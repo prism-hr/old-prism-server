@@ -5,6 +5,7 @@
    </head>
    <body>
 		<h2>Zuehlke project holding page</h2>
+		<h3>JSP style</h3>
 		<img alt="" src="<spring:theme code='image'/>">
 	</body>
 </html>

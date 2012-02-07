@@ -4,7 +4,7 @@
 	<head>
 		<link rel="stylesheet" href="<spring:theme code='styleSheet'/>" type="text/css"/>
    </head>
-   <body>
+   <body id="bodyId">
 		<h2>Zuehlke project holding page</h2>
 		<h3>JSP style</h3>
 		<h3>User details</h3>

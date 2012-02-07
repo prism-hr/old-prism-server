@@ -6,6 +6,7 @@
    </head>
    <body id="bodyId">
 		<h2>Zuehlke project holding page</h2>
+		<a id="loginLink" href="login">Login</a>
 		<h3>JSP style</h3>
 		<h3>User details</h3>
 		<p>first name: ${user.firstName}</p>

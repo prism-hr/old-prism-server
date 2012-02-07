@@ -1,0 +1,14 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="#springTheme('styleSheet')" type="text/css"/>
+   </head>
+   <body>
+		<h1>Login</h1>
+		<form
+action="/pgadmissions/login/submit"><br />
+<input type="text" id="email" name="email"><br />
+<input type="text" id="password" name="password" ><br />
+<input type="submit" id="loginBtn" name="loginBtn" value="Login"><br />
+</form>
+	</body>
+</html>

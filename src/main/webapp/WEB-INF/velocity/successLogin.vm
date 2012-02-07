@@ -1,0 +1,9 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="#springTheme('styleSheet')" type="text/css"/>
+		<title>Login successful</title>  
+</head>
+   <body>
+		<h1>Welcome ${user.email}</h1>
+	</body>
+</html>

@@ -11,10 +11,9 @@
 	<mvc:resources mapping="/design/**" location="/WEB-INF/design/" />
 
 
+	<context:annotation-config />
 
-	<!-- <context:annotation-config /> -->
-
-	<!-- <context:component-scan base-package="com.zuehlke.pgadmissions" /> -->
+ 	<context:component-scan base-package="com.zuehlke.pgadmissions" />
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
@@ -60,12 +59,12 @@
 		<property name="defaultThemeName" value="default" />
 	</bean>
 
-	<!-- <mvc:view-controller path="" view-name="index" /> -->
-	<mvc:view-controller path="home" view-name="home" />
+
 	<bean id="demoController" class="com.zuehlke.pgadmissions.controllers.DemoController">
 		<constructor-arg index="0" value="index"  />
 		<constructor-arg index="1" value="home"  />
 	</bean>
+
 
 	<import resource="hibernateEntities.xml" />
 </beans>

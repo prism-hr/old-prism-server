@@ -6,8 +6,8 @@ import cucumber.junit.Cucumber;
 import cucumber.junit.Feature;
 
 @RunWith(Cucumber.class)
-@Feature("homepage.feature")
+@Feature("successloginpage.feature")
 
-public class HomePage_Test {
+public class SuccessLoginPage_Test {
 
 }

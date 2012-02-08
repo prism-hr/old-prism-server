@@ -18,15 +18,5 @@ public class LoginController {
 		model.addAttribute("user", new User());
 		return "login";
 	}
-//
-//	@RequestMapping(value = "/submit")
-//	public String getLoginSubmit(@ModelAttribute("user") User user,
-//			BindingResult result, ModelMap model) {
-//		if (user.getEmail().isEmpty() && user.getPassword().isEmpty()) {
-//			return "failedLogin";
-//		}
-//		model.addAttribute("user", user);
-//		return "successLogin";
-//	}
 
 }

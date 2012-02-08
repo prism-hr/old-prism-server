@@ -16,17 +16,17 @@ public class LoginController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String getLoginForm(ModelMap model) {
 		model.addAttribute("user", new User());
-		return "newLogin";
+		return "login";
 	}
-
-	@RequestMapping(value = "/submit")
-	public String getLoginSubmit(@ModelAttribute("user") User user,
-			BindingResult result, ModelMap model) {
-		if (user.getEmail().isEmpty() && user.getPassword().isEmpty()) {
-			return "failedLogin";
-		}
-		model.addAttribute("user", user);
-		return "successLogin";
-	}
+//
+//	@RequestMapping(value = "/submit")
+//	public String getLoginSubmit(@ModelAttribute("user") User user,
+//			BindingResult result, ModelMap model) {
+//		if (user.getEmail().isEmpty() && user.getPassword().isEmpty()) {
+//			return "failedLogin";
+//		}
+//		model.addAttribute("user", user);
+//		return "successLogin";
+//	}
 
 }

@@ -6,9 +6,9 @@
 		<h1>Login</h1>
 		<form
 action="/pgadmissions/login/submit"><br />
-<input type="text" id="email" name="email"><br />
-<input type="text" id="password" name="password" ><br />
-<input type="submit" id="loginBtn" name="loginBtn" value="Login"><br />
+Username <input type="text" id="email" name="j_username">  <br />
+Password <input type="text" id="password" name="j_password" >  <br />
+<input name ="commit" type="submit" value="Sign In" /><br />
 </form>
 	</body>
 </html>

@@ -1,7 +1,7 @@
 <div>
-	<h2>Login to UCL PG WebSite</h2>
+	<h2>Login to UCL PG Web Application</h2>
 	<form id="loginForm" method="post" class="signin" action="/pgadmissions/j_spring_security_check">
-			<tablecellspacing="0">
+			<table cellspacing="0">
 			<tr>
 				<th><label for="username_or_email">Username or Email</label></th>
 				<td><input id ="username_or_email" name="j_username" type="text" /></td>

@@ -28,5 +28,15 @@
 			</user-service>
 		</authentication-provider>
 	</authentication-manager>
+	
+	<!--<authentication-manager>
+        <authentication-provider>
+            <jdbc-user-service id="userDetailsService" data-source-ref="dataSource"
+            users-by-username-query=
+            "select username, 'admin', true from users where username=?"
+            authorities-by-username-query=
+            "select username, 'ROLE_ADMIN' from authorities where username=?"/>
+        </authentication-provider>
+    </authentication-manager>-->
 
 </beans:beans>

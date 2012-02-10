@@ -18,21 +18,11 @@
 			<intercept-url pattern="*/j_spring_security_check" access="permitAll" />
 			<intercept-url pattern="/**" access="hasRole('ROLE_ADMIN')" />
 	</http>
-
-	<authentication-manager>
-		<authentication-provider>
-			<user-service id="userDetailsService">
-				<user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN" />
-				<user name="username" password="password" authorities="ROLE_USER" />
-				<user name="test" password="test" authorities="ROLE_USER" />
-			</user-service>
-		</authentication-provider>
-	</authentication-manager>
 	
-	<!-- <authentication-manager>
+	<authentication-manager>
         <authentication-provider>
             <jdbc-user-service id="userDetailsService" data-source-ref="dataSource"/>
         </authentication-provider>
-    </authentication-manager>-->
+    </authentication-manager>
 
 </beans:beans>

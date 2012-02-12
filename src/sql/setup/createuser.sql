@@ -1,1 +1,1 @@
-CREATE USER 'pgadmissions'@'localhost' IDENTIFIED BY 'pgadmissions';
+CREATE USER 'pgadmissions'@'%' IDENTIFIED BY 'pgadmissions';

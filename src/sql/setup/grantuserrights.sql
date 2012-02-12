@@ -1,1 +1,1 @@
-GRANT ALL  ON pgadmissions.* TO pgadmissions@'localhost'
+GRANT ALL  ON pgadmissions.* TO pgadmissions@'%'

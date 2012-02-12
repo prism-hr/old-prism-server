@@ -1,1 +1,1 @@
-DROP USER pgadmissions@localhost;
+DROP USER pgadmissions@'%';

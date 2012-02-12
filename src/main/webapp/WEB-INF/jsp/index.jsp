@@ -9,12 +9,12 @@
 		<button onclick="location.href='/pgadmissions/apply'">Apply now</button>
 		<h3>JSP style</h3>
 		<h3>User details</h3>
-		<p>first name: ${user.firstName}</p>
-		<p>last name: ${user.lastName}</p>		
-		<p>Contact Numbers</p>
+		<p>Username: ${user.username}</p>
+				
+		<p>Roles</p>
 		<ul>
-		<c:forEach var="phoneNumber" items="${user.phoneNumbers}">
-	        <li>${phoneNumber.name}: ${phoneNumber.number}</li>
+		<c:forEach var="role" items="${user.roles}">
+	        <li>${role.authority}</li>
       	</c:forEach>
       	</ul>
 		<img alt="" src="<spring:theme code='image'/>">

@@ -2,13 +2,27 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.openqa.selenium.SearchContext;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
 
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.temporary.User;
 
+
+
 public class DemoControllerTest {
+
+	private RegisteredUser user;
 
 	@Test
 	public void shouldReturnJspViewForEmptyPath() {
@@ -30,26 +44,28 @@ public class DemoControllerTest {
 
 
 	@Test
-	public void shoudAddUserObjectToModel(){
+	public void shoudAddUserFromSecurityContextObjectToModel(){
+		
+		
 		DemoController controller = new DemoController(null, null);
 		ModelMap modelMap = new ModelMap();
 		controller.getPage(new MockHttpServletRequest(), modelMap);
 		assertNotNull(modelMap.get("user"));
-		User user = (User) modelMap.get("user");
-		assertEquals("bob", user.getFirstName());
-		assertEquals("smith", user.getLastName());
-		assertEquals(3, user.getPhoneNumbers().size());
-		
-		assertEquals("office", user.getPhoneNumbers().get(0).getName());
-		assertEquals("0123 456 789", user.getPhoneNumbers().get(0).getNumber());
-		
-		assertEquals("home", user.getPhoneNumbers().get(1).getName());
-		assertEquals("0123 567 890", user.getPhoneNumbers().get(1).getNumber());
-		
-		assertEquals("mobile", user.getPhoneNumbers().get(2).getName());
-		assertEquals("0123 678 901", user.getPhoneNumbers().get(2).getNumber());
+		assertEquals(user, modelMap.get("user"));
+	}
+	@Before
+	public void setUp(){
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		user = new RegisteredUserBuilder().id(1).username("bob").toUser();
+		authenticationToken.setDetails(user);
+		SecurityContextImpl secContext = new SecurityContextImpl();
+		secContext.setAuthentication(authenticationToken);
+		SecurityContextHolder.setContext(secContext);
 	}
 	
-	
+	@After
+	public void tearDown(){
+		SecurityContextHolder.clearContext();
+	}
 	
 }

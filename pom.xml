@@ -147,7 +147,7 @@
 				<configuration>
 					<scriptdirectory>src/sql/change_scripts</scriptdirectory>
 					<driver>com.mysql.jdbc.Driver</driver>
-					<url>jdbc:mysql://localhost/pgadmissions</url>
+					<url>jdbc:mysql://192.168.11.115/pgadmissions</url>
 					<userid>pgadmissions</userid>
 					<password>pgadmissions</password>
 					<dbms>mysql</dbms>

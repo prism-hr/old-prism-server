@@ -202,11 +202,8 @@
 							<username>root</username>
 							<password>root</password>
 							<srcFiles>
-								<srcFile>src/sql/setup/dropuser.sql</srcFile>
 								<srcFile>src/sql/setup/dropdatabase.sql</srcFile>
 								<srcFile>src/sql/setup/createdatabase.sql</srcFile>
-								<srcFile>src/sql/setup/createuser.sql</srcFile>
-								<srcFile>src/sql/setup/grantuserrights.sql</srcFile>
 							</srcFiles>
 						</configuration>
 					</execution>

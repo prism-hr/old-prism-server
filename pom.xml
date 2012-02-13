@@ -8,9 +8,9 @@
 	<name>pgadmissions Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<properties>
-	   <spring.version>3.1.0.RELEASE</spring.version>
+		<spring.version>3.1.0.RELEASE</spring.version>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -123,14 +123,40 @@
 	<build>
 		<finalName>pgadmissions</finalName>
 		<resources>
-		  <resource>
-		      <directory>src/main/webapp/WEB-INF/spring</directory>
-		      <includes>
-		          <include>MainContext.xml</include>
-		      </includes>
-		      <filtering>true</filtering>
-		  </resource>
+		    <resource>
+		      <directory>src/main/resources</directory>
+		    </resource>
+			<resource>
+				<directory>src/main/webapp/WEB-INF/spring</directory>
+				<includes>
+					<include>MainContext.xml</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+                <directory>src/main/webapp/WEB-INF/spring</directory>
+                <excludes>
+                    <exclude>MainContext.xml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </resource>
 		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>hibernateTestConfig.xml</include>
+				</includes>
+				<filtering>true</filtering>
+			</testResource>
+			<testResource>
+                <directory>src/test/resources</directory>
+                <excludes>
+                    <exclude>hibernateTestConfig.xml</exclude>
+                </excludes>
+                <filtering>false</filtering>
+            </testResource>
+		</testResources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -255,21 +281,21 @@
 		</plugins>
 	</build>
 	<profiles>
-       <profile>
-           <id>local</id>
-           <activation>
-               <activeByDefault>true</activeByDefault>
-           </activation>
-           <properties>
-               <sql.url>localhost</sql.url>
-           </properties>
-       </profile>
-       <profile>
-           <id>jenkins</id>
-           <properties>
-               <sql.url>192.168.11.115</sql.url>
-           </properties>
-       </profile>
-    </profiles>
-	
+		<profile>
+			<id>local</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<sql.url>localhost</sql.url>
+			</properties>
+		</profile>
+		<profile>
+			<id>jenkins</id>
+			<properties>
+				<sql.url>192.168.11.115</sql.url>
+			</properties>
+		</profile>
+	</profiles>
+
 </project>

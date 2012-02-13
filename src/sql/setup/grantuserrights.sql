@@ -1,1 +1,0 @@
-GRANT ALL  ON pgadmissions.* TO pgadmissions@'%'

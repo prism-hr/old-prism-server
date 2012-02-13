@@ -147,7 +147,7 @@
 				<configuration>
 					<scriptdirectory>src/sql/change_scripts</scriptdirectory>
 					<driver>com.mysql.jdbc.Driver</driver>
-					<url>jdbc:mysql://localhost/pgadmissions</url>
+					<url>jdbc:mysql://${sql.url}/pgadmissions</url>
 					<userid>pgadmissions</userid>
 					<password>pgadmissions</password>
 					<dbms>mysql</dbms>
@@ -198,7 +198,7 @@
 						<!-- specific configuration for this execution -->
 						<configuration>
 							<driver>com.mysql.jdbc.Driver</driver>
-							<url>jdbc:mysql://localhost</url>
+							<url>jdbc:mysql://${sql.url}</url>
 							<username>root</username>
 							<password>root</password>
 							<srcFiles>
@@ -219,7 +219,7 @@
 						<!-- specific configuration for this execution -->
 						<configuration>
 							<driver>com.mysql.jdbc.Driver</driver>
-							<url>jdbc:mysql://localhost/pgadmissions</url>
+							<url>jdbc:mysql://${sql.url}/pgadmissions</url>
 							<username>pgadmissions</username>
 							<password>pgadmissions</password>
 							<srcFiles>
@@ -236,7 +236,7 @@
 						<!-- specific configuration for this execution -->
 						<configuration>
 							<driver>com.mysql.jdbc.Driver</driver>
-							<url>jdbc:mysql://localhost/pgadmissions</url>
+							<url>jdbc:mysql://${sql.url}/pgadmissions</url>
 							<username>pgadmissions</username>
 							<password>pgadmissions</password>
 							<srcFiles>
@@ -248,4 +248,22 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+       <profile>
+           <id>local</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
+           <properties>
+               <sql.url>localhost</sql.url>
+           </properties>
+       </profile>
+       <profile>
+           <id>jenkins</id>
+           <properties>
+               <sql.url>192.168.11.115</sql.url>
+           </properties>
+       </profile>
+    </profiles>
+	
 </project>

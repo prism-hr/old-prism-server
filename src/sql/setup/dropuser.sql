@@ -1,1 +1,1 @@
-DROP USER pgadmissions@'%';
+DELETE FROM mysql.user WHERE User='pgadmission';

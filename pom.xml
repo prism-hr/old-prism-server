@@ -147,7 +147,7 @@
 				<configuration>
 					<scriptdirectory>src/sql/change_scripts</scriptdirectory>
 					<driver>com.mysql.jdbc.Driver</driver>
-					<url>jdbc:mysql://${sql.url}/pgadmissions</url>
+					<url>jdbc:mysql://192.168.11.115/pgadmissions</url>
 					<userid>pgadmissions</userid>
 					<password>pgadmissions</password>
 					<dbms>mysql</dbms>
@@ -198,7 +198,7 @@
 						<!-- specific configuration for this execution -->
 						<configuration>
 							<driver>com.mysql.jdbc.Driver</driver>
-							<url>jdbc:mysql://${sql.url}</url>
+							<url>jdbc:mysql://192.168.11.115</url>
 							<username>root</username>
 							<password>root</password>
 							<srcFiles>
@@ -219,7 +219,7 @@
 						<!-- specific configuration for this execution -->
 						<configuration>
 							<driver>com.mysql.jdbc.Driver</driver>
-							<url>jdbc:mysql://${sql.url}/pgadmissions</url>
+							<url>jdbc:mysql://192.168.11.115/pgadmissions</url>
 							<username>pgadmissions</username>
 							<password>pgadmissions</password>
 							<srcFiles>
@@ -236,7 +236,7 @@
 						<!-- specific configuration for this execution -->
 						<configuration>
 							<driver>com.mysql.jdbc.Driver</driver>
-							<url>jdbc:mysql://${sql.url}/pgadmissions</url>
+							<url>jdbc:mysql://192.168.11.115/pgadmissions</url>
 							<username>pgadmissions</username>
 							<password>pgadmissions</password>
 							<srcFiles>

@@ -1,6 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.List;
+
+import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -29,10 +33,11 @@ public class ApplicationFormDAO {
 				ApplicationForm.class, id);
 	}
 	
-	public ApplicationForm getApplicationByUser(RegisteredUser user) {
-		return (ApplicationForm) sessionFactory.getCurrentSession()
+	public List<ApplicationForm> getApplicationsByUser(RegisteredUser user) {
+		List<ApplicationForm> list = sessionFactory.getCurrentSession()
 				.createCriteria(ApplicationForm.class)
-				.add(Restrictions.eq("registered_user_id", user.getId())).uniqueResult();
+				.add(Restrictions.eq("user", user)).list();
+		return list;
 	}
 
 }

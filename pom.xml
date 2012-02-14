@@ -123,9 +123,9 @@
 	<build>
 		<finalName>pgadmissions</finalName>
 		<resources>
-		    <resource>
-		      <directory>src/main/resources</directory>
-		    </resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
 			<resource>
 				<directory>src/main/webapp/WEB-INF/spring</directory>
 				<includes>
@@ -134,12 +134,12 @@
 				<filtering>true</filtering>
 			</resource>
 			<resource>
-                <directory>src/main/webapp/WEB-INF/spring</directory>
-                <excludes>
-                    <exclude>MainContext.xml</exclude>
-                </excludes>
-                <filtering>false</filtering>
-            </resource>
+				<directory>src/main/webapp/WEB-INF/spring</directory>
+				<excludes>
+					<exclude>MainContext.xml</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</resource>
 		</resources>
 		<testResources>
 			<testResource>
@@ -150,12 +150,12 @@
 				<filtering>true</filtering>
 			</testResource>
 			<testResource>
-                <directory>src/test/resources</directory>
-                <excludes>
-                    <exclude>hibernateTestConfig.xml</exclude>
-                </excludes>
-                <filtering>false</filtering>
-            </testResource>
+				<directory>src/test/resources</directory>
+				<excludes>
+					<exclude>hibernateTestConfig.xml</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</testResource>
 		</testResources>
 		<plugins>
 			<plugin>
@@ -200,6 +200,11 @@
 						<groupId>mysql</groupId>
 						<artifactId>mysql-connector-java</artifactId>
 						<version>5.1.12</version>
+					</dependency>
+					<dependency>
+						<groupId>org.freemarker</groupId>
+						<artifactId>freemarker</artifactId>
+						<version>2.3.14</version>
 					</dependency>
 				</dependencies>
 				<executions>

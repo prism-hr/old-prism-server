@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd		
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/tx  http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+	<mvc:annotation-driven />
+	<mvc:resources mapping="/design/**" location="/WEB-INF/design/" />
+
+
+	<context:annotation-config />
+
+	<context:component-scan base-package="com.zuehlke.pgadmissions" />
+
+	<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename">
+			<value>locale\messages</value>
+		</property>
+	</bean>
+
+	<!-- freemarker config -->
+	<bean id="freemarkerConfig"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
+	</bean>
+
+
+	<bean id="freemarkerViewResolver"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="cache" value="true" />
+		<property name="prefix" value="" />
+		<property name="suffix" value=".ftl" />
+	</bean>
+
+	<bean id="jspViewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<bean id="velocityConfig"
+		class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
+		<property name="resourceLoaderPath" value="/WEB-INF/velocity/" />
+		<property name="velocityProperties">
+			<props>
+				<prop key="input.encoding">UTF-8</prop>
+				<prop key="output.encoding">UTF-8</prop>
+				<prop key="runtime.log.logsystem.class">org.apache.velocity.runtime.log.Log4JLogChute</prop>
+				<prop key="runtime.log.logsystem.log4j.logger">org.apache.velocity</prop>
+				<prop key="runtime.log.invalid.references">false</prop>
+				<prop key="velocimacro.library">/velocity_config/macros.vm,/org/springframework/web/servlet/view/velocity/spring.vm
+				</prop>
+				<prop key="velocimacro.library.autoreload">true</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="velocityViewResolver"
+		class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+		<property name="order" value="1" />
+		<property name="cache" value="true" />
+		<property name="prefix" value="" />
+		<property name="suffix" value=".vm" />
+		<property name="toolboxConfigLocation" value="/WEB-INF/classes/velocity_config/toolbox.xml" />
+		<property name="exposeSpringMacroHelpers" value="true" />
+	</bean>
+
+	<bean id="themeResolver"
+		class="org.springframework.web.servlet.theme.FixedThemeResolver">
+		<property name="defaultThemeName" value="default" />
+	</bean>
+
+
+	<bean id="demoController" class="com.zuehlke.pgadmissions.controllers.DemoController">
+		<constructor-arg index="0" value="index" />
+		<constructor-arg index="1" value="home" />
+		<constructor-arg index="2" value="free" />
+	</bean>
+
+
+	<import resource="hibernateEntities.xml" />
+</beans>

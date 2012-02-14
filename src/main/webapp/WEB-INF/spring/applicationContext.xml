@@ -13,13 +13,27 @@
 
 	<context:annotation-config />
 
- 	<context:component-scan base-package="com.zuehlke.pgadmissions" />
+	<context:component-scan base-package="com.zuehlke.pgadmissions" />
 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename">
 			<value>locale\messages</value>
 		</property>
+	</bean>
+
+	<!-- freemarker config -->
+	<bean id="freemarkerConfig"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/freemarker/" />
+	</bean>
+
+
+	<bean id="freemarkerViewResolver"
+		class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="cache" value="true" />
+		<property name="prefix" value="" />
+		<property name="suffix" value=".ftl" />
 	</bean>
 
 	<bean id="jspViewResolver"
@@ -54,6 +68,7 @@
 		<property name="toolboxConfigLocation" value="/WEB-INF/classes/velocity_config/toolbox.xml" />
 		<property name="exposeSpringMacroHelpers" value="true" />
 	</bean>
+
 	<bean id="themeResolver"
 		class="org.springframework.web.servlet.theme.FixedThemeResolver">
 		<property name="defaultThemeName" value="default" />
@@ -61,8 +76,9 @@
 
 
 	<bean id="demoController" class="com.zuehlke.pgadmissions.controllers.DemoController">
-		<constructor-arg index="0" value="index"  />
-		<constructor-arg index="1" value="home"  />
+		<constructor-arg index="0" value="index" />
+		<constructor-arg index="1" value="home" />
+		<constructor-arg index="2" value="free" />
 	</bean>
 
 

@@ -16,6 +16,8 @@ import javax.persistence.Transient;
 
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+
 @Entity(name = "REGISTERED_USER")
 @Access(AccessType.FIELD)
 public class RegisteredUser extends DomainObject<Integer> implements UserDetails {
@@ -27,11 +29,10 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private boolean accountNonExpired;
 	private boolean accountNonLocked;
 	private boolean credentialsNonExpired;
-	
+
 	@ManyToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
-
 
 	public List<Role> getRoles() {
 		return roles;
@@ -108,6 +109,23 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public void setAccountNonExpired(boolean accountNonExpired) {
 		this.accountNonExpired = accountNonExpired;
 
+	}
+
+	public boolean isInRole(Authority authority) {
+		for (Role role : roles) {
+			if (role.getAuthorityEnum() == authority) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isInRole(String strAuthority) {
+		try {
+			return isInRole(Authority.valueOf(strAuthority));
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
 	}
 
 }

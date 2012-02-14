@@ -19,10 +19,10 @@ public class ApplicationFormBuilder {
 	
 	private String description_of_research;
 
-	private RegisteredUser registered_user_id = new RegisteredUser();
+	private RegisteredUser user;
 	
 	public ApplicationFormBuilder registeredUser (RegisteredUser user) {
-		this.registered_user_id = user;
+		this.user = user;
 		return this;
 	}
 	
@@ -70,7 +70,7 @@ public class ApplicationFormBuilder {
 		application.setNat(nationality);
 		application.setRes(description_of_research);
 		application.setTitle(title);
-		application.setUser(registered_user_id);
+		application.setUser(user);
 		return application;
 	}
 }

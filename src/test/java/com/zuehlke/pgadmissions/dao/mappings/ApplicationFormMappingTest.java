@@ -32,7 +32,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase{
 		application.setRes("I want to make a research on cancer");
 		application.setTitle("Miss");
 		application.setUser(user);
-		//application.setRegistered_user_id(user.getId());
 		
 		assertNull(application.getId());
 		
@@ -50,7 +49,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase{
 		assertEquals(application, reloadedApplication);
 		
 		assertEquals(application.getUser(), user);
-		//assertEquals(application.getRes(), reloadedApplication.getRes());
+		assertEquals(application.getRes(), reloadedApplication.getRes());
 	}
 
 }

@@ -6,11 +6,12 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd		
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
+    <context:property-placeholder location="classpath:jdbc.properties" />  
+
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<!-- <property name="url" value="jdbc:mysql://${sql.url}/pgadmissions" /> -->
-		<property name="url" value="jdbc:mysql://localhost/pgadmissions" />
+		<property name="url" value="jdbc:mysql://${host.url}/pgadmissions" />
 		<property name="username" value="pgadmissions" />
 		<property name="password" value="pgadmissions" />
 	</bean>

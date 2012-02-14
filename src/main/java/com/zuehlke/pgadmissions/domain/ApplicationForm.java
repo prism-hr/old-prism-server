@@ -104,8 +104,4 @@ public class ApplicationForm extends DomainObject<Integer> {
 	public void setUser(RegisteredUser user) {
 		this.user = user;
 	}
-
-	
-	
-
 }

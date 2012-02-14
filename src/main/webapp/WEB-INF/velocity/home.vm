@@ -1,0 +1,19 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="#springTheme('styleSheet')" type="text/css"/>
+   </head>
+   <body>
+		<h2>Zuehlke - project holding page</h2>
+		<h3>Velocity style</h3>
+		<h3>User details</h3>
+		<p>first name: $user.firstName</p>
+		<p>last name: $user.lastName</p>		
+		<p>Contact Numbers</p>
+		<ul>
+		#foreach( $phoneNumber in $user.phoneNumbers )
+    		<li>$phoneNumber.name: $phoneNumber.number</li>
+		#end
+		</ul>		
+		<img alt="" src="#springTheme('image')">
+	</body>
+</html>

@@ -59,16 +59,6 @@
 		</property>
 	</bean>
 
-	<bean id="velocityViewResolver"
-		class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
-		<property name="order" value="1" />
-		<property name="cache" value="true" />
-		<property name="prefix" value="" />
-		<property name="suffix" value=".vm" />
-		<property name="toolboxConfigLocation" value="/WEB-INF/classes/velocity_config/toolbox.xml" />
-		<property name="exposeSpringMacroHelpers" value="true" />
-	</bean>
-
 	<bean id="themeResolver"
 		class="org.springframework.web.servlet.theme.FixedThemeResolver">
 		<property name="defaultThemeName" value="default" />
@@ -77,8 +67,7 @@
 
 	<bean id="demoController" class="com.zuehlke.pgadmissions.controllers.DemoController">
 		<constructor-arg index="0" value="index" />
-		<constructor-arg index="1" value="home" />
-		<constructor-arg index="2" value="free" />
+		<constructor-arg index="1" value="free" />
 	</bean>
 
 

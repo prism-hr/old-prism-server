@@ -15,38 +15,28 @@ import org.springframework.ui.ModelMap;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
-public class DemoControllerTest {
+public class ViewApplicationsControllerTest {
 
 	private RegisteredUser user;
 
 	@Test
-	public void shouldReturnJspViewForEmptyPath() {
-		String jspViewName = "view";
-		DemoController controller = new DemoController(jspViewName, null);
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setServletPath("/");
-		assertEquals(jspViewName, controller.getPage(request, new ModelMap()));
-	}
-
-	@Test
-	public void shouldReturnFreemarkerViewForHomePath() {
-		String freemarkerViewName = "view";
-		DemoController controller = new DemoController(null, freemarkerViewName);
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setServletPath("/free");
-		assertEquals(freemarkerViewName, controller.getPage(request, new ModelMap()));
-	}
-
-	@Test
-	public void shoudAddUserFromSecurityContextObjectToModel() {
-
-		DemoController controller = new DemoController(null, null);
+	public void shouldAddUserFromSecurityContextObjectToModel() {
+		ViewApplicationsController controller = new ViewApplicationsController();
 		ModelMap modelMap = new ModelMap();
-		controller.getPage(new MockHttpServletRequest(), modelMap);
+		controller.createApplicationsView(modelMap);
 		assertNotNull(modelMap.get("user"));
 		assertEquals(user, modelMap.get("user"));
 	}
 
+
+	@Test
+	public void shouldReturnApplicaionsViewName() {
+		ViewApplicationsController controller = new ViewApplicationsController();
+		assertEquals("applications/applications", controller.createApplicationsView(new ModelMap()));
+	
+	}
+
+	
 	@Before
 	public void setUp() {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);

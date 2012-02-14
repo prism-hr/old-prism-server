@@ -29,7 +29,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase{
 		application.setDob("1988/03/24");
 		application.setGender("Female");
 		application.setNat("British");
-		application.setRes("I want to make a research on cancer");
+		application.setDescriptionOfResearch("I want to make a research on cancer");
 		application.setTitle("Miss");
 		application.setUser(user);
 		
@@ -49,7 +49,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase{
 		assertEquals(application, reloadedApplication);
 		
 		assertEquals(application.getUser(), user);
-		assertEquals(application.getRes(), reloadedApplication.getRes());
+		assertEquals(application.getDescriptionOfResearch(), reloadedApplication.getDescriptionOfResearch());
 	}
 
 }

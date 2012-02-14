@@ -68,7 +68,7 @@ public class ApplicationFormBuilder {
 		application.setGender(gender);
 		application.setId(id);
 		application.setNat(nationality);
-		application.setRes(description_of_research);
+		application.setDescriptionOfResearch(description_of_research);
 		application.setTitle(title);
 		application.setUser(user);
 		return application;

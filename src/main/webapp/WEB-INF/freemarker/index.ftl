@@ -12,5 +12,6 @@
 	        <li>${role.authority}</li>
       	</#list>
       	</ul>
+      	<a href="/pgadmissions/applications">View applications</a>
 	</body>
 </html>

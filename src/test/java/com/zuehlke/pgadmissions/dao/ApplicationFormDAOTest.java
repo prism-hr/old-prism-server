@@ -37,7 +37,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		application.setDob("1988/03/24");
 		application.setGender("Female");
 		application.setNat("British");
-		application.setRes("I want to make a research on cancer");
+		application.setDescriptionOfResearch("I want to make a research on cancer");
 		application.setTitle("Miss");
 		application.setUser(user);
 		
@@ -56,7 +56,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		assertNotSame(application, reloadedApplication);
 		assertEquals(application, reloadedApplication);
 		assertEquals(application.getUser(), user);
-		assertEquals(application.getRes(), reloadedApplication.getRes());
+		assertEquals(application.getDescriptionOfResearch(), reloadedApplication.getDescriptionOfResearch());
 	}
 
 	@Test
@@ -80,7 +80,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		application1.setDob("1988/03/24");
 		application1.setGender("Female");
 		application1.setNat("British");
-		application1.setRes("I want to make a research on cancer");
+		application1.setDescriptionOfResearch("I want to make a research on cancer");
 		application1.setTitle("Miss");
 		application1.setUser(user);
 		
@@ -93,7 +93,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		application2.setDob("1975/01/20");
 		application2.setGender("Male");
 		application2.setNat("Brazilian");
-		application2.setRes("I want to make a research on software engineering");
+		application2.setDescriptionOfResearch("I want to make a research on software engineering");
 		application2.setTitle("Mr");
 		application2.setUser(user);
 		

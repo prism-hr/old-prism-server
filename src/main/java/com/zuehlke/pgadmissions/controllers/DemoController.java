@@ -10,14 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping(value = { "", "free" })
+@RequestMapping(value = { "" })
 public class DemoController {
 
-	private final String jspViewName;
 	private final String freemarkerViewName;
 
-	public DemoController(String jspViewName, String freemarkerViewName) {
-		this.jspViewName = jspViewName;
+	public DemoController(String freemarkerViewName) {
 		this.freemarkerViewName = freemarkerViewName;
 	}
 
@@ -31,11 +29,7 @@ public class DemoController {
 	}
 
 	private String resolveView(HttpServletRequest request) {
-
-		if ("/free".equals(request.getServletPath())) {
-			return freemarkerViewName;
-		}
-		return jspViewName;
+		return freemarkerViewName;
 	}
 
 }

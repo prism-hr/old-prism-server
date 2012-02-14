@@ -20,32 +20,14 @@ public class DemoControllerTest {
 	private RegisteredUser user;
 
 	@Test
-	public void shouldReturnJspViewForEmptyPath() {
-		String jspViewName = "view";
-		DemoController controller = new DemoController(jspViewName, null);
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setServletPath("/");
-		assertEquals(jspViewName, controller.getPage(request, new ModelMap()));
-	}
-
-	@Test
 	public void shouldReturnFreemarkerViewForHomePath() {
 		String freemarkerViewName = "view";
-		DemoController controller = new DemoController(null, freemarkerViewName);
+		DemoController controller = new DemoController(freemarkerViewName);
 		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setServletPath("/free");
+		request.setServletPath("/");
 		assertEquals(freemarkerViewName, controller.getPage(request, new ModelMap()));
 	}
 
-	@Test
-	public void shoudAddUserFromSecurityContextObjectToModel() {
-
-		DemoController controller = new DemoController(null, null);
-		ModelMap modelMap = new ModelMap();
-		controller.getPage(new MockHttpServletRequest(), modelMap);
-		assertNotNull(modelMap.get("user"));
-		assertEquals(user, modelMap.get("user"));
-	}
 
 	@Before
 	public void setUp() {

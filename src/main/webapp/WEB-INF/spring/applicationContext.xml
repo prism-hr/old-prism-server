@@ -67,7 +67,6 @@
 
 	<bean id="demoController" class="com.zuehlke.pgadmissions.controllers.DemoController">
 		<constructor-arg index="0" value="index" />
-		<constructor-arg index="1" value="free" />
 	</bean>
 
 

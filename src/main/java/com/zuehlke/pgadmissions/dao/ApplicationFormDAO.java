@@ -6,6 +6,7 @@ import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -16,10 +17,12 @@ public class ApplicationFormDAO {
 
 	private final SessionFactory sessionFactory;
 
+	
 	ApplicationFormDAO(){
 		this(null);
 	}
 	
+	@Autowired
 	public ApplicationFormDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
@@ -39,5 +42,13 @@ public class ApplicationFormDAO {
 				.add(Restrictions.eq("user", user)).list();
 		return list;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getAllApplications() {
+		return  (List<ApplicationForm>)sessionFactory.getCurrentSession()
+				.createCriteria(ApplicationForm.class).list();
+				
+	}
+
 
 }

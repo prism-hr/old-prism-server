@@ -164,7 +164,6 @@
 				<groupId>com.dbdeploy</groupId>
 				<artifactId>maven-dbdeploy-plugin</artifactId>
 				<version>3.0M3</version>
-
 				<configuration>
 					<scriptdirectory>src/sql/change_scripts</scriptdirectory>
 					<driver>com.mysql.jdbc.Driver</driver>
@@ -175,7 +174,6 @@
 					<delimiter>;</delimiter>
 					<delimiterType>row</delimiterType>
 				</configuration>
-
 				<dependencies>
 					<dependency>
 						<groupId>com.dbdeploy</groupId>
@@ -198,10 +196,8 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>sql-maven-plugin</artifactId>
-				<version>1.5</version>
-
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
 				<dependencies>
 					<dependency>
 						<groupId>mysql</groupId>
@@ -211,56 +207,21 @@
 				</dependencies>
 				<executions>
 					<execution>
-						<id>drop_create_db</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>execute</goal>
-						</goals>
-						<!-- specific configuration for this execution -->
+						<id>default-cli</id>
 						<configuration>
-							<driver>com.mysql.jdbc.Driver</driver>
-							<url>jdbc:mysql://${sql.url}</url>
-							<username>root</username>
-							<password>root</password>
-							<srcFiles>
-								<srcFile>src/sql/setup/dropdatabase.sql</srcFile>
-								<srcFile>src/sql/setup/createdatabase.sql</srcFile>
-							</srcFiles>
+							<tasks>
+								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.url}"
+									userid="root" password="root" src="src/sql/setup/dropdatabase.sql" />
+								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.url}"
+									userid="root" password="root" src="src/sql/setup/createdatabase.sql" />
+								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.url}/pgadmissions"
+									userid="pgadmissions" password="pgadmissions"
+									src="src/sql/setup/createSchemaVersionTable.mysql.sql" />
+							</tasks>
 						</configuration>
-					</execution>
-					<execution>
-						<id>create_changelog_table</id>
-						<phase>generate-sources</phase>
 						<goals>
-							<goal>execute</goal>
+							<goal>run</goal>
 						</goals>
-						<!-- specific configuration for this execution -->
-						<configuration>
-							<driver>com.mysql.jdbc.Driver</driver>
-							<url>jdbc:mysql://${sql.url}/pgadmissions</url>
-							<username>pgadmissions</username>
-							<password>pgadmissions</password>
-							<srcFiles>
-								<srcFile>src/sql/setup/createSchemaVersionTable.mysql.sql</srcFile>
-							</srcFiles>
-						</configuration>
-					</execution>
-					<execution>
-						<id>populate</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>execute</goal>
-						</goals>
-						<!-- specific configuration for this execution -->
-						<configuration>
-							<driver>com.mysql.jdbc.Driver</driver>
-							<url>jdbc:mysql://${sql.url}/pgadmissions</url>
-							<username>pgadmissions</username>
-							<password>pgadmissions</password>
-							<srcFiles>
-								<srcFile>src/sql/test_data/insertUsers.sql</srcFile>
-							</srcFiles>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>

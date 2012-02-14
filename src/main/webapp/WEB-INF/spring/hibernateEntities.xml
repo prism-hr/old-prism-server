@@ -11,6 +11,7 @@
 	     	<list>
 	     		<value>com.zuehlke.pgadmissions.domain.RegisteredUser</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Role</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ApplicationForm</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

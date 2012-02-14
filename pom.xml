@@ -119,25 +119,66 @@
 			<artifactId>spring-security-taglibs</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.14</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>pgadmissions</finalName>
 		<resources>
+<<<<<<< local
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+			<resource>
+				<directory>src/main/webapp/WEB-INF/spring</directory>
+=======
 		    <resource>
 		      <directory>src/main/resources</directory>
+>>>>>>> other
 				<includes>
 					<include>jdbc.properties</include>
 				</includes>
 				<filtering>true</filtering>
 			</resource>
 			<resource>
+<<<<<<< local
+				<directory>src/main/webapp/WEB-INF/spring</directory>
+				<excludes>
+					<exclude>MainContext.xml</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</resource>
+=======
                 <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>jdbc.properties</exclude>
                 </excludes>
                 <filtering>false</filtering>
             </resource>
+>>>>>>> other
 		</resources>
+<<<<<<< local
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>hibernateTestConfig.xml</include>
+				</includes>
+				<filtering>true</filtering>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<excludes>
+					<exclude>hibernateTestConfig.xml</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</testResource>
+		</testResources>
+=======
+>>>>>>> other
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

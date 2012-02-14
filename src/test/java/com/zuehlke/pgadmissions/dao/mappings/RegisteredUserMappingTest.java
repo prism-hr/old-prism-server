@@ -54,8 +54,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadUserWithRoles() throws Exception {
 
 		//clear out whatever test data is in there -remember, it will all be rolled back!
-		sessionFactory.getCurrentSession().createSQLQuery("delete from user_role_link").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from application_role").executeUpdate();
+		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
+		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 		
 		Role roleOne = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
 		Role roleTwo = new RoleBuilder().authorityEnum(Authority.RECRUITER).toRole();
@@ -80,8 +80,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldDeleteRoleMappingWhenDeletingUser() throws Exception {
 		//clear out whatever test data is in there -remember, it will all be rolled back!
-		sessionFactory.getCurrentSession().createSQLQuery("delete from user_role_link").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from application_role").executeUpdate();
+		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
+		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();		
 		save(role);
 		Integer roleId = role.getId();

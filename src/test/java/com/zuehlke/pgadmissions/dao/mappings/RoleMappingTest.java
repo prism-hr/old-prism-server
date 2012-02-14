@@ -14,8 +14,8 @@ public class RoleMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadRole() {
 		//clear out whatever test data is in there -remember, it will all be rolled back!
-		sessionFactory.getCurrentSession().createSQLQuery("delete from user_role_link").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from application_role").executeUpdate();
+		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
+		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 		flushAndClearSession();
 		Role role = new Role();
 		role.setAuthorityEnum(Authority.APPLICANT);

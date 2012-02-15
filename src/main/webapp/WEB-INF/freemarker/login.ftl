@@ -1,5 +1,6 @@
 <div>
-	<h2>Login to UCL PG Web Application</h2>
+	<h2>UCL Post-graduate admissions portal</h2>
+	<p>Please log in: </p>
 	<form id="loginForm" method="post" class="signin" action="/pgadmissions/j_spring_security_check">
 			<table cellspacing="0">
 			<tr>

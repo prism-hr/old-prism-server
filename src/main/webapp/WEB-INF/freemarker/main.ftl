@@ -1,4 +1,8 @@
 <html>
+	<head>
+    <#import "/spring.ftl" as spring />
+	<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/default.css' />"/>
+	</head>
    <body id="bodyId">
 		<h2>UCL Post-graduate admissions portal</h2>		
 		<p>Welcome ${user.username}</p>				

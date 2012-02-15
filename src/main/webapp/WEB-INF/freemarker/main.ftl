@@ -1,6 +1,6 @@
 <html>
-   <body id="bodyId">
-		<h2>UCL Post-graduate admissions portal</h2>		
+   <body id="bodyId">   
+		<h2>UCL Post-graduate admissions portal</h2>			
 		<p>Welcome ${user.username}</p>				
 		<p>Roles</p>
 		<ul>
@@ -12,13 +12,12 @@
       		<button onclick="location.href='/pgadmissions/apply'">Apply now</button>
       	</#if>
       	<br/>
-      	<h3>Applications:</h3>
-      	<ul>
+      	<h3>Applications:</h3>      	
 		<#list applications as application>
 			<#if user.canSee(application)>
-    			<a href="application?id=${application.id}">${application.descriptionOfResearch}</a>
+    			<a href="application?id=${application.id}">${application.descriptionOfResearch}</a><br>    
     		</#if>	
 		</#list>
-		</ul>
+		
 	</body>
 </html>

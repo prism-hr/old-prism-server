@@ -18,6 +18,10 @@ public class AssignReviewerController {
 	
 	private ReviewerService reviewerService;
 
+	AssignReviewerController(){
+		this(null);
+	}
+	
 	@Autowired
 	public AssignReviewerController(ReviewerService reviewerService) {
 		this.reviewerService = reviewerService;

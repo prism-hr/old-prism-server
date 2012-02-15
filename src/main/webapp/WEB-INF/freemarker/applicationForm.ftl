@@ -4,18 +4,21 @@
 			<table cellspacing="0">
 			<tr>
 				<th>Title</th>
-				<td><select name="title">
-					<option value="Miss">Miss</option>
-					<option value="Mr">Mr</option>
-					<option value="Mrs">Mrs</option>
-					<option value="Ms">Ms</option>
-					</select></td>
+				<td>
+					<select name="title">
+						<option value="Miss">Miss</option>
+						<option value="Mr">Mr</option>
+						<option value="Mrs">Mrs</option>
+						<option value="Ms">Ms</option>
+					</select>
+				</td>
 			</tr>
 			<tr>
 				<th>Gender</th>
-				<td><input type="radio" name="gender" value="male" /> Male<br />
+				<td>
+					<input type="radio" name="gender" value="male" /> Male<br />
 					<input type="radio" name="gender" value="female" /> Female
-					</select></td>
+				</td>
 			</tr>
 			<tr>
 				<th><label for="dob">Date of Birth</label></th>
@@ -31,7 +34,7 @@
 			</tr>
 			<tr>
 				<th><label for="res">Proposed Research</label></th>
-				<td><textarea id ="res" name="res" cols=45 rows=7> </textarea></td>
+				<td><textarea id ="descriptionOfResearch" name="descriptionOfResearch" cols="45" rows="7"> </textarea></td>
 			</tr>
 			<tr>
 				<th></th>

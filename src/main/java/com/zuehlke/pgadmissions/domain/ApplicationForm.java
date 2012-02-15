@@ -29,7 +29,7 @@ public class ApplicationForm extends DomainObject<Integer> {
 	
 	private String nationality;
 	
-	private String description_of_research;
+	private String descriptionOfResearch;
 	
 	@ManyToOne
 	@JoinColumn(name="registered_user_id")
@@ -77,11 +77,11 @@ public class ApplicationForm extends DomainObject<Integer> {
 	}
 
 	public String getDescriptionOfResearch() {
-		return description_of_research;
+		return descriptionOfResearch;
 	}
 
 	public void setDescriptionOfResearch(String res) {
-		this.description_of_research = res;
+		this.descriptionOfResearch = res;
 	}
 
 	@Override

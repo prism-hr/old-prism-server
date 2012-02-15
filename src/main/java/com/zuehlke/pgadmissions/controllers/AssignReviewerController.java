@@ -52,12 +52,14 @@ public class AssignReviewerController {
 		return REVIEW_APPLICATION_VIEW_NAME;
 	}
 	
-	@RequestMapping(value={"/submit"},method = RequestMethod.GET)
+	@RequestMapping(value={"/submit"},method = RequestMethod.POST)
 	@Transactional
 	public String getSubmittedReviewPage(HttpServletRequest request,
 			ModelMap modelMap) {
 		SecurityContext context = SecurityContextHolder.getContext();
-		ApplicationForm application = (ApplicationForm) modelMap.get("application");
+		String id = request.getParameter("id");
+		ApplicationForm application = applicationFormDAO.get(Integer.parseInt(id));
+//		ApplicationForm application = (ApplicationForm) modelMap.get("application");
 		
 		ApplicationReview review = new ApplicationReview();
 		review.setUser((RegisteredUser)context.getAuthentication().getDetails());

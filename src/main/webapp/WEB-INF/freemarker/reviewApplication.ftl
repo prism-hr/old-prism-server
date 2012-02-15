@@ -1,7 +1,7 @@
 <html>
 <body>
 You have been assigned to review application: ${application.id}
-<form>
+<form action= "/pgadmissions/application/submit?id=${application.id}" method="post">
 <table>
 <tr>
 <td> Comment: </td>

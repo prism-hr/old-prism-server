@@ -5,6 +5,7 @@ import static junit.framework.Assert.assertEquals;
 import java.util.Arrays;
 
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -59,4 +60,10 @@ public class ViewApplicationFormControllerTest {
 		viewApplicationFormController = new ViewApplicationFormController(applicationFormDAOMock);
 		form = new ApplicationFormBuilder().id(1).toApplicationForm();
 	}
+	
+	@After
+	public void tearDown() {
+		SecurityContextHolder.clearContext();
+	}
+	
 }

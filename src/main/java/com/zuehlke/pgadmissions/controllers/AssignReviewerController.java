@@ -1,0 +1,50 @@
+package com.zuehlke.pgadmissions.controllers;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+
+@Controller
+@RequestMapping(value={"application/review"})
+public class AssignReviewerController {
+
+	private static final String REVIEW_APPLICATION_VIEW_NAME = "reviewApplication";
+	private final ApplicationFormDAO applicationFormDAO;
+	
+	AssignReviewerController(){
+		this(null);
+	}
+
+	@Autowired
+	public AssignReviewerController(ApplicationFormDAO applicationFormDAOMock) {
+		this.applicationFormDAO = applicationFormDAOMock;
+	}
+
+
+	@RequestMapping(method = RequestMethod.GET)
+	@Transactional
+	public String assignReviewer(HttpServletRequest request, ModelMap modelMap) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		String id = request.getParameter("id");
+		ApplicationForm applicationUnderReview = applicationFormDAO.get(Integer.parseInt(id));
+		applicationUnderReview.setReviewer((RegisteredUser)context.getAuthentication().getDetails());
+		
+		applicationFormDAO.save(applicationUnderReview);
+		modelMap.addAttribute("application", applicationUnderReview);
+		
+		return REVIEW_APPLICATION_VIEW_NAME;
+		
+	}
+	
+}

@@ -12,6 +12,7 @@
       		<button onclick="location.href='/pgadmissions/apply'">Apply now</button>
       	</#if>
       	<br/>
+      	<h3>Applications:</h3>
       	<ul>
 		<#list applications as application>
 			<#if user.canSee(application)>

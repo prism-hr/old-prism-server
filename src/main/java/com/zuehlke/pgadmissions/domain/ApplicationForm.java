@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -25,7 +26,8 @@ public class ApplicationForm extends DomainObject<Integer> {
 	
 	private String nationality;
 	
-	private String description_of_research;
+	@Column(name="description_of_research")
+	private String descriptionOfResearch;
 	
 	@ManyToOne
 	@JoinColumn(name="registered_user_id")
@@ -76,11 +78,11 @@ public class ApplicationForm extends DomainObject<Integer> {
 	}
 
 	public String getDescriptionOfResearch() {
-		return description_of_research;
+		return descriptionOfResearch;
 	}
 
 	public void setDescriptionOfResearch(String res) {
-		this.description_of_research = res;
+		this.descriptionOfResearch = res;
 	}
 
 	@Override

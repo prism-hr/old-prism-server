@@ -75,11 +75,11 @@ public class ApplicationForm extends DomainObject<Integer> {
 		this.nationality = nat;
 	}
 
-	public String getRes() {
+	public String getDescriptionOfResearch() {
 		return description_of_research;
 	}
 
-	public void setRes(String res) {
+	public void setDescriptionOfResearch(String res) {
 		this.description_of_research = res;
 	}
 

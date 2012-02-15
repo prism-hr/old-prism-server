@@ -1,35 +1,54 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMock;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.services.ReviewerService;
 
 
 public class AssignReviewerControllerTest {
 
 	private RegisteredUser user;
-	private AssignReviewerController controller;
-	private ReviewerService reviewerService;
+	private MockHttpServletRequest request;
 	private ApplicationFormDAO applicationFormDAOMock;
-	private UserDAO userDAOMock;
+	private AssignReviewerController controller;
+	private ApplicationForm form;
+
+	@Test
+	public void shouldReturnReviwersViewName() {
+		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(form);
+		applicationFormDAOMock.save(form);
+		EasyMock.replay(applicationFormDAOMock);
+		assertEquals("reviewApplication", controller.assignReviewer(request, new ModelMap()));
+	}
+	
+	@Test
+	public void shouldAssignReviewerToApplication(){
+		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(form);
+		applicationFormDAOMock.save(form);
+		EasyMock.replay(applicationFormDAOMock);
+		ModelMap modelMap = new ModelMap();
+		controller.assignReviewer(request, modelMap);
+		ApplicationForm reviewedApplication = (ApplicationForm) modelMap.get("application");
+		assertEquals(form, reviewedApplication);
+		assertNotNull(reviewedApplication.getReviewer());
+	}
 	
 	@Before
-	public void setUp() {
+	public void setUp(){
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		user = new RegisteredUserBuilder().id(1).username("bob").toUser();
 		authenticationToken.setDetails(user);
@@ -37,38 +56,14 @@ public class AssignReviewerControllerTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		
+		request = new MockHttpServletRequest();
+		request.setParameter("id", "1");
+		
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		userDAOMock = EasyMock.createMock(UserDAO.class);
-		reviewerService = new ReviewerService(applicationFormDAOMock, userDAOMock);
-		controller = new AssignReviewerController(reviewerService);
-	}
-	
-	@Test
-	public void shouldReturnReviwersViewName() {
-		assertEquals("assignReviewer", controller.assignReviewerView(new ModelMap()));
-	}
-	
-	@Test
-	public void shouldAssignReviewerToApplication() {
-		ApplicationForm app = new ApplicationFormBuilder().id(1).toApplicationForm();
-		RegisteredUser reviewer = new RegisteredUserBuilder().username("bob").toUser();
-		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(app);
-		applicationFormDAOMock.save(app);
-		EasyMock.replay(applicationFormDAOMock);
+		controller = new AssignReviewerController(applicationFormDAOMock);
 		
-		EasyMock.expect(userDAOMock.getUserByUsername("bob")).andReturn(reviewer);
-		EasyMock.replay(userDAOMock);
+		form = new ApplicationFormBuilder().id(1).toApplicationForm();
 		
-		ModelMap modelMap = new ModelMap();
-		controller.submitReviewer("bob", 1, modelMap);
-		ApplicationForm application = (ApplicationForm) modelMap.get("application");
-		
-		assertEquals("bob", application.getReviewer().getUsername());
-	}
-	
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
 	}
 	
 }

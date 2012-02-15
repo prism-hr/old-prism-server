@@ -17,12 +17,14 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.services.ReviewerService;
 
 
 public class AssignReviewerControllerTest {
 
 	private RegisteredUser user;
 	private AssignReviewerController controller;
+	private ReviewerService reviewerService;
 	private ApplicationFormDAO applicationFormDAOMock;
 	private UserDAO userDAOMock;
 	
@@ -37,12 +39,8 @@ public class AssignReviewerControllerTest {
 		
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		userDAOMock = EasyMock.createMock(UserDAO.class);
-		controller = new AssignReviewerController(applicationFormDAOMock, userDAOMock);
-	}
-	
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
+		reviewerService = new ReviewerService(applicationFormDAOMock, userDAOMock);
+		controller = new AssignReviewerController(reviewerService);
 	}
 	
 	@Test
@@ -55,9 +53,7 @@ public class AssignReviewerControllerTest {
 		ApplicationForm app = new ApplicationFormBuilder().id(1).toApplicationForm();
 		RegisteredUser reviewer = new RegisteredUserBuilder().username("bob").toUser();
 		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(app);
-		EasyMock.replay(applicationFormDAOMock);
-		//applicationFormDAOMock.save(app);
-		//EasyMock.expectLastCall().times(1);
+		applicationFormDAOMock.save(app);
 		EasyMock.replay(applicationFormDAOMock);
 		
 		EasyMock.expect(userDAOMock.getUserByUsername("bob")).andReturn(reviewer);
@@ -70,5 +66,9 @@ public class AssignReviewerControllerTest {
 		assertEquals("bob", application.getReviewer().getUsername());
 	}
 	
+	@After
+	public void tearDown() {
+		SecurityContextHolder.clearContext();
+	}
 	
 }

@@ -1,0 +1,114 @@
+package com.zuehlke.pgadmissions.domain;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity(name = "APPLICATION_FORM")
+@Access(AccessType.FIELD) 
+public class ApplicationForm extends DomainObject<Integer> {
+	
+	private static final long serialVersionUID = 1L;
+
+	//toDo: change to Enum
+	private String title;
+	//toDo: change to Enum
+	private String gender;
+	
+	private String dob;
+	
+	private String country_ob;
+	
+	private String nationality;
+	
+	private String description_of_research;
+	
+	@ManyToOne
+	@JoinColumn(name="registered_user_id")
+	private RegisteredUser user = null;
+
+	@ManyToOne
+	@JoinColumn(name="reviewer_user_id")
+	private RegisteredUser reviewer = null;
+	
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getGender() {
+		return gender;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+
+	public String getDob() {
+		return dob;
+	}
+
+	public void setDob(String dob) {
+		this.dob = dob;
+	}
+
+	public String getCob() {
+		return country_ob;
+	}
+
+	public void setCob(String cob) {
+		this.country_ob = cob;
+	}
+
+	public String getNat() {
+		return nationality;
+	}
+
+	public void setNat(String nat) {
+		this.nationality = nat;
+	}
+
+	public String getRes() {
+		return description_of_research;
+	}
+
+	public void setRes(String res) {
+		this.description_of_research = res;
+	}
+
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	@Override
+	@Id
+	@GeneratedValue
+	@Access(AccessType.PROPERTY)
+	public Integer getId() {
+		return id;
+	}
+
+	public RegisteredUser getUser() {
+		return user;
+	}
+
+	public void setUser(RegisteredUser user) {
+		this.user = user;
+	}
+	
+	public RegisteredUser getReviewer() {
+		return reviewer;
+	}
+	
+	public void setReviewer(RegisteredUser reviewer) {
+		this.reviewer = reviewer;
+	}
+}

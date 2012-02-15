@@ -6,11 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-
-import org.hibernate.annotations.CascadeType;
 
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD) 
@@ -35,6 +31,9 @@ public class ApplicationForm extends DomainObject<Integer> {
 	@JoinColumn(name="registered_user_id")
 	private RegisteredUser user = null;
 
+	@ManyToOne
+	@JoinColumn(name="reviewer_user_id")
+	private RegisteredUser reviewer = null;
 	
 	public String getTitle() {
 		return title;
@@ -103,5 +102,13 @@ public class ApplicationForm extends DomainObject<Integer> {
 
 	public void setUser(RegisteredUser user) {
 		this.user = user;
+	}
+	
+	public RegisteredUser getReviewer() {
+		return reviewer;
+	}
+	
+	public void setReviewer(RegisteredUser reviewer) {
+		this.reviewer = reviewer;
 	}
 }

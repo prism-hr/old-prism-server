@@ -7,7 +7,9 @@ CREATE TABLE APPLICATION_FORM (
 	nationality VARCHAR(200) NOT NULL,
 	description_of_research VARCHAR(500) NOT NULL,
 	registered_user_id INTEGER UNSIGNED NOT NULL,
+	reviewer_user_id INTEGER UNSIGNED, 
 	CONSTRAINT registered_user_fk FOREIGN KEY (registered_user_id) REFERENCES REGISTERED_USER(id),
+	CONSTRAINT reviewer_user_fk FOREIGN KEY (reviewer_user_id) REFERENCES REGISTERED_USER(id),
 	PRIMARY KEY(id)
 )
 

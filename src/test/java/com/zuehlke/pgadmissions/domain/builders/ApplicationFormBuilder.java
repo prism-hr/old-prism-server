@@ -21,6 +21,8 @@ public class ApplicationFormBuilder {
 
 	private RegisteredUser user;
 	
+	private RegisteredUser reviewer;
+	
 	public ApplicationFormBuilder registeredUser (RegisteredUser user) {
 		this.user = user;
 		return this;
@@ -61,6 +63,10 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
+	public ApplicationFormBuilder reviewer (RegisteredUser reviewer) {
+		this.reviewer = reviewer;
+		return this;
+	}
 	public ApplicationForm toApplicationForm() {
 		ApplicationForm application = new ApplicationForm();
 		application.setCob(country_ob);
@@ -71,6 +77,7 @@ public class ApplicationFormBuilder {
 		application.setRes(description_of_research);
 		application.setTitle(title);
 		application.setUser(user);
+		application.setReviewer(reviewer);
 		return application;
 	}
 }

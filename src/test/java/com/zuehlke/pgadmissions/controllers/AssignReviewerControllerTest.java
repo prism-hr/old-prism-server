@@ -4,6 +4,7 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMock;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -13,7 +14,9 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ApplicationReviewDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -24,6 +27,7 @@ public class AssignReviewerControllerTest {
 	private RegisteredUser user;
 	private MockHttpServletRequest request;
 	private ApplicationFormDAO applicationFormDAOMock;
+	private ApplicationReviewDAO applicationReviewDAOMock;
 	private AssignReviewerController controller;
 	private ApplicationForm form;
 
@@ -47,6 +51,19 @@ public class AssignReviewerControllerTest {
 		assertNotNull(reviewedApplication.getReviewer());
 	}
 	
+	@Test
+	public void shouldReturnSubmittedReviewPageViewName(){
+		assertEquals("reviewSuccess", controller.getSubmittedReviewPage(request, new ModelMap()));
+	}
+	
+	@Test
+	public void shouldReturnSubmittedReviewPage(){
+		ModelMap modelMap = new ModelMap();
+		controller.getSubmittedReviewPage(request, modelMap);
+		ApplicationReview reviewApp = (ApplicationReview) modelMap.get("review");
+		assertNotNull(reviewApp.getComment());
+	}
+	
 	@Before
 	public void setUp(){
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
@@ -58,12 +75,18 @@ public class AssignReviewerControllerTest {
 		
 		request = new MockHttpServletRequest();
 		request.setParameter("id", "1");
+		request.setParameter("comment", "excellent application!");
 		
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		controller = new AssignReviewerController(applicationFormDAOMock);
+		applicationReviewDAOMock = EasyMock.createMock(ApplicationReviewDAO.class);
+		controller = new AssignReviewerController(applicationFormDAOMock, applicationReviewDAOMock);
 		
 		form = new ApplicationFormBuilder().id(1).toApplicationForm();
 		
 	}
 	
+	@After
+	public void tearDown() {
+		SecurityContextHolder.clearContext();
+	}
 }

@@ -16,6 +16,7 @@
 			<intercept-url pattern="/login" access="permitAll" />
 			<intercept-url pattern="*/j_spring_security_check" access="permitAll" />
 			<intercept-url pattern="/**" access="hasAnyRole('RECRUITER','REVIEWER', 'APPLICANT')" />
+			<intercept-url pattern="/dwr/**" access="permitAll"/>
 			
 	</http>
 	

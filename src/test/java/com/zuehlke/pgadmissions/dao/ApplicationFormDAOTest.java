@@ -60,6 +60,13 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	}
 
 	@Test
+	public void shouldCheckIFApplicationIsApproved(){
+		ApplicationForm application = getApplicationFormsBelongingToSameUser().get(0);
+		List<ApplicationForm> approvedApplicationsById = applicationDAO.checkIfApplicationIsAlreadyApproved(application.getId());
+		assertEquals(1, approvedApplicationsById.size());
+	}
+	
+	@Test
 	public void shouldFindAllApplicationsBelongingToSameUser(){
 		List<ApplicationForm> applications = getApplicationFormsBelongingToSameUser();
 		List<ApplicationForm> applicationsByUser = applicationDAO.getApplicationsByUser(user);
@@ -83,6 +90,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		application1.setDescriptionOfResearch("I want to make a research on cancer");
 		application1.setTitle("Miss");
 		application1.setUser(user);
+		application1.setApproved("1");
 		
 		applicationDAO.save(application1);
 		

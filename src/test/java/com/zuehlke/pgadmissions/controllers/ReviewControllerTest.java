@@ -22,13 +22,13 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 
-public class AssignReviewerControllerTest {
+public class ReviewControllerTest {
 
 	private RegisteredUser user;
 	private MockHttpServletRequest request;
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApplicationReviewDAO applicationReviewDAOMock;
-	private AssignReviewerController controller;
+	private ReviewController controller;
 	private ApplicationForm form;
 
 	@Test
@@ -79,7 +79,7 @@ public class AssignReviewerControllerTest {
 		
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		applicationReviewDAOMock = EasyMock.createMock(ApplicationReviewDAO.class);
-		controller = new AssignReviewerController(applicationFormDAOMock, applicationReviewDAOMock);
+		controller = new ReviewController(applicationFormDAOMock, applicationReviewDAOMock);
 		
 		form = new ApplicationFormBuilder().id(1).toApplicationForm();
 		

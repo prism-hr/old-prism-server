@@ -11,7 +11,7 @@
 	
 	<dwr:configuration />   
 	
-		<dwr:controller id="DWRController" debug="true">
+		<dwr:controller id="dwrController" debug="true">
 			<dwr:config-param name="activeReverseAjaxEnabled" value="true"/>
 		</dwr:controller>
 	

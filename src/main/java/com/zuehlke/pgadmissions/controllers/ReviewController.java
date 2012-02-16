@@ -19,19 +19,19 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 @Controller
 @RequestMapping(value={"/application"})
-public class AssignReviewerController {
+public class ReviewController {
 
 	private static final String REVIEW_SUCCESS_VIEW_NAME = "reviewSuccess";
 	private static final String REVIEW_APPLICATION_VIEW_NAME = "reviewApplication";
 	private final ApplicationFormDAO applicationFormDAO;
 	private final ApplicationReviewDAO applicationReviewDAO;
 	
-	AssignReviewerController(){
+	ReviewController(){
 		this(null, null);
 	}
 
 	@Autowired
-	public AssignReviewerController(ApplicationFormDAO applicationFormDAO,
+	public ReviewController(ApplicationFormDAO applicationFormDAO,
 									ApplicationReviewDAO applicationReviewDAO) {
 		this.applicationFormDAO = applicationFormDAO;
 		this.applicationReviewDAO = applicationReviewDAO;
@@ -59,7 +59,6 @@ public class AssignReviewerController {
 		SecurityContext context = SecurityContextHolder.getContext();
 		String id = request.getParameter("id");
 		ApplicationForm application = applicationFormDAO.get(Integer.parseInt(id));
-//		ApplicationForm application = (ApplicationForm) modelMap.get("application");
 		
 		ApplicationReview review = new ApplicationReview();
 		review.setUser((RegisteredUser)context.getAuthentication().getDetails());

@@ -48,4 +48,10 @@ public class ApplicationReviewDAO {
 				
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getAllApplications() {
+		return  (List<ApplicationForm>)sessionFactory.getCurrentSession()
+				.createCriteria(ApplicationForm.class).list();
+				
+	}
 }

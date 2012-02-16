@@ -132,9 +132,7 @@
 		<dependency>
 			<groupId>org.directwebremoting</groupId>
 			<artifactId>dwr</artifactId>
-			<version>3.0.RC2</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/dwr-3.0.RC2.jar</systemPath>
+			<version>3.0.M1</version>
 		</dependency>
 	</dependencies>
 	<build>

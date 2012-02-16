@@ -4,9 +4,13 @@ Insert into REGISTERED_USER(username, password,   accountNonExpired,  accountNon
 ;
 Insert into REGISTERED_USER(username, password,   accountNonExpired,  accountNonLocked,  credentialsNonExpired,  enabled) values ('jane', 'password', 1, 1, 1, 1)
 ;
+Insert into REGISTERED_USER(username, password,   accountNonExpired,  accountNonLocked,  credentialsNonExpired,  enabled) values ('mark', 'password', 1, 1, 1, 1)
+;
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values(1, 1)
 ;
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values(2, 2)
 ;
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values(3, 3)
+;
+Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values(4, 4)
 ;

@@ -18,6 +18,10 @@ public class ApplicationFormBuilder {
 	private String nationality;
 	
 	private String description_of_research;
+	
+	private String approved;
+	
+	private RegisteredUser approver;
 
 	private RegisteredUser user;
 	
@@ -25,6 +29,16 @@ public class ApplicationFormBuilder {
 	
 	public ApplicationFormBuilder registeredUser (RegisteredUser user) {
 		this.user = user;
+		return this;
+	}
+	
+	public ApplicationFormBuilder approver (RegisteredUser user) {
+		this.approver = user;
+		return this;
+	}
+	
+	public ApplicationFormBuilder approved(String approved) {
+		this.approved = approved;
 		return this;
 	}
 	
@@ -78,6 +92,8 @@ public class ApplicationFormBuilder {
 		application.setTitle(title);
 		application.setUser(user);
 		application.setReviewer(reviewer);
+		application.setApproved(approved);
+		application.setApprover(approver);
 		return application;
 	}
 }

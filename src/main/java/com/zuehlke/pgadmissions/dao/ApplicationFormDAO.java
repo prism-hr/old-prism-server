@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.HashMap;
 import java.util.List;
 
+import org.directwebremoting.annotations.RemoteMethod;
+import org.directwebremoting.annotations.RemoteProxy;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,7 @@ public class ApplicationFormDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(application);
 	}
 
+	@RemoteMethod
 	public ApplicationForm get(Integer id) {
 		return (ApplicationForm) sessionFactory.getCurrentSession().get(
 				ApplicationForm.class, id);
@@ -47,6 +51,16 @@ public class ApplicationFormDAO {
 		return  (List<ApplicationForm>)sessionFactory.getCurrentSession()
 				.createCriteria(ApplicationForm.class).list();
 				
+	}
+
+	public List<ApplicationForm> checkIfApplicationIsAlreadyApproved(
+			Integer id) {
+		 @SuppressWarnings("unchecked")
+		List<ApplicationForm> list = sessionFactory.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.eq("approved", "1"))
+		 		.add(Restrictions.eq("id", id)).list();
+		 return list;
 	}
 
 

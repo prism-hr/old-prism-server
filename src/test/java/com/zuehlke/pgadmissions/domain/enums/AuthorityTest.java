@@ -9,9 +9,10 @@ public class AuthorityTest {
 	@Test
 	public void shouldHaveCorrectValues(){
 		Authority[] authorities = Authority.values();
-		assertEquals(3, authorities.length);
+		assertEquals(4, authorities.length);
 		assertEquals(Authority.APPLICANT, authorities[0]);
 		assertEquals(Authority.REVIEWER, authorities[1]);
 		assertEquals(Authority.RECRUITER, authorities[2]);
+		assertEquals(Authority.APPROVER, authorities[3]);
 	}
 }

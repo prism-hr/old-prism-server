@@ -14,7 +14,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>cglib</groupId>
-			<artifactId>cglib-nodep</artifactId>			
+			<artifactId>cglib-nodep</artifactId>
 			<version>2.2.2</version>
 		</dependency>
 		<dependency>
@@ -128,6 +128,14 @@
 			<groupId>org.freemarker</groupId>
 			<artifactId>freemarker</artifactId>
 			<version>2.3.14</version>
+		</dependency>
+		<dependency>
+			<groupId>org.directwebremoting</groupId>
+			<artifactId>dwr</artifactId>
+			<version>3.0.RC2</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/dwr-3.0.RC2.jar</systemPath>
+
 		</dependency>
 	</dependencies>
 	<build>

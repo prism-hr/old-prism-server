@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD) 
@@ -26,6 +27,8 @@ public class ApplicationForm extends DomainObject<Integer> {
 	
 	private String nationality;
 	
+	private String approved;
+	
 	@Column(name="description_of_research")
 	private String descriptionOfResearch;
 	
@@ -36,6 +39,10 @@ public class ApplicationForm extends DomainObject<Integer> {
 	@ManyToOne
 	@JoinColumn(name="reviewer_user_id")
 	private RegisteredUser reviewer = null;
+	
+	@OneToOne
+	@JoinColumn(name="approver_user_id")
+	private RegisteredUser approver = null;
 	
 	public String getTitle() {
 		return title;
@@ -112,5 +119,22 @@ public class ApplicationForm extends DomainObject<Integer> {
 	
 	public void setReviewer(RegisteredUser reviewer) {
 		this.reviewer = reviewer;
+	}
+
+
+	public RegisteredUser getApprover() {
+		return approver;
+	}
+
+	public void setApprover(RegisteredUser approver) {
+		this.approver = approver;
+	}
+
+	public String getApproved() {
+		return approved;
+	}
+
+	public void setApproved(String approved) {
+		this.approved = approved;
 	}
 }

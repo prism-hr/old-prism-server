@@ -1,0 +1,85 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* Reset -------------------------------------------------------------------------------------------------- */
+* { font-size: 100%; margin: 0; padding: 0; }
+
+
+/* Default styling ---------------------------------------------------------------------------------------- */
+a { text-decoration: none; }
+a:focus, a:hover { text-decoration: underline; }
+body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
+
+
+/* WRAPPER ------------------------------------------------------------------------------------------------ */
+#wrapper { margin: 0 auto; width: 950px; }
+
+
+/* HEADER ------------------------------------------------------------------------------------------------- */
+#header { background: url() no-repeat; color: #FFF; font-weight: bold; height: 108px; text-transform: uppercase; }
+#header p { margin: 30px 0 0 30px; }
+
+
+/* MIDDLE ------------------------------------------------------------------------------------------------- */
+#middle { background: #DCDDDE; }
+
+/* MIDDLE header ------------------------------------------------------------------------------------------ */
+#middle header { background: #FFF; padding: 25px 30px 0; overflow: hidden; }
+
+#middle header .logo { float: left; margin-right: 30px; }
+#middle header .tagline { color: #727272; float: left; font-size: 18pt; font-weight: bold; margin-top: 15px; width: 300px; }
+
+#middle header nav { clear: both; height: 29px; line-height: 29px; overflow: hidden; padding-top: 25px; }
+
+#middle header nav ul { float: left; list-style: none; overflow: hidden; }
+#middle header nav ul li { float: left; margin-right: 6px; }
+#middle header nav ul li a { background: #999; border-radius: 8px 8px 0 0; display: block; font-weight: bold; text-align: center; width: 125px; }
+
+#middle header nav .user { float: right; font-size: 12pt; }
+#middle header nav .user a.user-logout { font-size: 9pt; }
+
+
+/* Content area ------------------------------------------------------------------------------------------- */
+#content { padding: 30px; }
+
+#content .content-box { background: #E7E8E9 url(../images/bg_content_box_bottom.gif) repeat-x 0 100%; border-radius: 10px; border: 1px solid #999; box-shadow: 0 0 3px 1px #999; }
+#content .content-box-inner { background: url(../images/bg_content_box_top.gif) repeat-x; border-radius: 10px 10px 0 0; padding: 40px 30px; }
+
+#content hr { background: #999; border: none; color: #999; height: 2px; margin: 1em 0; }
+#content p { margin-bottom: 1em; }
+
+
+/* Expandable content bars -------------------------------------------------------------------------------- */
+section.folding h2 { background: url("../images/bg_bar.png") repeat-x; border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; cursor: pointer; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; padding-left: 20px; }
+/*
+section.folding h2 .left { background: url(../images/bg_bar_left.png) no-repeat; height: 100%; left: -5px; position: absolute; width: 30px; }
+section.folding h2 .right { background: url(../images/bg_bar_right.png) no-repeat; height: 100%; position: absolute; right: 0; width: 16px; }
+*/
+section.folding h2 .status { background: url(../images/bg_bar_status.png) no-repeat 0 14px; float: right; height: 14px; margin: 3px 3px 0 0; width: 14px; }
+
+/* Bar colours */
+section.folding.violet h2 { background-position: 0 0; }
+section.folding.purple h2 { background-position: 0 -20px; }
+section.folding.red h2 { background-position: 0 -40px; }
+section.folding.orange h2 { background-position: 0 -60px; }
+section.folding.yellow h2 { background-position: 0 -80px; }
+section.folding.green h2 { background-position: 0 -100px; }
+section.folding.navy h2 { background-position: 0 -120px; }
+section.folding.blue h2 { background-position: 0 -140px; }
+
+/* Bar states */
+section.folding h2.tick .status { background-position: 0 0; }
+section.folding h2.cross .status { background-position: 0 -15px; }
+section.folding h2.empty .status { background-position: 0 -30px; }
+
+/* Expandable content boxes */
+section.folding > div { border: 1px solid #999; margin-bottom: 10px; }
+
+section.folding.yellow > div { border-color: #F9CB54; }
+
+
+/* FOOTER ------------------------------------------------------------------------------------------------- */
+#footer { background: #58595B; color: #BABBBE; font-size: 9pt; text-transform: uppercase; }
+#footer ul { list-style: none; margin: 0 20px; overflow: hidden; }
+#footer ul li { float: left; margin: 0 10px; }
+#footer ul li a { color: #BABBBE; display: block; font-weight: bold; line-height: 42px; }

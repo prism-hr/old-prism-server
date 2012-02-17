@@ -21,9 +21,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadUser() throws Exception {
 	
 
-		RegisteredUser user = new RegisteredUser();
-		user.setPassword("password");
-		user.setUsername("username");
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(false).toUser();
 
 		assertNull(user.getId());
 		
@@ -39,8 +38,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		reloadedUser = userDAO.get(id);
 		assertNotSame(user, reloadedUser);
 		assertEquals(user, reloadedUser);
-		assertEquals(user.getPassword(), reloadedUser.getPassword());
-		assertEquals(user.getUsername(), reloadedUser.getUsername());		
+
 
 	}
 	
@@ -48,8 +46,10 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 	public void shouldFindUsersByUsername() throws Exception {
 	
 
-		RegisteredUser userOne = new RegisteredUserBuilder().username("username").password("password").toUser();
-		RegisteredUser userTwo = new RegisteredUserBuilder().username("otherusername").password("password").toUser();
+		RegisteredUser userOne = 	new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(false).toUser();
+		RegisteredUser userTwo =	new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(false).toUser();
 
 		save(userOne, userTwo);
 		
@@ -57,8 +57,6 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 	
 		RegisteredUser foundUser = userDAO.getUserByUsername("username");		
 		assertEquals(userOne, foundUser);
-		assertEquals(userOne.getPassword(), foundUser.getPassword());
-		assertEquals(userOne.getUsername(), foundUser.getUsername());		
 
 	}
 	

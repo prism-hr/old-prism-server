@@ -27,7 +27,8 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase{
 	
 	@Test
 	public void shouldSaveAndLoadReview(){
-		RegisteredUser user = new RegisteredUserBuilder().username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false)
 				.credentialsNonExpired(false).enabled(false).toUser();
 		
 		save(user);

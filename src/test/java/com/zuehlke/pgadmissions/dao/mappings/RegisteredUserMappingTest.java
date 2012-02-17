@@ -24,7 +24,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadUserWithSimpleValues() throws Exception {
 
-		RegisteredUser user = new RegisteredUserBuilder().username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false)
 				.credentialsNonExpired(false).enabled(false).toUser();
 
 		assertNull(user.getId());
@@ -43,6 +43,9 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(user, reloadedUser);
 		assertEquals(user.getPassword(), reloadedUser.getPassword());
 		assertEquals(user.getUsername(), reloadedUser.getUsername());
+		assertEquals(user.getFirstName(), reloadedUser.getFirstName());
+		assertEquals(user.getLastName(), reloadedUser.getLastName());
+		assertEquals(user.getEmail(), reloadedUser.getEmail());
 		assertFalse(reloadedUser.isAccountNonExpired());
 		assertFalse(reloadedUser.isAccountNonLocked());
 		assertFalse(reloadedUser.isCredentialsNonExpired());
@@ -61,9 +64,10 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		Role roleTwo = new RoleBuilder().authorityEnum(Authority.RECRUITER).toRole();
 		save(roleOne, roleTwo);
 		flushAndClearSession();
-
-		RegisteredUser user = new RegisteredUserBuilder().username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+		
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false)
 				.credentialsNonExpired(false).enabled(false).role(roleOne).role(roleTwo).toUser();
+
 
 		sessionFactory.getCurrentSession().save(user);
 		
@@ -87,7 +91,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		Integer roleId = role.getId();
 		flushAndClearSession();
 
-		RegisteredUser user = new RegisteredUserBuilder().username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false)
 				.credentialsNonExpired(false).enabled(false).role(role).toUser();
 
 		sessionFactory.getCurrentSession().save(user);

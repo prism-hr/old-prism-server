@@ -23,6 +23,10 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 public class RegisteredUser extends DomainObject<Integer> implements UserDetails {
 
 	private static final long serialVersionUID = 7913035836949510857L;
+	private String firstName;
+
+	private String lastName;
+	private String email;
 	private String username;
 	private String password;
 	private boolean enabled;
@@ -49,6 +53,30 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
+	}
+	
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstLame) {
+		this.firstName = firstLame;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public String getUsername() {

@@ -135,7 +135,11 @@
 			<version>3.0.RC2</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/dwr-3.0.RC2.jar</systemPath>
-
+		</dependency>
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
 	<build>

@@ -5,7 +5,22 @@
 	</head>
    <body id="bodyId">   
 		<h2>UCL Post-graduate admissions portal</h2>			
-		<p>Welcome ${user.username}</p>				
+		<p>Welcome ${user.username}</p>	
+		<input type="text" id="demoName"/>
+        <input value="Send" type="button" onclick="update()"/>
+        <br/>
+        
+        <span id="demoReply"></span>
+        </script>
+        <script type="text/javascript">
+              function update() {
+                    var name = document.getElementById('demoName').value;
+                    Demo.sayHello(name, function(data) {
+                        document.getElementById('demoReply').innerHTML=data;
+                    });
+                    }
+        </script>
+					
 		<p>Roles</p>
 		<ul>
 		<#list user.roles as role>

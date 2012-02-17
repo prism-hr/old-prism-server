@@ -27,7 +27,7 @@
 
 
 	<servlet-mapping>
-		<servlet-name>dwr-invoker</servlet-name>
+		<servlet-name>DWR controller servlet</servlet-name>
 		<url-pattern>/dwr/*</url-pattern>
 	</servlet-mapping>
 

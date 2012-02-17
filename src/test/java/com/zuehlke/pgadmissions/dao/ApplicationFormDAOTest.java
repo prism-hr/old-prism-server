@@ -25,7 +25,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldSaveAndLoadApplication() throws Exception {
 		
-		RegisteredUser user = new RegisteredUserBuilder().username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false)
 				.credentialsNonExpired(false).enabled(false).toUser();
 		
 		save(user);
@@ -77,7 +77,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	
 	public List<ApplicationForm> getApplicationFormsBelongingToSameUser(){
 		List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
-		user = new RegisteredUserBuilder().username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+		 user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false)
 				.credentialsNonExpired(false).enabled(false).toUser();
 		save(user);
 		flushAndClearSession();

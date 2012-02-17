@@ -134,7 +134,7 @@
 			<artifactId>dwr</artifactId>
 			<version>3.0.RC2</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/dwr-3.0.RC2.jar</systemPath>
+			<systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/dwr.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>

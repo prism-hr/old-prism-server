@@ -20,7 +20,7 @@
 					<input type="radio" name="feedback" value="reject" /> Reject
 				</td>
 			</tr>
-			<tr><td><input name ="feedback" type="submit" value="Save" /></td></tr>
+			<tr><td><input name ="submit" type="submit" value="Save" /></td></tr>
 		</form>
       	</#if>
 	</body>

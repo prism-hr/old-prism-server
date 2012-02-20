@@ -11,12 +11,12 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 
-public class ProjectDAOTest extends AutomaticRollbackTestCase{
-	
-	@Test 
-	public void shouldGetAllProjects(){
+public class ProjectDAOTest extends AutomaticRollbackTestCase {
+
+	@Test
+	public void shouldGetAllProjects() {
 		ProjectDAO projectDAO = new ProjectDAO(sessionFactory);
-		
+
 		Project projectOne = new Project();
 		projectOne.setCode("01234");
 		projectOne.setDescription("I am a project :)");
@@ -26,7 +26,7 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase{
 		program.setDescription("description");
 		program.setTitle("title");
 		projectOne.setProgram(program);
-		
+
 		Project projectTwo = new Project();
 		projectTwo.setCode("012345");
 		projectTwo.setDescription("I am a project two:)");
@@ -34,16 +34,46 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase{
 		projectTwo.setProgram(program);
 
 		sessionFactory.getCurrentSession().createSQLQuery("delete from PROJECT").executeUpdate();
-		
+
 		save(program, projectOne, projectTwo);
-		
+
 		flushAndClearSession();
-		
+
 		List<Project> projects = projectDAO.getAllProjects();
-		
+
 		assertEquals(2, projects.size());
 		assertTrue(projects.containsAll(Arrays.asList(projectOne, projectTwo)));
 	}
-	
+
+	@Test
+	public void shouldGetProjectById() {
+		ProjectDAO projectDAO = new ProjectDAO(sessionFactory);
+
+		Project projectOne = new Project();
+		projectOne.setCode("01234");
+		projectOne.setDescription("I am a project :)");
+		projectOne.setTitle("Project's Title");
+		Program program = new Program();
+		program.setCode("1524");
+		program.setDescription("description");
+		program.setTitle("title");
+		projectOne.setProgram(program);
+
+		Project projectTwo = new Project();
+		projectTwo.setCode("012345");
+		projectTwo.setDescription("I am a project two:)");
+		projectTwo.setTitle("Project's Two Title");
+		projectTwo.setProgram(program);
+
+		sessionFactory.getCurrentSession().createSQLQuery("delete from PROJECT").executeUpdate();
+
+		save(program, projectOne, projectTwo);
+
+		flushAndClearSession();
+
+		Project loadedProject = projectDAO.getProjectById(projectOne.getId());
+
+		assertEquals(projectOne, loadedProject);
+	}
 
 }

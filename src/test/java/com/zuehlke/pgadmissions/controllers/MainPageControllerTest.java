@@ -10,9 +10,7 @@ import java.util.List;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -23,6 +21,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class MainPageControllerTest {
 
@@ -62,7 +62,8 @@ public class MainPageControllerTest {
 	@Before
 	public void setUp() {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		user = new RegisteredUserBuilder().id(1).username("bob").toUser();
+		user = new RegisteredUserBuilder().id(1).username("bob")
+								.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		authenticationToken.setDetails(user);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);

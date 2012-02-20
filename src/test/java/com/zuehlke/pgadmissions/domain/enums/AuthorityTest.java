@@ -12,7 +12,7 @@ public class AuthorityTest {
 		assertEquals(4, authorities.length);
 		assertEquals(Authority.APPLICANT, authorities[0]);
 		assertEquals(Authority.REVIEWER, authorities[1]);
-		assertEquals(Authority.RECRUITER, authorities[2]);
+		assertEquals(Authority.ADMINISTRATOR, authorities[2]);
 		assertEquals(Authority.APPROVER, authorities[3]);
 	}
 }

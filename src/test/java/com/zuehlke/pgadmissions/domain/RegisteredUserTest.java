@@ -48,15 +48,6 @@ public class RegisteredUserTest {
 	}
 	
 	@Test
-	public void shouldReturnTrueIfUserIsAdministratorOrReviewer(){
-		RegisteredUser administrator = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		RegisteredUser reviewer = new RegisteredUserBuilder().roles( new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationForm();
-		assertTrue(administrator.canSee(applicationForm));
-		assertTrue(reviewer.canSee(applicationForm));
-	}
-	
-	@Test
 	public void shouldReturnTrueIfUserIsApplicantAndOwnerOfForm(){
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().registeredUser(applicant).toApplicationForm();
@@ -72,5 +63,43 @@ public class RegisteredUserTest {
 		assertFalse(applicantTwo.canSee(applicationForm));
 		
 	}
+
+	@Test
+	public void shouldReturnTrueIfUserIsAdministrator(){
+		RegisteredUser administrator = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationForm();
+		assertTrue(administrator.canSee(applicationForm));
+		
+	}
 	
+	@Test
+	public void shouldReturnTrueIfUserIsItsReviewer(){
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewer(reviewer).toApplicationForm();
+		assertTrue(reviewer.canSee(applicationForm));
+		
+	}
+	
+	@Test
+	public void shouldReturnTrueIfUserIsItsApprover(){
+		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().approver(approver).toApplicationForm();
+		assertTrue(approver.canSee(applicationForm));
+		
+	}
+	
+	@Test
+	public void shouldReturnFalseIfUserIsNotItsReviewer(){
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
+		assertFalse(reviewer.canSee(applicationForm));
+		
+	}
+	
+	@Test
+	public void shouldReturnFalseIfUserIsNotItsApprover(){
+		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
+		assertFalse(approver.canSee(applicationForm));
+	}
 }

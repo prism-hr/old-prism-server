@@ -2,12 +2,17 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD) 
@@ -32,6 +37,11 @@ public class ApplicationForm extends DomainObject<Integer> {
 	@ManyToOne
 	@JoinColumn(name="project_id")
 	private Project project;
+
+	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.SubmissionStatusEnumUserType")	
+	@Column(name="submission_status")
+	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
 	
 	
 	public Project getProject() {
@@ -86,5 +96,15 @@ public class ApplicationForm extends DomainObject<Integer> {
 
 	public void setProject(Project project) {
 		this.project = project;	
+	}
+
+	public void setSubmissionStatus(SubmissionStatus submissionStatus) {
+		this.submissionStatus = submissionStatus;
+		
+		
+	}
+
+	public SubmissionStatus getSubmissionStatus() {
+		return submissionStatus;
 	}
 }

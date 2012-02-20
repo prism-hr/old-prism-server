@@ -13,6 +13,8 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Role</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ApplicationForm</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ApplicationReview</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Program</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Project</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

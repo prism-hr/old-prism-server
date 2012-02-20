@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.*;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
 		projectTwo.setTitle("Project's Two Title");
 		projectTwo.setProgram(program);
 
-		sessionFactory.getCurrentSession().createSQLQuery("delete from PROJECT").executeUpdate();
+		BigInteger numberOfExistingProject = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from PROJECT").uniqueResult();
 
 		save(program, projectOne, projectTwo);
 
@@ -41,7 +42,7 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
 
 		List<Project> projects = projectDAO.getAllProjects();
 
-		assertEquals(2, projects.size());
+		assertEquals(numberOfExistingProject.intValue() + 2, projects.size());
 		assertTrue(projects.containsAll(Arrays.asList(projectOne, projectTwo)));
 	}
 
@@ -64,8 +65,6 @@ public class ProjectDAOTest extends AutomaticRollbackTestCase {
 		projectTwo.setDescription("I am a project two:)");
 		projectTwo.setTitle("Project's Two Title");
 		projectTwo.setProgram(program);
-
-		sessionFactory.getCurrentSession().createSQLQuery("delete from PROJECT").executeUpdate();
 
 		save(program, projectOne, projectTwo);
 

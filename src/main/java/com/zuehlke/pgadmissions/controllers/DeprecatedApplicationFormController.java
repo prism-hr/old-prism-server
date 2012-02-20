@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-@Controller
-@RequestMapping("/apply")
+
 @Deprecated
 public class DeprecatedApplicationFormController {
 	

@@ -16,4 +16,7 @@ $(document).ready(function()
 	});
 	
 	
+	// Sortable tables.
+	$('table.data').tablesorter();
+	
 });

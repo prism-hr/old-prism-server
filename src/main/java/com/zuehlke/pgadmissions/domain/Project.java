@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 @Access(AccessType.FIELD)
 public class Project extends DomainObject<Integer>{
 
+	private static final long serialVersionUID = -4047837257993195167L;
 	private String code;
 	private String description;
 	private String title;

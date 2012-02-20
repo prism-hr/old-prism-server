@@ -11,6 +11,7 @@ import javax.persistence.Id;
 @Access(AccessType.FIELD)
 public class Program extends DomainObject<Integer> {
 
+	private static final long serialVersionUID = -9073611033741317582L;
 	private String code;
 	private String title;
 	private String description;

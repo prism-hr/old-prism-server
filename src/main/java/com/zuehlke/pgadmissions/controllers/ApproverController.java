@@ -56,7 +56,7 @@ public class ApproverController {
 					"You did not specify a feedback. Please approve or reject before saving. ");
 			return APPLICATION_FEEDBACK_ERROR_VIEW_NAME;
 		}
-		application.setApprover((RegisteredUser) user);
+		application.setApprover(user);
 		application.setApproved(asBoolean);
 		applicationFormDAO.save(application);
 		return APPROVER_FEEDBACK_SUBMITTED_VIEW_NAME;

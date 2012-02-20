@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static junit.framework.Assert.assertEquals;
 
-import java.util.Arrays;
-
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;

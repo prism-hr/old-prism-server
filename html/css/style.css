@@ -14,7 +14,7 @@ body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 .right { text-align: right; }
 
 /* WRAPPER ------------------------------------------------------------------------------------------------ */
-#wrapper { margin: 0 auto; width: 950px; }
+#wrapper { background: url(../images/bg_login.jpg) no-repeat 0 55px; margin: 0 auto; width: 950px; }
 
 
 /* HEADER ------------------------------------------------------------------------------------------------- */
@@ -23,10 +23,19 @@ body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 
 
 /* MIDDLE ------------------------------------------------------------------------------------------------- */
-#middle { background: #DCDDDE; }
+#middle { }
 
 /* MIDDLE header ------------------------------------------------------------------------------------------ */
-#middle header { background: #FFF; padding: 25px 30px 0; overflow: hidden; }
+#middle header {
+	background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,0)), color-stop(100%,rgba(255,255,255,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* IE10+ */
+	background: linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+	padding: 25px 30px 0; overflow: hidden;
+}
 
 #middle header .logo { float: left; margin-right: 30px; }
 #middle header .tagline { color: #727272; float: left; font-size: 18pt; font-weight: bold; margin-top: 15px; width: 300px; }
@@ -43,7 +52,7 @@ body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 
 
 /* Content area ------------------------------------------------------------------------------------------- */
-#content { padding: 30px; }
+#content { background: #DCDDDE; padding: 30px; }
 
 #content .content-box { background: #E7E8E9 url(../images/bg_content_box_bottom.gif) repeat-x 0 100%; border-radius: 10px; border: 1px solid #999; box-shadow: 0 0 3px 1px #999; }
 #content .content-box-inner { background: url(../images/bg_content_box_top.gif) repeat-x; border-radius: 10px 10px 0 0; padding: 40px 30px; }
@@ -118,7 +127,6 @@ form input { border: 1px solid #999; padding: 5px; }
 
 
 /* LOGIN page -------------------------------------------------------------------------------------------- */
-body#login #wrapper { background: url(../images/bg_login.jpg) no-repeat 0 55px; }
 body#login #middle { background: transparent; height: 685px; position: relative; }
 body#login header { background: transparent; left: 35px; padding: 0; position: absolute; top: 35px; width: 40%; }
 body#login header .logo { float: none; }
@@ -151,9 +159,10 @@ body#login #register a:hover { text-decoration: none; }
 
 /* TABLES ------------------------------------------------------------------------------------------------ */
 table.data { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; width: 100%; }
-table.data thead th { font-weight: bold; text-align: left; }
+table.data thead th { cursor: pointer; font-weight: bold; text-align: left; padding: 5px 3px; }
 table.data th, table.data td { padding: 3px; vertical-align: middle; }
 table.data tr td, table.data tr th { border-bottom: 1px solid #999; }
 table.data tbody td { background: url(../images/bg_table_row.jpg) repeat-x 0 100%; }
 table.data select { width: 100%; }
-.centre { text-align: center; }
+
+table.data thead th.headerSortDown, table.data thead th.headerSortUp { background-color: #06C; color: #FFF; }

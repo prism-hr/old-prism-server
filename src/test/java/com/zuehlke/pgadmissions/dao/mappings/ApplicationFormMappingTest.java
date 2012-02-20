@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
@@ -29,7 +30,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setUser(user);
 		application.setProject(project);
-
+		application.setSubmissionStatus(SubmissionStatus.UNSUBMITTED);
+		
+		
 		assertNull(application.getId());
 
 		sessionFactory.getCurrentSession().save(application);
@@ -47,6 +50,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		assertEquals(user, reloadedApplication.getUser());
 		assertEquals(project, reloadedApplication.getProject());
+		assertEquals(SubmissionStatus.UNSUBMITTED, application.getSubmissionStatus());
 
 	}
 

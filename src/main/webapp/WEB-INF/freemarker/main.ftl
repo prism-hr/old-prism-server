@@ -36,9 +36,7 @@
       	<br/>
       	<h3>Applications:</h3>      	
 		<#list applications as application>
-			<#if user.canSee(application)>
-    			<a href="application?id=${application.id}">${application.descriptionOfResearch}</a><br>    
-    		</#if>	
+    		<a href="application?id=${application.id}"> ${application.id} : ${application.project.title}</a><br>    
 		</#list>
 		
 	</body>

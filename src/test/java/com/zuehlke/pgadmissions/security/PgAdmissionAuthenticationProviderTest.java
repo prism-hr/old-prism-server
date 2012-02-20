@@ -36,7 +36,7 @@ public class PgAdmissionAuthenticationProviderTest {
 	@Test
 	public void shouldReturnPopulatedAuthenticationForValidCredentials() {
 		Role roleOne = new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).toRole();
-		Role roleTwo = new RoleBuilder().id(2).authorityEnum(Authority.RECRUITER).toRole();
+		Role roleTwo = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).toRole();
 		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").roles(roleOne, roleTwo).id(1).toUser();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.replay(userDetailsServiceMock);

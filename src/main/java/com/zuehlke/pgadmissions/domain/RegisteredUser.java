@@ -157,9 +157,18 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	}
 
 	public boolean canSee(ApplicationForm applicationForm) {
-		if(isInRole(Authority.RECRUITER) || isInRole(Authority.REVIEWER) || isInRole(Authority.APPROVER)){
+		if(isInRole(Authority.ADMINISTRATOR)){
 			return true;
 		}
+		
+		if (isInRole(Authority.REVIEWER)) {
+			return this.equals(applicationForm.getReviewer());
+		}
+		
+		if (isInRole(Authority.APPROVER)) {
+			return this.equals(applicationForm.getApprover());
+		}
+		
 		if(this.equals(applicationForm.getUser())){
 			return true;
 		}

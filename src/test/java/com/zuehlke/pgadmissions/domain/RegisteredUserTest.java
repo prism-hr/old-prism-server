@@ -14,45 +14,45 @@ public class RegisteredUserTest {
 
 	@Test
 	public void shouldReturnTrueIfUserIsInRole(){
-		RegisteredUser user = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole(), new RoleBuilder().authorityEnum(Authority.RECRUITER).toRole()).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole(), new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		assertTrue(user.isInRole(Authority.APPLICANT));
 		
 	}
 	
 	@Test
 	public void shouldReturnFalseIfUserIsNotInRole(){
-		RegisteredUser user = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole(), new RoleBuilder().authorityEnum(Authority.RECRUITER).toRole()).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole(), new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		assertFalse(user.isInRole(Authority.REVIEWER));
 		
 	}
 	
 	@Test
 	public void shouldReturnTrueIfUserIsInRolePassedAsString(){
-		RegisteredUser user = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole(), new RoleBuilder().authorityEnum(Authority.RECRUITER).toRole()).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole(), new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		assertTrue(user.isInRole("APPLICANT"));
 		
 	}
 	
 	@Test
 	public void shouldReturnFalseIfUserIsNotInRolePassedAsString(){
-		RegisteredUser user = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole(), new RoleBuilder().authorityEnum(Authority.RECRUITER).toRole()).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole(), new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		assertFalse(user.isInRole("REVIEWER"));
 		
 	}
 	
 	@Test
 	public void shouldReturnFalseIStringIsNotAuthorityValue(){
-		RegisteredUser user = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole(), new RoleBuilder().authorityEnum(Authority.RECRUITER).toRole()).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole(), new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		assertFalse(user.isInRole("bob"));
 		
 	}
 	
 	@Test
-	public void shouldReturnTrueIfUserIsRecruiterOrReviewer(){
-		RegisteredUser recruiter = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.RECRUITER).toRole()).toUser();
+	public void shouldReturnTrueIfUserIsAdministratorOrReviewer(){
+		RegisteredUser administrator = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		RegisteredUser reviewer = new RegisteredUserBuilder().roles( new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		ApplicationForm applicationForm = new ApplicationForm();
-		assertTrue(recruiter.canSee(applicationForm));
+		assertTrue(administrator.canSee(applicationForm));
 		assertTrue(reviewer.canSee(applicationForm));
 	}
 	

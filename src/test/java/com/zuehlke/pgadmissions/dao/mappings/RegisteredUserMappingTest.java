@@ -61,7 +61,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 		
 		Role roleOne = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
-		Role roleTwo = new RoleBuilder().authorityEnum(Authority.RECRUITER).toRole();
+		Role roleTwo = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole();
 		save(roleOne, roleTwo);
 		flushAndClearSession();
 		

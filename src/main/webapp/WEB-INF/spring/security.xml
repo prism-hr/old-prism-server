@@ -14,6 +14,7 @@
 		authentication-failure-url="/login?login_error=t" /> 
 		<logout logout-url="/j_spring_security_logout" />
 			<intercept-url pattern="/login" access="permitAll" />
+			<intercept-url pattern="/projects" access="permitAll" />
 			<intercept-url pattern="*/j_spring_security_check" access="permitAll" />
 			<intercept-url pattern="/**" access="hasAnyRole('RECRUITER','REVIEWER', 'APPLICANT', 'APPROVER')" />
 			<intercept-url pattern="/dwr/**" access="permitAll"/>

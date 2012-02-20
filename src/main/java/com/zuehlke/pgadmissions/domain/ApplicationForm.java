@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,22 +14,8 @@ import javax.persistence.OneToOne;
 public class ApplicationForm extends DomainObject<Integer> {
 	
 	private static final long serialVersionUID = 1L;
-
-	//toDo: change to Enum
-	private String title;
-	//toDo: change to Enum
-	private String gender;
-	
-	private String dob;
-	
-	private String country_ob;
-	
-	private String nationality;
 	
 	private String approved;
-	
-	@Column(name="description_of_research")
-	private String descriptionOfResearch;
 	
 	@ManyToOne
 	@JoinColumn(name="registered_user_id")
@@ -43,53 +28,14 @@ public class ApplicationForm extends DomainObject<Integer> {
 	@OneToOne
 	@JoinColumn(name="approver_user_id")
 	private RegisteredUser approver = null;
+
+	@ManyToOne
+	@JoinColumn(name="project_id")
+	private Project project;
 	
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getGender() {
-		return gender;
-	}
-
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-
-	public String getDob() {
-		return dob;
-	}
-
-	public void setDob(String dob) {
-		this.dob = dob;
-	}
-
-	public String getCob() {
-		return country_ob;
-	}
-
-	public void setCob(String cob) {
-		this.country_ob = cob;
-	}
-
-	public String getNat() {
-		return nationality;
-	}
-
-	public void setNat(String nat) {
-		this.nationality = nat;
-	}
-
-	public String getDescriptionOfResearch() {
-		return descriptionOfResearch;
-	}
-
-	public void setDescriptionOfResearch(String res) {
-		this.descriptionOfResearch = res;
+	
+	public Project getProject() {
+		return project;
 	}
 
 	@Override
@@ -136,5 +82,9 @@ public class ApplicationForm extends DomainObject<Integer> {
 
 	public void setApproved(String approved) {
 		this.approved = approved;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;	
 	}
 }

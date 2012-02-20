@@ -1,52 +1,36 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-@Controller
-@RequestMapping("/apply")
+import com.zuehlke.pgadmissions.domain.Project;
+
 public class ApplicationFormController {
-	
-    private final ApplicationFormDAO applicationDAO;
-	
-    ApplicationFormController(){
-    	this(null);
-    }
-    
-    @Autowired
-	public ApplicationFormController(ApplicationFormDAO applicationDAO) {
+
+	private final ProjectDAO projectDAO;
+	private final ApplicationFormDAO applicationDAO;
+
+	@Autowired
+	public ApplicationFormController(ProjectDAO projectDAO, ApplicationFormDAO applicationDAO) {
+		this.projectDAO = projectDAO;
 		this.applicationDAO = applicationDAO;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getApplyForm(ModelMap model) {
-		model.addAttribute("application", new ApplicationForm());
+	public String getNewApplicationForm(Integer id, ModelMap modelMap) {
+		Project project = projectDAO.getProjectById(id);
+		ApplicationForm applicationForm = newApplicationForm();
+		applicationForm.setProject(project);
+		applicationDAO.save(applicationForm);
+		modelMap.addAttribute("application", applicationForm);
 		return "applicationForm";
 	}
-	
-	@Transactional
-	@RequestMapping(value = "/submit")
-	public String getLoginSubmit(@ModelAttribute("application") ApplicationForm application,
-			BindingResult result, ModelMap model) {
-		//toDO: validation
-		RegisteredUser user = (RegisteredUser)SecurityContextHolder.getContext().getAuthentication().getDetails();
-		application.setUser(user);
-		applicationDAO.save(application);
-		
-		
-		model.addAttribute("application", application);
-		return "applicationFormSubmitted";
+
+	 ApplicationForm newApplicationForm() {
+		return new ApplicationForm();
 	}
-	
+
 
 }

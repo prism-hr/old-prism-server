@@ -30,5 +30,8 @@ public class ProjectDAO {
 		return list;
 		
 	}
+	public Project getProjectById(Integer id) {
+		return (Project)sessionFactory.getCurrentSession().get(Project.class, id);
+	}
 
 }

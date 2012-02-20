@@ -7,9 +7,11 @@
 
 /* Default styling ---------------------------------------------------------------------------------------- */
 a { text-decoration: none; }
-a:focus, a:hover { text-decoration: underline; }
+/*a:focus, a:hover { text-decoration: underline; }*/
 body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 
+.centre { text-align: center; }
+.right { text-align: right; }
 
 /* WRAPPER ------------------------------------------------------------------------------------------------ */
 #wrapper { margin: 0 auto; width: 950px; }
@@ -33,10 +35,11 @@ body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 
 #middle header nav ul { float: left; list-style: none; overflow: hidden; }
 #middle header nav ul li { float: left; margin-right: 6px; }
-#middle header nav ul li a { background: #999; border-radius: 8px 8px 0 0; display: block; font-weight: bold; text-align: center; width: 125px; }
+#middle header nav ul li a { background: #DCDDDE url(../images/bg_tabs.jpg) repeat-x 0 -30px; color: #FFF; border-radius: 8px 8px 0 0; display: block; font-size: 9pt; font-weight: bold; min-width: 125px; text-align: center; }
+#middle header nav ul li.current a { background-position: 0 0; color: #000; } 
 
 #middle header nav .user { float: right; font-size: 12pt; }
-#middle header nav .user a.user-logout { font-size: 9pt; }
+#middle header nav .user a.user-logout { font-size: 9pt; margin-right: 5px; }
 
 
 /* Content area ------------------------------------------------------------------------------------------- */
@@ -86,11 +89,27 @@ section.folding.yellow > div { border-color: #F9CB54; }
 #footer ul li a { color: #BABBBE; display: block; font-weight: bold; line-height: 42px; }
 
 
-/* BUTTONS ------------------------------------------------------------------------------------------------ */
-button { background: url(../images/bg_button.png) repeat-x 0 -20px; border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; cursor: pointer; font-weight: bold; font-size: 8.5pt; font-weight: bold; line-height: 16px; padding: 1px 10px; text-align: center; vertical-align: middle; }
-button.blue { background-position: 0 0; }
+/* BUTTONS / INDICATORS ----------------------------------------------------------------------------------- */
+button, a.button, span.indicator {
+	background: url(../images/bg_button.png) repeat-x 0 -20px;
+	border: 2px solid #FFF;
+	border-radius: 11px;
+	box-shadow: 0 0 3px 0 #999;
+	color: #FFF;
+	cursor: pointer;
+	font-weight: bold;
+	font-size: 8.5pt;
+	font-weight: bold;
+	line-height: 16px;
+	padding: 1px 10px;
+	text-align: center;
+	vertical-align: middle;
+}
+button.blue, a.button.blue, span.indicator.blue { background-position: 0 0; }
 button span { background: url(../images/bg_button_icon.png) no-repeat; display: inline-block; height: 10px; margin-top: -2px; overflow: hidden; text-indent: 999px; vertical-align: middle; width: 10px; }
 button.plus span { background-position: 0 -10px; }
+a.button { vertical-align: text-bottom; }
+span.indicator { border-width: 1px; padding: 1px 5px; vertical-align: text-bottom; }
 
 
 /* FORM ELEMENTS ----------------------------------------------------------------------------------------- */
@@ -127,3 +146,14 @@ body#login #login-box form input { font-size: 8.5pt; margin-top: 3px; width: 208
 body#login #register { position: absolute; right: 35px; bottom: 70px; }
 body#login #register a { background: url(../images/button_register.png) no-repeat; color: #FFF; display: block; font-size: 16pt; font-weight: bold; height: 70px; line-height: 70px; text-indent: 40px; width: 240px; }
 body#login #register a:hover { text-decoration: none; }
+
+
+
+/* TABLES ------------------------------------------------------------------------------------------------ */
+table.data { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; width: 100%; }
+table.data thead th { font-weight: bold; text-align: left; }
+table.data th, table.data td { padding: 3px; vertical-align: middle; }
+table.data tr td, table.data tr th { border-bottom: 1px solid #999; }
+table.data tbody td { background: url(../images/bg_table_row.jpg) repeat-x 0 100%; }
+table.data select { width: 100%; }
+.centre { text-align: center; }

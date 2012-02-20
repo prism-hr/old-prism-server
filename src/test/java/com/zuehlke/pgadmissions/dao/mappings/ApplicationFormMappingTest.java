@@ -6,51 +6,64 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
-public class ApplicationFormMappingTest extends AutomaticRollbackTestCase{
-	
+public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
+
+	private RegisteredUser user;
+	private Program program;
+	private Project project;
+
 	@Test
-	public void shouldSaveAndLoadApplicationForm(){
+	public void shouldSaveAndLoadApplicationForm() {
 
-	
-
-		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).toUser();
-
-		save(user);
-		flushAndClearSession();
-		
 		ApplicationForm application = new ApplicationForm();
-		application.setCob("United Kingdom");
-		application.setDob("1988/03/24");
-		application.setGender("Female");
-		application.setNat("British");
-		application.setDescriptionOfResearch("I want to make a research on cancer");
-		application.setTitle("Miss");
 		application.setUser(user);
+		application.setProject(project);
+		application.setSubmissionStatus(SubmissionStatus.UNSUBMITTED);
+		
 		
 		assertNull(application.getId());
-		
+
 		sessionFactory.getCurrentSession().save(application);
-		
+
 		assertNotNull(application.getId());
 		Integer id = application.getId();
-		ApplicationForm reloadedApplication = (ApplicationForm)sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
 		assertSame(application, reloadedApplication);
-		
+
 		flushAndClearSession();
 
-		reloadedApplication = (ApplicationForm)sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
 		assertNotSame(application, reloadedApplication);
 		assertEquals(application, reloadedApplication);
-		
-		assertEquals(application.getUser(), user);
-		assertEquals(application.getDescriptionOfResearch(), reloadedApplication.getDescriptionOfResearch());
+
+		assertEquals(user, reloadedApplication.getUser());
+		assertEquals(project, reloadedApplication.getProject());
+		assertEquals(SubmissionStatus.UNSUBMITTED, application.getSubmissionStatus());
+
+	}
+
+	@Before
+	public void setup() {
+		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+
+		program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
+		project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
+		save(user, program, project);
+
+		flushAndClearSession();
 	}
 
 }

@@ -16,18 +16,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class MainPageControllerTest {
 
 	private RegisteredUser user;
-	private ApplicationFormDAO applicationFormDAOMock;
+	private ApplicationsService applicationsServiceMock;
 	private MainPageController controller;
 	private String freemarkerViewName = "main";
 
@@ -49,8 +49,8 @@ public class MainPageControllerTest {
 	public void shouldAddAllApplicationsToModel() {
 		ApplicationForm applicationOne = new ApplicationFormBuilder().id(1).toApplicationForm();
 		ApplicationForm applicationTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(applicationOne, applicationTwo));
-		EasyMock.replay(applicationFormDAOMock);
+		EasyMock.expect(applicationsServiceMock.getVisibleApplications(user)).andReturn(Arrays.asList(applicationOne, applicationTwo));
+		EasyMock.replay(applicationsServiceMock);
 		ModelMap modelMap = new ModelMap();
 		controller.getMainPage( modelMap);
 	
@@ -69,8 +69,8 @@ public class MainPageControllerTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		
-		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		controller = new MainPageController(applicationFormDAOMock);
+		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		controller = new MainPageController(applicationsServiceMock);
 	}
 
 	

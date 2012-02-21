@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "REGISTERED_USER")
 @Access(AccessType.FIELD)
@@ -157,6 +158,12 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	}
 
 	public boolean canSee(ApplicationForm applicationForm) {
+		
+		if (applicationForm.getSubmissionStatus() == SubmissionStatus.UNSUBMITTED &&
+				!isInRole(Authority.APPLICANT)) {
+			return false;
+		}
+		
 		if(isInRole(Authority.ADMINISTRATOR)){
 			return true;
 		}

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -29,45 +30,28 @@ public class ApproveRejectController {
 		this.applicationsService = applicationsService;
 	}
 
-	@RequestMapping(value = { "/approve" }, method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.POST)
 	@Transactional
-	public String getApprovedApplicationPage(int id, ModelMap modelMap) {
-		ApplicationForm application = applicationsService
-				.getApplicationById(id);
+	public String getDecidedApplicationPage(@RequestParam Integer id, @RequestParam String submit, ModelMap modelMap) {
+		ApplicationForm application = applicationsService.getApplicationById(id);
 		SecurityContext context = SecurityContextHolder.getContext();
-		RegisteredUser approver = (RegisteredUser) context.getAuthentication()
-				.getDetails();
+		RegisteredUser approver = (RegisteredUser) context.getAuthentication().getDetails();
 		if (application.getApproved() == null) {
-			application.setApproved("1");
+			String submitAsBoolean = getSubmitAsBoolean(submit);
+			application.setApproved(submitAsBoolean);
 			application.setApprover(approver);
 			applicationsService.save(application);
-			modelMap.addAttribute("message",
-					"Your have successfully approved the application");
+			String decision = submitAsBoolean.equals("0")? "rejected" : "accepted";
+			modelMap.addAttribute("message","Your have successfully "+ decision + " the application");
 		} else {
-			modelMap.addAttribute("message",
-					"The application has already been decided by user: " + application.getApprover().getUsername());
+			modelMap.addAttribute("message","The application has already been decided by user: " + application.getApprover().getUsername());
 		}
 		return APPROVE_REJECT_VIEW_NAME;
 	}
 
-	@RequestMapping(value = { "/reject" }, method = RequestMethod.GET)
-	@Transactional
-	public String getRejectedApplicationPage(int id, ModelMap modelMap) {
-		ApplicationForm application = applicationsService
-				.getApplicationById(id);
-		SecurityContext context = SecurityContextHolder.getContext();
-		RegisteredUser approver = (RegisteredUser) context.getAuthentication()
-				.getDetails();
-		if (application.getApproved() == null) {
-			application.setApproved("0");
-			application.setApprover(approver);
-			applicationsService.save(application);
-			modelMap.addAttribute("message",
-					"Your have successfully rejected the application");
-		} else {
-			modelMap.addAttribute("message",
-					"The application has already been decided by user: " + application.getApprover().getUsername());
-		}
-		return APPROVE_REJECT_VIEW_NAME;
+	private String getSubmitAsBoolean(String submit) {
+		return submit.equals("Approve")? "1" : "0";
 	}
+
+
 }

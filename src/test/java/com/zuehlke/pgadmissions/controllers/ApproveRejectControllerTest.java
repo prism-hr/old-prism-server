@@ -39,7 +39,7 @@ public class ApproveRejectControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationOne);
 		applicationsServiceMock.save(applicationOne);
 		EasyMock.replay(applicationsServiceMock);
-		String view = controller.getApprovedApplicationPage(1, new ModelMap());
+		String view = controller.getDecidedApplicationPage(1, "Approve", new ModelMap());
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals("mark", applicationOne.getApprover().getUsername());
 		assertEquals("1", applicationOne.getApproved());
@@ -55,7 +55,7 @@ public class ApproveRejectControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationOne);
 		applicationsServiceMock.save(applicationOne);
 		EasyMock.replay(applicationsServiceMock);
-		String view = controller.getRejectedApplicationPage(1, new ModelMap());
+		String view = controller.getDecidedApplicationPage(1, "Reject", new ModelMap());
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals("mark", applicationOne.getApprover().getUsername());
 		assertEquals("0", applicationOne.getApproved());
@@ -66,8 +66,7 @@ public class ApproveRejectControllerTest {
 	public void shouldNotSaveAlreadyApprovedOrRejectedApplication(){
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(applicationTwo);
 		EasyMock.replay(applicationsServiceMock);
-		System.out.println(applicationTwo.getApproved());
-		controller.getRejectedApplicationPage(2, new ModelMap());
+		controller.getDecidedApplicationPage(2, "0", new ModelMap());
 	}
 	
 	@Before

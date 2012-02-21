@@ -42,12 +42,15 @@
     			<a href="application?id=${application.id}"> ${application.id} : ${application.project.title}</a><br> 
     		</td>
     		<td>
+    			<form action="<@spring.url '/decision'/>" method = "POST">
+    			<input type="hidden" value="${application.id}" name="id"/>
     			<#if user.isInRole('APPROVER')>
-      				<button onclick="location.href='<@spring.url '/decision/approve?id=${application.id}'/>'">Approve</button>
+    				<input type="submit" name="submit" value="Approve"> 
       			</#if>
     			<#if ((user.isInRole('APPROVER') || user.isInRole('ADMINISTRATOR')) )>
-      				<button onclick="location.href='<@spring.url '/decision/reject?id=${application.id}'/>'">Reject</button>
+    				<input type="submit" name="submit" value="Reject">
       			</#if>
+      			</form>
     		</td>
     	</tr>   
 		</#list>

@@ -169,14 +169,7 @@
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>tomcat-maven-plugin</artifactId>
-				<configuration>
-					<url>http://localhost:8080/manager/html</url>
-				</configuration>
-			</plugin>
+			</plugin>				
 			<plugin>
 				<groupId>com.dbdeploy</groupId>
 				<artifactId>maven-dbdeploy-plugin</artifactId>
@@ -275,6 +268,28 @@
 			<properties>
 				<sql.url>192.168.11.115</sql.url>
 			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>test</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete file="${project.build.outputDirectory}/environment.properties"/>
+										<copy file="src/environments/environment.sit.properties"
+										 tofile="${project.build.outputDirectory}/environment.properties"/>
+									</tasks>
+							   </configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
 		</profile>
 	</profiles>
 

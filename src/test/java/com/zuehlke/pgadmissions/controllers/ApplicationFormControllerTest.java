@@ -33,7 +33,7 @@ public class ApplicationFormControllerTest {
 	
 	@Test
 	public void shouldGetApplicationFormView() {
-		assertEquals("applicationForm", applicationController.getNewApplicationForm(null, new ModelMap()));
+		assertEquals("application/applicationForm", applicationController.getNewApplicationForm(null, new ModelMap()));
 	}
 
 	@Test
@@ -88,7 +88,7 @@ public class ApplicationFormControllerTest {
 		applicationDAOMock.save(form);
 		EasyMock.replay(applicationDAOMock);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
-		assertEquals("applicationFormSubmitted", applicationController.submitApplication(id));
+		assertEquals("application/applicationFormSubmitted", applicationController.submitApplication(id));
 		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
 		EasyMock.verify(applicationDAOMock);
 		

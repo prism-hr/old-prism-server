@@ -47,7 +47,7 @@ public class ApplicationFormController {
 		applicationDAO.save(applicationForm);
 		modelMap.addAttribute("application", applicationForm);
 		
-		return "applicationForm";
+		return "application/applicationForm";
 	}
 
 	ApplicationForm newApplicationForm() {
@@ -60,7 +60,7 @@ public class ApplicationFormController {
 		ApplicationForm applicationForm = applicationDAO.get(id);
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationDAO.save(applicationForm);
-		return "applicationFormSubmitted";
+		return "application/applicationFormSubmitted";
 	}
 
 }

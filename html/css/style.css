@@ -105,7 +105,11 @@ section.folding footer { background: #DDD; border-top: 1px solid #999; padding: 
 
 section.folding table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%; }
 section.folding table.existing th { background: url(../images/bg_table_head.png) repeat-x; }
-section.folding table.existing td, section.folding table.existing th { line-height: 25px; padding: 0 3px; }
+section.folding table.existing td { background: url(../images/bg_table_row.jpg) repeat-x; }
+section.folding table.existing td, section.folding table.existing th { line-height: 25px; padding: 0 3px; vertical-align: middle; }
+
+section.folding .row-arrow { background: url(../images/button_arrow.png) no-repeat; width: 20px; height: 21px; display: inline-block; text-indent: 99px; overflow: hidden; vertical-align: middle; margin-top: -4px; }
+section.folding .row-arrow.open { background-position: 0 -21px; }
 
 section.folding form { background: #BBB; padding: 10px; }
 section.folding form > div { background: #FFF; border: 1px solid #999; margin-bottom: 2px; padding: 10px; }

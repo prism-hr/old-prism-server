@@ -96,7 +96,7 @@
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Personal Details
             </h2>
-            <div>
+            <div class="open">
             	<table class="existing">
               	<colgroup>
                 	<col width="30" />
@@ -152,7 +152,7 @@
                 	<div class="row">
                   	<label class="label">Date of Birth</label>
                     <span class="hint"></span>
-                    <input class="half" type="text" value="" />
+                    <input class="half" type="date" value="" />
                   </div>
                 </div>
 
@@ -234,9 +234,11 @@
                 	<div class="row">
                   	<span class="label">Supporting Document</span>
                     <span class="hint"></span>
-                    <input class="full" type="text" value="" />
-                    <a class="button" href="#">Browse</a>
-                    <a class="button" href="#">Upload</a>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                    </div>
                   </div>
                 	<div class="row">
                   	<div class="field"><a class="button blue" href="#">Add a visa</a></div>
@@ -250,7 +252,7 @@
                     <span class="hint"></span>
                     <div class="field">
 	                    <input class="full" type="email" value="info@hotmail.com" />
-                      <a class="button" href="#">Add Email</a>
+                      <a class="button" href="#" style="width: 90px;">Add Email</a>
                     </div>
                   </div>
                 </div>
@@ -264,7 +266,7 @@
                       	<option>Home</option>
                       </select>
 	                    <input class="half" type="text" placeholder="Number" />
-                      <a class="button" href="#">Add Phone</a>
+                      <a class="button" href="#" style="width: 90px;">Add Phone</a>
                     </div>
                   </div>
                 </div>
@@ -278,7 +280,7 @@
                       	<option>Skype</option>
                       </select>
 	                    <input class="half" type="text" placeholder="Address" />
-                      <a class="button" href="#">Add Messenger</a>
+                      <a class="button" href="#" style="width: 90px;">Add Messenger</a>
                     </div>
                   </div>
                 </div>
@@ -388,6 +390,7 @@
 
 <!-- Scripts -->
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-ui.min.js"></script>
 <script type="text/javascript" src="js/modernizr.js"></script>
 <script type="text/javascript" src="js/plugins.js"></script>
 </body>

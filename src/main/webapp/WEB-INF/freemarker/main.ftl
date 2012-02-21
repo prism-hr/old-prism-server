@@ -34,10 +34,24 @@
       		<button onclick="location.href='/pgadmissions/apply'">Apply now</button>
       	</#if>
       	<br/>
-      	<h3>Applications:</h3>      	
+      	<h3>Applications:</h3>     
+      	<table> 	
 		<#list applications as application>
-    		<a href="application?id=${application.id}"> ${application.id} : ${application.project.title}</a><br>    
+		<tr>
+			<td>
+    			<a href="application?id=${application.id}"> ${application.id} : ${application.project.title}</a><br> 
+    		</td>
+    		<td>
+    			<#if user.isInRole('APPROVER')>
+      				<button onclick="location.href='<@spring.url '/decision/approve?id=${application.id}'/>'">Approve</button>
+      			</#if>
+    			<#if ((user.isInRole('APPROVER') || user.isInRole('ADMINISTRATOR')) )>
+      				<button onclick="location.href='<@spring.url '/decision/reject?id=${application.id}'/>'">Reject</button>
+      			</#if>
+    		</td>
+    	</tr>   
 		</#list>
+		</table>
 		
 	</body>
 </html>

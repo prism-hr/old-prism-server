@@ -9,9 +9,11 @@
 a { text-decoration: none; }
 /*a:focus, a:hover { text-decoration: underline; }*/
 body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
+label input { vertical-align: middle; }
 
 .centre { text-align: center; }
 .right { text-align: right; }
+.row { overflow: visible; }
 
 /* WRAPPER ------------------------------------------------------------------------------------------------ */
 #wrapper { background: url(../images/bg_login.jpg) no-repeat 0 55px; margin: 0 auto; width: 950px; }
@@ -26,7 +28,7 @@ body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 #middle { }
 
 /* MIDDLE header ------------------------------------------------------------------------------------------ */
-#middle header {
+#middle > header {
 	background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,0)), color-stop(100%,rgba(255,255,255,1))); /* Chrome,Safari4+ */
 	background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* Chrome10+,Safari5.1+ */
@@ -37,18 +39,18 @@ body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 	padding: 25px 30px 0; overflow: hidden;
 }
 
-#middle header .logo { float: left; margin-right: 30px; }
-#middle header .tagline { color: #727272; float: left; font-size: 18pt; font-weight: bold; margin-top: 15px; width: 300px; }
+#middle > header .logo { float: left; margin-right: 30px; }
+#middle > header .tagline { color: #727272; float: left; font-size: 18pt; font-weight: bold; margin-top: 15px; width: 300px; }
 
-#middle header nav { clear: both; height: 29px; line-height: 29px; overflow: hidden; padding-top: 25px; }
+#middle > header nav { clear: both; height: 29px; line-height: 29px; overflow: hidden; padding-top: 25px; }
 
-#middle header nav ul { float: left; list-style: none; overflow: hidden; }
-#middle header nav ul li { float: left; margin-right: 6px; }
-#middle header nav ul li a { background: #DCDDDE url(../images/bg_tabs.jpg) repeat-x 0 -30px; color: #FFF; border-radius: 8px 8px 0 0; display: block; font-size: 9pt; font-weight: bold; min-width: 125px; text-align: center; }
-#middle header nav ul li.current a { background-position: 0 0; color: #000; } 
+#middle > header nav ul { float: left; list-style: none; overflow: hidden; }
+#middle > header nav ul li { float: left; margin-right: 6px; }
+#middle > header nav ul li a { background: #DCDDDE url(../images/bg_tabs.jpg) repeat-x 0 -30px; color: #FFF; border-radius: 8px 8px 0 0; display: block; font-size: 9pt; font-weight: bold; min-width: 125px; text-align: center; }
+#middle > header nav ul li.current a { background-position: 0 0; color: #000; } 
 
-#middle header nav .user { float: right; font-size: 12pt; }
-#middle header nav .user a.user-logout { font-size: 9pt; margin-right: 5px; }
+#middle > header nav .user { float: right; font-size: 12pt; }
+#middle > header nav .user a.user-logout { font-size: 9pt; margin-right: 5px; }
 
 
 /* Content area ------------------------------------------------------------------------------------------- */
@@ -86,9 +88,45 @@ section.folding h2.cross .status { background-position: 0 -15px; }
 section.folding h2.empty .status { background-position: 0 -30px; }
 
 /* Expandable content boxes */
-section.folding > div { border: 1px solid #999; margin-bottom: 10px; }
+section.folding > div { border: 2px solid #999; margin-bottom: 10px; }
 
-section.folding.yellow > div { border-color: #F9CB54; }
+section.folding.purple > div, section.folding.purple table.existing, section.folding.purple div.buttons { border-color: #826C7C; }
+section.folding.red > div, section.folding.red table.existing, section.folding.red div.buttons { border-color: #650729; }
+section.folding.orange > div, section.folding.orange table.existing, section.folding.orange div.buttons { border-color: #F58149; }
+section.folding.yellow > div, section.folding.yellow table.existing, section.folding.yellow div.buttons { border-color: #F9CB54; }
+section.folding.green > div, section.folding.green table.existing, section.folding.green div.buttons { border-color: #AFBD22; }
+section.folding.navy > div, section.folding.navy table.existing, section.folding.navy div.buttons { border-color: #285F93; }
+section.folding.blue > div, section.folding.blue table.existing, section.folding.blue div.buttons { border-color: #008898; }
+
+
+/* Expanding forms ---------------------------------------------------------------------------------------- */
+section.folding header { background: #DDD; border-bottom: 1px solid #999; font-weight: bold; padding: 6px; }
+section.folding footer { background: #DDD; border-top: 1px solid #999; padding: 6px !important; text-align: right; }
+
+section.folding table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%; }
+section.folding table.existing th { background: url(../images/bg_table_head.png) repeat-x; }
+section.folding table.existing td, section.folding table.existing th { line-height: 25px; padding: 0 3px; }
+
+section.folding form { background: #BBB; padding: 10px; }
+section.folding form > div { background: #FFF; border: 1px solid #999; margin-bottom: 2px; padding: 10px; }
+section.folding form .row { line-height: 24px; margin-bottom: 2px; }
+section.folding form .label { float: left; width: 180px; }
+section.folding form .field { margin-left: 205px; }
+section.folding form .hint { background: url(../images/button_question.png) no-repeat; width: 20px; height: 20px; float: left; margin-right: 5px; }
+section.folding form label.label { font-weight: bold; }
+section.folding form input, section.folding form select { padding: 1px 3px; }
+section.folding form label input { padding: 0; }
+
+section.folding form .field .full { width: 240px; }
+section.folding form .field .half { width: 120px; }
+section.folding form .field label { display: inline-block; margin-right: 1em; min-width: 60px; }
+
+section.folding form div.buttons { background: #DDD; border-width: 1px 0 0; margin: 8px -10px -10px; text-align: right; }
+
+section.folding.purple form { background: #E2DEE1; padding: 10px; }
+section.folding.purple table.existing, section.folding.purple div.buttons { background: #D5CED3; }
+
+section.folding.purple table.existing th { background-position: 0 0; }
 
 
 /* FOOTER ------------------------------------------------------------------------------------------------- */
@@ -106,9 +144,7 @@ button, a.button, span.indicator {
 	box-shadow: 0 0 3px 0 #999;
 	color: #FFF;
 	cursor: pointer;
-	font-weight: bold;
-	font-size: 8.5pt;
-	font-weight: bold;
+	font: bold 8.5pt Arial, Helvetica, sans-serif;
 	line-height: 16px;
 	padding: 1px 10px;
 	text-align: center;
@@ -117,7 +153,7 @@ button, a.button, span.indicator {
 button.blue, a.button.blue, span.indicator.blue { background-position: 0 0; }
 button span { background: url(../images/bg_button_icon.png) no-repeat; display: inline-block; height: 10px; margin-top: -2px; overflow: hidden; text-indent: 999px; vertical-align: middle; width: 10px; }
 button.plus span { background-position: 0 -10px; }
-a.button { vertical-align: text-bottom; }
+a.button { padding-top: 3px; padding-bottom: 3px; /*vertical-align: text-bottom;*/ }
 span.indicator { border-width: 1px; padding: 1px 5px; vertical-align: text-bottom; }
 
 
@@ -166,3 +202,12 @@ table.data tbody td { background: url(../images/bg_table_row.jpg) repeat-x 0 100
 table.data select { width: 100%; }
 
 table.data thead th.headerSortDown, table.data thead th.headerSortUp { background-color: #06C; color: #FFF; }
+
+
+
+#programme-details { overflow: hidden; }
+#programme-details .row { line-height: 20px; padding: 3px 0; }
+#programme-details .row input { padding: 2px; }
+#programme-details .row label { font-weight: bold; display: inline-block; min-width: 140px; }
+#programme-details .row label.checkbox { margin-left: 1em; min-width: 0; }
+#programme-details .half { width: 50%; float: left; }

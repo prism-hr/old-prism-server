@@ -1,31 +1,69 @@
+<!DOCTYPE HTML>
+<#import "/spring.ftl" as spring />
 <html>
 	<head>
-    <#import "/spring.ftl" as spring />
-	<link rel="stylesheet" type="text/css" href="<@spring.theme code='styleSheet' />"/>
+	
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Shell template</title>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/style.css' />"/>
+	
 	</head>
-	<body>
-		<div>
-			<h2>UCL Post-graduate admissions portal</h2>
-			<p>Please log in: </p>
-			<form id="loginForm" method="post" class="signin" action="/pgadmissions/j_spring_security_check">
-					<table cellspacing="0">
-						<tr>
-							<th><label for="username_or_email">Username or Email</label></th>
-							<td><input id ="username_or_email" name="j_username" type="text" /></td>
-						</tr>
-						<tr>
-							<th><labelfor="password">Password</label></th>
-							<td><input id ="password" name="j_password" type="password" />				
-						</tr>
-						
-						<tr>
-							<th></th>
-							<td><input name ="commit" type="submit" value="Sign In" /></td>
-						</tr>
-					</table>
-			</form>
-			<script type="text/javascript">
-			document.getElementById('username_or_email').focus(); </script>
+
+	<body id="login">
+
+		<div id="wrapper">
+		
+			<#include "/login/login_header.ftl"/>
+			
+		  	<!-- Middle. -->
+		  	<div id="middle">
+		  
+		    <header>
+		
+		      <!-- App logo and tagline -->
+		      <div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png'/>" alt="" /></div>
+		
+		      <div class="tagline">Your Gateway to<br />Research Opportunities</div>
+		
+		    </header>
+		    
+		    
+		    <!-- Blurb. -->
+		    <aside id="blurb">
+			    <h2>Welcome to your new gateway to<br />UCL Postgraduate Research programmes<br />in Engineering Sciences.</h2>
+					<p>Register today and begin your application to join some of the world's most highly regarded researchers and academics at the frontiers of discovery.</p>
+		    </aside>
+		
+		    <!-- Login form. -->
+		    <section id="login-box">
+		    
+		    	<form id="loginForm" method="post" 
+		    					action="/pgadmissions/j_spring_security_check">
+		    	<!--form method="post" action="w00pw00p"-->
+		      		<p>&gt; Login</p>
+		        	
+		        	<input type="text" id ="username_or_email" name="j_username" placeholder="Email address" />
+		        	<input type="password" id ="password" name="j_password" placeholder="Password" />
+		        	
+		        	<button name ="commit" type="submit" value="Sign In" class="blue">Go</button>
+		      	</form>
+		      	
+		    </section>
+		
+		    <!-- Registration button. -->
+		    <section id="register">
+		    	<a href="#">Register Today...</a>
+		    </section>
+		    
+		  </div>
+		  
+			<#include "/login/login_footer.ftl"/>
+		
 		</div>
+		
+		<!-- Scripts -->
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="js/modernizr.js"></script>
+		<script type="text/javascript" src="js/plugins.js"></script>
 	</body>
 </html>

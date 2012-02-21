@@ -294,23 +294,115 @@
             </div>
           </section>
           
-           <section class="folding red">
+          <!-- Address -->
+          <section class="folding red">
             <h2>
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Address
             </h2>
             <div>
-            	<header>
-              	Address
-              </header>
-              <div class="form">
-              	<label>Address</label>
-                <textarea rows="6" cols="60"></textarea>
-              </div>
-              <footer>
-              	<a class="button blue" href="#">Close</a>
-                <button class="blue">Save</button>
-              </footer>
+            	<table class="existing">
+              	<colgroup>
+                	<col width="30" />
+                	<col width="*" />
+                	<col width="100" />
+                	<col width="100" />
+                	<col width="30" />
+                	<col width="30" />
+                </colgroup>
+              	<thead>
+                	<tr>
+                  	<th colspan="2">Address</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th colspan="2">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                	<tr>
+                  	<td><a class="row-arrow" href="#">-</a></td>
+                  	<td>123 Letsby Avenue, Croydon, Surrey AS3 0LI</td>
+                  	<td>21/07/11</td>
+                  	<td>19/05/12</td>
+                  	<td>edit</td>
+                  	<td>close?</td>
+                  </tr>
+                	<tr>
+                  	<td><a class="row-arrow" href="#">-</a></td>
+                  	<td>124 Letsby Avenue, Croydon, Surrey AS3 0LI</td>
+                  	<td>18/07/10</td>
+                  	<td>19/07/11</td>
+                  	<td>edit</td>
+                  	<td>close?</td>
+                  </tr>
+                </tbody>
+              </table>
+              <form method="post" action="woooop">
+
+              	<div>
+                	<div class="row">
+                  	<label class="label">Street Name &amp; Number</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<textarea class="max" rows="6" cols="80"></textarea>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Postal Code</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<input class="half" type="text" value="" />
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Country</label>
+                    <div class="field">
+                      <select class="full">
+                        <option>United Kingdom</option>
+                      </select>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<span class="label">Start Date</span>
+                    <span class="hint"></span>
+                    <input class="half" type="date" value="" />
+                  </div>
+                	<div class="row">
+                  	<span class="label">End Date</span>
+                    <span class="hint"></span>
+                    <input class="half" type="date" value="" />
+                  </div>
+                	<div class="row">
+                  	<span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                    </div>	
+                  </div>
+                	<div class="row">
+                  	<div class="field"><a class="button blue" href="#">Add a document</a></div>
+                  </div>
+                	<div class="row">
+                  	<span class="label">This is my contact address</span>
+                    <div class="field">
+                    	<label class="half"><input type="checkbox" /></label>
+                    	<label>Reason for living here
+                      <select class="half">
+                        <option>parents</option>
+                      </select>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+              	<div class="buttons">
+                  <a class="button blue" href="#">Close</a>
+                  <button class="blue" type="submit">Save</button>
+                </div>
+
+              </form>
             </div>
           </section>
           
@@ -320,7 +412,50 @@
               Qualifications
             </h2>
             <div>
-              Testing...
+            	<table class="existing">
+              	<colgroup>
+                	<col width="30" />
+                	<col width="140" />
+                	<col width="140" />
+                	<col width="160" />
+                	<col width="*" />
+                	<col width="30" />
+                	<col width="30" />
+                </colgroup>
+              	<thead>
+                	<tr>
+                  	<th colspan="2">First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th colspan="2">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                	<tr>
+                  	<td><a class="row-arrow" href="#">-</a></td>
+                  	<td>&nbsp;</td>
+                  	<td>&nbsp;</td>
+                  	<td>&nbsp;</td>
+                  	<td>&nbsp;</td>
+                  	<td>edit</td>
+                  	<td>close?</td>
+                  </tr>
+                </tbody>
+              </table>
+              <form method="post" action="woooop">
+
+              	<div>
+                	<div class="row">
+                  	<label class="label">Street Name &amp; Number</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<textarea class="max" rows="6" cols="80"></textarea>
+                    </div>
+                  </div>
+                </div>
+                
+              </form>
             </div>
           </section>
           

@@ -13,9 +13,21 @@
 		<h2>Projects</h2>			
 		<ul>
 		<#if hasProjects>
+			<table>
+				<tr>
+					<td> Code </td>
+					<td> Title </td>
+					<td> Description </td>
+				</tr>
 			<#list projects as project>
-		        <li>${project.code} ${project.title} ${project.description} <button onclick="location.href='/pgadmissions/apply?project=${project.id}'">Apply now</button></li>
+				<tr> 
+					<td> ${project.code} </td>
+					<td> ${project.title} </td>
+					<td> ${project.description} </td>
+					<td> <button onclick="location.href='/pgadmissions/apply?project=${project.id}'">Apply now</button></td>
+				</tr>
 	      	</#list>
+	      	</table>
 	    </#if>
       	</ul>
 	</body>

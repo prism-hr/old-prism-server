@@ -107,4 +107,8 @@ public class ApplicationForm extends DomainObject<Integer> {
 	public SubmissionStatus getSubmissionStatus() {
 		return submissionStatus;
 	}
+	
+	public boolean isUnderReview() {
+		return reviewer != null;
+	}
 }

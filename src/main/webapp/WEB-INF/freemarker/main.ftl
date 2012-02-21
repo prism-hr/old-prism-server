@@ -1,7 +1,7 @@
 <html>
 	<head>
     <#import "/spring.ftl" as spring />
-	<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/default.css' />"/>
+	<link rel="stylesheet" type="text/css"  href="<@spring.theme code='styleSheet' />"/>
 	<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
     <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
     <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/interface/dwrService.js'/>"></script>

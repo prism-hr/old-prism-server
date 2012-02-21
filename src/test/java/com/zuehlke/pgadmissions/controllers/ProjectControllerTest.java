@@ -30,7 +30,7 @@ public class ProjectControllerTest {
 	
 	@Test
 	public void getProjectsViewName(){
-		assertEquals("projects", projectController.getProjectsPage().getViewName());
+		assertEquals("projects/projects", projectController.getProjectsPage().getViewName());
 	}
 	
 	@Test

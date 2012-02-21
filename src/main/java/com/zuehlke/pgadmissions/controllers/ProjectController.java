@@ -31,7 +31,7 @@ public class ProjectController {
 		
 		MainPageModel mainPageModel = new MainPageModel();
 		mainPageModel.setProjects(projectDAO.getAllProjects());
-		return new ModelAndView("projects", "model", mainPageModel);
+		return new ModelAndView("projects/projects", "model", mainPageModel);
 	}
 
 }

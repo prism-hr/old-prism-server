@@ -59,6 +59,12 @@
     				<input type="submit" name="submit" value="Reject">
       			</#if>
       			</form>
+      				<form action="<@spring.url '/comment'/>" >
+    			    <input type="hidden" value="${application.id}" name="id"/>
+      				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER'))) && application.isActive() )>
+    					<input type="submit" name="cmtDecision" value="Comment">
+      				</#if>
+      			</form>
     		</td>
     	</tr>   
 		</#list>

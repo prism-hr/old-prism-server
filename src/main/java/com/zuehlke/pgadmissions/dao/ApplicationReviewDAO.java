@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 @Repository
@@ -53,5 +54,12 @@ public class ApplicationReviewDAO {
 		return  (List<ApplicationForm>)sessionFactory.getCurrentSession()
 				.createCriteria(ApplicationForm.class).list();
 				
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ApplicationReview> getReviewsByApplication(ApplicationForm application) {
+		return sessionFactory.getCurrentSession()
+				.createCriteria(ApplicationReview.class)
+				.add(Restrictions.eq("application", application)).list();
 	}
 }

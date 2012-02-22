@@ -127,18 +127,27 @@ section.folding form .field label { display: inline-block; margin-right: 1em; mi
 section.folding form div.buttons { background: #DDD; border-width: 1px 0 0; margin: 8px -10px -10px; }
 
 section.folding.purple form { background: #E2DEE1; padding: 10px; }
-section.folding.purple table.existing, section.folding.purple div.buttons { background: #D5CED3; }
-
 section.folding.red form { background: #EFE8E7; padding: 10px; }
-section.folding.red table.existing, section.folding.red div.buttons { background: #E1D2D1; }
-
 section.folding.orange form { background: #FFF9F6; padding: 10px; }
+section.folding.yellow form { background: #FFFAA1; padding: 10px; }
+section.folding.green form { background: #F8F9EF; padding: 10px; }
+section.folding.navy form { background: #E5E8F1; padding: 10px; }
+section.folding.blue form { background: #EBF4F5; padding: 10px; }
+section.folding.purple table.existing, section.folding.purple div.buttons { background: #D5CED3; }
+section.folding.red table.existing, section.folding.red div.buttons { background: #E1D2D1; }
 section.folding.orange table.existing, section.folding.orange div.buttons { background: #FEE8D9; }
+section.folding.yellow table.existing, section.folding.yellow div.buttons { background: #FFF4E1; }
+section.folding.green table.existing, section.folding.green div.buttons { background: #EEF0D8; }
+section.folding.navy table.existing, section.folding.navy div.buttons { background: #D0D7E7; }
+section.folding.blue table.existing, section.folding.blue div.buttons { background: #CCE4E7; }
 
 section.folding.purple table.existing th { background-position: 0 0; }
 section.folding.red table.existing th { background-position: 0 -25px; }
 section.folding.orange table.existing th { background-position: 0 -50px; }
 section.folding.yellow table.existing th { background-position: 0 -75px; }
+section.folding.green table.existing th { background-position: 0 -100px; }
+section.folding.navy table.existing th { background-position: 0 -125px; }
+section.folding.blue table.existing th { background-position: 0 -150px; }
 
 
 /* FOOTER ------------------------------------------------------------------------------------------------- */
@@ -292,8 +301,6 @@ table.data thead th.headerSortDown, table.data thead th.headerSortUp { backgroun
  * http://jquery.org/license
  *
  * http://docs.jquery.com/UI/Theming/API
- *
- * To view and modify this theme, visit http://jqueryui.com/themeroller/?ffDefault=Verdana,Arial,sans-serif&fwDefault=normal&fsDefault=1.1em&cornerRadius=4px&bgColorHeader=cccccc&bgTextureHeader=03_highlight_soft.png&bgImgOpacityHeader=75&borderColorHeader=aaaaaa&fcHeader=222222&iconColorHeader=222222&bgColorContent=ffffff&bgTextureContent=01_flat.png&bgImgOpacityContent=75&borderColorContent=aaaaaa&fcContent=222222&iconColorContent=222222&bgColorDefault=e6e6e6&bgTextureDefault=02_glass.png&bgImgOpacityDefault=75&borderColorDefault=d3d3d3&fcDefault=555555&iconColorDefault=888888&bgColorHover=dadada&bgTextureHover=02_glass.png&bgImgOpacityHover=75&borderColorHover=999999&fcHover=212121&iconColorHover=454545&bgColorActive=ffffff&bgTextureActive=02_glass.png&bgImgOpacityActive=65&borderColorActive=aaaaaa&fcActive=212121&iconColorActive=454545&bgColorHighlight=fbf9ee&bgTextureHighlight=02_glass.png&bgImgOpacityHighlight=55&borderColorHighlight=fcefa1&fcHighlight=363636&iconColorHighlight=2e83ff&bgColorError=fef1ec&bgTextureError=02_glass.png&bgImgOpacityError=95&borderColorError=cd0a0a&fcError=cd0a0a&iconColorError=cd0a0a&bgColorOverlay=aaaaaa&bgTextureOverlay=01_flat.png&bgImgOpacityOverlay=0&opacityOverlay=30&bgColorShadow=aaaaaa&bgTextureShadow=01_flat.png&bgImgOpacityShadow=0&opacityShadow=30&thicknessShadow=8px&offsetTopShadow=-8px&offsetLeftShadow=-8px&cornerRadiusShadow=8px
  */
 
 

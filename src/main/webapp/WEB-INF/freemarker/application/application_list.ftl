@@ -42,9 +42,12 @@
     			<a href="application?id=${application.id}"> ${application.id} : ${application.project.title}</a><br> 
     		</td>
     		<td>
-    		  <#if model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')>
-                   <button onclick="location.href='/pgadmissions/reviewer?id=${application.id}'">Assign Reviewer</button>
-              </#if>
+    		  <form action="<@spring.url '/reviewer'/>">
+    		      <input type="hidden" value="${application.id}" name="id"/>
+        		  <#if model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')>
+        		      <input type="submit" name="submit" value="AssignReviewer">
+        		  </#if>
+    		  </form>
             </td>
     		<td>
     			<form action="<@spring.url '/decision'/>" method = "POST">

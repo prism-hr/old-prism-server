@@ -20,11 +20,11 @@
 					<td> Description </td>
 				</tr>
 			<#list projects as project>
-				<tr> 
+				<tr id = "${project.title}" > 
 					<td> ${project.code} </td>
 					<td> ${project.title} </td>
 					<td> ${project.description} </td>
-					<td> <button id="appluBtn" onclick="location.href='/pgadmissions/apply?project=${project.id}'">Apply now</button></td>
+					<td> <button id="${project.id}" name="${project.id}" onclick="location.href='/pgadmissions/apply?project=${project.id}'">Apply now</button></td>
 				</tr>
 	      	</#list>
 	      	</table>

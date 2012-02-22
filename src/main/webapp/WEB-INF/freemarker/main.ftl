@@ -39,7 +39,7 @@
 		<#list applications as application>
 		<tr>
 			<td>
-    			<a href="application?id=${application.id}"> ${application.id} : ${application.project.title}</a><br> 
+    			<a href="application?id=${application.id}" id= "${application.id}"> ${application.id} : ${application.project.title}</a><br> 
     		</td>
     		<td>
     			<form action="<@spring.url '/decision'/>" method = "POST">

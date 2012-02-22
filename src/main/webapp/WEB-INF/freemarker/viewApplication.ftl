@@ -4,8 +4,12 @@
 		<p>Name: ${application.user.firstName} ${application.user.lastName}</p>
 		<p>Project Title: ${application.project.title}</p>
 		<p>Project Description: ${application.project.description}</p>
-		<#if user.isInRole('REVIEWER')>
-      		<button onclick="location.href='/pgadmissions/application/review?id=${application.id}'">Review</button>
-      	</#if>
+		<#if !user.isInRole('APPLICANT')>
+		  <#if application.isUnderReview()>
+		      <p> Reviewer: ${application.reviewer.username}</p>
+		  <#else>
+		      <p>Reviewer: Not yet assigned.</p>
+		  </#if>
+		</#if>
 	</body>
 </html>

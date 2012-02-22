@@ -39,9 +39,12 @@
 		<#list applications as application>
 		<tr>
 			<td>
-    			<a href="application?id=${application.id}" id= "${application.id}"> ${application.id} : ${application.project.title}</a><br> 
+    			<a href="application?id=${application.id}"> ${application.id} : ${application.project.title}</a><br> 
     		</td>
     		<td>
+    			<#if user.isInRole('ADMINISTRATOR') || user.isInRole('REVIEWER')>
+    			 <button onclick="location.href='/pgadmissions/reviewer?id=${application.id}'">Assign Review</button>
+    			</#if>
     			<form action="<@spring.url '/decision'/>" method = "POST">
     			<input type="hidden" value="${application.id}" name="id"/>
     			<#if user.isInRole('APPROVER')>

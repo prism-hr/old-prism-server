@@ -8,6 +8,7 @@
 /* Default styling ---------------------------------------------------------------------------------------- */
 a { text-decoration: none; }
 /*a:focus, a:hover { text-decoration: underline; }*/
+a img { border: none; }
 body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 label input { vertical-align: middle; }
 
@@ -40,7 +41,7 @@ label input { vertical-align: middle; }
 }
 
 #middle > header .logo { float: left; margin-right: 30px; }
-#middle > header .tagline { color: #727272; float: left; font-size: 18pt; font-weight: bold; margin-top: 15px; width: 300px; }
+#middle > header .tagline { color: #727272; float: left; font-size: 18pt; font-weight: bold; margin-top: 10px; width: 300px; }
 
 #middle > header nav { clear: both; height: 29px; line-height: 29px; overflow: hidden; padding-top: 25px; }
 
@@ -104,12 +105,9 @@ section.folding header { background: #DDD; border-bottom: 1px solid #999; font-w
 section.folding footer { background: #DDD; border-top: 1px solid #999; padding: 6px !important; text-align: right; }
 
 section.folding table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%; }
-section.folding table.existing th { background: url(../images/bg_table_head.png) repeat-x; }
-section.folding table.existing td { background: url(../images/bg_table_row.jpg) repeat-x; }
+section.folding table.existing th { background: url(../images/bg_table_head.png) repeat-x; text-align: left; }
+section.folding table.existing td { background: url(../images/bg_table_row.jpg) repeat-x; text-align: left; }
 section.folding table.existing td, section.folding table.existing th { line-height: 25px; padding: 0 3px; vertical-align: middle; }
-
-section.folding .row-arrow { background: url(../images/button_arrow.png) no-repeat; width: 20px; height: 21px; display: inline-block; text-indent: 99px; overflow: hidden; vertical-align: middle; margin-top: -4px; }
-section.folding .row-arrow.open { background-position: 0 -21px; }
 
 section.folding form { background: #BBB; padding: 10px; }
 section.folding form > div { background: #FFF; border: 1px solid #999; margin-bottom: 2px; padding: 10px; }
@@ -126,7 +124,7 @@ section.folding form .field .full { width: 240px; }
 section.folding form .field .half { width: 120px; }
 section.folding form .field label { display: inline-block; margin-right: 1em; min-width: 60px; }
 
-section.folding form div.buttons { background: #DDD; border-width: 1px 0 0; margin: 8px -10px -10px; text-align: right; }
+section.folding form div.buttons { background: #DDD; border-width: 1px 0 0; margin: 8px -10px -10px; }
 
 section.folding.purple form { background: #E2DEE1; padding: 10px; }
 section.folding.purple table.existing, section.folding.purple div.buttons { background: #D5CED3; }
@@ -167,18 +165,32 @@ button, a.button, span.indicator {
 button.blue, a.button.blue, span.indicator.blue { background-position: 0 0; }
 button span { background: url(../images/bg_button_icon.png) no-repeat; display: inline-block; height: 10px; margin-top: -2px; overflow: hidden; text-indent: 999px; vertical-align: middle; width: 10px; }
 button.plus span { background-position: 0 -10px; }
-a.button { padding-top: 3px; padding-bottom: 3px; /*vertical-align: text-bottom;*/ }
+a.button { display: inline-block; padding-top: 2px; padding-bottom: 2px; /*vertical-align: text-bottom;*/ }
 span.indicator { border-width: 1px; padding: 1px 5px; vertical-align: text-bottom; }
+
+.button-edit, .button-close, .button-question { background-repeat: no-repeat; display: inline-block; height: 24px; margin-top: -4px; overflow: hidden; text-indent: 99px; vertical-align: middle; width: 24px; }
+.button-edit { background-image: url(../images/button_row_edit.png); }
+.button-close { background-image: url(../images/button_row_close.png); }
+.button-question { background-image: url(../images/button_question.png); margin-top: 0; width: 20px; height: 20px; }
+
+/* Row arrows */
+.row-arrow { background: url(../images/button_arrow.png) no-repeat; width: 20px; height: 21px; display: inline-block; text-indent: 99px; overflow: hidden; vertical-align: middle; margin-top: -4px; }
+.row-arrow.open { background-position: 0 -21px; }
+
 
 
 /* FORM ELEMENTS ----------------------------------------------------------------------------------------- */
-form input { border: 1px solid #999; padding: 5px; }
+form input, form select, form textarea { border: 1px solid #999; padding: 5px; }
+label input { border: none; }
+
+div.buttons { text-align: right; }
+
 
 
 
 /* LOGIN page -------------------------------------------------------------------------------------------- */
 body#login #middle { background: transparent; height: 685px; position: relative; }
-body#login header { background: transparent; left: 35px; padding: 0; position: absolute; top: 35px; width: 40%; }
+body#login header { background: none; filter: none; left: 35px; padding: 0; position: absolute; top: 35px; width: 40%; }
 body#login header .logo { float: none; }
 body#login header .tagline { color: #FFF; float: none; font-size: 18pt; line-height: 1.2; text-shadow: #333 0 0 5px; width: auto; }
 body#login #blurb { bottom: 70px; font-weight: bold; left: 35px; line-height: 1.2; position: absolute; width: 40%; }

@@ -10,35 +10,41 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	
 	private ApplicationFormDAO applicationDAO;
 	private RegisteredUser user;
+	private Program program;
+	private Project project;
+	
+	
 	@Before
-	public void setup(){
+	public void setup() {
 		applicationDAO = new ApplicationFormDAO(sessionFactory);
+		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+
+		program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
+		project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
+		save(user, program, project);
+
+		flushAndClearSession();
+		
 	}
 
 	@Test
 	public void shouldSaveAndLoadApplication() throws Exception {
 		
-		RegisteredUser user = new RegisteredUserBuilder().username("username").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).toUser();
-		
-		save(user);
-		flushAndClearSession();
-		
 		ApplicationForm application = new ApplicationForm();
+		application.setProject(project);
 		
-		application.setCob("United Kingdom");
-		application.setDob("1988/03/24");
-		application.setGender("Female");
-		application.setNat("British");
-		application.setDescriptionOfResearch("I want to make a research on cancer");
-		application.setTitle("Miss");
 		application.setUser(user);
 		
 		assertNull(application.getId());
@@ -55,9 +61,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		reloadedApplication = applicationDAO.get(id);
 		assertNotSame(application, reloadedApplication);
 		assertEquals(application, reloadedApplication);
-		assertEquals(application.getUser(), user);
-		assertEquals(application.getDescriptionOfResearch(), reloadedApplication.getDescriptionOfResearch());
-	}
+		assertEquals(application.getUser(), user);	}
 
 	@Test
 	public void shouldCheckIFApplicationIsApproved(){
@@ -77,19 +81,11 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	
 	public List<ApplicationForm> getApplicationFormsBelongingToSameUser(){
 		List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
-		user = new RegisteredUserBuilder().username("username").password("password").accountNonExpired(false).accountNonLocked(false)
-				.credentialsNonExpired(false).enabled(false).toUser();
-		save(user);
-		flushAndClearSession();
+
 		
-		ApplicationForm application1 = new ApplicationForm();
-		application1.setCob("United Kingdom");
-		application1.setDob("1988/03/24");
-		application1.setGender("Female");
-		application1.setNat("British");
-		application1.setDescriptionOfResearch("I want to make a research on cancer");
-		application1.setTitle("Miss");
+		ApplicationForm application1 = new ApplicationForm();	
 		application1.setUser(user);
+		application1.setProject(project);
 		application1.setApproved("1");
 		
 		applicationDAO.save(application1);
@@ -97,13 +93,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		applications.add(application1);
 		
 		ApplicationForm application2 = new ApplicationForm();
-		application2.setCob("Brazilia");
-		application2.setDob("1975/01/20");
-		application2.setGender("Male");
-		application2.setNat("Brazilian");
-		application2.setDescriptionOfResearch("I want to make a research on software engineering");
-		application2.setTitle("Mr");
 		application2.setUser(user);
+		application2.setProject(project);
 		
 		applicationDAO.save(application2);
 		
@@ -113,4 +104,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		
 		return applications;
 	}
+	
+	
 }

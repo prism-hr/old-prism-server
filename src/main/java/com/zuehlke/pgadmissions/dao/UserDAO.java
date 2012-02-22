@@ -1,11 +1,15 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
 public class UserDAO {
@@ -34,6 +38,19 @@ public class UserDAO {
 		return (RegisteredUser) sessionFactory.getCurrentSession()
 				.createCriteria(RegisteredUser.class)
 				.add(Restrictions.eq("username", username)).uniqueResult();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RegisteredUser> getReviewers(){
+		List<RegisteredUser> users = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).list();
+		List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
+		for (RegisteredUser user : users) {
+			if (user.isInRole(Authority.REVIEWER)) {
+				reviewers.add(user);
+			}
+		}
+		
+		return reviewers;
 	}
 
 }

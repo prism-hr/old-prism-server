@@ -10,27 +10,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD) 
 public class ApplicationForm extends DomainObject<Integer> {
 	
 	private static final long serialVersionUID = 1L;
-
-	//toDo: change to Enum
-	private String title;
-	//toDo: change to Enum
-	private String gender;
-	
-	private String dob;
-	
-	private String country_ob;
-	
-	private String nationality;
 	
 	private String approved;
-	
-	@Column(name="description_of_research")
-	private String descriptionOfResearch;
 	
 	@ManyToOne
 	@JoinColumn(name="registered_user_id")
@@ -43,53 +33,19 @@ public class ApplicationForm extends DomainObject<Integer> {
 	@OneToOne
 	@JoinColumn(name="approver_user_id")
 	private RegisteredUser approver = null;
+
+	@ManyToOne
+	@JoinColumn(name="project_id")
+	private Project project;
+
 	
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getGender() {
-		return gender;
-	}
-
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-
-	public String getDob() {
-		return dob;
-	}
-
-	public void setDob(String dob) {
-		this.dob = dob;
-	}
-
-	public String getCob() {
-		return country_ob;
-	}
-
-	public void setCob(String cob) {
-		this.country_ob = cob;
-	}
-
-	public String getNat() {
-		return nationality;
-	}
-
-	public void setNat(String nat) {
-		this.nationality = nat;
-	}
-
-	public String getDescriptionOfResearch() {
-		return descriptionOfResearch;
-	}
-
-	public void setDescriptionOfResearch(String res) {
-		this.descriptionOfResearch = res;
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.SubmissionStatusEnumUserType")	
+	@Column(name="submission_status")
+	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
+	
+	
+	public Project getProject() {
+		return project;
 	}
 
 	@Override
@@ -136,5 +92,23 @@ public class ApplicationForm extends DomainObject<Integer> {
 
 	public void setApproved(String approved) {
 		this.approved = approved;
+	}
+
+	public void setProject(Project project) {
+		this.project = project;	
+	}
+
+	public void setSubmissionStatus(SubmissionStatus submissionStatus) {
+		this.submissionStatus = submissionStatus;
+		
+		
+	}
+
+	public SubmissionStatus getSubmissionStatus() {
+		return submissionStatus;
+	}
+	
+	public boolean isUnderReview() {
+		return reviewer != null;
 	}
 }

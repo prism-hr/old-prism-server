@@ -3,83 +3,81 @@ package com.zuehlke.pgadmissions.controllers;
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationReviewDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewerAssignedModel;
+import com.zuehlke.pgadmissions.domain.ReviewersListModel;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class ReviewControllerTest {
 
-	private RegisteredUser user;
-	private MockHttpServletRequest request;
+	private RegisteredUser reviewer;
 	private ApplicationFormDAO applicationFormDAOMock;
-	private ApplicationReviewDAO applicationReviewDAOMock;
 	private ReviewController controller;
 	private ApplicationForm form;
+	private UserDAO userDAOMock;
 
 	@Test
 	public void shouldReturnReviwersViewName() {
-		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(form);
-		applicationFormDAOMock.save(form);
-		EasyMock.replay(applicationFormDAOMock);
-		assertEquals("reviewApplication", controller.assignReviewer(request, new ModelMap()));
+		assertEquals("reviewer/reviewer", controller.getReviewerPage(1).getViewName());
 	}
 	
 	@Test
-	public void shouldAssignReviewerToApplication(){
+	public void shouldgetListOfReviewersToApplication(){
+		EasyMock.expect(userDAOMock.getReviewers()).andReturn(Arrays.asList(reviewer));
+		EasyMock.replay(userDAOMock);
+
 		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(form);
-		applicationFormDAOMock.save(form);
 		EasyMock.replay(applicationFormDAOMock);
-		ModelMap modelMap = new ModelMap();
-		controller.assignReviewer(request, modelMap);
-		ApplicationForm reviewedApplication = (ApplicationForm) modelMap.get("application");
+		
+		ReviewersListModel model = (ReviewersListModel) controller.getReviewerPage(1).getModel().get("model");
+		ApplicationForm reviewedApplication = model.getApplication();
 		assertEquals(form, reviewedApplication);
-		assertNotNull(reviewedApplication.getReviewer());
+		assertNotNull(model.getReviewers());
 	}
 	
 	@Test
-	public void shouldReturnSubmittedReviewPageViewName(){
-		assertEquals("reviewSuccess", controller.getSubmittedReviewPage(request, new ModelMap()));
-	}
-	
-	@Test
-	public void shouldReturnSubmittedReviewPage(){
-		ModelMap modelMap = new ModelMap();
-		controller.getSubmittedReviewPage(request, modelMap);
-		ApplicationReview reviewApp = (ApplicationReview) modelMap.get("review");
-		assertNotNull(reviewApp.getComment());
+	public void shouldAssignReviewerToApplication() {
+		EasyMock.expect(userDAOMock.getReviewers()).andReturn(Arrays.asList(reviewer));
+		EasyMock.expect(userDAOMock.get(1)).andReturn(reviewer);
+		EasyMock.replay(userDAOMock);
+
+		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(form);
+		applicationFormDAOMock.save(form);
+		EasyMock.replay(applicationFormDAOMock);
+		
+		ReviewerAssignedModel model = (ReviewerAssignedModel) controller.addReviewer(1, 1).getModel().get("model");
+		ApplicationForm application = model.getApplication();
+		assertNotNull(application.getReviewer());
 	}
 	
 	@Before
 	public void setUp(){
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		user = new RegisteredUserBuilder().id(1).username("bob").toUser();
-		authenticationToken.setDetails(user);
+		reviewer = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		authenticationToken.setDetails(reviewer);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		
-		request = new MockHttpServletRequest();
-		request.setParameter("id", "1");
-		request.setParameter("comment", "excellent application!");
-		
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		applicationReviewDAOMock = EasyMock.createMock(ApplicationReviewDAO.class);
-		controller = new ReviewController(applicationFormDAOMock, applicationReviewDAOMock);
+		userDAOMock = EasyMock.createMock(UserDAO.class);
+		controller = new ReviewController(applicationFormDAOMock, userDAOMock);
 		
 		form = new ApplicationFormBuilder().id(1).toApplicationForm();
 		

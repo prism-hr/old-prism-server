@@ -34,6 +34,9 @@ public class ReviewControllerTest {
 
 	@Test
 	public void shouldReturnReviwersViewName() {
+		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(form);
+		EasyMock.replay(applicationFormDAOMock);
+		
 		assertEquals("reviewer/reviewer", controller.getReviewerPage(1).getViewName());
 	}
 	

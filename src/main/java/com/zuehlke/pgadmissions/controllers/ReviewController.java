@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ReviewerAssignedModel;
 import com.zuehlke.pgadmissions.domain.ReviewersListModel;
+import com.zuehlke.pgadmissions.exceptions.CannotReviewApprovedApplicationException;
 
 @Controller
 @RequestMapping(value={"/reviewer"})
@@ -38,6 +39,9 @@ public class ReviewController {
 	@Transactional
 	public ModelAndView getReviewerPage(@RequestParam Integer id) {
 		ApplicationForm applicationUnderReview = applicationFormDAO.get(id);
+		if (applicationUnderReview.hasBeenApproved()) {
+			throw new CannotReviewApprovedApplicationException();
+		}
 		
 		ReviewersListModel model = new ReviewersListModel();
 		model.setApplication(applicationUnderReview);

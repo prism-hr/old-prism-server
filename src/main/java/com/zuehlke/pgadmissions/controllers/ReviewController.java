@@ -1,75 +1,62 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.ApplicationReviewDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationReview;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewerAssignedModel;
+import com.zuehlke.pgadmissions.domain.ReviewersListModel;
 
 @Controller
-@RequestMapping(value={"/application"})
+@RequestMapping(value={"/reviewer"})
 public class ReviewController {
 
-	private static final String REVIEW_SUCCESS_VIEW_NAME = "reviewSuccess";
-	private static final String REVIEW_APPLICATION_VIEW_NAME = "reviewApplication";
+	private static final String ADD_REVIEW_SUCCESS_VIEW_NAME = "reviewer/reviewerSuccess";
+	private static final String ADD_REVIEWER_VIEW_NAME = "reviewer/reviewer";
 	private final ApplicationFormDAO applicationFormDAO;
-	private final ApplicationReviewDAO applicationReviewDAO;
+	private final UserDAO userDAO;
 	
 	ReviewController(){
 		this(null, null);
 	}
 
 	@Autowired
-	public ReviewController(ApplicationFormDAO applicationFormDAO,
-									ApplicationReviewDAO applicationReviewDAO) {
+	public ReviewController(ApplicationFormDAO applicationFormDAO, UserDAO userDAO) {
 		this.applicationFormDAO = applicationFormDAO;
-		this.applicationReviewDAO = applicationReviewDAO;
+		this.userDAO = userDAO;
 	}
 
 
-	@RequestMapping(value={"/review"},method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	@Transactional
-	public String assignReviewer(HttpServletRequest request, ModelMap modelMap) {
-		SecurityContext context = SecurityContextHolder.getContext();
-		String id = request.getParameter("id");
-		ApplicationForm applicationUnderReview = applicationFormDAO.get(Integer.parseInt(id));
-		applicationUnderReview.setReviewer((RegisteredUser)context.getAuthentication().getDetails());
+	public ModelAndView getReviewerPage(@RequestParam Integer id) {
+		ApplicationForm applicationUnderReview = applicationFormDAO.get(id);
 		
-		applicationFormDAO.save(applicationUnderReview);
-		modelMap.addAttribute("application", applicationUnderReview);
+		ReviewersListModel model = new ReviewersListModel();
+		model.setApplication(applicationUnderReview);
+		model.setReviewers(userDAO.getReviewers());
 		
-		return REVIEW_APPLICATION_VIEW_NAME;
+		return new ModelAndView(ADD_REVIEWER_VIEW_NAME, "model", model);
 	}
 	
-	@RequestMapping(value={"/submit"},method = RequestMethod.POST)
+	@RequestMapping(value={"/reviewerSuccess"},method = RequestMethod.POST)
 	@Transactional
-	public String getSubmittedReviewPage(HttpServletRequest request,
-			ModelMap modelMap) {
-		SecurityContext context = SecurityContextHolder.getContext();
-		String id = request.getParameter("id");
-		ApplicationForm application = applicationFormDAO.get(Integer.parseInt(id));
+	public ModelAndView addReviewer(@RequestParam Integer id, @RequestParam Integer reviewerId) {
+		ApplicationForm application = applicationFormDAO.get(id);
+		application.setReviewer(userDAO.get(reviewerId));
 		
-		ApplicationReview review = new ApplicationReview();
-		review.setUser((RegisteredUser)context.getAuthentication().getDetails());
-		review.setApplication(application);
-		review.setComment(request.getParameter("comment"));
+		applicationFormDAO.save(application);
 		
-		applicationReviewDAO.save(review);
-		modelMap.addAttribute("review", review);
+		ReviewerAssignedModel model = new ReviewerAssignedModel();
+		model.setApplication(application);
 		
-		return REVIEW_SUCCESS_VIEW_NAME;
+		return new ModelAndView(ADD_REVIEW_SUCCESS_VIEW_NAME, "model", model);
 	}
-	
-	
 }

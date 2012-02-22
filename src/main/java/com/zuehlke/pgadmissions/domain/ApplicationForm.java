@@ -111,4 +111,8 @@ public class ApplicationForm extends DomainObject<Integer> {
 	public boolean isUnderReview() {
 		return reviewer != null;
 	}
+
+	public boolean hasBeenApproved() {
+		return approver != null;
+	}
 }

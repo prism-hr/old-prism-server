@@ -4,7 +4,7 @@
 	<link rel="stylesheet" type="text/css"  href="<@spring.theme code='styleSheet' />"/>
 	<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
     <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
-    <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/interface/dwrService.js'/>"></script>
+    <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/interface/acceptDWR.js'/>"></script>
 	</head>
    <body id="bodyId">   
 		<h2>UCL Post-graduate admissions portal</h2>			
@@ -14,14 +14,16 @@
         <br/>
         
         <span id="demoReply"></span>
-        </script>
         <script type="text/javascript">
-              function update() {
-                    var name = dwr.util.getValue("demoName");
-                    dwrService.sayHello(name, function(data) {
-                        dwr.util.setValue("demoReply", data);
-                    });
-                    }
+                    
+              function acceptApplication(id){
+                   alert("adasdfa");
+                   acceptDWR.acceptApplication(id, function(data) {
+                        dwr.util.setValue("demoStatus", data);
+                 });
+                 alert("adasdfa");
+              	
+              }
         </script>
 					
 		<p>Roles</p>
@@ -50,15 +52,21 @@
     		  </form>
             </td>
     		<td>
-    			<form action="<@spring.url '/decision'/>" method = "POST">
-    			<input type="hidden" value="${application.id}" name="id"/>
     			<#if model.user.isInRole('APPROVER')>
-    				<input type="submit" name="submit" value="Approve"> 
+    				<input value="Approve" type="button" onclick="acceptApplication(id)"/>
       			</#if>
+      			<span id="demoStatus"></span>
     			<#if ((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR')) )>
     				<input type="submit" name="submit" value="Reject">
       			</#if>
+      			
+      			<form action="<@spring.url '/comment'/>" >
+    			    <input type="hidden" value="${application.id}" name="id"/>
+      				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER'))) && application.isActive() )>
+    					<input type="submit" name="cmtDecision" value="Comment">
+      				</#if>
       			</form>
+      			
     		</td>
     	</tr>   
 		</#list>

@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	
@@ -62,13 +63,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		assertNotSame(application, reloadedApplication);
 		assertEquals(application, reloadedApplication);
 		assertEquals(application.getUser(), user);	}
-
-	@Test
-	public void shouldCheckIFApplicationIsApproved(){
-		ApplicationForm application = getApplicationFormsBelongingToSameUser().get(0);
-		List<ApplicationForm> approvedApplicationsById = applicationDAO.checkIfApplicationIsAlreadyApproved(application.getId());
-		assertEquals(1, approvedApplicationsById.size());
-	}
 	
 	@Test
 	public void shouldFindAllApplicationsBelongingToSameUser(){
@@ -86,7 +80,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		ApplicationForm application1 = new ApplicationForm();	
 		application1.setUser(user);
 		application1.setProject(project);
-		application1.setApproved("1");
+		application1.setApprovalStatus(ApprovalStatus.APPROVED);
 		
 		applicationDAO.save(application1);
 		

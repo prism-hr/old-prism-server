@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Type;
 
+import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "APPLICATION_FORM")
@@ -20,8 +21,10 @@ public class ApplicationForm extends DomainObject<Integer> {
 	
 	private static final long serialVersionUID = 1L;
 	
-	private String approved;
-	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApprovalStatusEnumUserType")	
+	@Column(name="approval_status")
+	private ApprovalStatus approvalStatus;
+
 	@ManyToOne
 	@JoinColumn(name="registered_user_id")
 	private RegisteredUser user = null;
@@ -48,6 +51,14 @@ public class ApplicationForm extends DomainObject<Integer> {
 		return project;
 	}
 
+	public ApprovalStatus getApprovalStatus() {
+		return approvalStatus;
+	}
+	
+	public void setApprovalStatus(ApprovalStatus approvalStatus) {
+		this.approvalStatus = approvalStatus;
+	}
+	
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
@@ -86,13 +97,6 @@ public class ApplicationForm extends DomainObject<Integer> {
 		this.approver = approver;
 	}
 
-	public String getApproved() {
-		return approved;
-	}
-
-	public void setApproved(String approved) {
-		this.approved = approved;
-	}
 
 	public void setProject(Project project) {
 		this.project = project;	
@@ -108,15 +112,14 @@ public class ApplicationForm extends DomainObject<Integer> {
 		return submissionStatus;
 	}
 	
-public boolean isActive(){
-		return approved == null;
-	}
-
 	public boolean isUnderReview() {
 		return reviewer != null;
 	}
-
-
+	
+	public boolean isActive(){
+		return approvalStatus == null;
+	}
+	
 	public boolean hasBeenApproved() {
 		return approver != null;
 	}

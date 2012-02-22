@@ -4,8 +4,8 @@ import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
 import org.springframework.stereotype.Service;
 
-@Service
-@RemoteProxy
+@Service("springService")
+@RemoteProxy(name="dwrService")
 public class Demo {
 
 	@RemoteMethod

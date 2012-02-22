@@ -7,7 +7,10 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 
 public class RegisteredUserBuilder {
+	private String firstName;
 
+	private String lastName;
+	private String email;
 	private String username;
 	private String password;
 	private Integer id;
@@ -30,11 +33,27 @@ public class RegisteredUserBuilder {
 		return this;
 	}
 
+	public RegisteredUserBuilder email(String email) {
+		this.email = email;
+		return this;
+	}
+	
+	public RegisteredUserBuilder lastName(String lastName) {
+		this.lastName = lastName;
+		return this;
+	}
+	
+	public RegisteredUserBuilder firstName(String firstName) {
+		this.firstName = firstName;
+		return this;
+	}
+
 	public RegisteredUserBuilder username(String username) {
 		this.username = username;
 		return this;
 	}
-
+	
+	
 	public RegisteredUserBuilder password(String password) {
 		this.password = password;
 		return this;
@@ -68,6 +87,9 @@ public class RegisteredUserBuilder {
 	public RegisteredUser toUser() {
 		RegisteredUser user = new RegisteredUser();
 		user.setId(id);
+		user.setFirstName(firstName);
+		user.setLastName(lastName);
+		user.setEmail(email);
 		user.setUsername(username);
 		user.setPassword(password);
 		user.setEnabled(enabled);

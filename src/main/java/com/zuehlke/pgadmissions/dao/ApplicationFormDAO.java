@@ -1,10 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.HashMap;
 import java.util.List;
 
-import org.directwebremoting.annotations.RemoteMethod;
-import org.directwebremoting.annotations.RemoteProxy;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +29,6 @@ public class ApplicationFormDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(application);
 	}
 
-	@RemoteMethod
 	public ApplicationForm get(Integer id) {
 		return (ApplicationForm) sessionFactory.getCurrentSession().get(
 				ApplicationForm.class, id);

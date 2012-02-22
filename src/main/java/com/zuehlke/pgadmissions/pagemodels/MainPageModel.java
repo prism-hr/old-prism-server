@@ -1,6 +1,8 @@
-package com.zuehlke.pgadmissions.domain;
+package com.zuehlke.pgadmissions.pagemodels;
 
 import java.util.List;
+
+import com.zuehlke.pgadmissions.domain.Project;
 
 public class MainPageModel extends DomainModel{
 

@@ -7,36 +7,40 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.pagemodels.ApplicationListModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
-@RequestMapping(value = { "" })
-public class MainPageController {
+@RequestMapping(value = "applications")
+public class ApplicationListController {
 
-
-	private static final String MAIN_PAGE_VIEW_NAME = "main";
 	private ApplicationsService applicationsService;
-
-	MainPageController(){
+	
+	ApplicationListController(){
 		this(null);
 	}
 
 	@Autowired
-	public MainPageController(ApplicationsService applicationsService) {
+	public ApplicationListController(ApplicationsService applicationsService) {
 		this.applicationsService = applicationsService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String getMainPage( ModelMap modelMap) {
+	public ModelAndView getApplicationListPage() {
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		RegisteredUser user = (RegisteredUser) context.getAuthentication().getDetails();
 		
-		modelMap.addAttribute("user", user);
-		modelMap.addAttribute("applications", applicationsService.getVisibleApplications(user));
-
-		return MAIN_PAGE_VIEW_NAME;
+		ApplicationListModel model = new ApplicationListModel();
+		model.setUser(user);
+		model.setApplications(applicationsService.getVisibleApplications(user));
+		
+		ModelAndView modelAndView = new ModelAndView("application/application_list", "model", model);
+		
+		return modelAndView;
 	}
+	
 }

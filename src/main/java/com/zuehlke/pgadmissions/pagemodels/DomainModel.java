@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.domain;
+package com.zuehlke.pgadmissions.pagemodels;
 
 import java.util.Map;
 

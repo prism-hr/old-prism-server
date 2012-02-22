@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
-import com.zuehlke.pgadmissions.domain.MainPageModel;
+import com.zuehlke.pgadmissions.pagemodels.MainPageModel;
 
 @Controller
 @RequestMapping(value = { "/projects" })

@@ -46,7 +46,7 @@ public class ApplicationReview extends DomainObject<Integer>{
 	}
 
 	@ManyToOne
-	@JoinColumn(name="reviewer_user_id")
+	@JoinColumn(name="user_id")
 	private RegisteredUser user = null;
 	
 	@OneToOne

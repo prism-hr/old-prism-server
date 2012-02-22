@@ -42,7 +42,7 @@
     			<a href="application?id=${application.id}"> ${application.id} : ${application.project.title}</a><br> 
     		</td>
     		<td>
-    		  <#if user.isInRole('ADMINISTRATOR') || user.isInRole('REVIEWER')>
+    		  <#if model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')>
                    <button onclick="location.href='/pgadmissions/reviewer?id=${application.id}'">Assign Reviewer</button>
               </#if>
             </td>

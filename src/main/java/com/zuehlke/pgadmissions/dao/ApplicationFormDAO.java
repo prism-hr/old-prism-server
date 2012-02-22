@@ -49,15 +49,4 @@ public class ApplicationFormDAO {
 				
 	}
 
-	public List<ApplicationForm> checkIfApplicationIsAlreadyApproved(
-			Integer id) {
-		 @SuppressWarnings("unchecked")
-		List<ApplicationForm> list = sessionFactory.getCurrentSession()
-				.createCriteria(ApplicationForm.class)
-				.add(Restrictions.isNotNull("approved"))
-		 		.add(Restrictions.eq("id", id)).list();
-		 return list;
-	}
-
-
 }

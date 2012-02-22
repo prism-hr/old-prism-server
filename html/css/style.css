@@ -204,10 +204,12 @@ div.buttons { text-align: right; }
 #tools ul.right { float: right; margin-right: 20px; height: 31px; margin-bottom: -1px; text-align: left; }
 #tools ul.right li { background: url(../images/bg_tools_tabs.png) repeat-x; border-radius: 8px 8px 0 0; box-shadow: 0 0 5px #666; margin-left: 10px; padding: 0; }
 #tools ul.right li.current { background-position: 0 -31px; }
-#tools ul.right li a { text-indent: 30px; }
+#tools ul.right li a { color: #000; text-indent: 30px; background-position: 6px center; }
 
 #tools li.icon-pdf a { background-image: url(../images/icon_pdf.gif); }
 #tools li.icon-print a { background-image: url(../images/icon_print.gif); }
+#tools li.icon-progress a { background-image: url(../images/icon_progress.png); }
+#tools li.icon-application a { background-image: url(../images/icon_clipboard.png); background-position: 10px center !important; }
 
 
 /* LOGIN page -------------------------------------------------------------------------------------------- */
@@ -259,6 +261,15 @@ table.data thead th.headerSortDown, table.data thead th.headerSortUp { backgroun
 #programme-details .row label { font-weight: bold; display: inline-block; min-width: 140px; }
 #programme-details .row label.checkbox { margin-left: 1em; min-width: 0; }
 #programme-details .half { width: 50%; float: left; }
+
+
+/* "APPROVAL" page --------------------------------------------------------------------------------------- */
+#approval { background: #DDD; border: 1px solid #999; margin: 20px 0; padding: 20px; }
+#approval .row { margin-bottom: 10px; }
+#approval .row label { display: inline-block; width: 140px; }
+#approval .row select { width: 240px; }
+#approval .row textarea { clear: left; margin-top: 0.5em; width: 100%; }
+
 
 
 

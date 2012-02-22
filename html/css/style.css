@@ -187,6 +187,19 @@ div.buttons { text-align: right; }
 
 
 
+#tools { height: 35px; line-height: 30px; }
+#tools ul { list-style: none; margin-top: 5px; }
+#tools ul li { float: left; width: 140px; }
+#tools ul li a { background: no-repeat left center; color: #58585A; font-size: 9pt; font-weight: bold; display: block; text-indent: 22px; }
+#tools ul.left { float: left; margin-left: 40px; }
+#tools ul.right { float: right; margin-right: 20px; height: 31px; margin-bottom: -1px; text-align: left; }
+#tools ul.right li { background: url(../images/bg_tools_tabs.png) repeat-x; border-radius: 8px 8px 0 0; box-shadow: 0 0 5px #666; margin-left: 10px; padding: 0; }
+#tools ul.right li.current { background-position: 0 -31px; }
+#tools ul.right li a { text-indent: 30px; }
+
+#tools li.icon-pdf a { background-image: url(../images/icon_pdf.gif); }
+#tools li.icon-print a { background-image: url(../images/icon_print.gif); }
+
 
 /* LOGIN page -------------------------------------------------------------------------------------------- */
 body#login #middle { background: transparent; height: 685px; position: relative; }

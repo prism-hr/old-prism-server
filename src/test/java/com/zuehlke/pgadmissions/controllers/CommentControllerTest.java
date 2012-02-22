@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
@@ -56,7 +57,7 @@ public class CommentControllerTest {
 		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);
 		controller = new CommentController(applicationReviewServiceMock, applicationsServiceMock);
 		submittedNonApprovedApplication = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
-		submittedApprovedApplication = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED).approved("1").approver(approver).toApplicationForm();
+		submittedApprovedApplication = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED).approvedSatus(ApprovalStatus.APPROVED).approver(approver).toApplicationForm();
 		unsubmittedApplication = new ApplicationFormBuilder().id(3).toApplicationForm();
 		applicationReviewForSubmittedNonApproved = new ApplicationReviewBuilder().id(1).application(submittedNonApprovedApplication).comment("Amazing Research !!!").user(admin).toApplicationReview();
 	}

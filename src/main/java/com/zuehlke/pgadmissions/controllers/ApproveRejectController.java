@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
@@ -36,9 +37,9 @@ public class ApproveRejectController {
 		ApplicationForm application = applicationsService.getApplicationById(id);
 		SecurityContext context = SecurityContextHolder.getContext();
 		RegisteredUser approver = (RegisteredUser) context.getAuthentication().getDetails();
-		if (application.getApproved() == null) {
+		if (application.getApprovalStatus() == null) {
 			String submitAsBoolean = getSubmitAsBoolean(submit);
-			application.setApproved(submitAsBoolean);
+			application.setApprovalStatus(ApprovalStatus.APPROVED);
 			application.setApprover(approver);
 			applicationsService.save(application);
 			String decision = submitAsBoolean.equals("0")? "rejected" : "accepted";

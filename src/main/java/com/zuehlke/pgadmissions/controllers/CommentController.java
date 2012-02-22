@@ -57,7 +57,7 @@ public class CommentController {
 		{
 			commentModel.setMessage("You are not authorized to comment on the application");
 			}
-		else if (application1.getApproved() != null)
+		else if (application1.getApprovalStatus() != null)
 			{
 			commentModel.setMessage("You cannot comment on a completed application");
 			}

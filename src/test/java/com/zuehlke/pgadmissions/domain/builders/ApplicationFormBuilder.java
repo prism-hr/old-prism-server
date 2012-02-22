@@ -3,13 +3,14 @@ package com.zuehlke.pgadmissions.domain.builders;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class ApplicationFormBuilder {
 
 	private Integer id;
 	
-	private String approved;
+	private ApprovalStatus approved;
 	
 	private RegisteredUser approver;
 
@@ -37,7 +38,7 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
-	public ApplicationFormBuilder approved(String approved) {
+	public ApplicationFormBuilder approvedSatus(ApprovalStatus approved) {
 		this.approved = approved;
 		return this;
 	}
@@ -62,7 +63,7 @@ public class ApplicationFormBuilder {
 		application.setId(id);		
 		application.setUser(user);
 		application.setReviewer(reviewer);
-		application.setApproved(approved);
+		application.setApprovalStatus(approved);
 		application.setApprover(approver);
 		application.setProject(project);
 		application.setSubmissionStatus(submissionStatus);

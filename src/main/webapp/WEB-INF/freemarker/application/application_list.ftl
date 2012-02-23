@@ -54,10 +54,16 @@
     				<input type="submit" name="submit" value="Reject">
       			</#if>
       			
-      			<form action="<@spring.url '/comment'/>" >
+      			<form action="<@spring.url '/comments/addComment'/>" >
     			    <input type="hidden" value="${application.id}" name="id"/>
       				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER'))) && application.isActive() )>
     					<input type="submit" name="cmtDecision" value="Comment">
+      				</#if>
+      			</form>
+      			<form action="<@spring.url '/comments/showAll'/>" >
+    			    <input type="hidden" value="${application.id}" name="id"/>
+      				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER'))) && application.isActive() )>
+    					<input type="submit" name="showComments" value="Show Comments">
       				</#if>
       			</form>
       			

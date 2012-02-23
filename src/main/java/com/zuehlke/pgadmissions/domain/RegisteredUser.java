@@ -2,9 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -45,13 +43,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return roles;
 	}
 	
-	@ManyToMany(mappedBy="reviewers")
-	private Set<ApplicationForm> underReviewApplications = new HashSet<ApplicationForm>();
-	
-	public Set<ApplicationForm> getUnderReviewApplications() {
-		return underReviewApplications;
-	}
-
 	@Override
 	public void setId(Integer id) {
 		this.id = id;

@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
-@RemoteProxy(name="dwrApplicationsService")
 @Service("applicationsService")
 public class ApplicationsService {
 
@@ -30,7 +29,6 @@ public class ApplicationsService {
 	}
 
 	@Transactional
-	@RemoteMethod
 	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
 		List<ApplicationForm> visibleApplications = new ArrayList<ApplicationForm>();
 
@@ -41,8 +39,7 @@ public class ApplicationsService {
 				visibleApplications.addAll(applications);
 			}
 		} else {
-			List<ApplicationForm> applications = applicationFormDAO
-					.getAllApplications();
+			List<ApplicationForm> applications = applicationFormDAO.getAllApplications();
 			if (applications != null) {
 				for (ApplicationForm application : applications) {
 					if (user.canSee(application)) {
@@ -56,13 +53,11 @@ public class ApplicationsService {
 	}
 
 	@Transactional
-	@RemoteMethod
 	public ApplicationForm getApplicationById(int id) {
 		return applicationFormDAO.get(id);
 	}
 
 	@Transactional
-	@RemoteMethod
 	public void save(ApplicationForm application) {
 		applicationFormDAO.save(application);
 

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,9 +51,40 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		assertEquals(user, reloadedApplication.getUser());
 		assertEquals(project, reloadedApplication.getProject());
-		assertEquals(SubmissionStatus.UNSUBMITTED, application.getSubmissionStatus());
-
+		assertEquals(SubmissionStatus.UNSUBMITTED, reloadedApplication.getSubmissionStatus());
 	}
+	
+	@Test
+	public void shouldSaveAndLoadApplicationFormWithReviewer() {
+
+		ApplicationForm application = new ApplicationForm();
+		application.setProject(project);
+		application.setUser(user);
+		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		application.getReviewers().add(user);
+		
+		assertNull(application.getId());
+
+		sessionFactory.getCurrentSession().save(application);
+
+		assertNotNull(application.getId());
+		Integer id = application.getId();
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+		assertSame(application, reloadedApplication);
+
+		flushAndClearSession();
+
+		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+		assertNotSame(application, reloadedApplication);
+		assertEquals(application, reloadedApplication);
+
+		assertEquals(user, reloadedApplication.getUser());
+		assertEquals(project, reloadedApplication.getProject());
+		assertEquals(SubmissionStatus.SUBMITTED, reloadedApplication.getSubmissionStatus());
+		Assert.assertEquals(1, reloadedApplication.getReviewers().size());
+		Assert.assertTrue(reloadedApplication.getReviewers().contains(user));
+	}
+	
 
 	@Before
 	public void setup() {

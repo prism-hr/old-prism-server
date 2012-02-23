@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.CommentModel;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.exceptions.CannotViewCommentsException;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
@@ -87,7 +88,7 @@ public class CommentController {
 		ApplicationForm application = applicationService.getApplicationById(id);
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		if(user.isInRole(Authority.APPLICANT)){
-			commentModel.setMessage("You are not authorized to view comments");
+			throw new CannotViewCommentsException();
 		}
 		else if (user.isInRole(Authority.ADMINISTRATOR) || user.isInRole(Authority.APPROVER)){
 			commentModel.setMessage("Comments: ");

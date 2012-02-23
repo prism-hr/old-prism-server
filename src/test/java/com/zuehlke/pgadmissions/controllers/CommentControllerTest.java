@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.exceptions.CannotViewCommentsException;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
@@ -223,7 +224,7 @@ public class CommentControllerTest {
 		assertEquals("comments", modelAndView.getViewName());
 	}
 	
-	@Test
+	@Test(expected = CannotViewCommentsException.class)
 	public void applicantShouldNotSeeAnyComments(){
 		authenticationToken.setDetails(applicant);
 		SecurityContextImpl secContext = new SecurityContextImpl();
@@ -231,8 +232,7 @@ public class CommentControllerTest {
 		SecurityContextHolder.setContext(secContext);
 		List<ApplicationReview> comments = new ArrayList<ApplicationReview>();
 		comments.add(applicationReviewForSubmittedNonApproved1);
-		ModelAndView modelAndView = controller.getAllCommentsForApplication(1);
-		assertEquals("You are not authorized to view comments", ((CommentModel)modelAndView.getModelMap().get("model")).getMessage());
+		controller.getAllCommentsForApplication(1);
 	}
 	
 

@@ -202,5 +202,6 @@ target/test-classes/com/zuehlke/pgadmissions/controllers/MainPageControllerTest.
 target/test-classes/com/zuehlke/pgadmissions/controllers/ViewApplicationFormControllerTest.class
 target/test-classes/com/zuehlke/pgadmissions/domain/ApplicationFormTest.class
 docs/mock-ups.docx
+designs/*
 syntax: regexp
 target/*

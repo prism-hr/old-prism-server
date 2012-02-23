@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -16,12 +19,11 @@ public class ApplicationFormBuilder {
 
 	private RegisteredUser user;
 	
-	private RegisteredUser reviewer;
-	
 	private Project project;
 	
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
 	
+	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 	
 	public ApplicationFormBuilder registeredUser (RegisteredUser user) {
 		this.user = user;
@@ -48,8 +50,8 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
-	public ApplicationFormBuilder reviewer (RegisteredUser reviewer) {
-		this.reviewer = reviewer;
+	public ApplicationFormBuilder reviewers (Set<RegisteredUser> reviewers) {
+		this.reviewers = reviewers;
 		return this;
 	}
 	
@@ -62,7 +64,9 @@ public class ApplicationFormBuilder {
 		ApplicationForm application = new ApplicationForm();	
 		application.setId(id);		
 		application.setUser(user);
-		application.setReviewer(reviewer);
+		if (reviewers != null) {
+			application.getReviewers().addAll(reviewers);
+		}
 		application.setApprovalStatus(approved);
 		application.setApprover(approver);
 		application.setProject(project);

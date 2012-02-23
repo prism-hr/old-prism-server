@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewerAssignedModel;
 import com.zuehlke.pgadmissions.domain.ReviewersListModel;
 import com.zuehlke.pgadmissions.exceptions.CannotReviewApprovedApplicationException;
@@ -52,14 +53,19 @@ public class ReviewController {
 	
 	@RequestMapping(value={"/reviewerSuccess"},method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView addReviewer(@RequestParam Integer id, @RequestParam Integer reviewerId) {
-		ApplicationForm application = applicationFormDAO.get(id);
-		application.setReviewer(userDAO.get(reviewerId));
+	public ModelAndView addReviewer(@RequestParam Integer applicationId, @RequestParam Integer reviewerId) {
+		ApplicationForm application = applicationFormDAO.get(applicationId);
+		RegisteredUser reviewer = userDAO.get(reviewerId);
 		
+		application.getReviewers().add(reviewer);
+		reviewer.getUnderReviewApplications().add(application);
+		
+		userDAO.save(reviewer);
 		applicationFormDAO.save(application);
 		
 		ReviewerAssignedModel model = new ReviewerAssignedModel();
 		model.setApplication(application);
+		model.setReviewer(reviewer);
 		
 		return new ModelAndView(ADD_REVIEW_SUCCESS_VIEW_NAME, "model", model);
 	}

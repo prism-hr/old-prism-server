@@ -1,12 +1,18 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
@@ -29,10 +35,6 @@ public class ApplicationForm extends DomainObject<Integer> {
 	@JoinColumn(name="registered_user_id")
 	private RegisteredUser user = null;
 
-	@ManyToOne
-	@JoinColumn(name="reviewer_user_id")
-	private RegisteredUser reviewer = null;
-	
 	@OneToOne
 	@JoinColumn(name="approver_user_id")
 	private RegisteredUser approver = null;
@@ -45,7 +47,14 @@ public class ApplicationForm extends DomainObject<Integer> {
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.SubmissionStatusEnumUserType")	
 	@Column(name="submission_status")
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
+
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
+	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 	
+	public Set<RegisteredUser> getReviewers() {
+		return reviewers;
+	}
 	
 	public Project getProject() {
 		return project;
@@ -80,15 +89,6 @@ public class ApplicationForm extends DomainObject<Integer> {
 		this.user = user;
 	}
 	
-	public RegisteredUser getReviewer() {
-		return reviewer;
-	}
-	
-	public void setReviewer(RegisteredUser reviewer) {
-		this.reviewer = reviewer;
-	}
-
-
 	public RegisteredUser getApprover() {
 		return approver;
 	}
@@ -113,7 +113,7 @@ public class ApplicationForm extends DomainObject<Integer> {
 	}
 	
 	public boolean isUnderReview() {
-		return reviewer != null;
+		return reviewers.size() > 0;
 	}
 	
 	public boolean isActive(){

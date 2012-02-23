@@ -57,6 +57,7 @@ public class ReviewControllerTest {
 	@Test
 	public void shouldAssignReviewerToApplication() {
 		EasyMock.expect(userDAOMock.getReviewers()).andReturn(Arrays.asList(reviewer));
+		userDAOMock.save(reviewer);
 		EasyMock.expect(userDAOMock.get(1)).andReturn(reviewer);
 		EasyMock.replay(userDAOMock);
 
@@ -66,7 +67,7 @@ public class ReviewControllerTest {
 		
 		ReviewerAssignedModel model = (ReviewerAssignedModel) controller.addReviewer(1, 1).getModel().get("model");
 		ApplicationForm application = model.getApplication();
-		assertNotNull(application.getReviewer());
+		assertEquals(1, application.getReviewers().size());
 	}
 	
 	@Before

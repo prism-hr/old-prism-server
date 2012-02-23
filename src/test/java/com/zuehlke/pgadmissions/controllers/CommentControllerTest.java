@@ -31,19 +31,22 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
+import cucumber.annotation.en_pirate.Aye;
+
 public class CommentControllerTest {
 	
 	private RegisteredUser admin;
 	private RegisteredUser approver;
 	private RegisteredUser reviewer, reviewer2;
 	private RegisteredUser applicant;
+	private RegisteredUser adminAndReviewer;
 	private ApplicationsService applicationsServiceMock;
 	private ApplicationReviewService applicationReviewServiceMock;
 	private CommentController controller;
 	ApplicationForm submittedNonApprovedApplication;
 	ApplicationForm submittedApprovedApplication;
 	ApplicationForm unsubmittedApplication;
-	ApplicationReview applicationReviewForSubmittedNonApproved1, applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved3;
+	ApplicationReview applicationReviewForSubmittedNonApproved1, applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved3, applicationReviewForSubmittedNonApproved4;
 	UsernamePasswordAuthenticationToken authenticationToken;
 	
 	
@@ -52,14 +55,16 @@ public class CommentControllerTest {
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		admin = new RegisteredUserBuilder().id(1).username("bob")
 								.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		approver = new RegisteredUserBuilder().id(1).username("mark")
+		approver = new RegisteredUserBuilder().id(2).username("mark")
 				.role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		reviewer = new RegisteredUserBuilder().id(1).username("jane")
+		reviewer = new RegisteredUserBuilder().id(3).username("jane")
 				.role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		reviewer2 = new RegisteredUserBuilder().id(2).username("john")
+		reviewer2 = new RegisteredUserBuilder().id(3).username("john")
 				.role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		applicant = new RegisteredUserBuilder().id(1).username("fred")
+		applicant = new RegisteredUserBuilder().id(5).username("fred")
 				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		adminAndReviewer = new RegisteredUserBuilder().id(6).username("fred")
+				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole(), new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);
 		controller = new CommentController(applicationReviewServiceMock, applicationsServiceMock);
@@ -69,6 +74,7 @@ public class CommentControllerTest {
 		applicationReviewForSubmittedNonApproved1 = new ApplicationReviewBuilder().id(1).application(submittedNonApprovedApplication).comment("Amazing Research !!!").user(admin).toApplicationReview();
 		applicationReviewForSubmittedNonApproved2 = new ApplicationReviewBuilder().id(2).application(submittedNonApprovedApplication).comment("I'm not interested").user(reviewer).toApplicationReview();
 		applicationReviewForSubmittedNonApproved3 = new ApplicationReviewBuilder().id(3).application(submittedNonApprovedApplication).comment("I'm interested").user(reviewer2).toApplicationReview();
+		applicationReviewForSubmittedNonApproved4 = new ApplicationReviewBuilder().id(4).application(submittedNonApprovedApplication).comment("Comment By Admin And Reviewer").user(adminAndReviewer).toApplicationReview();
 	}
 
 	@Test
@@ -187,6 +193,32 @@ public class CommentControllerTest {
 		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved2));
 		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved1));
 		assertTrue(!loadedComments.contains(applicationReviewForSubmittedNonApproved3));
+		
+		assertEquals("comments", modelAndView.getViewName());
+	}
+	
+	@Test
+	public void shouldShowAllCommentsForUserWhoIsBothAdminAndReviewer(){
+		authenticationToken.setDetails(adminAndReviewer);
+		SecurityContextImpl secContext = new SecurityContextImpl();
+		secContext.setAuthentication(authenticationToken);
+		SecurityContextHolder.setContext(secContext);
+		List<ApplicationReview> comments = new ArrayList<ApplicationReview>();
+		comments.add(applicationReviewForSubmittedNonApproved1); //admin
+		comments.add(applicationReviewForSubmittedNonApproved2); //reviewer
+		comments.add(applicationReviewForSubmittedNonApproved3); //reviewer2
+		comments.add(applicationReviewForSubmittedNonApproved4); //adminAndReviewer
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(submittedNonApprovedApplication);
+		EasyMock.expect(applicationReviewServiceMock.getApplicationReviewsByApplication(submittedNonApprovedApplication)).andReturn(comments);
+		EasyMock.expect(applicationReviewServiceMock.getVisibleComments(submittedNonApprovedApplication, reviewer)).andReturn(Arrays.asList(applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved1));
+		EasyMock.replay(applicationsServiceMock, applicationReviewServiceMock);
+		ModelAndView modelAndView = controller.getAllCommentsForApplication(1);
+		List<ApplicationReview> loadedComments = ((CommentModel) modelAndView.getModelMap().get("model")).getComments();
+		assertEquals(4, loadedComments.size());
+		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved2));
+		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved1));
+		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved3));
+		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved4));
 		
 		assertEquals("comments", modelAndView.getViewName());
 	}

@@ -93,15 +93,17 @@ public class CommentController {
 		{
 			commentModel.setMessage("You cannot see comments for a completed application ??? ");
 		}
-		else if (user.isInRole(Authority.REVIEWER)){
-			commentModel.setMessage("Comments: ");
-			commentModel.setApplication(application);
-			commentModel.setComments(applicationReviewService.getVisibleComments(application, user));
-		}
-		else{
+		else if (user.isInRole(Authority.ADMINISTRATOR) || user.isInRole(Authority.APPROVER)){
+			System.out.println("HERE");
 			commentModel.setMessage("Comments: ");
 			commentModel.setApplication(application);
 			commentModel.setComments(applicationReviewService.getApplicationReviewsByApplication(application));
+		}
+		else if (user.isInRole(Authority.REVIEWER)){
+			System.out.println("HERE1");
+			commentModel.setMessage("Comments: ");
+			commentModel.setApplication(application);
+			commentModel.setComments(applicationReviewService.getVisibleComments(application, user));
 		}
 		
 		return new ModelAndView("comments", "model", commentModel);

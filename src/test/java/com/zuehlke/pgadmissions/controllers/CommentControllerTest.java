@@ -222,6 +222,19 @@ public class CommentControllerTest {
 		
 		assertEquals("comments", modelAndView.getViewName());
 	}
+	
+	@Test
+	public void applicantShouldNotSeeAnyComments(){
+		authenticationToken.setDetails(applicant);
+		SecurityContextImpl secContext = new SecurityContextImpl();
+		secContext.setAuthentication(authenticationToken);
+		SecurityContextHolder.setContext(secContext);
+		List<ApplicationReview> comments = new ArrayList<ApplicationReview>();
+		comments.add(applicationReviewForSubmittedNonApproved1);
+		ModelAndView modelAndView = controller.getAllCommentsForApplication(1);
+		assertEquals("You are not authorized to view comments", ((CommentModel)modelAndView.getModelMap().get("model")).getMessage());
+	}
+	
 
 	@After
 	public void tearDown() {

@@ -89,10 +89,6 @@ public class CommentController {
 		if(user.isInRole(Authority.APPLICANT)){
 			commentModel.setMessage("You are not authorized to view comments");
 		}
-		else if (application.getApprovalStatus() != null)
-		{
-			commentModel.setMessage("You cannot see comments for a completed application ??? ");
-		}
 		else if (user.isInRole(Authority.ADMINISTRATOR) || user.isInRole(Authority.APPROVER)){
 			commentModel.setMessage("Comments: ");
 			commentModel.setApplication(application);

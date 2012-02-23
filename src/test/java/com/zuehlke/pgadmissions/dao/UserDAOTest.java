@@ -16,6 +16,7 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -86,7 +87,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();		
 
-		List<RegisteredUser> foundReviewers = userDAO.getReviewers();
+		List<RegisteredUser> foundReviewers = userDAO.getReviewersForApplication(new ApplicationFormBuilder().id(1).toApplicationForm());
 		assertEquals(1, foundReviewers.size());
 		assertTrue(foundReviewers.contains(userOne));
 		assertFalse(foundReviewers.contains(userTwo));

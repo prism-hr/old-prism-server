@@ -7,13 +7,15 @@
 		<p>Project Description: ${application.project.description}</p>
 		<#if !user.isInRole('APPLICANT')>
 		  <#if application.isUnderReview()>
+		      <p>Reviewers:</p>
 		      <#list application.reviewers as reviewer>
                     <li>${reviewer.username}</li>
               </#list>
 		  <#else>
 		      <p>Reviewer: Not yet assigned.</p>
-		  </#if>
-		</#if>
+		  </#if>		  
+		  
+		</#if>		
 		<p><a href="<@spring.url '/j_spring_security_logout'/>">Log out</a></p>
 	</body>
 	

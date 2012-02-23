@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -28,6 +29,7 @@ public class ApplicationFormDAO {
 	public void save(ApplicationForm application) {
 		sessionFactory.getCurrentSession().saveOrUpdate(application);
 	}
+
 
 	public ApplicationForm get(Integer id) {
 		return (ApplicationForm) sessionFactory.getCurrentSession().get(

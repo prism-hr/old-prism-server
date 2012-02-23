@@ -42,11 +42,12 @@ public class ReviewControllerTest {
 	
 	@Test
 	public void shouldgetListOfReviewersToApplication(){
-		EasyMock.expect(userDAOMock.getReviewers()).andReturn(Arrays.asList(reviewer));
-		EasyMock.replay(userDAOMock);
-
 		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(form);
 		EasyMock.replay(applicationFormDAOMock);
+		
+		EasyMock.expect(userDAOMock.getReviewersForApplication(form)).andReturn(Arrays.asList(reviewer));
+		EasyMock.replay(userDAOMock);
+
 		
 		ReviewersListModel model = (ReviewersListModel) controller.getReviewerPage(1).getModel().get("model");
 		ApplicationForm reviewedApplication = model.getApplication();
@@ -56,15 +57,15 @@ public class ReviewControllerTest {
 	
 	@Test
 	public void shouldAssignReviewerToApplication() {
-		EasyMock.expect(userDAOMock.getReviewers()).andReturn(Arrays.asList(reviewer));
-		userDAOMock.save(reviewer);
-		EasyMock.expect(userDAOMock.get(1)).andReturn(reviewer);
-		EasyMock.replay(userDAOMock);
 
 		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(form);
 		applicationFormDAOMock.save(form);
 		EasyMock.replay(applicationFormDAOMock);
 		
+		EasyMock.expect(userDAOMock.getReviewersForApplication(form)).andReturn(Arrays.asList(reviewer));
+		userDAOMock.save(reviewer);
+		EasyMock.expect(userDAOMock.get(1)).andReturn(reviewer);
+		EasyMock.replay(userDAOMock);
 		ReviewerAssignedModel model = (ReviewerAssignedModel) controller.addReviewer(1, 1).getModel().get("model");
 		ApplicationForm application = model.getApplication();
 		assertEquals(1, application.getReviewers().size());

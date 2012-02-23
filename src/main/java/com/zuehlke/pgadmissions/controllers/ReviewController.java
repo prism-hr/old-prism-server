@@ -46,7 +46,7 @@ public class ReviewController {
 		
 		ReviewersListModel model = new ReviewersListModel();
 		model.setApplication(applicationUnderReview);
-		model.setReviewers(userDAO.getReviewers());
+		model.setReviewers(userDAO.getReviewersForApplication(applicationUnderReview));
 		
 		return new ModelAndView(ADD_REVIEWER_VIEW_NAME, "model", model);
 	}
@@ -58,9 +58,6 @@ public class ReviewController {
 		RegisteredUser reviewer = userDAO.get(reviewerId);
 		
 		application.getReviewers().add(reviewer);
-		reviewer.getUnderReviewApplications().add(application);
-		
-		userDAO.save(reviewer);
 		applicationFormDAO.save(application);
 		
 		ReviewerAssignedModel model = new ReviewerAssignedModel();

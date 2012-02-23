@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewerAssignedModel;
 import com.zuehlke.pgadmissions.domain.ReviewersListModel;
 import com.zuehlke.pgadmissions.exceptions.CannotReviewApprovedApplicationException;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping(value={"/reviewer"})
@@ -23,16 +23,16 @@ public class ReviewController {
 	private static final String ADD_REVIEW_SUCCESS_VIEW_NAME = "reviewer/reviewerSuccess";
 	private static final String ADD_REVIEWER_VIEW_NAME = "reviewer/reviewer";
 	private final ApplicationFormDAO applicationFormDAO;
-	private final UserDAO userDAO;
+	private final UserService userService;
 	
 	ReviewController(){
 		this(null, null);
 	}
 
 	@Autowired
-	public ReviewController(ApplicationFormDAO applicationFormDAO, UserDAO userDAO) {
+	public ReviewController(ApplicationFormDAO applicationFormDAO, UserService userService) {
 		this.applicationFormDAO = applicationFormDAO;
-		this.userDAO = userDAO;
+		this.userService = userService;
 	}
 
 
@@ -46,7 +46,7 @@ public class ReviewController {
 		
 		ReviewersListModel model = new ReviewersListModel();
 		model.setApplication(applicationUnderReview);
-		model.setReviewers(userDAO.getReviewersForApplication(applicationUnderReview));
+		model.setReviewers(userService.getReviewersForApplication(applicationUnderReview));
 		
 		return new ModelAndView(ADD_REVIEWER_VIEW_NAME, "model", model);
 	}
@@ -55,7 +55,7 @@ public class ReviewController {
 	@Transactional
 	public ModelAndView addReviewer(@RequestParam Integer applicationId, @RequestParam Integer reviewerId) {
 		ApplicationForm application = applicationFormDAO.get(applicationId);
-		RegisteredUser reviewer = userDAO.get(reviewerId);
+		RegisteredUser reviewer = userService.getUser(reviewerId);
 		
 		application.getReviewers().add(reviewer);
 		applicationFormDAO.save(application);

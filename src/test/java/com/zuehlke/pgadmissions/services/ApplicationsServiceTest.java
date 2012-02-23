@@ -33,7 +33,7 @@ public class ApplicationsServiceTest{
 	private ApplicationsService applicationsService;
 	
 	@Test
-	public void shouldgetListOfReviewersToApplicationForApplicant(){
+	public void shouldgetListOfApplicationsForApplicant(){
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getApplicationsByUser(user)).andReturn(Arrays.asList(form));
 		EasyMock.replay(applicationFormDAOMock);
@@ -43,7 +43,7 @@ public class ApplicationsServiceTest{
 	}
 	
 	@Test
-	public void shouldGetListOfReviewersToApplicationForAssignedReviewer(){
+	public void shouldGetListOfApplicationsForAssignedReviewer(){
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		reviewers.add(reviewer);
@@ -56,7 +56,7 @@ public class ApplicationsServiceTest{
 	}
 	
 	@Test
-	public void shouldNotGetListOfReviewersToApplicationForUnAssignedReviewer(){
+	public void shouldNotGetListOfApplicationsForUnAssignedReviewer(){
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));

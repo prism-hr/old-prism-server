@@ -2,7 +2,9 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -38,9 +40,16 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@ManyToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
-
+	
 	public List<Role> getRoles() {
 		return roles;
+	}
+	
+	@ManyToMany(mappedBy="reviewers")
+	private Set<ApplicationForm> underReviewApplications = new HashSet<ApplicationForm>();
+	
+	public Set<ApplicationForm> getUnderReviewApplications() {
+		return underReviewApplications;
 	}
 
 	@Override
@@ -169,7 +178,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		
 		if (isInRole(Authority.REVIEWER)) {
-			return this.equals(applicationForm.getReviewer());
+			return applicationForm.getReviewers().contains(this);
 		}
 		
 		if (isInRole(Authority.APPROVER)) {

@@ -3,6 +3,9 @@ package com.zuehlke.pgadmissions.domain;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -76,7 +79,9 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserIsItsReviewer(){
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewer(reviewer).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
+		reviewers.add(reviewer);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewers).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		assertTrue(reviewer.canSee(applicationForm));
 		
 	}
@@ -107,7 +112,9 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnFalseForAnyoneNotAnApplicantIfUnsubmittedApplication() {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewer(reviewer).toApplicationForm();
+		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
+		reviewers.add(reviewer);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewers).toApplicationForm();
 		assertFalse(reviewer.canSee(applicationForm));
 	}
 	

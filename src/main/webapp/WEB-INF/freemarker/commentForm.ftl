@@ -11,6 +11,7 @@
 </tr>
 </table>
 </form>
-
+<p><a href="<@spring.url '/j_spring_security_logout'/>">Log out</a></p>
 </body>
+
 </html>

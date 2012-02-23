@@ -11,5 +11,7 @@
 		      <p>Reviewer: Not yet assigned.</p>
 		  </#if>
 		</#if>
+		<p><a href="<@spring.url '/j_spring_security_logout'/>">Log out</a></p>
 	</body>
+	
 </html>

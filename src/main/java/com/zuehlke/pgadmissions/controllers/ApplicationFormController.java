@@ -62,13 +62,19 @@ public class ApplicationFormController {
 		return new ApplicationForm();
 	}
 
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value="/success", method = RequestMethod.GET)
 	@Transactional
 	public String submitApplication(@RequestParam Integer id) {
 		ApplicationForm applicationForm = applicationDAO.get(id);
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationDAO.save(applicationForm);
 		return "application/applicationFormSubmitted";
+	}
+	
+	@RequestMapping(value="/edit", method = RequestMethod.GET)
+	@Transactional
+	public String editPersonalDetailsInApplication() {
+		return "application/edit_personal_details_form";
 	}
 
 }

@@ -39,6 +39,13 @@ public class ApplicationFormControllerTest {
 		
 		assertEquals("application/applicationForm", modelAndView.getViewName());
 	}
+	
+	@Test
+	public void shouldGetEditPersonalDetailsInApplicationView() {
+		String view = applicationController.editPersonalDetailsInApplication();
+		assertEquals("application/edit_personal_details_form", view);
+	}
+
 
 	@Test
 	public void shouldLoadProjectByIdANdSetOnApplicationForm() {

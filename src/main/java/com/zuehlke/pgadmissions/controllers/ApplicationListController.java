@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationListModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
-@RequestMapping(value = "applications")
+@RequestMapping(value = {"","applications"})
 public class ApplicationListController {
 
 	private ApplicationsService applicationsService;

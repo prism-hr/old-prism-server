@@ -1,6 +1,7 @@
+<!DOCTYPE HTML>
+<#import "/spring.ftl" as spring />
 <html>
 	<head>
-    <#import "/spring.ftl" as spring />
 	<link rel="stylesheet" type="text/css"  href="<@spring.theme code='styleSheet' />"/>
 	<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
     <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
@@ -9,11 +10,7 @@
    <body id="bodyId">   
 		<h2>UCL Post-graduate admissions portal</h2>			
 		<p>Welcome ${model.user.username}</p>	
-		<input type="text" id="demoName"/>
-        <input value="Send" type="button" onclick="update()"/>
-        <br/>
-        
-        <span id="demoReply"></span>
+		
         <script type="text/javascript">
                     
               function acceptApplication(id){
@@ -31,10 +28,7 @@
 		<#list model.user.roles as role>
 	        <li>${role.authority}</li>
       	</#list>
-      	</ul>
-      	<#if model.user.isInRole('APPLICANT')>
-      		<button onclick="location.href='/pgadmissions/apply'">Apply now</button>
-      	</#if>
+      	</ul>      
       	<br/>
       	<h3>Applications:</h3>     
       	<table> 	
@@ -71,6 +65,6 @@
     	</tr>   
 		</#list>
 		</table>
-		
+		<p><a href="<@spring.url '/j_spring_security_logout'/>">Log out</a></p>
 	</body>
 </html>

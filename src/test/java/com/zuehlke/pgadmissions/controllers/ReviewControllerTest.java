@@ -22,7 +22,9 @@ import com.zuehlke.pgadmissions.domain.ReviewersListModel;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.exceptions.CannotReviewApprovedApplicationException;
 
 public class ReviewControllerTest {
 
@@ -69,6 +71,21 @@ public class ReviewControllerTest {
 		ReviewerAssignedModel model = (ReviewerAssignedModel) controller.addReviewer(1, 1).getModel().get("model");
 		ApplicationForm application = model.getApplication();
 		assertEquals(1, application.getReviewers().size());
+	}
+	
+	@Test(expected=CannotReviewApprovedApplicationException.class)
+	public void shouldThrowExceptionWhenAssigningReviewerToApprovedApplication() {
+		ApplicationForm approvedForm = new ApplicationFormBuilder().id(1).approvedSatus(ApprovalStatus.APPROVED).toApplicationForm();
+		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(approvedForm);
+		applicationFormDAOMock.save(approvedForm);
+		EasyMock.replay(applicationFormDAOMock);
+		
+		EasyMock.expect(userDAOMock.getReviewersForApplication(approvedForm)).andReturn(Arrays.asList(reviewer));
+		userDAOMock.save(reviewer);
+		EasyMock.expect(userDAOMock.get(1)).andReturn(reviewer);
+		EasyMock.replay(userDAOMock);
+		
+		controller.getReviewerPage(1);
 	}
 	
 	@Before

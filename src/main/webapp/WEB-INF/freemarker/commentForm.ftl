@@ -1,3 +1,4 @@
+<#import "/spring.ftl" as spring />
 <html>
 <body>
 <form action= "/pgadmissions/comment/submit?id=${model.application.id}" method="post">

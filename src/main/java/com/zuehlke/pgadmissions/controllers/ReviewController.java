@@ -40,7 +40,7 @@ public class ReviewController {
 	@Transactional
 	public ModelAndView getReviewerPage(@RequestParam Integer id) {
 		ApplicationForm applicationUnderReview = applicationFormDAO.get(id);
-		if (applicationUnderReview.hasBeenApproved()) {
+		if (!applicationUnderReview.isActive()) {
 			throw new CannotReviewApprovedApplicationException();
 		}
 		

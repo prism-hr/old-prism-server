@@ -126,8 +126,4 @@ public class ApplicationForm extends DomainObject<Integer> {
 	public boolean isActive() {
 		return approvalStatus == null;
 	}
-
-	public boolean hasBeenApproved() {
-		return approver != null;
-	}
 }

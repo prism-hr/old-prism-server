@@ -48,21 +48,13 @@ public class ApplicationForm extends DomainObject<Integer> {
 	@Column(name="submission_status")
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
 	
+	@ManyToMany(fetch=FetchType.EAGER)
+	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
 	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();	
 
-	@ManyToMany()
-	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
-	@Access(AccessType.PROPERTY)
 	public List<RegisteredUser> getReviewers() {
 		return reviewers;
 	}
-	
-	public void setReviewers(List<RegisteredUser> reviewers) {
-		this.reviewers.clear();
-		this.reviewers.addAll(reviewers);
-	}
-	
-	
 	
 	public Project getProject() {
 		return project;

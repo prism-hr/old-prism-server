@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -52,7 +51,6 @@ public class ApplicationListControllerTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void shouldAddAllApplicationsToModel() {
 		ApplicationForm applicationOne = new ApplicationFormBuilder().id(1).toApplicationForm();
 		ApplicationForm applicationTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
@@ -62,7 +60,7 @@ public class ApplicationListControllerTest {
 		ModelAndView modelAndView = controller.getApplicationListPage();
 		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
 	
-		List<ApplicationForm> applications = (List<ApplicationForm>) model.getApplications();
+		List<ApplicationForm> applications = model.getApplications();
 		assertEquals(2, applications.size());
 		assertTrue(applications.containsAll(Arrays.asList(applicationOne, applicationTwo)));
 	}

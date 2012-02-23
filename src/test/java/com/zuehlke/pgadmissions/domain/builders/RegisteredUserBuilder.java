@@ -1,11 +1,8 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 
@@ -23,7 +20,6 @@ public class RegisteredUserBuilder {
 	private boolean credentialsNonExpired = true;
 
 	private List<Role> roles = new ArrayList<Role>();
-	private Set<ApplicationForm> applicationsUnderReview = new HashSet<ApplicationForm>();
 
 	public RegisteredUserBuilder role(Role role) {
 		this.roles.add(role);
@@ -88,11 +84,6 @@ public class RegisteredUserBuilder {
 		return this;
 	}
 	
-	public RegisteredUserBuilder applicationsUnderReview(Set<ApplicationForm> applications) {
-		this.applicationsUnderReview = applications;
-		return this;
-	}
-
 	public RegisteredUser toUser() {
 		RegisteredUser user = new RegisteredUser();
 		user.setId(id);
@@ -106,7 +97,6 @@ public class RegisteredUserBuilder {
 		user.setAccountNonLocked(accountNonLocked);
 		user.setCredentialsNonExpired(credentialsNonExpired);
 		user.getRoles().addAll(roles);
-		user.getUnderReviewApplications().addAll(applicationsUnderReview);
 		return user;
 	}
 

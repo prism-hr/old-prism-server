@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -25,8 +25,8 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 @Access(AccessType.FIELD) 
 public class ApplicationForm extends DomainObject<Integer> {
 	
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = -7671357234815343496L;
+
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApprovalStatusEnumUserType")	
 	@Column(name="approval_status")
 	private ApprovalStatus approvalStatus;
@@ -47,14 +47,22 @@ public class ApplicationForm extends DomainObject<Integer> {
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.SubmissionStatusEnumUserType")	
 	@Column(name="submission_status")
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
-
-	@ManyToMany(fetch=FetchType.EAGER)
-	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
-	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 	
-	public Set<RegisteredUser> getReviewers() {
+	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();	
+
+	@ManyToMany()
+	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
+	@Access(AccessType.PROPERTY)
+	public List<RegisteredUser> getReviewers() {
 		return reviewers;
 	}
+	
+	public void setReviewers(List<RegisteredUser> reviewers) {
+		this.reviewers.clear();
+		this.reviewers.addAll(reviewers);
+	}
+	
+	
 	
 	public Project getProject() {
 		return project;
@@ -112,8 +120,9 @@ public class ApplicationForm extends DomainObject<Integer> {
 		return submissionStatus;
 	}
 	
-	public boolean isUnderReview() {
-		return reviewers.size() > 0;
+	
+	public boolean isUnderReview(){
+		return !reviewers.isEmpty();
 	}
 	
 	public boolean isActive(){

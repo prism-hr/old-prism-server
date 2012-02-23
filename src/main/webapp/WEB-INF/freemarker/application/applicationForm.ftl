@@ -119,7 +119,7 @@
 			          <hr />
 			          
 			          <a class="button" href="#">Close</a>
-			          <button type="submit">Submit</button>
+			          <button type="submit" onclick="location.href='/pgadmissions/apply/success?id=${model.applicationForm.id}'">Submit</button>
 			          
 			        </div><!-- .content-box-inner -->
 			      </div><!-- .content-box -->

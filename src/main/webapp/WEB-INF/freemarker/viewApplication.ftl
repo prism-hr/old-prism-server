@@ -1,3 +1,4 @@
+<#import "/spring.ftl" as spring />
 <html>
    <body>
 		<h2>Application View</h2>	

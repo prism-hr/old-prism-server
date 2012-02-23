@@ -6,6 +6,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Shell template</title>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/style.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/login.css' />"/>
 	
 	</head>
 
@@ -62,8 +63,8 @@
 		</div>
 		
 		<!-- Scripts -->
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/modernizr.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/plugins.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 	</body>
 </html>

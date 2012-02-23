@@ -1,10 +1,18 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 
 @Entity(name="PROGRAM")
@@ -15,6 +23,11 @@ public class Program extends DomainObject<Integer> {
 	private String code;
 	private String title;
 	private String description;
+	
+
+	@ManyToMany
+	@JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "registered_user_id") })
+	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
 
 	@Override
 	@Id
@@ -53,6 +66,22 @@ public class Program extends DomainObject<Integer> {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public List<RegisteredUser> getApprovers() {
+		return approvers;
+	}
+
+	public boolean isApprover(RegisteredUser user) {
+		if(!user.isInRole(Authority.APPROVER)){
+			return false;
+		}
+		for (RegisteredUser approver : approvers) {
+			if(approver.equals(user)){
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

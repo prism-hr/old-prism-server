@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotReviewApprovedApplicationException;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class ReviewControllerTest {
 
@@ -33,6 +34,7 @@ public class ReviewControllerTest {
 	private ReviewController controller;
 	private ApplicationForm form;
 	private UserDAO userDAOMock;
+	private UserService userService;
 
 	@Test
 	public void shouldReturnReviwersViewName() {
@@ -47,8 +49,8 @@ public class ReviewControllerTest {
 		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(form);
 		EasyMock.replay(applicationFormDAOMock);
 		
-		EasyMock.expect(userDAOMock.getReviewersForApplication(form)).andReturn(Arrays.asList(reviewer));
-		EasyMock.replay(userDAOMock);
+		EasyMock.expect(userService.getReviewersForApplication(form)).andReturn(Arrays.asList(reviewer));
+		EasyMock.replay(userService);
 
 		
 		ReviewersListModel model = (ReviewersListModel) controller.getReviewerPage(1).getModel().get("model");
@@ -64,7 +66,10 @@ public class ReviewControllerTest {
 		applicationFormDAOMock.save(form);
 		EasyMock.replay(applicationFormDAOMock);
 		
-		EasyMock.expect(userDAOMock.getReviewersForApplication(form)).andReturn(Arrays.asList(reviewer));
+		EasyMock.expect(userService.getReviewersForApplication(form)).andReturn(Arrays.asList(reviewer));
+		EasyMock.expect(userService.getUser(1)).andReturn(reviewer);
+		EasyMock.replay(userService);
+		
 		userDAOMock.save(reviewer);
 		EasyMock.expect(userDAOMock.get(1)).andReturn(reviewer);
 		EasyMock.replay(userDAOMock);
@@ -80,7 +85,9 @@ public class ReviewControllerTest {
 		applicationFormDAOMock.save(approvedForm);
 		EasyMock.replay(applicationFormDAOMock);
 		
-		EasyMock.expect(userDAOMock.getReviewersForApplication(approvedForm)).andReturn(Arrays.asList(reviewer));
+		EasyMock.expect(userService.getReviewersForApplication(approvedForm)).andReturn(Arrays.asList(reviewer));
+		EasyMock.replay(userService);
+		
 		userDAOMock.save(reviewer);
 		EasyMock.expect(userDAOMock.get(1)).andReturn(reviewer);
 		EasyMock.replay(userDAOMock);
@@ -99,7 +106,8 @@ public class ReviewControllerTest {
 		
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		userDAOMock = EasyMock.createMock(UserDAO.class);
-		controller = new ReviewController(applicationFormDAOMock, userDAOMock);
+		userService = EasyMock.createMock(UserService.class);
+		controller = new ReviewController(applicationFormDAOMock, userService);
 		
 		form = new ApplicationFormBuilder().id(1).toApplicationForm();
 		

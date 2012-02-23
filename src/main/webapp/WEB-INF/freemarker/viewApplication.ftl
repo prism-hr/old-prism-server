@@ -7,6 +7,7 @@
 		<p>Project Description: ${application.project.description}</p>
 		<#if !user.isInRole('APPLICANT')>
 		  <#if application.isUnderReview()>
+		      <p>Reviewers:</p>
 		      <#list application.reviewers as reviewer>
                     <li>${reviewer.username}</li>
               </#list>

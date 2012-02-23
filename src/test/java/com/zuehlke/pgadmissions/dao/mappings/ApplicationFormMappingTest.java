@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+
+import java.util.Arrays;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -61,7 +64,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setProject(project);
 		application.setUser(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		application.getReviewers().add(user);
+		application.setReviewers(Arrays.asList(user));
 		
 		assertNull(application.getId());
 

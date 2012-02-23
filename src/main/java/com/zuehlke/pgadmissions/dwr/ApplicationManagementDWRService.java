@@ -5,15 +5,16 @@ import org.directwebremoting.annotations.RemoteProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
-@Service
+
 @RemoteProxy(name = "acceptDWR")
+@Component
 public class ApplicationManagementDWRService {
 
 	private final ApplicationsService applicationsService;
@@ -25,12 +26,13 @@ public class ApplicationManagementDWRService {
 	@Autowired
 	public ApplicationManagementDWRService(ApplicationsService applicationsService) {
 		this.applicationsService = applicationsService;
+		
 	}
 
 	@RemoteMethod
 	public String acceptApplication(Integer appId) {
-
-		System.out.println("I am in dwr!!!");
+ 
+		System.out.println("I am in dwr w. appId " +  appId);
 		String status = "";
 
 		ApplicationForm application = applicationsService.getApplicationById(appId);

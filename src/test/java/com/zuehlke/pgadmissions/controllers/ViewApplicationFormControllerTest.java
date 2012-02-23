@@ -17,14 +17,16 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class ViewApplicationFormControllerTest {
 	
-	private ApplicationFormDAO applicationFormDAOMock;
+
 	private ViewApplicationFormController viewApplicationFormController;
 	private ApplicationForm form;
 	private MockHttpServletRequest request;
 	private RegisteredUser user;
+	private ApplicationsService applicationsServiceMock;
 
 
 	@Test
@@ -35,8 +37,8 @@ public class ViewApplicationFormControllerTest {
 	@Test
 	public void shouldGetApplicationFromApplicationId(){
 	
-		EasyMock.expect(applicationFormDAOMock.get(1)).andReturn(form);
-		EasyMock.replay(applicationFormDAOMock);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
 		ModelMap modelMap = new ModelMap();
 		viewApplicationFormController.getViewApplicationPage(request, modelMap);
 		assertEquals(form, modelMap.get("application"));
@@ -54,8 +56,8 @@ public class ViewApplicationFormControllerTest {
 		
 		request = new MockHttpServletRequest();
 		request.setParameter("id", "1");
-		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		viewApplicationFormController = new ViewApplicationFormController(applicationFormDAOMock);
+		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		viewApplicationFormController = new ViewApplicationFormController(applicationsServiceMock);
 		form = new ApplicationFormBuilder().id(1).toApplicationForm();
 	}
 	

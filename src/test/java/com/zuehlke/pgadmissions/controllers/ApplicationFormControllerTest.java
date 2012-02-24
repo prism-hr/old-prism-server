@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -31,6 +32,7 @@ public class ApplicationFormControllerTest {
 	private ApplicationForm applicationForm;
 	ApplicationFormDAO applicationDAOMock;
 	private RegisteredUser student;
+	private UserDAO userDAOMock;
 	
 	@Test
 	public void shouldGetApplicationFormView() {
@@ -107,9 +109,10 @@ public class ApplicationFormControllerTest {
 		applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		
 		projectDAOMock = EasyMock.createMock(ProjectDAO.class);
-		applicationDAOMock = EasyMock.createMock(ApplicationFormDAO.class);		
+		applicationDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
+		userDAOMock = EasyMock.createMock(UserDAO.class);
 		
-		applicationController = new ApplicationFormController(projectDAOMock, applicationDAOMock) {			
+		applicationController = new ApplicationFormController(projectDAOMock, applicationDAOMock, userDAOMock) {			
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

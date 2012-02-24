@@ -14,6 +14,8 @@ import com.zuehlke.pgadmissions.pagemodels.MainPageModel;
 @RequestMapping(value = { "/projects" })
 public class ProjectController {
 	
+	private static final String PROJECTS_VIEW_NAME = "projects/projects";
+
 	ProjectController() {
 		this(null);
 	}
@@ -31,7 +33,7 @@ public class ProjectController {
 		
 		MainPageModel mainPageModel = new MainPageModel();
 		mainPageModel.setProjects(projectDAO.getAllProjects());
-		return new ModelAndView("projects/projects", "model", mainPageModel);
+		return new ModelAndView(PROJECTS_VIEW_NAME, "model", mainPageModel);
 	}
 
 }

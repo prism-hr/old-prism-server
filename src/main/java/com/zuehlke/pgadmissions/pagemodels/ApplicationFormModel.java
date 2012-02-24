@@ -5,7 +5,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 public class ApplicationFormModel extends DomainModel{
 
 	private ApplicationForm applicationForm;
-	private String projectId;
 	
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -13,11 +12,4 @@ public class ApplicationFormModel extends DomainModel{
 	public void setApplicationForm(ApplicationForm applicationForm) {
 		this.applicationForm = applicationForm;
 	}
-	public String getProjectId() {
-		return projectId;
-	}
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
-	
 }

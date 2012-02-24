@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 @RequestMapping(value = {"","applications"})
 public class ApplicationListController {
 
+	private static final String APPLICATION_LIST_VIEW_NAME = "application/application_list";
 	private ApplicationsService applicationsService;
 	
 	ApplicationListController(){
@@ -37,7 +38,7 @@ public class ApplicationListController {
 		model.setUser(user);
 		model.setApplications(applicationsService.getVisibleApplications(user));
 		
-		ModelAndView modelAndView = new ModelAndView("application/application_list", "model", model);
+		ModelAndView modelAndView = new ModelAndView(APPLICATION_LIST_VIEW_NAME, "model", model);
 		
 		return modelAndView;
 	}

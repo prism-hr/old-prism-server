@@ -34,8 +34,8 @@
 			    </tr>
 			</tbody>
 		</table>
-		<form method="post" action="woooop">
-
+		<form method="post" action="<@spring.url '/apply'/>" method = "POST">
+                <input type="hidden" name="id" value="${model.applicationForm.id}"/>
               	<div>
                 	<div class="row">
                   	<label class="label">First Name</label>

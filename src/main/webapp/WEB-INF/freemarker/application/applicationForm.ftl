@@ -8,29 +8,6 @@
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/style.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/application.css' />"/>
 	
-		<script type="text/javascript">
-                    
-              function fetchPersonalDetails(){
-                   //alert("fetchPersonalDetails - begin");
-                   
-                   acceptDWR.displayPersonalDetails(${model.user.id},
-                   		function(data) {
-                        	dwr.util.setValue("demoStatus", data);
-                        	
-                        	//alert(data.firstName + " " + data.lastName);
-                        	
-                        	$("#firstName").val(data.firstName);
-                        	$("#lastName").val(data.lastName);
-                        	
-                 		}
-                   );
-                   
-                 //alert("fetchPersonalDetails - done");
-              	
-              }
-        </script>
-		
-	
 	</head>
 
 	<body onload="fetchPersonalDetails()">
@@ -164,5 +141,6 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
 	</body>
 </html>

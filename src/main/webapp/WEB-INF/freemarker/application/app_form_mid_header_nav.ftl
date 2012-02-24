@@ -16,7 +16,7 @@
 			        
 		<div class="user">
 			${model.applicationForm.user.firstName!} ${' '} ${model.applicationForm.user.lastName!}
-			<a class="button user-logout">Logout</a>
+			<a class="button user-logout" href="<@spring.url '/j_spring_security_logout'/>">Logout</a>
 		</div>
 	</nav>
 			      

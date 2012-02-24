@@ -36,14 +36,13 @@ public class ApplicationFormControllerTest {
 	public void shouldGetApplicationFormView() {
 		
 		ModelAndView modelAndView = applicationController.getNewApplicationForm(null);
-		
 		assertEquals("application/applicationForm", modelAndView.getViewName());
 	}
 	
 	@Test
 	public void shouldGetEditPersonalDetailsInApplicationView() {
-		String view = applicationController.editPersonalDetailsInApplication();
-		assertEquals("application/edit_personal_details_form", view);
+		ModelAndView modelAndView = applicationController.editPersonalDetailsInApplication();
+		assertEquals("application/edit_personal_details_form", modelAndView.getViewName());
 	}
 
 
@@ -92,7 +91,6 @@ public class ApplicationFormControllerTest {
 		
 	}
 	
-	
 	@Test
 	public void shouldLoadApplicationFormByIdAndChangeSubmissionStatusToSubmitted(){
 		Integer id = 2;
@@ -101,7 +99,8 @@ public class ApplicationFormControllerTest {
 		applicationDAOMock.save(form);
 		EasyMock.replay(applicationDAOMock);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
-		assertEquals("application/applicationFormSubmitted", applicationController.submitApplication(id));
+		ModelAndView modelAndView = applicationController.submitApplication(id);
+		assertEquals("application/applicationFormSubmitted", modelAndView.getViewName());
 		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
 		EasyMock.verify(applicationDAOMock);
 		

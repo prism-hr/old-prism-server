@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
+import com.zuehlke.pgadmissions.dwr.models.PersonalDetailsDWR;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 
@@ -51,4 +52,23 @@ public class ApplicationManagementDWRService {
 		return status;
 	}
 
+	@RemoteMethod
+	public PersonalDetailsDWR displayPersonalDetails(){
+		
+		return this.getDummyUser();
+		
+	}
+	
+	//FIXME Needs to be removed when you can fetch User using business services.
+	private PersonalDetailsDWR getDummyUser(){
+		
+		PersonalDetailsDWR user = new PersonalDetailsDWR();
+		
+		user.setFirstName("Fred");
+		user.setLastName("Adams");
+
+		return user;
+		
+	}
+	
 }

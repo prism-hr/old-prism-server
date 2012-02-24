@@ -34,5 +34,43 @@
 			    </tr>
 			</tbody>
 		</table>
+		<form method="post" action="woooop">
+
+              	<div>
+                	<div class="row">
+                  	<label class="label">First Name</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<input class="full" type="text" value="Bob" name="firstName" id="firstName"/>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Last Name</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<input class="full" type="text" value="Smith" name="lastName" id="lastName"/>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Gender</label>
+                    <div class="field">
+                      <label><input type="radio" name="gender" /> Male</label>
+                      <label><input type="radio" name="gender" /> Female</label>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Date of Birth</label>
+                    <span class="hint"></span>
+                    <input class="half" type="date" value="" />
+                  </div>
+                </div>
+
+              	<div class="buttons">
+                  <a class="button blue" href="#">Close</a>
+                  <button class="blue" type="submit">Save</button>
+                </div>
+
+		</form>
+		
 	</div>
 </section>

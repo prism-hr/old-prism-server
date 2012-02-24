@@ -94,7 +94,8 @@ public class ApplicationFormControllerTest {
 		applicationDAOMock.save(form);
 		EasyMock.replay(applicationDAOMock);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
-		assertEquals("application/applicationFormSubmitted", applicationController.submitApplication(id));
+		ModelAndView modelAndView = applicationController.submitApplication(id);
+		assertEquals("application/applicationFormSubmitted", modelAndView.getViewName());
 		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
 		EasyMock.verify(applicationDAOMock);
 		

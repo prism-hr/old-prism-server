@@ -1,7 +1,23 @@
 /* FEEDBACK page ----------------------------------------------------------------------------------------- */
-#feedback { margin-top: 20px; }
-#feedback .row { background: #FFF; border: 1px solid #999; border-radius: 20px; font-size: 8pt; height: 40px; margin-bottom: 10px; padding: 0 30px 0 50px; }
-#feedback .row strong { display: block; margin: 8px 0 3px; }
+#content .content-box { background-image: url(../images/bg_content_box_bottom_white.gif); background-color: #FFF !important; }
+#content .content-box-inner { background-image: url(../images/bg_content_box_top_white.gif); }
 
-#feedback .row.last strong { margin: 0; }
-#feedback .row.last { line-height: 40px; }
+#feedback { margin-top: 20px; }
+
+#feedback .key { font-weight: bold; list-style: none; margin: 0 0 20px; overflow: hidden; float: right; }
+#feedback .key img { vertical-align: middle; width: 16px; }
+#feedback .key li { float: left; margin-left: 2em; }
+
+#feedback .row { clear: both; font-size: 8pt; margin-bottom: 10px; overflow: hidden; }
+#feedback .row .bar { background: url(../images/bg_feedback_bar.jpg) repeat-x; border: 1px solid #999; border-radius: 30px; vertical-align: middle; line-height: 15px; padding: 10px 30px 10px 50px; position: relative; }
+#feedback .row .bar strong { display: block; }
+
+#feedback .row .icon { background: no-repeat; display: block; position: absolute; right: 12px; top: 8px; width: 34px; height: 34px; }
+#feedback .row.attention .icon { background-image: url(../images/circle_attention.png); }
+#feedback .row.complete .icon { background-image: url(../images/circle_complete.png); }
+#feedback .row.progress .icon { background-image: url(../images/circle_in_progress.png); }
+#feedback .row.stopped .icon { background-image: url(../images/circle_stopped.png); }
+
+#feedback .row .more { background: url(../images/button_question_blue.png) no-repeat; cursor: pointer; display: block; width: 20px; height: 21px; position: absolute; top: 15px; left: 15px; overflow: hidden; text-indent: 20px; }
+
+#feedback .row .information { background: #FFF; border: 1px solid #999; border-radius: 0 0 30px 30px; display: none; margin-top: -25px; padding: 40px 20px 20px; }

@@ -29,6 +29,12 @@ $(document).ready(function()
 		$this.toggleClass('open', $form.is(':visible'));
 	});
 	
+	$('#feedback span.more').bind('click', function()
+	{
+		var $this   = $(this);
+		var $parent = $this.parent().parent();
+		$('div.information', $parent).toggle();
+	});
 	
 	// Date pickers.
 	$('input[type=date]').datepicker();

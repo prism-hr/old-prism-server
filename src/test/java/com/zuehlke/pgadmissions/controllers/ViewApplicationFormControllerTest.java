@@ -6,17 +6,16 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.pagemodels.ViewApplicationModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class ViewApplicationFormControllerTest {
@@ -24,14 +23,13 @@ public class ViewApplicationFormControllerTest {
 
 	private ViewApplicationFormController viewApplicationFormController;
 	private ApplicationForm form;
-	private MockHttpServletRequest request;
 	private RegisteredUser user;
 	private ApplicationsService applicationsServiceMock;
 
 
 	@Test
 	public void shouldReturnViewApplicationViewName(){
-		assertEquals("viewApplication", viewApplicationFormController.getViewApplicationPage(request, new ModelMap()));
+		assertEquals("viewApplication", viewApplicationFormController.getViewApplicationPage(1).getViewName());
 	}
 	
 	@Test
@@ -39,9 +37,8 @@ public class ViewApplicationFormControllerTest {
 	
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
-		ModelMap modelMap = new ModelMap();
-		viewApplicationFormController.getViewApplicationPage(request, modelMap);
-		assertEquals(form, modelMap.get("application"));
+		ModelAndView viewApplicationPage = viewApplicationFormController.getViewApplicationPage(1);
+		assertEquals(form, ((ViewApplicationModel)viewApplicationPage.getModel().get("model")).getApplicationForm());
 	}
 
 	
@@ -54,8 +51,6 @@ public class ViewApplicationFormControllerTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		
-		request = new MockHttpServletRequest();
-		request.setParameter("id", "1");
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		viewApplicationFormController = new ViewApplicationFormController(applicationsServiceMock);
 		form = new ApplicationFormBuilder().id(1).toApplicationForm();

@@ -15,11 +15,12 @@ import com.zuehlke.pgadmissions.domain.CommentModel;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.exceptions.CannotViewCommentsException;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
-@RequestMapping(value = { "/comment" })
+@RequestMapping(value = { "/comments" })
 public class CommentController {
 
 	private final ApplicationReviewService applicationReviewService;
@@ -37,7 +38,7 @@ public class CommentController {
 
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value = { "/addComment" }, method = RequestMethod.GET)
 	@Transactional
 	public ModelAndView getCommentPage(@RequestParam Integer id, @RequestParam String cmtDecision) {
 		CommentModel commentModel = new CommentModel();
@@ -51,29 +52,53 @@ public class CommentController {
 			@RequestParam String comment) {
 		CommentModel commentModel = new CommentModel();
 		ApplicationReview applicationReview = new ApplicationReview();
-		ApplicationForm application1 = applicationService.getApplicationById(id);
+		ApplicationForm application = applicationService.getApplicationById(id);
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		if(user.isInRole(Authority.APPLICANT))
 		{
 			commentModel.setMessage("You are not authorized to comment on the application");
-			}
-		else if (application1.getApprovalStatus() != null)
-			{
+		}
+		else if (application.getApprovalStatus() != null)
+		{
 			commentModel.setMessage("You cannot comment on a completed application");
-			}
-		else if(application1.getSubmissionStatus().equals(SubmissionStatus.UNSUBMITTED)){
+		}
+		else if(application.getSubmissionStatus().equals(SubmissionStatus.UNSUBMITTED)){
 			commentModel.setMessage("You cannot comment on a non submitted application");
 		}
-		else {
-			applicationReview.setApplication(application1);
+		else 
+		{
+			applicationReview.setApplication(application);
 			applicationReview.setComment(comment);
 			applicationReview.setUser(user);
 			applicationReviewService.save(applicationReview);
 			commentModel.setMessage("Your comment is submitted successful");
 			commentModel.setComment(comment);
-			commentModel.setApplication(application1);
+			commentModel.setApplication(application);
 		}
 		return new ModelAndView("comment", "model", commentModel);
+	}
+
+	@RequestMapping(value = { "/showAll" }, method = RequestMethod.GET)
+	@Transactional
+	public ModelAndView getAllCommentsForApplication(@RequestParam Integer id) {
+		CommentModel commentModel = new CommentModel();
+		ApplicationForm application = applicationService.getApplicationById(id);
+		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		if(user.isInRole(Authority.APPLICANT)){
+			throw new CannotViewCommentsException();
+		}
+		else if (user.isInRole(Authority.ADMINISTRATOR) || user.isInRole(Authority.APPROVER)){
+			commentModel.setMessage("Comments: ");
+			commentModel.setApplication(application);
+			commentModel.setComments(applicationReviewService.getApplicationReviewsByApplication(application));
+		}
+		else if (user.isInRole(Authority.REVIEWER)){
+			commentModel.setMessage("Comments: ");
+			commentModel.setApplication(application);
+			commentModel.setComments(applicationReviewService.getVisibleComments(application, user));
+		}
+		
+		return new ModelAndView("comments", "model", commentModel);
 	}
 
 	

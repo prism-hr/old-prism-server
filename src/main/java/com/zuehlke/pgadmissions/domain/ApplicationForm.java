@@ -22,40 +22,49 @@ import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "APPLICATION_FORM")
-@Access(AccessType.FIELD) 
+@Access(AccessType.FIELD)
 public class ApplicationForm extends DomainObject<Integer> {
-	
+
 	private static final long serialVersionUID = -7671357234815343496L;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApprovalStatusEnumUserType")	
-	@Column(name="approval_status")
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApprovalStatusEnumUserType")
+	@Column(name = "approval_status")
 	private ApprovalStatus approvalStatus;
 
 	@ManyToOne
-	@JoinColumn(name="registered_user_id")
+	@JoinColumn(name = "registered_user_id")
 	private RegisteredUser user = null;
 
 	@OneToOne
-	@JoinColumn(name="approver_user_id")
+	@JoinColumn(name = "approver_user_id")
 	private RegisteredUser approver = null;
 
 	@ManyToOne
-	@JoinColumn(name="project_id")
+	@JoinColumn(name = "project_id")
 	private Project project;
 
-	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.SubmissionStatusEnumUserType")	
-	@Column(name="submission_status")
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.SubmissionStatusEnumUserType")
+	@Column(name = "submission_status")
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
-	
-	@ManyToMany(fetch=FetchType.EAGER)
-	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
-	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();	
 
+	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
+
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
+	@Access(AccessType.PROPERTY)
 	public List<RegisteredUser> getReviewers() {
 		return reviewers;
 	}
-	
+
+	public void setReviewers(List<RegisteredUser> reviewers) {
+		//THIS IS A HACK. To be changed.
+		if(this.reviewers.size() == reviewers.size() && this.reviewers.containsAll(reviewers)){
+			return;
+		}
+		this.reviewers.clear();
+		this.reviewers.addAll(reviewers);
+	}
+
 	public Project getProject() {
 		return project;
 	}
@@ -63,11 +72,11 @@ public class ApplicationForm extends DomainObject<Integer> {
 	public ApprovalStatus getApprovalStatus() {
 		return approvalStatus;
 	}
-	
+
 	public void setApprovalStatus(ApprovalStatus approvalStatus) {
 		this.approvalStatus = approvalStatus;
 	}
-	
+
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
@@ -88,7 +97,7 @@ public class ApplicationForm extends DomainObject<Integer> {
 	public void setUser(RegisteredUser user) {
 		this.user = user;
 	}
-	
+
 	public RegisteredUser getApprover() {
 		return approver;
 	}
@@ -97,31 +106,24 @@ public class ApplicationForm extends DomainObject<Integer> {
 		this.approver = approver;
 	}
 
-
 	public void setProject(Project project) {
-		this.project = project;	
+		this.project = project;
 	}
 
 	public void setSubmissionStatus(SubmissionStatus submissionStatus) {
 		this.submissionStatus = submissionStatus;
-		
-		
+
 	}
 
 	public SubmissionStatus getSubmissionStatus() {
 		return submissionStatus;
 	}
-	
-	
-	public boolean isUnderReview(){
+
+	public boolean isUnderReview() {
 		return !reviewers.isEmpty();
 	}
-	
-	public boolean isActive(){
+
+	public boolean isActive() {
 		return approvalStatus == null;
-	}
-	
-	public boolean hasBeenApproved() {
-		return approver != null;
 	}
 }

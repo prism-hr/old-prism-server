@@ -38,11 +38,11 @@ public class ApproveRejectController {
 		SecurityContext context = SecurityContextHolder.getContext();
 		RegisteredUser approver = (RegisteredUser) context.getAuthentication().getDetails();
 		if (application.getApprovalStatus() == null) {
-			String submitAsBoolean = getSubmitAsBoolean(submit);
-			application.setApprovalStatus(ApprovalStatus.APPROVED);
+			ApprovalStatus submitAsEnum = getSubmitAsEnum(submit);
+			application.setApprovalStatus(submitAsEnum);
 			application.setApprover(approver);
 			applicationsService.save(application);
-			String decision = submitAsBoolean.equals("0")? "rejected" : "accepted";
+			String decision = submitAsEnum.equals(ApprovalStatus.APPROVED)? "rejected" : "accepted";
 			modelMap.addAttribute("message","Your have successfully "+ decision + " the application");
 		} else {
 			modelMap.addAttribute("message","The application has already been decided by user: " + application.getApprover().getUsername());
@@ -50,8 +50,8 @@ public class ApproveRejectController {
 		return APPROVE_REJECT_VIEW_NAME;
 	}
 
-	private String getSubmitAsBoolean(String submit) {
-		return submit.equals("Approve")? "1" : "0";
+	private ApprovalStatus getSubmitAsEnum(String submit) {
+		return submit.equals("Approve")? ApprovalStatus.APPROVED : ApprovalStatus.REJECTED;
 	}
 
 

@@ -13,9 +13,7 @@
               function fetchPersonalDetails(){
                    //alert("fetchPersonalDetails - begin");
                    
-                   var userId = dwr.util.getValue("userId");
-                   
-                   acceptDWR.displayPersonalDetails(userId,
+                   acceptDWR.displayPersonalDetails(${model.user.id},
                    		function(data) {
                         	dwr.util.setValue("demoStatus", data);
                         	
@@ -37,8 +35,6 @@
 
 	<body onload="fetchPersonalDetails()">
 
-        <input type="hidden" name="userId" value="${model.user.id}"/>
-        
 		<div id="wrapper">
 			
 			  <#include "/application/app_form_header.ftl"/>

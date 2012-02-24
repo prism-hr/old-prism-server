@@ -64,10 +64,16 @@ public class ApplicationFormController {
 
 	@RequestMapping(value="/success", method = RequestMethod.GET)
 	@Transactional
-	public String submitApplication(@RequestParam Integer id) {
+	public ModelAndView submitApplication(@RequestParam Integer id) {
 		ApplicationForm applicationForm = applicationDAO.get(id);
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationDAO.save(applicationForm);
-		return "application/applicationFormSubmitted";
+
+		ApplicationFormModel model = new ApplicationFormModel();
+		model.setApplicationForm(applicationForm);
+		ModelAndView modelAndView = new  ModelAndView("application/applicationFormSubmitted","model", model);
+
+		return modelAndView;
 	}
+
 }

@@ -23,6 +23,9 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 @RequestMapping(value = { "/comments" })
 public class CommentController {
 
+	private static final String COMMENT_FORM_VIEW_NAME = "commentForm";
+	private static final String SUBMITTED_COMMENT_VIEW_NAME = "comment";
+	private static final String SHOW_COMMENTS_VIEW_NAME = "comments";
 	private final ApplicationReviewService applicationReviewService;
 	private final ApplicationsService applicationService;
 
@@ -43,7 +46,7 @@ public class CommentController {
 	public ModelAndView getCommentPage(@RequestParam Integer id, @RequestParam String cmtDecision) {
 		CommentModel commentModel = new CommentModel();
 		commentModel.setApplication(applicationService.getApplicationById(id));
-		return new ModelAndView("commentForm", "model", commentModel);
+		return new ModelAndView(COMMENT_FORM_VIEW_NAME, "model", commentModel);
 	}
 
 	@RequestMapping(value = { "/submit" }, method = RequestMethod.POST)
@@ -75,7 +78,7 @@ public class CommentController {
 			commentModel.setComment(comment);
 			commentModel.setApplication(application);
 		}
-		return new ModelAndView("comment", "model", commentModel);
+		return new ModelAndView(SUBMITTED_COMMENT_VIEW_NAME, "model", commentModel);
 	}
 
 	@RequestMapping(value = { "/showAll" }, method = RequestMethod.GET)
@@ -98,7 +101,7 @@ public class CommentController {
 			commentModel.setComments(applicationReviewService.getVisibleComments(application, user));
 		}
 		
-		return new ModelAndView("comments", "model", commentModel);
+		return new ModelAndView(SHOW_COMMENTS_VIEW_NAME, "model", commentModel);
 	}
 
 	

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
+import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -38,7 +39,6 @@ public class ApplicationFormControllerTest {
 	public void shouldGetApplicationFormView() {
 		
 		ModelAndView modelAndView = applicationController.getNewApplicationForm(null);
-		
 		assertEquals("application/applicationForm", modelAndView.getViewName());
 	}
 
@@ -102,6 +102,18 @@ public class ApplicationFormControllerTest {
 		EasyMock.verify(applicationDAOMock);
 		
 	}
+	
+	@Test
+	public void shouldSaveNewPersonalDetails() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationDAOMock.get(2)).andReturn(form);
+		EasyMock.replay(applicationDAOMock);
+		
+		ModelAndView modelAndView = applicationController.editApplicationForm(2, "Jack" , "Johnson");
+		ApplicationFormModel model = (ApplicationFormModel) modelAndView.getModel().get("model");
+		Assert.assertEquals("Jack", model.getUser().getFirstName());
+		Assert.assertEquals("Johnson", model.getUser().getLastName());
+	} 
 
 	@Before
 	public void setUp() {

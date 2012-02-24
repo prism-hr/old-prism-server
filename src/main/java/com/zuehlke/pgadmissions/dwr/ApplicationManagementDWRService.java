@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.dwr.models.PersonalDetailsDWR;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 
 @RemoteProxy(name = "acceptDWR")
@@ -19,14 +20,16 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 public class ApplicationManagementDWRService {
 
 	private final ApplicationsService applicationsService;
+	private final UserService userService;
 
 	ApplicationManagementDWRService() {
-		this(null);
+		this(null, null);
 	}
 
 	@Autowired
-	public ApplicationManagementDWRService(ApplicationsService applicationsService) {
+	public ApplicationManagementDWRService(ApplicationsService applicationsService, UserService userService) {
 		this.applicationsService = applicationsService;
+		this.userService = userService;
 		
 	}
 
@@ -53,22 +56,15 @@ public class ApplicationManagementDWRService {
 	}
 
 	@RemoteMethod
-	public PersonalDetailsDWR displayPersonalDetails(){
-		
-		return this.getDummyUser();
-		
-	}
-	
-	//FIXME Needs to be removed when you can fetch User using business services.
-	private PersonalDetailsDWR getDummyUser(){
+	public PersonalDetailsDWR displayPersonalDetails(Integer userId){
+		RegisteredUser registeredUser = userService.getUser(userId);
 		
 		PersonalDetailsDWR user = new PersonalDetailsDWR();
 		
-		user.setFirstName("Fred");
-		user.setLastName("Adams");
+		user.setFirstName(registeredUser.getFirstName());
+		user.setLastName(registeredUser.getLastName());
 
 		return user;
 		
 	}
-	
 }

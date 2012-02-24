@@ -52,6 +52,7 @@ public class ApplicationFormController {
 		
 		ApplicationFormModel model = new ApplicationFormModel();
 		model.setApplicationForm(applicationForm);
+		model.setUser(user);
 		
 		ModelAndView modelAndView = new  ModelAndView("application/applicationForm","model", model);
 		
@@ -65,12 +66,15 @@ public class ApplicationFormController {
 	@RequestMapping(value="/success", method = RequestMethod.GET)
 	@Transactional
 	public ModelAndView submitApplication(@RequestParam Integer id) {
+		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		
 		ApplicationForm applicationForm = applicationDAO.get(id);
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationDAO.save(applicationForm);
 
 		ApplicationFormModel model = new ApplicationFormModel();
 		model.setApplicationForm(applicationForm);
+		model.setUser(user);
 		ModelAndView modelAndView = new  ModelAndView("application/applicationFormSubmitted","model", model);
 
 		return modelAndView;

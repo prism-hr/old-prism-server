@@ -9,14 +9,14 @@
 	<nav>
 		<ul>
 			<li><a href="#">My account</a></li>    
-			<li class="current"><a href="#">My applications <span class="indicator blue">1</span></a></li>    
+			<li class="current"><a href=""<@spring.url '/applications'/>">My applications <span class="indicator blue">1</span></a></li>    
 			<li><a href="#">Messages</a></li>    
 			<li><a href="#">Help</a></li>    
 		</ul>
 			        
 		<div class="user">
 			${model.applicationForm.user.firstName!} ${' '} ${model.applicationForm.user.lastName!}
-			<a class="button user-logout">Logout</a>
+			<a class="button user-logout" href="<@spring.url '/j_spring_security_logout'/>">Logout</a>
 		</div>
 	</nav>
 			      

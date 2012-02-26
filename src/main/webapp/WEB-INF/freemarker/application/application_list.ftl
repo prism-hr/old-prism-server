@@ -13,12 +13,15 @@
 		
         <script type="text/javascript">
                     
-              function acceptApplication(id){
-                   alert("adasdfa");
-                   acceptDWR.acceptApplication(id, function(data) {
-                        dwr.util.setValue("demoStatus", data);
-                 });
-                 alert("adasdfa");
+              function acceptApplication(id){  
+                   acceptDWR.acceptApplication(id,
+                   	 	function(data) {
+                        	dwr.util.setValue("demoStatus", data);
+                 		},
+                 		function(errorString, exception) {
+                 			alert(errorString);
+                 		}
+                 	);    
               	
               }
         </script>
@@ -47,7 +50,7 @@
             </td>
     		<td>
     			<#if model.user.isInRole('APPROVER')>
-    				<input value="Approve" type="button" onclick="acceptApplication(id)"/>
+    				<input value="Approve" type="button" onclick="acceptApplication(${application.id})"/>
       			</#if>
       			<span id="demoStatus"></span>
     			<#if ((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR')) )>

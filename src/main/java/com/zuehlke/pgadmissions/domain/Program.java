@@ -25,9 +25,9 @@ public class Program extends DomainObject<Integer> {
 	private String description;
 	
 
-	@ManyToMany
-	@JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "registered_user_id") })
+	
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
+
 
 	@Override
 	@Id
@@ -67,12 +67,26 @@ public class Program extends DomainObject<Integer> {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-
+	
+	@ManyToMany
+	@JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "registered_user_id") })
+	@Access(AccessType.PROPERTY)
 	public List<RegisteredUser> getApprovers() {
 		return approvers;
 	}
+	
 
+	public void setApprovers(List<RegisteredUser> approvers) {
+		//THIS IS A HACK. To be changed.
+		if(this.approvers.size() == approvers.size() && this.approvers.containsAll(approvers)){
+			return;
+		}
+		this.approvers.clear();
+		this.approvers.addAll(approvers);
+	}
+	
 	public boolean isApprover(RegisteredUser user) {
+		System.out.println("SIZE: " + approvers.size());
 		if(!user.isInRole(Authority.APPROVER)){
 			return false;
 		}

@@ -1,0 +1,7 @@
+/* FEEDBACK page ----------------------------------------------------------------------------------------- */
+#feedback { margin-top: 20px; }
+#feedback .row { background: #FFF; border: 1px solid #999; border-radius: 20px; font-size: 8pt; height: 40px; margin-bottom: 10px; padding: 0 30px 0 50px; }
+#feedback .row strong { display: block; margin: 8px 0 3px; }
+
+#feedback .row.last strong { margin: 0; }
+#feedback .row.last { line-height: 40px; }

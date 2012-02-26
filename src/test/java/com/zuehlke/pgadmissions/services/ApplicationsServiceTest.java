@@ -35,7 +35,7 @@ public class ApplicationsServiceTest{
 	@Test
 	public void shouldgetListOfApplicationsForApplicant(){
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		EasyMock.expect(applicationFormDAOMock.getApplicationsByUser(user)).andReturn(Arrays.asList(form));
+		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicant(user)).andReturn(Arrays.asList(form));
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(user);
 		Assert.assertTrue(visibleApplications.contains(form));

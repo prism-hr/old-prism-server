@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static junit.framework.Assert.assertEquals;
+
+import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -14,51 +15,92 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.pagemodels.ViewApplicationModel;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class ViewApplicationFormControllerTest {
-	
 
-	private ViewApplicationFormController viewApplicationFormController;
-	private ApplicationForm form;
-	private RegisteredUser user;
+	private ViewApplicationFormController controller;
+	private RegisteredUser userMock;
 	private ApplicationsService applicationsServiceMock;
 
-
-	@Test
-	public void shouldReturnViewApplicationViewName(){
-		assertEquals("viewApplication", viewApplicationFormController.getViewApplicationPage(1).getViewName());
-	}
-	
-	@Test
-	public void shouldGetApplicationFromApplicationId(){
-	
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(form);
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		ModelAndView viewApplicationPage = viewApplicationFormController.getViewApplicationPage(1);
-		assertEquals(form, ((ViewApplicationModel)viewApplicationPage.getModel().get("model")).getApplicationForm());
+		controller.getViewApplicationPage(1);
+
 	}
 
-	
-	@Before
-	public void setUp(){
+	@Test
+	public void shouldGetApplicationFormView() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
+		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.replay(userMock,applicationsServiceMock);
+		ModelAndView modelAndView = controller.getViewApplicationPage(1);
+		assertEquals("application/applicationForm", modelAndView.getViewName());
+	}
+
+	@Test
+	public void shouldGetApplicationFormFromIdAndSetOnModel() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
+		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.replay(userMock, applicationsServiceMock);
+		ModelAndView modelAndView = controller.getViewApplicationPage(1);
+		ApplicationFormModel model = (ApplicationFormModel) modelAndView.getModel().get("model");
+		assertEquals(applicationForm, model.getApplicationForm());
+	}
+
+	@Test
+	public void shouldGetCurrentUserFromSecutrityContextAndSetOnEditModel() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.replay(userMock, applicationsServiceMock);
+
+		ModelAndView modelAndView = controller.getViewApplicationPage(1);
+		ApplicationFormModel model = (ApplicationFormModel) modelAndView.getModel().get("model");
+		assertEquals(userMock, model.getUser());
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowExceptionIfCurrentCannotSeeApplicatioForm() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.replay(applicationsServiceMock);
+
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		user = new RegisteredUserBuilder().id(1).username("bob").toUser();
-		authenticationToken.setDetails(user);
+		RegisteredUser userMock =EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
+		EasyMock.replay(userMock);
+		authenticationToken.setDetails(userMock);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		viewApplicationFormController = new ViewApplicationFormController(applicationsServiceMock);
-		form = new ApplicationFormBuilder().id(1).toApplicationForm();
+		controller.getViewApplicationPage(1);
 	}
-	
+
+	@Before
+	public void setUp() {
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		userMock =EasyMock.createMock(RegisteredUser.class);
+		authenticationToken.setDetails(userMock);
+		SecurityContextImpl secContext = new SecurityContextImpl();
+		secContext.setAuthentication(authenticationToken);
+		SecurityContextHolder.setContext(secContext);
+
+		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		controller = new ViewApplicationFormController(applicationsServiceMock);
+
+	}
+
 	@After
 	public void tearDown() {
 		SecurityContextHolder.clearContext();
 	}
-	
+
 }

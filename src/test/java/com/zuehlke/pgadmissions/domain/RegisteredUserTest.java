@@ -56,7 +56,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserIsApplicantAndOwnerOfForm(){
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().registeredUser(applicant).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).toApplicationForm();
 		assertTrue(applicant.canSee(applicationForm));
 		
 	}
@@ -65,7 +65,7 @@ public class RegisteredUserTest {
 	public void shouldReturnFalseIfUserIsApplicantAndNotOwnerOfForm(){
 		RegisteredUser applicantOne = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();		
 		RegisteredUser applicantTwo = new RegisteredUserBuilder().id(2).roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().registeredUser(applicantOne).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicantOne).toApplicationForm();
 		assertFalse(applicantTwo.canSee(applicationForm));
 		
 	}
@@ -111,7 +111,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueForAnApplicantIfUnsubmittedApplication() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.UNSUBMITTED).registeredUser(applicant).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(applicant).toApplicationForm();
 		assertTrue(applicant.canSee(applicationForm));
 	}
 	

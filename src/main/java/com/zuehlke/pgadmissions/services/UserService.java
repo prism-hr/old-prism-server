@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -16,14 +17,16 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 public class UserService {
 
 	private final UserDAO userDAO;
+	private final RoleDAO roleDAO;
 	
 	UserService() {
-		this(null);
+		this(null, null);
 	}
 
 	@Autowired
-	public UserService(UserDAO userDAO) {
+	public UserService(UserDAO userDAO, RoleDAO roleDAO) {
 		this.userDAO = userDAO;
+		this.roleDAO = roleDAO;
 	}
 	
 	@Transactional
@@ -42,5 +45,11 @@ public class UserService {
 	@Transactional
 	public RegisteredUser getUser(Integer reviewerId) {
 		return userDAO.get(reviewerId);
+	
+	}
+	
+	@Transactional
+	public List<RegisteredUser> getUsersInRole(Authority auth) {
+		return userDAO.getUsersInRole(roleDAO.getRoleByAuthority(auth));
 	}
 }

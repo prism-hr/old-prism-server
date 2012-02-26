@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -18,17 +17,16 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
-
-import cucumber.annotation.lu.a;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
 @RequestMapping("/apply")
 public class ApplicationFormController {
 
-	private static final String APPLICATION_FORM_SUBMITTED_VIEW_NAME = "application/applicationFormSubmitted";
+	
 	private static final String APPLICATION_FORM_VIEW_NAME = "application/applicationForm";
 	private final ProjectDAO projectDAO;
-	private final ApplicationFormDAO applicationDAO;
+	private final ApplicationsService applicationService;
 	private final UserDAO userDAO;
 
 	ApplicationFormController() {
@@ -36,9 +34,9 @@ public class ApplicationFormController {
 	}
 
 	@Autowired
-	public ApplicationFormController(ProjectDAO projectDAO, ApplicationFormDAO applicationDAO, UserDAO userDAO) {
+	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService, UserDAO userDAO) {
 		this.projectDAO = projectDAO;
-		this.applicationDAO = applicationDAO;
+		this.applicationService = applicationService;
 		this.userDAO = userDAO;
 	}
 	
@@ -53,9 +51,9 @@ public class ApplicationFormController {
 		ApplicationForm applicationForm = newApplicationForm();
 		applicationForm.setApplicant(user);
 		applicationForm.setProject(proj);
-		applicationDAO.save(applicationForm);
+		applicationService.save(applicationForm);
 		
-		return new   ModelAndView("redirect:edit","id", applicationForm.getId());
+		return new  ModelAndView("redirect:/pgadmissions/application","id", applicationForm.getId());
 		
 	}
 
@@ -69,7 +67,7 @@ public class ApplicationFormController {
 		user.setFirstName(firstName);
 		userDAO.save(user);
 		
-		ApplicationForm applicationForm = applicationDAO.get(id);
+		ApplicationForm applicationForm = applicationService.getApplicationById(id);
 		ApplicationFormModel model = new ApplicationFormModel();
 		model.setApplicationForm(applicationForm);
 		model.setUser(user);
@@ -78,20 +76,19 @@ public class ApplicationFormController {
 	}
 
 	@RequestMapping(value="/submit", method = RequestMethod.POST)
-	@Transactional
-	public ModelAndView submitApplication(@RequestParam Integer id) {
+	public ModelAndView submitApplication(@RequestParam Integer applicationForm) {
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();		
-		ApplicationForm applicationForm = applicationDAO.get(id);
-		if(applicationForm == null || ! user.equals(applicationForm.getApplicant())){
+		ApplicationForm appForm = applicationService.getApplicationById(applicationForm);
+		if(appForm == null || ! user.equals(appForm.getApplicant())){
 			throw new ResourceNotFoundException();
 		}		
 		
-		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		applicationDAO.save(applicationForm);
-		return new   ModelAndView("redirect:/pgadmissions/applications");
+		appForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		applicationService.save(appForm);
+		return new  ModelAndView("redirect:/pgadmissions/applications");
 	
 	}
-	
+	/*
 	@RequestMapping(value="/edit", method = RequestMethod.GET)
 	@Transactional
 	public ModelAndView getNewApplicationFormPage(@RequestParam Integer id) {
@@ -105,7 +102,7 @@ public class ApplicationFormController {
 		model.setUser((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails());
 		return new  ModelAndView(APPLICATION_FORM_VIEW_NAME,"model", model);
 	}
-	
+	*/
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
 	}

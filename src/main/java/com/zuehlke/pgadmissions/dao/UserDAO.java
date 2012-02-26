@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 
 @Repository
 public class UserDAO {
@@ -28,18 +29,22 @@ public class UserDAO {
 	}
 
 	public RegisteredUser get(Integer id) {
-		return (RegisteredUser) sessionFactory.getCurrentSession().get(
-				RegisteredUser.class, id);
+		return (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
 	}
 
 	public RegisteredUser getUserByUsername(String username) {
-		return (RegisteredUser) sessionFactory.getCurrentSession()
-				.createCriteria(RegisteredUser.class)
-				.add(Restrictions.eq("username", username)).uniqueResult();
+		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("username", username))
+				.uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getAllUsers() {
 		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<RegisteredUser> getUsersInRole(Role role) {
+		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles").add(Restrictions.eq("id", role.getId())).list();
+
 	}
 }

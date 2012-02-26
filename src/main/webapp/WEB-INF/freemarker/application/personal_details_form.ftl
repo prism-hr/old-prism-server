@@ -26,9 +26,9 @@
 			<tbody>
 				<tr>
 			    	<td><a class="row-arrow" href="#">-</a></td>
-			        <td>${model.applicationForm.user.firstName}</td>
-			        <td>${model.applicationForm.user.lastName}</td>
-			        <td>${model.applicationForm.user.email}</td>
+			        <td>${model.applicationForm.applicant.firstName}</td>
+			        <td>${model.applicationForm.applicant.lastName}</td>
+			        <td>${model.applicationForm.applicant.email}</td>
 			        <td>edit</td>
 			        <td>close?</td>
 			    </tr>

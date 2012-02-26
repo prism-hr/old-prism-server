@@ -17,7 +17,7 @@ public class ApplicationFormBuilder {
 	
 	private RegisteredUser approver;
 
-	private RegisteredUser user;
+	private RegisteredUser applicant;
 	
 	private Project project;
 	
@@ -25,8 +25,8 @@ public class ApplicationFormBuilder {
 	
 	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 	
-	public ApplicationFormBuilder registeredUser (RegisteredUser user) {
-		this.user = user;
+	public ApplicationFormBuilder applicant (RegisteredUser applicant) {
+		this.applicant = applicant;
 		return this;
 	}
 	
@@ -63,7 +63,7 @@ public class ApplicationFormBuilder {
 	public ApplicationForm toApplicationForm() {
 		ApplicationForm application = new ApplicationForm();	
 		application.setId(id);		
-		application.setApplicant(user);
+		application.setApplicant(applicant);
 		if (reviewers != null) {
 			application.getReviewers().addAll(reviewers);
 		}

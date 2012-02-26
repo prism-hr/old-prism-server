@@ -20,8 +20,8 @@
 		<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
 	    <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
 	    <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/interface/acceptDWR.js'/>"></script>
-	    
-	    <script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
 	    
 	</head>
 	
@@ -50,7 +50,10 @@
 					            	<col width="120" />
 					            	<col width="120" />
 					            	<col width="*" />
-					            	<col width="180" />
+					             <#if model.user.isInRole('APPLICANT')>
+					            	<col width="*" />
+					            </#if>
+					            	<col width="180" />					            
 					            	<col width="40" />
 					            </colgroup>
 					          	<thead>
@@ -60,6 +63,10 @@
 					                <th scope="col">First Name</th>
 					                <th scope="col">Surname</th>
 					                <th scope="col">Programme</th>
+					                <#if model.user.isInRole('APPLICANT')>
+					            		<th scope="col">Submission Status</th>
+					            	</#if>
+					               
 					                <th scope="col">Actions</th>
 					                <th class="centre" scope="col">Select</th>
 					              </tr>
@@ -69,14 +76,18 @@
 							        	<tr>
 							                <td><a class="row-arrow" href="#">&gt;</a></td>
 							                <td id="row_app_id">${application.id}</td>
-							                <td>${application.user.firstName}</td>
-							                <td>${application.user.lastName}</td>
+							                <td>${application.applicant.firstName}</td>
+							                <td>${application.applicant.lastName}</td>
 							                <td>${application.project.program.code} - ${application.project.program.title}</td>
+							                <#if model.user.isInRole('APPLICANT')>
+							               	 	<td>${application.submissionStatus}</td>
+							                </#if>
 							                <td>
-							                	<select class="actionType" name="app_[${application.id}]" onchange="takeAction(this);">
-							                		<option>View</option>
-							                	    <#if model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')>
-      													<option>AssignReviewer</option>
+							                	<select class="actionType" name="app_[${application.id}]">
+							                		<option>Select...</option>
+							                		<option value="view">View</option>
+							                	    <#if (model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')) && application.isReviewable()>
+      													<option value="assignReviewer">Assign Reviewer</option>
         		  									</#if>
 							                	    <#if model.user.isInRole('APPROVER')>
 							                	    	<option>Approve</option>
@@ -85,17 +96,17 @@
 									    				<option>Reject</option>
 									      			</#if>
 								      				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || 
-								      											model.user.isInRole('REVIEWER'))) && application.isActive() )>
+								      											model.user.isInRole('REVIEWER'))) && application.isReviewable() )>
 								    					<option>Comment</option>
 								      				</#if>      												
 								      				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || 
-								      										model.user.isInRole('REVIEWER'))) && application.isActive() )>
+								      										model.user.isInRole('REVIEWER'))) && application.isReviewable() )>
 								    					<option>Show Comments</option>
 								      				</#if>
 								      											                	
 							                  	</select>
 							                </td>
-							                <td class="centre"><input type="checkbox" name="select" /></td>
+							                <td class="centre"><input type="checkbox" name="select" disabled="disabled" /></td>
 						              	</tr>
 					              	</#list>
 					            </tbody>

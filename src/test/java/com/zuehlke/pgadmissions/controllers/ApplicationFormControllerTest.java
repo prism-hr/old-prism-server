@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -28,53 +27,17 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class ApplicationFormControllerTest {
 
 	ProjectDAO projectDAOMock;
 	ApplicationFormController applicationController;
 	private ApplicationForm applicationForm;
-	ApplicationFormDAO applicationDAOMock;
+	ApplicationsService applicationsServiceMock;
 	private RegisteredUser student;
 	private UserDAO userDAOMock;
 
-	@Test(expected=ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationDAOMock.get(1)).andReturn(null);
-		EasyMock.replay(applicationDAOMock);
-		applicationController.getNewApplicationFormPage(1);
-
-	}
-	
-	@Test
-	public void shouldGetApplicationFormView() {
-		applicationForm.setApplicant(student);
-		EasyMock.expect(applicationDAOMock.get(1)).andReturn(applicationForm);
-		EasyMock.replay(applicationDAOMock);
-		ModelAndView modelAndView = applicationController.getNewApplicationFormPage(1);
-		assertEquals("application/applicationForm", modelAndView.getViewName());
-	}
-
-	@Test
-	public void shouldGetApplicationFormFromIdAndSetOnModel() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		applicationForm.setApplicant(student);
-		EasyMock.expect(applicationDAOMock.get(1)).andReturn(applicationForm);
-		EasyMock.replay(applicationDAOMock);
-		ModelAndView modelAndView = applicationController.getNewApplicationFormPage(1);
-		ApplicationFormModel model = (ApplicationFormModel) modelAndView.getModel().get("model");
-		assertEquals(applicationForm, model.getApplicationForm());
-	}
-
-	@Test
-	public void shouldGetCurrentUserFromSecutrityContextAndSetOnEditModel() {
-		applicationForm.setApplicant(student);
-		EasyMock.expect(applicationDAOMock.get(1)).andReturn(applicationForm);
-		EasyMock.replay(applicationDAOMock);
-		ModelAndView modelAndView = applicationController.getNewApplicationFormPage(1);
-		ApplicationFormModel model = (ApplicationFormModel) modelAndView.getModel().get("model");
-		assertEquals(student, model.getUser());
-	}
 
 	@Test
 	public void shouldLoadProjectByIdAndSetOnApplicationForm() {
@@ -95,34 +58,22 @@ public class ApplicationFormControllerTest {
 	}
 
 	@Test
-	public void shouldRedirectToEditView() {
+	public void shouldRedirectToApplicationFormView() {
 
 		ModelAndView modelAndView = applicationController.createNewApplicationForm(12);
 		assertEquals(applicationForm.getId(), modelAndView.getModel().get("id"));
-		assertEquals("redirect:edit", modelAndView.getViewName());
+		assertEquals("redirect:/pgadmissions/application", modelAndView.getViewName());
 
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowExceptionIfCurrecntUserNotTheApplicantStudent() {
-		applicationForm.setApplicant(student);
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		RegisteredUser otherApplicant = new RegisteredUserBuilder().id(6).username("fred").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole())
-				.toUser();
-		authenticationToken.setDetails(otherApplicant);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-		EasyMock.expect(applicationDAOMock.get(1)).andReturn(applicationForm);
-		applicationController.getNewApplicationFormPage(1);
-	}
+
 
 	@Test
 	public void shouldSaveApplicationForm() {
-		applicationDAOMock.save(applicationForm);
-		EasyMock.replay(applicationDAOMock);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(applicationsServiceMock);
 		applicationController.createNewApplicationForm(null);
-		EasyMock.verify(applicationDAOMock);
+		EasyMock.verify(applicationsServiceMock);
 
 	}
 
@@ -131,13 +82,13 @@ public class ApplicationFormControllerTest {
 		Integer id = 2;
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		form.setApplicant(student);
-		EasyMock.expect(applicationDAOMock.get(id)).andReturn(form);
-		applicationDAOMock.save(form);
-		EasyMock.replay(applicationDAOMock);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(id)).andReturn(form);
+		applicationsServiceMock.save(form);
+		EasyMock.replay(applicationsServiceMock);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
 		assertEquals("redirect:/pgadmissions/applications", applicationController.submitApplication(id).getViewName());
 		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
-		EasyMock.verify(applicationDAOMock);
+		EasyMock.verify(applicationsServiceMock);
 
 	}
 
@@ -145,9 +96,9 @@ public class ApplicationFormControllerTest {
 	public void shouldThrowResourceNotFoundExceptionIfSubmitterNotFormAcpplicant() {
 		Integer id = 2;
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationDAOMock.get(id)).andReturn(form);		
-		applicationDAOMock.save(form);
-		EasyMock.replay(applicationDAOMock);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(id)).andReturn(form);		
+		applicationsServiceMock.save(form);
+		EasyMock.replay(applicationsServiceMock);
 		
 		form.setApplicant(student);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
@@ -165,8 +116,8 @@ public class ApplicationFormControllerTest {
 	@Test(expected=ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfSubmittedApplicationFormDoesNotExist() {
 		Integer id = 2;		
-		EasyMock.expect(applicationDAOMock.get(id)).andReturn(null);	
-		EasyMock.replay(applicationDAOMock);		
+		EasyMock.expect(applicationsServiceMock.getApplicationById(id)).andReturn(null);	
+		EasyMock.replay(applicationsServiceMock);		
 		applicationController.submitApplication(id);
 	}
 
@@ -184,8 +135,8 @@ public class ApplicationFormControllerTest {
 	@Test
 	public void shouldSaveNewPersonalDetails() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationDAOMock.get(2)).andReturn(form);
-		EasyMock.replay(applicationDAOMock);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
 
 		ModelAndView modelAndView = applicationController.editApplicationForm(2, "Jack", "Johnson");
 		ApplicationFormModel model = (ApplicationFormModel) modelAndView.getModel().get("model");
@@ -199,10 +150,10 @@ public class ApplicationFormControllerTest {
 		applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 
 		projectDAOMock = EasyMock.createMock(ProjectDAO.class);
-		applicationDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
+		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userDAOMock = EasyMock.createMock(UserDAO.class);
 
-		applicationController = new ApplicationFormController(projectDAOMock, applicationDAOMock, userDAOMock) {
+		applicationController = new ApplicationFormController(projectDAOMock, applicationsServiceMock, userDAOMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

@@ -26,6 +26,8 @@ public class ApplicationFormDAO {
 	}
 	
 	public void save(ApplicationForm application) {
+		System.out.println("******************Saving");
+		System.out.println(application.getSubmissionStatus());
 		sessionFactory.getCurrentSession().saveOrUpdate(application);
 	}
 
@@ -35,11 +37,11 @@ public class ApplicationFormDAO {
 				ApplicationForm.class, id);
 	}
 	
-	public List<ApplicationForm> getApplicationsByUser(RegisteredUser user) {
+	public List<ApplicationForm> getApplicationsByApplicant(RegisteredUser applicant) {
 		@SuppressWarnings("unchecked")
 		List<ApplicationForm> list = sessionFactory.getCurrentSession()
 				.createCriteria(ApplicationForm.class)
-				.add(Restrictions.eq("applicant", user)).list();
+				.add(Restrictions.eq("applicant", applicant)).list();
 		return list;
 	}
 	

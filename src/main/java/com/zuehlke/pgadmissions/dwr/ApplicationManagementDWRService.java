@@ -1,4 +1,5 @@
 package com.zuehlke.pgadmissions.dwr;
+package com.zuehlke.pgadmissions.dwr;
 
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -10,16 +11,19 @@ import com.zuehlke.pgadmissions.dao.HibernateFlusher;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
+import com.zuehlke.pgadmissions.dwr.models.PersonalDetailsDWR;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @RemoteProxy(name = "acceptDWR")
 @Component
 public class ApplicationManagementDWRService {
 
 	private final ApplicationsService applicationsService;
+	private final UserService userService;
 	private final HibernateFlusher hibernateFlusher;
 
 	ApplicationManagementDWRService() {
@@ -29,6 +33,8 @@ public class ApplicationManagementDWRService {
 	@Autowired
 	public ApplicationManagementDWRService(ApplicationsService applicationsService, HibernateFlusher hibernateFlusher) {
 		this.applicationsService = applicationsService;
+		this.userService = userService;
+		
 		this.hibernateFlusher = hibernateFlusher;
 
 	}
@@ -78,4 +84,16 @@ public class ApplicationManagementDWRService {
 		return null;
 	}
 
+	@RemoteMethod
+	public PersonalDetailsDWR displayPersonalDetails(Integer userId){
+		RegisteredUser registeredUser = userService.getUser(userId);
+		
+		PersonalDetailsDWR user = new PersonalDetailsDWR();
+		
+		user.setFirstName(registeredUser.getFirstName());
+		user.setLastName(registeredUser.getLastName());
+
+		return user;
+		
+	}
 }

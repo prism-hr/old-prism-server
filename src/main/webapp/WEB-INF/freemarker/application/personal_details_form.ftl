@@ -26,13 +26,51 @@
 			<tbody>
 				<tr>
 			    	<td><a class="row-arrow" href="#">-</a></td>
-			        <td>Bob</td>
-			        <td>Smith</td>
-			        <td>bob.smith@test.com</td>
+			        <td>${model.applicationForm.user.firstName}</td>
+			        <td>${model.applicationForm.user.lastName}</td>
+			        <td>${model.applicationForm.user.email}</td>
 			        <td>edit</td>
 			        <td>close?</td>
 			    </tr>
 			</tbody>
 		</table>
+		<form method="post" action="<@spring.url '/apply'/>" method = "POST">
+                <input type="hidden" name="id" value="${model.applicationForm.id}"/>
+              	<div>
+                	<div class="row">
+                  	<label class="label">First Name</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<input class="full" type="text" value="Bob" name="firstName" id="firstName"/>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Last Name</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<input class="full" type="text" value="Smith" name="lastName" id="lastName"/>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Gender</label>
+                    <div class="field">
+                      <label><input type="radio" name="gender" /> Male</label>
+                      <label><input type="radio" name="gender" /> Female</label>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Date of Birth</label>
+                    <span class="hint"></span>
+                    <input class="half" type="date" value="" />
+                  </div>
+                </div>
+
+              	<div class="buttons">
+                  <a class="button blue" href="#">Close</a>
+                  <button class="blue" type="submit">Save</button>
+                </div>
+
+		</form>
+		
 	</div>
 </section>

@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -23,17 +24,21 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
 @RequestMapping("/apply")
 public class ApplicationFormController {
 
+	private static final String APPLICATION_FORM_SUBMITTED_VIEW_NAME = "application/applicationFormSubmitted";
+	private static final String APPLICATION_FORM_VIEW_NAME = "application/applicationForm";
 	private final ProjectDAO projectDAO;
 	private final ApplicationFormDAO applicationDAO;
+	private final UserDAO userDAO;
 
 	ApplicationFormController() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public ApplicationFormController(ProjectDAO projectDAO, ApplicationFormDAO applicationDAO) {
+	public ApplicationFormController(ProjectDAO projectDAO, ApplicationFormDAO applicationDAO, UserDAO userDAO) {
 		this.projectDAO = projectDAO;
 		this.applicationDAO = applicationDAO;
+		this.userDAO = userDAO;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -52,8 +57,9 @@ public class ApplicationFormController {
 		
 		ApplicationFormModel model = new ApplicationFormModel();
 		model.setApplicationForm(applicationForm);
+		model.setUser(user);
 		
-		ModelAndView modelAndView = new  ModelAndView("application/applicationForm","model", model);
+		ModelAndView modelAndView = new  ModelAndView(APPLICATION_FORM_VIEW_NAME,"model", model);
 		
 		return modelAndView;
 	}
@@ -61,20 +67,39 @@ public class ApplicationFormController {
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
 	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView editApplicationForm(@RequestParam Integer id, @RequestParam String firstName, @RequestParam String lastName) {	
+		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		user.setLastName(lastName);
+		user.setFirstName(firstName);
+		userDAO.save(user);
+		
+		ApplicationForm applicationForm = applicationDAO.get(id);
+		ApplicationFormModel model = new ApplicationFormModel();
+		model.setApplicationForm(applicationForm);
+		model.setUser(user);
+		
+		ModelAndView modelAndView = new  ModelAndView(APPLICATION_FORM_VIEW_NAME,"model", model);
+		return modelAndView;
+	}
 
 	@RequestMapping(value="/success", method = RequestMethod.GET)
 	@Transactional
-	public String submitApplication(@RequestParam Integer id) {
+	public ModelAndView submitApplication(@RequestParam Integer id) {
+		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		
 		ApplicationForm applicationForm = applicationDAO.get(id);
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationDAO.save(applicationForm);
-		return "application/applicationFormSubmitted";
-	}
-	
-	@RequestMapping(value="/edit", method = RequestMethod.GET)
-	@Transactional
-	public String editPersonalDetailsInApplication() {
-		return "application/edit_personal_details_form";
+
+		ApplicationFormModel model = new ApplicationFormModel();
+		model.setApplicationForm(applicationForm);
+		model.setUser(user);
+		ModelAndView modelAndView = new  ModelAndView(APPLICATION_FORM_SUBMITTED_VIEW_NAME,"model", model);
+
+		return modelAndView;
 	}
 
 }

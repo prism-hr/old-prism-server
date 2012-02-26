@@ -39,7 +39,7 @@ public class ApplicationFormDAO {
 		@SuppressWarnings("unchecked")
 		List<ApplicationForm> list = sessionFactory.getCurrentSession()
 				.createCriteria(ApplicationForm.class)
-				.add(Restrictions.eq("user", user)).list();
+				.add(Restrictions.eq("applicant", user)).list();
 		return list;
 	}
 	

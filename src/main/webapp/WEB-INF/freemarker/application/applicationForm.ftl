@@ -32,12 +32,12 @@
 			          
 				          	<div class="row">
 				            	<label>Programme Name</label>
-				              <input disabled size="109" value="${model.applicationForm.project.program.title}" />
+				              <input disabled size="109" value="${model.applicationForm.project.program.code} - ${model.applicationForm.project.program.title}" />
 				            </div>
 				            
 				          	<div class="row half">
 				            	<label>Application Number</label>
-				              <input disabled size="20" value="${model.applicationForm.project.program.code}" />
+				              <input disabled size="20" value="${model.applicationForm.id}" />
 				            </div>
 			          	</div>
 			          
@@ -118,9 +118,11 @@
 			          
 			          <hr />
 			          
-			          <a class="button" href="#">Close</a>
-			          <button type="submit" onclick="location.href='/pgadmissions/apply/success?id=${model.applicationForm.id}'">Submit</button>
-			          
+			          <a class="button" href="<@spring.url '/applications'/>">Close</a>
+			          <a id="submitButton" class="button" href="<@spring.url '/applications'/>">Submit</a>
+			         <form id="submitApplicationForm" action="<@spring.url "/apply/submit"/> method="POST">
+			          	<input type="hidden" id="applicationFormId" name="applicationForm" value="${model.applicationForm.id}"/>
+			          </form>
 			        </div><!-- .content-box-inner -->
 			      </div><!-- .content-box -->
 			      
@@ -136,7 +138,7 @@
 		
 		<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
     	<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
-    	<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/interface/acceptDWR.js'/>"></script>
+    	<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/interface/applicationDWR.js'/>"></script>
 		
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>

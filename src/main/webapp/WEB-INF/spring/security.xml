@@ -13,14 +13,13 @@
 		<form-login login-page="/login" login-processing-url="/j_spring_security_check"
 			authentication-failure-url="/login?login_error=t" />
 		<logout logout-url="/j_spring_security_logout" />
-		<intercept-url pattern="/login" access="permitAll" />
+		<intercept-url pattern="/login" 	access="permitAll" />
 		<intercept-url pattern="/design/**" access="permitAll" />
-		<intercept-url pattern="/projects" access="permitAll" />
-		<intercept-url pattern="*/j_spring_security_check"
-			access="permitAll" />
-		<intercept-url pattern="/**"
-			access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER')" />
-		<intercept-url pattern="/dwr/**" access="permitAll" />
+		<intercept-url pattern="/projects" 	access="permitAll" />
+		<intercept-url pattern="*/j_spring_security_check"	access="permitAll" />
+		<intercept-url pattern="/apply/**"	access="hasRole('APPLICANT')" />
+		<intercept-url pattern="/**"		access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER')" />		
+		<intercept-url pattern="/dwr/**" 	access="permitAll" />
 
 	</http>
 

@@ -46,7 +46,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		ApplicationForm application = new ApplicationForm();
 		application.setProject(project);
 		
-		application.setUser(user);
+		application.setApplicant(user);
 		
 		assertNull(application.getId());
 		
@@ -62,7 +62,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		reloadedApplication = applicationDAO.get(id);
 		assertNotSame(application, reloadedApplication);
 		assertEquals(application, reloadedApplication);
-		assertEquals(application.getUser(), user);	}
+		assertEquals(application.getApplicant(), user);	}
 	
 	@Test
 	public void shouldFindAllApplicationsBelongingToSameUser(){
@@ -70,7 +70,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		List<ApplicationForm> applicationsByUser = applicationDAO.getApplicationsByUser(user);
 		assertNotSame(applications, applicationsByUser);
 		assertEquals(applications, applicationsByUser);
-		assertEquals(applications.get(0).getUser(), applications.get(1).getUser());
+		assertEquals(applications.get(0).getApplicant(), applications.get(1).getApplicant());
 	}
 	
 	public List<ApplicationForm> getApplicationFormsBelongingToSameUser(){
@@ -78,7 +78,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 
 		
 		ApplicationForm application1 = new ApplicationForm();	
-		application1.setUser(user);
+		application1.setApplicant(user);
 		application1.setProject(project);
 		application1.setApprovalStatus(ApprovalStatus.APPROVED);
 		
@@ -87,7 +87,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		applications.add(application1);
 		
 		ApplicationForm application2 = new ApplicationForm();
-		application2.setUser(user);
+		application2.setApplicant(user);
 		application2.setProject(project);
 		
 		applicationDAO.save(application2);

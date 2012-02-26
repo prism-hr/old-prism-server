@@ -42,3 +42,9 @@ function takeAction(row){
 	
 	alert(actionText); */
 }
+
+$(document).ready(function(){
+	$('#submitButton').click(function(){
+		$('#submitApplicationForm').submit();
+	});
+})

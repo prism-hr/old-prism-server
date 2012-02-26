@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dwr;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -10,10 +10,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
-import com.sun.jna.platform.win32.WinUser.HHOOK;
 import com.zuehlke.pgadmissions.dao.HibernateFlusher;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -23,11 +21,11 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dwr.models.PersonalDetailsDWR;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-
-import cucumber.annotation.lu.a;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class ApplicationManagementDWRServiceTest {
 
@@ -36,6 +34,7 @@ public class ApplicationManagementDWRServiceTest {
 	private RegisteredUser currentUser;
 	private Project project;
 	private HibernateFlusher hibernateFlusherMock;
+	private UserService userServiceMock;
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowIllegalArgumentExceptionIfIdIsNull() {
@@ -110,12 +109,24 @@ public class ApplicationManagementDWRServiceTest {
 
 	}
 
+	
+	@Test
+	public void shouldDisplayPersonalDetails() {
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(new RegisteredUserBuilder().id(1).firstName("Jack").lastName("Johnson").toUser());
+		EasyMock.replay(userServiceMock);
+		
+		PersonalDetailsDWR displayPersonalDetails = dwrService.displayPersonalDetails(1);
+		assertEquals("Jack", displayPersonalDetails.getFirstName());
+		assertEquals("Johnson", displayPersonalDetails.getLastName());
+	}
+	
+	
 	@Before
 	public void setup() {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-
+		userServiceMock = EasyMock.createMock(UserService.class);
 		hibernateFlusherMock = EasyMock.createMock(HibernateFlusher.class);
-		dwrService = new ApplicationManagementDWRService(applicationsServiceMock, hibernateFlusherMock);
+		dwrService = new ApplicationManagementDWRService(applicationsServiceMock,userServiceMock,  hibernateFlusherMock);
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
@@ -135,62 +146,4 @@ public class ApplicationManagementDWRServiceTest {
 	}
 
 }
-package com.zuehlke.pgadmissions.dwr;
 
-import junit.framework.Assert;
-
-import org.easymock.EasyMock;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
-
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dwr.models.PersonalDetailsDWR;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.UserService;
-
-
-public class ApplicationManagementDWRServiceTest {
-	
-	private RegisteredUser user;
-	private ApplicationManagementDWRService dwrService; 
-	private UserService userServiceMock;
-	private ApplicationsService applicationsServiceMock;
-
-	@Test
-	public void shouldDisplayPersonalDetails() {
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-		EasyMock.replay(userServiceMock);
-		
-		PersonalDetailsDWR displayPersonalDetails = dwrService.displayPersonalDetails(1);
-		Assert.assertEquals("Jack", displayPersonalDetails.getFirstName());
-		Assert.assertEquals("Johnson", displayPersonalDetails.getLastName());
-	}
-	
-	@Before
-	public void setUp(){
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		user = new RegisteredUserBuilder().id(1).username("bob").firstName("Jack").lastName("Johnson").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(user);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-		
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		userServiceMock = EasyMock.createMock(UserService.class);
-		
-		dwrService = new ApplicationManagementDWRService(applicationsServiceMock, userServiceMock);
-	}
-	
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
-	}
-
-}

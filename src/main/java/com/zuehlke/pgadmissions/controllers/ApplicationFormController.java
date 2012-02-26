@@ -15,10 +15,11 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
+
+import cucumber.annotation.lu.a;
 
 @Controller
 @RequestMapping("/apply")
@@ -41,32 +42,24 @@ public class ApplicationFormController {
 		this.userDAO = userDAO;
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value="/new", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView getNewApplicationForm(@RequestParam Integer project) {	
+	public ModelAndView createNewApplicationForm(@RequestParam Integer project) {	
 		
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		if(!user.isInRole(Authority.APPLICANT)) throw new ResourceNotFoundException();
 		
 		Project proj = projectDAO.getProjectById(project);
 		
 		ApplicationForm applicationForm = newApplicationForm();
-		applicationForm.setUser(user);
+		applicationForm.setApplicant(user);
 		applicationForm.setProject(proj);
 		applicationDAO.save(applicationForm);
 		
-		ApplicationFormModel model = new ApplicationFormModel();
-		model.setApplicationForm(applicationForm);
-		model.setUser(user);
+		return new   ModelAndView("redirect:edit","id", applicationForm.getId());
 		
-		ModelAndView modelAndView = new  ModelAndView(APPLICATION_FORM_VIEW_NAME,"model", model);
-		
-		return modelAndView;
 	}
 
-	ApplicationForm newApplicationForm() {
-		return new ApplicationForm();
-	}
+
 	
 	@RequestMapping(method = RequestMethod.POST)
 	@Transactional
@@ -81,25 +74,39 @@ public class ApplicationFormController {
 		model.setApplicationForm(applicationForm);
 		model.setUser(user);
 		
-		ModelAndView modelAndView = new  ModelAndView(APPLICATION_FORM_VIEW_NAME,"model", model);
-		return modelAndView;
+		return new  ModelAndView(APPLICATION_FORM_VIEW_NAME,"model", model);
 	}
 
-	@RequestMapping(value="/success", method = RequestMethod.GET)
+	@RequestMapping(value="/submit", method = RequestMethod.POST)
 	@Transactional
 	public ModelAndView submitApplication(@RequestParam Integer id) {
-		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		
+		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();		
 		ApplicationForm applicationForm = applicationDAO.get(id);
+		if(applicationForm == null || ! user.equals(applicationForm.getApplicant())){
+			throw new ResourceNotFoundException();
+		}		
+		
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationDAO.save(applicationForm);
-
+		return new   ModelAndView("redirect:/pgadmissions/applications");
+	
+	}
+	
+	@RequestMapping(value="/edit", method = RequestMethod.GET)
+	@Transactional
+	public ModelAndView getNewApplicationFormPage(@RequestParam Integer id) {
+		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		ApplicationForm applicationForm = applicationDAO.get(id);	
+		if(applicationForm == null || !currentUser.equals(applicationForm.getApplicant())){
+			throw new ResourceNotFoundException();
+		}
 		ApplicationFormModel model = new ApplicationFormModel();
 		model.setApplicationForm(applicationForm);
-		model.setUser(user);
-		ModelAndView modelAndView = new  ModelAndView(APPLICATION_FORM_SUBMITTED_VIEW_NAME,"model", model);
-
-		return modelAndView;
+		model.setUser((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails());
+		return new  ModelAndView(APPLICATION_FORM_VIEW_NAME,"model", model);
 	}
-
+	
+	ApplicationForm newApplicationForm() {
+		return new ApplicationForm();
+	}
 }

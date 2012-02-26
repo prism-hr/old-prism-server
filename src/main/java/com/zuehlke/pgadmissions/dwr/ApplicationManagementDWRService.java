@@ -1,5 +1,4 @@
 package com.zuehlke.pgadmissions.dwr;
-package com.zuehlke.pgadmissions.dwr;
 
 import org.directwebremoting.annotations.RemoteMethod;
 import org.directwebremoting.annotations.RemoteProxy;
@@ -11,14 +10,14 @@ import com.zuehlke.pgadmissions.dao.HibernateFlusher;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
-import com.zuehlke.pgadmissions.dwr.models.PersonalDetailsDWR;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dwr.models.PersonalDetailsDWR;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
-@RemoteProxy(name = "acceptDWR")
+@RemoteProxy(name = "applicationDWR")
 @Component
 public class ApplicationManagementDWRService {
 
@@ -27,11 +26,11 @@ public class ApplicationManagementDWRService {
 	private final HibernateFlusher hibernateFlusher;
 
 	ApplicationManagementDWRService() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public ApplicationManagementDWRService(ApplicationsService applicationsService, HibernateFlusher hibernateFlusher) {
+	public ApplicationManagementDWRService(ApplicationsService applicationsService, UserService userService, HibernateFlusher hibernateFlusher) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		
@@ -42,25 +41,6 @@ public class ApplicationManagementDWRService {
 	@RemoteMethod
 	public String acceptApplication(Integer applicationId) {
 
-	/*	System.out.println("I am in dwr w. appId " + appId + ", service: " + applicationsService);
-		String status = "";
-
-		ApplicationForm application = applicationsService.getApplicationById(appId);
-		SecurityContext context = SecurityContextHolder.getContext();
-		RegisteredUser approver = (RegisteredUser) context.getAuthentication().getDetails();
-		if(true){
-			throw new AccessDeniedException();
-		}
-		if (application.getApprovalStatus() == null) {
-			application.setApprovalStatus(ApprovalStatus.APPROVED);
-			application.setApprover(approver);
-			applicationsService.save(application);
-			status = "success";
-		} else {
-			status = "failure";
-		}
-
-		return status;*/
 		RegisteredUser approver = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		if(!approver.isInRole(Authority.APPROVER)){
 			throw new AccessDeniedException();

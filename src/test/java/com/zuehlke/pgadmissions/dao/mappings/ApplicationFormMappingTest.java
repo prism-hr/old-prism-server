@@ -32,7 +32,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadApplicationForm() {
 
 		ApplicationForm application = new ApplicationForm();
-		application.setUser(user);
+		application.setApplicant(user);
 		application.setProject(project);
 		application.setSubmissionStatus(SubmissionStatus.UNSUBMITTED);
 		
@@ -52,7 +52,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertNotSame(application, reloadedApplication);
 		assertEquals(application, reloadedApplication);
 
-		assertEquals(user, reloadedApplication.getUser());
+		assertEquals(user, reloadedApplication.getApplicant());
 		assertEquals(project, reloadedApplication.getProject());
 		assertEquals(SubmissionStatus.UNSUBMITTED, reloadedApplication.getSubmissionStatus());
 	}
@@ -62,7 +62,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		ApplicationForm application = new ApplicationForm();
 		application.setProject(project);
-		application.setUser(user);
+		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		application.setReviewers(Arrays.asList(user));
 		
@@ -81,7 +81,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertNotSame(application, reloadedApplication);
 		assertEquals(application, reloadedApplication);
 
-		assertEquals(user, reloadedApplication.getUser());
+		assertEquals(user, reloadedApplication.getApplicant());
 		assertEquals(project, reloadedApplication.getProject());
 		assertEquals(SubmissionStatus.SUBMITTED, reloadedApplication.getSubmissionStatus());
 		Assert.assertEquals(1, reloadedApplication.getReviewers().size());

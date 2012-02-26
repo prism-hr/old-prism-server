@@ -2,13 +2,13 @@
 <html>
    <body>
 		<h2>Application View</h2>	
-		<p>Name: ${application.user.firstName} ${application.user.lastName}</p>
-		<p>Project Title: ${application.project.title}</p>
-		<p>Project Description: ${application.project.description}</p>
-		<#if !user.isInRole('APPLICANT')>
-		  <#if application.isUnderReview()>
+		<p>Name: ${model.applicationForm.user.firstName} ${model.applicationForm.user.lastName}</p>
+		<p>Project Title: ${model.applicationForm.project.title}</p>
+		<p>Project Description: ${model.applicationForm.project.description}</p>
+		<#if !model.user.isInRole('APPLICANT')>
+		  <#if model.applicationForm.isUnderReview()>
 		      <p>Reviewers:</p>
-		      <#list application.reviewers as reviewer>
+		      <#list model.applicationForm.reviewers as reviewer>
                     <li>${reviewer.username}</li>
               </#list>
 		  <#else>

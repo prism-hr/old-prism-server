@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
+import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -31,21 +33,14 @@ public class ApplicationFormControllerTest {
 	private ApplicationForm applicationForm;
 	ApplicationFormDAO applicationDAOMock;
 	private RegisteredUser student;
+	private UserDAO userDAOMock;
 	
 	@Test
 	public void shouldGetApplicationFormView() {
 		
 		ModelAndView modelAndView = applicationController.getNewApplicationForm(null);
-		
 		assertEquals("application/applicationForm", modelAndView.getViewName());
 	}
-	
-	@Test
-	public void shouldGetEditPersonalDetailsInApplicationView() {
-		String view = applicationController.editPersonalDetailsInApplication();
-		assertEquals("application/edit_personal_details_form", view);
-	}
-
 
 	@Test
 	public void shouldLoadProjectByIdANdSetOnApplicationForm() {
@@ -101,11 +96,24 @@ public class ApplicationFormControllerTest {
 		applicationDAOMock.save(form);
 		EasyMock.replay(applicationDAOMock);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
-		assertEquals("application/applicationFormSubmitted", applicationController.submitApplication(id));
+		ModelAndView modelAndView = applicationController.submitApplication(id);
+		assertEquals("application/applicationFormSubmitted", modelAndView.getViewName());
 		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
 		EasyMock.verify(applicationDAOMock);
 		
 	}
+	
+	@Test
+	public void shouldSaveNewPersonalDetails() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationDAOMock.get(2)).andReturn(form);
+		EasyMock.replay(applicationDAOMock);
+		
+		ModelAndView modelAndView = applicationController.editApplicationForm(2, "Jack" , "Johnson");
+		ApplicationFormModel model = (ApplicationFormModel) modelAndView.getModel().get("model");
+		Assert.assertEquals("Jack", model.getUser().getFirstName());
+		Assert.assertEquals("Johnson", model.getUser().getLastName());
+	} 
 
 	@Before
 	public void setUp() {
@@ -113,9 +121,10 @@ public class ApplicationFormControllerTest {
 		applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		
 		projectDAOMock = EasyMock.createMock(ProjectDAO.class);
-		applicationDAOMock = EasyMock.createMock(ApplicationFormDAO.class);		
+		applicationDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
+		userDAOMock = EasyMock.createMock(UserDAO.class);
 		
-		applicationController = new ApplicationFormController(projectDAOMock, applicationDAOMock) {			
+		applicationController = new ApplicationFormController(projectDAOMock, applicationDAOMock, userDAOMock) {			
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

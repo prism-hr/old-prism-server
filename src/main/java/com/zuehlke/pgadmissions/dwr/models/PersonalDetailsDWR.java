@@ -7,9 +7,7 @@ import org.directwebremoting.annotations.DataTransferObject;
 @DataTransferObject
 public class PersonalDetailsDWR implements Serializable{
 
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	
 	private String firstName;

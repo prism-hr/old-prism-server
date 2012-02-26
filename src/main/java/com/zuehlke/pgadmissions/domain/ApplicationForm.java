@@ -32,8 +32,8 @@ public class ApplicationForm extends DomainObject<Integer> {
 	private ApprovalStatus approvalStatus;
 
 	@ManyToOne
-	@JoinColumn(name = "registered_user_id")
-	private RegisteredUser user = null;
+	@JoinColumn(name = "applicant_id")
+	private RegisteredUser applicant = null;
 
 	@OneToOne
 	@JoinColumn(name = "approver_user_id")
@@ -90,12 +90,12 @@ public class ApplicationForm extends DomainObject<Integer> {
 		return id;
 	}
 
-	public RegisteredUser getUser() {
-		return user;
+	public RegisteredUser getApplicant() {
+		return applicant;
 	}
 
-	public void setUser(RegisteredUser user) {
-		this.user = user;
+	public void setApplicant(RegisteredUser user) {
+		this.applicant = user;
 	}
 
 	public RegisteredUser getApprover() {

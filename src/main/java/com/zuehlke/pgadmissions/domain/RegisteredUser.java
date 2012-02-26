@@ -176,7 +176,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return applicationForm.getProject().getProgram().isApprover(this);
 		}
 		
-		if(this.equals(applicationForm.getUser())){
+		if(this.equals(applicationForm.getApplicant())){
 			return true;
 		}
 		return false;

@@ -63,7 +63,7 @@ public class ApplicationFormBuilder {
 	public ApplicationForm toApplicationForm() {
 		ApplicationForm application = new ApplicationForm();	
 		application.setId(id);		
-		application.setUser(user);
+		application.setApplicant(user);
 		if (reviewers != null) {
 			application.getReviewers().addAll(reviewers);
 		}

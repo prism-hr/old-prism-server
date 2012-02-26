@@ -67,7 +67,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldFindAllApplicationsBelongingToSameUser(){
 		List<ApplicationForm> applications = getApplicationFormsBelongingToSameUser();
-		List<ApplicationForm> applicationsByUser = applicationDAO.getApplicationsByUser(user);
+		List<ApplicationForm> applicationsByUser = applicationDAO.getApplicationsByApplicant(user);
 		assertNotSame(applications, applicationsByUser);
 		assertEquals(applications, applicationsByUser);
 		assertEquals(applications.get(0).getApplicant(), applications.get(1).getApplicant());

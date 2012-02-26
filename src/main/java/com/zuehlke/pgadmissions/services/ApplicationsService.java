@@ -32,7 +32,7 @@ public class ApplicationsService {
 
 		if (user.isInRole(Authority.APPLICANT)) {
 			List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
-			applications = applicationFormDAO.getApplicationsByUser(user);
+			applications = applicationFormDAO.getApplicationsByApplicant(user);
 			if (applications != null) {
 				visibleApplications.addAll(applications);
 			}
@@ -51,7 +51,7 @@ public class ApplicationsService {
 	}
 
 	@Transactional
-	public ApplicationForm getApplicationById(int id) {
+	public ApplicationForm getApplicationById(Integer id) {
 		return applicationFormDAO.get(id);
 	}
 

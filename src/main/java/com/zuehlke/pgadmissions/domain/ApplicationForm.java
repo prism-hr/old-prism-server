@@ -15,6 +15,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
@@ -26,6 +27,18 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 public class ApplicationForm extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = -7671357234815343496L;
+	
+	@Transient
+	private String test;
+
+	public String getTest() {
+		return test;
+	}
+
+	public void setTest(String test) {
+		this.test = test;
+	}
+
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApprovalStatusEnumUserType")
 	@Column(name = "approval_status")
@@ -57,6 +70,7 @@ public class ApplicationForm extends DomainObject<Integer> {
 	}
 
 	public void setReviewers(List<RegisteredUser> reviewers) {
+		System.out.println("ADDING REVIEWERS");
 		//THIS IS A HACK. To be changed.
 		if(this.reviewers.size() == reviewers.size() && this.reviewers.containsAll(reviewers)){
 			return;
@@ -123,7 +137,11 @@ public class ApplicationForm extends DomainObject<Integer> {
 		return !reviewers.isEmpty();
 	}
 
-	public boolean isActive() {
-		return approvalStatus == null;
+
+	public boolean isReviewable() {		
+		if (submissionStatus != SubmissionStatus.SUBMITTED ||approvalStatus != null ){
+			return false;
+		}
+		return true;
 	}
 }

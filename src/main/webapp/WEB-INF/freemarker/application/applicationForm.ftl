@@ -119,15 +119,19 @@
 			          <hr />
 			          
 			          <a class="button" href="<@spring.url '/applications'/>">Close</a>
+			          
 			          <a id="submitButton" class="button" href="<@spring.url '/applications'/>">Submit</a>
-			         <form id="submitApplicationForm" action="<@spring.url "/apply/submit"/> method="POST">
+			         <form id="submitApplicationForm" action="<@spring.url "/apply/submit"/>" method="POST">
 			          	<input type="hidden" id="applicationFormId" name="applicationForm" value="${model.applicationForm.id}"/>
 			          </form>
+			          <#if !model.user.isInRole('APPLICANT')>
+			   	  			<#include "/application/reviewers.ftl"/>
+			    	</#if>
 			        </div><!-- .content-box-inner -->
 			      </div><!-- .content-box -->
-			      
+			  
 			    </article>
-			    
+		
 			  </div>
 			  
 			<#include "/application/app_form_footer.ftl"/>

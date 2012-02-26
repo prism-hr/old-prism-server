@@ -2,7 +2,7 @@
 <html>
    <body>
 		<h2>Application View</h2>	
-		<p>Name: ${model.applicationForm.user.firstName} ${model.applicationForm.user.lastName}</p>
+		<p>Name: ${model.applicationForm.applicant.firstName} ${model.applicationForm.applicant.lastName}</p>
 		<p>Project Title: ${model.applicationForm.project.title}</p>
 		<p>Project Description: ${model.applicationForm.project.description}</p>
 		<#if !model.user.isInRole('APPLICANT')>

@@ -1,6 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +77,20 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		assertEquals(applications.get(0).getApplicant(), applications.get(1).getApplicant());
 	}
 	
+	@Test 
+	public void shouldAssignDateToApplicationForm() {
+		ApplicationForm application = new ApplicationForm();
+		application.setProject(project);
+		application.setApplicant(user);
+		
+		applicationDAO.save(application);
+		
+		Integer id = application.getId();
+		ApplicationForm reloadedApplication = applicationDAO.get(id);
+		assertNotNull(reloadedApplication.getApplicationTimestamp());
+		
+	}
+	
 	public List<ApplicationForm> getApplicationFormsBelongingToSameUser(){
 		List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
 
@@ -98,6 +116,4 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		
 		return applications;
 	}
-	
-	
 }

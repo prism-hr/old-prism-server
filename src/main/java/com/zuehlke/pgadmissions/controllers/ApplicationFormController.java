@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
@@ -77,13 +78,11 @@ public class ApplicationFormController {
 
 	@RequestMapping(value="/submit", method = RequestMethod.POST)
 	public ModelAndView submitApplication(@RequestParam Integer applicationForm) {
-
-		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();		
+		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		ApplicationForm appForm = applicationService.getApplicationById(applicationForm);
-		if(appForm == null || ! user.equals(appForm.getApplicant())){
+		if(appForm == null || ! user.equals(appForm.getApplicant()) || appForm.isSubmitted()){
 			throw new ResourceNotFoundException();
 		}		
-		
 		appForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationService.save(appForm);
 		return new  ModelAndView("redirect:/applications?success=true");

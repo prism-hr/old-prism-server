@@ -3,7 +3,8 @@
  */
 function fetchPersonalDetails() {
 	//alert("fetchPersonalDetails - begin");
-
+	
+	/*
 	applicationDWR.displayPersonalDetails(function(data) {
 		dwr.util.setValue("demoStatus", data);
 
@@ -12,7 +13,7 @@ function fetchPersonalDetails() {
 		$("#firstName").val(data.firstName);
 		$("#lastName").val(data.lastName);
 
-	});
+	});*/
 
 }
 

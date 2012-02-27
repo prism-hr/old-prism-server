@@ -7,6 +7,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public class ReviewersListModel {
 	
+	private RegisteredUser user;
 	private ApplicationForm application;
 	private List<RegisteredUser> reviewers;
 	
@@ -25,4 +26,13 @@ public class ReviewersListModel {
 	public List<RegisteredUser> getReviewers() {
 		return reviewers;
 	}
+	
+	public RegisteredUser getUser() {
+		return user;
+	}
+
+	public void setUser(RegisteredUser user) {
+		this.user = user;
+	}
+
 }

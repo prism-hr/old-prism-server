@@ -44,7 +44,7 @@
 				        <div class="content-box-inner">
 							<!-- confirmation message if application just submitted with email coming soon confirmation -->
 							<p style="color:red;">${model.message}</p>
-							<table class="data" border="0">
+							<table class="data" border="0" >
 					          	<colgroup>
 					            	<col width="30" />
 					            	<col width="90" />
@@ -74,14 +74,14 @@
 					            </thead>
 					            <tbody>
 					            	<#list model.applications as application>
-							        	<tr>
+							        	<tr id="row_${application.id}" name="applicationRow">
 							                <td><a class="row-arrow" href="#">&gt;</a></td>
-							                <td id="row_app_id">${application.id}</td>
+							                <td name="idColumn">${application.id}</td>
 							                <td>${application.applicant.firstName}</td>
 							                <td>${application.applicant.lastName}</td>
 							                <td>${application.project.program.code} - ${application.project.program.title}</td>
 							                <#if model.user.isInRole('APPLICANT')>
-							               	 	<td>${application.submissionStatus}</td>
+							               	 	<td name="submissionStatusColumn">${application.submissionStatus}</td>
 							                </#if>
 							                <td>
 							                	<select class="actionType" name="app_[${application.id}]">

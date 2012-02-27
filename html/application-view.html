@@ -105,7 +105,7 @@
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Programme
             </h2>
-            <div>
+            <div class="open">
             	<p>Testing...</p>
             </div>
           </section>
@@ -274,110 +274,75 @@
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Address
             </h2>
-            <div>
-            	<table class="existing">
-              	<colgroup>
-                	<col style="width: 30px" />
-                	<col />
-                	<col style="width: 100px" />
-                	<col style="width: 100px" />
-                	<col style="width: 30px" />
-                	<col style="width: 30px" />
-                </colgroup>
-              	<thead>
-                	<tr>
-                  	<th colspan="2">Address</th>
-                    <th>From</th>
-                    <th>To</th>
-                    <th colspan="2">&nbsp;</th>
-                  </tr>
-                </thead>
-                <tbody>
-                	<tr>
-                  	<td><a class="row-arrow" href="#">-</a></td>
-                  	<td>123 Letsby Avenue, Croydon, Surrey AS3 0LI</td>
-                  	<td>21/07/11</td>
-                  	<td>19/05/12</td>
-                  	<td><a class="button-edit" href="#">edit</a></td>
-                  	<td><a class="button-close" href="#">close</a></td>
-                  </tr>
-                	<tr>
-                  	<td><a class="row-arrow" href="#">-</a></td>
-                  	<td>124 Letsby Avenue, Croydon, Surrey AS3 0LI</td>
-                  	<td>18/07/10</td>
-                  	<td>19/07/11</td>
-                  	<td><a class="button-edit" href="#">edit</a></td>
-                  	<td><a class="button-close" href="#">close</a></td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="open">
               <form method="post" action="woooop">
 
               	<div>
                 	<div class="row">
                   	<label class="label">Street Name &amp; Number</label>
-                    <span class="hint"></span>
-                    <div class="field">
-                    	<textarea class="max" rows="6" cols="80"></textarea>
-                    </div>
+                    <div class="field">123 Letsby Avenue</div>
                   </div>
                 	<div class="row">
                   	<label class="label">Postal Code</label>
-                    <span class="hint"></span>
                     <div class="field">
-                    	<input class="half" type="text" value="" />
+                    	AS3 0LI
                     </div>
                   </div>
                 	<div class="row">
                   	<label class="label">Country</label>
                     <div class="field">
-                      <select class="full">
-                        <option>United Kingdom</option>
-                      </select>
+                      United Kingdom
                     </div>
                   </div>
                 	<div class="row">
                   	<span class="label">Start Date</span>
-                    <span class="hint"></span>
-                    <div class="field">
-	                    <input class="half" type="date" value="" />
-                    </div>
+                    <div class="field">21/07/11</div>
                   </div>
                 	<div class="row">
                   	<span class="label">End Date</span>
-                    <span class="hint"></span>
-                    <div class="field">
-  	                  <input class="half" type="date" value="" />
-                    </div>
+                    <div class="field">19/05/12</div>
                   </div>
                 	<div class="row">
                   	<span class="label">Supporting Document</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <input class="full" type="text" value="" />
-                      <a class="button" href="#">Browse</a>
-                      <a class="button" href="#">Upload</a>
+                      ...
                     </div>	
                   </div>
-                	<div class="row">
-                  	<div class="field"><a class="button blue" href="#">Add a document</a></div>
+                </div>
+
+                <div class="comment">
+                	<div class="previous">
+                    <strong>Previous comments</strong>
+                    <ul>
+                      <li>
+                      	<strong>Jane Smith</strong>
+                        <span>Lorem ipsum dolor sit amet</span>
+                      </li>
+                      <li>
+                      	<strong>Jane Smith</strong>
+                        <span>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</span>
+                      </li>
+                      <li>
+                      	<strong>Jim Frankl</strong>
+                        <span>Capsicum lorem ipsum dolor sit amet</span>
+                      </li>
+                    </ul>
                   </div>
-                	<div class="row">
-                  	<span class="label">This is my contact address</span>
-                    <div class="field">
-                    	<label class="half"><input type="checkbox" /></label>
-                    	<label>Reason for living here
-                      <select class="half">
-                        <option>parents</option>
-                      </select>
-                      </label>
-                    </div>
+                	
+                  <hr />
+                  
+                	<p><strong>Add a comment</strong></p>
+                  <textarea class="max" rows="4" cols="70"></textarea>
+                  
+                  <div class="buttons">
+                  	<a class="button comment-close">Close</a>
+                  	<button type="submit" class="blue">Submit</button>
                   </div>
                 </div>
 
               	<div class="buttons">
-                  <a class="button blue" href="#">Close</a>
-                  <button class="blue" type="submit">Save</button>
+                  <a class="button blue comment-open" href="#">Comment</a>
                 </div>
 
               </form>
@@ -389,38 +354,7 @@
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Qualifications
             </h2>
-            <div>
-            	<table class="existing">
-              	<colgroup>
-                	<col style="width: 30px" />
-                	<col style="width: 140px" />
-                	<col style="width: 140px" />
-                	<col style="width: 160px" />
-                	<col />
-                	<col style="width: 30px" />
-                	<col style="width: 30px" />
-                </colgroup>
-              	<thead>
-                	<tr>
-                  	<th colspan="2">First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Phone Number</th>
-                    <th colspan="2">&nbsp;</th>
-                  </tr>
-                </thead>
-                <tbody>
-                	<tr>
-                  	<td><a class="row-arrow" href="#">-</a></td>
-                  	<td>&nbsp;</td>
-                  	<td>&nbsp;</td>
-                  	<td>&nbsp;</td>
-                  	<td>&nbsp;</td>
-                  	<td>edit</td>
-                  	<td>close?</td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="open">
               <form method="post" action="woooop">
 
               	<div>
@@ -433,8 +367,43 @@
                   </div>
                 </div>
                 
+                <div class="comment">
+                	<div class="previous">
+                    <strong>Previous comments</strong>
+                    <ul>
+                      <li>
+                      	<strong>Jane Smith</strong>
+                        <span>Lorem ipsum dolor sit amet</span>
+                      </li>
+                      <li>
+                      	<strong>Jane Smith</strong>
+                        <span>It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).</span>
+                      </li>
+                      <li>
+                      	<strong>Jim Frankl</strong>
+                        <span>Capsicum lorem ipsum dolor sit amet</span>
+                      </li>
+                    </ul>
+                  </div>
+                	
+                  <hr />
+                  
+                	<p><strong>Add a comment</strong></p>
+                  <textarea class="max" rows="4" cols="70"></textarea>
+                  
+                  <div class="buttons">
+                  	<a class="button comment-close">Close</a>
+                  	<button type="submit" class="blue">Submit</button>
+                  </div>
+                </div>
+
+              	<div class="buttons">
+                  <a class="button blue comment-open" href="#">Comment</a>
+                </div>
+
               </form>
             </div>
+
           </section>
           
            <section class="folding yellow">
@@ -442,7 +411,7 @@
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Employment
             </h2>
-            <div>
+            <div class="open">
             	<table class="existing">
               	<colgroup>
                 	<col style="width: 30px" />
@@ -479,7 +448,7 @@
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Funding
             </h2>
-            <div>
+            <div class="open">
             	<table class="existing">
               	<colgroup>
                 	<col style="width: 30px" />
@@ -516,7 +485,7 @@
               <span class="left"></span><span class="right"></span><span class="status"></span>
               References
             </h2>
-            <div>
+            <div class="open">
             	<table class="existing">
               	<colgroup>
                 	<col style="width: 30px" />
@@ -553,7 +522,7 @@
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Documents
             </h2>
-            <div>
+            <div class="open">
             	<table class="existing">
               	<colgroup>
                 	<col style="width: 30px" />
@@ -584,15 +553,6 @@
               </table>
             </div>
           </section>
-          
-          <hr />
-          
-          <div class="buttons">
-            <a class="button blue" href="#">Share</a>
-            <a class="button-question" href="#">?</a>
-            <a class="button" href="#">Close</a>
-            <button type="submit">Submit</button>
-          </div>
           
         </div><!-- .content-box-inner -->
       </div><!-- .content-box -->

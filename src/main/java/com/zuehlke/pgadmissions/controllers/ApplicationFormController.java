@@ -53,7 +53,7 @@ public class ApplicationFormController {
 		applicationForm.setProject(proj);
 		applicationService.save(applicationForm);
 		
-		return new  ModelAndView("redirect:/pgadmissions/application","id", applicationForm.getId());
+		return new  ModelAndView("redirect:/application","id", applicationForm.getId());
 		
 	}
 
@@ -77,6 +77,7 @@ public class ApplicationFormController {
 
 	@RequestMapping(value="/submit", method = RequestMethod.POST)
 	public ModelAndView submitApplication(@RequestParam Integer applicationForm) {
+		System.out.println("SUBMITTED");
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();		
 		ApplicationForm appForm = applicationService.getApplicationById(applicationForm);
 		if(appForm == null || ! user.equals(appForm.getApplicant())){

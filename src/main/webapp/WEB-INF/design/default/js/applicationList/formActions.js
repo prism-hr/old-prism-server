@@ -5,9 +5,19 @@ $(document).ready(function() {
 
 		if ($(this).val() == 'view') {
 			window.location.href = "/pgadmissions/application?id=" + id;
-		}
-		if ($(this).val() == 'assignReviewer') {
+		}else if($(this).val() == 'assignReviewer') {
+			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
+		}else if($(this).val() == 'approve') {
+			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
+		}else if($(this).val() == 'reject') {
 			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
 		}
+		
+//		else if($(this).val() == 'comment') {
+//			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
+//		}else if($(this).val() == 'showComment') {
+//			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
+//		}
+		
 	});
-})
+});

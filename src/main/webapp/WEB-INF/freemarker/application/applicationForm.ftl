@@ -1,3 +1,13 @@
+<#-- Assignments -->
+
+<#if model.user.isInRole('APPLICANT')>
+	<#assign formViewState = "close"/>
+<#else>
+	<#assign formViewState = "open"/>
+</#if>
+
+<#-- Personal Details Rendering -->
+
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
 <html>
@@ -115,8 +125,7 @@
 			              Testing...
 			            </div>
 			          </section>
-			          
-			          <#if !model.user.isInRole('APPLICANT')>
+			         <#if !model.user.isInRole('APPLICANT')>
 			          <section class="folding violet">
                         <h2>
                           <span class="left"></span><span class="right"></span><span class="status"></span>
@@ -166,7 +175,8 @@
 		
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+		
 	</body>
 </html>

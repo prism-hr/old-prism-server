@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Access;
@@ -15,8 +16,12 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
@@ -24,10 +29,10 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD)
-public class ApplicationForm extends DomainObject<Integer> {
+public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm>{
 
 	private static final long serialVersionUID = -7671357234815343496L;
-	
+
 	@Transient
 	private String test;
 
@@ -39,6 +44,10 @@ public class ApplicationForm extends DomainObject<Integer> {
 		this.test = test;
 	}
 
+	@Column(name="app_date_time", insertable = false)
+	@Generated(GenerationTime.INSERT)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date applicationTimestamp;
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApprovalStatusEnumUserType")
 	@Column(name = "approval_status")
@@ -69,8 +78,7 @@ public class ApplicationForm extends DomainObject<Integer> {
 		return reviewers;
 	}
 
-	public void setReviewers(List<RegisteredUser> reviewers) {
-		System.out.println("ADDING REVIEWERS");
+	public void setReviewers(List<RegisteredUser> reviewers) {	
 		//THIS IS A HACK. To be changed.
 		if(this.reviewers.size() == reviewers.size() && this.reviewers.containsAll(reviewers)){
 			return;
@@ -133,15 +141,27 @@ public class ApplicationForm extends DomainObject<Integer> {
 		return submissionStatus;
 	}
 
+	public Date getApplicationTimestamp() {
+		return applicationTimestamp;
+	}
+
+	public void setApplicationTimestamp(Date applicationTimestamp) {
+		this.applicationTimestamp = applicationTimestamp;
+	}
+
 	public boolean isUnderReview() {
 		return !reviewers.isEmpty();
 	}
-
 
 	public boolean isReviewable() {		
 		if (submissionStatus != SubmissionStatus.SUBMITTED ||approvalStatus != null ){
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public int compareTo(ApplicationForm appForm) {
+		return (-1) * this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
 	}
 }

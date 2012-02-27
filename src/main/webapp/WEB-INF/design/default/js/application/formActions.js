@@ -4,7 +4,7 @@
 function fetchPersonalDetails() {
 	//alert("fetchPersonalDetails - begin");
 
-	acceptDWR.displayPersonalDetails(function(data) {
+	/*applicationDWR.displayPersonalDetails(function(data) {
 		dwr.util.setValue("demoStatus", data);
 
 		//alert(data.firstName + " " + data.lastName);
@@ -12,7 +12,7 @@ function fetchPersonalDetails() {
 		$("#firstName").val(data.firstName);
 		$("#lastName").val(data.lastName);
 
-	});
+	});*/
 
 }
 
@@ -22,7 +22,7 @@ function fetchPersonalDetails() {
 function acceptApplication(id) {
 	//alert("adasdfa");
 	
-	acceptDWR.acceptApplication(id, function(data) {
+	applicationDWR.acceptApplication(id, function(data) {
 		dwr.util.setValue("demoStatus", data);
 	});
 	

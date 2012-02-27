@@ -1,4 +1,4 @@
-update registered_user set firstname='Robert', lastname= 'Smith' where username='bob';
-update registered_user set firstname='Frederick', lastname= 'Jones' where username='fred';
-update registered_user set firstname='Jane', lastname= 'Harrison' where username='jane';
-update registered_user set firstname='Mark', lastname= 'Thomson' where username='mark';
+update REGISTERED_USER set firstname='Robert', lastname= 'Smith' where username='bob';
+update REGISTERED_USER set firstname='Frederick', lastname= 'Jones' where username='fred';
+update REGISTERED_USER set firstname='Jane', lastname= 'Harrison' where username='jane';
+update REGISTERED_USER set firstname='Mark', lastname= 'Thomson' where username='mark';

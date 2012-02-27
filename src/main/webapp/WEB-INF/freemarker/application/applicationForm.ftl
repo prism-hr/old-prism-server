@@ -116,6 +116,28 @@
 			            </div>
 			          </section>
 			          
+			          <#if !model.user.isInRole('APPLICANT')>
+			          <section class="folding violet">
+                        <h2>
+                          <span class="left"></span><span class="right"></span><span class="status"></span>
+                          Reviewers
+                        </h2>
+                        <div>
+                             <#include "/application/reviewers.ftl"/>
+                        </div>
+                      </section>
+                      
+                      <section class="folding orange">
+                        <h2>
+                          <span class="left"></span><span class="right"></span><span class="status"></span>
+                          Comments
+                        </h2>
+                        <div>
+                            <p>Testing...</p>
+                        </div>
+                      </section>
+			          </#if>
+			          
 			          <hr />
 			          
 			          <a class="button" href="<@spring.url '/applications'/>">Close</a>
@@ -125,9 +147,6 @@
 			          	      <input type="hidden" id="applicationFormId" name="applicationForm" value="${model.applicationForm.id}"/>
 			             </form>
 			    	 </#if>
-			    	 <#if !model.user.isInRole('APPLICANT')>
-                            <#include "/application/reviewers.ftl"/>
-                     </#if>   
 			        </div><!-- .content-box-inner -->
 			      </div><!-- .content-box -->
 			  

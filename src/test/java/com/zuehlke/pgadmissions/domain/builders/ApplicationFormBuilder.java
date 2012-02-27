@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +25,8 @@ public class ApplicationFormBuilder {
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
 	
 	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
+	
+	private Date appDate;
 	
 	public ApplicationFormBuilder applicant (RegisteredUser applicant) {
 		this.applicant = applicant;
@@ -60,6 +63,11 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
+	public ApplicationFormBuilder appDate(Date date) {
+		this.appDate = date;
+		return this;
+	}
+	
 	public ApplicationForm toApplicationForm() {
 		ApplicationForm application = new ApplicationForm();	
 		application.setId(id);		
@@ -71,6 +79,7 @@ public class ApplicationFormBuilder {
 		application.setApprover(approver);
 		application.setProject(project);
 		application.setSubmissionStatus(submissionStatus);
+		application.setApplicationTimestamp(appDate);
 		return application;
 	}
 }

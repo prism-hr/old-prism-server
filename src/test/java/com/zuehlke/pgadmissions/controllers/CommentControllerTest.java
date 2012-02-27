@@ -84,7 +84,7 @@ public class CommentControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(submittedNonApprovedApplication);
 		EasyMock.replay(applicationsServiceMock);
 		ModelAndView modelAndView = controller.getCommentPage(1);
-		assertEquals("commentForm", modelAndView.getViewName());
+		assertEquals("comment/commentForm", modelAndView.getViewName());
 		assertEquals(submittedNonApprovedApplication, ((CommentModel)modelAndView.getModelMap().get("model")).getApplication());
 	}
 	
@@ -175,7 +175,7 @@ public class CommentControllerTest {
 		List<ApplicationReview> loadedComments = ((CommentModel) modelAndView.getModelMap().get("model")).getComments();
 		assertEquals(2, loadedComments.size());
 		assertEquals(comments, loadedComments);
-		assertEquals("comments", modelAndView.getViewName());
+		assertEquals("comment/comments", modelAndView.getViewName());
 		
 	}
 	
@@ -200,7 +200,7 @@ public class CommentControllerTest {
 		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved1));
 		assertTrue(!loadedComments.contains(applicationReviewForSubmittedNonApproved3));
 		
-		assertEquals("comments", modelAndView.getViewName());
+		assertEquals("comment/comments", modelAndView.getViewName());
 	}
 	
 	@Test
@@ -226,7 +226,7 @@ public class CommentControllerTest {
 		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved3));
 		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved4));
 		
-		assertEquals("comments", modelAndView.getViewName());
+		assertEquals("comment/comments", modelAndView.getViewName());
 	}
 	
 	@Test(expected = CannotViewCommentsException.class)

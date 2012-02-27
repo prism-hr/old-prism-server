@@ -23,8 +23,8 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 @RequestMapping(value = { "/comments" })
 public class CommentController {
 
-	private static final String COMMENT_FORM_VIEW_NAME = "comments/commentForm";
-	private static final String SHOW_COMMENTS_VIEW_NAME = "comments/comments";
+	private static final String COMMENT_FORM_VIEW_NAME = "comment/commentForm";
+	private static final String SHOW_COMMENTS_VIEW_NAME = "comment/comments";
 	private final ApplicationReviewService applicationReviewService;
 	private final ApplicationsService applicationService;
 

@@ -80,3 +80,14 @@ section.folding.yellow table.existing th { background-position: 0 -75px; }
 section.folding.green table.existing th { background-position: 0 -100px; }
 section.folding.navy table.existing th { background-position: 0 -125px; }
 section.folding.blue table.existing th { background-position: 0 -150px; }
+
+section.folding div.comment { display: none; }
+section.folding div.comment label { display: block; margin-bottom: 4px; }
+section.folding div.comment textarea { width: 99%; }
+section.folding div.comment .buttons { background-color: transparent; padding: 5px; }
+section.folding div.comment .previous { margin-bottom: 10px; }
+section.folding div.comment .previous a.more { float: right; font-weight: bold; }
+section.folding div.comment .previous ul { list-style: none; margin: 10px 0; }
+section.folding div.comment .previous ul li { background: #DDD; margin-bottom: 0.5em; padding: 5px; }
+section.folding div.comment .previous ul li.even { background: #EEE; }
+section.folding div.comment .previous ul li span { display: block; }

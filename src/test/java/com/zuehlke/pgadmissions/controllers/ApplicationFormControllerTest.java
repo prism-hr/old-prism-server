@@ -62,7 +62,7 @@ public class ApplicationFormControllerTest {
 
 		ModelAndView modelAndView = applicationController.createNewApplicationForm(12);
 		assertEquals(applicationForm.getId(), modelAndView.getModel().get("id"));
-		assertEquals("redirect:/pgadmissions/application", modelAndView.getViewName());
+		assertEquals("redirect:/application", modelAndView.getViewName());
 
 	}
 

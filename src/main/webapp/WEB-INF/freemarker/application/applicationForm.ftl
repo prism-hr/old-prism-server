@@ -124,10 +124,10 @@
 			             <form id="submitApplicationForm" action="<@spring.url "/apply/submit"/>" method="POST">
 			          	      <input type="hidden" id="applicationFormId" name="applicationForm" value="${model.applicationForm.id}"/>
 			             </form>
-			             <#if !model.user.isInRole('APPLICANT')>
-			   	  			<#include "/application/reviewers.ftl"/>
-			    	    </#if>
-			    	 </#if>   
+			    	 </#if>
+			    	 <#if !model.user.isInRole('APPLICANT')>
+                            <#include "/application/reviewers.ftl"/>
+                     </#if>   
 			        </div><!-- .content-box-inner -->
 			      </div><!-- .content-box -->
 			  

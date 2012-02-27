@@ -100,7 +100,7 @@ public class ReviewControllerTest {
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfSubmittedAPplicationDoesNotExist() {
+	public void shouldThrowResourceNotFoundExceptionIfSubmittedApplicationDoesNotExist() {
 
 		controller.updateReviewers(null);
 	}

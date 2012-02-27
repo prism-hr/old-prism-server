@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 public class CommentController {
 
 	private static final String COMMENT_FORM_VIEW_NAME = "commentForm";
-	private static final String SUBMITTED_COMMENT_VIEW_NAME = "comment";
 	private static final String SHOW_COMMENTS_VIEW_NAME = "comments";
 	private final ApplicationReviewService applicationReviewService;
 	private final ApplicationsService applicationService;
@@ -43,7 +42,7 @@ public class CommentController {
 	
 	@RequestMapping(value = { "/addComment" }, method = RequestMethod.GET)
 	@Transactional
-	public ModelAndView getCommentPage(@RequestParam Integer id, @RequestParam String cmtDecision) {
+	public ModelAndView getCommentPage(@RequestParam Integer id) {
 		CommentModel commentModel = new CommentModel();
 		commentModel.setApplication(applicationService.getApplicationById(id));
 		return new ModelAndView(COMMENT_FORM_VIEW_NAME, "model", commentModel);
@@ -78,7 +77,7 @@ public class CommentController {
 			commentModel.setComment(comment);
 			commentModel.setApplication(application);
 		}
-		return new ModelAndView(SUBMITTED_COMMENT_VIEW_NAME, "model", commentModel);
+		return new ModelAndView("redirect:/application", "id", application.getId());
 	}
 
 	@RequestMapping(value = { "/showAll" }, method = RequestMethod.GET)

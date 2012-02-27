@@ -136,15 +136,6 @@
                         </div>
                       </section>
                       
-                      <section class="folding orange">
-                        <h2>
-                          <span class="left"></span><span class="right"></span><span class="status"></span>
-                          Comments
-                        </h2>
-                        <div>
-                            <p>Testing...</p>
-                        </div>
-                      </section>
 			          </#if>
 			          
 			          <hr />

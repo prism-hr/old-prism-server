@@ -162,6 +162,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	@Override
 	public int compareTo(ApplicationForm appForm) {
-		return (-1) * this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
+		return this.applicationTimestamp == null? -1: (-1) * this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
 	}
 }

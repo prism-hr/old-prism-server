@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -29,7 +30,7 @@ public class ApplicationListController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getApplicationListPage() {
+	public ModelAndView getApplicationListPage(@RequestParam(required=false) boolean success) {
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		RegisteredUser user = (RegisteredUser) context.getAuthentication().getDetails();
@@ -37,7 +38,8 @@ public class ApplicationListController {
 		ApplicationListModel model = new ApplicationListModel();
 		model.setUser(user);
 		model.setApplications(applicationsService.getVisibleApplications(user));
-		
+		if(success)
+		        model.setMessage("Your application is submitted successfully. <b>Coming soon: </b> email confirmation.");
 		ModelAndView modelAndView = new ModelAndView(APPLICATION_LIST_VIEW_NAME, "model", model);
 		
 		return modelAndView;

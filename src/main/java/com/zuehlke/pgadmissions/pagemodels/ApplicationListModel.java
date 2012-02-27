@@ -9,7 +9,12 @@ public class ApplicationListModel extends DomainModel{
 
 	private RegisteredUser user;
 	private List<ApplicationForm> applications;
+	private String message = "";
 	
+	public String getMessage() {
+		return message;
+	}
+
 	public List<ApplicationForm> getApplications() {
 		return applications;
 	}
@@ -24,6 +29,10 @@ public class ApplicationListModel extends DomainModel{
 
 	public RegisteredUser getUser() {
 		return this.user;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 	
 }

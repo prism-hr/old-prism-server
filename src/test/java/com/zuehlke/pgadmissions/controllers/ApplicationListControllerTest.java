@@ -34,7 +34,7 @@ public class ApplicationListControllerTest {
 	@Test
 	public void shouldReturnCorrectViewForApplicant() {		
 		
-		ModelAndView modelAndView = controller.getApplicationListPage();
+		ModelAndView modelAndView = controller.getApplicationListPage(false);
 
 		assertEquals("application/application_list", modelAndView.getViewName());
 	}
@@ -42,7 +42,7 @@ public class ApplicationListControllerTest {
 	@Test
 	public void shouldAddUserFromSecurityContextObjectToModel() {
 		
-		ModelAndView modelAndView = controller.getApplicationListPage();
+		ModelAndView modelAndView = controller.getApplicationListPage(false);
 		
 		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
 		
@@ -57,7 +57,7 @@ public class ApplicationListControllerTest {
 		EasyMock.expect(applicationsServiceMock.getVisibleApplications(user)).andReturn(Arrays.asList(applicationOne, applicationTwo));
 		EasyMock.replay(applicationsServiceMock);
 		
-		ModelAndView modelAndView = controller.getApplicationListPage();
+		ModelAndView modelAndView = controller.getApplicationListPage(false);
 		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
 	
 		List<ApplicationForm> applications = model.getApplications();

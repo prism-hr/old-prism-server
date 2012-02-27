@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,6 +65,19 @@ public class ApplicationsServiceTest{
 		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(reviewer);
 		Assert.assertEquals(0, visibleApplications.size());
 		Assert.assertFalse(visibleApplications.contains(underReviewForm));
+	}
+	
+	@Test
+	public void shouldGetMostRecentApplicationFirst() throws InterruptedException{
+		ApplicationForm app1 = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).appDate(new Date()).toApplicationForm();
+		Thread.sleep(1000);
+		ApplicationForm app2 = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED).appDate(new Date()).toApplicationForm();
+		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicant(user)).andReturn(Arrays.asList(app1,app2));
+		EasyMock.replay(applicationFormDAOMock);
+		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(user);
+		Assert.assertEquals(2, visibleApplications.size());
+		Assert.assertEquals(app2, visibleApplications.get(0));
+		Assert.assertEquals(app1, visibleApplications.get(1));
 	}
 	
 	@Before

@@ -77,7 +77,7 @@ public class ApplicationFormController {
 
 	@RequestMapping(value="/submit", method = RequestMethod.POST)
 	public ModelAndView submitApplication(@RequestParam Integer applicationForm) {
-		System.out.println("SUBMITTED");
+
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();		
 		ApplicationForm appForm = applicationService.getApplicationById(applicationForm);
 		if(appForm == null || ! user.equals(appForm.getApplicant())){
@@ -86,24 +86,10 @@ public class ApplicationFormController {
 		
 		appForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationService.save(appForm);
-		return new  ModelAndView("redirect:/pgadmissions/applications");
+		return new  ModelAndView("redirect:/applications");
 	
 	}
-	/*
-	@RequestMapping(value="/edit", method = RequestMethod.GET)
-	@Transactional
-	public ModelAndView getNewApplicationFormPage(@RequestParam Integer id) {
-		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		ApplicationForm applicationForm = applicationDAO.get(id);	
-		if(applicationForm == null || !currentUser.equals(applicationForm.getApplicant())){
-			throw new ResourceNotFoundException();
-		}
-		ApplicationFormModel model = new ApplicationFormModel();
-		model.setApplicationForm(applicationForm);
-		model.setUser((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails());
-		return new  ModelAndView(APPLICATION_FORM_VIEW_NAME,"model", model);
-	}
-	*/
+
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
 	}

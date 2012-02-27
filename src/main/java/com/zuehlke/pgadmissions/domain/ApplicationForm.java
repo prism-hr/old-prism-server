@@ -69,8 +69,7 @@ public class ApplicationForm extends DomainObject<Integer> {
 		return reviewers;
 	}
 
-	public void setReviewers(List<RegisteredUser> reviewers) {
-		System.out.println("ADDING REVIEWERS");
+	public void setReviewers(List<RegisteredUser> reviewers) {	
 		//THIS IS A HACK. To be changed.
 		if(this.reviewers.size() == reviewers.size() && this.reviewers.containsAll(reviewers)){
 			return;

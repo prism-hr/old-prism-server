@@ -120,7 +120,7 @@
 			          
 			          <a class="button" href="<@spring.url '/applications'/>">Close</a>
 			          
-			          <a id="submitButton" class="button" href="<@spring.url '/applications'/>">Submit</a>
+			          <a id="submitButton" class="button">Submit</a>
 			         <form id="submitApplicationForm" action="<@spring.url "/apply/submit"/>" method="POST">
 			          	<input type="hidden" id="applicationFormId" name="applicationForm" value="${model.applicationForm.id}"/>
 			          </form>

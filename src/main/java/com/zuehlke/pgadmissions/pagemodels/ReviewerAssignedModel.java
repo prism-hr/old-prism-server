@@ -1,4 +1,7 @@
-package com.zuehlke.pgadmissions.domain;
+package com.zuehlke.pgadmissions.pagemodels;
+
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public class ReviewerAssignedModel {
 

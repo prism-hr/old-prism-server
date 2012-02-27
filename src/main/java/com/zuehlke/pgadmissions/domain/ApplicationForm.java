@@ -18,7 +18,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
@@ -32,17 +31,6 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm>{
 
 	private static final long serialVersionUID = -7671357234815343496L;
-
-	@Transient
-	private String test;
-
-	public String getTest() {
-		return test;
-	}
-
-	public void setTest(String test) {
-		this.test = test;
-	}
 
 	@Column(name="app_date_time", insertable = false)
 	@Generated(GenerationTime.INSERT)
@@ -167,12 +155,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Override
 	public int compareTo(ApplicationForm appForm) {
 		if (this.applicationTimestamp == null) {
-			System.out.println("first app null");
 			return -1;
 		}
 		
 		if (appForm.getApplicationTimestamp() == null) {
-			System.out.println("second app null");
 			return 1;
 		}
 		return (-1) * this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());

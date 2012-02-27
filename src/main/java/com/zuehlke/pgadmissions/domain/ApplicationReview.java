@@ -14,9 +14,6 @@ import javax.persistence.OneToOne;
 @Access(AccessType.FIELD) 
 public class ApplicationReview extends DomainObject<Integer>{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 2861325991249900547L;
 
 	private String comment;

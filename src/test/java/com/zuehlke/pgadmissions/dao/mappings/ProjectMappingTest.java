@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 
 public class ProjectMappingTest extends AutomaticRollbackTestCase{
+	
 	@Test
 	public void shouldSaveAndLoadProject(){
 	

@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -9,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-
 
 @Entity(name="PROJECT")
 @Access(AccessType.FIELD)

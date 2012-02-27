@@ -26,8 +26,6 @@ public class ApplicationFormDAO {
 	}
 	
 	public void save(ApplicationForm application) {
-		System.out.println("******************Saving");
-		System.out.println(application.getSubmissionStatus());
 		sessionFactory.getCurrentSession().saveOrUpdate(application);
 	}
 

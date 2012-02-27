@@ -66,8 +66,6 @@ public class ApplicationFormControllerTest {
 
 	}
 
-
-
 	@Test
 	public void shouldSaveApplicationForm() {
 		applicationsServiceMock.save(applicationForm);
@@ -127,10 +125,7 @@ public class ApplicationFormControllerTest {
 	public void shouldDoStuffIfSaveFails() {
 		//
 		fail("not implemented");
-	
-
 	}
-	
 	
 	@Test
 	public void shouldSaveNewPersonalDetails() {

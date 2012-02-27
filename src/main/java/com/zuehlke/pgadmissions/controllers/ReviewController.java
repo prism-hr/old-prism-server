@@ -12,9 +12,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewersListModel;
 import com.zuehlke.pgadmissions.exceptions.CannotReviewApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.pagemodels.ReviewersListModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -23,8 +23,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping(value = { "/reviewer" })
 public class ReviewController {
 
-	// private static final String ADD_REVIEW_SUCCESS_VIEW_NAME =
-	// "reviewer/reviewerSuccess";
 	private static final String ADD_REVIEWER_VIEW_NAME = "reviewer/reviewer";
 	private final ApplicationsService applicationsService;
 	private final UserService userService;

@@ -1,6 +1,9 @@
-package com.zuehlke.pgadmissions.domain;
+package com.zuehlke.pgadmissions.pagemodels;
 
 import java.util.List;
+
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public class ReviewersListModel {
 	

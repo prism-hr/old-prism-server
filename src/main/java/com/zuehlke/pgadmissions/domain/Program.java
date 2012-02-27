@@ -23,11 +23,7 @@ public class Program extends DomainObject<Integer> {
 	private String code;
 	private String title;
 	private String description;
-	
-
-	
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
-
 
 	@Override
 	@Id
@@ -86,7 +82,6 @@ public class Program extends DomainObject<Integer> {
 	}
 	
 	public boolean isApprover(RegisteredUser user) {
-		System.out.println("SIZE: " + approvers.size());
 		if(!user.isInRole(Authority.APPROVER)){
 			return false;
 		}

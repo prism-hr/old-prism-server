@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,8 @@ public class ApplicationsService {
 				}
 			}
 		}
-
+		
+		Collections.sort(visibleApplications);
 		return visibleApplications;
 	}
 

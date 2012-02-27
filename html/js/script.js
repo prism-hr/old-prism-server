@@ -13,8 +13,7 @@ $(document).ready(function()
 			$(this).toggleClass('open', $content.is(':visible'));
 			return false;
 		});
-		$content.not('.open').hide();
-		$header.toggleClass('open', $content.is(':visible'));
+
 	});
 
 	$('section.folding a.row-arrow').each(function()
@@ -28,8 +27,8 @@ $(document).ready(function()
 		});
 		$this.toggleClass('open', $form.is(':visible'));
 	});
-
-	$('section.folding a.comment-open').each(function()
+	
+		$('section.folding a.comment-open').each(function()
 	{
 		var $this = $(this);
 		var $target = $this.closest('section.folding').find('div.comment');
@@ -66,7 +65,7 @@ $(document).ready(function()
 		$target.hide();
 	});
 	
-	$('#feedback span.more').bind('click', function()
+		$('#feedback span.more').bind('click', function()
 	{
 		var $this   = $(this);
 		var $parent = $this.parent().parent();

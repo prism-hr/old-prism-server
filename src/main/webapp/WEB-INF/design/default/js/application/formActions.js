@@ -4,7 +4,7 @@
 function fetchPersonalDetails() {
 	//alert("fetchPersonalDetails - begin");
 
-	/*applicationDWR.displayPersonalDetails(function(data) {
+	applicationDWR.displayPersonalDetails(function(data) {
 		dwr.util.setValue("demoStatus", data);
 
 		//alert(data.firstName + " " + data.lastName);
@@ -12,7 +12,7 @@ function fetchPersonalDetails() {
 		$("#firstName").val(data.firstName);
 		$("#lastName").val(data.lastName);
 
-	});*/
+	});
 
 }
 
@@ -30,21 +30,31 @@ function acceptApplication(id) {
 
 }
 
-function takeAction(row){
-	/*
-	var actionText = row.value;
-	if(actionText == "Reject"){
-		
-		alert($('#row_app_id').val());
-		//acceptApplication(id);
-		
-	}
-	
-	alert(actionText); */
-}
-
 $(document).ready(function(){
+	
+	/*
+	 * Submit application form on click of submit button.
+	 */ 
 	$('#submitButton').click(function(){
 		$('#submitApplicationForm').submit();
 	});
-})
+	
+	/*
+	 * Keep the view state of the form open or close depending on the user role.
+	 */
+	
+	$(window).load(function(){
+		
+//		alert($("input#form-view-state").val());
+//		var className = $("div#personal-details-section").attr('class');
+//		alert("the class name is " + className);
+		
+		if($("input#form-view-state").val() == "close"){
+			// close everything
+			$('section.folding > div').removeClass("open").hide();
+			
+			//$("div#personal-details-section").removeClass("open").hide();
+			
+		}
+	});
+});

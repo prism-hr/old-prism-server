@@ -1,3 +1,7 @@
+<#-- Assignments -->
+
+<#-- Personal Details Rendering -->
+
 <!-- Personal details -->
 <section class="folding purple">
 	<h2>
@@ -5,50 +9,51 @@
 		Personal Details
 	</h2>
 	
-	<div>
+    <div id="personal-details-section" class="open">
 		<table class="existing">
-			<colgroup>
-				<col width="30" />
-			    <col width="170" />
-			    <col width="200" />
-			    <col width="*" />
-			    <col width="30" />
-			    <col width="30" />
-			</colgroup>
-			<thead>
-				<tr>
-			    	<th colspan="2">First name</th>
-			        <th>Surname</th>
-			        <th>Email</th>
-			        <th colspan="2">&nbsp;</th>
-			    </tr>
-			</thead>
+              	<colgroup>
+                	<col style="width: 30px" />
+                	<col style="width: 170px" />
+                	<col style="width: 200px" />
+                	<col />
+                	<col style="width: 30px" />
+                	<col style="width: 30px" />
+                </colgroup>
+              	<thead>
+                	<tr>
+                  	<th colspan="2">First name</th>
+                    <th>Surname</th>
+                    <th>Email</th>
+                    <th colspan="2">&nbsp;</th>
+                  </tr>
+                </thead>
 			<tbody>
 				<tr>
 			    	<td><a class="row-arrow" href="#">-</a></td>
 			        <td>${model.applicationForm.applicant.firstName}</td>
 			        <td>${model.applicationForm.applicant.lastName}</td>
 			        <td>${model.applicationForm.applicant.email}</td>
-			        <td>edit</td>
-			        <td>close?</td>
+                  	<td><a class="button-edit" href="#">edit</a></td>
+                  	<td><a class="button-close" href="#">close</a></td>
 			    </tr>
 			</tbody>
 		</table>
 		<form method="post" action="<@spring.url '/apply'/>" method = "POST">
                 <input type="hidden" name="id" value="${model.applicationForm.id}"/>
+                <input type="hidden" id="form-view-state" value="${formViewState}"/>
               	<div>
                 	<div class="row">
                   	<label class="label">First Name</label>
                     <span class="hint"></span>
                     <div class="field">
-                    	<input class="full" type="text" value="Bob" name="firstName" id="firstName"/>
+                    	<input class="full" type="text" value="${model.applicationForm.applicant.firstName}" name="firstName" id="firstName"/>
                     </div>
                   </div>
                 	<div class="row">
                   	<label class="label">Last Name</label>
                     <span class="hint"></span>
                     <div class="field">
-                    	<input class="full" type="text" value="Smith" name="lastName" id="lastName"/>
+                    	<input class="full" type="text" value="${model.applicationForm.applicant.lastName}" name="lastName" id="lastName"/>
                     </div>
                   </div>
                 	<div class="row">
@@ -62,6 +67,135 @@
                   	<label class="label">Date of Birth</label>
                     <span class="hint"></span>
                     <input class="half" type="date" value="" />
+                  </div>
+                </div>
+
+              	<div>
+                	<div class="row">
+                  	<label class="label">Country of Birth</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>United Kingdom</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+              	<div>
+                	<strong>Nationality</strong>
+                	<div class="row">
+                  	<span class="label">Country</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>British</option>
+                      </select>
+                      <label><input type="radio" /> This is my primary nationality</label>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<div class="field"><a class="button blue" href="#">Add a nationality</a></div>
+                  </div>
+                </div>
+              	
+              	<div>
+                	<div class="row">
+                  	<label class="label">Language</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>English</option>
+                      </select>
+                      <label><input type="radio" /> This is my primary language</label>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<span class="label">Aptitude</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>Native Speaker</option>
+                      </select>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<div class="field"><a class="button blue" href="#">Add a language</a></div>
+                  </div>
+                </div>
+
+              	<div>
+                	<strong>UK Visa</strong>
+                	<div class="row">
+                  	<span class="label">Type</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>Student</option>
+                      </select>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<span class="label">Date of Issue</span>
+                    <span class="hint"></span>
+                    <input class="half" type="date" value="" />
+                  </div>
+                	<div class="row">
+                  	<span class="label">Date of Expiry</span>
+                    <span class="hint"></span>
+                    <input class="half" type="date" value="" />
+                  </div>
+                	<div class="row">
+                  	<span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<div class="field"><a class="button blue" href="#">Add a visa</a></div>
+                  </div>
+                </div>
+
+              	<div>
+                	<strong>Contact Details</strong>
+                	<div class="row">
+                		<span class="label">Email</span>
+                    <span class="hint"></span>
+                    <div class="field">
+	                    <input class="full" type="email" value="info@hotmail.com" />
+                      <a class="button" href="#" style="width: 110px;">Add Email</a>
+                    </div>
+                  </div>
+                </div>
+                
+              	<div>
+                	<div class="row">
+                		<span class="label">Telephone</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<select class="half">
+                      	<option>Home</option>
+                      </select>
+	                    <input class="half" type="text" placeholder="Number" />
+                      <a class="button" href="#" style="width: 110px;">Add Phone</a>
+                    </div>
+                  </div>
+                </div>
+                
+              	<div>
+                	<div class="row">
+                		<span class="label">Messenger</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<select class="half">
+                      	<option>Skype</option>
+                      </select>
+	                    <input class="half" type="text" placeholder="Address" />
+                      <a class="button" href="#" style="width: 110px;">Add Messenger</a>
+                    </div>
                   </div>
                 </div>
 

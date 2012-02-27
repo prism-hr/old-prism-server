@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -20,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
-import com.zuehlke.pgadmissions.pagemodels.ApplicationListModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller

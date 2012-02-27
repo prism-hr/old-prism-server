@@ -118,6 +118,20 @@ public class ApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock);		
 		applicationController.submitApplication(id);
 	}
+	
+	
+	@Test(expected=ResourceNotFoundException.class)
+	public void shouldThrowSubmitExceptionIfApplicationIsAlreadySubmitted() {
+		Integer id = 2;
+		ApplicationForm form = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(id)).andReturn(form);		
+		applicationsServiceMock.save(form);
+		EasyMock.replay(applicationsServiceMock);
+		
+		form.setApplicant(student);
+		
+		applicationController.submitApplication(id);
+	}
 
 	
 	@Test

@@ -30,12 +30,15 @@
 					<td> Code </td>
 					<td> Title </td>
 					<td> Description </td>
+					<td> Program </td>
+					<td/>
 				</tr>
 			<#list projects as project>
 				<tr id = "${project.title}" > 
 					<td> ${project.code} </td>
 					<td> ${project.title} </td>
 					<td> ${project.description} </td>
+					<td> ${project.program.title} </td>
 					<td> <button id="${project.id}" class="apply">Apply now</button></td>
 				</tr>
 	      	</#list>

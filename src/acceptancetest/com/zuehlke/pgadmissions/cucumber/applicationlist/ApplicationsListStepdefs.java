@@ -37,6 +37,7 @@ import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 
 public class ApplicationsListStepdefs {
+
 	private static final int REVIEWERS_COLUMN_INDEX = 3;
 	private static final int PROJECT_COLUMN_INDEX = 2;
 	private static final int SUBMISSION_STATUS_COLUMN_INDEX = 1;
@@ -203,6 +204,8 @@ public class ApplicationsListStepdefs {
 
 	@Before
 	public void setup() {
+		
+
 		sessionFactory = (SessionFactory) new ClassPathXmlApplicationContext("hibernateTestConfig.xml").getBean("sessionFactory");
 		transaction = sessionFactory.getCurrentSession().beginTransaction();
 		cleanUp();
@@ -299,9 +302,7 @@ public class ApplicationsListStepdefs {
 		deleteUserIfExists("charles");
 		deleteUserIfExists("dorotha");
 		deleteUserIfExists("elsie");
-		deleteUserIfExists("foxy");
-
-	
+		deleteUserIfExists("foxy");	
 
 		sessionFactory.getCurrentSession().flush();
 

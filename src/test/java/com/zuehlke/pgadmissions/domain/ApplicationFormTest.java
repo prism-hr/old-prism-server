@@ -13,26 +13,29 @@ public class ApplicationFormTest {
 
 	
 	@Test
-	public void shouldReturnFalseIfAppliactioNFormUnsubmittfe(){
+	public void shouldReturnReviewableFalseIfAppliactioNFormUnsubmittfe(){
 		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
 		assertFalse(applicationForm.isReviewable());
 	}
 	
 	@Test
-	public void shouldReturnFalseIfApplicationFormRejected(){
+	public void shouldReturnReviewableFalseIfApplicationFormRejected(){
 		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).approvedSatus(ApprovalStatus.REJECTED).toApplicationForm();
 		assertFalse(applicationForm.isReviewable());
 	}
 	
 	@Test
-	public void shouldReturnFalseIfApplicationFormAccepted(){
+	public void shouldReturnReviewableFalseIfApplicationFormAccepted(){
 		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).approvedSatus(ApprovalStatus.APPROVED).toApplicationForm();
 		assertFalse(applicationForm.isReviewable());
 	}
 	
 	@Test
-	public void shouldReturnTrueIfApplicationFormSubmittedButNeitherRejectedOrApproved(){
+	public void shouldReturnReviewableTrueIfApplicationFormSubmittedButNeitherRejectedOrApproved(){
 		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		assertTrue(applicationForm.isReviewable());
 	}
+	
+
 }
+

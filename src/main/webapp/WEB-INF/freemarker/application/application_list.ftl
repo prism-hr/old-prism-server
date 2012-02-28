@@ -91,10 +91,10 @@
 							                	    <#if (model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')) && application.isReviewable()>
       													<option value="assignReviewer">Assign Reviewer</option>
         		  									</#if>
-							                	    <#if model.user.isInRole('APPROVER')>
+							                	    <#if model.user.isInRole('APPROVER') && application.isReviewable()>
 							                	    	<option value="approve">Approve</option>
       												</#if>
-									    			<#if ((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR')) )>
+									    			<#if (model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR'))  && application.isReviewable()>
 									    				<option value="reject">Reject</option>
 									      			</#if>
 								      				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || 

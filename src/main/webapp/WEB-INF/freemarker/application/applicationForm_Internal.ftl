@@ -131,18 +131,6 @@
 			              Testing...
 			            </div>
 			          </section>
-			         <#if !model.user.isInRole('APPLICANT')>
-			          <section class="folding violet">
-                        <h2 class="open">
-                          <span class="left"></span><span class="right"></span><span class="status"></span>
-                          Reviewers
-                        </h2>
-                        <div>
-                             <#include "/application/reviewers.ftl"/>
-                        </div>
-                      </section>
-                      
-			          </#if>
 			          
 			          <hr />
 			          

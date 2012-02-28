@@ -35,8 +35,6 @@
 			    <!-- Main content area. -->
 			    <article id="content" role="main">
 			      
-			      <#include "/common/tools.ftl"/>
-			      
 			      <!-- content box -->
 			      <div class="content-box">
 			        <div class="content-box-inner">
@@ -67,7 +65,7 @@
 			            </div>
 			          </section>
 			          
-			          <#include "/application/personal_details_form.ftl"/>
+			          <#include "/application/personal_details_applicant.ftl"/>
 			          
 			          <!-- Address -->
 			          <section class="folding red">
@@ -129,18 +127,6 @@
 			              Testing...
 			            </div>
 			          </section>
-			         <#if !model.user.isInRole('APPLICANT')>
-			          <section class="folding violet">
-                        <h2 class="open">
-                          <span class="left"></span><span class="right"></span><span class="status"></span>
-                          Reviewers
-                        </h2>
-                        <div>
-                             <#include "/application/reviewers.ftl"/>
-                        </div>
-                      </section>
-                      
-			          </#if>
 			          
 			          <hr />
 			          

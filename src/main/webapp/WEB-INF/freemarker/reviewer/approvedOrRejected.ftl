@@ -8,9 +8,9 @@
 		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		
+
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/style.css' />"/>
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />"/>
-
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
@@ -75,53 +75,19 @@
 				<div id ="actions">
 				   	<div class="row">
 		            	<label>Assigned Reviewers</label>
-		               <#if model.application.isUnderReview()>
-		                    <table>
-                            <#list model.application.reviewers as reviewer>
-                                <td>- ${reviewer.firstName} ${reviewer.lastName}</td><tr>
-                            </#list>
-                            </table>
-                       <#else>
-                                <p>Not yet assigned.</p>
-                       </#if>
+		              Jane Highsmith, Frank Johnson
 		            </div>
-		        <#if model.applicationForm.isReviewable() >
-					<form  action="<@spring.url '/reviewer/reviewerSuccess'/>" method = "POST">		                    
-			            <input type="hidden" name="id" value="${model.application.id}"/>
-			          	<div class="row">
-			            	<label>Assign Reviewer</label>
-			            	<select name="reviewers" multiple="multiple">
-					        
-						        <#list model.reviewers as reviewer>
-						            <option value="${reviewer.id}">${reviewer.firstName} ${reviewer.lastName}</option>               
-						        </#list>
-				             <select>
-						        
-						        <#list model.application.reviewers as reviewer>
-						             <input type="hidden" name="reviewers" value="${reviewer.id}"/>
-                                </#list>
-			            	
-			            </div>
-			            
-			            <div class="buttons">
-			              <button type="submit">Assign</button>
-			            </div>
-			          
-			        </form>
-			        <br />
-  				</#if> 
 
-				<#if model.applicationForm.isReviewable() && (model.user.isInRole('ADMINISTRATOR')|| model.user.isInRole('APPROVER')) >
-					<form id="approvalForm" action="<@spring.url '/approveOrReject'/>" method = "POST">
-						<input type="hidden" name="id" value="${model.applicationForm.id!}"/>
-			          	<div class="row">
-			          		<#if model.user.isInRole('APPROVER')>
-			            		<label><input type="radio" name="decision" value="APPROVED"/> Approve</label>
-			            	</#if>
-			            	<label><input type="radio" name="decision" value="REJECTED"/> Reject</label>
-			            </div>
-			         </form>
-	            </#if>
+	            <#if !model.applicationForm.isReviewable()>
+		            <#if !model.applicationForm.isSubmitted() >
+		            	This application is not ready for review.
+		            <#elseif model.applicationForm.approvalStatus.toString() == "APPROVED" >
+		            	This application has now been approved.
+  					<#elseif model.applicationForm.approvalStatus.toString() == "REJECTED" >
+		            	This application has been rejected.		            	
+		            </#if>	
+	            </#if> 
+				
 	            <br />
 				</div>
 		        <!-- #actions -->
@@ -145,9 +111,9 @@
 		
 		</div>
 		
-		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	    <script type="text/javascript" src="<@spring.url '/design/default/js/applicationManagement/formAction.js'/>"></script>
+		<!-- Scripts -->
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+		<script type="text/javascript" src="js/libraries.js"></script>
+		<script type="text/javascript" src="js/script.js"></script>
 	</body>
 </html>

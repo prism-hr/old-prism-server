@@ -1,7 +1,7 @@
 <#import "/spring.ftl" as spring />
 <html>
 <body>
-<form action= "/pgadmissions/comments/submit?id=${model.application.id}" method="post">
+<form action= "/pgadmissions/comments/submit?id=${model.applicationForm.id}" method="post">
 <table>
 <tr>
 <td> Comment: </td>

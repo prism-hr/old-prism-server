@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotApproveApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class ApproveRejectControllerTest {
@@ -32,34 +33,43 @@ public class ApproveRejectControllerTest {
 
 	@Test
 	public void shouldGetApplicationFromFromService() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		assertEquals(applicationForm, controller.getApplicationForm(5));
-	}
-	
-	@Test(expected=ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplication(){
-				ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();	
 		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
-		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(false);
-		EasyMock.replay(approverMock);
-		controller.applyDecision(applicationForm, ApprovalStatus.APPROVED);		
-	}
-	
-	@Test(expected=ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentUserNotApprover(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();	
-		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(false);		
-		EasyMock.replay(approverMock);
-		controller.applyDecision(applicationForm, ApprovalStatus.APPROVED);		
+		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.replay(approverMock, applicationsServiceMock);
+		assertEquals(applicationForm, controller.getApplicationForm(5));
 	}
 	
 	@Test(expected=ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionApplicationFormDoesNotExist(){
 			
-		controller.applyDecision(null, ApprovalStatus.APPROVED);			
+		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(null);
+		EasyMock.replay(applicationsServiceMock);
+		controller.getApplicationForm(5);
 	}
+	
+	@Test(expected=ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplication(){
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
+		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(false);
+		EasyMock.replay(approverMock, applicationsServiceMock);
+		controller.getApplicationForm(5);
+	}
+	
+	@Test(expected=ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfCurrentUserNotApprover(){			
+		ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
+		EasyMock.expect(applicationFormMock.isReviewable()).andReturn(true);
+		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(false);
+		EasyMock.expect(approverMock.canSee(applicationFormMock)).andReturn(true);
+		EasyMock.replay(approverMock, applicationFormMock);		
+		controller.applyDecision(applicationFormMock, ApprovalStatus.APPROVED);	
+	}
+
 	
 	@Test(expected=CannotApproveApplicationException.class)
 	public void shouldThrowCannotReviewApprovedApplicationExceptionIfSubmittedApplicationnNotReviewable() {
@@ -88,7 +98,7 @@ public class ApproveRejectControllerTest {
 	}
 	
 	@Test
-	public void shouldRedirectToReviewerPage(){
+	public void shouldRedirectToDecisionMadePage(){
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
@@ -98,8 +108,21 @@ public class ApproveRejectControllerTest {
 		
 		
 		ModelAndView modelAndView = controller.applyDecision(applicationForm, ApprovalStatus.APPROVED);
-		assertEquals("redirect:/reviewer/assign", modelAndView.getViewName());
+		assertEquals("redirect:/approveOrReject/decisionmade", modelAndView.getViewName());
 		assertEquals(1, modelAndView.getModelMap().get("id"));	
+		
+	}
+	
+	@Test
+	public void shouldReturnApprovedOrRejectedViewWithApplicationAndUser(){
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+				
+		ModelAndView modelAndView = controller.getApprovedOrRejectedPage(applicationForm);
+		assertEquals("/reviewer/approvedOrRejected", modelAndView.getViewName());
+		PageModel pageModel = (PageModel) modelAndView.getModel().get("model");
+		assertEquals(applicationForm, pageModel.getApplicationForm());
+		assertEquals(approverMock, pageModel.getUser());		
 		
 	}
 

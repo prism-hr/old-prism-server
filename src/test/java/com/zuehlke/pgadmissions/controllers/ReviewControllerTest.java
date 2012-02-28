@@ -64,7 +64,7 @@ public class ReviewControllerTest {
 
 		ReviewersListModel model = (ReviewersListModel) controller
 				.getReviewerPage(new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm()).getModel().get("model");
-		ApplicationForm reviewedApplication = model.getApplication();
+		ApplicationForm reviewedApplication = model.getApplicationForm();
 		assertEquals(form, reviewedApplication);
 		assertNotNull(model.getReviewers());
 	}
@@ -92,13 +92,6 @@ public class ReviewControllerTest {
 		controller.getReviewerPage(null);
 	}
 
-	@Test(expected = CannotReviewApplicationException.class)
-	public void shouldThrowCannotReviewApprovedApplicationExceptionIfApplicationnNotReviewable() {
-		ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
-		EasyMock.expect(applicationFormMock.isReviewable()).andReturn(false);
-		EasyMock.replay(applicationFormMock);
-		controller.getReviewerPage(applicationFormMock);
-	}
 
 	@Test
 	public void shouldGetApplicationFromFromService() {

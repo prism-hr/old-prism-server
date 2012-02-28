@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
+import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
@@ -39,7 +39,7 @@ public class ViewApplicationFormController {
 		if(applicationForm == null || !currentuser.canSee(applicationForm) ){
 			throw new ResourceNotFoundException();
 		}
-		ApplicationFormModel viewApplicationModel = new ApplicationFormModel();
+		PageModel viewApplicationModel = new PageModel();
 		viewApplicationModel.setUser(currentuser);
 		viewApplicationModel.setApplicationForm(applicationForm);
 		

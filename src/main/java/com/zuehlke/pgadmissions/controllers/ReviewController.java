@@ -52,7 +52,7 @@ public class ReviewController {
 		}
 
 		ReviewersListModel model = new ReviewersListModel();
-		model.setApplication(applicationForm);
+		model.setApplicationForm(applicationForm);
 		model.setReviewers(userService.getReviewersForApplication(applicationForm));
 		model.setUser((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails());
 		return new ModelAndView(ADD_REVIEWER_VIEW_NAME, "model", model);

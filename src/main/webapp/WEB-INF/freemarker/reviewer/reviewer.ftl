@@ -75,9 +75,9 @@
 				<div id ="actions">
 				   	<div class="row">
 		            	<label>Assigned Reviewers</label>
-		               <#if model.application.isUnderReview()>
+		               <#if model.applicationForm.isUnderReview()>
 		                    <table>
-                            <#list model.application.reviewers as reviewer>
+                            <#list model.applicationForm.reviewers as reviewer>
                                 <td>- ${reviewer.firstName} ${reviewer.lastName}</td><tr>
                             </#list>
                             </table>
@@ -87,7 +87,7 @@
 		            </div>
 		        <#if model.applicationForm.isReviewable() >
 					<form  action="<@spring.url '/reviewer/reviewerSuccess'/>" method = "POST">		                    
-			            <input type="hidden" name="id" value="${model.application.id}"/>
+			            <input type="hidden" name="id" value="${model.applicationForm.id}"/>
 			          	<div class="row">
 			            	<label>Assign Reviewer</label>
 			            	<select name="reviewers" multiple="multiple">
@@ -97,7 +97,7 @@
 						        </#list>
 				             <select>
 						        
-						        <#list model.application.reviewers as reviewer>
+						        <#list model.applicationForm.reviewers as reviewer>
 						             <input type="hidden" name="reviewers" value="${reviewer.id}"/>
                                 </#list>
 			            	

@@ -89,7 +89,6 @@ public class CommentControllerTest {
 	}
 	
 	@Test
-	//TODO: fix this test
 	public void shouldSaveCommentByAdminOnSubmittedNonApprovedApplication(){
 		authenticationToken.setDetails(admin);
 		SecurityContextImpl secContext = new SecurityContextImpl();
@@ -101,13 +100,9 @@ public class CommentControllerTest {
 		ModelAndView modelAndView = controller.getCommentedApplicationPage(1, "Amazing Research !!!");
 		assertEquals("redirect:/application", modelAndView.getViewName());
 		EasyMock.verify(applicationsServiceMock);
-		//assertEquals("Amazing Research !!!", ((CommentModel)modelAndView.getModel().get("model")).getComment());
-		//assertEquals("Your comment is submitted successful", ((CommentModel)modelAndView.getModel().get("model")).getMessage());
-		
 	}
 	
 	@Test
-	//TODO: fix this test
 	public void shouldNotSaveCommentByAdminOnSubmittedApprovedApplication(){
 		authenticationToken.setDetails(admin);
 		SecurityContextImpl secContext = new SecurityContextImpl();
@@ -119,12 +114,8 @@ public class CommentControllerTest {
 		ModelAndView modelAndView = controller.getCommentedApplicationPage(2, "Amazing Research !!!");
 		assertEquals("redirect:/application", modelAndView.getViewName());
 		EasyMock.verify(applicationsServiceMock);
-		//assertNull(((CommentModel)modelAndView.getModel().get("model")).getComment());
-		//assertEquals("You cannot comment on a completed application", ((CommentModel)modelAndView.getModel().get("model")).getMessage());
-		
 	}
 	@Test
-	//TODO: fix this test
 	public void shouldNotSaveCommentByAdminOnUnSubmittedApplication(){
 		authenticationToken.setDetails(admin);
 		SecurityContextImpl secContext = new SecurityContextImpl();
@@ -136,12 +127,9 @@ public class CommentControllerTest {
 		ModelAndView modelAndView = controller.getCommentedApplicationPage(3, "Amazing Research !!!");
 		assertEquals("redirect:/application", modelAndView.getViewName());
 		EasyMock.verify(applicationsServiceMock);
-		//assertNull(((CommentModel)modelAndView.getModel().get("model")).getComment());
-		//assertEquals("You cannot comment on a non submitted application", ((CommentModel)modelAndView.getModel().get("model")).getMessage());
 		
 	}
 	@Test
-	//TODO: fix this test
 	public void shouldNotAllowApplicantCommenting(){
 		authenticationToken.setDetails(applicant);
 		SecurityContextImpl secContext = new SecurityContextImpl();
@@ -153,8 +141,6 @@ public class CommentControllerTest {
 		ModelAndView modelAndView = controller.getCommentedApplicationPage(1, "Amazing Research !!!");
 		assertEquals("redirect:/application", modelAndView.getViewName());
 		EasyMock.verify(applicationsServiceMock);
-		//assertNull(((CommentModel)modelAndView.getModel().get("model")).getComment());
-		//assertEquals("You are not authorized to comment on the application", ((CommentModel)modelAndView.getModel().get("model")).getMessage());
 		
 	}
 	

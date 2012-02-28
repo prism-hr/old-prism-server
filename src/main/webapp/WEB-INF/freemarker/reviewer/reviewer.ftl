@@ -91,12 +91,12 @@
 		            </div>
 		            
 		            <br />
-		
-		          	<div class="row">
-		            	<label><input type="radio" /> Approve</label>
-		            	<label><input type="radio" /> Reject</label>
-		            </div>
-		            
+					<#if model.user.isInRole('ADMINISTRATOR')|| model.user.isInRole('APPROVER')>
+			          	<div class="row">
+			            	<label><input type="radio" /> Approve</label>
+			            	<label><input type="radio" /> Reject</label>
+			            </div>
+		            </#if>
 		            <br />
 		
 		            <div class="buttons">

@@ -29,12 +29,12 @@
 		<!-- Wrapper Starts -->
 		<div id="wrapper">
 
-			<#include "/application/app_form_header.ftl"/>
+			<#include "/common/header.ftl"/>
 			
 			 <!-- Middle Starts -->
 			<div id="middle">
 			
-				<#include "/application/app_form_mid_header_nav.ftl"/>
+				<#include "/common/nav_with_user_info.ftl"/>
 				
 				    <!-- Main content area. -->
 				    <article id="content" role="main">
@@ -126,7 +126,7 @@
 			</div>
 			<!-- Middle Ends -->
 			
-			<#include "/application/app_form_footer.ftl"/>
+			<#include "/common/footer.ftl"/>
 			
 		</div>
 		<!-- Wrapper Ends -->

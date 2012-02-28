@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -18,7 +19,8 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 @RequestMapping(value = { "application" })
 public class ViewApplicationFormController {
 
-	private static final String VIEW_APPLICATION_VIEW_NAME = "application/applicationForm";
+	private static final String VIEW_APPLICATION_INTERNAL_VIEW_NAME = "application/applicationForm_internal";
+	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "application/applicationForm_applicant";
 	private ApplicationsService applicationService;
 
 	ViewApplicationFormController() {
@@ -41,7 +43,10 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setUser(currentuser);
 		viewApplicationModel.setApplicationForm(applicationForm);
 		
-		return new ModelAndView(VIEW_APPLICATION_VIEW_NAME, "model", viewApplicationModel);
+		if (currentuser.isInRole(Authority.APPLICANT)) {
+			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME, "model", viewApplicationModel);
+		}
+		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", viewApplicationModel);
 	}
 
 }

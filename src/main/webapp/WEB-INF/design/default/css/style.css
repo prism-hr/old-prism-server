@@ -105,6 +105,7 @@ form input, form select, form textarea { border: 1px solid #999; font-family: Ar
 form input { padding: 1px 3px; }
 form textarea { padding: 3px; resize: none; }
 form label input { border: none; padding: 0; }
+form select[multiple] { vertical-align: top; }
 
 
 div.buttons { text-align: right; }

@@ -39,6 +39,7 @@
 				    <!-- Main content area. -->
 				    <article id="content" role="main">
 				      
+				      <#include "/common/tools.ftl"/>
 				      <!-- content box -->
 				      <div class="content-box">
 				        <div class="content-box-inner">

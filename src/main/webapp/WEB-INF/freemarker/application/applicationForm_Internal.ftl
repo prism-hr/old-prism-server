@@ -53,6 +53,8 @@
 				              <input disabled size="20" value="${model.applicationForm.id}" />
 				            </div>
 				            
+				            <#include "/application/supervisor_section.ftl"/>
+				            
 			          	</div>
 			          
 			          <hr />
@@ -67,7 +69,7 @@
 			            </div>
 			          </section>
 			          
-			          <#include "/application/personal_details_form.ftl"/>
+			          <#include "/application/personal_details_internal.ftl"/>
 			          
 			          <!-- Address -->
 			          <section class="folding red">

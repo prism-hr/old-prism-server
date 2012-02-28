@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
+import junit.framework.Assert;
+
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -13,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -24,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotReviewApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ReviewersListModel;
-import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -111,7 +113,8 @@ public class ReviewControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		controller.updateReviewers(applicationForm);
+		ModelAndView redirectModel = controller.updateReviewers(applicationForm);
+		Assert.assertEquals("redirect:/reviewer/assign", redirectModel.getViewName());
 		EasyMock.verify(applicationsServiceMock);
 			
 	}

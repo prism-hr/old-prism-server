@@ -76,11 +76,19 @@
 				<div id ="actions">
 				   	<div class="row">
 		            	<label>Assigned Reviewers</label>
-		              Jane Highsmith, Frank Johnson
+		               <#if model.application.isUnderReview()>
+		                    <table>
+                            <#list model.application.reviewers as reviewer>
+                                <td>- ${reviewer.firstName} ${reviewer.lastName}</td><tr>
+                            </#list>
+                            </table>
+                       <#else>
+                                <p>Not yet assigned.</p>
+                       </#if>
 		            </div>
 		        <#if model.application.isReviewable() >
 					<form  action="<@spring.url '/reviewer/reviewerSuccess'/>" method = "POST">		                    
-			       
+			            <input type="hidden" name="id" value="${model.application.id}"/>
 			          	<div class="row">
 			            	<label>Assign Reviewer</label>
 			            	<select name="reviewers" multiple="multiple">
@@ -88,8 +96,12 @@
 						        <#list model.reviewers as reviewer>
 						            <option value="${reviewer.id}">${reviewer.firstName} ${reviewer.lastName}</option>               
 						        </#list>
-			            	
 				             <select>
+						        
+						        <#list model.application.reviewers as reviewer>
+						             <input type="hidden" name="reviewers" value="${reviewer.id}"/>
+                                </#list>
+			            	
 			            </div>
 			            
 			            <div class="buttons">

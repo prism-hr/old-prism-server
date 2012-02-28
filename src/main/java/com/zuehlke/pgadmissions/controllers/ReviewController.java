@@ -67,7 +67,7 @@ public class ReviewController {
 			throw new CannotReviewApplicationException();
 		}
 		applicationsService.save(applicationForm);
-		return new ModelAndView("redirect:/application", "id", applicationForm.getId());
+		return new ModelAndView("redirect:/reviewer/assign", "id", applicationForm.getId());
 
 	}
 

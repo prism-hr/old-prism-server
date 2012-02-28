@@ -37,7 +37,7 @@ public class ReviewControllerTest {
 	private UserService userServiceMock;
 	private ApplicationsService applicationsServiceMock;
 	private UserPropertyEditor userPropertyEditorMoc;
-	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
+
 
 	@Test
 	public void shouldBindPropertyEditors() {
@@ -56,7 +56,7 @@ public class ReviewControllerTest {
 	}
 
 	@Test
-	public void shouldgetListOfReviewersToApplication() {
+	public void shouldgetListOfReviewersAndAddToApplication() {
 		EasyMock.expect(userServiceMock.getReviewersForApplication(form)).andReturn(Arrays.asList(reviewer));
 		EasyMock.replay(userServiceMock);
 
@@ -67,6 +67,23 @@ public class ReviewControllerTest {
 		assertNotNull(model.getReviewers());
 	}
 
+	
+	@Test
+	public void shouldAddCurrentUserToAModel() {
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).toUser();
+		authenticationToken.setDetails(currentUser);
+		SecurityContextImpl secContext = new SecurityContextImpl();
+		secContext.setAuthentication(authenticationToken);
+		SecurityContextHolder.setContext(secContext);
+		
+
+		ReviewersListModel model = (ReviewersListModel) controller
+				.getReviewerPage(new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm()).getModel().get("model");
+		assertEquals(currentUser, model.getUser());
+
+
+	}
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfAPplicationDoesNotExist() {
 
@@ -122,8 +139,7 @@ public class ReviewControllerTest {
 		SecurityContextHolder.setContext(secContext);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		userPropertyEditorMoc = EasyMock.createMock(UserPropertyEditor.class);
-		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
+		userPropertyEditorMoc = EasyMock.createMock(UserPropertyEditor.class);		
 		controller = new ReviewController(applicationsServiceMock, userServiceMock, userPropertyEditorMoc);
 
 		form = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();

@@ -13,8 +13,7 @@ $(document).ready(function()
 			$(this).toggleClass('open', $content.is(':visible'));
 			return false;
 		});
-		$content.not('.open').hide();
-		$header.toggleClass('open', $content.is(':visible'));
+
 	});
 
 	$('section.folding a.row-arrow').each(function()
@@ -29,7 +28,44 @@ $(document).ready(function()
 		$this.toggleClass('open', $form.is(':visible'));
 	});
 	
-	$('#feedback span.more').bind('click', function()
+		$('section.folding a.comment-open').each(function()
+	{
+		var $this = $(this);
+		var $target = $this.closest('section.folding').find('div.comment');
+		
+		// comment box
+		$this.bind('click', function()
+		{
+			$target.show();
+			return false;
+		});
+		$target.find('a.comment-close').bind('click', function()
+		{
+			$target.hide();
+			return false;
+		});
+		
+		// previous comments
+		var $previous = $('div.previous', $target);
+		var i = 0;
+		$('li', $previous).each(function()
+		{
+			i++;
+			var $item = $(this);
+			if (i % 2) { $item.addClass('even'); }
+			$('span', $item).hide();
+			$item.prepend('<a class="more" href="#">read</a>');
+			$('a.more', $item).bind('click', function()
+			{
+				$('span', $item).toggle();
+				return false;
+			});
+		});
+		
+		$target.hide();
+	});
+	
+		$('#feedback span.more').bind('click', function()
 	{
 		var $this   = $(this);
 		var $parent = $this.parent().parent();

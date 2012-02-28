@@ -4,7 +4,7 @@
 
 <!-- Personal details -->
 <section class="folding purple">
-	<h2>
+	<h2 class="open">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Personal Details
 	</h2>
@@ -59,14 +59,14 @@
                 	<div class="row">
                   	<label class="label">Gender</label>
                     <div class="field">
-                      <label><input type="radio" name="gender" /> Male</label>
-                      <label><input type="radio" name="gender" /> Female</label>
+                      <label><input class="disabledEle" type="radio" name="gender" /> Male</label>
+                      <label><input class="disabledEle" type="radio" name="gender" /> Female</label>
                     </div>
                   </div>
                 	<div class="row">
                   	<label class="label">Date of Birth</label>
                     <span class="hint"></span>
-                    <input class="half" type="date" value="" />
+                    <input class="half disabledEle" type="date" value="" />
                   </div>
                 </div>
 
@@ -75,7 +75,7 @@
                   	<label class="label">Country of Birth</label>
                     <span class="hint"></span>
                     <div class="field">
-                      <select class="full">
+                      <select class="full disabledEle">
                         <option>United Kingdom</option>
                       </select>
                     </div>
@@ -88,14 +88,14 @@
                   	<span class="label">Country</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select class="full">
+                      <select class="full disabledEle">
                         <option>British</option>
                       </select>
-                      <label><input type="radio" /> This is my primary nationality</label>
+                      <label><input class="disabledEle" type="radio" /> This is my primary nationality</label>
                     </div>
                   </div>
                 	<div class="row">
-                  	<div class="field"><a class="button blue" href="#">Add a nationality</a></div>
+                  	<div class="field"><a class="button blue disabledEle" href="#">Add a nationality</a></div>
                   </div>
                 </div>
               	
@@ -104,23 +104,23 @@
                   	<label class="label">Language</label>
                     <span class="hint"></span>
                     <div class="field">
-                      <select class="full">
+                      <select class="full disabledEle">
                         <option>English</option>
                       </select>
-                      <label><input type="radio" /> This is my primary language</label>
+                      <label><input class="disabledEle" type="radio" /> This is my primary language</label>
                     </div>
                   </div>
                 	<div class="row">
                   	<span class="label">Aptitude</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select class="full">
+                      <select class="full disabledEle">
                         <option>Native Speaker</option>
                       </select>
                     </div>
                   </div>
                 	<div class="row">
-                  	<div class="field"><a class="button blue" href="#">Add a language</a></div>
+                  	<div class="field"><a class="button blue disabledEle" href="#">Add a language</a></div>
                   </div>
                 </div>
 
@@ -130,7 +130,7 @@
                   	<span class="label">Type</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select class="full">
+                      <select class="full disabledEle">
                         <option>Student</option>
                       </select>
                     </div>
@@ -138,24 +138,24 @@
                 	<div class="row">
                   	<span class="label">Date of Issue</span>
                     <span class="hint"></span>
-                    <input class="half" type="date" value="" />
+                    <input class="half disabledEle" type="date" value="" />
                   </div>
                 	<div class="row">
                   	<span class="label">Date of Expiry</span>
                     <span class="hint"></span>
-                    <input class="half" type="date" value="" />
+                    <input class="half disabledEle" type="date" value="" />
                   </div>
                 	<div class="row">
                   	<span class="label">Supporting Document</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <input class="full" type="text" value="" />
+                      <input class="full disabledEle" type="text" value="" />
                       <a class="button" href="#">Browse</a>
                       <a class="button" href="#">Upload</a>
                     </div>
                   </div>
                 	<div class="row">
-                  	<div class="field"><a class="button blue" href="#">Add a visa</a></div>
+                  	<div class="field"><a class="button blue disabledEle" href="#">Add a visa</a></div>
                   </div>
                 </div>
 
@@ -165,8 +165,8 @@
                 		<span class="label">Email</span>
                     <span class="hint"></span>
                     <div class="field">
-	                    <input class="full" type="email" value="info@hotmail.com" />
-                      <a class="button" href="#" style="width: 110px;">Add Email</a>
+	                    <input class="full disabledEle" type="email" value="info@hotmail.com" />
+                      <a class="button disabledEle" href="#" style="width: 110px;">Add Email</a>
                     </div>
                   </div>
                 </div>
@@ -176,10 +176,10 @@
                 		<span class="label">Telephone</span>
                     <span class="hint"></span>
                     <div class="field">
-                    	<select class="half">
+                    	<select class="half disabledEle">
                       	<option>Home</option>
                       </select>
-	                    <input class="half" type="text" placeholder="Number" />
+	                    <input class="half disabledEle" type="text" placeholder="Number" />
                       <a class="button" href="#" style="width: 110px;">Add Phone</a>
                     </div>
                   </div>
@@ -190,11 +190,11 @@
                 		<span class="label">Messenger</span>
                     <span class="hint"></span>
                     <div class="field">
-                    	<select class="half">
+                    	<select class="half disabledEle">
                       	<option>Skype</option>
                       </select>
-	                    <input class="half" type="text" placeholder="Address" />
-                      <a class="button" href="#" style="width: 110px;">Add Messenger</a>
+	                    <input class="half disabledEle" type="text" placeholder="Address" />
+                      <a class="button disabledEle" href="#" style="width: 110px;">Add Messenger</a>
                     </div>
                   </div>
                 </div>

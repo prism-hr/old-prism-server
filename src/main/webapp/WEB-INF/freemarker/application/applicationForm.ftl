@@ -17,6 +17,7 @@
 		<title>Shell template</title>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/style.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/application.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/field_controls.css' />"/>
 	
 	</head>
 
@@ -54,7 +55,7 @@
 			          <hr />
 			
 			          <section class="folding violet">
-			            <h2>
+			            <h2 class="open">
 			              <span class="left"></span><span class="right"></span><span class="status"></span>
 			              Programme
 			            </h2>
@@ -67,7 +68,7 @@
 			          
 			          <!-- Address -->
 			          <section class="folding red">
-			            <h2>
+			            <h2 class="open">
 			              <span class="left"></span><span class="right"></span><span class="status"></span>
 			              Address
 			            </h2>
@@ -77,7 +78,7 @@
 			          </section>
 			          
 			           <section class="folding orange">
-			            <h2>
+			            <h2 class="open">
 			              <span class="left"></span><span class="right"></span><span class="status"></span>
 			              Qualifications
 			            </h2>
@@ -87,7 +88,7 @@
 			          </section>
 			          
 			           <section class="folding yellow">
-			            <h2>
+			            <h2 class="open">
 			              <span class="left"></span><span class="right"></span><span class="status"></span>
 			              Employment
 			            </h2>
@@ -97,7 +98,7 @@
 			          </section>
 			          
 			           <section class="folding green">
-			            <h2>
+			            <h2 class="open">
 			              <span class="left"></span><span class="right"></span><span class="status"></span>
 			              Funding
 			            </h2>
@@ -107,7 +108,7 @@
 			          </section>
 			          
 			           <section class="folding navy">
-			            <h2>
+			            <h2 class="open">
 			              <span class="left"></span><span class="right"></span><span class="status"></span>
 			              References
 			            </h2>
@@ -117,7 +118,7 @@
 			          </section>
 			          
 			           <section class="folding blue">
-			            <h2>
+			            <h2 class="open">
 			              <span class="left"></span><span class="right"></span><span class="status"></span>
 			              Documents
 			            </h2>
@@ -127,7 +128,7 @@
 			          </section>
 			         <#if !model.user.isInRole('APPLICANT')>
 			          <section class="folding violet">
-                        <h2>
+                        <h2 class="open">
                           <span class="left"></span><span class="right"></span><span class="status"></span>
                           Reviewers
                         </h2>
@@ -166,8 +167,9 @@
 		
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
+		
 		
 	</body>
 </html>

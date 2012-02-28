@@ -53,9 +53,15 @@ $(document).ready(function(){
 		if($("input#form-view-state").val() == "close"){
 			// close everything
 			$('section.folding > div').removeClass("open").hide();
+			$('section.folding > h2').removeClass("open");
 			
 			//$("div#personal-details-section").removeClass("open").hide();
 			
 		}
+		
+		// To make uncompleted functionalities disable.
+		$(".disabledEle").attr("disabled", "disabled");
+		
 	});
+	
 });

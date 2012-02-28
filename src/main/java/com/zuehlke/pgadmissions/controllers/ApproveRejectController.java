@@ -1,26 +1,28 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.exceptions.CannotApproveApplicationException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
-@RequestMapping(value = { "/decision" })
+@RequestMapping(value = { "/approveOrReject" })
 public class ApproveRejectController {
 
-	private static final String APPROVE_REJECT_VIEW_NAME = "approveRejectSuccess";
-	private ApplicationsService applicationsService;
+	
+	private final ApplicationsService applicationsService;
 
 	ApproveRejectController() {
 		this(null);
@@ -32,26 +34,26 @@ public class ApproveRejectController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	@Transactional
-	public String getDecidedApplicationPage(@RequestParam Integer id, @RequestParam String submit, ModelMap modelMap) {
-		ApplicationForm application = applicationsService.getApplicationById(id);
-		SecurityContext context = SecurityContextHolder.getContext();
-		RegisteredUser approver = (RegisteredUser) context.getAuthentication().getDetails();
-		if (application.getApprovalStatus() == null) {
-			ApprovalStatus submitAsEnum = getSubmitAsEnum(submit);
-			application.setApprovalStatus(submitAsEnum);
-			application.setApprover(approver);
-			applicationsService.save(application);
-			String decision = submitAsEnum.equals(ApprovalStatus.APPROVED)? "rejected" : "accepted";
-			modelMap.addAttribute("message","Your have successfully "+ decision + " the application");
-		} else {
-			modelMap.addAttribute("message","The application has already been decided by user: " + application.getApprover().getUsername());
+	public ModelAndView applyDecision(@ModelAttribute ApplicationForm applicationForm, @RequestParam ApprovalStatus decision) {
+		RegisteredUser approver = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		if(applicationForm == null || !approver.isInRole(Authority.APPROVER) || !approver.canSee(applicationForm)){
+			throw new ResourceNotFoundException();
 		}
-		return APPROVE_REJECT_VIEW_NAME;
+		if(!applicationForm.isReviewable()){
+			throw new CannotApproveApplicationException();
+		}
+				
+		applicationForm.setApprovalStatus(decision);
+		applicationForm.setApprover(approver);
+		applicationsService.save(applicationForm);
+		
+		return new ModelAndView("redirect:/reviewer/assign", "id", applicationForm.getId());
 	}
 
-	private ApprovalStatus getSubmitAsEnum(String submit) {
-		return submit.equals("Approve")? ApprovalStatus.APPROVED : ApprovalStatus.REJECTED;
+	
+	@ModelAttribute("applicationForm")
+	public ApplicationForm getApplicationForm(Integer id) {
+		return applicationsService.getApplicationById(id);
 	}
 
 

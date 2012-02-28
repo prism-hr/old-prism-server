@@ -18,6 +18,7 @@
 		<intercept-url pattern="/projects" 	access="permitAll" />
 		<intercept-url pattern="*/j_spring_security_check"	access="permitAll" />
 		<intercept-url pattern="/apply/**"	access="hasRole('APPLICANT')" />
+		<intercept-url pattern="/reviewer/**"	access="hasAnyRole('ADMINISTRATOR','REVIEWER','APPROVER')" />
 		<intercept-url pattern="/**"		access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER')" />		
 		<intercept-url pattern="/dwr/**" 	access="permitAll" />
 

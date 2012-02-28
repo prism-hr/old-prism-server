@@ -42,11 +42,7 @@ public class ReviewController {
 	}
 
 	@RequestMapping(value = "/assign", method = RequestMethod.GET)
-	@Transactional
-	public ModelAndView getReviewerPage(@ModelAttribute ApplicationForm applicationForm) {
-		if (applicationForm == null) {
-			throw new ResourceNotFoundException();
-		}
+	public ModelAndView getReviewerPage(@ModelAttribute ApplicationForm applicationForm) {	
 		if (!applicationForm.isReviewable()) {
 			throw new CannotReviewApplicationException();
 		}
@@ -60,9 +56,7 @@ public class ReviewController {
 
 	@RequestMapping(value = { "/reviewerSuccess" }, method = RequestMethod.POST)
 	public ModelAndView updateReviewers(@ModelAttribute ApplicationForm applicationForm) {
-		if (applicationForm == null) {
-			throw new ResourceNotFoundException();
-		}
+	
 		if (!applicationForm.isReviewable()) {
 			throw new CannotReviewApplicationException();
 		}
@@ -71,11 +65,17 @@ public class ReviewController {
 
 	}
 
+	
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(Integer id) {
-		return applicationsService.getApplicationById(id);
-
+		RegisteredUser approver = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		ApplicationForm applicationForm = applicationsService.getApplicationById(id);
+		if(applicationForm == null || !approver.canSee(applicationForm)){
+			throw new ResourceNotFoundException();
+		}
+		return applicationForm;
 	}
+
 
 	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.Project;
 
-public class MainPageModel extends DomainModel{
+public class MainPageModel extends PageModel{
 
 	private List<Project> projects;
 

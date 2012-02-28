@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
+import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
@@ -68,7 +68,7 @@ public class ApplicationFormController {
 		userDAO.save(user);
 		
 		ApplicationForm applicationForm = applicationService.getApplicationById(id);
-		ApplicationFormModel model = new ApplicationFormModel();
+		PageModel model = new PageModel();
 		model.setApplicationForm(applicationForm);
 		model.setUser(user);
 		

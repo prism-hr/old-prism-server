@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotApproveApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
@@ -36,7 +37,7 @@ public class ApproveRejectController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView applyDecision(@ModelAttribute ApplicationForm applicationForm, @RequestParam ApprovalStatus decision) {
 		RegisteredUser approver = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		if(applicationForm == null || !approver.isInRole(Authority.APPROVER) || !approver.canSee(applicationForm)){
+		if(!approver.isInRole(Authority.APPROVER) ){
 			throw new ResourceNotFoundException();
 		}
 		if(!applicationForm.isReviewable()){
@@ -47,13 +48,26 @@ public class ApproveRejectController {
 		applicationForm.setApprover(approver);
 		applicationsService.save(applicationForm);
 		
-		return new ModelAndView("redirect:/reviewer/assign", "id", applicationForm.getId());
+		return new ModelAndView("redirect:/approveOrReject/decisionmade", "id", applicationForm.getId());
 	}
 
 	
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(Integer id) {
-		return applicationsService.getApplicationById(id);
+		RegisteredUser approver = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		ApplicationForm applicationForm = applicationsService.getApplicationById(id);
+		if(applicationForm == null || !approver.canSee(applicationForm)){
+			throw new ResourceNotFoundException();
+		}
+		return applicationForm;
+	}
+
+	@RequestMapping(value="/decisionmade", method = RequestMethod.GET)
+	public ModelAndView getApprovedOrRejectedPage(ApplicationForm applicationForm) {
+		PageModel pageModel = new PageModel();
+		pageModel.setApplicationForm(applicationForm);
+		pageModel.setUser((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails());
+		return new ModelAndView("/reviewer/approvedOrRejected", "model", pageModel);
 	}
 
 

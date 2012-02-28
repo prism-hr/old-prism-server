@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
+import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class ViewApplicationFormControllerTest {
@@ -53,7 +53,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage(1);
-		ApplicationFormModel model = (ApplicationFormModel) modelAndView.getModel().get("model");
+		PageModel model = (PageModel) modelAndView.getModel().get("model");
 		assertEquals(applicationForm, model.getApplicationForm());
 	}
 
@@ -66,7 +66,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.replay(userMock, applicationsServiceMock);
 
 		ModelAndView modelAndView = controller.getViewApplicationPage(1);
-		ApplicationFormModel model = (ApplicationFormModel) modelAndView.getModel().get("model");
+		PageModel model = (PageModel) modelAndView.getModel().get("model");
 		assertEquals(userMock, model.getUser());
 	}
 

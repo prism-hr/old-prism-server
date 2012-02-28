@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.pagemodels.ApplicationFormModel;
+import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class ApplicationFormControllerTest {
@@ -148,7 +148,7 @@ public class ApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 
 		ModelAndView modelAndView = applicationController.editApplicationForm(2, "Jack", "Johnson");
-		ApplicationFormModel model = (ApplicationFormModel) modelAndView.getModel().get("model");
+		PageModel model = (PageModel) modelAndView.getModel().get("model");
 		Assert.assertEquals("Jack", model.getUser().getFirstName());
 		Assert.assertEquals("Johnson", model.getUser().getLastName());
 	}

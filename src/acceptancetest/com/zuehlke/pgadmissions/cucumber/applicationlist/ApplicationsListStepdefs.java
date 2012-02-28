@@ -37,19 +37,29 @@ import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 
 public class ApplicationsListStepdefs {
+	private static final int REVIEWERS_COLUMN_INDEX = 3;
+	private static final int PROJECT_COLUMN_INDEX = 2;
+	private static final int SUBMISSION_STATUS_COLUMN_INDEX = 1;
+	private static final int ID_COLUMN_INDEX = 0;
 	private final WebDriver webDriver = new HtmlUnitDriver();
 	private SessionFactory sessionFactory;
-	private Program program;
-	private Project project;
+	private Program programOne;
+	private Project projectOne;
 	private RegisteredUser anna;
 	private RegisteredUser bert;
 
 	private Map<String, RegisteredUser> userMap = new HashMap<String, RegisteredUser>();
 	private Map<Integer, String> applicationIdMap = new HashMap<Integer, String>();
+	private Map<String, Program> programMap = new HashMap<String, Program>();
+	private Map<String, Project> projectMap = new HashMap<String, Project>();
+	
 	private Transaction transaction;
 	private RegisteredUser charles;
 	private RegisteredUser dorotha;
 	private RegisteredUser elsie;
+	private RegisteredUser foxy;
+	private Program programTwo;
+	private Project projectTwo;
 
 	@Given("(\\w+) has applications$")
 	public void userHasApplications(String username, DataTable table) {
@@ -57,13 +67,17 @@ public class ApplicationsListStepdefs {
 		List<DataTableRow> rows = table.getGherkinRows();
 		for (int i = 1; i < rows.size(); i++) {
 			DataTableRow row = rows.get(i);
-			String idKey = row.getCells().get(0);
-			SubmissionStatus submissionStatus = SubmissionStatus.valueOf(row.getCells().get(1).toUpperCase());
+			String idKey = row.getCells().get(ID_COLUMN_INDEX);
+			SubmissionStatus submissionStatus = SubmissionStatus.valueOf(row.getCells().get(SUBMISSION_STATUS_COLUMN_INDEX).toUpperCase());
+			String projectCode = row.getCells().get(PROJECT_COLUMN_INDEX);
+			
 			String[] reviewerNames = new String[0];
 			if (table.getGherkinRows().get(0).getCells().contains("Reviewers")) {
-				reviewerNames = row.getCells().get(2).split(",");
+				reviewerNames = row.getCells().get(REVIEWERS_COLUMN_INDEX).split(",");
 			}
-			ApplicationForm applicationForm = createAndSaveApplicationForm(username, submissionStatus, reviewerNames);
+			
+			ApplicationForm applicationForm = createAndSaveApplicationForm(username, submissionStatus,projectCode, reviewerNames);
+			
 			applicationIdMap.put(applicationForm.getId(), idKey);
 
 		}
@@ -94,7 +108,7 @@ public class ApplicationsListStepdefs {
 			String expectedIdPlaceHolder = applicationIdMap.get(Integer.parseInt(idElement.getText()));
 			actualRow.add(expectedIdPlaceHolder);
 			if (table.getGherkinRows().get(0).getCells().contains("SubmissionStatus")) {
-				WebElement submissionStatusElement = htmlRow.findElement(By.name("submissionStausColumn"));
+				WebElement submissionStatusElement = htmlRow.findElement(By.name("submissionStatusColumn"));
 				actualRow.add(submissionStatusElement.getText());
 			}
 			actualApplications.add(actualRow);
@@ -161,15 +175,20 @@ public class ApplicationsListStepdefs {
 		return false;
 	}
 
-	private ApplicationForm createAndSaveApplicationForm(String username, SubmissionStatus submissionStatus, String... reviewers) {
+	private ApplicationForm createAndSaveApplicationForm(String username, SubmissionStatus submissionStatus, String projectCode, String... reviewers) {
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(userMap.get(username)).project(project).submissionStatus(submissionStatus)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(userMap.get(username)).project(projectMap.get(projectCode)).submissionStatus(submissionStatus)
 				.toApplicationForm();
 		for (String revieweName : reviewers) {
 			applicationForm.getReviewers().add(userMap.get(revieweName.trim()));
 		}
 		sessionFactory.getCurrentSession().save(applicationForm);
 		commitAndGetNewTransaction();
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			//ignore
+		}
 		return applicationForm;
 	}
 
@@ -188,22 +207,15 @@ public class ApplicationsListStepdefs {
 		transaction = sessionFactory.getCurrentSession().beginTransaction();
 		cleanUp();
 		commitAndGetNewTransaction();
+	
 
-		program = new ProgramBuilder().code("CUKEPROG").description("Cucumber Test Program Description").title("Cucumber Test Program Title").toProgram();
-		sessionFactory.getCurrentSession().save(program);
+		Role applicant = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.APPLICANT)).uniqueResult();
 
-		project = new ProjectBuilder().code("CUKEPROJ").description("Cucumber Test Project Description").title("Cucumber Test Project Title").program(program)
-				.toProject();
-		sessionFactory.getCurrentSession().save(project);
+		Role administrator = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.ADMINISTRATOR)).uniqueResult();
 
-		Role applicant = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.APPLICANT))
-				.uniqueResult();
-
-		Role administrator = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class)
-				.add(Restrictions.eq("authorityEnum", Authority.ADMINISTRATOR)).uniqueResult();
-
-		Role reviewer = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.REVIEWER))
-				.uniqueResult();
+		Role reviewer = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.REVIEWER)).uniqueResult();
+		
+		Role approver = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.APPROVER)).uniqueResult();
 
 		anna = new RegisteredUserBuilder().firstName("Anna").lastName("Cucumber").email("email@test.com").username("anna").password("password")
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(applicant).toUser();
@@ -229,7 +241,32 @@ public class ApplicationsListStepdefs {
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(reviewer).toUser();
 		sessionFactory.getCurrentSession().save(elsie);
 		userMap.put("elsie", elsie);
-
+		
+		foxy = new RegisteredUserBuilder().firstName("Foxy").lastName("Cucumber").email("email@test.com").username("foxy").password("password")
+				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(approver).toUser();
+		sessionFactory.getCurrentSession().save(foxy);
+		userMap.put("foxy", foxy);
+		
+		programOne = new ProgramBuilder().code("CUKEPROG1").description("Cucumber Test Program Description").title("Cucumber Test Program Title").approver(foxy).toProgram();
+		sessionFactory.getCurrentSession().save(programOne);
+		programMap.put(programOne.getCode(), programOne);
+		
+		programTwo = new ProgramBuilder().code("CUKEPROG2").description("Cucumber Test Program Description").title("Cucumber Test Program Title").toProgram();
+		sessionFactory.getCurrentSession().save(programTwo);
+		programMap.put(programTwo.getCode(), programTwo);
+		
+		projectOne = new ProjectBuilder().code("CUKEPROJ1").description("Cucumber Test Project Description").title("Cucumber Test Project Title").program(programOne)
+				.toProject();
+		sessionFactory.getCurrentSession().save(projectOne);
+		projectMap.put(projectOne.getCode(), projectOne);
+		
+		
+		projectTwo = new ProjectBuilder().code("CUKEPROJ2").description("Cucumber Test Project Description").title("Cucumber Test Project Title").program(programTwo)
+				.toProject();
+		sessionFactory.getCurrentSession().save(projectTwo);
+		projectMap.put(projectTwo.getCode(), projectTwo);
+		
+		
 		sessionFactory.getCurrentSession().flush();
 		commitAndGetNewTransaction();
 
@@ -250,16 +287,21 @@ public class ApplicationsListStepdefs {
 
 	private void cleanUp() {
 		deleteApplicationForms("anna");
-		deleteUserIfExists("anna");
 		deleteApplicationForms("bert");
+		
+		deleteProjectIfExists("CUKEPROJ1");
+		deleteProjectIfExists("CUKEPROJ2");
+		deleteProgramIfExists("CUKEPROG1");
+		deleteProgramIfExists("CUKEPROG2");
+		
+		deleteUserIfExists("anna");		
 		deleteUserIfExists("bert");
-
 		deleteUserIfExists("charles");
 		deleteUserIfExists("dorotha");
 		deleteUserIfExists("elsie");
+		deleteUserIfExists("foxy");
 
-		deleteProjectIfExists();
-		deleteProgramIfExistys();
+	
 
 		sessionFactory.getCurrentSession().flush();
 
@@ -275,16 +317,16 @@ public class ApplicationsListStepdefs {
 		commitAndGetNewTransaction();
 	}
 
-	private void deleteProgramIfExistys() {
-		Program prog = (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", "CUKEPROG")).uniqueResult();
+	private void deleteProgramIfExists(String code) {		
+		Program prog = (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code",code)).uniqueResult();
 		if (prog != null) {
 			sessionFactory.getCurrentSession().delete(prog);
 		}
 		commitAndGetNewTransaction();
 	}
 
-	private void deleteProjectIfExists() {
-		Project proj = (Project) sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("code", "CUKEPROJ")).uniqueResult();
+	private void deleteProjectIfExists(String code) {
+		Project proj = (Project) sessionFactory.getCurrentSession().createCriteria(Project.class).add(Restrictions.eq("code", code)).uniqueResult();
 		if (proj != null) {
 			sessionFactory.getCurrentSession().delete(proj);
 		}

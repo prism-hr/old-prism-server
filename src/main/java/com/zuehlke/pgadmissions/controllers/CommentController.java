@@ -11,12 +11,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
-import com.zuehlke.pgadmissions.domain.CommentModel;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotCommentException;
-import com.zuehlke.pgadmissions.exceptions.CannotViewCommentsException;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
@@ -24,8 +22,6 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 @RequestMapping(value = { "/comments" })
 public class CommentController {
 
-	private static final String COMMENT_FORM_VIEW_NAME = "comment/commentForm";
-	private static final String SHOW_COMMENTS_VIEW_NAME = "application/personal_details_internal";
 	private final ApplicationReviewService applicationReviewService;
 	private final ApplicationsService applicationService;
 

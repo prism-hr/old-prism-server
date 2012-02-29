@@ -68,7 +68,7 @@ public class ApplicationFormController {
 
 	@RequestMapping(value="/edit", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView editApplicationForm(@ModelAttribute PersonalDetails personalDetails, @ModelAttribute RegisteredUser user, 
+	public ModelAndView editApplicationForm(@ModelAttribute PersonalDetails personalDetails, @RequestParam Integer id, 
 											@RequestParam Integer appId,
 											BindingResult result) {	
 		
@@ -79,9 +79,12 @@ public class ApplicationFormController {
 			model.setErrorObjs(result.getAllErrors());
 			return new  ModelAndView("error/errors","model", model);
 		}
-		user.setLastName(personalDetails.getLastname());
-		user.setFirstName(personalDetails.getFirstname());
-		user.setEmail(personalDetails.getEmailaddress());
+		
+		RegisteredUser user = userService.getUser(id);
+		
+		user.setLastName(personalDetails.getLastName());
+		user.setFirstName(personalDetails.getFirstName());
+		user.setEmail(personalDetails.getEmail());
 		userService.save(user);
 		
 		return new  ModelAndView("redirect:/application","id", appId);

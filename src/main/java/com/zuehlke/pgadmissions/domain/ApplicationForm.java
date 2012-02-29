@@ -22,6 +22,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
+import org.springframework.util.Assert;
 
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -59,7 +60,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
 
-	private List<ApplicationReview> applicationComments;
+	private List<ApplicationReview> applicationComments = new ArrayList<ApplicationReview>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
@@ -170,15 +171,23 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return approvalStatus != null;
 	}
 	
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "APPLICATION_REVIEW", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "APPLICATION_REVIEW", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "user_id") })
 	@Access(AccessType.PROPERTY)
 	public List<ApplicationReview> getApplicationComments() {
 		return applicationComments;
 	}
 
 	public void setApplicationComments(List<ApplicationReview> applicationComments) {
-		this.applicationComments = applicationComments;
+		
+		for (ApplicationReview applicationReview : applicationComments) {
+			Assert.notNull(applicationReview.getComment());
+		}
+		if(this.applicationComments.size() == applicationComments.size() && this.applicationComments.containsAll(applicationComments)){
+			return;
+		}
+		this.applicationComments.clear();
+		this.applicationComments.addAll(applicationComments);
 	}
 
 	public boolean hasComments() {

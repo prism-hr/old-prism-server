@@ -55,9 +55,8 @@ public class ViewApplicationFormController {
 			} else if (currentuser.isInRole(Authority.REVIEWER)) {
 				viewApplicationModel.setApplicationComments((applicationReviewService.getVisibleComments(applicationForm,currentuser)));
 			}
-			viewApplicationModel.setApplicationComments(applicationForm
-					.getApplicationComments());
 		}
+		
 		if (currentuser.isInRole(Authority.APPLICANT)) {
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,
 					"model", viewApplicationModel);

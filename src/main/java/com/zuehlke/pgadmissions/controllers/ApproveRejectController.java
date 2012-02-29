@@ -46,9 +46,8 @@ public class ApproveRejectController {
 				
 		applicationForm.setApprovalStatus(decision);
 		applicationForm.setApprover(approver);
-		applicationsService.save(applicationForm);
-		
-		return new ModelAndView("redirect:/approveOrReject/decisionmade", "id", applicationForm.getId());
+		applicationsService.save(applicationForm);		
+		return new ModelAndView("redirect:/applications", "decision", decision.toString().toLowerCase()); 
 	}
 
 	

@@ -84,7 +84,7 @@ public class ApplicationFormController {
 		}		
 		appForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationService.save(appForm);
-		return new  ModelAndView("redirect:/applications?success=true");
+		return new  ModelAndView("redirect:/applications?submissionSuccess=true");
 	
 	}
 

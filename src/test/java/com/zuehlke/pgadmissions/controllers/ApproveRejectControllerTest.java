@@ -98,7 +98,7 @@ public class ApproveRejectControllerTest {
 	}
 	
 	@Test
-	public void shouldRedirectToDecisionMadePage(){
+	public void shouldRedirectToApplicationListOnApproval(){
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
@@ -108,11 +108,26 @@ public class ApproveRejectControllerTest {
 		
 		
 		ModelAndView modelAndView = controller.applyDecision(applicationForm, ApprovalStatus.APPROVED);
-		assertEquals("redirect:/approveOrReject/decisionmade", modelAndView.getViewName());
-		assertEquals(1, modelAndView.getModelMap().get("id"));	
+		assertEquals("redirect:/applications", modelAndView.getViewName());
+		assertEquals("approved", modelAndView.getModelMap().get("decision"));	
+		
 		
 	}
-	
+	@Test
+	public void shouldRedirectToApplicationListOnRejection(){
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
+		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.replay(approverMock, applicationsServiceMock);
+		
+		
+		ModelAndView modelAndView = controller.applyDecision(applicationForm, ApprovalStatus.REJECTED);
+		assertEquals("redirect:/applications", modelAndView.getViewName());
+		assertEquals("rejected", modelAndView.getModelMap().get("decision"));	
+		
+	}
 	@Test
 	public void shouldReturnApprovedOrRejectedViewWithApplicationAndUser(){
 		

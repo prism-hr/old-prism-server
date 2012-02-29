@@ -64,11 +64,8 @@
 					                <th scope="col">App. No.</th>
 					                <th scope="col">First Name</th>
 					                <th scope="col">Surname</th>
-					                <th scope="col">Programme</th>
-					                <#if model.user.isInRole('APPLICANT')>
-					            		<th scope="col">Status</th>
-					            	</#if>
-					               
+					                <th scope="col">Programme</th>					
+					            	<th scope="col">Status</th>
 					                <th scope="col">Actions</th>
 					                <th class="centre" scope="col">Select</th>
 					              </tr>

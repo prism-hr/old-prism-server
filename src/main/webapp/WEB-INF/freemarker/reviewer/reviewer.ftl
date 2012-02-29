@@ -85,7 +85,7 @@
                                 <p>Not yet assigned.</p>
                        </#if>
 		            </div>
-		        <#if model.applicationForm.isReviewable() >
+		        <#if model.applicationForm.isReviewable()  && (model.user.isInRole('ADMINISTRATOR')||model.user.isInRole('REVIEWER') )>
 					<form  action="<@spring.url '/reviewer/reviewerSuccess'/>" method = "POST">		                    
 			            <input type="hidden" name="id" value="${model.applicationForm.id}"/>
 			          	<div class="row">

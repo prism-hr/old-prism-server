@@ -4,6 +4,8 @@
 	version="3.0">
 	<display-name>UCL Postgraduate admissions application</display-name>
 
+
+
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/spring/MainContext.xml,
@@ -14,6 +16,20 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>pgadmissions.root</param-value>
+	</context-param>
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>/WEB-INF/classes/log4j.properties</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+
+
 
 
 	<servlet-mapping>

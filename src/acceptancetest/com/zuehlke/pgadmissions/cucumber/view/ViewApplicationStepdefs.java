@@ -1,22 +1,28 @@
-package com.zuehlke.pgadmissions.cucumber.applicationlist;
+package com.zuehlke.pgadmissions.cucumber.view;
 
 import gherkin.formatter.model.DataTableRow;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.By.ById;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.Wait;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.google.common.base.Function;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -36,7 +42,7 @@ import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
 import cucumber.table.DataTable;
 
-public class ApplicationsListStepdefs {
+public class ViewApplicationStepdefs {
 
 	private static final int REVIEWERS_COLUMN_INDEX = 3;
 	private static final int PROJECT_COLUMN_INDEX = 2;
@@ -50,10 +56,10 @@ public class ApplicationsListStepdefs {
 	private RegisteredUser bert;
 
 	private Map<String, RegisteredUser> userMap = new HashMap<String, RegisteredUser>();
-	private Map<Integer, String> applicationIdMap = new HashMap<Integer, String>();
+	private Map<String, Integer> applicationIdMap = new HashMap<String, Integer>();
 	private Map<String, Program> programMap = new HashMap<String, Program>();
 	private Map<String, Project> projectMap = new HashMap<String, Project>();
-	
+
 	private Transaction transaction;
 	private RegisteredUser charles;
 	private RegisteredUser dorotha;
@@ -71,15 +77,15 @@ public class ApplicationsListStepdefs {
 			String idKey = row.getCells().get(ID_COLUMN_INDEX);
 			SubmissionStatus submissionStatus = SubmissionStatus.valueOf(row.getCells().get(SUBMISSION_STATUS_COLUMN_INDEX).toUpperCase());
 			String projectCode = row.getCells().get(PROJECT_COLUMN_INDEX);
-			
+
 			String[] reviewerNames = new String[0];
 			if (table.getGherkinRows().get(0).getCells().contains("Reviewers")) {
 				reviewerNames = row.getCells().get(REVIEWERS_COLUMN_INDEX).split(",");
 			}
-			
-			ApplicationForm applicationForm = createAndSaveApplicationForm(username, submissionStatus,projectCode, reviewerNames);
-			
-			applicationIdMap.put(applicationForm.getId(), idKey);
+
+			ApplicationForm applicationForm = createAndSaveApplicationForm(username, submissionStatus, projectCode, reviewerNames);
+
+			applicationIdMap.put(idKey, applicationForm.getId());
 
 		}
 	}
@@ -90,98 +96,33 @@ public class ApplicationsListStepdefs {
 		webDriver.get("http://localhost:8080/pgadmissions/applications");
 	}
 
-	@Then("she sees a list containing only applications$")
-	public void userSeesListContainintOnly(DataTable table) {
-		List<WebElement> htmlRows = webDriver.findElements(By.name("applicationRow"));
-		Assert.assertEquals(table.getGherkinRows().size() - 1, htmlRows.size());
-
-		List<List<String>> actualApplications = new ArrayList<List<String>>();
-		List<String> actualRow = new ArrayList<String>();
-		actualRow.add("ApplicationNumber");
-		if (table.getGherkinRows().get(0).getCells().contains("SubmissionStatus")) {
-			actualRow.add("SubmissionStatus");
-		}
-		actualApplications.add(actualRow);
-
-		for (WebElement htmlRow : htmlRows) {
-			actualRow = new ArrayList<String>();
-			WebElement idElement = htmlRow.findElement(By.name("idColumn"));
-			String expectedIdPlaceHolder = applicationIdMap.get(Integer.parseInt(idElement.getText()));
-			actualRow.add(expectedIdPlaceHolder);
-			if (table.getGherkinRows().get(0).getCells().contains("SubmissionStatus")) {
-				WebElement submissionStatusElement = htmlRow.findElement(By.name("statusColumn"));
-				actualRow.add(submissionStatusElement.getText());
-			}
-			actualApplications.add(actualRow);
-		}
-
-		table.diff(actualApplications);
+	@Then("^she can (\\w+) the application (\\w+)$")
+	public void she_can_take_action_for_the_application(String action, final String idKey) {
+		WebElement selectElement = webDriver.findElement(By.name("app_[" + applicationIdMap.get(idKey) + "]"));
+		Assert.assertNotNull(selectElement.findElement(By.xpath("option[@value='" + action + "']")));
 	}
 
-	@Then("she sees a list containing applications$")
-	public void userSeesListContaining(DataTable table) {
-		List<WebElement> htmlRows = webDriver.findElements(By.name("applicationRow"));
-
-		List<List<String>> actualApplications = new ArrayList<List<String>>();
-		List<String> actualRow = new ArrayList<String>();
-		actualRow.add("ApplicationNumber");
-		actualApplications.add(actualRow);
-
-		for (WebElement htmlRow : htmlRows) {
-			actualRow = new ArrayList<String>();
-			WebElement idElement = htmlRow.findElement(By.name("idColumn"));
-			String expectedIdPlaceHolder = applicationIdMap.get(Integer.parseInt(idElement.getText()));
-			actualRow.add(expectedIdPlaceHolder);
-			actualApplications.add(actualRow);
-
-		}
-		List<DataTableRow> gherkinRows = table.getGherkinRows();
-		for (DataTableRow dataTableRow : gherkinRows) {
-			Assert.assertTrue(contains(actualApplications, dataTableRow.getCells()));
-		}
+	@Then("^she gets a resource not found error$")
+	public void she_gets_a_resource_not_found_error() {
+		Assert.assertTrue(webDriver.getPageSource().contains("HTTP Status 404"));
 	}
 
-	@Then("not containing applications$")
-	public void notContainingApplications(DataTable table) {
-		List<WebElement> htmlRows = webDriver.findElements(By.name("applicationRow"));
-
-		List<List<String>> actualApplications = new ArrayList<List<String>>();
-		List<String> actualRow = new ArrayList<String>();
-		actualRow.add("ApplicationNumber");
-		actualApplications.add(actualRow);
-
-		for (WebElement htmlRow : htmlRows) {
-			actualRow = new ArrayList<String>();
-			WebElement idElement = htmlRow.findElement(By.name("idColumn"));
-			String expectedIdPlaceHolder = applicationIdMap.get(Integer.parseInt(idElement.getText()));
-			actualRow.add(expectedIdPlaceHolder);
-			actualApplications.add(actualRow);
-
-		}
-		List<DataTableRow> gherkinRows = table.getGherkinRows();
-		for (int i = 1; i < gherkinRows.size(); i++) {
-			Assert.assertFalse(contains(actualApplications, gherkinRows.get(i).getCells()));
-
-		}
+	@When("^(\\w+) opens view for application (\\w+)$")
+	public void user_opens_view_for_application_id_(String username, String idKey) {
+		loginAs(username);
+		webDriver.get("http://localhost:8080/pgadmissions/application?id=" + applicationIdMap.get(idKey));
 	}
 
-	private boolean contains(List<List<String>> actualApplications, List<String> expectedRow) {
-		for (List<String> actualRow : actualApplications) {
-			if (actualRow.size() == expectedRow.size()) {
-				if (actualRow.containsAll(expectedRow)) {
-					return true;
-				}
-			}
-		}
-		return false;
+	@Then("^she sees the view of application (\\w+)$")
+	public void she_sees_application_id_(String idKey) {
+		Assert.assertEquals(applicationIdMap.get(idKey).toString(), webDriver.findElement(ById.id("applicationNumber")).getAttribute("value"));
 	}
-
 	
-	
+
 	private ApplicationForm createAndSaveApplicationForm(String username, SubmissionStatus submissionStatus, String projectCode, String... reviewers) {
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(userMap.get(username)).project(projectMap.get(projectCode)).submissionStatus(submissionStatus)
-				.toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(userMap.get(username)).project(projectMap.get(projectCode))
+				.submissionStatus(submissionStatus).toApplicationForm();
 		for (String revieweName : reviewers) {
 			applicationForm.getReviewers().add(userMap.get(revieweName.trim()));
 		}
@@ -190,7 +131,7 @@ public class ApplicationsListStepdefs {
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {
-			//ignore
+			// ignore
 		}
 		return applicationForm;
 	}
@@ -206,21 +147,23 @@ public class ApplicationsListStepdefs {
 
 	@Before
 	public void setup() {
-		
 
 		sessionFactory = (SessionFactory) new ClassPathXmlApplicationContext("hibernateTestConfig.xml").getBean("sessionFactory");
 		transaction = sessionFactory.getCurrentSession().beginTransaction();
 		cleanUp();
 		commitAndGetNewTransaction();
-	
 
-		Role applicant = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.APPLICANT)).uniqueResult();
+		Role applicant = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.APPLICANT))
+				.uniqueResult();
 
-		Role administrator = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.ADMINISTRATOR)).uniqueResult();
+		Role administrator = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class)
+				.add(Restrictions.eq("authorityEnum", Authority.ADMINISTRATOR)).uniqueResult();
 
-		Role reviewer = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.REVIEWER)).uniqueResult();
-		
-		Role approver = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.APPROVER)).uniqueResult();
+		Role reviewer = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.REVIEWER))
+				.uniqueResult();
+
+		Role approver = (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("authorityEnum", Authority.APPROVER))
+				.uniqueResult();
 
 		anna = new RegisteredUserBuilder().firstName("Anna").lastName("Cucumber").email("email@test.com").username("anna").password("password")
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(applicant).toUser();
@@ -246,32 +189,31 @@ public class ApplicationsListStepdefs {
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(reviewer).toUser();
 		sessionFactory.getCurrentSession().save(elsie);
 		userMap.put("elsie", elsie);
-		
+
 		foxy = new RegisteredUserBuilder().firstName("Foxy").lastName("Cucumber").email("email@test.com").username("foxy").password("password")
 				.accountNonExpired(true).accountNonLocked(true).credentialsNonExpired(true).enabled(true).role(approver).toUser();
 		sessionFactory.getCurrentSession().save(foxy);
 		userMap.put("foxy", foxy);
-		
-		programOne = new ProgramBuilder().code("CUKEPROG1").description("Cucumber Test Program Description").title("Cucumber Test Program Title").approver(foxy).toProgram();
+
+		programOne = new ProgramBuilder().code("CUKEPROG1").description("Cucumber Test Program Description").title("Cucumber Test Program Title")
+				.approver(foxy).toProgram();
 		sessionFactory.getCurrentSession().save(programOne);
 		programMap.put(programOne.getCode(), programOne);
-		
+
 		programTwo = new ProgramBuilder().code("CUKEPROG2").description("Cucumber Test Program Description").title("Cucumber Test Program Title").toProgram();
 		sessionFactory.getCurrentSession().save(programTwo);
 		programMap.put(programTwo.getCode(), programTwo);
-		
-		projectOne = new ProjectBuilder().code("CUKEPROJ1").description("Cucumber Test Project Description").title("Cucumber Test Project Title").program(programOne)
-				.toProject();
+
+		projectOne = new ProjectBuilder().code("CUKEPROJ1").description("Cucumber Test Project Description").title("Cucumber Test Project Title")
+				.program(programOne).toProject();
 		sessionFactory.getCurrentSession().save(projectOne);
 		projectMap.put(projectOne.getCode(), projectOne);
-		
-		
-		projectTwo = new ProjectBuilder().code("CUKEPROJ2").description("Cucumber Test Project Description").title("Cucumber Test Project Title").program(programTwo)
-				.toProject();
+
+		projectTwo = new ProjectBuilder().code("CUKEPROJ2").description("Cucumber Test Project Description").title("Cucumber Test Project Title")
+				.program(programTwo).toProject();
 		sessionFactory.getCurrentSession().save(projectTwo);
 		projectMap.put(projectTwo.getCode(), projectTwo);
-		
-		
+
 		sessionFactory.getCurrentSession().flush();
 		commitAndGetNewTransaction();
 
@@ -293,18 +235,18 @@ public class ApplicationsListStepdefs {
 	private void cleanUp() {
 		deleteApplicationForms("anna");
 		deleteApplicationForms("bert");
-		
+
 		deleteProjectIfExists("CUKEPROJ1");
 		deleteProjectIfExists("CUKEPROJ2");
 		deleteProgramIfExists("CUKEPROG1");
 		deleteProgramIfExists("CUKEPROG2");
-		
-		deleteUserIfExists("anna");		
+
+		deleteUserIfExists("anna");
 		deleteUserIfExists("bert");
 		deleteUserIfExists("charles");
 		deleteUserIfExists("dorotha");
 		deleteUserIfExists("elsie");
-		deleteUserIfExists("foxy");	
+		deleteUserIfExists("foxy");
 
 		sessionFactory.getCurrentSession().flush();
 
@@ -320,8 +262,8 @@ public class ApplicationsListStepdefs {
 		commitAndGetNewTransaction();
 	}
 
-	private void deleteProgramIfExists(String code) {		
-		Program prog = (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code",code)).uniqueResult();
+	private void deleteProgramIfExists(String code) {
+		Program prog = (Program) sessionFactory.getCurrentSession().createCriteria(Program.class).add(Restrictions.eq("code", code)).uniqueResult();
 		if (prog != null) {
 			sessionFactory.getCurrentSession().delete(prog);
 		}

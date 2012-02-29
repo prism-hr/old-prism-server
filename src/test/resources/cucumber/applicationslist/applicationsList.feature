@@ -11,9 +11,9 @@ And bert has applications
     | 		id_3		| SUBMITTED        | CUKEPROJ1	|
 When anna views the application list
 Then she sees a list containing only applications
-	|ApplicationNumber	| SubmissionStatus |
-    | 		id_2		| UNSUBMITTED        |
-    | 		id_1		| SUBMITTED      |
+	|ApplicationNumber	|
+    | 		id_2		| 
+    | 		id_1		| 
 
  Scenario: Administrator sees list of all submitted applications
  Given anna has applications

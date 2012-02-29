@@ -31,7 +31,7 @@ public class ApplicationListController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getApplicationListPage(@RequestParam(required=false) boolean submissionSuccess, String decision) {
-
+		
 		SecurityContext context = SecurityContextHolder.getContext();
 		RegisteredUser user = (RegisteredUser) context.getAuthentication().getDetails();
 		
@@ -47,6 +47,5 @@ public class ApplicationListController {
 		ModelAndView modelAndView = new ModelAndView(APPLICATION_LIST_VIEW_NAME, "model", model);
 		
 		return modelAndView;
-	}
-	
+	}	
 }

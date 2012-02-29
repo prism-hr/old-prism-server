@@ -48,7 +48,7 @@
 				            
 				          	<div class="row half">
 				            	<label>Application Number</label>
-				              <input disabled size="20" value="${model.applicationForm.id}" />
+				              <input id="applicationNumber" disabled size="20" value="${model.applicationForm.id}" />
 				            </div>
 				            
 			          	</div>

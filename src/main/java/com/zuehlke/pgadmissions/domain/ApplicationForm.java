@@ -28,11 +28,11 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD)
-public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm> {
+public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm>{
 
 	private static final long serialVersionUID = -7671357234815343496L;
 
-	@Column(name = "app_date_time", insertable = false)
+	@Column(name="app_date_time", insertable = false)
 	@Generated(GenerationTime.INSERT)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date applicationTimestamp;
@@ -68,9 +68,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return reviewers;
 	}
 
-	public void setReviewers(List<RegisteredUser> reviewers) {
-		// THIS IS A HACK. To be changed.
-		if (this.reviewers.size() == reviewers.size() && this.reviewers.containsAll(reviewers)) {
+	public void setReviewers(List<RegisteredUser> reviewers) {	
+		//THIS IS A HACK. To be changed.
+		if(this.reviewers.size() == reviewers.size() && this.reviewers.containsAll(reviewers)){
 			return;
 		}
 		this.reviewers.clear();
@@ -143,19 +143,15 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return !reviewers.isEmpty();
 	}
 
-	public boolean isReviewable() {
-		if (submissionStatus != SubmissionStatus.SUBMITTED || approvalStatus != null) {
+	public boolean isReviewable() {		
+		if (submissionStatus != SubmissionStatus.SUBMITTED ||approvalStatus != null ){
 			return false;
 		}
 		return true;
 	}
-
+	
 	public boolean isSubmitted() {
 		return submissionStatus == SubmissionStatus.SUBMITTED;
-	}
-	
-	public boolean hasComments(){
-		return applicationComments!=null;
 	}
 
 	@Override
@@ -163,28 +159,19 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		if (this.applicationTimestamp == null) {
 			return -1;
 		}
-
+		
 		if (appForm.getApplicationTimestamp() == null) {
 			return 1;
 		}
 		return (-1) * this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
 	}
-	
-		public boolean isDecided() {
-		return approvalStatus != null;}
 
-
-	public void setApplicationComments(List<ApplicationReview> applicationComments) {
-		this.applicationComments = applicationComments;
+	public boolean isDecided() {
+		return approvalStatus != null;
 	}
-
-
 	
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "APPLICATION_REVIEW", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
-	public boolean isDecided() {
-		return approvalStatus != null;
-
 	@Access(AccessType.PROPERTY)
 	public List<ApplicationReview> getApplicationComments() {
 		return applicationComments;
@@ -192,5 +179,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setApplicationComments(List<ApplicationReview> applicationComments) {
 		this.applicationComments = applicationComments;
+	}
+
+	public boolean hasComments() {
+		return applicationComments!=null;
 	}
 }

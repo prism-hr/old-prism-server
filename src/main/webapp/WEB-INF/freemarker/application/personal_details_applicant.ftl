@@ -38,8 +38,9 @@
 			    </tr>
 			</tbody>
 		</table>
-		<form method="post" action="<@spring.url '/apply'/>" method = "POST">
-                <input type="hidden" name="id" value="${model.applicationForm.id}"/>
+		<form method="post" action="<@spring.url '/apply/edit'/>" method = "POST">
+                <input type="hidden" name="id" value="${model.user.id}"/>
+                <input type="hidden" name="appId" value="${model.applicationForm.id}"/>
                 <input type="hidden" id="form-view-state" value="${formViewState}"/>
               	<div>
                 	<div class="row">
@@ -165,7 +166,7 @@
                 		<span class="label">Email</span>
                     <span class="hint"></span>
                     <div class="field">
-	                    <input class="full disabledEle" type="email" value="info@hotmail.com" />
+	                    <input class="full" type="email" value="${model.applicationForm.applicant.email}" name="email"/>
                       <a class="button disabledEle" href="#" style="width: 110px;">Add Email</a>
                     </div>
                   </div>

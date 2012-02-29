@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+
+import java.util.HashMap;
+
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
@@ -12,10 +14,10 @@ import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.validation.MapBindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
-import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -25,18 +27,19 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class ApplicationFormControllerTest {
 
-	ProjectDAO projectDAOMock;
-	ApplicationFormController applicationController;
+	private ProjectDAO projectDAOMock;
+	private ApplicationFormController applicationController;
 	private ApplicationForm applicationForm;
-	ApplicationsService applicationsServiceMock;
+	private ApplicationsService applicationsServiceMock;
+	private UserService userServiceMock;
 	private RegisteredUser student;
-	private UserDAO userDAOMock;
 
 
 	@Test
@@ -132,25 +135,26 @@ public class ApplicationFormControllerTest {
 		
 		applicationController.submitApplication(id);
 	}
-
 	
 	@Test
 	@Ignore
-	public void shouldDoStuffIfSaveFails() {
-		//
-		fail("not implemented");
-	}
-	
-	@Test
 	public void shouldSaveNewPersonalDetails() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
+		
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		userServiceMock.save(student);
+		EasyMock.replay(userServiceMock);
 
-		ModelAndView modelAndView = applicationController.editApplicationForm(2, "Jack", "Johnson");
-		PageModel model = (PageModel) modelAndView.getModel().get("model");
-		Assert.assertEquals("Jack", model.getUser().getFirstName());
-		Assert.assertEquals("Johnson", model.getUser().getLastName());
+		PersonalDetails personalDetails = new PersonalDetails();
+		personalDetails.setFirstName("New First Name");
+		personalDetails.setLastName("New Last Name");
+		personalDetails.setEmail("newemail@emai.com");
+		@SuppressWarnings("rawtypes")
+		MapBindingResult mappingResult = new MapBindingResult(new HashMap(), "personalDetails");
+		ModelAndView modelAndView = applicationController.editApplicationForm(personalDetails, 2, 1, mappingResult);
+		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
 	}
 
 	@Before
@@ -160,17 +164,16 @@ public class ApplicationFormControllerTest {
 
 		projectDAOMock = EasyMock.createMock(ProjectDAO.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		userDAOMock = EasyMock.createMock(UserDAO.class);
-
-		applicationController = new ApplicationFormController(projectDAOMock, applicationsServiceMock, userDAOMock) {
+		userServiceMock = EasyMock.createMock(UserService.class);
+		
+		applicationController = new ApplicationFormController(projectDAOMock, applicationsServiceMock, userServiceMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}
-
 		};
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		student = new RegisteredUserBuilder().id(1).username("mark").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		authenticationToken.setDetails(student);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);

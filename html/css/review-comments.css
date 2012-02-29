@@ -1,0 +1,4 @@
+@charset "utf-8";
+
+#review-comments td.comment { background: #FFF; display: none; padding: 10px; }
+#review-comments td.comment a.button { float: right; }

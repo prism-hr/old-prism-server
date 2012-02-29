@@ -43,25 +43,24 @@ $(document).ready(function(){
 	/*
 	 * Keep the view state of the form open or close depending on the user role.
 	 */
-	
 	$(window).load(function(){
-		
-//		alert($("input#form-view-state").val());
-//		var className = $("div#personal-details-section").attr('class');
-//		alert("the class name is " + className);
 		
 		if($("input#form-view-state").val() == "close"){
 			// close everything
 			$('section.folding > div').removeClass("open").hide();
 			$('section.folding > h2').removeClass("open");
-			
-			//$("div#personal-details-section").removeClass("open").hide();
-			
 		}
 		
 		// To make uncompleted functionalities disable.
 		$(".disabledEle").attr("disabled", "disabled");
 		
+	});
+	
+	/*
+	 * On click of the close button inside comment div, the div should be returned to its contrasted state.
+	 * */
+	$('#comment-close').click(function(){
+		$('#comment').css("display", "none");
 	});
 	
 });

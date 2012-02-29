@@ -10,6 +10,7 @@ import java.util.List;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,7 +28,9 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.exceptions.CannotCommentException;
 import com.zuehlke.pgadmissions.exceptions.CannotViewCommentsException;
+import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
@@ -74,19 +77,6 @@ public class CommentControllerTest {
 		applicationReviewForSubmittedNonApproved3 = new ApplicationReviewBuilder().id(3).application(submittedNonApprovedApplication).comment("I'm interested").user(reviewer2).toApplicationReview();
 		applicationReviewForSubmittedNonApproved4 = new ApplicationReviewBuilder().id(4).application(submittedNonApprovedApplication).comment("Comment By Admin And Reviewer").user(adminAndReviewer).toApplicationReview();
 	}
-
-	@Test
-	public void shouldGetCommentPage(){
-		authenticationToken.setDetails(admin);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(submittedNonApprovedApplication);
-		EasyMock.replay(applicationsServiceMock);
-		ModelAndView modelAndView = controller.getCommentPage(1);
-		assertEquals("comment/commentForm", modelAndView.getViewName());
-		assertEquals(submittedNonApprovedApplication, ((CommentModel)modelAndView.getModelMap().get("model")).getApplication());
-	}
 	
 	@Test
 	public void shouldSaveCommentByAdminOnSubmittedNonApprovedApplication(){
@@ -102,7 +92,7 @@ public class CommentControllerTest {
 		EasyMock.verify(applicationsServiceMock);
 	}
 	
-	@Test
+	@Test(expected = CannotCommentException.class)
 	public void shouldNotSaveCommentByAdminOnSubmittedApprovedApplication(){
 		authenticationToken.setDetails(admin);
 		SecurityContextImpl secContext = new SecurityContextImpl();
@@ -115,7 +105,8 @@ public class CommentControllerTest {
 		assertEquals("redirect:/application", modelAndView.getViewName());
 		EasyMock.verify(applicationsServiceMock);
 	}
-	@Test
+	
+	@Test(expected = CannotCommentException.class)
 	public void shouldNotSaveCommentByAdminOnUnSubmittedApplication(){
 		authenticationToken.setDetails(admin);
 		SecurityContextImpl secContext = new SecurityContextImpl();
@@ -129,7 +120,8 @@ public class CommentControllerTest {
 		EasyMock.verify(applicationsServiceMock);
 		
 	}
-	@Test
+	
+	@Test(expected = CannotCommentException.class)
 	public void shouldNotAllowApplicantCommenting(){
 		authenticationToken.setDetails(applicant);
 		SecurityContextImpl secContext = new SecurityContextImpl();
@@ -144,89 +136,6 @@ public class CommentControllerTest {
 		
 	}
 	
-	@Test
-	public void shouldShowAllCommentsForAdministrator(){
-		authenticationToken.setDetails(admin);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-		List<ApplicationReview> comments = new ArrayList<ApplicationReview>();
-		comments.add(applicationReviewForSubmittedNonApproved1);
-		comments.add(applicationReviewForSubmittedNonApproved2);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(submittedNonApprovedApplication);
-		EasyMock.replay(applicationsServiceMock);
-		EasyMock.expect(applicationReviewServiceMock.getApplicationReviewsByApplication(submittedNonApprovedApplication)).andReturn(comments);
-		EasyMock.replay(applicationReviewServiceMock);
-		ModelAndView modelAndView = controller.getAllCommentsForApplication(1);
-		List<ApplicationReview> loadedComments = ((CommentModel) modelAndView.getModelMap().get("model")).getComments();
-		assertEquals(2, loadedComments.size());
-		assertEquals(comments, loadedComments);
-		assertEquals("comment/comments", modelAndView.getViewName());
-		
-	}
-	
-	@Test
-	public void shouldShowAllCommentsForReviewerExceptFromOtherReviewersComments(){
-		authenticationToken.setDetails(reviewer);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-		List<ApplicationReview> comments = new ArrayList<ApplicationReview>();
-		comments.add(applicationReviewForSubmittedNonApproved1); //admin
-		comments.add(applicationReviewForSubmittedNonApproved2); //reviewer
-		comments.add(applicationReviewForSubmittedNonApproved3); //reviewer2
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(submittedNonApprovedApplication);
-		EasyMock.expect(applicationReviewServiceMock.getApplicationReviewsByApplication(submittedNonApprovedApplication)).andReturn(comments);
-		EasyMock.expect(applicationReviewServiceMock.getVisibleComments(submittedNonApprovedApplication, reviewer)).andReturn(Arrays.asList(applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved1));
-		EasyMock.replay(applicationsServiceMock, applicationReviewServiceMock);
-		ModelAndView modelAndView = controller.getAllCommentsForApplication(1);
-		List<ApplicationReview> loadedComments = ((CommentModel) modelAndView.getModelMap().get("model")).getComments();
-		assertEquals(2, loadedComments.size());
-		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved2));
-		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved1));
-		assertTrue(!loadedComments.contains(applicationReviewForSubmittedNonApproved3));
-		
-		assertEquals("comment/comments", modelAndView.getViewName());
-	}
-	
-	@Test
-	public void shouldShowAllCommentsForUserWhoIsBothAdminAndReviewer(){
-		authenticationToken.setDetails(adminAndReviewer);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-		List<ApplicationReview> comments = new ArrayList<ApplicationReview>();
-		comments.add(applicationReviewForSubmittedNonApproved1); //admin
-		comments.add(applicationReviewForSubmittedNonApproved2); //reviewer
-		comments.add(applicationReviewForSubmittedNonApproved3); //reviewer2
-		comments.add(applicationReviewForSubmittedNonApproved4); //adminAndReviewer
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(submittedNonApprovedApplication);
-		EasyMock.expect(applicationReviewServiceMock.getApplicationReviewsByApplication(submittedNonApprovedApplication)).andReturn(comments);
-		EasyMock.expect(applicationReviewServiceMock.getVisibleComments(submittedNonApprovedApplication, reviewer)).andReturn(Arrays.asList(applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved1));
-		EasyMock.replay(applicationsServiceMock, applicationReviewServiceMock);
-		ModelAndView modelAndView = controller.getAllCommentsForApplication(1);
-		List<ApplicationReview> loadedComments = ((CommentModel) modelAndView.getModelMap().get("model")).getComments();
-		assertEquals(4, loadedComments.size());
-		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved2));
-		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved1));
-		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved3));
-		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved4));
-		
-		assertEquals("comment/comments", modelAndView.getViewName());
-	}
-	
-	@Test(expected = CannotViewCommentsException.class)
-	public void applicantShouldNotSeeAnyComments(){
-		authenticationToken.setDetails(applicant);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-		List<ApplicationReview> comments = new ArrayList<ApplicationReview>();
-		comments.add(applicationReviewForSubmittedNonApproved1);
-		controller.getAllCommentsForApplication(1);
-	}
-	
-
 	@After
 	public void tearDown() {
 		SecurityContextHolder.clearContext();

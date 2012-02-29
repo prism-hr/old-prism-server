@@ -59,6 +59,8 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
 
+	private List<ApplicationReview> applicationComments;
+
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
 	@Access(AccessType.PROPERTY)
@@ -151,6 +153,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public boolean isSubmitted() {
 		return submissionStatus == SubmissionStatus.SUBMITTED;
 	}
+	
+	public boolean hasComments(){
+		return applicationComments!=null;
+	}
 
 	@Override
 	public int compareTo(ApplicationForm appForm) {
@@ -163,9 +169,28 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 		return (-1) * this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
 	}
+	
+		public boolean isDecided() {
+		return approvalStatus != null;}
 
+
+	public void setApplicationComments(List<ApplicationReview> applicationComments) {
+		this.applicationComments = applicationComments;
+	}
+
+
+	
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "APPLICATION_REVIEW", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "id") })
 	public boolean isDecided() {
 		return approvalStatus != null;
 
+	@Access(AccessType.PROPERTY)
+	public List<ApplicationReview> getApplicationComments() {
+		return applicationComments;
+	}
+
+	public void setApplicationComments(List<ApplicationReview> applicationComments) {
+		this.applicationComments = applicationComments;
 	}
 }

@@ -12,8 +12,6 @@ $(document).ready(function() {
 		}else if($(this).val() == 'reject') {
 			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
 		}else if($(this).val() == 'comment') {
-			window.location.href = "/pgadmissions/comments/addComment?id=" + id;
-		}else if($(this).val() == 'showComment') {
 			window.location.href = "/pgadmissions/comments/showAll?id=" + id;
 		}
 	});

@@ -101,13 +101,8 @@
 									      			</#if>
 								      				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || 
 								      											model.user.isInRole('REVIEWER'))) && application.isReviewable() )>
-								    					<option value="comment">Comment</option>
+								    					<option value="comment">Comments</option>
 								      				</#if>      												
-								      				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || 
-								      										model.user.isInRole('REVIEWER'))) && application.isReviewable() )>
-								    					<option value="showComment">Show Comments</option>
-								      				</#if>
-								      											                	
 							                  	</select>
 							                </td>
 							                <td class="centre"><input type="checkbox" name="select" disabled="disabled" /></td>

@@ -17,19 +17,6 @@ function fetchPersonalDetails() {
 
 }
 
-/**
- * Change the application status to Accepted Application.
- */
-function acceptApplication(id) {
-	//alert("adasdfa");
-	
-	applicationDWR.acceptApplication(id, function(data) {
-		dwr.util.setValue("demoStatus", data);
-	});
-	
-	//alert("adasdfa");
-
-}
 
 $(document).ready(function(){
 	
@@ -40,6 +27,13 @@ $(document).ready(function(){
 		$('#submitApplicationForm').submit();
 	});
 	
+	/*
+	 * Submit commnet on click of comment submit button.
+	 */ 
+	$('#commentSubmitButton').click(function(){
+		$('#commentField').val($('#comment').val());
+		$('#commentForm').submit();
+	});
 	/*
 	 * Keep the view state of the form open or close depending on the user role.
 	 */

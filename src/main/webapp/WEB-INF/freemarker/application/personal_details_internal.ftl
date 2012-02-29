@@ -10,7 +10,7 @@
 	</h2>
 	
     <div id="personal-details-section" class="open">
-		<form method="post" action="<@spring.url '/???'/>" method = "GET">
+		<form method="post" method = "GET">
                 
                 <input type="hidden" name="id" value="${model.applicationForm.id}"/>
                 <input type="hidden" id="form-view-state" value="${formViewState}"/>
@@ -153,44 +153,34 @@
                   	</div>
                 
                 </div>
-                
                 <!-- Comment Sectiton -->
                 
                 <div class="comment">
                 	
+                   <#if model.applicationForm.hasComments()>
                 	<div class="previous">
                     	<strong>Previous comments</strong>
-	                    <ul>
-	                      	<li>
-	                      		<strong>Jane Smith</strong>
-	                        	<span>Lorem ipsum dolor sit amet</span>
-	                      	</li>
-	                      	<li>
-	                      		<strong>Jane Smith</strong>
-	                        	<span>It is a long established fact that a reader will be distracted by the readable content of a 
-	                        	page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal 
-	                        	distribution of letters, as opposed to using 'Content here, content here', making it look like readable 
-	                        	English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default 
-	                        	model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various 
-	                        	versions have evolved over the years, sometimes by accident, sometimes on purpose 
-	                        	(injected humour and the like).</span>
-	                      	</li>
-	                      	<li>
-	                      		<strong>Jim Frankl</strong>
-	                        	<span>Capsicum lorem ipsum dolor sit amet</span>
-	                      	</li>
-	                    </ul>
+                    	 <ul>
+                    	<#list model.applicationComments as comment>
+							<li>
+								<strong>${comment.user.username}</strong>
+								<span>${comment.comment}</span>
+							</li>
+						</#list>
+						 </ul>
                   	</div>
+                  </#if>
                 	
                 	<hr />
                   
                 	<p><strong>Add a comment</strong></p>
                   	
-                  	<textarea class="max" rows="4" cols="70"></textarea>
                   
                   	<div class="buttons">
                   		<a class="button comment-close">Close</a>
-                  		<button type="submit" class="blue">Submit</button>
+                  		<textarea  id="comment" lass="max" rows="4" cols="70"></textarea>
+              			<a class="button blue" id="commentSubmitButton">Submit</a>
+                  		
                   	</div>
                   	
                 </div>
@@ -200,7 +190,10 @@
                 </div>
 
 		</form>
-		
+		<form id="commentForm" action= "/pgadmissions/comments/submit" method="POST">
+			<input type ="hidden" name="id" value="${model.applicationForm.id}"/>
+			<input id="commentField" type="hidden" name="comment" value=""/>
+		</form>
 	</div>
 	
 </section>

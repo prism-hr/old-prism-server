@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
+import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class ViewApplicationFormControllerTest {
@@ -25,6 +26,7 @@ public class ViewApplicationFormControllerTest {
 	private ViewApplicationFormController controller;
 	private RegisteredUser userMock;
 	private ApplicationsService applicationsServiceMock;
+	private ApplicationReviewService applicationReviewServiceMock;
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
@@ -88,6 +90,10 @@ public class ViewApplicationFormControllerTest {
 		controller.getViewApplicationPage(1);
 	}
 
+	
+	
+	
+	
 	@Before
 	public void setUp() {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
@@ -98,7 +104,7 @@ public class ViewApplicationFormControllerTest {
 		SecurityContextHolder.setContext(secContext);
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		controller = new ViewApplicationFormController(applicationsServiceMock);
+		controller = new ViewApplicationFormController(applicationsServiceMock, applicationReviewServiceMock);
 
 	}
 

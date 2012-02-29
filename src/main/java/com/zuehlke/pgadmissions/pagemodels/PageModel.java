@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
+import java.util.List;
 import java.util.Map;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public class PageModel {
@@ -10,6 +12,7 @@ public class PageModel {
 	private Map<String, String> errorObjs;
 	private ApplicationForm applicationForm;
 	private RegisteredUser user;
+	private List<ApplicationReview> applicationComments;
 	
 	public Map<String, String> getErrorObjs() {
 		return errorObjs;
@@ -34,5 +37,14 @@ public class PageModel {
 	public void setUser(RegisteredUser user) {
 		this.user = user;
 	}
+
+	public List<ApplicationReview> getApplicationComments() {
+		return applicationComments;
+	}
+
+	public void setApplicationComments(List<ApplicationReview> applicationComments) {
+		this.applicationComments = applicationComments;
+	}
+	
 	
 }

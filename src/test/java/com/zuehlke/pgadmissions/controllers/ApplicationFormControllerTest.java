@@ -84,7 +84,7 @@ public class ApplicationFormControllerTest {
 		applicationsServiceMock.save(form);
 		EasyMock.replay(applicationsServiceMock);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
-		assertEquals("redirect:/applications?success=true", applicationController.submitApplication(id).getViewName());
+		assertEquals("redirect:/applications?submissionSuccess=true", applicationController.submitApplication(id).getViewName());
 		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
 		EasyMock.verify(applicationsServiceMock);
 

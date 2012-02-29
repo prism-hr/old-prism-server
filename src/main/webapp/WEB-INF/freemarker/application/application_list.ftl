@@ -38,8 +38,10 @@
 				
 				    <!-- Main content area. -->
 				    <article id="content" role="main">
+				      <#if !model.user.isInRole('APPLICANT')>
+				      	<#include "/common/tools.ftl"/>
+				      </#if>
 				      
-				      <#include "/common/tools.ftl"/>
 				      <!-- content box -->
 				      <div class="content-box">
 				        <div class="content-box-inner">
@@ -47,16 +49,14 @@
 							<p style="color:red;">${model.message}</p>
 							<table class="data" border="0" >
 					          	<colgroup>
-					            	<col width="30" />
-					            	<col width="90" />
-					            	<col width="120" />
-					            	<col width="120" />
-					            	<col width="*" />
-					             <#if model.user.isInRole('APPLICANT')>
-					            	<col width="*" />
-					            </#if>
-					            	<col width="180" />					            
-					            	<col width="40" />
+					            	<col style="width: 30px" />
+					            	<col style="width: 65px" />
+					            	<col style="width: 120px" />
+					            	<col style="width: 120px" />
+					            	<col />
+					            	<col style="width: 100px" />
+					            	<col style="width: 160px" />					            
+					            	<col style="width: 40px" />
 					            </colgroup>
 					          	<thead>
 					              <tr>
@@ -66,7 +66,7 @@
 					                <th scope="col">Surname</th>
 					                <th scope="col">Programme</th>
 					                <#if model.user.isInRole('APPLICANT')>
-					            		<th scope="col">Submission Status</th>
+					            		<th scope="col">Status</th>
 					            	</#if>
 					               
 					                <th scope="col">Actions</th>
@@ -80,10 +80,12 @@
 							                <td name="idColumn">${application.id}</td>
 							                <td>${application.applicant.firstName}</td>
 							                <td>${application.applicant.lastName}</td>
-							                <td>${application.project.program.code} - ${application.project.program.title}</td>
-							                <#if model.user.isInRole('APPLICANT')>
-							               	 	<td name="submissionStatusColumn">${application.submissionStatus}</td>
-							                </#if>
+							                <td>${application.project.program.code} - ${application.project.program.title}</td>			
+							                 <#if application.isDecided() >
+							               	 <td name="statusColumn">${application.approvalStatus.displayValue()}</td>
+							               	 <#else>
+							               	  <td name="statusColumn">${application.submissionStatus.displayValue()}</td>
+							              	</#if>
 							                <td>
 							                	<select class="actionType" name="app_[${application.id}]">
 							                		<option>Select...</option>

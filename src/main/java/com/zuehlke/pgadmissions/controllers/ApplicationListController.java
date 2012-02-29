@@ -30,7 +30,7 @@ public class ApplicationListController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getApplicationListPage(@RequestParam(required=false) boolean success) {
+	public ModelAndView getApplicationListPage(@RequestParam(required=false) boolean submissionSuccess, String decision) {
 
 		SecurityContext context = SecurityContextHolder.getContext();
 		RegisteredUser user = (RegisteredUser) context.getAuthentication().getDetails();
@@ -38,8 +38,12 @@ public class ApplicationListController {
 		ApplicationListModel model = new ApplicationListModel();
 		model.setUser(user);
 		model.setApplications(applicationsService.getVisibleApplications(user));
-		if(success)
+		if(submissionSuccess){
 		        model.setMessage("Your application is submitted successfully. <b>Coming soon: </b> email confirmation.");
+		}
+		if(decision != null){
+		    model.setMessage("The application was successfully " + decision +".");
+		}
 		ModelAndView modelAndView = new ModelAndView(APPLICATION_LIST_VIEW_NAME, "model", model);
 		
 		return modelAndView;

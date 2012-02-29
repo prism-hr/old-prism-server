@@ -56,7 +56,7 @@
 			          <hr />
 			
 			          <section class="folding violet">
-			            <h2 class="tick open">
+			            <h2 class="open">
 			              <span class="left"></span><span class="right"></span><span class="status"></span>
 			              Programme
 			            </h2>

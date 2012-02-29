@@ -1,3 +1,4 @@
+
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
 <html>
@@ -8,9 +9,9 @@
 		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		
-
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/style.css' />"/>
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />"/>
+
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
@@ -59,39 +60,7 @@
 		      <!-- content box -->
 		      <div class="content-box">
 		        <div class="content-box-inner">
-		          
-							<div id="programme-details">
-		          
-		          	<div class="row">
-		            	<label>Programme Name</label>
-		              <input disabled size="109" value="${model.applicationForm.project.program.code!} - ${model.applicationForm.project.program.title!}" />
-		            </div>
-		            
-		          	<div class="row half">
-		            	<label>Application Number</label>
-		              <input disabled size="20" value="${model.applicationForm.id!}" />
-		            </div>
-		          </div>
-				<div id ="actions">
-				   	<div class="row">
-		            	<label>Assigned Reviewers</label>
-		              Jane Highsmith, Frank Johnson
-		            </div>
-
-	            <#if !model.applicationForm.isReviewable()>
-		            <#if !model.applicationForm.isSubmitted() >
-		            	This application is not ready for review.
-		            <#elseif model.applicationForm.approvalStatus.toString() == "APPROVED" >
-		            	This application has now been approved.
-  					<#elseif model.applicationForm.approvalStatus.toString() == "REJECTED" >
-		            	This application has been rejected.		            	
-		            </#if>	
-	            </#if> 
-				
-	            <br />
-				</div>
-		        <!-- #actions -->
-		          
+		          Sorry, an error occurred while processing your request.					          
 		        </div><!-- .content-box-inner -->
 		      </div><!-- .content-box -->
 		      
@@ -111,9 +80,5 @@
 		
 		</div>
 		
-		<!-- Scripts -->
-		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-		<script type="text/javascript" src="js/libraries.js"></script>
-		<script type="text/javascript" src="js/script.js"></script>
 	</body>
 </html>

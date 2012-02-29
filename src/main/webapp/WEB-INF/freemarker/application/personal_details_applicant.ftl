@@ -4,7 +4,7 @@
 
 <!-- Personal details -->
 <section class="folding purple">
-	<h2 class="empty open">
+	<h2 class="open">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Personal Details
 	</h2>

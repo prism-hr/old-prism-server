@@ -4,7 +4,7 @@ $(document).ready(function() {
 		var id = name.substring(5).replace(']', '');
 
 		if ($(this).val() == 'view') {
-			window.location.href = "/pgadmissions/application?id=" + id;
+			window.location.href = "/pgadmissions/application?view=view&id=" + id;
 		}else if($(this).val() == 'assignReviewer') {
 			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
 		}else if($(this).val() == 'approve') {

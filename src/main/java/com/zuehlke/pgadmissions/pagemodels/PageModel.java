@@ -14,7 +14,12 @@ public class PageModel {
 	private ApplicationForm applicationForm;
 	private RegisteredUser user;
 	private List<ApplicationReview> applicationComments;
+	private String view;
 	
+	public String getView() {
+		return view;
+	}
+
 	public List<ObjectError> getErrorObjs() {
 		return errorObjs;
 	}
@@ -45,6 +50,11 @@ public class PageModel {
 
 	public void setApplicationComments(List<ApplicationReview> applicationComments) {
 		this.applicationComments = applicationComments;
+	}
+
+	public void setView(String view) {
+		this.view = view;
+		
 	}
 	
 	

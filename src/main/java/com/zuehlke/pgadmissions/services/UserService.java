@@ -43,13 +43,18 @@ public class UserService {
 	}
 
 	@Transactional
-	public RegisteredUser getUser(Integer reviewerId) {
-		return userDAO.get(reviewerId);
+	public RegisteredUser getUser(Integer id) {
+		return userDAO.get(id);
 	
 	}
 	
 	@Transactional
 	public List<RegisteredUser> getUsersInRole(Authority auth) {
 		return userDAO.getUsersInRole(roleDAO.getRoleByAuthority(auth));
+	}
+	
+	@Transactional 
+	public void save(RegisteredUser user) {
+		userDAO.save(user);
 	}
 }

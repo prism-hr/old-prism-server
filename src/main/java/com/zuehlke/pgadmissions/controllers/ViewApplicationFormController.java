@@ -51,10 +51,7 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setUser(currentuser);
 		viewApplicationModel.setApplicationForm(applicationForm);
 		if (applicationForm.hasComments()) {
-			if(currentuser.isInRole(Authority.APPLICANT)){
-				throw new CannotViewCommentsException();
-			}
-			else if (currentuser.isInRole(Authority.ADMINISTRATOR)|| currentuser.isInRole(Authority.APPROVER)) {
+			if (currentuser.isInRole(Authority.ADMINISTRATOR)|| currentuser.isInRole(Authority.APPROVER)) {
 				viewApplicationModel.setApplicationComments(applicationReviewService.getApplicationReviewsByApplication(applicationForm));
 			} else if (currentuser.isInRole(Authority.REVIEWER)) {
 				viewApplicationModel.setApplicationComments((applicationReviewService.getVisibleComments(applicationForm,currentuser)));

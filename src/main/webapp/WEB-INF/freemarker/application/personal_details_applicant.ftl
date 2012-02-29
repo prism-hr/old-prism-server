@@ -47,14 +47,14 @@
                   	<label class="label">First Name</label>
                     <span class="hint"></span>
                     <div class="field">
-                    	<input class="full" type="text" value="${model.applicationForm.applicant.firstName}" name="firstName" id="firstname"/>
+                    	<input class="full" type="text" value="${model.applicationForm.applicant.firstName}" name="firstName" id="firstName"/>
                     </div>
                   </div>
                 	<div class="row">
                   	<label class="label">Last Name</label>
                     <span class="hint"></span>
                     <div class="field">
-                    	<input class="full" type="text" value="${model.applicationForm.applicant.lastName}" name="lastName" id="lastname"/>
+                    	<input class="full" type="text" value="${model.applicationForm.applicant.lastName}" name="lastName" id="lastName"/>
                     </div>
                   </div>
                 	<div class="row">
@@ -166,7 +166,7 @@
                 		<span class="label">Email</span>
                     <span class="hint"></span>
                     <div class="field">
-	                    <input class="full" type="email" value="${model.applicationForm.applicant.email}" name="emailaddress" id="emailaddress"/>
+	                    <input class="full" type="email" value="${model.applicationForm.applicant.email}" name="email"/>
                       <a class="button disabledEle" href="#" style="width: 110px;">Add Email</a>
                     </div>
                   </div>

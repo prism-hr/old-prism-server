@@ -11,7 +11,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.CannotViewCommentsException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;

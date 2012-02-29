@@ -146,11 +146,11 @@ public class ApplicationFormControllerTest {
 		EasyMock.replay(userServiceMock);
 
 		PersonalDetails personalDetails = new PersonalDetails();
-		personalDetails.setFirstname("New First Name");
-		personalDetails.setLastname("New Last Name");
-		personalDetails.setEmailaddress("newemail@email.com");
+		personalDetails.setFirstName("New First Name");
+		personalDetails.setLastName("New Last Name");
+		personalDetails.setEmail("newemail@email.com");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
-		ModelAndView modelAndView = applicationController.editApplicationForm(personalDetails, student, 1, mappingResult);
+		ModelAndView modelAndView = applicationController.editApplicationForm(personalDetails, 1, 2, mappingResult);
 		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
 	}
 	
@@ -165,11 +165,11 @@ public class ApplicationFormControllerTest {
 		EasyMock.replay(userServiceMock);
 
 		PersonalDetails personalDetails = new PersonalDetails();
-		personalDetails.setFirstname("");
-		personalDetails.setLastname(" ");
-		personalDetails.setEmailaddress("newemail");
+		personalDetails.setFirstName("");
+		personalDetails.setLastName(" ");
+		personalDetails.setEmail("newemail");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
-		ModelAndView modelAndView = applicationController.editApplicationForm(personalDetails, student, 1, mappingResult);
+		ModelAndView modelAndView = applicationController.editApplicationForm(personalDetails, 1, 2, mappingResult);
 		Assert.assertEquals("error/errors", modelAndView.getViewName());
 		PageModel model = (PageModel) modelAndView.getModel().get("model");
 		Assert.assertEquals(3, model.getErrorObjs().size());

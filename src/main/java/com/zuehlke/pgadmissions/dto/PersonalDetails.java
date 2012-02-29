@@ -5,31 +5,31 @@ import org.springframework.stereotype.Component;
 @Component
 public class PersonalDetails {
 
-	private String firstName;
-	private String lastName;
-	private String email;
+	private String firstname;
+	private String lastname;
+	private String emailaddress;
 	
-	public String getFirstName() {
-		return firstName;
+	public String getEmailaddress() {
+		return emailaddress;
 	}
 	
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+	public void setEmailaddress(String emailaddress) {
+		this.emailaddress = emailaddress;
 	}
 	
-	public String getLastName() {
-		return lastName;
+	public String getFirstname() {
+		return firstname;
 	}
 	
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
 	}
 	
-	public void setEmail(String email) {
-		this.email = email;
+	public String getLastname() {
+		return lastname;
 	}
 	
-	public String getEmail() {
-		return email;
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
 	}
 }

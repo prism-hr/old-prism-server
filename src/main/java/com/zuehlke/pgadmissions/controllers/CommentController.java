@@ -62,8 +62,7 @@ public class CommentController {
 	@Transactional
 	public ModelAndView getAllCommentsForApplication(@RequestParam Integer id) {
 		ApplicationForm application = applicationService.getApplicationById(id);
-		
-		return new  ModelAndView("redirect:/application","id", application.getId());
+		return new  ModelAndView("redirect:/application?view=comments","id", application.getId());
 	}
 
 	

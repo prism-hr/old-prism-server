@@ -38,7 +38,7 @@ public class ViewApplicationFormController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getViewApplicationPage(@RequestParam Integer id) {
+	public ModelAndView getViewApplicationPage(@RequestParam Integer id, @RequestParam(required=false) String view) {
 		RegisteredUser currentuser = (RegisteredUser) SecurityContextHolder
 				.getContext().getAuthentication().getDetails();
 		ApplicationForm applicationForm = applicationService
@@ -61,6 +61,9 @@ public class ViewApplicationFormController {
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,
 					"model", viewApplicationModel);
 		}
+		if(view!=null)
+		if(view.equals("comments")) viewApplicationModel.setView("commentsView"); else viewApplicationModel.setView("normalView");
+		
 		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model",
 				viewApplicationModel);
 	}

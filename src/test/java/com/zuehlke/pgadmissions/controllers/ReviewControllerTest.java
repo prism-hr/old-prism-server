@@ -38,13 +38,13 @@ public class ReviewControllerTest {
 	private ApplicationForm form;
 	private UserService userServiceMock;
 	private ApplicationsService applicationsServiceMock;
-	private UserPropertyEditor userPropertyEditorMoc;
+	private UserPropertyEditor userPropertyEditorMock;
 	private UsernamePasswordAuthenticationToken authenticationToken;
 
 	@Test
 	public void shouldBindPropertyEditors() {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-		binderMock.registerCustomEditor(RegisteredUser.class, userPropertyEditorMoc);
+		binderMock.registerCustomEditor(RegisteredUser.class, userPropertyEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
@@ -142,8 +142,8 @@ public class ReviewControllerTest {
 		SecurityContextHolder.setContext(secContext);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		userPropertyEditorMoc = EasyMock.createMock(UserPropertyEditor.class);
-		controller = new ReviewController(applicationsServiceMock, userServiceMock, userPropertyEditorMoc);
+		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
+		controller = new ReviewController(applicationsServiceMock, userServiceMock, userPropertyEditorMock);
 
 		form = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 

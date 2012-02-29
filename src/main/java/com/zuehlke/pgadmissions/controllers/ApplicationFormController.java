@@ -4,40 +4,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
-import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 
 @Controller
 @RequestMapping("/apply")
 public class ApplicationFormController {
 
 	
-	private static final String APPLICATION_FORM_VIEW_NAME = "application/applicationForm";
 	private final ProjectDAO projectDAO;
 	private final ApplicationsService applicationService;
-	private final UserDAO userDAO;
+	private final UserService userService;
 
 	ApplicationFormController() {
 		this(null, null, null);
 	}
 
 	@Autowired
-	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService, UserDAO userDAO) {
+	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService, UserService userService) {
 		this.projectDAO = projectDAO;
 		this.applicationService = applicationService;
-		this.userDAO = userDAO;
+		this.userService = userService;
 	}
 	
 	@RequestMapping(value="/new", method = RequestMethod.POST)
@@ -57,22 +60,26 @@ public class ApplicationFormController {
 		
 	}
 
-
-	
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value="/edit", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView editApplicationForm(@RequestParam Integer id, @RequestParam String firstName, @RequestParam String lastName) {	
-		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		user.setLastName(lastName);
-		user.setFirstName(firstName);
-		userDAO.save(user);
+	public ModelAndView editApplicationForm(@ModelAttribute PersonalDetails personalDetails, 
+											@RequestParam Integer appId, @RequestParam Integer id,
+											BindingResult result) {	
 		
-		ApplicationForm applicationForm = applicationService.getApplicationById(id);
-		PageModel model = new PageModel();
-		model.setApplicationForm(applicationForm);
-		model.setUser(user);
+		PersonalDetailsValidator personalDetailsValidator = new PersonalDetailsValidator();
+		personalDetailsValidator.validate(personalDetails, result);
+		if (result.hasErrors()) {
+			PageModel model = new PageModel();
+			model.setErrorObjs(result.getAllErrors());
+			return new  ModelAndView("error/errors","model", model);
+		}
+		RegisteredUser user = userService.getUser(id);
+		user.setLastName(personalDetails.getLastName());
+		user.setFirstName(personalDetails.getFirstName());
+		user.setEmail(personalDetails.getEmail());
+		userService.save(user);
 		
-		return new  ModelAndView(APPLICATION_FORM_VIEW_NAME,"model", model);
+		return new  ModelAndView("redirect:/application","id", appId);
 	}
 
 	@RequestMapping(value="/submit", method = RequestMethod.POST)
@@ -91,4 +98,5 @@ public class ApplicationFormController {
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
 	}
+	
 }

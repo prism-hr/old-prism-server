@@ -5,6 +5,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
+import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
@@ -31,16 +34,19 @@ public class ApplicationFormController {
 	private final ProjectDAO projectDAO;
 	private final ApplicationsService applicationService;
 	private final UserService userService;
+	private final UserPropertyEditor userPropertyEditor;
 
 	ApplicationFormController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService, UserService userService) {
+	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService, UserService userService,
+			UserPropertyEditor userPropertyEditor) {
 		this.projectDAO = projectDAO;
 		this.applicationService = applicationService;
 		this.userService = userService;
+		this.userPropertyEditor = userPropertyEditor;
 	}
 	
 	@RequestMapping(value="/new", method = RequestMethod.POST)
@@ -62,8 +68,8 @@ public class ApplicationFormController {
 
 	@RequestMapping(value="/edit", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView editApplicationForm(@ModelAttribute PersonalDetails personalDetails, 
-											@RequestParam Integer appId, @RequestParam Integer id,
+	public ModelAndView editApplicationForm(@ModelAttribute PersonalDetails personalDetails, @ModelAttribute RegisteredUser user, 
+											@RequestParam Integer appId,
 											BindingResult result) {	
 		
 		PersonalDetailsValidator personalDetailsValidator = new PersonalDetailsValidator();
@@ -73,10 +79,9 @@ public class ApplicationFormController {
 			model.setErrorObjs(result.getAllErrors());
 			return new  ModelAndView("error/errors","model", model);
 		}
-		RegisteredUser user = userService.getUser(id);
-		user.setLastName(personalDetails.getLastName());
-		user.setFirstName(personalDetails.getFirstName());
-		user.setEmail(personalDetails.getEmail());
+		user.setLastName(personalDetails.getLastname());
+		user.setFirstName(personalDetails.getFirstname());
+		user.setEmail(personalDetails.getEmailaddress());
 		userService.save(user);
 		
 		return new  ModelAndView("redirect:/application","id", appId);
@@ -97,6 +102,12 @@ public class ApplicationFormController {
 
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
+	}
+	
+	@InitBinder
+	public void registerPropertyEditors(WebDataBinder binder) {
+		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);
+
 	}
 	
 }

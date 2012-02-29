@@ -36,6 +36,17 @@ public class ApplicationFormTest {
 		assertTrue(applicationForm.isReviewable());
 	}
 	
-
+	@Test
+	public void shouldReturnDecidedTrueIfRejectedOrApproved(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().approvedSatus(ApprovalStatus.APPROVED).toApplicationForm();
+		assertTrue(applicationForm.isDecided());
+		applicationForm = new ApplicationFormBuilder().approvedSatus(ApprovalStatus.REJECTED).toApplicationForm();
+		assertTrue(applicationForm.isDecided());
+	}
+	@Test
+	public void shouldReturnDecidedFalseIfNeitherRejectedOrApproved(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		assertFalse(applicationForm.isDecided());
+	}
 }
 

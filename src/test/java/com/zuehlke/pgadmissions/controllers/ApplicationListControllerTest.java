@@ -34,7 +34,7 @@ public class ApplicationListControllerTest {
 	@Test
 	public void shouldReturnCorrectViewForApplicant() {		
 		
-		ModelAndView modelAndView = controller.getApplicationListPage(false);
+		ModelAndView modelAndView = controller.getApplicationListPage(false, null);
 
 		assertEquals("application/application_list", modelAndView.getViewName());
 	}
@@ -42,14 +42,35 @@ public class ApplicationListControllerTest {
 	@Test
 	public void shouldAddUserFromSecurityContextObjectToModel() {
 		
-		ModelAndView modelAndView = controller.getApplicationListPage(false);
+		ModelAndView modelAndView = controller.getApplicationListPage(false, null);
 		
 		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
 		
 		assertNotNull(model.getUser());
 		assertEquals(user, model.getUser());
 	}
-
+	
+	@Test
+	public void shouldAddSubmissionSuccesMessageIfRequired() {
+		
+		ModelAndView modelAndView = controller.getApplicationListPage(true, null);
+		
+		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
+		
+		assertEquals("Your application is submitted successfully. <b>Coming soon: </b> email confirmation.", model.getMessage());
+	}
+	
+	@Test
+	public void shouldAddDecissionMessageIfRequired() {
+		
+		ModelAndView modelAndView = controller.getApplicationListPage(true, "bobbed");
+		
+		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
+		
+		assertEquals("The application was successfully bobbed.", model.getMessage());
+		
+		
+	}
 	@Test
 	public void shouldAddAllApplicationsToModel() {
 		ApplicationForm applicationOne = new ApplicationFormBuilder().id(1).toApplicationForm();
@@ -57,7 +78,7 @@ public class ApplicationListControllerTest {
 		EasyMock.expect(applicationsServiceMock.getVisibleApplications(user)).andReturn(Arrays.asList(applicationOne, applicationTwo));
 		EasyMock.replay(applicationsServiceMock);
 		
-		ModelAndView modelAndView = controller.getApplicationListPage(false);
+		ModelAndView modelAndView = controller.getApplicationListPage(false, null);
 		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
 	
 		List<ApplicationForm> applications = model.getApplications();

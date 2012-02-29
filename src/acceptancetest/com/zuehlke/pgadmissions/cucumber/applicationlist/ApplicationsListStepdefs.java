@@ -109,7 +109,7 @@ public class ApplicationsListStepdefs {
 			String expectedIdPlaceHolder = applicationIdMap.get(Integer.parseInt(idElement.getText()));
 			actualRow.add(expectedIdPlaceHolder);
 			if (table.getGherkinRows().get(0).getCells().contains("SubmissionStatus")) {
-				WebElement submissionStatusElement = htmlRow.findElement(By.name("submissionStatusColumn"));
+				WebElement submissionStatusElement = htmlRow.findElement(By.name("statusColumn"));
 				actualRow.add(submissionStatusElement.getText());
 			}
 			actualApplications.add(actualRow);

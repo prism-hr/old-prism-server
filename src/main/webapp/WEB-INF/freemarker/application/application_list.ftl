@@ -52,9 +52,7 @@
 					            	<col style="width: 120px" />
 					            	<col style="width: 120px" />
 					            	<col />
-					             <#if model.user.isInRole('APPLICANT')>
-					            	<col style="width: 100px" />
-					            </#if>
+									<col style="width: 100px" />
 					            	<col style="width: 160px" />					            
 					            	<col style="width: 40px" />
 					            </colgroup>
@@ -64,11 +62,8 @@
 					                <th scope="col">App. No.</th>
 					                <th scope="col">First Name</th>
 					                <th scope="col">Surname</th>
-					                <th scope="col">Programme</th>
-					                <#if model.user.isInRole('APPLICANT')>
-					            		<th scope="col">Status</th>
-					            	</#if>
-					               
+					                <th scope="col">Programme</th>					                
+					            	<th scope="col">Status</th>					               
 					                <th scope="col">Actions</th>
 					                <th class="centre" scope="col">Select</th>
 					              </tr>
@@ -80,10 +75,12 @@
 							                <td name="idColumn">${application.id}</td>
 							                <td>${application.applicant.firstName}</td>
 							                <td>${application.applicant.lastName}</td>
-							                <td>${application.project.program.code} - ${application.project.program.title}</td>
-							                <#if model.user.isInRole('APPLICANT')>
-							               	 	<td name="submissionStatusColumn">${application.submissionStatus}</td>
-							                </#if>
+							                <td>${application.project.program.code} - ${application.project.program.title}</td>			
+							                 <#if application.isDecided() >
+							               	 <td name="statusColumn">${application.approvalStatus.displayValue()}</td>
+							               	 <#else>
+							               	  <td name="statusColumn">${application.submissionStatus.displayValue()}</td>
+							              	</#if>
 							                <td>
 							                	<select class="actionType" name="app_[${application.id}]">
 							                		<option>Select...</option>

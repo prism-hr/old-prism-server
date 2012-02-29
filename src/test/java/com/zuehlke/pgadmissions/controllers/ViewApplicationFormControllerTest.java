@@ -32,7 +32,7 @@ public class ViewApplicationFormControllerTest {
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getViewApplicationPage(1);
+		controller.getViewApplicationPage(1, "");
 
 	}
 
@@ -46,7 +46,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock,applicationsServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage(1);
+		ModelAndView modelAndView = controller.getViewApplicationPage(1, "");
 		assertEquals("application/applicationForm_applicant", modelAndView.getViewName());
 	}
 
@@ -60,7 +60,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage(1);
+		ModelAndView modelAndView = controller.getViewApplicationPage(1, "");
 		PageModel model = (PageModel) modelAndView.getModel().get("model");
 		assertEquals(applicationForm, model.getApplicationForm());
 	}
@@ -76,7 +76,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.replay(userMock, applicationsServiceMock);
 
-		ModelAndView modelAndView = controller.getViewApplicationPage(1);
+		ModelAndView modelAndView = controller.getViewApplicationPage(1, "");
 		PageModel model = (PageModel) modelAndView.getModel().get("model");
 		assertEquals(userMock, model.getUser());
 	}
@@ -96,7 +96,7 @@ public class ViewApplicationFormControllerTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		
-		controller.getViewApplicationPage(1);
+		controller.getViewApplicationPage(1, "");
 	}
 
 	

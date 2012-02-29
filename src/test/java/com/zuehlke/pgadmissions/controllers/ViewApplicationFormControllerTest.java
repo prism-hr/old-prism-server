@@ -41,6 +41,9 @@ public class ViewApplicationFormControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
+		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock,applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage(1);
@@ -52,6 +55,9 @@ public class ViewApplicationFormControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
+		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage(1);
@@ -65,6 +71,9 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
+		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.replay(userMock, applicationsServiceMock);
 
 		ModelAndView modelAndView = controller.getViewApplicationPage(1);

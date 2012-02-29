@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
 import java.util.List;
-import java.util.Map;
+
+import org.springframework.validation.ObjectError;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
@@ -9,16 +10,16 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public class PageModel {
 
-	private Map<String, String> errorObjs;
+	private List<ObjectError> errorObjs;
 	private ApplicationForm applicationForm;
 	private RegisteredUser user;
 	private List<ApplicationReview> applicationComments;
 	
-	public Map<String, String> getErrorObjs() {
+	public List<ObjectError> getErrorObjs() {
 		return errorObjs;
 	}
-
-	public void setErrorObjs(Map<String, String> errorObjs) {
+	
+	public void setErrorObjs(List<ObjectError> errorObjs) {
 		this.errorObjs = errorObjs;
 	}
 

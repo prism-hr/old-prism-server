@@ -141,6 +141,11 @@
 			<artifactId>commons-logging</artifactId>
 			<version>1.1.1</version>
 		</dependency>
+		<dependency>
+			<groupId>commons-validator</groupId>
+			<artifactId>commons-validator</artifactId>
+			<version>1.4.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>pgadmissions</finalName>
@@ -169,7 +174,7 @@
 					<source>1.6</source>
 					<target>1.6</target>
 				</configuration>
-			</plugin>				
+			</plugin>
 			<plugin>
 				<groupId>com.dbdeploy</groupId>
 				<artifactId>maven-dbdeploy-plugin</artifactId>
@@ -238,19 +243,19 @@
 		</plugins>
 	</build>
 	<reporting>
-		<plugins>	   
+		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
 				<version>2.5.1</version>
 				<configuration>
-					<instrumentation>				
+					<instrumentation>
 						<excludes>
-						  <exclude>com/zuehlke/pgadmissions/cucumber/**/*.class</exclude>						  
+							<exclude>com/zuehlke/pgadmissions/cucumber/**/*.class</exclude>
 						</excludes>
 					</instrumentation>
 				</configuration>
-			 </plugin>
+			</plugin>
 		</plugins>
 	</reporting>
 	<profiles>
@@ -280,11 +285,12 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<delete file="${project.build.outputDirectory}/environment.properties"/>
+										<delete
+											file="${project.build.outputDirectory}/environment.properties" />
 										<copy file="src/environments/environment.sit.properties"
-										 tofile="${project.build.outputDirectory}/environment.properties"/>
+											tofile="${project.build.outputDirectory}/environment.properties" />
 									</tasks>
-							   </configuration>
+								</configuration>
 							</execution>
 						</executions>
 					</plugin>

@@ -77,13 +77,7 @@
 			          </section>
 			          
 			           <section class="folding orange">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Qualifications
-			            </h2>
-			            <div>
-			              Testing...
-			            </div>
+			            <#include "/application/qualifications_internal.ftl"/>
 			          </section>
 			          
 			           <section class="folding yellow">

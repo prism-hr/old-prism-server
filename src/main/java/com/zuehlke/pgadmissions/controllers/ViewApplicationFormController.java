@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
@@ -49,9 +50,20 @@ public class ViewApplicationFormController {
 		}
 		ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
 		
-		viewApplicationModel.setUser(currentuser);
 		viewApplicationModel.setApplicationForm(applicationForm);
 		viewApplicationModel.setPersonalDetails(createPersonalDetails(applicationForm));
+		if(!currentuser.hasQualifications()){
+			Qualification qualification = new Qualification();
+			qualification.setDegree("");
+			qualification.setDate_taken("2006/02/02");
+			qualification.setGrade("");
+			qualification.setInstitution("");
+			qualification.setApplicant(currentuser);
+			qualification.setApplication(applicationForm);
+			applicationReviewService.saveQualification(qualification);
+			currentuser.getQualifications().add(qualification);
+		}
+		viewApplicationModel.setUser(currentuser);
 		if (applicationForm.hasComments()) {
 			if (currentuser.isInRole(Authority.ADMINISTRATOR)|| currentuser.isInRole(Authority.APPROVER)) {
 				viewApplicationModel.setApplicationComments(applicationReviewService.getApplicationReviewsByApplication(applicationForm));

@@ -17,10 +17,12 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
+import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -30,11 +32,13 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
+import com.zuehlke.pgadmissions.validators.QualificationValidator;
 
 @Controller
 @RequestMapping("/apply")
 public class ApplicationFormController {
 
+	private static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "application/qualification_applicant";
 	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "application/address_applicant";
 	private final ProjectDAO projectDAO;
 	private final ApplicationsService applicationService;
@@ -102,6 +106,39 @@ public class ApplicationFormController {
 
 		return new ModelAndView("application/personal_details_applicant", modelMap);
 	}
+	
+	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView editQualification(@ModelAttribute Qualification qual, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result) {
+		
+		QualificationValidator qualificationValidator = new QualificationValidator();
+		qualificationValidator.validate(qual, result);
+		ApplicationForm application = applicationService.getApplicationById(appId);
+		RegisteredUser user = userService.getUser(id);
+		
+//		if(!user.hasQualifications()){
+//			Qualification qualification = new Qualification();
+//			qualification.setDegree("");
+//			qualification.setDate_taken("");
+//			qualification.setGrade("");
+//			qualification.setInstitution("");
+//			userService.saveQualification(qualification);
+//		}
+		if (!result.hasErrors()) {
+//		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+			qual.setApplicant(user);
+			qual.setApplication(application);
+			userService.saveQualification(qual);
+			userService.save(user);
+		}
+		
+		
+		PageModel model = new PageModel();
+		model.setApplicationForm(application);
+		model.setUser(user);
+		model.setResult(result);
+		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, "model", model);
+	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
 	public ModelAndView submitApplication(@RequestParam Integer applicationForm) {
@@ -144,4 +181,5 @@ public class ApplicationFormController {
 		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, "model", model);
 	}
 
+	
 }

@@ -6,6 +6,7 @@ import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,15 +18,18 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
+import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
@@ -41,6 +45,7 @@ public class ApplicationFormControllerTest {
 	private UserService userServiceMock;
 	private UserPropertyEditor userPropertyEditorMock;
 	private RegisteredUser student;
+	private Qualification qualification;
 
 
 	@Test
@@ -218,6 +223,38 @@ public class ApplicationFormControllerTest {
 		Assert.assertEquals("london", ((PageModel)modelAndView.getModel().get("model")).getUser().getAddress());
 	}
 	
+	@Test
+	public void shouldSaveNewQualification() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		userServiceMock.save(student);
+		userServiceMock.saveQualification(qualification);
+		EasyMock.replay(userServiceMock);
+		
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		ModelAndView modelAndView = applicationController.editQualification(qualification, 1, 2, mappingResult);
+		Assert.assertEquals("application/qualification_applicant", modelAndView.getViewName());
+		Assert.assertEquals("BSc Computer Science", ((PageModel)modelAndView.getModel().get("model")).getUser().getQualifications().get(0).getDegree());
+	}
+	
+	@Test
+	public void shouldNotSaveEmptyQualification() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		userServiceMock.save(student);
+		EasyMock.replay(userServiceMock);
+		Qualification qualification = new QualificationBuilder().degree("BSc Computer Science").date_taken("2006/09/03").grade("First Class").institution("UCL").toQualification();
+		qualification.setDegree("");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qual");
+		ModelAndView modelAndView = applicationController.editQualification(qualification, 1, 2, mappingResult);
+		Assert.assertEquals("application/qualification_applicant", modelAndView.getViewName());
+		Assert.assertEquals("BSc Computer Science", ((PageModel)modelAndView.getModel().get("model")).getUser().getQualifications().get(0).getDegree());
+	}
+	
 	@Before
 	public void setUp() {
 
@@ -235,7 +272,8 @@ public class ApplicationFormControllerTest {
 		};
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").address("london").firstName("mark").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		qualification = new QualificationBuilder().id(2).degree("BSc Computer Science").date_taken("2006/09/03").grade("First Class").institution("UCL").toQualification();
+		student = new RegisteredUserBuilder().id(1).username("mark").qualification(qualification).email("mark@gmail.com").address("london").firstName("mark").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		authenticationToken.setDetails(student);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);

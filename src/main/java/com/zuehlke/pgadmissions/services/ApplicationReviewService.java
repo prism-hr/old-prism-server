@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationReviewDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -57,6 +58,17 @@ public class ApplicationReviewService {
 			}
 		}
 		return visibleComments;
+	}
+
+	@Transactional
+	public void saveQualification(Qualification qualification) {
+		applicationReviewDAO.saveQualification(qualification);
+		
+	}
+
+	@Transactional
+	public void saveUser(RegisteredUser currentuser) {
+		applicationReviewDAO.saveUser(currentuser);
 	}
 
 

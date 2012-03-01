@@ -20,9 +20,11 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.CommentModel;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
@@ -54,17 +56,18 @@ public class CommentControllerTest {
 	@Before
 	public void setUp() {
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").toQualification();
 		admin = new RegisteredUserBuilder().id(1).username("bob")
 								.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		approver = new RegisteredUserBuilder().id(2).username("mark")
+		approver = new RegisteredUserBuilder().id(2).username("mark").qualification(qual)
 				.role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		reviewer = new RegisteredUserBuilder().id(3).username("jane")
+		reviewer = new RegisteredUserBuilder().id(3).username("jane").qualification(qual)
 				.role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		reviewer2 = new RegisteredUserBuilder().id(3).username("john")
+		reviewer2 = new RegisteredUserBuilder().id(3).username("john").qualification(qual)
 				.role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		applicant = new RegisteredUserBuilder().id(5).username("fred")
+		applicant = new RegisteredUserBuilder().id(5).username("fred").qualification(qual)
 				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		adminAndReviewer = new RegisteredUserBuilder().id(6).username("fred")
+		adminAndReviewer = new RegisteredUserBuilder().id(6).username("fred").qualification(qual)
 				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole(), new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);

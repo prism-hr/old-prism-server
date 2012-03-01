@@ -74,14 +74,8 @@
 			             <#include "/application/address_applicant.ftl"/>
 			          </section>
 			          
-			           <section class="folding orange">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Qualifications
-			            </h2>
-			            <div>
-			              Testing...
-			            </div>
+			           <section id="qualificationsSection" class="folding orange">
+			            <#include "/application/qualifications_applicant.ftl"/>
 			          </section>
 			          
 			           <section class="folding yellow">

@@ -12,6 +12,20 @@ $(document).ready(function(){
 				     $('#addressSection').html(data);
 				   });
 	});
+
+	$('#qualificationsSaveButton').click(function(){
+		$.post("/pgadmissions/apply/editQualification", { degree: $("#degree").val(), 
+			id: $("#id").val(), 
+			institution: $("#institution").val(), 
+			date_taken: $("#date_taken").val(), 
+			grade: $("#grade").val(), 
+			appId: $("#appId").val()
+		},
+		function(data) {
+			alert(data);
+			$('#qualificationsSection').html(data);
+		});
+	});
 	
 	/*
 	 * Submit application form on click of submit button.

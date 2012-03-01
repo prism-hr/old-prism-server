@@ -21,9 +21,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -65,6 +67,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.hasQualifications()).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock,applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage(1, "");
@@ -79,6 +82,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.hasQualifications()).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage(1, "");
@@ -94,6 +98,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.hasQualifications()).andReturn(true);
 		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
 		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
 		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
@@ -115,6 +120,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.hasQualifications()).andReturn(true);
 		EasyMock.replay(userMock, applicationsServiceMock);
 
 		ModelAndView modelAndView = controller.getViewApplicationPage(1, "");
@@ -219,14 +225,13 @@ public class ViewApplicationFormControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);
 		controller = new ViewApplicationFormController(applicationsServiceMock, applicationReviewServiceMock);
-		
-		admin = new RegisteredUserBuilder().id(1).username("bob")
+		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").toQualification();
+		admin = new RegisteredUserBuilder().id(1).username("bob").qualification(qual)
 								.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		reviewer = new RegisteredUserBuilder().id(3).username("jane")
+		reviewer = new RegisteredUserBuilder().id(3).username("jane").qualification(qual).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		reviewer2 = new RegisteredUserBuilder().id(3).username("john").qualification(qual)
 				.role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		reviewer2 = new RegisteredUserBuilder().id(3).username("john")
-				.role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		adminAndReviewer = new RegisteredUserBuilder().id(6).username("fred")
+		adminAndReviewer = new RegisteredUserBuilder().id(6).qualification(qual).username("fred")
 				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole(), new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		reviewers.add(reviewer);

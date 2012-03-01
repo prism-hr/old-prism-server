@@ -7,17 +7,21 @@ import java.util.List;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.Assert;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.dto.QualificationDTO;
 
 @Entity(name = "REGISTERED_USER")
 @Access(AccessType.FIELD)
@@ -36,7 +40,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private boolean credentialsNonExpired;
 	private String address;
 
-	@ManyToMany
+	private List<Qualification> qualifications = new ArrayList<Qualification>();
+	
+	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
 	
@@ -47,6 +53,24 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
+	}
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "APPLICATION_FORM_QUALIFICATION", joinColumns = { @JoinColumn(name = "applicant_id") }, inverseJoinColumns = { @JoinColumn(name = "application_form_id") })
+	@Access(AccessType.PROPERTY)
+	public List<Qualification> getQualifications() {
+		return qualifications;
+	}
+	
+	public void setQualifications(List<Qualification> qualifications) {	
+		for (Qualification qualification : qualifications) {
+			Assert.notNull(qualification.getDegree());
+		}
+		if(this.qualifications.size() == qualifications.size() && this.qualifications.containsAll(qualifications)){
+			return;
+		}
+		this.qualifications.clear();
+		this.qualifications.addAll(qualifications);
 	}
 
 	@Override
@@ -190,5 +214,10 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public void setAddress(String address) {
 		this.address = address;
 	}
+	
+	public boolean hasQualifications(){
+		return !qualifications.isEmpty();
+	}
+
 
 }

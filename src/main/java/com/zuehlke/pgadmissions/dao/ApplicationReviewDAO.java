@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 @Repository
@@ -60,5 +61,15 @@ public class ApplicationReviewDAO {
 		return sessionFactory.getCurrentSession()
 				.createCriteria(ApplicationReview.class)
 				.add(Restrictions.eq("application", application)).list();
+	}
+
+	public void saveQualification(Qualification qualification) {
+		sessionFactory.getCurrentSession().saveOrUpdate(qualification);
+		
+	}
+
+	public void saveUser(RegisteredUser currentuser) {
+		sessionFactory.getCurrentSession().saveOrUpdate(currentuser);
+		
 	}
 }

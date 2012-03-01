@@ -15,6 +15,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.ApplicationReview</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Program</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Project</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Qualification</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

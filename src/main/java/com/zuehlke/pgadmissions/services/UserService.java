@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -57,4 +58,11 @@ public class UserService {
 	public void save(RegisteredUser user) {
 		userDAO.save(user);
 	}
+
+	@Transactional
+	public void saveQualification(Qualification qual) {
+		userDAO.saveQualification(qual);
+		
+	}
+	
 }

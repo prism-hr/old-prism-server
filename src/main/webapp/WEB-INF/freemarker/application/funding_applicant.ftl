@@ -6,7 +6,10 @@
                         <div>
                             <br/>
                             <div>
-                            <textarea id="funding" name="funding" cols="45" rows="7">${model.applicationForm.funding!}</textarea>
+                            <textarea id="funding" name="funding" cols="45" rows="7">${model.funding.funding!}</textarea>
+                             <#if model.hasError('funding')>                           
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('funding').code /></span>                           
+                            </#if>
                             </div>
                             <br/>
                             <div class="buttons">

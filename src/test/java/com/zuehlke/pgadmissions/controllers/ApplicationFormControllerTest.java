@@ -262,7 +262,7 @@ public class ApplicationFormControllerTest {
 		Funding funding = new Funding();
 		funding.setFunding("self-funded");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult);
+		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("application/funding_applicant", modelAndView.getViewName());
 		Assert.assertEquals("self-funded", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getFunding());
 	}
@@ -277,7 +277,7 @@ public class ApplicationFormControllerTest {
 		Funding funding = new Funding();
 		funding.setFunding("         ");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult);
+		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("application/funding_applicant", modelAndView.getViewName());
 		Assert.assertEquals("scholarship", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getFunding());
 	}
@@ -294,7 +294,7 @@ public class ApplicationFormControllerTest {
 		Funding funding = new Funding();
 		funding.setFunding("self-funded");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		applicationController.addFunding(funding, 1, 2, mappingResult);
+		applicationController.addFunding(funding, 1, 2, mappingResult, new ModelMap());
 	}
 
 	@Before

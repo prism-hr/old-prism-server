@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -131,7 +130,7 @@ public class ApplicationFormController {
 
 	@RequestMapping(value = "/addFunding", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result) {
+	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
 		ApplicationForm application = applicationService.getApplicationById(appId);
 		
 		if (application.isSubmitted()) {
@@ -147,11 +146,15 @@ public class ApplicationFormController {
 		
 		RegisteredUser user = userService.getUser(id);
 
-		PageModel model = new PageModel();
-		model.setApplicationForm(application);
+		ApplicationPageModel model = new ApplicationPageModel();
 		model.setUser(user);
-
-		return new ModelAndView("application/funding_applicant", "model", model);
+		ApplicationForm applicationForm = application;
+		model.setApplicationForm(applicationForm);
+		model.setFunding(fund);
+		model.setResult(result);
+		modelMap.put("model", model);
+		
+		return new ModelAndView("application/funding_applicant", modelMap);
 	}
 
 

@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -54,6 +55,7 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setApplicationForm(applicationForm);
 		viewApplicationModel.setPersonalDetails(createPersonalDetails(applicationForm));
 		viewApplicationModel.setAddress(createAddress(applicationForm));
+		viewApplicationModel.setFunding(createFunding(applicationForm));
 		if (applicationForm.hasComments()) {
 			if (currentuser.isInRole(Authority.ADMINISTRATOR)|| currentuser.isInRole(Authority.APPROVER)) {
 				viewApplicationModel.setApplicationComments(applicationReviewService.getApplicationReviewsByApplication(applicationForm));
@@ -70,6 +72,12 @@ public class ViewApplicationFormController {
 		
 		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model",
 				viewApplicationModel);
+	}
+
+	private Funding createFunding(ApplicationForm applicationForm) {
+		Funding funding = new Funding();
+		funding.setFunding(applicationForm.getFunding());
+		return funding;
 	}
 
 	private Address createAddress(ApplicationForm applicationForm) {

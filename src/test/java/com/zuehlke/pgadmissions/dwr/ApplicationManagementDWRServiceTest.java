@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.UserService;
 
 public class ApplicationManagementDWRServiceTest {
 
@@ -33,7 +32,6 @@ public class ApplicationManagementDWRServiceTest {
 	private RegisteredUser currentUser;
 	private Project project;
 	private HibernateFlusher hibernateFlusherMock;
-	private UserService userServiceMock;
 
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowIllegalArgumentExceptionIfIdIsNull() {
@@ -111,9 +109,8 @@ public class ApplicationManagementDWRServiceTest {
 	@Before
 	public void setup() {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		userServiceMock = EasyMock.createMock(UserService.class);
 		hibernateFlusherMock = EasyMock.createMock(HibernateFlusher.class);
-		dwrService = new ApplicationManagementDWRService(applicationsServiceMock,userServiceMock,  hibernateFlusherMock);
+		dwrService = new ApplicationManagementDWRService(applicationsServiceMock, hibernateFlusherMock);
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();

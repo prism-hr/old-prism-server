@@ -1,23 +1,3 @@
-/**
- * Fetches a single POJO to represent personal details of the user. 
- */
-function fetchPersonalDetails() {
-	//alert("fetchPersonalDetails - begin");
-	
-	/*
-	applicationDWR.displayPersonalDetails(function(data) {
-		dwr.util.setValue("demoStatus", data);
-
-		//alert(data.firstName + " " + data.lastName);
-
-		$("#firstName").val(data.firstName);
-		$("#lastName").val(data.lastName);
-
-	});*/
-
-}
-
-
 $(document).ready(function(){
 	
 	/*

@@ -11,7 +11,9 @@
                             <br/>
                             <div class="buttons">
                                     <a class="button blue" href="#">Close</a>
-                                    <a class="button blue" type="submit" id="fundingSaveButton">Save</a>
+                                    <#if !model.applicationForm.isSubmitted()>
+                                        <a class="button blue" type="submit" id="fundingSaveButton">Save</a>
+                                    </#if>    
                             </div>
                         </div>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>

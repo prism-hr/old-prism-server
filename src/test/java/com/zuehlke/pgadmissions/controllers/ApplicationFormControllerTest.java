@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
+import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
@@ -161,6 +162,24 @@ public class ApplicationFormControllerTest {
 		Assert.assertEquals("New Last Name", user.getLastName());
 		Assert.assertEquals("newemail@email.com", user.getEmail());
 	}
+	
+	
+	@Test(expected=CannotUpdateApplicationException.class)
+	public void shouldNotSaveNewPersonalDetailsWhenApplicationSubmitted() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
+
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		EasyMock.replay(userServiceMock);
+
+		PersonalDetails personalDetails = new PersonalDetails();
+		personalDetails.setFirstName("New First Name");
+		personalDetails.setLastName("New Last Name");
+		personalDetails.setEmail("newemail@email.com");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
+		applicationController.editPersonalDetails(personalDetails, 1, 2, mappingResult, new ModelMap());
+	}
 
 	@Test
 	public void shouldNotSaveNewPersonalDetails() {
@@ -216,6 +235,19 @@ public class ApplicationFormControllerTest {
 		Assert.assertEquals("application/address_applicant", modelAndView.getViewName());
 		Assert.assertEquals("london", ((PageModel)modelAndView.getModel().get("model")).getUser().getAddress());
 	}
+	
+	@Test(expected=CannotUpdateApplicationException.class)
+	public void shouldNotSaveNewAddressWhenApplicationIsSubmitted() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		EasyMock.replay(userServiceMock);
+		Address address = new Address();
+		address.setAddress("london, uk");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
+		applicationController.editAddress(address, 1, 2, mappingResult);
+	}
 
 
 	@Test
@@ -232,7 +264,6 @@ public class ApplicationFormControllerTest {
 		funding.setFunding("self-funded");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
 		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult);
-		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals("application/funding_applicant", modelAndView.getViewName());
 		Assert.assertEquals("self-funded", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getFunding());
 	}
@@ -250,6 +281,21 @@ public class ApplicationFormControllerTest {
 		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult);
 		Assert.assertEquals("application/funding_applicant", modelAndView.getViewName());
 		Assert.assertEquals("scholarship", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getFunding());
+	}
+	
+	@Test(expected=CannotUpdateApplicationException.class)
+	public void shouldNotSaveNewFundingWhenAplicationIsSubmitted() {
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		EasyMock.replay(userServiceMock);
+		
+		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
+
+		Funding funding = new Funding();
+		funding.setFunding("self-funded");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
+		applicationController.addFunding(funding, 1, 2, mappingResult);
 	}
 
 	@Before

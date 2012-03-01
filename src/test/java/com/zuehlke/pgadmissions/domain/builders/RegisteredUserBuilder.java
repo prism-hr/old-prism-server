@@ -14,6 +14,7 @@ public class RegisteredUserBuilder {
 	private String username;
 	private String password;
 	private Integer id;
+	private String address;
 	private boolean enabled = true;
 	private boolean accountNonExpired = true;
 	private boolean accountNonLocked = true;
@@ -40,6 +41,10 @@ public class RegisteredUserBuilder {
 	
 	public RegisteredUserBuilder lastName(String lastName) {
 		this.lastName = lastName;
+		return this;
+	}
+	public RegisteredUserBuilder address(String address) {
+		this.address = address;
 		return this;
 	}
 	
@@ -96,6 +101,7 @@ public class RegisteredUserBuilder {
 		user.setAccountNonExpired(accountNonExpired);
 		user.setAccountNonLocked(accountNonLocked);
 		user.setCredentialsNonExpired(credentialsNonExpired);
+		user.setAddress(address);
 		user.getRoles().addAll(roles);
 		return user;
 	}

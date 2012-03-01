@@ -73,13 +73,7 @@
 			          
 			          <!-- Address -->
 			          <section class="folding red">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Address
-			            </h2>
-			            <div>
-			            	Testing...
-			            </div>
+                        <#include "/application/address_internal.ftl"/>
 			          </section>
 			          
 			           <section class="folding orange">

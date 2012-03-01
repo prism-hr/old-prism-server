@@ -70,14 +70,8 @@
 			          </section>
 			          
 			          <!-- Address -->
-			          <section class="folding red">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Address
-			            </h2>
-			            <div>
-			            	Testing...
-			            </div>
+			          <section id="addressSection" class="folding red">
+			             <#include "/application/address_applicant.ftl"/>
 			          </section>
 			          
 			           <section class="folding orange">

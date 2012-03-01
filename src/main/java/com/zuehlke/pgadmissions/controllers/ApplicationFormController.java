@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -26,13 +27,14 @@ import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.AddressValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 
 @Controller
 @RequestMapping("/apply")
 public class ApplicationFormController {
 
-
+	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "application/address_applicant";
 	private final ProjectDAO projectDAO;
 	private final ApplicationsService applicationService;
 	private final UserService userService;
@@ -43,17 +45,16 @@ public class ApplicationFormController {
 	}
 
 	@Autowired
-	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService, UserService userService,
-			UserPropertyEditor userPropertyEditor) {
+	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService, UserService userService, UserPropertyEditor userPropertyEditor) {
 		this.projectDAO = projectDAO;
 		this.applicationService = applicationService;
 		this.userService = userService;
 		this.userPropertyEditor = userPropertyEditor;
 	}
 
-	@RequestMapping(value="/new", method = RequestMethod.POST)
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView createNewApplicationForm(@RequestParam Integer project) {	
+	public ModelAndView createNewApplicationForm(@RequestParam Integer project) {
 
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
@@ -64,15 +65,13 @@ public class ApplicationFormController {
 		applicationForm.setProject(proj);
 		applicationService.save(applicationForm);
 
-		return new  ModelAndView("redirect:/application","id", applicationForm.getId());
+		return new ModelAndView("redirect:/application", "id", applicationForm.getId());
 
 	}
 
-	@RequestMapping(value="/edit", method = RequestMethod.POST)
+	@RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView editApplicationForm(@ModelAttribute PersonalDetails personalDetails, @RequestParam Integer id, 
-			@RequestParam Integer appId,
-			BindingResult result, ModelMap modelMap) {	
+	public ModelAndView editPersonalDetails(@ModelAttribute PersonalDetails personalDetails, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
 
 		PersonalDetailsValidator personalDetailsValidator = new PersonalDetailsValidator();
 		personalDetailsValidator.validate(personalDetails, result);
@@ -99,16 +98,16 @@ public class ApplicationFormController {
 		return new ModelAndView("application/personal_details_applicant", modelMap);
 	}
 
-	@RequestMapping(value="/submit", method = RequestMethod.POST)
+	@RequestMapping(value = "/submit", method = RequestMethod.POST)
 	public ModelAndView submitApplication(@RequestParam Integer applicationForm) {
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		ApplicationForm appForm = applicationService.getApplicationById(applicationForm);
-		if(appForm == null || ! user.equals(appForm.getApplicant()) || appForm.isSubmitted()){
+		if (appForm == null || !user.equals(appForm.getApplicant()) || appForm.isSubmitted()) {
 			throw new ResourceNotFoundException();
-		}		
+		}
 		appForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationService.save(appForm);
-		return new  ModelAndView("redirect:/applications?submissionSuccess=true");
+		return new ModelAndView("redirect:/applications?submissionSuccess=true");
 
 	}
 
@@ -120,6 +119,23 @@ public class ApplicationFormController {
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);
 
+	}
+
+	@RequestMapping(value = "/editAddress", method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result) {
+		RegisteredUser user = userService.getUser(id);
+		AddressValidator addressValidator = new AddressValidator();
+		addressValidator.validate(addr, result);
+		if (!result.hasErrors()) {
+			user.setAddress(addr.getAddress());
+			userService.save(user);
+		}
+		PageModel model = new PageModel();
+		model.setApplicationForm(applicationService.getApplicationById(appId));
+		model.setUser(user);
+
+		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, "model", model);
 	}
 
 }

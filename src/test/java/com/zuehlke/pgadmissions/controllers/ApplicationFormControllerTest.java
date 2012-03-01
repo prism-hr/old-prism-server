@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
@@ -151,13 +152,45 @@ public class ApplicationFormControllerTest {
 		personalDetails.setLastName("New Last Name");
 		personalDetails.setEmail("newemail@email.com");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
-		ModelAndView modelAndView = applicationController.editApplicationForm(personalDetails, 1, 2, mappingResult, new ModelMap());
+		ModelAndView modelAndView = applicationController.editPersonalDetails(personalDetails, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("application/personal_details_applicant", modelAndView.getViewName());
 		PageModel model = (PageModel) modelAndView.getModel().get("model");
 		RegisteredUser user = model.getUser();
 		Assert.assertEquals("New First Name", user.getFirstName());
 		Assert.assertEquals("New Last Name", user.getLastName());
 		Assert.assertEquals("newemail@email.com", user.getEmail());
+	}
+	
+	@Test
+	public void shouldSaveNewAddress() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		userServiceMock.save(student);
+		EasyMock.replay(userServiceMock);
+		Address address = new Address();
+		address.setAddress("london, uk");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
+		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult);
+		Assert.assertEquals("application/address_applicant", modelAndView.getViewName());
+		Assert.assertEquals("london, uk", ((PageModel)modelAndView.getModel().get("model")).getUser().getAddress());
+	}
+	
+	@Test
+	public void shouldNotSaveEmptyAddress() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		userServiceMock.save(student);
+		EasyMock.replay(userServiceMock);
+		Address address = new Address();
+		address.setAddress("");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
+		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult);
+		Assert.assertEquals("application/address_applicant", modelAndView.getViewName());
+		Assert.assertEquals("london", ((PageModel)modelAndView.getModel().get("model")).getUser().getAddress());
 	}
 	
 	@Before
@@ -177,7 +210,7 @@ public class ApplicationFormControllerTest {
 		};
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").address("london").firstName("mark").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		authenticationToken.setDetails(student);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);

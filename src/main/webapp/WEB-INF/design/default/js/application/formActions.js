@@ -2,7 +2,7 @@ $(document).ready(function(){
 	
 	
 	$('#personalDetailsSaveButton').click(function(){
-		$.post("/pgadmissions/apply/edit", { firstName: $("#firstName").val(), 
+		$.post("/pgadmissions/apply/editPersonalDetails", { firstName: $("#firstName").val(), 
 								lastName: $("#lastName").val(), 
 								email: $("#email").val(), 
 								id: $("#id").val(), 
@@ -12,6 +12,18 @@ $(document).ready(function(){
 				     $('#personalDetailsSection').html(data);
 				   });
 	});
+	
+	$('#addressSaveButton').click(function(){
+		$.post("/pgadmissions/apply/editAddress", { address: $("#address").val(), 
+								id: $("#id").val(), 
+								appId: $("#appId").val()
+								},
+				   function(data) {
+					alert(data);
+				     $('#addressSection').html(data);
+				   });
+	});
+	
 	/*
 	 * Submit application form on click of submit button.
 	 */ 

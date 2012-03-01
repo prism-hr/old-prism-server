@@ -65,6 +65,7 @@ public class ApproveRejectControllerTest {
 		ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
 		EasyMock.expect(applicationFormMock.isReviewable()).andReturn(true);
 		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(false);
+		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(approverMock.canSee(applicationFormMock)).andReturn(true);
 		EasyMock.replay(approverMock, applicationFormMock);		
 		controller.applyDecision(applicationFormMock, ApprovalStatus.APPROVED);	
@@ -77,6 +78,8 @@ public class ApproveRejectControllerTest {
 		ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
 		EasyMock.expect(applicationFormMock.isReviewable()).andReturn(false);
 		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
+		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		
 		EasyMock.expect(approverMock.canSee(applicationFormMock)).andReturn(true);
 		EasyMock.replay(approverMock, applicationFormMock);		
 		controller.applyDecision(applicationFormMock, ApprovalStatus.APPROVED);	
@@ -87,6 +90,7 @@ public class ApproveRejectControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
+		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock, applicationsServiceMock);
 		
@@ -103,6 +107,7 @@ public class ApproveRejectControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
+		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock, applicationsServiceMock);
 		
@@ -119,6 +124,7 @@ public class ApproveRejectControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
+		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock, applicationsServiceMock);
 		

@@ -3,7 +3,6 @@
 <#-- Personal Details Rendering -->
 
 <!-- Personal details -->
-<section class="folding purple">
 	<h2 class="open">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Personal Details
@@ -38,9 +37,9 @@
 			    </tr>
 			</tbody>
 		</table>
-		<form method="post" action="<@spring.url '/apply/edit'/>" method = "POST">
-                <input type="hidden" name="id" value="${model.user.id}"/>
-                <input type="hidden" name="appId" value="${model.applicationForm.id}"/>
+		  <form>
+                <input type="hidden" name="id" id="id" value="${model.user.id}"/>
+                <input type="hidden" name="appId" id="appId" value="${model.applicationForm.id}"/>
                 <input type="hidden" id="form-view-state" value="${formViewState}"/>
               	<div>
                 	<div class="row">
@@ -166,7 +165,7 @@
                 		<span class="label">Email</span>
                     <span class="hint"></span>
                     <div class="field">
-	                    <input class="full" type="email" value="${model.applicationForm.applicant.email}" name="email"/>
+	                    <input class="full" type="email" value="${model.applicationForm.applicant.email}" name="email" id="email"/>
                       <a class="button disabledEle" href="#" style="width: 110px;">Add Email</a>
                     </div>
                   </div>
@@ -202,10 +201,7 @@
 
               	<div class="buttons">
                   <a class="button blue" href="#">Close</a>
-                  <button class="blue" type="submit">Save</button>
+                  <a class="button blue" type="submit" id="personalDetailsSaveButton">Save</a>
                 </div>
-
-		</form>
-		
+                </form>
 	</div>
-</section>

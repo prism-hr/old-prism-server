@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -19,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
+import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
@@ -30,7 +32,7 @@ import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 @RequestMapping("/apply")
 public class ApplicationFormController {
 
-	
+
 	private final ProjectDAO projectDAO;
 	private final ApplicationsService applicationService;
 	private final UserService userService;
@@ -48,46 +50,53 @@ public class ApplicationFormController {
 		this.userService = userService;
 		this.userPropertyEditor = userPropertyEditor;
 	}
-	
+
 	@RequestMapping(value="/new", method = RequestMethod.POST)
 	@Transactional
 	public ModelAndView createNewApplicationForm(@RequestParam Integer project) {	
-		
+
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		
+
 		Project proj = projectDAO.getProjectById(project);
-		
+
 		ApplicationForm applicationForm = newApplicationForm();
 		applicationForm.setApplicant(user);
 		applicationForm.setProject(proj);
 		applicationService.save(applicationForm);
-		
+
 		return new  ModelAndView("redirect:/application","id", applicationForm.getId());
-		
+
 	}
 
 	@RequestMapping(value="/edit", method = RequestMethod.POST)
 	@Transactional
 	public ModelAndView editApplicationForm(@ModelAttribute PersonalDetails personalDetails, @RequestParam Integer id, 
-											@RequestParam Integer appId,
-											BindingResult result) {	
-		
+			@RequestParam Integer appId,
+			BindingResult result, ModelMap modelMap) {	
+
 		PersonalDetailsValidator personalDetailsValidator = new PersonalDetailsValidator();
 		personalDetailsValidator.validate(personalDetails, result);
-		if (result.hasErrors()) {
-			PageModel model = new PageModel();
-			model.setErrorObjs(result.getAllErrors());
-			return new  ModelAndView("error/errors","model", model);
-		}
-		
+
 		RegisteredUser user = userService.getUser(id);
-		
-		user.setLastName(personalDetails.getLastName());
-		user.setFirstName(personalDetails.getFirstName());
-		user.setEmail(personalDetails.getEmail());
-		userService.save(user);
-		
-		return new  ModelAndView("redirect:/application","id", appId);
+		if (!user.equals(SecurityContextHolder.getContext().getAuthentication().getDetails())) {
+			throw new AccessDeniedException();
+		}
+
+		if (!result.hasErrors()) {
+			user.setLastName(personalDetails.getLastName());
+			user.setFirstName(personalDetails.getFirstName());
+			user.setEmail(personalDetails.getEmail());
+			userService.save(user);
+		}
+
+		PageModel model = new PageModel();
+		model.setUser(user);
+		model.setApplicationForm(applicationService.getApplicationById(appId));
+
+		modelMap.put("model", model);
+		modelMap.put("formViewState", "open");
+
+		return new ModelAndView("application/personal_details_applicant", modelMap);
 	}
 
 	@RequestMapping(value="/submit", method = RequestMethod.POST)
@@ -100,17 +109,17 @@ public class ApplicationFormController {
 		appForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationService.save(appForm);
 		return new  ModelAndView("redirect:/applications?submissionSuccess=true");
-	
+
 	}
 
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
 	}
-	
+
 	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);
 
 	}
-	
+
 }

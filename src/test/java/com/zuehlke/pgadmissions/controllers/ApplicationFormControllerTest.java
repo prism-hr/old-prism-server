@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -150,32 +151,15 @@ public class ApplicationFormControllerTest {
 		personalDetails.setLastName("New Last Name");
 		personalDetails.setEmail("newemail@email.com");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
-		ModelAndView modelAndView = applicationController.editApplicationForm(personalDetails, 1, 2, mappingResult);
-		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
-	}
-	
-	@Test
-	public void shouldGiveErrorsWhenIncorrectPersonalDetails() {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock);
-		
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
-		userServiceMock.save(student);
-		EasyMock.replay(userServiceMock);
-
-		PersonalDetails personalDetails = new PersonalDetails();
-		personalDetails.setFirstName("");
-		personalDetails.setLastName(" ");
-		personalDetails.setEmail("newemail");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
-		ModelAndView modelAndView = applicationController.editApplicationForm(personalDetails, 1, 2, mappingResult);
-		Assert.assertEquals("error/errors", modelAndView.getViewName());
+		ModelAndView modelAndView = applicationController.editApplicationForm(personalDetails, 1, 2, mappingResult, new ModelMap());
+		Assert.assertEquals("application/personal_details_applicant", modelAndView.getViewName());
 		PageModel model = (PageModel) modelAndView.getModel().get("model");
-		Assert.assertEquals(3, model.getErrorObjs().size());
+		RegisteredUser user = model.getUser();
+		Assert.assertEquals("New First Name", user.getFirstName());
+		Assert.assertEquals("New Last Name", user.getLastName());
+		Assert.assertEquals("newemail@email.com", user.getEmail());
 	}
 	
-
 	@Before
 	public void setUp() {
 

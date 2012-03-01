@@ -65,7 +65,9 @@
 			            </div>
 			          </section>
 			          
-			          <#include "/application/personal_details_applicant.ftl"/>
+			          <section id="personalDetailsSection" class="folding purple">
+			             <#include "/application/personal_details_applicant.ftl"/>
+			          </section>
 			          
 			          <!-- Address -->
 			          <section class="folding red">

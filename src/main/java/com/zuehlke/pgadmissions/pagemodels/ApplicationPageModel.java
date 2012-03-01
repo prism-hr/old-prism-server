@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
 import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 
 public class ApplicationPageModel extends PageModel {
-	private PersonalDetails personalDetails;
 	
+	private PersonalDetails personalDetails;
 	private Address address;
+	private Funding funding;
 
 	public PersonalDetails getPersonalDetails() {
 		return personalDetails;
@@ -22,5 +24,13 @@ public class ApplicationPageModel extends PageModel {
 	
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+	
+	public Funding getFunding() {
+		return funding;
+	}
+	
+	public void setFunding(Funding funding) {
+		this.funding = funding;
 	}
 }

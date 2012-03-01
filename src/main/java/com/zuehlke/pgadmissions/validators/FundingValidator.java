@@ -15,7 +15,7 @@ public class FundingValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "funding", "Funding cannot be empty.");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "funding", "user.funding.notempty");
 	}
 
 }

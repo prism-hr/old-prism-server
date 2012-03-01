@@ -162,6 +162,31 @@ public class ApplicationFormControllerTest {
 	}
 	
 	@Test
+	public void shouldNotSaveNewPersonalDetails() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
+		
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		userServiceMock.save(student);
+		EasyMock.replay(userServiceMock);
+
+		PersonalDetails personalDetails = new PersonalDetails();
+		personalDetails.setFirstName("");
+		personalDetails.setLastName("   ");
+		personalDetails.setEmail("newemail@email");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
+		ModelAndView modelAndView = applicationController.editPersonalDetails(personalDetails, 1, 2, mappingResult, new ModelMap());
+		Assert.assertEquals("application/personal_details_applicant", modelAndView.getViewName());
+		PageModel model = (PageModel) modelAndView.getModel().get("model");
+		RegisteredUser user = model.getUser();
+		Assert.assertEquals("mark", user.getFirstName());
+		Assert.assertEquals("ham", user.getLastName());
+		Assert.assertEquals("mark@gmail.com", user.getEmail());
+	}
+	
+	
+	@Test
 	public void shouldSaveNewAddress() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);

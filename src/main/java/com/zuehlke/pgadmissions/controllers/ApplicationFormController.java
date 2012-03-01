@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -45,7 +46,8 @@ public class ApplicationFormController {
 	}
 
 	@Autowired
-	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService, UserService userService, UserPropertyEditor userPropertyEditor) {
+	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService, UserService userService,
+			UserPropertyEditor userPropertyEditor) {
 		this.projectDAO = projectDAO;
 		this.applicationService = applicationService;
 		this.userService = userService;
@@ -71,7 +73,8 @@ public class ApplicationFormController {
 
 	@RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView editPersonalDetails(@ModelAttribute PersonalDetails personalDetails, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+	public ModelAndView editPersonalDetails(@ModelAttribute PersonalDetails personalDetails, @RequestParam Integer id, @RequestParam Integer appId,
+			BindingResult result, ModelMap modelMap) {
 
 		PersonalDetailsValidator personalDetailsValidator = new PersonalDetailsValidator();
 		personalDetailsValidator.validate(personalDetails, result);
@@ -88,12 +91,14 @@ public class ApplicationFormController {
 			userService.save(user);
 		}
 
-		PageModel model = new PageModel();
+		ApplicationPageModel model = new ApplicationPageModel();
 		model.setUser(user);
-		model.setApplicationForm(applicationService.getApplicationById(appId));
-
+		ApplicationForm applicationForm = applicationService.getApplicationById(appId);
+		model.setApplicationForm(applicationForm);
+		model.setPersonalDetails(personalDetails);
+		model.setResult(result);
 		modelMap.put("model", model);
-		modelMap.put("formViewState", "open");
+		modelMap.put("formDisplayState", "open");
 
 		return new ModelAndView("application/personal_details_applicant", modelMap);
 	}
@@ -115,6 +120,7 @@ public class ApplicationFormController {
 		return new ApplicationForm();
 	}
 
+	
 	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);

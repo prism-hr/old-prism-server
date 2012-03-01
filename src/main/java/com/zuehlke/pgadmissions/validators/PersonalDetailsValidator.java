@@ -18,11 +18,11 @@ public class PersonalDetailsValidator implements Validator{
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "First name cannot be empty.");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "Last name cannot be empty.");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "user.firstname.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "user.lastname.notempty");
 		PersonalDetails personalDetails = (PersonalDetails) target;
 		if (!EmailValidator.getInstance().isValid(personalDetails.getEmail())) {
-			errors.rejectValue("email", "Email is not a valid email");
+			errors.rejectValue("email", "user.email.notvalid");
 		}
 	}
 

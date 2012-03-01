@@ -88,7 +88,7 @@ public class CommentControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(submittedNonApprovedApplication);
 		EasyMock.replay(applicationsServiceMock);
 		ModelAndView modelAndView = controller.getCommentedApplicationPage(1, "Amazing Research !!!");
-		assertEquals("redirect:/application", modelAndView.getViewName());
+		assertEquals("redirect:/application?view=comments", modelAndView.getViewName());
 		EasyMock.verify(applicationsServiceMock);
 	}
 	

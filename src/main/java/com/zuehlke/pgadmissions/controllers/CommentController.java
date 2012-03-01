@@ -55,7 +55,7 @@ public class CommentController {
 			applicationReview.setUser(user);
 			applicationReviewService.save(applicationReview);
 		}
-		return new  ModelAndView("redirect:/application","id", application.getId());
+		return new  ModelAndView("redirect:/application?view=comments","id", application.getId());
 	}
 
 	@RequestMapping(value = { "/showAll" }, method = RequestMethod.GET)

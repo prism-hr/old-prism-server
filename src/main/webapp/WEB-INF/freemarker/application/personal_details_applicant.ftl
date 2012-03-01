@@ -37,10 +37,10 @@
 			    </tr>
 			</tbody>
 		</table>
-		  <form>
-                <input type="hidden" name="id" id="id" value="${model.user.id}"/>
-                <input type="hidden" name="appId" id="appId" value="${model.applicationForm.id}"/>
-                <input type="hidden" id="form-view-state" value="${formViewState}"/>
+		<form>
+				<input type="hidden" name="id" id="id" value="${model.user.id}"/>
+				<input type="hidden" name="appId" value="${model.applicationForm.id}"/>
+                <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
               	<div>
                 	<div class="row">
                   	<label class="label">First Name</label>
@@ -165,7 +165,7 @@
                 		<span class="label">Email</span>
                     <span class="hint"></span>
                     <div class="field">
-	                    <input class="full" type="email" value="${model.applicationForm.applicant.email}" name="email" id="email"/>
+	                    <input class="full" type="email" value="${model.applicationForm.applicant.email}" name="email"/>
                       <a class="button disabledEle" href="#" style="width: 110px;">Add Email</a>
                     </div>
                   </div>
@@ -200,8 +200,10 @@
                 </div>
 
               	<div class="buttons">
-                  <a class="button blue" href="#">Close</a>
-                  <a class="button blue" type="submit" id="personalDetailsSaveButton">Save</a>
+                  <a id="close-section-button"class="button blue" href="#">Close</a>
+                  <button class="button blue" type="submit" id="personalDetailsSaveButton">Save</button>
                 </div>
-                </form>
+
+		</form>
+		
 	</div>

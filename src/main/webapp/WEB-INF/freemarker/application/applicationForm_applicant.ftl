@@ -1,9 +1,9 @@
 <#-- Assignments -->
 
 <#if model.user.isInRole('APPLICANT')>
-	<#assign formViewState = "close"/>
+	<#assign formDisplayState = "close"/>
 <#else>
-	<#assign formViewState = "open"/>
+	<#assign formDisplayState = "open"/>
 </#if>
 
 <#-- Personal Details Rendering -->

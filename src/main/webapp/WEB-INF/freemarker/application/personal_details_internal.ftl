@@ -1,5 +1,14 @@
 <#-- Assignments -->
 
+<#assign viewType = model.view>
+<#assign prevComments = "false">
+
+<#if model.applicationForm.hasComments()>
+	
+	<#assign comCount = model.applicationComments?size>
+
+</#if>
+
 <#-- Personal Details Rendering -->
 
 <!-- Personal details -->
@@ -11,9 +20,9 @@
 	
     <div id="personal-details-section" class="open">
 		<form method="post" method = "GET">
-                
+                <input type ="hidden" id="view-type-personal-form" value="${viewType}"/>
                 <input type="hidden" name="id" value="${model.applicationForm.id}"/>
-                <input type="hidden" id="form-view-state" value="${formViewState}"/>
+                <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
               	
               	<!-- Basic Details -->
               	<div>
@@ -153,46 +162,53 @@
                   	</div>
                 
                 </div>
-                <!-- Comment Sectiton -->
-                
-                <div class="comment">
-                	
-                   <#if model.applicationForm.hasComments()>
-                	<div class="previous">
-                    	<strong>Previous comments</strong>
-                    	 <ul>
-                    	<#list model.applicationComments as comment>
-							<li>
-								<strong>${comment.user.username}</strong>
-								<span>${comment.comment}</span>
-							</li>
-						</#list>
-						 </ul>
-                  	</div>
-                  </#if>
-                	
-                	<hr />
-                  
-                	<p><strong>Add a comment</strong></p>
-                  	
-                  
-                  	<div class="buttons">
-                  		<a class="button comment-close">Close</a>
-                  		<textarea  id="comment" lass="max" rows="4" cols="70"></textarea>
-              			<a class="button blue" id="commentSubmitButton">Submit</a>
-                  		
-                  	</div>
-                  	
-                </div>
 
-              	<div class="buttons">
-                	<a class="button blue comment-open" href="#">Comment</a>
+              	<div class="buttons" id="show-comment-button-div">
+                	<a class="button blue comment-open" href="#" id="comment-button">Comment</a>
                 </div>
 
 		</form>
+		
 		<form id="commentForm" action= "/pgadmissions/comments/submit" method="POST">
+		
+		    <!-- Comment Sectiton -->
+                
+            <div class="comment">
+                	
+                   <#if model.applicationForm.hasComments()>
+	                   	<#assign prevComments = "true">
+	                	<div class="previous">
+	                    	<strong>Previous comments</strong>
+	                    	 <ul>
+	                    	<#list model.applicationComments as comment>
+								<li>
+									<strong>${comment.user.username}</strong>
+									<span>${comment.comment}</span>
+								</li>
+							</#list>
+							 </ul>
+	                  	</div>
+                  <#else>
+                  		<#assign prevComments = "false">
+                  </#if>
+                <hr />
+            </div>
+		
 			<input type ="hidden" name="id" value="${model.applicationForm.id}"/>
+			<input type ="hidden" id="view-type-comment-form" value="${viewType}"/>
+			<input type ="hidden" id="prev-comment-div" value="${comCount}"/>
 			<input id="commentField" type="hidden" name="comment" value=""/>
+			
+			<p><strong>Add a comment</strong></p>
+			<textarea id="comment" lass="max" rows="4" cols="70"></textarea>
+                  
+            <div class="buttons" id="buttons-inside-comment-div">
+            	
+            	<a class="button comment-close" id="comment-close-button">Close</a>
+              	<a class="button blue" id="commentSubmitButton">Submit</a>
+                  		
+        	</div>
+			
 		</form>
 	</div>
 	

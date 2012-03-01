@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.pagemodels;
 
 import java.util.List;
 
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -15,7 +16,16 @@ public class PageModel {
 	private RegisteredUser user;
 	private List<ApplicationReview> applicationComments;
 	private String view;
+	private BindingResult result;
 	
+	public BindingResult getResult() {
+		return result;
+	}
+
+	public void setResult(BindingResult result) {
+		this.result = result;
+	}
+
 	public String getView() {
 		return view;
 	}
@@ -57,5 +67,14 @@ public class PageModel {
 		
 	}
 	
+	public boolean hasError(String fieldname){
+		if(result != null && result.getFieldError(fieldname) != null){
+			return true;
+		}
+		return false;
+	}
+
+
+		
 	
 }

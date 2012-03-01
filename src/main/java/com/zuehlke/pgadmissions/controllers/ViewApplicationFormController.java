@@ -11,8 +11,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.pagemodels.PageModel;
+import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
@@ -46,9 +47,11 @@ public class ViewApplicationFormController {
 		if (applicationForm == null || !currentuser.canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
-		PageModel viewApplicationModel = new PageModel();
+		ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
+		
 		viewApplicationModel.setUser(currentuser);
 		viewApplicationModel.setApplicationForm(applicationForm);
+		viewApplicationModel.setPersonalDetails(createPersonalDetails(applicationForm));
 		if (applicationForm.hasComments()) {
 			if (currentuser.isInRole(Authority.ADMINISTRATOR)|| currentuser.isInRole(Authority.APPROVER)) {
 				viewApplicationModel.setApplicationComments(applicationReviewService.getApplicationReviewsByApplication(applicationForm));
@@ -66,5 +69,18 @@ public class ViewApplicationFormController {
 		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model",
 				viewApplicationModel);
 	}
+
+	private PersonalDetails createPersonalDetails(ApplicationForm applicationForm) {
+		PersonalDetails personalDetails = new PersonalDetails();
+		if(applicationForm.getApplicant() != null){
+			personalDetails.setFirstName(applicationForm.getApplicant().getFirstName());
+			personalDetails.setLastName(applicationForm.getApplicant().getLastName());
+			personalDetails.setEmail(applicationForm.getApplicant().getEmail());
+		}
+		return personalDetails;
+	}
+	
+
+	
 
 }

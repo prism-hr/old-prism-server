@@ -1,7 +1,6 @@
 <#-- Assignments -->
-
+<#import "/spring.ftl" as spring />
 <#-- Personal Details Rendering -->
-
 <!-- Personal details -->
 	<h2 class="open">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
@@ -39,21 +38,28 @@
 		</table>
 		<form>
 				<input type="hidden" name="id" id="id" value="${model.user.id}"/>
-				<input type="hidden" name="appId" value="${model.applicationForm.id}"/>
+				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
               	<div>
                 	<div class="row">
                   	<label class="label">First Name</label>
                     <span class="hint"></span>
-                    <div class="field">
-                    	<input class="full" type="text" value="${model.applicationForm.applicant.firstName}" name="firstName" id="firstName"/>
+                    <div class="field">                    	
+                    	<input class="full" type="text" value="${model.personalDetails.firstName}" name="firstName" id="firstName"/>
+                    	<#if model.hasError('firstName')>                    		
+                    			<span style="color:red;"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
+                    	</#if>
+                    
                     </div>
                   </div>
                 	<div class="row">
                   	<label class="label">Last Name</label>
                     <span class="hint"></span>
                     <div class="field">
-                    	<input class="full" type="text" value="${model.applicationForm.applicant.lastName}" name="lastName" id="lastName"/>
+                    	<input class="full" type="text" value="${model.personalDetails.lastName}" name="lastName" id="lastName"/>
+                    	<#if model.hasError('lastName')>                    		
+                    			<span style="color:red;"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
+                    	</#if>
                     </div>
                   </div>
                 	<div class="row">
@@ -165,7 +171,10 @@
                 		<span class="label">Email</span>
                     <span class="hint"></span>
                     <div class="field">
-	                    <input class="full" type="email" value="${model.applicationForm.applicant.email}" name="email"/>
+	                    <input class="full" type="email" value="${model.personalDetails.email}" name="email" id="email"/>
+	                     	<#if model.hasError('email')>                    		
+                    			<span style="color:red;"><@spring.message  model.result.getFieldError('email').code /></span>                    		
+                    		</#if>
                       <a class="button disabledEle" href="#" style="width: 110px;">Add Email</a>
                     </div>
                   </div>
@@ -201,9 +210,9 @@
 
               	<div class="buttons">
                   <a id="close-section-button"class="button blue" href="#">Close</a>
-                  <button class="button blue" type="submit" id="personalDetailsSaveButton">Save</button>
+                  <a class="button blue" id="personalDetailsSaveButton">Save</a>
                 </div>
-
-		</form>
-		
+           </form>
 	</div>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>

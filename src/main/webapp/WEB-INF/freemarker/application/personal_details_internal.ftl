@@ -17,7 +17,7 @@
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Personal Details
 	</h2>
-	
+
     <div id="personal-details-section" class="open">
 		<form method="post" method = "GET">
                 <input type ="hidden" id="view-type-personal-form" value="${viewType}"/>

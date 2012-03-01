@@ -1,17 +1,6 @@
 $(document).ready(function(){
-	
-	
-	$('#personalDetailsSaveButton').click(function(){
-		$.post("/pgadmissions/apply/editPersonalDetails", { firstName: $("#firstName").val(), 
-								lastName: $("#lastName").val(), 
-								email: $("#email").val(), 
-								id: $("#id").val(), 
-								appId: $("#appId").val()
-								},
-				   function(data) {
-				     $('#personalDetailsSection').html(data);
-				   });
-	});
+
+
 	
 	$('#addressSaveButton').click(function(){
 		$.post("/pgadmissions/apply/editAddress", { address: $("#address").val(), 

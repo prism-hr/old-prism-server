@@ -62,6 +62,8 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	private List<ApplicationReview> applicationComments = new ArrayList<ApplicationReview>();
 
+	private String funding;
+
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
 	@Access(AccessType.PROPERTY)
@@ -192,5 +194,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public boolean hasComments() {
 		return applicationComments!=null;
+	}
+
+	public void setFunding(String funding) {
+		this.funding = funding;
+	}
+	
+	public String getFunding() {
+		return funding;
 	}
 }

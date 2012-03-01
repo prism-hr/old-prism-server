@@ -8,7 +8,6 @@ $(document).ready(function(){
 								appId: $("#appId").val()
 								},
 				   function(data) {
-					alert(data);
 				     $('#addressSection').html(data);
 				   });
 	});

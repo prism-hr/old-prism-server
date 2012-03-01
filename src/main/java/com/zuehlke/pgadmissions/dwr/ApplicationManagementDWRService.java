@@ -14,24 +14,21 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.UserService;
 
 @RemoteProxy(name = "applicationDWR")
 @Component
 public class ApplicationManagementDWRService {
 
 	private final ApplicationsService applicationsService;
-	private final UserService userService;
 	private final HibernateFlusher hibernateFlusher;
 
 	ApplicationManagementDWRService() {
-		this(null, null, null);
+		this(null, null);
 	}
 
 	@Autowired
-	public ApplicationManagementDWRService(ApplicationsService applicationsService, UserService userService, HibernateFlusher hibernateFlusher) {
+	public ApplicationManagementDWRService(ApplicationsService applicationsService, HibernateFlusher hibernateFlusher) {
 		this.applicationsService = applicationsService;
-		this.userService = userService;
 		
 		this.hibernateFlusher = hibernateFlusher;
 

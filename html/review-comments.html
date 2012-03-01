@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Shell template</title>
+
+<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+<link type="text/css" rel="stylesheet" href="css/style.css" />
+<link type="text/css" rel="stylesheet" href="css/review-comments.css" />
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+
+<body>
+
+<div id="wrapper">
+
+  <!-- Header. -->
+  <div id="header">
+    <p>Postgraduate Research Admissions Tool</p>
+  </div>
+  
+  <!-- Middle. -->
+  <div id="middle">
+  
+    <header>
+
+      <!-- App logo and tagline -->
+      <div class="logo"><img src="images/ph_logo_app.png" alt="" /></div>
+
+      <div class="tagline">Your Gateway to Research Opportunities</div>
+
+      <!-- Main tabbed menu -->
+      <nav>
+        <ul>
+          <li><a href="#">My account</a></li>    
+          <li class="current"><a href="#">My applications <span class="indicator blue">1</span></a></li>    
+          <li><a href="#">Messages</a></li>    
+          <li><a href="#">Help</a></li>    
+        </ul>
+        
+        <div class="user">
+          Jonathan Smith
+          <a class="button user-logout">Logout</a>
+        </div>
+      </nav>
+      
+    </header>
+    
+    
+    <!-- Main content area. -->
+    <article id="content" role="main">
+      
+      <!-- "Tools" -->
+      <div id="tools">
+        <ul class="right">
+          <li><a href="#">Application</a></li>
+          <li class="current"><a href="#">Review</a></li>
+        </ul>
+      </div>
+
+      <!-- content box -->
+      <div class="content-box">
+        <div class="content-box-inner">
+
+					<table id="review-comments" class="data" border="0">
+          	<colgroup>
+            	<col style="width: 120px;" />
+            	<col style="width: 120px;" />
+            	<col />
+            	<col style="width: 100px;" />
+            	<col style="width: 140px;" />
+            </colgroup>
+          	<thead>
+              <tr>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Jim</td>
+                <td>Smith</td>
+                <td>jim@smithsonian.com</td>
+                <td>Pending</td>
+                <td>
+                	<select>
+                  	<option></option>
+                  	<option>View comment</option>
+                  	<option>Print comment</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="5" class="comment">
+                  <p>Comment:</p>
+                  <p>Nulla ullamcorper, velit vitae sodales iaculis, sem augue dapibus sem,   at sagittis lorem magna id libero. Suspendisse laoreet malesuada orci,   eget tristique libero sagittis vitae. Nam id elit ac nisi posuere   suscipit sit amet et quam. Duis hendrerit, diam at pharetra iaculis,   nulla metus tincidunt tortor, vitae blandit eros nisl et metus.</p>
+                  <a class="button" href="">Close</a>
+                </td>
+              </tr>
+              <tr>
+                <td>Jim</td>
+                <td>Smith</td>
+                <td>jim@smithsonian.com</td>
+                <td>Reviewed</td>
+                <td>
+                	<select>
+                  	<option></option>
+                  	<option>View comment</option>
+                  	<option>Print comment</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="5" class="comment">
+                  <p>Comment:</p>
+                  <p>Nulla ullamcorper, velit vitae sodales iaculis, sem augue dapibus sem,   at sagittis lorem magna id libero. Suspendisse laoreet malesuada orci,   eget tristique libero sagittis vitae. Nam id elit ac nisi posuere   suscipit sit amet et quam. Duis hendrerit, diam at pharetra iaculis,   nulla metus tincidunt tortor, vitae blandit eros nisl et metus.</p>
+                  <a class="button" href="">Close</a>
+                </td>
+              </tr>
+              <tr>
+                <td>Jim</td>
+                <td>Smith</td>
+                <td>jim@smithsonian.com</td>
+                <td>Reviewed</td>
+                <td>
+                	<select>
+                  	<option></option>
+                  	<option>View comment</option>
+                  	<option>Print comment</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="5" class="comment">
+                  <p>Comment:</p>
+                  <p>Nulla ullamcorper, velit vitae sodales iaculis, sem augue dapibus sem,   at sagittis lorem magna id libero. Suspendisse laoreet malesuada orci,   eget tristique libero sagittis vitae. Nam id elit ac nisi posuere   suscipit sit amet et quam. Duis hendrerit, diam at pharetra iaculis,   nulla metus tincidunt tortor, vitae blandit eros nisl et metus.</p>
+                  <a class="button" href="">Close</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="right">
+          	<a href="#" class="button">View all</a>
+            &nbsp;
+          	<a href="#" class="button">Print all</a>
+          </p>
+        </div><!-- .content-box-inner -->
+      </div><!-- .content-box -->
+      
+    </article>
+    
+  </div>
+  
+  <!-- Footer. -->
+  <div id="footer">
+    <ul>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms &amp; conditions</a></li>
+      <li><a href="#">Contact us</a></li>
+      <li><a href="#">Glossary</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/libraries.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+</body>
+</html>

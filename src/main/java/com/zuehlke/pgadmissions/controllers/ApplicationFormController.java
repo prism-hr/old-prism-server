@@ -163,7 +163,7 @@ public class ApplicationFormController {
 
 	@RequestMapping(value = "/editAddress", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result) {
+	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
 		if (application.isSubmitted()) {
@@ -178,11 +178,16 @@ public class ApplicationFormController {
 			user.setAddress(addr.getAddress());
 			userService.save(user);
 		}
-		PageModel model = new PageModel();
-		model.setApplicationForm(application);
+		
+		ApplicationPageModel model = new ApplicationPageModel();
 		model.setUser(user);
-
-		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, "model", model);
+		ApplicationForm applicationForm = application;
+		model.setApplicationForm(applicationForm);
+		model.setAddress(addr);
+		model.setResult(result);
+		modelMap.put("model", model);
+		
+		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, modelMap);
 	}
 
 }

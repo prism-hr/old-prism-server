@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -52,6 +53,7 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setUser(currentuser);
 		viewApplicationModel.setApplicationForm(applicationForm);
 		viewApplicationModel.setPersonalDetails(createPersonalDetails(applicationForm));
+		viewApplicationModel.setAddress(createAddress(applicationForm));
 		if (applicationForm.hasComments()) {
 			if (currentuser.isInRole(Authority.ADMINISTRATOR)|| currentuser.isInRole(Authority.APPROVER)) {
 				viewApplicationModel.setApplicationComments(applicationReviewService.getApplicationReviewsByApplication(applicationForm));
@@ -70,6 +72,14 @@ public class ViewApplicationFormController {
 				viewApplicationModel);
 	}
 
+	private Address createAddress(ApplicationForm applicationForm) {
+		Address address = new Address();
+		if (applicationForm.getApplicant() != null) {
+			address.setAddress(applicationForm.getApplicant().getAddress());
+		}
+		return address;
+	}
+
 	private PersonalDetails createPersonalDetails(ApplicationForm applicationForm) {
 		PersonalDetails personalDetails = new PersonalDetails();
 		if(applicationForm.getApplicant() != null){
@@ -79,6 +89,8 @@ public class ViewApplicationFormController {
 		}
 		return personalDetails;
 	}
+	
+	
 	
 
 	

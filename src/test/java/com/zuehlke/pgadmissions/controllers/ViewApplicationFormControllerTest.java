@@ -97,6 +97,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
 		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
 		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
+		EasyMock.expect(userMock.getAddress()).andReturn("london");
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage(1, "");

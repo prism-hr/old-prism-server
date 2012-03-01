@@ -15,7 +15,7 @@ public class AddressValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address", "Address cannot be empty.");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address", "user.address.notempty");
 	}
 
 }

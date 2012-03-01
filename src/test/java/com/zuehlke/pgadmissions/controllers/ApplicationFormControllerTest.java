@@ -216,7 +216,7 @@ public class ApplicationFormControllerTest {
 		Address address = new Address();
 		address.setAddress("london, uk");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult);
+		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("application/address_applicant", modelAndView.getViewName());
 		Assert.assertEquals("london, uk", ((PageModel)modelAndView.getModel().get("model")).getUser().getAddress());
 	}
@@ -231,7 +231,7 @@ public class ApplicationFormControllerTest {
 		Address address = new Address();
 		address.setAddress("");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult);
+		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("application/address_applicant", modelAndView.getViewName());
 		Assert.assertEquals("london", ((PageModel)modelAndView.getModel().get("model")).getUser().getAddress());
 	}
@@ -246,9 +246,8 @@ public class ApplicationFormControllerTest {
 		Address address = new Address();
 		address.setAddress("london, uk");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		applicationController.editAddress(address, 1, 2, mappingResult);
+		applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 	}
-
 
 	@Test
 	public void shouldSaveNewFunding() {

@@ -97,13 +97,7 @@
 			          </section>
 			          
 			           <section class="folding green">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Funding
-			            </h2>
-			            <div>
-			              Testing...
-			            </div>
+			             <#include "/application/funding_internal.ftl"/>
 			          </section>
 			          
 			           <section class="folding navy">
@@ -150,7 +144,6 @@
 		
 		<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
     	<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
-    	<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/interface/applicationDWR.js'/>"></script>
 		
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>

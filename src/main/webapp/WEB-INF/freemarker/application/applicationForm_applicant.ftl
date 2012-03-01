@@ -21,7 +21,7 @@
 	
 	</head>
 
-	<body onload="fetchPersonalDetails()">
+	<body>
 
 		<div id="wrapper">
 			

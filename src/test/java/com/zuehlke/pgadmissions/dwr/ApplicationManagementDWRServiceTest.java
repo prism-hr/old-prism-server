@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dwr.models.PersonalDetailsDWR;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -108,18 +107,6 @@ public class ApplicationManagementDWRServiceTest {
 		assertEquals(ApprovalStatus.APPROVED, applicationForm.getApprovalStatus());
 
 	}
-
-	
-	@Test
-	public void shouldDisplayPersonalDetails() {
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(new RegisteredUserBuilder().id(1).firstName("Jack").lastName("Johnson").toUser());
-		EasyMock.replay(userServiceMock);
-		
-		PersonalDetailsDWR displayPersonalDetails = dwrService.displayPersonalDetails(1);
-		assertEquals("Jack", displayPersonalDetails.getFirstName());
-		assertEquals("Johnson", displayPersonalDetails.getLastName());
-	}
-	
 	
 	@Before
 	public void setup() {

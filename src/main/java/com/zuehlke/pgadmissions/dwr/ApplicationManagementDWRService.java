@@ -11,7 +11,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dwr.models.PersonalDetailsDWR;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -62,18 +61,5 @@ public class ApplicationManagementDWRService {
 		applicationForm.setApprovalStatus(ApprovalStatus.APPROVED);
 		hibernateFlusher.flush();
 		return null;
-	}
-
-	@RemoteMethod
-	public PersonalDetailsDWR displayPersonalDetails(Integer userId){
-		RegisteredUser registeredUser = userService.getUser(userId);
-		
-		PersonalDetailsDWR user = new PersonalDetailsDWR();
-		
-		user.setFirstName(registeredUser.getFirstName());
-		user.setLastName(registeredUser.getLastName());
-
-		return user;
-		
 	}
 }

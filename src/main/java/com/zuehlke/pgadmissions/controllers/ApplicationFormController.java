@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -29,6 +30,7 @@ import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
+import com.zuehlke.pgadmissions.validators.FundingValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 
 @Controller
@@ -120,7 +122,26 @@ public class ApplicationFormController {
 		return new ApplicationForm();
 	}
 
-	
+	@RequestMapping(value = "/addFunding", method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result) {
+		RegisteredUser user = userService.getUser(id);
+		ApplicationForm application = applicationService.getApplicationById(appId);
+		FundingValidator fundingValidator = new FundingValidator();
+		fundingValidator.validate(fund, result);
+		if (!result.hasErrors()) {
+			application.setFunding(fund.getFunding());
+			applicationService.save(application);
+		}
+
+		PageModel model = new PageModel();
+		model.setApplicationForm(application);
+		model.setUser(user);
+
+		return new ModelAndView("application/funding_applicant", "model", model);
+	}
+
+
 	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);

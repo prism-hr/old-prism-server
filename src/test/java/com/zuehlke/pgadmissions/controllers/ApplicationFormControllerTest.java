@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
@@ -101,20 +102,20 @@ public class ApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(id)).andReturn(form);		
 		applicationsServiceMock.save(form);
 		EasyMock.replay(applicationsServiceMock);
-		
+
 		form.setApplicant(student);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		RegisteredUser otherApplicant = new RegisteredUserBuilder().id(6).username("fred").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole())
-				.toUser();
+		.toUser();
 		authenticationToken.setDetails(otherApplicant);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);		
-		
+
 		applicationController.submitApplication(id);
 	}
 
-	
+
 	@Test(expected=ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfSubmittedApplicationFormDoesNotExist() {
 		Integer id = 2;		
@@ -122,8 +123,8 @@ public class ApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock);		
 		applicationController.submitApplication(id);
 	}
-	
-	
+
+
 	@Test(expected=ResourceNotFoundException.class)
 	public void shouldThrowSubmitExceptionIfApplicationIsAlreadySubmitted() {
 		Integer id = 2;
@@ -131,18 +132,18 @@ public class ApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(id)).andReturn(form);		
 		applicationsServiceMock.save(form);
 		EasyMock.replay(applicationsServiceMock);
-		
+
 		form.setApplicant(student);
-		
+
 		applicationController.submitApplication(id);
 	}
-	
+
 	@Test
 	public void shouldSaveNewPersonalDetails() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
-		
+
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		userServiceMock.save(student);
 		EasyMock.replay(userServiceMock);
@@ -160,15 +161,14 @@ public class ApplicationFormControllerTest {
 		Assert.assertEquals("New Last Name", user.getLastName());
 		Assert.assertEquals("newemail@email.com", user.getEmail());
 	}
-	
+
 	@Test
 	public void shouldNotSaveNewPersonalDetails() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
-		
+
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
-		userServiceMock.save(student);
 		EasyMock.replay(userServiceMock);
 
 		PersonalDetails personalDetails = new PersonalDetails();
@@ -184,8 +184,8 @@ public class ApplicationFormControllerTest {
 		Assert.assertEquals("ham", user.getLastName());
 		Assert.assertEquals("mark@gmail.com", user.getEmail());
 	}
-	
-	
+
+
 	@Test
 	public void shouldSaveNewAddress() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
@@ -201,14 +201,13 @@ public class ApplicationFormControllerTest {
 		Assert.assertEquals("application/address_applicant", modelAndView.getViewName());
 		Assert.assertEquals("london, uk", ((PageModel)modelAndView.getModel().get("model")).getUser().getAddress());
 	}
-	
+
 	@Test
 	public void shouldNotSaveEmptyAddress() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
-		userServiceMock.save(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
 		address.setAddress("");
@@ -217,7 +216,42 @@ public class ApplicationFormControllerTest {
 		Assert.assertEquals("application/address_applicant", modelAndView.getViewName());
 		Assert.assertEquals("london", ((PageModel)modelAndView.getModel().get("model")).getUser().getAddress());
 	}
-	
+
+
+	@Test
+	public void shouldSaveNewFunding() {
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		EasyMock.replay(userServiceMock);
+		
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		applicationsServiceMock.save(form);
+		EasyMock.replay(applicationsServiceMock);
+
+		Funding funding = new Funding();
+		funding.setFunding("self-funded");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
+		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult);
+		EasyMock.verify(applicationsServiceMock);
+		Assert.assertEquals("application/funding_applicant", modelAndView.getViewName());
+		Assert.assertEquals("self-funded", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getFunding());
+	}
+
+	@Test
+	public void shouldNotSaveNewFunding() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).funding("scholarship").toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		EasyMock.replay(userServiceMock);
+		Funding funding = new Funding();
+		funding.setFunding("         ");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
+		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult);
+		Assert.assertEquals("application/funding_applicant", modelAndView.getViewName());
+		Assert.assertEquals("scholarship", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getFunding());
+	}
+
 	@Before
 	public void setUp() {
 
@@ -227,7 +261,7 @@ public class ApplicationFormControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
-		
+
 		applicationController = new ApplicationFormController(projectDAOMock, applicationsServiceMock, userServiceMock, userPropertyEditorMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;

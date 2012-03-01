@@ -61,8 +61,7 @@ public class ViewApplicationFormController {
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,
 					"model", viewApplicationModel);
 		}
-		if(view!=null)
-		if(view.equals("comments")) viewApplicationModel.setView("commentsView"); else viewApplicationModel.setView("normalView");
+		if(view!=null) viewApplicationModel.setView(view);
 		
 		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model",
 				viewApplicationModel);

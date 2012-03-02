@@ -76,11 +76,13 @@
 							                <td name="idColumn">${application.id}</td>
 							                <td>${application.applicant.firstName}</td>
 							                <td>${application.applicant.lastName}</td>
-							                <td>${application.project.program.code} - ${application.project.program.title}</td>			
+							                <td>${application.project.program.code} - ${application.project.program.title}</td>	
 							                 <#if application.isDecided() >
-							               	 <td name="statusColumn">${application.approvalStatus.displayValue()}</td>
+							               	     <td name="statusColumn">${application.approvalStatus.displayValue()}</td>
+							               	 <#elseif application.isUnderReview()>
+							               	     <td name="statusColumn">Under Review</td>
 							               	 <#else>
-							               	  <td name="statusColumn">${application.submissionStatus.displayValue()}</td>
+							               	     <td name="statusColumn">${application.submissionStatus.displayValue()}</td>
 							              	</#if>
 							                <td>
 							                	<select class="actionType" name="app_[${application.id}]">

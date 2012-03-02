@@ -117,8 +117,8 @@
 			          <a class="button" href="<@spring.url '/applications'/>">Close</a>
 			          <#if !model.applicationForm.isSubmitted() && model.user.isInRole('APPLICANT')>
 			             <a id="submitButton" class="button">Submit</a>
-			             <form id="submitApplicationForm" action="<@spring.url "/apply/submit"/>" method="POST">
-			          	      <input type="hidden" id="applicationFormId" name="applicationForm" value="${model.applicationForm.id}"/>
+			             <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
+			          	      <input type="hidden" id="applicationFormId" name="applicationFormId" value="${model.applicationForm.id}"/>
 			             </form>
 			    	 </#if>
 			        </div><!-- .content-box-inner -->

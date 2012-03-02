@@ -1,6 +1,6 @@
 $(document).ready(function(){
 $('#fundingSaveButton').click(function(){
-		$.post("/pgadmissions/apply/addFunding", { funding: $("#funding").val(), 
+		$.post("/pgadmissions/update/addFunding", { funding: $("#funding").val(), 
 								id: $("#id").val(), 
 								appId: $("#appId").val()
 								},

@@ -1,0 +1,30 @@
+@charset "utf-8";
+
+/* LOGIN page -------------------------------------------------------------------------------------------- */
+body#login #middle { background: transparent; height: 685px; position: relative; }
+body#login header { background: none; filter: none; left: 35px; padding: 0; position: absolute; top: 35px; width: 40%; }
+body#login header .logo { float: none; }
+body#login header .tagline { color: #FFF; float: none; font-size: 18pt; line-height: 1.2; text-shadow: #333 0 0 5px; width: auto; }
+body#login #blurb { bottom: 70px; font-weight: bold; left: 35px; line-height: 1.2; position: absolute; width: 40%; }
+body#login #blurb h2 { color: #024389; font-size: 13pt; margin-bottom: 0.5em; }
+body#login #blurb p { font-size: 10.5pt; }
+
+body#login #login-box {
+	background: #828386 url(../images/bg_login_box.jpg) repeat-x; /* Old browsers */
+	background: -moz-linear-gradient(top, #e6e6e7 0%, #828386 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e6e6e7), color-stop(100%,#828386)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #e6e6e7 0%,#828386 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #e6e6e7 0%,#828386 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #e6e6e7 0%,#828386 100%); /* IE10+ */
+	background: linear-gradient(top, #e6e6e7 0%,#828386 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6e6e7', endColorstr='#828386',GradientType=0 ); /* IE6-9 */
+	border-radius: 10px; color: #58585a; font-size: 8.5pt; font-weight: bold; height: 100px; position: absolute; right: 35px; top: 35px; width: 240px;
+}
+body#login #login-box form { padding: 10px; }
+body#login #login-box p { line-height: 24px; }
+body#login #login-box form button { position: absolute; top: 10px; right: 10px; }
+body#login #login-box form input { font-size: 8.5pt; margin-top: 3px; width: 208px; }
+
+body#login #register { position: absolute; right: 35px; bottom: 70px; }
+body#login #register a { background: url(../images/button_register.png) no-repeat; color: #FFF; display: block; font-size: 16pt; font-weight: bold; height: 70px; line-height: 70px; text-indent: 40px; width: 240px; }
+body#login #register a:hover { text-decoration: none; }

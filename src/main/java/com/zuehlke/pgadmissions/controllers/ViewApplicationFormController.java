@@ -12,13 +12,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.Address;
-import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.utils.DTOUtils;
 
 @Controller
 @RequestMapping(value = { "application" })
@@ -44,21 +42,19 @@ public class ViewApplicationFormController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getViewApplicationPage(@RequestParam(required=false) String view, @RequestParam Integer id) {
 		RegisteredUser currentuser = (RegisteredUser) SecurityContextHolder
-				.getContext().getAuthentication().getDetails();
+		.getContext().getAuthentication().getDetails();
 		ApplicationForm applicationForm = applicationService
-				.getApplicationById(id);
+		.getApplicationById(id);
 		if (applicationForm == null || !currentuser.canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 		ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
-		
+
 		viewApplicationModel.setApplicationForm(applicationForm);
-		viewApplicationModel.setPersonalDetails(createPersonalDetails(applicationForm));
-		viewApplicationModel.setAddress(createAddress(applicationForm));
-		viewApplicationModel.setFunding(createFunding(applicationForm));
-		if (view != null && view.equals("errors")) {
-			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
-		}
+		viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(applicationForm));
+		viewApplicationModel.setAddress(DTOUtils.createAddress(applicationForm));
+		viewApplicationModel.setFunding(DTOUtils.createFunding(applicationForm));
+
 		if(!currentuser.hasQualifications()){
 			Qualification qualification = new Qualification();
 			qualification.setDegree("");
@@ -78,44 +74,14 @@ public class ViewApplicationFormController {
 				viewApplicationModel.setApplicationComments((applicationReviewService.getVisibleComments(applicationForm,currentuser)));
 			}
 		}
-		
+
 		if (currentuser.isInRole(Authority.APPLICANT)) {
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,
 					"model", viewApplicationModel);
 		}
 		if(view!=null) viewApplicationModel.setView(view);
-		
+
 		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model",
 				viewApplicationModel);
 	}
-
-	private Funding createFunding(ApplicationForm applicationForm) {
-		Funding funding = new Funding();
-		funding.setFunding(applicationForm.getFunding());
-		return funding;
-	}
-
-	private Address createAddress(ApplicationForm applicationForm) {
-		Address address = new Address();
-		if (applicationForm.getApplicant() != null) {
-			address.setAddress(applicationForm.getApplicant().getAddress());
-		}
-		return address;
-	}
-
-	private PersonalDetails createPersonalDetails(ApplicationForm applicationForm) {
-		PersonalDetails personalDetails = new PersonalDetails();
-		if(applicationForm.getApplicant() != null){
-			personalDetails.setFirstName(applicationForm.getApplicant().getFirstName());
-			personalDetails.setLastName(applicationForm.getApplicant().getLastName());
-			personalDetails.setEmail(applicationForm.getApplicant().getEmail());
-		}
-		return personalDetails;
-	}
-	
-	
-	
-
-	
-
 }

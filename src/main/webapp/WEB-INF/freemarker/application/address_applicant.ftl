@@ -11,6 +11,10 @@
                                 <span style="color:red;"><@spring.message  model.result.getFieldError('address').code /></span>                           
                             </#if>
                             
+                            <#if model.hasError('address.address')>                           
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('address.address').code /></span>                           
+                            </#if>
+                            
                             </div>
                             <br/>
                             <div class="buttons">

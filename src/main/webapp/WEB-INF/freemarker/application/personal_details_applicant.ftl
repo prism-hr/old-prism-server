@@ -50,6 +50,9 @@
                     	<#if model.hasError('firstName')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
                     	</#if>
+                    	<#if model.hasError('personalDetails.firstName')>                          
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('personalDetails.firstName').code /></span>                           
+                        </#if>
                     	<#else>
                     		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.firstName}" name="email" id="email" />	          
                     	</#if>
@@ -64,6 +67,9 @@
                     	<#if model.hasError('lastName')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
                     	</#if>
+                    	<#if model.hasError('personalDetails.lastName')>                          
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('personalDetails.lastName').code /></span>                           
+                        </#if>
                     <#else>
                     		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.lastName}" name="email" id="email" />	          
                     </#if>
@@ -183,6 +189,10 @@
 	                     	<#if model.hasError('email')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('email').code /></span>                    		
                     		</#if>
+                    		<#if model.hasError('personalDetails.email')>                         
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('personalDetails.email').code /></span>                           
+                            </#if>
+                    		
                     	<#else>
                     		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.email}" name="email" id="email" />	          
                     	</#if>

@@ -9,6 +9,7 @@ public class ApplicationPageModel extends PageModel {
 	private PersonalDetails personalDetails;
 	private Address address;
 	private Funding funding;
+	private String message;
 
 	public PersonalDetails getPersonalDetails() {
 		return personalDetails;
@@ -32,5 +33,13 @@ public class ApplicationPageModel extends PageModel {
 	
 	public void setFunding(Funding funding) {
 		this.funding = funding;
+	}
+	
+	public String getMessage() {
+		return message;
+	}
+	
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }

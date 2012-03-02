@@ -39,6 +39,7 @@
 			      <div class="content-box">
 			        <div class="content-box-inner">
 			
+			            <p style="color:red;">${model.message!}</p>
 						<div id="programme-details">
 			          
 				          	<div class="row">

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.Assert;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -17,15 +18,16 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
 @Controller
 @RequestMapping("/submit")
 public class SubmitApplicationFormController {
-	
+
 	private final ApplicationsService applicationService;
 	private final UserPropertyEditor userPropertyEditor;
 
-	
+
 	SubmitApplicationFormController() {
 		this(null, null);
 	}
@@ -36,14 +38,21 @@ public class SubmitApplicationFormController {
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 	}
-	
+
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView submitApplication(@ModelAttribute ApplicationForm applicationForm) {
+	public ModelAndView submitApplication(@ModelAttribute ApplicationForm applicationForm, BindingResult result) {
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		if (applicationForm == null || !user.equals(applicationForm.getApplicant()) || applicationForm.isSubmitted()) {
 			throw new ResourceNotFoundException();
 		}
+
+		ApplicationFormValidator validator = new ApplicationFormValidator();
+		validator.validate(applicationForm, result);
+		if (result.hasErrors()) {
+			return new ModelAndView("redirect:/application?view=errors", "id", applicationForm.getId());
+		}
+
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationService.save(applicationForm);
 		return new ModelAndView("redirect:/applications?submissionSuccess=true");
@@ -59,7 +68,7 @@ public class SubmitApplicationFormController {
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
 	}
-	
+
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(Integer applicationFormId) {
 		RegisteredUser approver = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();

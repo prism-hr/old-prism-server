@@ -55,7 +55,7 @@ public class ViewApplicationFormControllerTest {
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getViewApplicationPage(1, "");
+		controller.getViewApplicationPage("", 1);
 
 	}
 
@@ -70,7 +70,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.hasQualifications()).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock,applicationsServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage(1, "");
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
 		assertEquals("application/applicationForm_applicant", modelAndView.getViewName());
 	}
 
@@ -85,7 +85,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.hasQualifications()).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage(1, "");
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
 		PageModel model = (PageModel) modelAndView.getModel().get("model");
 		assertEquals(applicationForm, model.getApplicationForm());
 	}
@@ -105,7 +105,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.getAddress()).andReturn("london");
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage(1, "");
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
 		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
 		assertEquals("bob", model.getPersonalDetails().getFirstName());
 		assertEquals("Smith", model.getPersonalDetails().getLastName());
@@ -124,7 +124,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.hasQualifications()).andReturn(true);
 		EasyMock.replay(userMock, applicationsServiceMock);
 
-		ModelAndView modelAndView = controller.getViewApplicationPage(1, "");
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
 		PageModel model = (PageModel) modelAndView.getModel().get("model");
 		assertEquals(userMock, model.getUser());
 	}
@@ -144,7 +144,7 @@ public class ViewApplicationFormControllerTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		
-		controller.getViewApplicationPage(1, "");
+		controller.getViewApplicationPage("", 1);
 	}
 
 	@Test
@@ -160,7 +160,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.expect(applicationReviewServiceMock.getApplicationReviewsByApplication(submittedNonApprovedApplication)).andReturn(comments);
 		EasyMock.replay(applicationReviewServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage(2, "view");
+		ModelAndView modelAndView = controller.getViewApplicationPage("view", 2);
 		List<ApplicationReview> loadedComments = ((PageModel) modelAndView.getModelMap().get("model")).getApplicationComments();
 		assertEquals(2, loadedComments.size());
 		assertEquals(comments, loadedComments);
@@ -181,7 +181,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(applicationReviewServiceMock.getApplicationReviewsByApplication(submittedNonApprovedApplication)).andReturn(comments);
 		EasyMock.expect(applicationReviewServiceMock.getVisibleComments(submittedNonApprovedApplication, reviewer)).andReturn(Arrays.asList(applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved1));
 		EasyMock.replay(applicationsServiceMock, applicationReviewServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage(2, "view");
+		ModelAndView modelAndView = controller.getViewApplicationPage("view", 2);
 		List<ApplicationReview> loadedComments = ((PageModel) modelAndView.getModelMap().get("model")).getApplicationComments();
 		assertEquals(2, loadedComments.size());
 		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved2));
@@ -205,7 +205,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(applicationReviewServiceMock.getApplicationReviewsByApplication(submittedNonApprovedApplication)).andReturn(comments);
 		EasyMock.expect(applicationReviewServiceMock.getVisibleComments(submittedNonApprovedApplication, reviewer)).andReturn(Arrays.asList(applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved1));
 		EasyMock.replay(applicationsServiceMock, applicationReviewServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage(2, "view");
+		ModelAndView modelAndView = controller.getViewApplicationPage("view", 2);
 		List<ApplicationReview> loadedComments = ((PageModel) modelAndView.getModelMap().get("model")).getApplicationComments();
 		assertEquals(4, loadedComments.size());
 		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved2));

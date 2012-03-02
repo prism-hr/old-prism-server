@@ -9,6 +9,9 @@ import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -32,12 +35,13 @@ public class SubmitApplicationFormControllerTest {
 
 	@Test
 	public void shouldLoadApplicationFormByIdAndChangeSubmissionStatusToSubmitted() {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).funding("test").toApplicationForm();
 		form.setApplicant(student);
 		applicationsServiceMock.save(form);
 		EasyMock.replay(applicationsServiceMock);
+		BindingResult mappingResult = new BeanPropertyBindingResult(form, "applicationForm", true, 100);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
-		assertEquals("redirect:/applications?submissionSuccess=true", applicationController.submitApplication(form).getViewName());
+		assertEquals("redirect:/applications?submissionSuccess=true", applicationController.submitApplication(form, mappingResult).getViewName());
 		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
 		EasyMock.verify(applicationsServiceMock);
 
@@ -60,7 +64,7 @@ public class SubmitApplicationFormControllerTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);		
 
-		applicationController.submitApplication(form);
+		applicationController.submitApplication(form, null);
 	}
 
 
@@ -68,8 +72,8 @@ public class SubmitApplicationFormControllerTest {
 	public void shouldThrowResourceNotFoundExceptionIfSubmittedApplicationFormDoesNotExist() {
 		Integer id = 2;		
 		EasyMock.expect(applicationsServiceMock.getApplicationById(id)).andReturn(null);	
-		EasyMock.replay(applicationsServiceMock);		
-		applicationController.submitApplication(applicationsServiceMock.getApplicationById(id));
+		EasyMock.replay(applicationsServiceMock);
+		applicationController.submitApplication(applicationsServiceMock.getApplicationById(id), null);
 	}
 
 
@@ -82,8 +86,9 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 
 		form.setApplicant(student);
-
-		applicationController.submitApplication(form);
+		
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(null, "");
+		applicationController.submitApplication(form, mappingResult);
 	}
 
 	@Before

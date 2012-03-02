@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
@@ -26,6 +27,9 @@ import org.springframework.util.Assert;
 
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.Funding;
+import com.zuehlke.pgadmissions.dto.PersonalDetails;
 
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD)
@@ -203,4 +207,38 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public String getFunding() {
 		return funding;
 	}
+	
+	@Transient
+	private PersonalDetails personalDetails;
+	
+	@Transient
+	private Address address;
+	
+	@Transient
+	private Funding fund;
+	
+	public Address getAddress() {
+		return address;
+	}
+	
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+	
+	public Funding getFund() {
+		return fund;
+	}
+	
+	public void setFund(Funding fund) {
+		this.fund = fund;
+	}
+	
+	public PersonalDetails getPersonalDetails() {
+		return personalDetails;
+	}
+	
+	public void setPersonalDetails(PersonalDetails personalDetails) {
+		this.personalDetails = personalDetails;
+	}
 }
+

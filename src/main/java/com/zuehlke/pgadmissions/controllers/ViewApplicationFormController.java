@@ -42,7 +42,7 @@ public class ViewApplicationFormController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getViewApplicationPage(@RequestParam Integer id, @RequestParam(required=false) String view) {
+	public ModelAndView getViewApplicationPage(@RequestParam(required=false) String view, @RequestParam Integer id) {
 		RegisteredUser currentuser = (RegisteredUser) SecurityContextHolder
 				.getContext().getAuthentication().getDetails();
 		ApplicationForm applicationForm = applicationService
@@ -56,6 +56,9 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setPersonalDetails(createPersonalDetails(applicationForm));
 		viewApplicationModel.setAddress(createAddress(applicationForm));
 		viewApplicationModel.setFunding(createFunding(applicationForm));
+		if (view.equals("errors")) {
+			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
+		}
 		if(!currentuser.hasQualifications()){
 			Qualification qualification = new Qualification();
 			qualification.setDegree("");

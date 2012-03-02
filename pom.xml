@@ -177,7 +177,7 @@
 				<configuration>
 					<scriptdirectory>src/sql/change_scripts</scriptdirectory>
 					<driver>com.mysql.jdbc.Driver</driver>
-					<url>jdbc:mysql://${sql.url}/pgadmissions</url>
+					<url>jdbc:mysql://${sql.host}/${sql.db}</url>
 					<userid>pgadmissions</userid>
 					<password>pgadmissions</password>
 					<dbms>mysql</dbms>
@@ -220,11 +220,11 @@
 						<id>default-cli</id>
 						<configuration>
 							<tasks>
-								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.url}"
+								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}"
 									userid="root" password="root" src="src/sql/setup/dropdatabase.sql" />
-								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.url}"
+								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}"
 									userid="root" password="root" src="src/sql/setup/createdatabase.sql" />
-								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.url}/pgadmissions"
+								<sql driver="com.mysql.jdbc.Driver" url="jdbc:mysql://${sql.host}/pgadmissions"
 									userid="pgadmissions" password="pgadmissions"
 									src="src/sql/setup/createSchemaVersionTable.mysql.sql" />
 							</tasks>
@@ -260,13 +260,15 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<sql.url>localhost</sql.url>
+				<sql.host>localhost</sql.host>
+				<sql.db>pgadmissions</sql.db>
 			</properties>
 		</profile>
 		<profile>
 			<id>jenkins</id>
-			<properties>
-				<sql.url>192.168.11.115</sql.url>
+			<properties>		
+				<sql.host>192.168.11.115</sql.host>
+				<sql.db>pgadmissions</sql.db>
 			</properties>
 			<build>
 				<plugins>
@@ -283,6 +285,36 @@
 										<delete
 											file="${project.build.outputDirectory}/environment.properties" />
 										<copy file="src/environments/environment.sit.properties"
+											tofile="${project.build.outputDirectory}/environment.properties" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>uat</id>
+			<properties>
+				<sql.host>192.168.11.115</sql.host>
+				<sql.db>pgadmissions_uat</sql.db>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>test-compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete
+											file="${project.build.outputDirectory}/environment.properties" />
+										<copy file="src/environments/environment.uat.properties"
 											tofile="${project.build.outputDirectory}/environment.properties" />
 									</tasks>
 								</configuration>

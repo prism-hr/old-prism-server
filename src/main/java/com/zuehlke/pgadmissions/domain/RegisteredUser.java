@@ -21,7 +21,6 @@ import org.springframework.util.Assert;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
-import com.zuehlke.pgadmissions.dto.QualificationDTO;
 
 @Entity(name = "REGISTERED_USER")
 @Access(AccessType.FIELD)

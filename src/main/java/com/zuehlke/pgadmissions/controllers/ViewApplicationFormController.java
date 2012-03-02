@@ -56,7 +56,7 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setPersonalDetails(createPersonalDetails(applicationForm));
 		viewApplicationModel.setAddress(createAddress(applicationForm));
 		viewApplicationModel.setFunding(createFunding(applicationForm));
-		if (view.equals("errors")) {
+		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}
 		if(!currentuser.hasQualifications()){

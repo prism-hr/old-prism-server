@@ -12,6 +12,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -52,6 +54,8 @@ public class ViewApplicationFormController {
 		
 		viewApplicationModel.setApplicationForm(applicationForm);
 		viewApplicationModel.setPersonalDetails(createPersonalDetails(applicationForm));
+		viewApplicationModel.setAddress(createAddress(applicationForm));
+		viewApplicationModel.setFunding(createFunding(applicationForm));
 		if(!currentuser.hasQualifications()){
 			Qualification qualification = new Qualification();
 			qualification.setDegree("");
@@ -82,6 +86,20 @@ public class ViewApplicationFormController {
 				viewApplicationModel);
 	}
 
+	private Funding createFunding(ApplicationForm applicationForm) {
+		Funding funding = new Funding();
+		funding.setFunding(applicationForm.getFunding());
+		return funding;
+	}
+
+	private Address createAddress(ApplicationForm applicationForm) {
+		Address address = new Address();
+		if (applicationForm.getApplicant() != null) {
+			address.setAddress(applicationForm.getApplicant().getAddress());
+		}
+		return address;
+	}
+
 	private PersonalDetails createPersonalDetails(ApplicationForm applicationForm) {
 		PersonalDetails personalDetails = new PersonalDetails();
 		if(applicationForm.getApplicant() != null){
@@ -91,6 +109,8 @@ public class ViewApplicationFormController {
 		}
 		return personalDetails;
 	}
+	
+	
 	
 
 	

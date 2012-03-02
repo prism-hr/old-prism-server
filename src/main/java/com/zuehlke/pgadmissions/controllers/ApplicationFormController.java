@@ -21,9 +21,11 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
+import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
@@ -31,6 +33,7 @@ import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
+import com.zuehlke.pgadmissions.validators.FundingValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 
@@ -80,6 +83,12 @@ public class ApplicationFormController {
 	public ModelAndView editPersonalDetails(@ModelAttribute PersonalDetails personalDetails, @RequestParam Integer id, @RequestParam Integer appId,
 			BindingResult result, ModelMap modelMap) {
 
+		ApplicationForm application = applicationService.getApplicationById(appId);
+		
+		if (application.isSubmitted()) {
+			throw new CannotUpdateApplicationException();
+		}
+		
 		PersonalDetailsValidator personalDetailsValidator = new PersonalDetailsValidator();
 		personalDetailsValidator.validate(personalDetails, result);
 
@@ -97,8 +106,7 @@ public class ApplicationFormController {
 
 		ApplicationPageModel model = new ApplicationPageModel();
 		model.setUser(user);
-		ApplicationForm applicationForm = applicationService.getApplicationById(appId);
-		model.setApplicationForm(applicationForm);
+		model.setApplicationForm(application);
 		model.setPersonalDetails(personalDetails);
 		model.setResult(result);
 		modelMap.put("model", model);
@@ -116,16 +124,7 @@ public class ApplicationFormController {
 		ApplicationForm application = applicationService.getApplicationById(appId);
 		RegisteredUser user = userService.getUser(id);
 		
-//		if(!user.hasQualifications()){
-//			Qualification qualification = new Qualification();
-//			qualification.setDegree("");
-//			qualification.setDate_taken("");
-//			qualification.setGrade("");
-//			qualification.setInstitution("");
-//			userService.saveQualification(qualification);
-//		}
 		if (!result.hasErrors()) {
-//		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 			qual.setApplicant(user);
 			qual.setApplication(application);
 			userService.saveQualification(qual);
@@ -157,7 +156,36 @@ public class ApplicationFormController {
 		return new ApplicationForm();
 	}
 
-	
+	@RequestMapping(value = "/addFunding", method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+		ApplicationForm application = applicationService.getApplicationById(appId);
+		
+		if (application.isSubmitted()) {
+			throw new CannotUpdateApplicationException();
+		}
+		
+		FundingValidator fundingValidator = new FundingValidator();
+		fundingValidator.validate(fund, result);
+		if (!result.hasErrors()) {
+			application.setFunding(fund.getFunding());
+			applicationService.save(application);
+		}
+		
+		RegisteredUser user = userService.getUser(id);
+
+		ApplicationPageModel model = new ApplicationPageModel();
+		model.setUser(user);
+		ApplicationForm applicationForm = application;
+		model.setApplicationForm(applicationForm);
+		model.setFunding(fund);
+		model.setResult(result);
+		modelMap.put("model", model);
+		
+		return new ModelAndView("application/funding_applicant", modelMap);
+	}
+
+
 	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);
@@ -166,19 +194,31 @@ public class ApplicationFormController {
 
 	@RequestMapping(value = "/editAddress", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result) {
+	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+		ApplicationForm application = applicationService.getApplicationById(appId);
+
+		if (application.isSubmitted()) {
+			throw new CannotUpdateApplicationException();
+		}
+		
 		RegisteredUser user = userService.getUser(id);
+		
 		AddressValidator addressValidator = new AddressValidator();
 		addressValidator.validate(addr, result);
 		if (!result.hasErrors()) {
 			user.setAddress(addr.getAddress());
 			userService.save(user);
 		}
-		PageModel model = new PageModel();
-		model.setApplicationForm(applicationService.getApplicationById(appId));
+		
+		ApplicationPageModel model = new ApplicationPageModel();
 		model.setUser(user);
-
-		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, "model", model);
+		ApplicationForm applicationForm = application;
+		model.setApplicationForm(applicationForm);
+		model.setAddress(addr);
+		model.setResult(result);
+		modelMap.put("model", model);
+		
+		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, modelMap);
 	}
 
 	

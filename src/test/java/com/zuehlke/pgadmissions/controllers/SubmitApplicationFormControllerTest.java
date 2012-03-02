@@ -44,7 +44,17 @@ public class SubmitApplicationFormControllerTest {
 		assertEquals("redirect:/applications?submissionSuccess=true", applicationController.submitApplication(form, mappingResult).getViewName());
 		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
 		EasyMock.verify(applicationsServiceMock);
-
+	}
+	
+	@Test
+	public void shouldReLoadApplicationFormWhenIncomplete() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		form.setApplicant(student);
+		applicationsServiceMock.save(form);
+		EasyMock.replay(applicationsServiceMock);
+		BindingResult mappingResult = new BeanPropertyBindingResult(form, "applicationForm", true, 100);
+		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
+		assertEquals("redirect:/application?view=errors", applicationController.submitApplication(form, mappingResult).getViewName());
 	}
 
 	@Test(expected=ResourceNotFoundException.class)

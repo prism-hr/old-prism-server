@@ -1,7 +1,7 @@
 $(document).ready(function(){
 	
 	$('#personalDetailsSaveButton').on("click", function(){
-		$.post("/pgadmissions/apply/editPersonalDetails",
+		$.post("/pgadmissions/update/editPersonalDetails",
 				{ 
 					firstName: $("#firstName").val(), 
 					lastName: $("#lastName").val(), 

@@ -22,6 +22,8 @@ public class ApplicationFormBuilder {
 	
 	private Project project;
 	
+	private String funding;
+	
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
 	
 	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
@@ -68,6 +70,11 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
+	public ApplicationFormBuilder funding(String funding) {
+		this.funding = funding;
+		return this;
+	}
+	
 	public ApplicationForm toApplicationForm() {
 		ApplicationForm application = new ApplicationForm();	
 		application.setId(id);		
@@ -80,6 +87,7 @@ public class ApplicationFormBuilder {
 		application.setProject(project);
 		application.setSubmissionStatus(submissionStatus);
 		application.setApplicationTimestamp(appDate);
+		application.setFunding(funding);
 		return application;
 	}
 }

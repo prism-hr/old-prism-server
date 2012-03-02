@@ -210,7 +210,9 @@
 
               	<div class="buttons">
                   <a id="close-section-button"class="button blue" href="#">Close</a>
-                  <a class="button blue" id="personalDetailsSaveButton">Save</a>
+                  <#if !model.applicationForm.isSubmitted()>
+                    <a class="button blue" id="personalDetailsSaveButton">Save</a>
+                  </#if>
                 </div>
            </form>
 	</div>

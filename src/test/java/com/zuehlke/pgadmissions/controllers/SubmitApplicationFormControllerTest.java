@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -38,10 +39,12 @@ public class SubmitApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).funding("test").toApplicationForm();
 		form.setApplicant(student);
 		applicationsServiceMock.save(form);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
-		BindingResult mappingResult = new BeanPropertyBindingResult(form, "applicationForm", true, 100);
+		ApplicationFormDetails applDetails = new ApplicationFormDetails();
+		BindingResult mappingResult = new BeanPropertyBindingResult(applDetails, "applicationFormDetails", true, 100);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
-		assertEquals("redirect:/applications?submissionSuccess=true", applicationController.submitApplication(form, mappingResult).getViewName());
+		assertEquals("redirect:/applications?submissionSuccess=true", applicationController.submitApplication(applDetails, 2, mappingResult).getViewName());
 		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
 		EasyMock.verify(applicationsServiceMock);
 	}
@@ -51,10 +54,12 @@ public class SubmitApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		form.setApplicant(student);
 		applicationsServiceMock.save(form);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
-		BindingResult mappingResult = new BeanPropertyBindingResult(form, "applicationForm", true, 100);
+		ApplicationFormDetails applDetails = new ApplicationFormDetails();
+		BindingResult mappingResult = new BeanPropertyBindingResult(applDetails, "applicationFormDetails", true, 100);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
-		assertEquals("redirect:/application?view=errors", applicationController.submitApplication(form, mappingResult).getViewName());
+		assertEquals("redirect:/application?view=errors", applicationController.submitApplication(applDetails, 2, mappingResult).getViewName());
 	}
 
 	@Test(expected=ResourceNotFoundException.class)
@@ -74,7 +79,7 @@ public class SubmitApplicationFormControllerTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);		
 
-		applicationController.submitApplication(form, null);
+		applicationController.submitApplication(new ApplicationFormDetails(), 2, null);
 	}
 
 
@@ -83,7 +88,7 @@ public class SubmitApplicationFormControllerTest {
 		Integer id = 2;		
 		EasyMock.expect(applicationsServiceMock.getApplicationById(id)).andReturn(null);	
 		EasyMock.replay(applicationsServiceMock);
-		applicationController.submitApplication(applicationsServiceMock.getApplicationById(id), null);
+		applicationController.submitApplication(new ApplicationFormDetails(), 2, null);
 	}
 
 
@@ -98,7 +103,7 @@ public class SubmitApplicationFormControllerTest {
 		form.setApplicant(student);
 		
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(null, "");
-		applicationController.submitApplication(form, mappingResult);
+		applicationController.submitApplication(new ApplicationFormDetails(), 2, mappingResult);
 	}
 
 	@Before

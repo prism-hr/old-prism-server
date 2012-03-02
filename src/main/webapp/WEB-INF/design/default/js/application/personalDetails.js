@@ -13,4 +13,7 @@ $(document).ready(function(){
 				    $('#personalDetailsSection').html(data);
 				  });
 	});
+	
+	// To make uncompleted functionalities disable.
+	$(".disabledEle").attr("disabled", "disabled");
 });

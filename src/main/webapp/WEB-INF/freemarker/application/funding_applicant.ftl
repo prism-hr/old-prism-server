@@ -10,6 +10,11 @@
                              <#if model.hasError('funding')>                           
                                 <span style="color:red;"><@spring.message  model.result.getFieldError('funding').code /></span>                           
                             </#if>
+                            
+                            <#if model.hasError('funding.funding')>                           
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('funding.funding').code /></span>                           
+                            </#if>
+                            
                             </div>
                             <br/>
                             <div class="buttons">

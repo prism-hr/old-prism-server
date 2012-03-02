@@ -49,7 +49,7 @@
 				            
 				          	<div class="row half">
 				            	<label>Application Number</label>
-				              <input id="applicationNumber" disabled size="20" value="${model.applicationForm.id}" />
+				              <input id="applicationNumber" disabled size="20" value="${model.applicationForm.id?string("######")}" />
 				            </div>
 				            
 			          	</div>
@@ -119,7 +119,7 @@
 			          <#if !model.applicationForm.isSubmitted() && model.user.isInRole('APPLICANT')>
 			             <a id="submitButton" class="button">Submit</a>
 			             <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
-			          	      <input type="hidden" id="applicationFormId" name="applicationFormId" value="${model.applicationForm.id}"/>
+			          	      <input type="hidden" id="applicationFormId" name="applicationFormId" value="${model.applicationForm.id?string("######")}"/>
 			             </form>
 			    	 </#if>
 			        </div><!-- .content-box-inner -->

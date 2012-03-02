@@ -69,7 +69,7 @@
 		            
 		          	<div class="row half">
 		            	<label>Application Number</label>
-		              <input disabled size="20" value="${model.applicationForm.id!}" />
+		              <input disabled size="20" value="${model.applicationForm.id?string("######")!}" />
 		            </div>
 		          </div>
 				<div id ="actions">
@@ -87,18 +87,18 @@
 		            </div>
 		        <#if model.applicationForm.isReviewable()  && (model.user.isInRole('ADMINISTRATOR')||model.user.isInRole('REVIEWER') )>
 					<form  action="<@spring.url '/reviewer/reviewerSuccess'/>" method = "POST">		                    
-			            <input type="hidden" name="id" value="${model.applicationForm.id}"/>
+			            <input type="hidden" name="id" value="${model.applicationForm.id?string("######")}"/>
 			          	<div class="row">
 			            	<label>Assign Reviewer</label>
 			            	<select name="reviewers" multiple="multiple">
 					        
 						        <#list model.reviewers as reviewer>
-						            <option value="${reviewer.id}">${reviewer.firstName} ${reviewer.lastName}</option>               
+						            <option value="${reviewer.id?string("######")}">${reviewer.firstName} ${reviewer.lastName}</option>               
 						        </#list>
 				             <select>
 						        
 						        <#list model.applicationForm.reviewers as reviewer>
-						             <input type="hidden" name="reviewers" value="${reviewer.id}"/>
+						             <input type="hidden" name="reviewers" value="${reviewer.id?string("######")}"/>
                                 </#list>
 			            	
 			            </div>
@@ -113,7 +113,7 @@
 
 				<#if model.applicationForm.isReviewable() && (model.user.isInRole('ADMINISTRATOR')|| model.user.isInRole('APPROVER')) >
 					<form id="approvalForm" action="<@spring.url '/approveOrReject'/>" method = "POST">
-						<input type="hidden" name="id" value="${model.applicationForm.id!}"/>
+						<input type="hidden" name="id" value="${model.applicationForm.id?string("######")!}"/>
 			          	<div class="row">
 			          		<#if model.user.isInRole('APPROVER')>
 			            		<label><input type="radio" name="decision" value="APPROVED"/> Approve</label>

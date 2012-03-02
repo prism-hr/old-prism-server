@@ -39,7 +39,7 @@
 					<td> ${project.title} </td>
 					<td> ${project.description} </td>
 					<td> ${project.program.title} </td>
-					<td> <button id="${project.id}" class="apply">Apply now</button></td>
+					<td> <button id="${project.id?string("######")}" class="apply">Apply now</button></td>
 				</tr>
 	      	</#list>
 	      	</table>

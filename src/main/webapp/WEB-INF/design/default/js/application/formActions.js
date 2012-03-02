@@ -97,19 +97,7 @@ $(document).ready(function(){
 		
 	});
 
-	/* 4. For Applicant, On click of the close button, of personal details section, 
-	 * the section should be closed */
-	
-	$('#close-section-button').click(function(){
-		
-		//alert("...");
-		//$('#personal-details-section').css("display", "none");
-		
-		$('#personal-details-section').prev("h2").trigger("click");
-		
-		return false;
-	});
-	
+
 	
 	
 	

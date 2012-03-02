@@ -37,8 +37,8 @@
 			</tbody>
 		</table>
 		<form>
-				<input type="hidden" name="id" id="id" value="${model.user.id}"/>
-				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id}"/>
+				<input type="hidden" name="id" id="id" value="${model.user.id?string("######")}"/>
+				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id?string("######")}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
               	<div>
                 	<div class="row">
@@ -220,7 +220,7 @@
                 </div>
 
               	<div class="buttons">
-                  <a id="close-section-button"class="button blue" href="#">Close</a>
+                  <a id="close-section-button"class="button blue">Close</a>
                   <#if !model.applicationForm.isSubmitted()>
                     <a class="button blue" id="personalDetailsSaveButton">Save</a>
                   </#if>

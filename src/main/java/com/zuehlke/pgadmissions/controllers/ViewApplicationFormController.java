@@ -59,9 +59,9 @@ public class ViewApplicationFormController {
 		if(!currentuser.hasQualifications()){
 			Qualification qualification = new Qualification();
 			qualification.setDegree("");
-			qualification.setDate_taken("2006/02/02");
 			qualification.setGrade("");
 			qualification.setInstitution("");
+			qualification.setDate_taken("");
 			qualification.setApplicant(currentuser);
 			qualification.setApplication(applicationForm);
 			applicationReviewService.saveQualification(qualification);

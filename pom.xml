@@ -144,14 +144,7 @@
 	</dependencies>
 	<build>
 		<finalName>pgadmissions</finalName>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<includes>
-					<include>jdbc.properties</include>
-				</includes>
-				<filtering>true</filtering>
-			</resource>
+		<resources>			
 			<resource>
 				<directory>src/main/resources</directory>
 				<excludes>

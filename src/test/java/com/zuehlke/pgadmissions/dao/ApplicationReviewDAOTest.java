@@ -5,6 +5,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -69,5 +73,45 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase{
 		assertEquals(review, reloadedReview);
 		assertEquals(review.getUser(), user);
 		assertEquals(review.getComment(), reloadedReview.getComment());
+	}
+	
+	
+
+	@Test
+	public void shouldGetReviewByApplicationForm(){
+
+		
+		ApplicationForm applicationOne = new ApplicationFormBuilder().id(1).project(project).applicant(user).toApplicationForm();
+		ApplicationForm applicationTwo  = new ApplicationFormBuilder().id(1).project(project).applicant(user).toApplicationForm();
+		save(applicationOne, applicationTwo);
+		flushAndClearSession();
+		
+		ApplicationReview reviewOne = new ApplicationReview();
+		reviewOne.setApplication(applicationOne);
+		reviewOne.setComment("Excellent Application!!!");
+		reviewOne.setUser(user);
+
+		ApplicationReview reviewTwo = new ApplicationReview();
+		reviewTwo.setApplication(applicationTwo);
+		reviewTwo.setComment("Excellent Application!!!");
+		reviewTwo.setUser(user);
+		
+		
+		ApplicationReview reviewThree = new ApplicationReview();
+		reviewThree.setApplication(applicationOne);
+		reviewThree.setComment("Excellent Application!!!");
+		reviewThree.setUser(user);
+		
+		
+		save(reviewOne, reviewTwo, reviewThree);
+		
+		flushAndClearSession();
+		
+		List<ApplicationReview> reviewsByApplication = applicationReviewDAO.getReviewsByApplication(applicationOne);
+		
+		assertEquals(2, reviewsByApplication.size());
+		assertTrue(reviewsByApplication.containsAll(Arrays.asList(reviewOne, reviewThree)));
+		
+		
 	}
 }

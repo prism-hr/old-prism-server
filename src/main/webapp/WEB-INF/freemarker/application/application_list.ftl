@@ -71,9 +71,9 @@
 					            </thead>
 					            <tbody>
 					            	<#list model.applications as application>
-							        	<tr id="row_${application.id}" name="applicationRow">
+							        	<tr id="row_${application.id?string("######")}" name="applicationRow">
 							                <td><a class="row-arrow" href="#">&gt;</a></td>
-							                <td name="idColumn">${application.id}</td>
+							                <td name="idColumn">${application.id?string("######")}</td>
 							                <td>${application.applicant.firstName}</td>
 							                <td>${application.applicant.lastName}</td>
 							                <td>${application.project.program.code} - ${application.project.program.title}</td>	
@@ -85,7 +85,7 @@
 							               	     <td name="statusColumn">${application.submissionStatus.displayValue()}</td>
 							              	</#if>
 							                <td>
-							                	<select class="actionType" name="app_[${application.id}]">
+							                	<select class="actionType" name="app_[${application.id?string("######")}]">
 							                		<option>Select...</option>
 							                		<option value="view">View</option>
 							                	    <#if (model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')) && application.isReviewable()>

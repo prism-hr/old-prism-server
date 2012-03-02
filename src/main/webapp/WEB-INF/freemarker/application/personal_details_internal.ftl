@@ -21,7 +21,7 @@
     <div id="personal-details-section" class="open">
 		<form method="post" method = "GET">
                 <input type ="hidden" id="view-type-personal-form" value="${viewType}"/>
-                <input type="hidden" name="id" value="${model.applicationForm.id}"/>
+                <input type="hidden" name="id" value="${model.applicationForm.id?string("######")}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
               	
               	<!-- Basic Details -->
@@ -194,7 +194,7 @@
                 <hr />
             </div>
 		
-			<input type ="hidden" name="id" value="${model.applicationForm.id}"/>
+			<input type ="hidden" name="id" value="${model.applicationForm.id?string("######")}"/>
 			<input type ="hidden" id="view-type-comment-form" value="${viewType}"/>
 			<input type ="hidden" id="prev-comment-div" value="${comCount}"/>
 			<input id="commentField" type="hidden" name="comment" value=""/>

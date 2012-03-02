@@ -37,7 +37,11 @@ public class ApproveRejectController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView applyDecision(@ModelAttribute ApplicationForm applicationForm, @RequestParam ApprovalStatus decision) {
 		RegisteredUser approver = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		if(!approver.isInRole(Authority.APPROVER) ){
+		if(!(approver.isInRole(Authority.APPROVER) || approver.isInRole(Authority.ADMINISTRATOR))){
+			throw new ResourceNotFoundException();
+		}
+		
+		if (approver.isInRole(Authority.ADMINISTRATOR) && decision == ApprovalStatus.APPROVED){
 			throw new ResourceNotFoundException();
 		}
 		if(!applicationForm.isReviewable()){

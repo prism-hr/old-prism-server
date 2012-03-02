@@ -1,17 +1,6 @@
 $(document).ready(function(){
-$('#addressSaveButton').click(function(){
-		$.post("/pgadmissions/apply/editAddress", { address: $("#address").val(), 
-								id: $("#id").val(), 
-								appId: $("#appId").val()
-								},
-				   function(data) {
-					alert(data);
-				     $('#addressSection').html(data);
-				   });
-	});
-
 	$('#qualificationsSaveButton').click(function(){
-		$.post("/pgadmissions/apply/editQualification", { degree: $("#degree").val(), 
+		$.post("/pgadmissions/update/editQualification", { degree: $("#degree").val(), 
 			id: $("#id").val(), 
 			institution: $("#institution").val(), 
 			date_taken: $("#date_taken").val(), 

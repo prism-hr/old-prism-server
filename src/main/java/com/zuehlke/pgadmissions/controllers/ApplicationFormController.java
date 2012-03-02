@@ -29,7 +29,7 @@ public class ApplicationFormController {
 	ApplicationFormController() {
 		this(null, null, null);
 	}
-
+	
 	@Autowired
 	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService,
 			UserPropertyEditor userPropertyEditor) {

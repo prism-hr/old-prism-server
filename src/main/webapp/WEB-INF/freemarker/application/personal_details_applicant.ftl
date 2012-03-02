@@ -45,21 +45,28 @@
                   	<label class="label">First Name</label>
                     <span class="hint"></span>
                     <div class="field">                    	
+                    <#if !model.applicationForm.isSubmitted()>
                     	<input class="full" type="text" value="${model.personalDetails.firstName}" name="firstName" id="firstName"/>
                     	<#if model.hasError('firstName')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
                     	</#if>
-                    
+                    	<#else>
+                    		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.firstName}" name="email" id="email" />	          
+                    	</#if>
                     </div>
                   </div>
                 	<div class="row">
                   	<label class="label">Last Name</label>
                     <span class="hint"></span>
                     <div class="field">
+                     <#if !model.applicationForm.isSubmitted()>
                     	<input class="full" type="text" value="${model.personalDetails.lastName}" name="lastName" id="lastName"/>
                     	<#if model.hasError('lastName')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
                     	</#if>
+                    <#else>
+                    		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.lastName}" name="email" id="email" />	          
+                    </#if>
                     </div>
                   </div>
                 	<div class="row">
@@ -171,10 +178,14 @@
                 		<span class="label">Email</span>
                     <span class="hint"></span>
                     <div class="field">
-	                    <input class="full" type="email" value="${model.personalDetails.email}" name="email" id="email"/>
+                        <#if !model.applicationForm.isSubmitted()>
+	                    	<input class="full" type="email" value="${model.personalDetails.email}" name="email" id="email" />	                    
 	                     	<#if model.hasError('email')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('email').code /></span>                    		
                     		</#if>
+                    	<#else>
+                    		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.email}" name="email" id="email" />	          
+                    	</#if>
                       <a class="button disabledEle" href="#" style="width: 110px;">Add Email</a>
                     </div>
                   </div>
@@ -216,5 +227,6 @@
                 </div>
            </form>
 	</div>
+	
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>		
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>

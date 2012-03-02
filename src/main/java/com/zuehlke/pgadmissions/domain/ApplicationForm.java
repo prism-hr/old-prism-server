@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -23,7 +24,6 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
-import org.springframework.util.Assert;
 
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -177,8 +177,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return approvalStatus != null;
 	}
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APPLICATION_REVIEW", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "user_id") })
+	@OneToMany(mappedBy="application")
 	@Access(AccessType.PROPERTY)
 	public List<ApplicationReview> getApplicationComments() {
 		return applicationComments;
@@ -186,9 +185,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setApplicationComments(List<ApplicationReview> applicationComments) {
 		
-		for (ApplicationReview applicationReview : applicationComments) {
+		/*for (ApplicationReview applicationReview : applicationComments) {
 			Assert.notNull(applicationReview.getComment());
-		}
+		}*/
 		if(this.applicationComments.size() == applicationComments.size() && this.applicationComments.containsAll(applicationComments)){
 			return;
 		}

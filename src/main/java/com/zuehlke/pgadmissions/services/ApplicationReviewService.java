@@ -49,9 +49,10 @@ public class ApplicationReviewService {
 	public List<ApplicationReview> getVisibleComments(
 			ApplicationForm application, RegisteredUser user) {
 		List<ApplicationReview> visibleComments = new ArrayList<ApplicationReview>();
-		for (ApplicationReview comment : getApplicationReviewsByApplication(application)){
-			if (comment.getUser().isInRole(Authority.REVIEWER) && (comment.getUser().getId() != user.getId())){
-				break;
+		List<ApplicationReview> allReviewsForApplication = getApplicationReviewsByApplication(application);
+		for (ApplicationReview comment : allReviewsForApplication){
+			if (comment.getUser().isInRole(Authority.REVIEWER) && (!comment.getUser().equals(user))){
+				continue;
 			}
 			else{
 				visibleComments.add(comment);

@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 
 
 @Entity(name="APPLICATION_REVIEW")
@@ -46,7 +45,7 @@ public class ApplicationReview extends DomainObject<Integer>{
 	@JoinColumn(name="user_id")
 	private RegisteredUser user = null;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application = null;
 	

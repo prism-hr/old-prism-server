@@ -77,7 +77,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock,applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
-		assertEquals("private/pgStudent/form/main_application_page", modelAndView.getViewName());
+		assertEquals("private/pgStudents/form/main_application_page", modelAndView.getViewName());
 	}
 
 	@Ignore

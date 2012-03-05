@@ -68,4 +68,10 @@ public class ApplicationsService {
 		return applicationFormDAO.getQualification(id);
 	}
 
+	@Transactional
+	public List<Qualification> getQualificationsByApplication(
+			ApplicationForm applicationForm) {
+		return applicationFormDAO.getQualificationsByApplication(applicationForm);
+	}
+
 }

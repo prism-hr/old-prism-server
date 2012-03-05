@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,12 +22,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
+import org.springframework.util.Assert;
 
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
@@ -69,6 +71,27 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToMany(mappedBy="application")
 	@Cascade(CascadeType.ALL)
 	private List<Address> addresses = new ArrayList<Address>();
+
+	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
+	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+	@Access(AccessType.PROPERTY)
+	@JoinColumn(name = "application_form_id")
+	private List<Qualification> qualifications = new ArrayList<Qualification>();
+	
+	public List<Qualification> getQualifications() {
+		return qualifications;
+	}
+	
+	public void setQualifications(List<Qualification> qualifications) {	
+		for (Qualification qualification : qualifications) {
+			Assert.notNull(qualification.getDegree());
+		}
+		if(this.qualifications.size() == qualifications.size() && this.qualifications.containsAll(qualifications)){
+			return;
+		}
+		this.qualifications.clear();
+		this.qualifications.addAll(qualifications);
+	}
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
@@ -216,5 +239,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public void setAddresses(List<Address> addresses) {
 		this.addresses = addresses;
 	}
+	
+	public boolean hasQualifications(){
+		return !qualifications.isEmpty();
+	}
+
+
 }
 

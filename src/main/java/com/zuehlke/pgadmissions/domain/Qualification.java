@@ -9,6 +9,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import org.hibernate.annotations.Cascade;
+
 @Entity(name="APPLICATION_FORM_QUALIFICATION")
 @Access(AccessType.FIELD) 
 public class Qualification extends DomainObject<Integer>{
@@ -24,12 +26,10 @@ public class Qualification extends DomainObject<Integer>{
 	private String institution;
 	private String grade;
 	
-	@ManyToOne
-	@JoinColumn(name="applicant_id")
-	private RegisteredUser applicant = null;
 	
 	@ManyToOne
-	@JoinColumn(name="application_form_id")
+	@Cascade( { org.hibernate.annotations.CascadeType.ALL } )
+	@JoinColumn(name="application_form_id", insertable=false, updatable=false, nullable=false)
 	private ApplicationForm application = null;
 	
 	public String getDegree() {
@@ -62,14 +62,6 @@ public class Qualification extends DomainObject<Integer>{
 
 	public void setGrade(String grade) {
 		this.grade = grade;
-	}
-
-	public RegisteredUser getApplicant() {
-		return applicant;
-	}
-
-	public void setApplicant(RegisteredUser applicant) {
-		this.applicant = applicant;
 	}
 
 	public ApplicationForm getApplication() {

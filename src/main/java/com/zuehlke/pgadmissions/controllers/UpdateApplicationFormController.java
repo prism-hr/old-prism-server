@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -42,18 +44,21 @@ public class UpdateApplicationFormController {
 	private final ApplicationsService applicationService;
 	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;
+	private QualificationValidator qualificationValidator;
 
 	
 	UpdateApplicationFormController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService,
-			UserPropertyEditor userPropertyEditor) {
+			UserPropertyEditor userPropertyEditor, QualificationValidator qualificationValidator) {
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.userService = userService;
+		this.qualificationValidator = qualificationValidator;
+		
 	}
 	
 	@RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
@@ -94,32 +99,35 @@ public class UpdateApplicationFormController {
 	}
 	
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-	@Transactional
-	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer id, @RequestParam Integer appId, @RequestParam Integer qualId, BindingResult result) {
+	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer appId, BindingResult result) {
+		qualificationValidator.validate(qual, result);
 		ApplicationForm application = applicationService.getApplicationById(appId);
+		if (!result.hasErrors()) {
+			
 		if (application.isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
-		
-		RegisteredUser user = userService.getUser(id);
-		Qualification qualification = applicationService.getQualificationById(qualId);
-		QualificationValidator qualificationValidator = new QualificationValidator();
-		qualificationValidator.validate(qual, result);
-		
-		if (!result.hasErrors()) {
+		Qualification qualification;
+		if(qual.getQualId()== null){
+			qualification = newQualification();
+			qualification.setApplication(application);
+			application.getQualifications().add(qualification);
+		}
+		else{
+			qualification = applicationService.getQualificationById(qual.getQualId());
+		}
 			qualification.setDate_taken(qual.getDate_taken());
 			qualification.setDegree(qual.getDegree());
 			qualification.setGrade(qual.getGrade());
 			qualification.setInstitution(qual.getInstitution());
-			userService.saveQualification(qualification);
-//			user.getQualifications().add(qualifichation); //hibernate exception: field degree doesn't have a default value
-			userService.save(user);
+			
+			applicationService.save(application);
 		}
 		
 		
 		PageModel model = new PageModel();
 		model.setApplicationForm(application);
-		model.setUser(user);
+		model.setUser(((RegisteredUser)SecurityContextHolder.getContext().getAuthentication().getDetails()));
 		model.setResult(result);
 		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, "model", model);
 	}
@@ -192,4 +200,10 @@ public class UpdateApplicationFormController {
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
 	}
+	
+	Qualification newQualification() {
+		return new Qualification();
+	}
+	
+	
 }

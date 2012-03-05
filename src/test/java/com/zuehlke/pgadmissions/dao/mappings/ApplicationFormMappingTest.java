@@ -8,17 +8,20 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
@@ -94,6 +97,43 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 				reloadedApplication.getSubmissionStatus());
 		Assert.assertEquals(1, reloadedApplication.getReviewers().size());
 		Assert.assertTrue(reloadedApplication.getReviewers().contains(user));
+	}
+	
+	@Test 
+	public void shouldSaveAndLoadApplicationFormWithAddress() {
+		ApplicationForm application = new ApplicationForm();
+		application.setProject(project);
+		application.setApplicant(user);
+		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		Address address = new AddressBuilder().application(application).country("Germany")
+					.street("1 Main Street").postCode("NW2 456").city("london").startDate(new Date()).endDate(new Date()).toAddress();
+		application.setAddresses(Arrays.asList(address));
+
+		assertNull(application.getId());
+
+		sessionFactory.getCurrentSession().save(application);
+
+		assertNotNull(application.getId());
+		Integer id = application.getId();
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory
+		.getCurrentSession().get(ApplicationForm.class, id);
+		assertSame(application, reloadedApplication);
+
+		flushAndClearSession();
+
+		reloadedApplication = (ApplicationForm) sessionFactory
+		.getCurrentSession().get(ApplicationForm.class, id);
+		assertNotSame(application, reloadedApplication);
+		assertEquals(application, reloadedApplication);
+
+		assertEquals(user, reloadedApplication.getApplicant());
+		assertEquals(project, reloadedApplication.getProject());
+		assertEquals(SubmissionStatus.SUBMITTED,
+				reloadedApplication.getSubmissionStatus());
+		Assert.assertEquals(1, reloadedApplication.getAddresses().size());
+		Assert.assertTrue(reloadedApplication.getAddresses().contains(address));
+
+
 	}
 
 	@Test

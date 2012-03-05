@@ -62,12 +62,6 @@ public class ApplicationReviewService {
 	}
 
 	@Transactional
-	public void saveQualification(Qualification qualification) {
-		applicationReviewDAO.saveQualification(qualification);
-		
-	}
-
-	@Transactional
 	public void saveUser(RegisteredUser currentuser) {
 		applicationReviewDAO.saveUser(currentuser);
 	}

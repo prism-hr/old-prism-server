@@ -18,8 +18,10 @@ import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -41,6 +43,16 @@ public class ApplicationsServiceTest{
 		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(user);
 		Assert.assertTrue(visibleApplications.contains(form));
 		Assert.assertEquals(1, visibleApplications.size());
+	}
+	
+	@Test
+	public void shouldGetListOfQualificationsForApplication(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
+		Qualification qual = new QualificationBuilder().id(1).date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").application(applicationForm).toQualification();
+		EasyMock.expect(applicationFormDAOMock.getQualificationsByApplication(applicationForm)).andReturn(Arrays.asList(qual));
+		EasyMock.replay(applicationFormDAOMock);
+		List<Qualification> qualifications = applicationsService.getQualificationsByApplication(applicationForm);
+		Assert.assertEquals(qual, qualifications.get(0));
 	}
 	
 	@Test

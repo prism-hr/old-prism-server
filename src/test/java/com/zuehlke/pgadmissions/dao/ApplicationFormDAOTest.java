@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
@@ -28,6 +29,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	private RegisteredUser user;
 	private Program program;
 	private Project project;
+	private ApplicationForm application;
 	
 	
 	@Before
@@ -77,6 +79,16 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		assertEquals(applications.get(0).getApplicant(), applications.get(1).getApplicant());
 	}
 	
+	@Test
+	public void shouldFindAllQualificationsBelongingToSameApplication(){
+		List<Qualification> qualifications = getQualificationsBelongingToSameApplication();
+		applicationDAO.save(application);
+		flushAndClearSession();
+		List<Qualification> qualificationsByApplication = applicationDAO.getQualificationsByApplication(application);
+		assertNotSame(qualifications, qualificationsByApplication);
+		assertEquals(qualifications.get(0).getApplication(), qualifications.get(1).getApplication());
+	}
+	
 	@Test 
 	public void shouldAssignDateToApplicationForm() {
 		ApplicationForm application = new ApplicationForm();
@@ -115,5 +127,35 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 		
 		return applications;
+	}
+	
+	public List<Qualification> getQualificationsBelongingToSameApplication(){
+		
+		application = new ApplicationForm();
+		application.setApplicant(user);
+		application.setProject(project);
+		
+		List<Qualification> qualifications = new ArrayList<Qualification>();
+		
+		
+		Qualification qualification1 = new Qualification();	
+		qualification1.setApplication(application);
+		qualification1.setDate_taken("");
+		qualification1.setDegree("");
+		qualification1.setGrade("");
+		qualification1.setInstitution("");
+		
+		qualifications.add(qualification1);
+		
+		Qualification qualification2 = new Qualification();	
+		qualification2.setDate_taken("");
+		qualification2.setDegree("");
+		qualification2.setGrade("");
+		qualification2.setInstitution("");
+		qualification2.setApplication(application);
+		
+		
+		qualifications.add(qualification1);
+		return qualifications;
 	}
 }

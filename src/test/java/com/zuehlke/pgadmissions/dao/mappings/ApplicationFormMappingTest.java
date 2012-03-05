@@ -13,6 +13,7 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Address;
@@ -20,11 +21,13 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
@@ -157,6 +160,34 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
 		assertEquals(2, reloadedApplication.getApplicationComments().size());
 		assertTrue(reloadedApplication.getApplicationComments().containsAll(Arrays.asList(applicationReviewOne, applicationReviewTwo)));
+	}
+	
+	@Ignore
+	@Test
+	public void shouldSaveQualificationsWithApplication() {
+		
+		ApplicationForm application = new ApplicationForm();
+		application.setProject(project);
+		application.setApplicant(user);
+		
+	//	sessionFactory.getCurrentSession().save(application);
+		//Integer id = application.getId();
+		//flushAndClearSession();
+		
+		Qualification qualification1 = new QualificationBuilder().date_taken("").degree("").grade("").institution("").toQualification();
+
+		Qualification qualification2 = new QualificationBuilder().date_taken("").degree("d").grade("1").institution("").toQualification();
+
+		application.getQualifications().addAll(Arrays.asList(qualification1, qualification2));
+
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(application);
+		flushAndClearSession();
+		
+		Integer id = application.getId();
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+		assertEquals(2, reloadedApplication.getQualifications().size());
+		
 	}
 
 	@Before

@@ -1,0 +1,93 @@
+@charset "utf-8";
+
+/* Expandable content bars -------------------------------------------------------------------------------- */
+section.folding h2 { background: url("../images/bg_bar.png") repeat-x; border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; cursor: pointer; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; padding-left: 5px; }
+section.folding h2 .left { background: url(../images/bg_expand_arrow.png) no-repeat; float: left; height: 11px; margin: 5px 4px 0 0; width: 11px; }
+section.folding h2.open .left { background-position: 0 -11px; }
+section.folding h2 .status { background: url(../images/bg_bar_status.png) no-repeat 0 14px; float: right; height: 14px; margin: 3px 3px 0 0; width: 14px; }
+
+/* Bar colours */
+section.folding.violet h2 { background-position: 0 0; }
+section.folding.purple h2 { background-position: 0 -20px; }
+section.folding.red h2 { background-position: 0 -40px; }
+section.folding.orange h2 { background-position: 0 -60px; }
+section.folding.yellow h2 { background-position: 0 -80px; }
+section.folding.green h2 { background-position: 0 -100px; }
+section.folding.navy h2 { background-position: 0 -120px; }
+section.folding.blue h2 { background-position: 0 -140px; }
+
+/* Bar states */
+section.folding h2.tick .status { background-position: 0 0; }
+section.folding h2.cross .status { background-position: 0 -15px; }
+section.folding h2.empty .status { background-position: 0 -30px; }
+
+/* Expandable content boxes */
+section.folding > div { border: 2px solid #999; margin-bottom: 10px; }
+
+section.folding.purple > div, section.folding.purple table.existing, section.folding.purple div.buttons { border-color: #826C7C; }
+section.folding.red > div, section.folding.red table.existing, section.folding.red div.buttons { border-color: #650729; }
+section.folding.orange > div, section.folding.orange table.existing, section.folding.orange div.buttons { border-color: #F58149; }
+section.folding.yellow > div, section.folding.yellow table.existing, section.folding.yellow div.buttons { border-color: #F9CB54; }
+section.folding.green > div, section.folding.green table.existing, section.folding.green div.buttons { border-color: #AFBD22; }
+section.folding.navy > div, section.folding.navy table.existing, section.folding.navy div.buttons { border-color: #285F93; }
+section.folding.blue > div, section.folding.blue table.existing, section.folding.blue div.buttons { border-color: #008898; }
+
+
+/* Expanding forms ---------------------------------------------------------------------------------------- */
+section.folding header { background: #DDD; border-bottom: 1px solid #999; font-weight: bold; padding: 6px; }
+section.folding footer { background: #DDD; border-top: 1px solid #999; padding: 6px !important; text-align: right; }
+
+section.folding table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%; }
+section.folding table.existing th { background: url(../images/bg_table_head.png) repeat-x; text-align: left; }
+section.folding table.existing td { background: url(../images/bg_table_row.jpg) repeat-x; text-align: left; }
+section.folding table.existing td, section.folding table.existing th { line-height: 25px; padding: 0 3px; vertical-align: middle; }
+
+section.folding form { background: #BBB; padding: 10px; }
+section.folding form > div { background: #FFF; border: 1px solid #999; margin-bottom: 2px; padding: 10px; }
+section.folding form .row { line-height: 24px; margin-bottom: 2px; }
+section.folding form .label { float: left; width: 180px; }
+section.folding form .field { margin-left: 205px; }
+section.folding form .hint { background: url(../images/button_question.png) no-repeat; width: 20px; height: 20px; float: left; margin-right: 5px; }
+section.folding form label.label { font-weight: bold; }
+
+section.folding form .field .max { width: 480px; }
+section.folding form .field .full { width: 240px; }
+section.folding form .field .half { width: 120px; }
+section.folding form .field label { display: inline-block; margin-right: 1em; min-width: 60px; }
+
+section.folding form div.buttons { background: #DDD; border-width: 1px 0 0; margin: 8px -10px -10px; }
+
+section.folding.purple form { background: #E2DEE1; padding: 10px; }
+section.folding.red form { background: #EFE8E7; padding: 10px; }
+section.folding.orange form { background: #FFF9F6; padding: 10px; }
+section.folding.yellow form { background: #FFFAA1; padding: 10px; }
+section.folding.green form { background: #F8F9EF; padding: 10px; }
+section.folding.navy form { background: #E5E8F1; padding: 10px; }
+section.folding.blue form { background: #EBF4F5; padding: 10px; }
+
+section.folding.purple table.existing, section.folding.purple div.buttons { background: #D5CED3; }
+section.folding.red table.existing, section.folding.red div.buttons { background: #E1D2D1; }
+section.folding.orange table.existing, section.folding.orange div.buttons { background: #FEE8D9; }
+section.folding.yellow table.existing, section.folding.yellow div.buttons { background: #FFF4E1; }
+section.folding.green table.existing, section.folding.green div.buttons { background: #EEF0D8; }
+section.folding.navy table.existing, section.folding.navy div.buttons { background: #D0D7E7; }
+section.folding.blue table.existing, section.folding.blue div.buttons { background: #CCE4E7; }
+
+section.folding.purple table.existing th { background-position: 0 0; }
+section.folding.red table.existing th { background-position: 0 -25px; }
+section.folding.orange table.existing th { background-position: 0 -50px; }
+section.folding.yellow table.existing th { background-position: 0 -75px; }
+section.folding.green table.existing th { background-position: 0 -100px; }
+section.folding.navy table.existing th { background-position: 0 -125px; }
+section.folding.blue table.existing th { background-position: 0 -150px; }
+
+section.folding div.comment { display: none; }
+section.folding div.comment label { display: block; margin-bottom: 4px; }
+section.folding div.comment textarea { width: 99%; }
+section.folding div.comment .buttons { background-color: transparent; padding: 5px; }
+section.folding div.comment .previous { margin-bottom: 10px; }
+section.folding div.comment .previous a.more { float: right; font-weight: bold; }
+section.folding div.comment .previous ul { list-style: none; margin: 10px 0; }
+section.folding div.comment .previous ul li { background: #DDD; margin-bottom: 0.5em; padding: 5px; }
+section.folding div.comment .previous ul li.even { background: #EEE; }
+section.folding div.comment .previous ul li span { display: block; }

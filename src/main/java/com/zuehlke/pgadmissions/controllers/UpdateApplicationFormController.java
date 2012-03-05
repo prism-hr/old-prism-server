@@ -37,8 +37,8 @@ import com.zuehlke.pgadmissions.validators.QualificationValidator;
 @RequestMapping("/update")
 public class UpdateApplicationFormController {
 	
-	private static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "private/pgStudent/form/components/qualification_details";
-	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudent/form/components/address_details";
+	private static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/qualification_details";
+	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/address_details";
 	private final ApplicationsService applicationService;
 	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;
@@ -90,7 +90,7 @@ public class UpdateApplicationFormController {
 		modelMap.put("model", model);
 		modelMap.put("formDisplayState", "open");
 
-		return new ModelAndView("private/pgStudent/form/components/personal_details", modelMap);
+		return new ModelAndView("private/pgStudents/form/components/personal_details", modelMap);
 	}
 	
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
@@ -150,7 +150,7 @@ public class UpdateApplicationFormController {
 		model.setResult(result);
 		modelMap.put("model", model);
 		
-		return new ModelAndView("private/pgStudent/form/components/funding_details", modelMap);
+		return new ModelAndView("private/pgStudents/form/components/funding_details", modelMap);
 	}
 
 

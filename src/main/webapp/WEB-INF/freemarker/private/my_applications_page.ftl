@@ -28,7 +28,7 @@
 		<!-- Wrapper Starts -->
 		<div id="wrapper">
 
-			<#include "/private/common/header_global.ftl"/>
+			<#include "/private/common/global_header.ftl"/>
 			
 			 <!-- Middle Starts -->
 			<div id="middle">
@@ -122,7 +122,7 @@
 			</div>
 			<!-- Middle Ends -->
 			
-			<#include "/private/common/footer_global.ftl"/>
+			<#include "/private/common/global_footer.ftl"/>
 			
 		</div>
 		<!-- Wrapper Ends -->

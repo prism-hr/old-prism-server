@@ -28,7 +28,7 @@ public class Qualification extends DomainObject<Integer>{
 	@JoinColumn(name="applicant_id")
 	private RegisteredUser applicant = null;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application = null;
 	
@@ -93,6 +93,11 @@ public class Qualification extends DomainObject<Integer>{
 	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
+	}
+
+	public boolean isAttachedToApplication(
+			ApplicationForm applicationForm, Qualification qualification) {
+		return qualification.getApplication().equals(applicationForm);
 	}
 
 }

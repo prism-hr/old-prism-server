@@ -1,7 +1,9 @@
 $(document).ready(function(){
 	$('#qualificationsSaveButton').click(function(){
+//		alert(data);
 		$.post("/pgadmissions/update/editQualification", { degree: $("#degree").val(), 
 			id: $("#id").val(), 
+			qualId: $("#qualId").val(), 
 			institution: $("#institution").val(), 
 			date_taken: $("#date_taken").val(), 
 			grade: $("#grade").val(), 
@@ -13,7 +15,8 @@ $(document).ready(function(){
 		});
 	});
 	
-	/*
+	
+/*
 	 * Submit application form on click of submit button.
 	 */ 
 	$('#submitButton').click(function(){

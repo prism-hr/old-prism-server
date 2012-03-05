@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
+import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -94,17 +95,24 @@ public class UpdateApplicationFormController {
 	
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView editQualification(@ModelAttribute Qualification qual, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result) {
+	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer id, @RequestParam Integer appId, @RequestParam Integer qualId, BindingResult result) {
+		ApplicationForm application = applicationService.getApplicationById(appId);
+		if (application.isSubmitted()) {
+			throw new CannotUpdateApplicationException();
+		}
 		
+		RegisteredUser user = userService.getUser(id);
+		Qualification qualification = applicationService.getQualificationById(qualId);
 		QualificationValidator qualificationValidator = new QualificationValidator();
 		qualificationValidator.validate(qual, result);
-		ApplicationForm application = applicationService.getApplicationById(appId);
-		RegisteredUser user = userService.getUser(id);
 		
 		if (!result.hasErrors()) {
-			qual.setApplicant(user);
-			qual.setApplication(application);
-			userService.saveQualification(qual);
+			qualification.setDate_taken(qual.getDate_taken());
+			qualification.setDegree(qual.getDegree());
+			qualification.setGrade(qual.getGrade());
+			qualification.setInstitution(qual.getInstitution());
+			userService.saveQualification(qualification);
+//			user.getQualifications().add(qualifichation); //hibernate exception: field degree doesn't have a default value
 			userService.save(user);
 		}
 		

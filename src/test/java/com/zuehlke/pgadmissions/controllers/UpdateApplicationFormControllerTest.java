@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
+import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
@@ -40,6 +42,7 @@ public class UpdateApplicationFormControllerTest {
 	private UserPropertyEditor userPropertyEditorMock;
 	private RegisteredUser student;
 	private Qualification qualification;
+	private QualificationDTO qualificationDto;
 
 	@Test
 	public void shouldSaveNewPersonalDetails() {
@@ -198,26 +201,31 @@ public class UpdateApplicationFormControllerTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
 		applicationController.addFunding(funding, 1, 2, mappingResult, new ModelMap());
 	}
+	
 	@Test
 	public void shouldSaveNewQualification() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.expect(applicationsServiceMock.getQualificationById(2)).andReturn(qualification);
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		userServiceMock.save(student);
 		userServiceMock.saveQualification(qualification);
 		EasyMock.replay(userServiceMock);
-		
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
-		ModelAndView modelAndView = applicationController.editQualification(qualification, 1, 2, mappingResult);
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 1,2, 2, mappingResult);
 		Assert.assertEquals("application/qualification_applicant", modelAndView.getViewName());
-		Assert.assertEquals("BSc Computer Science", ((PageModel)modelAndView.getModel().get("model")).getUser().getQualifications().get(0).getDegree());
+		Assert.assertEquals("", ((PageModel)modelAndView.getModel().get("model")).getUser().getQualifications().get(0).getDegree());
+		Assert.assertEquals("", ((PageModel)modelAndView.getModel().get("model")).getUser().getQualifications().get(0).getDate_taken());
+		Assert.assertEquals("", ((PageModel)modelAndView.getModel().get("model")).getUser().getQualifications().get(0).getGrade());
+		Assert.assertEquals("", ((PageModel)modelAndView.getModel().get("model")).getUser().getQualifications().get(0).getInstitution());
 	}
 	
 	@Test
 	public void shouldNotSaveEmptyQualification() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.expect(applicationsServiceMock.getQualificationById(2)).andReturn(qualification);
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		userServiceMock.save(student);
@@ -225,7 +233,7 @@ public class UpdateApplicationFormControllerTest {
 		Qualification qualification = new QualificationBuilder().degree("BSc Computer Science").date_taken("2006/09/03").grade("First Class").institution("UCL").toQualification();
 		qualification.setDegree("");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qual");
-		ModelAndView modelAndView = applicationController.editQualification(qualification, 1, 2, mappingResult);
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1,2,2,mappingResult);
 		Assert.assertEquals("application/qualification_applicant", modelAndView.getViewName());
 		Assert.assertEquals("BSc Computer Science", ((PageModel)modelAndView.getModel().get("model")).getUser().getQualifications().get(0).getDegree());
 	}
@@ -247,6 +255,12 @@ public class UpdateApplicationFormControllerTest {
 			}
 		};
 
+		
+		qualificationDto = new QualificationDTO();
+		qualificationDto.setDate_taken("");
+		qualificationDto.setDegree("");
+		qualificationDto.setGrade("");
+		qualificationDto.setInstitution("");
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		qualification = new QualificationBuilder().id(2).degree("BSc Computer Science").date_taken("2006/09/03").grade("First Class").institution("UCL").toQualification();
 		student = new RegisteredUserBuilder().id(1).username("mark").qualification(qualification).email("mark@gmail.com").address("london").firstName("mark").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();

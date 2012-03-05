@@ -50,6 +50,8 @@ public class ViewApplicationFormControllerTest {
 	ApplicationForm submittedApprovedApplication;
 	ApplicationForm unsubmittedApplication;
 	ApplicationReview applicationReviewForSubmittedNonApproved1, applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved3, applicationReviewForSubmittedNonApproved4;
+	private Qualification qual;
+	private RegisteredUser applicant;
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
@@ -62,12 +64,14 @@ public class ViewApplicationFormControllerTest {
 	@Test
 	public void shouldGetApplicationFormView() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").application(applicationForm).toQualification();
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.expect(userMock.hasQualifications()).andReturn(true);
+		EasyMock.expect(userMock.getQualifications()).andReturn(Arrays.asList(qual));
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock,applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
@@ -77,12 +81,14 @@ public class ViewApplicationFormControllerTest {
 	@Test
 	public void shouldGetApplicationFormFromIdAndSetOnModel() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").application(applicationForm).toQualification();
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.expect(userMock.hasQualifications()).andReturn(true);
+		EasyMock.expect(userMock.getQualifications()).andReturn(Arrays.asList(qual));
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
@@ -93,12 +99,14 @@ public class ViewApplicationFormControllerTest {
 	@Test
 	public void shouldCreatePersonalDetailsFromApplicationApplicantAndSetOnModel() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();		
+		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").application(applicationForm).toQualification();
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.expect(userMock.hasQualifications()).andReturn(true);
+		EasyMock.expect(userMock.getQualifications()).andReturn(Arrays.asList(qual));
 		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
 		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
 		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
@@ -115,6 +123,7 @@ public class ViewApplicationFormControllerTest {
 	@Test
 	public void shouldGetCurrentUserFromSecutrityContextAndSetOnEditModel() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").application(applicationForm).toQualification();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
@@ -122,6 +131,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.expect(userMock.hasQualifications()).andReturn(true);
+		EasyMock.expect(userMock.getQualifications()).andReturn(Arrays.asList(qual));
 		EasyMock.replay(userMock, applicationsServiceMock);
 
 		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
@@ -150,6 +160,8 @@ public class ViewApplicationFormControllerTest {
 	@Test
 	public void shouldShowAllCommentsForAdministrator(){
 		authenticationToken.setDetails(admin);
+		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").degree("").application(submittedNonApprovedApplication).applicant(applicant).toQualification();
+		admin.setQualifications(Arrays.asList(qual));
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
@@ -170,6 +182,8 @@ public class ViewApplicationFormControllerTest {
 	@Test
 	public void shouldShowAllCommentsForReviewerExceptFromOtherReviewersComments(){
 		authenticationToken.setDetails(reviewer);
+		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").degree("").application(submittedNonApprovedApplication).applicant(applicant).toQualification();
+		reviewer.setQualifications(Arrays.asList(qual));
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
@@ -193,6 +207,8 @@ public class ViewApplicationFormControllerTest {
 	@Test
 	public void shouldShowAllCommentsForUserWhoIsBothAdminAndReviewer(){
 		authenticationToken.setDetails(adminAndReviewer);
+		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").degree("").application(submittedNonApprovedApplication).applicant(applicant).toQualification();
+		adminAndReviewer.setQualifications(Arrays.asList(qual));
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
@@ -226,9 +242,11 @@ public class ViewApplicationFormControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);
 		controller = new ViewApplicationFormController(applicationsServiceMock, applicationReviewServiceMock);
-		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").toQualification();
+//		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").application(submittedApprovedApplication).toQualification();
 		admin = new RegisteredUserBuilder().id(1).username("bob").qualification(qual)
 								.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		applicant = new RegisteredUserBuilder().id(1).username("bob").qualification(qual)
+				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		reviewer = new RegisteredUserBuilder().id(3).username("jane").qualification(qual).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		reviewer2 = new RegisteredUserBuilder().id(3).username("john").qualification(qual)
 				.role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();

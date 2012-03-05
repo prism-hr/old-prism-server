@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -56,20 +60,11 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setPersonalDetails(createPersonalDetails(applicationForm));
 		viewApplicationModel.setAddress(createAddress(applicationForm));
 		viewApplicationModel.setFunding(createFunding(applicationForm));
+		viewApplicationModel.setQualifications(createOrGetExistingQualifications(applicationForm, currentuser));
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}
-		if(!currentuser.hasQualifications()){
-			Qualification qualification = new Qualification();
-			qualification.setDegree("");
-			qualification.setGrade("");
-			qualification.setInstitution("");
-			qualification.setDate_taken("");
-			qualification.setApplicant(currentuser);
-			qualification.setApplication(applicationForm);
-			applicationReviewService.saveQualification(qualification);
-			currentuser.getQualifications().add(qualification);
-		}
+		
 		viewApplicationModel.setUser(currentuser);
 		if (applicationForm.hasComments()) {
 			if (currentuser.isInRole(Authority.ADMINISTRATOR)|| currentuser.isInRole(Authority.APPROVER)) {
@@ -87,6 +82,47 @@ public class ViewApplicationFormController {
 		
 		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model",
 				viewApplicationModel);
+	}
+
+	private List<Qualification> createOrGetExistingQualifications(ApplicationForm applicationForm, RegisteredUser currentuser) {
+		List<Qualification> qualifications = new ArrayList<Qualification>();
+		if(!currentuser.hasQualifications()){
+			Qualification qualification = new Qualification();
+			qualification.setDegree("");
+			qualification.setGrade("");
+			qualification.setInstitution("");
+			qualification.setDate_taken("");
+			qualification.setApplicant(currentuser);
+			qualification.setApplication(applicationForm);
+			applicationReviewService.saveQualification(qualification);
+//			currentuser.getQualifications().add(qualification);
+//			applicationReviewService.saveUser(currentuser);
+			qualifications.add(qualification);
+		}
+		else{
+			List<Qualification> existingQualifications = currentuser.getQualifications();
+			for (Qualification existingQualification : existingQualifications) {
+				if(!existingQualification.isAttachedToApplication(applicationForm, existingQualification)){
+					Qualification newQualification = attachQualificationToApplication(applicationForm, currentuser, existingQualification);
+					qualifications.add(newQualification);
+				}
+			}
+		}
+		return qualifications;
+	}
+
+	private Qualification attachQualificationToApplication(ApplicationForm applicationForm, RegisteredUser currentuser, Qualification existingQualification) {
+				Qualification newQualification = new Qualification();
+				newQualification.setDate_taken(existingQualification.getDate_taken());
+				newQualification.setDegree(existingQualification.getDegree());
+				newQualification.setGrade(existingQualification.getDegree());
+				newQualification.setInstitution(existingQualification.getInstitution());
+				newQualification.setApplicant(currentuser);
+				newQualification.setApplication(applicationForm);
+				applicationReviewService.saveQualification(newQualification);
+//				currentuser.getQualifications().add(newQualification);
+//				applicationReviewService.saveUser(currentuser);
+				return newQualification;
 	}
 
 	private Funding createFunding(ApplicationForm applicationForm) {

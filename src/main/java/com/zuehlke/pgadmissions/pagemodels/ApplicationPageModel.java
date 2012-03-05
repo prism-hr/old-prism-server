@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
+import java.util.List;
+
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
@@ -10,6 +13,7 @@ public class ApplicationPageModel extends PageModel {
 	private Address address;
 	private Funding funding;
 	private String message;
+	private List<Qualification> qualifications;
 
 	public PersonalDetails getPersonalDetails() {
 		return personalDetails;
@@ -41,5 +45,13 @@ public class ApplicationPageModel extends PageModel {
 	
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public void setQualifications(List<Qualification> qualifications) {
+		this.qualifications = qualifications;
+	}
+	
+	public List<Qualification> getQualifications() {
+		return qualifications;
 	}
 }

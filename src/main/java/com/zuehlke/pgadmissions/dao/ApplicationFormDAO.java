@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 @Repository
@@ -48,6 +49,11 @@ public class ApplicationFormDAO {
 		return  (List<ApplicationForm>)sessionFactory.getCurrentSession()
 				.createCriteria(ApplicationForm.class).list();
 				
+	}
+
+	public Qualification getQualification(Integer id) {
+		return (Qualification) sessionFactory.getCurrentSession().get(
+				Qualification.class, id);
 	}
 
 }

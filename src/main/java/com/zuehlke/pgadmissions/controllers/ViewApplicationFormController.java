@@ -16,6 +16,9 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.Funding;
+import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
@@ -133,34 +136,5 @@ public class ViewApplicationFormController {
 //				applicationReviewService.saveUser(currentuser);
 				return newQualification;
 	}
-
-	private Funding createFunding(ApplicationForm applicationForm) {
-		Funding funding = new Funding();
-		funding.setFunding(applicationForm.getFunding());
-		return funding;
-	}
-
-	private Address createAddress(ApplicationForm applicationForm) {
-		Address address = new Address();
-		if (applicationForm.getApplicant() != null) {
-			address.setAddress(applicationForm.getApplicant().getAddress());
-		}
-		return address;
-	}
-
-	private PersonalDetails createPersonalDetails(ApplicationForm applicationForm) {
-		PersonalDetails personalDetails = new PersonalDetails();
-		if(applicationForm.getApplicant() != null){
-			personalDetails.setFirstName(applicationForm.getApplicant().getFirstName());
-			personalDetails.setLastName(applicationForm.getApplicant().getLastName());
-			personalDetails.setEmail(applicationForm.getApplicant().getEmail());
-		}
-		return personalDetails;
-	}
-	
-	
-	
-
-	
 
 }

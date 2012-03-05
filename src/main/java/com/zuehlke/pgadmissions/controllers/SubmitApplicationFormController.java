@@ -36,7 +36,7 @@ public class SubmitApplicationFormController {
 
 	private final ApplicationsService applicationService;
 	private final UserPropertyEditor userPropertyEditor;
-	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "application/applicationForm_applicant";
+	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/main_application_page";
 
 	SubmitApplicationFormController() {
 		this(null, null);

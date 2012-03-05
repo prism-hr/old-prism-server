@@ -17,7 +17,7 @@ public class ErrorController {
 	public ModelAndView getErrorPage() {
 		PageModel model = new PageModel();
 		model.setUser((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails());
-		return new ModelAndView("/error/error", "model", model);
+		return new ModelAndView("/public/error/error", "model", model);
 	}
 
 }

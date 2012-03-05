@@ -36,7 +36,7 @@ public class ApplicationListControllerTest {
 		
 		ModelAndView modelAndView = controller.getApplicationListPage(false, null);
 
-		assertEquals("application/application_list", modelAndView.getViewName());
+		assertEquals("private/my_applications_page", modelAndView.getViewName());
 	}
 	
 	@Test

@@ -28,17 +28,17 @@
 		<!-- Wrapper Starts -->
 		<div id="wrapper">
 
-			<#include "/common/header.ftl"/>
+			<#include "/private/common/header_global.ftl"/>
 			
 			 <!-- Middle Starts -->
 			<div id="middle">
 			
-				<#include "/common/nav_with_user_info.ftl"/>
+				<#include "/private/common/parts/nav_with_user_info.ftl"/>
 				
 				    <!-- Main content area. -->
 				    <article id="content" role="main">
 				      <#if !model.user.isInRole('APPLICANT')>
-				      	<#include "/common/tools.ftl"/>
+				      	<#include "/private/common/parts/tools.ftl"/>
 				      </#if>
 				      
 				      <!-- content box -->
@@ -122,7 +122,7 @@
 			</div>
 			<!-- Middle Ends -->
 			
-			<#include "/common/footer.ftl"/>
+			<#include "/private/common/footer_global.ftl"/>
 			
 		</div>
 		<!-- Wrapper Ends -->

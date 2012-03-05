@@ -27,12 +27,12 @@
 
 		<div id="wrapper">
 			
-			  <#include "/common/header.ftl"/>
+			  <#include "/private/common/header_global.ftl"/>
 			  
 			  <!-- Middle. -->
 			  <div id="middle">
 			  
-			    <#include "/common/nav_with_user_info.ftl"/>
+			    <#include "/private/common/parts/nav_with_user_info.ftl"/>
 			    
 			    <!-- Main content area. -->
 			    <article id="content" role="main">
@@ -69,16 +69,16 @@
 			          </section>
 			          
 			          <section id="personalDetailsSection" class="folding purple">
-			             <#include "/application/personal_details_applicant.ftl"/>
+			             <#include "/private/pgStudent/form/components/personal_details.ftl"/>
 			          </section>
 			          
 			          <!-- Address -->
 			          <section id="addressSection" class="folding red">
-			             <#include "/application/address_applicant.ftl"/>
+			             <#include "/private/pgStudent/form/components/address_details.ftl"/>
 			          </section>
 			          
 			           <section id="qualificationsSection" class="folding orange">
-			            <#include "/application/qualifications_applicant.ftl"/>
+			            <#include "/private/pgStudent/form/components/qualification_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding yellow">
@@ -92,7 +92,7 @@
 			          </section>
 			          
 			           <section id="fundingSection" class="folding green">
-			             <#include "/application/funding_applicant.ftl"/>
+			             <#include "/private/pgStudent/form/components/funding_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding navy">
@@ -131,7 +131,7 @@
 		
 			  </div>
 			  
-			<#include "/common/footer.ftl"/>
+			<#include "/private/common/footer_global.ftl"/>
 		
 		</div>
 		

@@ -26,7 +26,7 @@ public class ErrorControllerTest {
 		
 		ModelAndView modelAndView = new ErrorController().getErrorPage();
 		PageModel model = (PageModel) modelAndView.getModel().get("model");		
-		assertEquals("/error/error", modelAndView.getViewName());
+		assertEquals("/public/error/error", modelAndView.getViewName());
 		assertEquals(currentUser, model.getUser());
 		
 	}

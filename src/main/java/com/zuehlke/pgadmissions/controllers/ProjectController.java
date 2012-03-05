@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.pagemodels.MainPageModel;
 @RequestMapping(value = { "/projects" })
 public class ProjectController {
 	
-	private static final String PROJECTS_VIEW_NAME = "projects/projects";
+	private static final String PROJECTS_VIEW_NAME = "private/pgStudents/projects/project_list_page";
 
 	ProjectController() {
 		this(null);

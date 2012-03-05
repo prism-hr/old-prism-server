@@ -77,7 +77,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock,applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
-		assertEquals("application/applicationForm_applicant", modelAndView.getViewName());
+		assertEquals("private/pgStudent/form/main_application_page", modelAndView.getViewName());
 	}
 
 	@Ignore
@@ -181,7 +181,7 @@ public class ViewApplicationFormControllerTest {
 		List<ApplicationReview> loadedComments = ((PageModel) modelAndView.getModelMap().get("model")).getApplicationComments();
 		assertEquals(2, loadedComments.size());
 		assertEquals(comments, loadedComments);
-		assertEquals("application/applicationForm_internal", modelAndView.getViewName());
+		assertEquals("private/staff/application/main_application_page", modelAndView.getViewName());
 	}
 	
 	@Test

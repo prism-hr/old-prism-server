@@ -27,17 +27,17 @@
 
 		<div id="wrapper">
 			
-			  <#include "/common/header.ftl"/>
+			  <#include "/private/common/header_global.ftl"/>
 			  
 			  <!-- Middle. -->
 			  <div id="middle">
 			  
-			    <#include "/common/nav_with_user_info.ftl"/>
+			    <#include "/private/common/parts/nav_with_user_info.ftl"/>
 			    
 			    <!-- Main content area. -->
 			    <article id="content" role="main">
 			      
-			      <#include "/common/tools.ftl"/>
+			      <#include "/private/common/parts/tools.ftl"/>
 			      
 			      <!-- content box -->
 			      <div class="content-box">
@@ -55,7 +55,7 @@
 				              <input id="applicationNumber" disabled size="20" value="${model.applicationForm.id?string("######")}" />
 				            </div>
 				            
-				            <#include "/application/supervisor_section.ftl"/>
+				            <#include "/private/staff/application/parts/supervisor_info.ftl"/>
 				            
 			          	</div>
 			          
@@ -71,15 +71,15 @@
 			            </div>
 			          </section>
 			          
-			          <#include "/application/personal_details_internal.ftl"/>
+			          <#include "/private/staff/application/components/personal_details.ftl"/>
 			          
 			          <!-- Address -->
 			          <section class="folding red">
-                        <#include "/application/address_internal.ftl"/>
+                        <#include "/private/staff/application/components/address_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding orange">
-			            <#include "/application/qualifications_internal.ftl"/>
+			            <#include "/private/staff/application/components/qualifications_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding yellow">
@@ -93,7 +93,7 @@
 			          </section>
 			          
 			           <section class="folding green">
-			             <#include "/application/funding_internal.ftl"/>
+			             <#include "/private/staff/application/components/funding_detials.ftl"/>
 			          </section>
 			          
 			           <section class="folding navy">
@@ -132,7 +132,7 @@
 		
 			  </div>
 			  
-			<#include "/common/footer.ftl"/>
+			<#include "/private/common/global_footer.ftl"/>
 		
 		</div>
 		

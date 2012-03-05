@@ -17,7 +17,7 @@
 
 		<div id="wrapper">
 		
-			<#include "/login/login_header.ftl"/>
+			<#include "/public/common/global_header.ftl"/>
 			
 		  	<!-- Middle. -->
 		  	<div id="middle">
@@ -61,7 +61,7 @@
 		    
 		  </div>
 		  
-			<#include "/login/login_footer.ftl"/>
+			<#include "/public/common/global_footer.ftl"/>
 		
 		</div>
 		

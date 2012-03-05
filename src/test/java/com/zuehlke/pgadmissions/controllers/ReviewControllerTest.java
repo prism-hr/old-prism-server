@@ -53,7 +53,7 @@ public class ReviewControllerTest {
 	@Test
 	public void shouldReturnReviwersViewName() {
 
-		assertEquals("reviewer/reviewer",
+		assertEquals("private/staff/admin/assign_reviewers_page",
 				controller.getReviewerPage(new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm()).getViewName());
 	}
 

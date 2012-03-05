@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 @RequestMapping(value = {"","applications"})
 public class ApplicationListController {
 
-	private static final String APPLICATION_LIST_VIEW_NAME = "application/application_list";
+	private static final String APPLICATION_LIST_VIEW_NAME = "private/my_applications_page";
 	private ApplicationsService applicationsService;
 	
 	ApplicationListController(){

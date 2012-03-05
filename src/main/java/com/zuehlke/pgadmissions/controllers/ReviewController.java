@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping(value = { "/reviewer" })
 public class ReviewController {
 
-	private static final String ADD_REVIEWER_VIEW_NAME = "reviewer/reviewer";
+	private static final String ADD_REVIEWER_VIEW_NAME = "private/staff/admin/assign_reviewers_page";
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;

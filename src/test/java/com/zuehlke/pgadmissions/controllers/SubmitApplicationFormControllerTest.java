@@ -59,7 +59,7 @@ public class SubmitApplicationFormControllerTest {
 		ApplicationFormDetails applDetails = new ApplicationFormDetails();
 		BindingResult mappingResult = new BeanPropertyBindingResult(applDetails, "applicationFormDetails", true, 100);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
-		assertEquals("application/applicationForm_applicant", applicationController.submitApplication(applDetails, 2, mappingResult).getViewName());
+		assertEquals("private/pgStudents/form/main_application_page", applicationController.submitApplication(applDetails, 2, mappingResult).getViewName());
 	}
 
 	@Test(expected=ResourceNotFoundException.class)

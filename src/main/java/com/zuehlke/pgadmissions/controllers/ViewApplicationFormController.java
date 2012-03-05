@@ -29,8 +29,8 @@ import com.zuehlke.pgadmissions.utils.DTOUtils;
 @RequestMapping(value = { "application" })
 public class ViewApplicationFormController {
 
-	private static final String VIEW_APPLICATION_INTERNAL_VIEW_NAME = "application/applicationForm_internal";
-	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "application/applicationForm_applicant";
+	private static final String VIEW_APPLICATION_INTERNAL_VIEW_NAME = "private/staff/application/main_application_page";
+	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudent/form/main_application_page";
 	private ApplicationsService applicationService;
 	private ApplicationReviewService applicationReviewService;
 
@@ -138,3 +138,4 @@ public class ViewApplicationFormController {
 	}
 
 }
+

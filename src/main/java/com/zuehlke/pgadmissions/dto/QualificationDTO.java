@@ -6,6 +6,7 @@ public class QualificationDTO {
 	private String date_taken;
 	private String institution;
 	private String grade;
+	private Integer qualId;
 	
 	public String getDegree() {
 		return degree;
@@ -30,5 +31,11 @@ public class QualificationDTO {
 	}
 	public void setGrade(String grade) {
 		this.grade = grade;
+	}
+	public Integer getQualId() {
+		return qualId;
+	}
+	public void setQualId(Integer qualId) {
+		this.qualId = qualId;
 	}
 }

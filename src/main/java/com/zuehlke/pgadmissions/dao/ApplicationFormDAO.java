@@ -6,6 +6,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -54,6 +55,15 @@ public class ApplicationFormDAO {
 	public Qualification getQualification(Integer id) {
 		return (Qualification) sessionFactory.getCurrentSession().get(
 				Qualification.class, id);
+	}
+
+	@Transactional
+	@SuppressWarnings("unchecked")
+	public List<Qualification> getQualificationsByApplication(
+			ApplicationForm application) {
+		return sessionFactory.getCurrentSession()
+				.createCriteria(Qualification.class)
+				.add(Restrictions.eq("application", application)).list();
 	}
 
 }

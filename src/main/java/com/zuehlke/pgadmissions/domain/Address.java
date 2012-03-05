@@ -1,0 +1,113 @@
+package com.zuehlke.pgadmissions.domain;
+
+import java.util.Date;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+
+@Entity(name="APPLICATION_FORM_ADDRESS")
+@Access(AccessType.FIELD) 
+public class Address extends DomainObject<Integer>{
+
+	private static final long serialVersionUID = 2746228908173552617L;
+
+	@ManyToOne
+	@JoinColumn(name="application_form_id")
+	private ApplicationForm application = null;
+
+	@Column(name="post_code")
+	private String postCode;
+
+	private String country;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name="start_date")
+	private Date startDate;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name="end_date")
+	private Date endDate;
+
+	public ApplicationForm getApplication() {
+		return application;
+	}
+
+	public void setApplication(ApplicationForm application) {
+		this.application = application;
+	}
+
+	private String street;
+	
+	private String city;
+
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	@Override
+	@Id
+	@GeneratedValue
+	@Access(AccessType.PROPERTY)
+	public Integer getId() {
+		return id;
+	}
+
+	public String getPostCode() {
+		return postCode;
+	}
+
+	public void setPostCode(String postCode) {
+		this.postCode = postCode;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
+	
+	public String getCity() {
+		return city;
+	}
+	
+	public void setCity(String city) {
+		this.city = city;
+	}
+}
+

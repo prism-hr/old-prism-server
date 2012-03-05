@@ -37,5 +37,5 @@
 		class="com.zuehlke.pgadmissions.security.PgAdmissionUserDetailsService"
 		autowire="constructor" />
 		
-	<mvc:view-controller path="login" view-name="login/login" />
+	<mvc:view-controller path="login" view-name="public/login/login_page" />
 </beans:beans>

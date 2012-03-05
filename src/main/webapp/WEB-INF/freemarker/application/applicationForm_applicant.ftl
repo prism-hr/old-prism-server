@@ -18,7 +18,9 @@
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/style.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/application.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/field_controls.css' />"/>
-	
+			<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
 	</head>
 
 	<body>

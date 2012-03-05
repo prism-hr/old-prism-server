@@ -16,13 +16,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.Address;
-import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.utils.DTOUtils;
 
 @Controller
 @RequestMapping(value = { "application" })
@@ -48,23 +46,34 @@ public class ViewApplicationFormController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getViewApplicationPage(@RequestParam(required=false) String view, @RequestParam Integer id) {
 		RegisteredUser currentuser = (RegisteredUser) SecurityContextHolder
-				.getContext().getAuthentication().getDetails();
+		.getContext().getAuthentication().getDetails();
 		ApplicationForm applicationForm = applicationService
-				.getApplicationById(id);
+		.getApplicationById(id);
 		if (applicationForm == null || !currentuser.canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 		ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
-		
+
 		viewApplicationModel.setApplicationForm(applicationForm);
-		viewApplicationModel.setPersonalDetails(createPersonalDetails(applicationForm));
-		viewApplicationModel.setAddress(createAddress(applicationForm));
-		viewApplicationModel.setFunding(createFunding(applicationForm));
+		viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(applicationForm));
+		viewApplicationModel.setAddress(DTOUtils.createAddress(applicationForm));
+		viewApplicationModel.setFunding(DTOUtils.createFunding(applicationForm));
 		viewApplicationModel.setQualifications(createOrGetExistingQualifications(applicationForm, currentuser));
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}
 		
+		if(!currentuser.hasQualifications()){
+			Qualification qualification = new Qualification();
+			qualification.setDegree("");
+			qualification.setGrade("");
+			qualification.setInstitution("");
+			qualification.setDate_taken("");
+			qualification.setApplicant(currentuser);
+			qualification.setApplication(applicationForm);
+			applicationReviewService.saveQualification(qualification);
+			currentuser.getQualifications().add(qualification);
+		}
 		viewApplicationModel.setUser(currentuser);
 		if (applicationForm.hasComments()) {
 			if (currentuser.isInRole(Authority.ADMINISTRATOR)|| currentuser.isInRole(Authority.APPROVER)) {
@@ -73,13 +82,13 @@ public class ViewApplicationFormController {
 				viewApplicationModel.setApplicationComments((applicationReviewService.getVisibleComments(applicationForm,currentuser)));
 			}
 		}
-		
+
 		if (currentuser.isInRole(Authority.APPLICANT)) {
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,
 					"model", viewApplicationModel);
 		}
 		if(view!=null) viewApplicationModel.setView(view);
-		
+
 		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model",
 				viewApplicationModel);
 	}

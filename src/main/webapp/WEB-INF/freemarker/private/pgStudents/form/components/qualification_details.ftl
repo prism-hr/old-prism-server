@@ -5,16 +5,29 @@
                         </h2>
                         <div>
                             <br/>
-							<#list model.qualifications as qualification >
-							<table>
- 							<tr><td>
-                               Degree: <textarea cols="45" rows="1"  name="degree" id="degree" > ${qualification.degree}</textarea></td></tr>
-                            	<tr><td>Institution: <textarea cols="45" rows="1"  name="institution" id="institution">${qualification.institution}</textarea></td></tr>
-                            	<tr><td>Date:<textarea cols="45" rows="1" name="date_taken" id="date_taken">${qualification.date_taken}</textarea></td></tr>
-                            	<tr><td>Grade: <textarea cols="45" rows="1"  name="grade" id="grade">${qualification.grade}</textarea></td></tr>
+                            <table>
+							<#list model.applicationForm.qualifications as qualification >
+						
+ 							<tr>
+ 								<td>
+                               Degree: <input type="text"  name="degree" id="degree" value= "${qualification.degree}" />
+                               </td>
+                              </tr>
+                            	<tr><td>Institution:<input type="text"  name="institution" id="institution" value="${qualification.institution}"/></td></tr>
+                            	<tr><td>Date:<input type="text" name="date_taken" id="date_taken" value="${qualification.date_taken}" /></td></tr>
+                            	<tr><td>Grade: <input type="text"  name="grade" id="grade" value="${qualification.grade}"/></td></tr>
                              	<tr><td>	<input type="hidden" name="qualId" id="qualId" value="${qualification.id}"/></td></tr>
-                             	</table>
+                             	
                             </#list>
+                          <tr>
+ 								<td>
+                               Degree: <input type="text"  name="degree" id="degree" value= "" />
+                               </td>
+                              </tr>
+                            	<tr><td>Institution:<input type="text"  name="institution" id="institution" value=""/></td></tr>
+                            	<tr><td>Date:<input type="text" name="date_taken" id="date_taken" value="" /></td></tr>
+                            	<tr><td>Grade: <input type="text"  name="grade" id="grade" value=""/></td></tr>
+                            </table>
                             <br/>
                             <div class="buttons">
                                     <a class="button blue" href="#">Close</a>

@@ -20,6 +20,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
@@ -63,6 +65,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	private List<ApplicationReview> applicationComments = new ArrayList<ApplicationReview>();
 
 	private String funding;
+	
+	@OneToMany(mappedBy="application")
+	@Cascade(CascadeType.ALL)
+	private List<Address> addresses = new ArrayList<Address>();
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
@@ -201,6 +207,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	
 	public String getFunding() {
 		return funding;
+	}
+	
+	public List<Address> getAddresses() {
+		return addresses;
+	}
+	
+	public void setAddresses(List<Address> addresses) {
+		this.addresses = addresses;
 	}
 }
 

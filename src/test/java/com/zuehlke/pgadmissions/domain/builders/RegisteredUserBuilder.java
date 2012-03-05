@@ -23,7 +23,7 @@ public class RegisteredUserBuilder {
 	
 
 	private List<Role> roles = new ArrayList<Role>();
-	private List<Qualification> qualifications = new ArrayList<Qualification>();
+	
 
 	public RegisteredUserBuilder role(Role role) {
 		this.roles.add(role);
@@ -37,18 +37,6 @@ public class RegisteredUserBuilder {
 		return this;
 	}
 	
-	public RegisteredUserBuilder qualification(Qualification qualification) {
-		this.qualifications.add(qualification);
-		return this;
-	}
-	
-	public RegisteredUserBuilder qualifications(Qualification... qualifications) {
-		for (Qualification qualification : qualifications) {
-			this.qualifications.add(qualification);
-		}
-		return this;
-	}
-
 	public RegisteredUserBuilder email(String email) {
 		this.email = email;
 		return this;
@@ -118,7 +106,6 @@ public class RegisteredUserBuilder {
 		user.setCredentialsNonExpired(credentialsNonExpired);
 		user.setAddress(address);
 		user.getRoles().addAll(roles);
-		user.getQualifications().addAll(qualifications);
 		return user;
 	}
 

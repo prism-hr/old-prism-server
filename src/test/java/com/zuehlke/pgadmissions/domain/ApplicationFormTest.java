@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
@@ -47,6 +48,13 @@ public class ApplicationFormTest {
 	public void shouldReturnDecidedFalseIfNeitherRejectedOrApproved(){
 		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		assertFalse(applicationForm.isDecided());
+	}
+	
+	@Test
+	public void shouldSaveQualificationInApplicationForm(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").application(applicationForm).toQualification();
+		
 	}
 }
 

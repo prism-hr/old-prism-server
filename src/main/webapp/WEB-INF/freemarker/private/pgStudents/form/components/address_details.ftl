@@ -14,8 +14,8 @@
                                 <#list model.applicationForm.addresses as address>
                                 <tr>
                                     <td>${address.location}, ${address.postCode}</td>
-                                    <td>${address.startDate}</td>
-                                    <td>${address.endDate}</td>
+                                    <td>${address.startDate?string('yyyy/MM/dd')}</td>
+                                    <td>${address.endDate?string('yyyy/MM/dd')}</td>
                                </tr>
                             </#list>
                             </table>
@@ -51,7 +51,7 @@
                             
                                 <tr>
                                 <td>Start Date</td>
-                                <td><input type="text" id="startDate" name="startDate" value="${model.address.startDate!}"/>
+                                <td><input type="text" id="startDate" name="startDate" value="${(model.address.startDate?string('yyyy/MM/dd'))!}"/>
                                 <#if model.hasError('startDate')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('startDate').code /></span>                           
                                 </#if>
@@ -60,7 +60,7 @@
                             
                                 <tr>
                                 <td>End Date</td>
-                                <td><input type="text" id="endDate" name="endDate" value="${model.address.endDate!}"/>
+                                <td><input type="text" id="endDate" name="endDate" value="${(model.address.endDate?string('yyyy/MM/dd'))!}"/>
                                 <#if model.hasError('endDate')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('endDate').code /></span>                           
                                 </#if>

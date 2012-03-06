@@ -1,9 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -13,12 +9,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.Address;
-import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
@@ -59,7 +52,7 @@ public class ViewApplicationFormController {
 
 		viewApplicationModel.setApplicationForm(applicationForm);
 		viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(applicationForm));
-		viewApplicationModel.setAddress(DTOUtils.createAddress(applicationForm));
+		viewApplicationModel.setAddress(new Address());
 		viewApplicationModel.setFunding(DTOUtils.createFunding(applicationForm));
 		
 		if (view != null && view.equals("errors")) {

@@ -19,10 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
-import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
-import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
@@ -58,21 +55,8 @@ public class SubmitApplicationFormController {
 			throw new ResourceNotFoundException();
 		}
 
+		appForm.setNumberOfAddresses(applicationForm.getAddresses().size());
 		ApplicationFormValidator validator = new ApplicationFormValidator();
-		PersonalDetails ps = new PersonalDetails();
-		ps.setFirstName(applicationForm.getApplicant().getFirstName());
-		ps.setLastName(applicationForm.getApplicant().getLastName());
-		ps.setEmail(applicationForm.getApplicant().getEmail());
-		
-		appForm.setPersonalDetails(ps);
-		
-		Address addr = new Address();
-		addr.setAddress(applicationForm.getApplicant().getAddress());
-		appForm.setAddress(addr);
-		
-		Funding fund = new Funding();
-		fund.setFunding(applicationForm.getFunding());
-		appForm.setFunding(fund);
 		
 		validator.validate(appForm, result);
 		List<FieldError> fieldErrors = new LinkedList<FieldError>();

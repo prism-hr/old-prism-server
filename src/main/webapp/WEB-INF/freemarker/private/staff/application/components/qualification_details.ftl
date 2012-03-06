@@ -5,7 +5,7 @@
                         <div>
                             <br/>
                             <div>
-                            <#list model.user.qualifications as qualification >
+                            <#list model.applicationForm.qualifications as qualification >
                             	${qualification.degree}
                             	${qualification.institution}
                             	${qualification.date_taken}

@@ -13,6 +13,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
+
 
 @Entity(name="APPLICATION_FORM_ADDRESS")
 @Access(AccessType.FIELD) 
@@ -38,6 +42,10 @@ public class Address extends DomainObject<Integer>{
 	@Temporal(TemporalType.DATE)
 	@Column(name="end_date")
 	private Date endDate;
+	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AddressStatusEnumUserType")
+	@Column(name = "contact_address")
+	private AddressStatus contactAddress;
 
 	public ApplicationForm getApplication() {
 		return application;
@@ -108,6 +116,14 @@ public class Address extends DomainObject<Integer>{
 	
 	public void setPurpose(String purpose) {
 		this.purpose = purpose;
+	}
+	
+	public AddressStatus getContactAddress() {
+		return contactAddress;
+	}
+	
+	public void setContactAddress(AddressStatus contactAddress) {
+		this.contactAddress = contactAddress;
 	}
 }
 

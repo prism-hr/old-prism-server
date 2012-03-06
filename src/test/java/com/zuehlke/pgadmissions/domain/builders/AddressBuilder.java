@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 
 public class AddressBuilder {
 
@@ -13,14 +14,21 @@ public class AddressBuilder {
 	private String location;
 	private String postCode;
 	private String country;
+	private String purpose;
 	
 	private Date startDate;
 	private Date endDate;
 	
-	private String purpose;
+	private AddressStatus contactAddress;
+	
 	
 	public AddressBuilder application(ApplicationForm application) {
 		this.application = application;
+		return this;
+	}
+	
+	public AddressBuilder contactAddress(AddressStatus contactAddress) {
+		this.contactAddress = contactAddress;
 		return this;
 	}
 	
@@ -64,6 +72,7 @@ public class AddressBuilder {
 		address.setStartDate(startDate);
 		address.setEndDate(endDate);
 		address.setPurpose(purpose);
+		address.setContactAddress(contactAddress);
 		return address;
 	}
 	

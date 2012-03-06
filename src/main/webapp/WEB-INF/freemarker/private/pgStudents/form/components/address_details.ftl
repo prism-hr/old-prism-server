@@ -78,8 +78,9 @@
                             
                             </table>
                             <label>This is my contact address</label>
-                            <label><input type="radio" name="contactAddress" value="YES"/> Yes</label>
-                            <label><input type="radio" name="contactAddress" value="NO"/> No</label>
+                            <label><input type="radio" name="isCA" value="YES"/> Yes</label>
+                            <label><input type="radio" name="isCA" value="NO"/> No</label>
+                            <input type="hidden" id="contactAddress" name="contactAddress"/>
                             </div>
                             <br/>
                             <div class="buttons">

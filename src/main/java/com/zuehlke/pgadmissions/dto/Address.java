@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
+
 public class Address {
 
 	private String location;
@@ -10,6 +12,8 @@ public class Address {
 	private Date startDate;
 	private Date endDate;
 	private String purpose;
+	
+	private AddressStatus contactAddress;
 	
 	public String getLocation() {
 		return location;
@@ -57,5 +61,13 @@ public class Address {
 	
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+	
+	public AddressStatus getContactAddress() {
+		return contactAddress;
+	}
+	
+	public void setContactAddress(AddressStatus contactAddress) {
+		this.contactAddress = contactAddress;
 	}
 }

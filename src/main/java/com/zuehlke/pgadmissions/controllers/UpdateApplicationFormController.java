@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -195,6 +194,12 @@ public class UpdateApplicationFormController {
 
 		AddressValidator addressValidator = new AddressValidator();
 		addressValidator.validate(addr, result);
+		ApplicationPageModel model = new ApplicationPageModel();
+		ApplicationForm applicationForm = application;
+		model.setUser(user);
+		model.setApplicationForm(applicationForm);
+		model.setResult(result);
+
 		if (!result.hasErrors()) {
 			com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
 			address.setApplication(application);
@@ -204,16 +209,13 @@ public class UpdateApplicationFormController {
 			address.setPurpose(addr.getPurpose());
 			address.setStartDate(addr.getStartDate());
 			address.setEndDate(addr.getEndDate());
+			address.setContactAddress(addr.getContactAddress());
 			application.getAddresses().add(address);
 			applicationService.save(application);
+			model.setAddress(new Address());
+		} else {
+			model.setAddress(addr);
 		}
-
-		ApplicationPageModel model = new ApplicationPageModel();
-		ApplicationForm applicationForm = application;
-		model.setUser(user);
-		model.setApplicationForm(applicationForm);
-		model.setAddress(addr);
-		model.setResult(result);
 		modelMap.put("model", model);
 
 		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, modelMap);

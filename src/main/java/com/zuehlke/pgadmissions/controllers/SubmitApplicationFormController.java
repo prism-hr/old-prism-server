@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -66,7 +67,7 @@ public class SubmitApplicationFormController {
 
 			viewApplicationModel.setApplicationForm(applicationForm);
 			viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(applicationForm));
-			viewApplicationModel.setAddress(DTOUtils.createAddress(applicationForm));
+			viewApplicationModel.setAddress(new Address());
 			viewApplicationModel.setFunding(DTOUtils.createFunding(applicationForm));
 			viewApplicationModel.setMessage("Some required fields are missing, please review your application form.");
 			viewApplicationModel.setResult(result);

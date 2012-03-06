@@ -24,7 +24,7 @@
                                 <tr align=left></tr>
                                 <tr><td>Street Name & Number</td>
                                 <td>
-                                <input type="text" id="street" name="street"/>
+                                <input type="text" id="street" name="street" value="${model.address.street!}"/>
                                 <#if model.hasError('street')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('street').code /></span>                           
                                 </#if>
@@ -33,7 +33,7 @@
                                 
                                 <tr>
                                 <td>Postal Code</td>
-                                <td><input type="text" id="postCode" name="postCode"/>
+                                <td><input type="text" id="postCode" name="postCode" value="${model.address.postCode!}"/>
                                 <#if model.hasError('postCode')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('postCode').code /></span>                           
                                 </#if>
@@ -42,7 +42,7 @@
                             
                                 <tr>
                                 <td>City</td>
-                                <td><input type="text" id="city" name="city"/>
+                                <td><input type="text" id="city" name="city" value="${model.address.city!}"/>
                                 <#if model.hasError('city')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('city').code /></span>                           
                                 </#if>
@@ -51,7 +51,7 @@
                             
                                 <tr>
                                 <td>Country</td>
-                                <td><input type="text" id="country" name="country"/>
+                                <td><input type="text" id="country" name="country" value="${model.address.country!}"/>
                                 <#if model.hasError('country')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('country').code /></span>                           
                                 </#if>
@@ -60,7 +60,7 @@
                             
                                 <tr>
                                 <td>Start Date</td>
-                                <td><input type="text" id="startDate" name="startDate"/>
+                                <td><input type="text" id="startDate" name="startDate" value="${model.address.startDate!}"/>
                                 <#if model.hasError('startDate')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('startDate').code /></span>                           
                                 </#if>
@@ -69,7 +69,7 @@
                             
                                 <tr>
                                 <td>End Date</td>
-                                <td><input type="text" id="endDate" name="endDate"/>
+                                <td><input type="text" id="endDate" name="endDate" value="${model.address.endDate!}"/>
                                 <#if model.hasError('endDate')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('endDate').code /></span>                           
                                 </#if>

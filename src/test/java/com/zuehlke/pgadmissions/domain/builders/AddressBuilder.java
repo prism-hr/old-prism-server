@@ -10,26 +10,27 @@ public class AddressBuilder {
 	
 	private ApplicationForm application;
 	
-	private String street;
-	private String city;
+	private String location;
 	private String postCode;
 	private String country;
 	
 	private Date startDate;
 	private Date endDate;
 	
+	private String purpose;
+	
 	public AddressBuilder application(ApplicationForm application) {
 		this.application = application;
 		return this;
 	}
 	
-	public AddressBuilder street(String street) {
-		this.street = street;
+	public AddressBuilder location(String location) {
+		this.location = location;
 		return this;
 	}
 	
-	public AddressBuilder city(String city) {
-		this.city = city;
+	public AddressBuilder purpose(String purpose) {
+		this.purpose = purpose;
 		return this;
 	}
 	
@@ -57,13 +58,12 @@ public class AddressBuilder {
 	public Address toAddress() {
 		Address address = new Address();
 		address.setApplication(application);
-		address.setStreet(street);
-		address.setCity(city);
+		address.setLocation(location);
 		address.setPostCode(postCode);
 		address.setCountry(country);
 		address.setStartDate(startDate);
 		address.setEndDate(endDate);
-		
+		address.setPurpose(purpose);
 		return address;
 	}
 	

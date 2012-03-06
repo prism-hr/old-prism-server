@@ -184,10 +184,10 @@ public class UpdateApplicationFormController {
 		if (!result.hasErrors()) {
 			com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
 			address.setApplication(application);
-			address.setStreet(addr.getStreet());
+			address.setLocation(addr.getLocation());
 			address.setPostCode(addr.getPostCode());
-			address.setCity(addr.getCity());
 			address.setCountry(addr.getCountry());
+			address.setPurpose(addr.getPurpose());
 			//TODO
 			address.setStartDate(new Date());
 			address.setEndDate(new Date());

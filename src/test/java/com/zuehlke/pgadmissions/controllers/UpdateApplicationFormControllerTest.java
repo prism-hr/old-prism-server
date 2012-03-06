@@ -122,9 +122,9 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setStreet("1, Main Street");
+		address.setLocation("1, Main Street, London");
 		address.setPostCode("NW2345");
-		address.setCity("london");
+		address.setPurpose("parents");
 		address.setCountry("UK");
 		//TODO
 		address.setStartDate("date1");
@@ -134,9 +134,9 @@ public class UpdateApplicationFormControllerTest {
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
 		com.zuehlke.pgadmissions.domain.Address addr = ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getAddresses().get(0);
-		Assert.assertEquals("1, Main Street", addr.getStreet());
+		Assert.assertEquals("1, Main Street, London", addr.getLocation());
 		Assert.assertEquals("NW2345", addr.getPostCode());
-		Assert.assertEquals("london", addr.getCity());
+		Assert.assertEquals("parents", addr.getPurpose());
 		Assert.assertEquals("UK", addr.getCountry());
 	}
 
@@ -148,7 +148,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setCity("");
+		address.setLocation("");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
@@ -163,7 +163,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setCity("london, uk");
+		address.setLocation("london, uk");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 	}

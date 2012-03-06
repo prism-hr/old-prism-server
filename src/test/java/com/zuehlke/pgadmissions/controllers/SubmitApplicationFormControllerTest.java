@@ -42,12 +42,12 @@ public class SubmitApplicationFormControllerTest {
 		form.setApplicant(student);
 		com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
 		address.setApplication(form);
-		address.setCity("london");
 		address.setCountry("test");
-		address.setStreet("test");
+		address.setLocation("test");
 		address.setStartDate(new Date());
 		address.setEndDate(new Date());
 		address.setPostCode("test");
+		address.setPurpose("parents");
 		
 		form.getAddresses().add(address);
 		applicationsServiceMock.save(form);

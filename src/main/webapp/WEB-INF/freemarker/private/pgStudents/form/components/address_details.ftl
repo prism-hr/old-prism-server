@@ -13,7 +13,7 @@
                                  <tr align=left><th>Address</th><th>From</th><th>To</th></tr>
                                 <#list model.applicationForm.addresses as address>
                                 <tr>
-                                    <td>${address.street}, ${address.city}, ${address.postCode}</td>
+                                    <td>${address.location}, ${address.postCode}</td>
                                     <td>${address.startDate?date}</td>
                                     <td>${address.endDate?date}</td>
                                </tr>
@@ -24,9 +24,9 @@
                                 <tr align=left></tr>
                                 <tr><td>Street Name & Number</td>
                                 <td>
-                                <input type="text" id="street" name="street" value="${model.address.street!}"/>
-                                <#if model.hasError('street')>                           
-                                    <span style="color:red;"><@spring.message  model.result.getFieldError('street').code /></span>                           
+                                <input type="text" id="location" name="location" value="${model.address.location!}"/>
+                                <#if model.hasError('location')>                           
+                                    <span style="color:red;"><@spring.message  model.result.getFieldError('location').code /></span>                           
                                 </#if>
                                 </td>
                                 </tr>
@@ -36,15 +36,6 @@
                                 <td><input type="text" id="postCode" name="postCode" value="${model.address.postCode!}"/>
                                 <#if model.hasError('postCode')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('postCode').code /></span>                           
-                                </#if>
-                                </td>
-                                </tr>
-                            
-                                <tr>
-                                <td>City</td>
-                                <td><input type="text" id="city" name="city" value="${model.address.city!}"/>
-                                <#if model.hasError('city')>                           
-                                    <span style="color:red;"><@spring.message  model.result.getFieldError('city').code /></span>                           
                                 </#if>
                                 </td>
                                 </tr>
@@ -75,8 +66,20 @@
                                 </#if>
                                 </td>
                                 </tr>
-                            </table>
+                                
+                                <tr>
+                                <td>Reason for living here</td>
+                                <td><input type="text" id="purpose" name="purpose" value="${model.address.purpose!}"/>
+                                <#if model.hasError('purpose')>                           
+                                    <span style="color:red;"><@spring.message  model.result.getFieldError('purpose').code /></span>                           
+                                </#if>
+                                </td>
+                                </tr>
                             
+                            </table>
+                            <label>This is my contact address</label>
+                            <label><input type="radio" name="contactAddress" value="YES"/> Yes</label>
+                            <label><input type="radio" name="contactAddress" value="NO"/> No</label>
                             </div>
                             <br/>
                             <div class="buttons">

@@ -2,27 +2,20 @@ package com.zuehlke.pgadmissions.dto;
 
 public class Address {
 
-	private String street;
-	private String city;
+	private String location;
 	private String postCode;
 	private String country;
 	private String startDate;
 	private String endDate;
+	private String purpose;
 	
-	public String getStreet() {
-		return street;
+
+	public String getLocation() {
+		return location;
 	}
 	
-	public void setStreet(String street) {
-		this.street = street;
-	}
-	
-	public String getCity() {
-		return city;
-	}
-	
-	public void setCity(String city) {
-		this.city = city;
+	public void setLocation(String location) {
+		this.location = location;
 	}
 	
 	public String getPostCode() {
@@ -55,5 +48,13 @@ public class Address {
 	
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+	
+	public String getPurpose() {
+		return purpose;
+	}
+	
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
 	}
 }

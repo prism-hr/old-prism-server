@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -46,9 +48,9 @@ public class ApplicationsServiceTest{
 	}
 	
 	@Test
-	public void shouldGetListOfQualificationsForApplication(){
+	public void shouldGetListOfQualificationsForApplication() throws ParseException{
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
-		Qualification qual = new QualificationBuilder().id(1).date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").application(applicationForm).toQualification();
+		Qualification qual = new QualificationBuilder().id(3).application(applicationForm).q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_country("").q_grade("").q_institution("").q_language_of_study("").q_level("").q_name_of_programme("").q_score("").q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_termination_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/10/10")).q_termination_reason("").q_type("").toQualification();
 		EasyMock.expect(applicationFormDAOMock.getQualificationsByApplication(applicationForm)).andReturn(Arrays.asList(qual));
 		EasyMock.replay(applicationFormDAOMock);
 		List<Qualification> qualifications = applicationsService.getQualificationsByApplication(applicationForm);

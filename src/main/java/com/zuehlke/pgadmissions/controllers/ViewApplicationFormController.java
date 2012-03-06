@@ -78,46 +78,5 @@ public class ViewApplicationFormController {
 				viewApplicationModel);
 	}
 
-	/*private List<Qualification> createOrGetExistingQualifications(ApplicationForm applicationForm, RegisteredUser currentuser) {
-		if(!applicationForm.hasQualifications()){
-			Qualification qualification = new Qualification();
-			qualification.setDegree("");
-			qualification.setGrade("");
-			qualification.setInstitution("");
-			qualification.setDate_taken("");
-			qualification.setApplicant(currentuser);
-			qualification.setApplication(applicationForm);
-			applicationService.save(applicationForm);
-			return Arrays.asList(qualification);
-		}*/
-	
-//		return applicationForm.getQualifications();
-		
-//		else{
-//			List<Qualification> existingQualifications = applicationForm.getQualifications();
-//			for (Qualification existingQualification : existingQualifications) {
-//				if(!existingQualification.isAttachedToApplication(applicationForm, existingQualification)){
-//					Qualification newQualification = attachQualificationToApplication(applicationForm, currentuser, existingQualification);
-//					qualifications.add(newQualification);
-//				}
-//			}
-//		}
-		
-//	}
-
-//	private Qualification attachQualificationToApplication(ApplicationForm applicationForm, RegisteredUser currentuser, Qualification existingQualification) {
-//				Qualification newQualification = new Qualification();
-//				newQualification.setDate_taken(existingQualification.getDate_taken());
-//				newQualification.setDegree(existingQualification.getDegree());
-//				newQualification.setGrade(existingQualification.getDegree());
-//				newQualification.setInstitution(existingQualification.getInstitution());
-//				newQualification.setApplicant(currentuser);
-//				newQualification.setApplication(applicationForm);
-//				applicationService.save(applicationForm);
-////				currentuser.getQualifications().add(newQualification);
-////				applicationReviewService.saveUser(currentuser);
-//				return newQualification;
-//	}
-
 }
 

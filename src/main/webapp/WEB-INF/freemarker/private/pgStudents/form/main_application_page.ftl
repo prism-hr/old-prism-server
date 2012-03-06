@@ -78,7 +78,7 @@
 			          </section>
 			          
 			           <section id="qualificationsSection" class="folding orange">
-			            <#include "/private/pgStudents/form/components/qualification_details.ftl"/>
+			            <#include "/wip/qualifications.ftl"/>
 			          </section>
 			          
 			           <section class="folding yellow">

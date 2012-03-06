@@ -55,7 +55,7 @@ public class CommentControllerTest {
 	@Before
 	public void setUp() {
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").toQualification();
+		
 		admin = new RegisteredUserBuilder().id(1).username("bob")
 								.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		approver = new RegisteredUserBuilder().id(2).username("mark")

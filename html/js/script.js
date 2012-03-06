@@ -40,15 +40,17 @@ $(document).ready(function()
 	{
 		var $this    = $(this);
 		var $form    = $this.closest('table').next('form');
+		/*
 		$this.bind('click', function() {
 			$form.toggle();
 			$this.toggleClass('open', $form.is(':visible'));
 			return false;
 		});
 		$this.toggleClass('open', $form.is(':visible'));
+		*/
 	});
 	
-		$('section.folding a.comment-open').each(function()
+	$('section.folding a.comment-open').each(function()
 	{
 		var $this = $(this);
 		var $target = $this.closest('section.folding').find('div.comment');

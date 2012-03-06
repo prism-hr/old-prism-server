@@ -79,7 +79,7 @@
 			          </section>
 			          
 			           <section class="folding orange">
-			            <#include "/private/staff/application/components/qualifications_details.ftl"/>
+			            <#include "/private/staff/application/components/qualification_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding yellow">
@@ -93,7 +93,7 @@
 			          </section>
 			          
 			           <section class="folding green">
-			             <#include "/private/staff/application/components/funding_detials.ftl"/>
+			             <#include "/private/staff/application/components/funding_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding navy">

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.ArrayList;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -182,8 +182,18 @@ public class UpdateApplicationFormController {
 		AddressValidator addressValidator = new AddressValidator();
 		addressValidator.validate(addr, result);
 		if (!result.hasErrors()) {
-			user.setAddress(addr.getAddress());
-			userService.save(user);
+			com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
+			address.setApplication(application);
+			address.setStreet(addr.getStreet());
+			address.setPostCode(addr.getPostCode());
+			address.setCity(addr.getCity());
+			address.setCountry(addr.getCountry());
+			//TODO
+			address.setStartDate(new Date());
+			address.setEndDate(new Date());
+			//TODO
+			application.getAddresses().add(address);
+			applicationService.save(application);
 		}
 		
 		ApplicationPageModel model = new ApplicationPageModel();

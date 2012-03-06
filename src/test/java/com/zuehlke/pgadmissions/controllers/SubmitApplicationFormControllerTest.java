@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Date;
+
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -38,6 +40,16 @@ public class SubmitApplicationFormControllerTest {
 	public void shouldLoadApplicationFormByIdAndChangeSubmissionStatusToSubmitted() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).funding("test").toApplicationForm();
 		form.setApplicant(student);
+		com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
+		address.setApplication(form);
+		address.setCity("london");
+		address.setCountry("test");
+		address.setStreet("test");
+		address.setStartDate(new Date());
+		address.setEndDate(new Date());
+		address.setPostCode("test");
+		
+		form.getAddresses().add(address);
 		applicationsServiceMock.save(form);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);

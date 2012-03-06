@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,7 +25,6 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 import org.springframework.util.Assert;
 
-import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
@@ -68,8 +65,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	private String funding;
 	
-	@OneToMany(mappedBy="application")
-	@Cascade(CascadeType.ALL)
+	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
+	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+	@Access(AccessType.PROPERTY)
+	@JoinColumn(name = "application_form_id")
 	private List<Address> addresses = new ArrayList<Address>();
 
 	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
@@ -237,7 +236,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 	
 	public void setAddresses(List<Address> addresses) {
-		this.addresses = addresses;
+		if(this.addresses.size() == addresses.size() && this.addresses.containsAll(addresses)){
+			return;
+		}
+		this.addresses.clear();
+		this.addresses.addAll(addresses);
 	}
 	
 	public boolean hasQualifications(){

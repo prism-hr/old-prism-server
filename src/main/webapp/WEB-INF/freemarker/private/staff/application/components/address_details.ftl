@@ -5,9 +5,14 @@
                         <div>
                             <br/>
                             <div>
-                            <table>
-                            <#list model.applicationForm.addresses as address>
-                                <tr><td>- ${address.street}, ${address.city}, ${address.postCode}, ${address.country}     ${address.startDate?date}     ${address.endDate?date}</td></tr>
+                             <table cellspacing=10>
+                                 <tr align=left><th>Address</th><th>From</th><th>To</th></tr>
+                                <#list model.applicationForm.addresses as address>
+                                <tr>
+                                    <td>${address.street}, ${address.city}, ${address.postCode}</td>
+                                    <td>${address.startDate?date}</td>
+                                    <td>${address.endDate?date}</td>
+                               </tr>
                             </#list>
                             </table>
                             </div>

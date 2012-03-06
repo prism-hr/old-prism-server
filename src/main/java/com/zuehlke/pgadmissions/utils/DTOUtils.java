@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.utils;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 
@@ -11,11 +10,6 @@ public class DTOUtils {
 		Funding funding = new Funding();
 		funding.setFunding(applicationForm.getFunding());
 		return funding;
-	}
-
-	public static Address createAddress(ApplicationForm applicationForm) {
-		Address address = new Address();
-		return address;
 	}
 
 	public static PersonalDetails createPersonalDetails(ApplicationForm applicationForm) {

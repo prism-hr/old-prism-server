@@ -6,14 +6,76 @@
                         <div>
                             <br/>
                             <div>
-                            <textarea id="address" name="address" cols="45" rows="7">${model.address.address!}</textarea>
-                            <#if model.hasError('address')>                           
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('address').code /></span>                           
+                            <#if model.hasError('numberOfAddresses')>                           
+                                    <span style="color:red;"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>                        
                             </#if>
+                             <table cellspacing=10>
+                                 <tr align=left><th>Address</th><th>From</th><th>To</th></tr>
+                                <#list model.applicationForm.addresses as address>
+                                <tr>
+                                    <td>${address.street}, ${address.city}, ${address.postCode}</td>
+                                    <td>${address.startDate?date}</td>
+                                    <td>${address.endDate?date}</td>
+                               </tr>
+                            </#list>
+                            </table>
                             
-                            <#if model.hasError('address.address')>                           
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('address.address').code /></span>                           
-                            </#if>
+                            <table cellspacing=10>
+                                <tr align=left></tr>
+                                <tr><td>Street Name & Number</td>
+                                <td>
+                                <input type="text" id="street" name="street"/>
+                                <#if model.hasError('street')>                           
+                                    <span style="color:red;"><@spring.message  model.result.getFieldError('street').code /></span>                           
+                                </#if>
+                                </td>
+                                </tr>
+                                
+                                <tr>
+                                <td>Postal Code</td>
+                                <td><input type="text" id="postCode" name="postCode"/>
+                                <#if model.hasError('postCode')>                           
+                                    <span style="color:red;"><@spring.message  model.result.getFieldError('postCode').code /></span>                           
+                                </#if>
+                                </td>
+                                </tr>
+                            
+                                <tr>
+                                <td>City</td>
+                                <td><input type="text" id="city" name="city"/>
+                                <#if model.hasError('city')>                           
+                                    <span style="color:red;"><@spring.message  model.result.getFieldError('city').code /></span>                           
+                                </#if>
+                                </td>
+                                </tr>
+                            
+                                <tr>
+                                <td>Country</td>
+                                <td><input type="text" id="country" name="country"/>
+                                <#if model.hasError('country')>                           
+                                    <span style="color:red;"><@spring.message  model.result.getFieldError('country').code /></span>                           
+                                </#if>
+                                </td>
+                                </tr>
+                            
+                                <tr>
+                                <td>Start Date</td>
+                                <td><input type="text" id="startDate" name="startDate"/>
+                                <#if model.hasError('startDate')>                           
+                                    <span style="color:red;"><@spring.message  model.result.getFieldError('startDate').code /></span>                           
+                                </#if>
+                                </td>
+                                </tr>
+                            
+                                <tr>
+                                <td>End Date</td>
+                                <td><input type="text" id="endDate" name="endDate"/>
+                                <#if model.hasError('endDate')>                           
+                                    <span style="color:red;"><@spring.message  model.result.getFieldError('endDate').code /></span>                           
+                                </#if>
+                                </td>
+                                </tr>
+                            </table>
                             
                             </div>
                             <br/>

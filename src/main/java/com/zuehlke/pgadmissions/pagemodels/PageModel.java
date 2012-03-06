@@ -74,7 +74,4 @@ public class PageModel {
 		return false;
 	}
 
-
-		
-	
 }

@@ -6,18 +6,13 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public class QualificationBuilder {
 	
-	private RegisteredUser applicant;
 	private String degree;
 	private String date_taken;
 	private String institution;
 	private String grade;
 	private ApplicationForm application;
-	private int id;
+	private Integer id;
 	
-	public QualificationBuilder applicant (RegisteredUser applicant) {
-		this.applicant = applicant;
-		return this;
-	}
 	
 	public QualificationBuilder degree (String degree) {
 		this.degree = degree;
@@ -42,7 +37,6 @@ public class QualificationBuilder {
 	
 	public Qualification toQualification() {
 		Qualification qualification = new Qualification();
-		qualification.setApplicant(applicant);
 		qualification.setApplication(application);
 		qualification.setDate_taken(date_taken);
 		qualification.setDegree(degree);
@@ -52,7 +46,7 @@ public class QualificationBuilder {
 		return qualification;
 	}
 
-	public QualificationBuilder id(int id) {
+	public QualificationBuilder id(Integer id) {
 		this.id = id;
 		return this;
 	}

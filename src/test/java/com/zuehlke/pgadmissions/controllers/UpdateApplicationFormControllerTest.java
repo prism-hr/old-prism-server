@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
@@ -272,6 +273,32 @@ public class UpdateApplicationFormControllerTest {
 		applicationController.editQualification(qualificationDto,2,mappingResult);
 		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals(0, form.getQualifications().size() );
+	}
+	@Test
+	public void shouldReturnInputQualificationDtoIfHasErrors() {
+		BindingResult mappingResult = EasyMock.createMock(BindingResult.class);
+		qualificationDto.setQualId(null);
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		qualificationValidator.validate(qualificationDto, mappingResult);
+		EasyMock.expect(mappingResult.hasErrors()).andReturn(true);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock, mappingResult, qualificationValidator);
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,2,mappingResult);
+		Assert.assertEquals(qualificationDto, ((ApplicationPageModel)modelAndView.getModel().get("model")).getQualification());
+	}
+	@Test
+	public void shouldReturnNewQualificationDtoIfHasNoErrors() {
+		BindingResult mappingResult = EasyMock.createMock(BindingResult.class);
+		qualificationDto.setQualId(null);
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		qualificationValidator.validate(qualificationDto, mappingResult);
+		EasyMock.expect(mappingResult.hasErrors()).andReturn(false);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		applicationsServiceMock.save(form);
+		EasyMock.replay(applicationsServiceMock, mappingResult, qualificationValidator);
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,2,mappingResult);
+		Assert.assertNotNull(((ApplicationPageModel)modelAndView.getModel().get("model")).getQualification());
+		Assert.assertNull(((ApplicationPageModel)modelAndView.getModel().get("model")).getQualification().getInstitution());
 	}
 	
 	@Test

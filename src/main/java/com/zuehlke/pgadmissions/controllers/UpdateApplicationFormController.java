@@ -106,8 +106,12 @@ public class UpdateApplicationFormController {
 			BindingResult result) {
 		qualificationValidator.validate(qual, result);
 		ApplicationForm application = applicationService.getApplicationById(appId);
+		ApplicationPageModel model = new ApplicationPageModel();
+		model.setApplicationForm(application);
+		model.setUser(((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()));
+		model.setResult(result);
 		if (!result.hasErrors()) {
-
+			model.setQualificationDto(new QualificationDTO());
 			if (application.isSubmitted()) {
 				throw new CannotUpdateApplicationException();
 			}
@@ -134,11 +138,10 @@ public class UpdateApplicationFormController {
 
 			applicationService.save(application);
 		}
+		else{
+			model.setQualificationDto(qual);
+		}
 
-		PageModel model = new PageModel();
-		model.setApplicationForm(application);
-		model.setUser(((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()));
-		model.setResult(result);
 		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, "model", model);
 	}
 

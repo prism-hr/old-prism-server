@@ -1,15 +1,15 @@
-          <!-- Personal details -->
-          <section class="folding purple">
+          <section class="folding navy">
             <h2 class="empty">
               <span class="left"></span><span class="right"></span><span class="status"></span>
-              Personal Details
+              References
             </h2>
             <div class="open">
             	<table class="existing">
               	<colgroup>
                 	<col style="width: 30px" />
-                	<col style="width: 170px" />
-                	<col style="width: 200px" />
+                	<col style="width: 160px" />
+                	<col style="width: 160px" />
+                	<col style="width: 260px" />
                 	<col />
                 	<col style="width: 30px" />
                 	<col style="width: 30px" />
@@ -18,6 +18,7 @@
                 	<tr>
                   	<th colspan="2">First name</th>
                     <th>Surname</th>
+                    <th>Phone Number</th>
                     <th>Email</th>
                     <th colspan="2">&nbsp;</th>
                   </tr>
@@ -27,12 +28,18 @@
                   	<td><a class="row-arrow" href="#">-</a></td>
                   	<td>Bob</td>
                   	<td>Smith</td>
+                  	<td>0800 5555555</td>
                   	<td>bob.smith@test.com</td>
                   	<td><a class="button-edit" href="#">edit</a></td>
                   	<td><a class="button-close" href="#">close</a></td>
                   </tr>
                 </tbody>
               </table>
+
+              <div class="add buttons">
+                <a class="button" href="#">Add Another Person</a>
+              </div>
+              
               <form method="post" action="woooop">
 
               	<div>
@@ -40,33 +47,71 @@
                   	<label class="label">First Name</label>
                     <span class="hint"></span>
                     <div class="field">
-                    	<input class="full" type="text" value="Bob" />
+                    	<input class="full" type="text" value="" />
                     </div>
                   </div>
                 	<div class="row">
                   	<label class="label">Last Name</label>
                     <span class="hint"></span>
                     <div class="field">
-                    	<input class="full" type="text" value="Smith" />
+                    	<input class="full" type="text" value="" />
                     </div>
                   </div>
                 	<div class="row">
-                  	<label class="label">Gender</label>
-                    <div class="field">
-                      <label><input type="radio" name="gender" /> Male</label>
-                      <label><input type="radio" name="gender" /> Female</label>
-                    </div>
-                  </div>
-                	<div class="row">
-                  	<label class="label">Date of Birth</label>
+                  	<label class="label">Relationship</label>
                     <span class="hint"></span>
-                    <input class="half" type="date" value="" />
+                    <div class="field">
+                    	<input class="full" type="text" value="" />
+                    </div>
                   </div>
                 </div>
 
               	<div>
+                	<p><strong>Position</strong></p>
                 	<div class="row">
-                  	<label class="label">Country of Birth</label>
+                  	<span class="label">Employer</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<input class="full" type="text" value="" />
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Country</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>United Kingdom</option>
+                      </select>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<span class="label">Position</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<input class="full" type="text" value="" />
+                    </div>
+                  </div>
+                </div>
+
+              	<div>
+                	<p><strong>Address</strong></p>
+                  
+                	<div class="row">
+                  	<span class="label">Stret Name,<br>Number,<br>City &amp; State</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <textarea class="max" rows="6" cols="70"></textarea>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<span class="label">Postal Code</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<input class="half" type="text" value="" />
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<span class="label">Country</span>
                     <span class="hint"></span>
                     <div class="field">
                       <select class="full">
@@ -77,95 +122,15 @@
                 </div>
 
               	<div>
-                	<p><strong>Nationality</strong></p>
-                	<div class="row">
-                  	<span class="label">Country</span>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full">
-                        <option>British</option>
-                      </select>
-                      <label><input type="radio" /> This is my primary nationality</label>
-                    </div>
-                  </div>
-                	<div class="row">
-                  	<div class="field"><a class="button blue" href="#">Add a nationality</a></div>
-                  </div>
-                </div>
-
-              	<div>
-                	<div class="row">
-                  	<label class="label">Language</label>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full">
-                        <option>English</option>
-                      </select>
-                      <label><input type="radio" /> This is my primary language</label>
-                    </div>
-                  </div>
-                	<div class="row">
-                  	<span class="label">Aptitude</span>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full">
-                        <option>Native Speaker</option>
-                      </select>
-                    </div>
-                  </div>
-                	<div class="row">
-                  	<div class="field"><a class="button blue" href="#">Add a language</a></div>
-                  </div>
-                </div>
-
-              	<div>
-                	<p><strong>UK Visa</strong></p>
-                	<div class="row">
-                  	<span class="label">Type</span>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full">
-                        <option>Student</option>
-                      </select>
-                    </div>
-                  </div>
-                	<div class="row">
-                  	<span class="label">Date of Issue</span>
-                    <span class="hint"></span>
-                    <input class="half" type="date" value="" />
-                  </div>
-                	<div class="row">
-                  	<span class="label">Date of Expiry</span>
-                    <span class="hint"></span>
-                    <input class="half" type="date" value="" />
-                  </div>
-                	<div class="row">
-                  	<span class="label">Supporting Document</span>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <input class="full" type="text" value="" />
-                      <a class="button" href="#">Browse</a>
-                      <a class="button" href="#">Upload</a>
-                    </div>
-                  </div>
-                	<div class="row">
-                  	<div class="field"><a class="button blue" href="#">Add a visa</a></div>
-                  </div>
-                </div>
-
-              	<div>
                 	<p><strong>Contact Details</strong></p>
                 	<div class="row">
                 		<span class="label">Email</span>
                     <span class="hint"></span>
                     <div class="field">
 	                    <input class="full" type="email" value="info@hotmail.com" />
-                      <a class="button" href="#" style="width: 110px;">Add Email</a>
                     </div>
                   </div>
-                </div>
-                
-              	<div>
+
                 	<div class="row">
                 		<span class="label">Telephone</span>
                     <span class="hint"></span>
@@ -177,9 +142,7 @@
                       <a class="button" href="#" style="width: 110px;">Add Phone</a>
                     </div>
                   </div>
-                </div>
-                
-              	<div>
+
                 	<div class="row">
                 		<span class="label">Messenger</span>
                     <span class="hint"></span>

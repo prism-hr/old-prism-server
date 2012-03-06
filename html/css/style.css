@@ -129,6 +129,7 @@ span.indicator { border-width: 1px; padding: 1px 5px; vertical-align: text-botto
 /* FORM ELEMENTS ----------------------------------------------------------------------------------------- */
 form input, form select, form textarea { border: 1px solid #999; font-family: Arial, Helvetica, sans-serif; }
 form input { padding: 1px 3px; }
+form input[type=date], form input.hasDatepicker { background: url(../images/calendar.png) no-repeat right center; }
 form textarea { padding: 3px; resize: none; }
 form label input { border: none; padding: 0; }
 form select[multiple] { vertical-align: top; }

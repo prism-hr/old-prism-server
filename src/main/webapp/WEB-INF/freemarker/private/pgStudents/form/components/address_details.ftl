@@ -14,8 +14,8 @@
                                 <#list model.applicationForm.addresses as address>
                                 <tr>
                                     <td>${address.location}, ${address.postCode}</td>
-                                    <td>${address.startDate?date}</td>
-                                    <td>${address.endDate?date}</td>
+                                    <td>${address.startDate}</td>
+                                    <td>${address.endDate}</td>
                                </tr>
                             </#list>
                             </table>

@@ -134,10 +134,8 @@ public class UpdateApplicationFormControllerTest {
 		address.setPostCode("NW2345");
 		address.setPurpose("parents");
 		address.setCountry("UK");
-		//TODO
-		address.setStartDate("date1");
-		address.setEndDate("date2");
-		//TODO
+		address.setStartDate(new Date());
+		address.setEndDate(new Date());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());

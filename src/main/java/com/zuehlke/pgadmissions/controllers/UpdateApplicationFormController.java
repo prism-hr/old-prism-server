@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.util.Date;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -200,10 +199,8 @@ public class UpdateApplicationFormController {
 			address.setPostCode(addr.getPostCode());
 			address.setCountry(addr.getCountry());
 			address.setPurpose(addr.getPurpose());
-			//TODO
-			address.setStartDate(new Date());
-			address.setEndDate(new Date());
-			//TODO
+			address.setStartDate(addr.getStartDate());
+			address.setEndDate(addr.getEndDate());
 			application.getAddresses().add(address);
 			applicationService.save(application);
 		}

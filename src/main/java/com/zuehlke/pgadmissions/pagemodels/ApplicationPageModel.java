@@ -7,6 +7,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
+import com.zuehlke.pgadmissions.dto.QualificationDTO;
 
 public class ApplicationPageModel extends PageModel {
 	
@@ -16,6 +17,7 @@ public class ApplicationPageModel extends PageModel {
 	private String message;
 	private List<Qualification> qualifications;
 	private ApplicationForm applicationForm;
+	private QualificationDTO qualificationDto;
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -64,5 +66,12 @@ public class ApplicationPageModel extends PageModel {
 	public void setApplicationForm(ApplicationForm applicationForm) {
 		this.applicationForm = applicationForm;
 		
+	}
+
+	public QualificationDTO getQualification() {
+		return qualificationDto;
+	}
+	public void setQualificationDto(QualificationDTO qualificationDto) {
+		this.qualificationDto = qualificationDto;
 	}
 }

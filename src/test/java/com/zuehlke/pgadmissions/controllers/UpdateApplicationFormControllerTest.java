@@ -122,6 +122,7 @@ public class UpdateApplicationFormControllerTest {
 	}
 
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldSaveNewAddress() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
@@ -135,8 +136,8 @@ public class UpdateApplicationFormControllerTest {
 		address.setPostCode("NW2345");
 		address.setPurpose("parents");
 		address.setCountry("UK");
-		address.setStartDate(new Date());
-		address.setEndDate(new Date());
+		address.setStartDate(new Date(2011, 11, 11));
+		address.setEndDate(new Date(2012, 11, 11));
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
@@ -156,6 +157,8 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
 		address.setLocation("");
+		address.setStartDate(new Date());
+		address.setEndDate(new Date());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());

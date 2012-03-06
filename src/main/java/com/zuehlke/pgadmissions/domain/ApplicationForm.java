@@ -82,9 +82,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 	
 	public void setQualifications(List<Qualification> qualifications) {	
-		for (Qualification qualification : qualifications) {
-			Assert.notNull(qualification.getDegree());
-		}
 		if(this.qualifications.size() == qualifications.size() && this.qualifications.containsAll(qualifications)){
 			return;
 		}

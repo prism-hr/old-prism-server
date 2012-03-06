@@ -175,7 +175,6 @@ public class ViewApplicationFormControllerTest {
 	@Test
 	public void shouldShowAllCommentsForReviewerExceptFromOtherReviewersComments(){
 		authenticationToken.setDetails(reviewer);
-		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").degree("").application(submittedNonApprovedApplication).toQualification();
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);

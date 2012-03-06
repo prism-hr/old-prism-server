@@ -5,30 +5,39 @@
                         </h2>
                         <div>
                             <br/>
-                            <table>
 							<#list model.applicationForm.qualifications as qualification >
 						
+                            <table>
  							<tr>
  								<td>
-                               Degree: <input type="text"  name="degree" id="degree" value= "${qualification.degree}" />
+                             	Type
                                </td>
-                              </tr>
-                            	<tr><td>Institution:<input type="text"  name="institution" id="institution" value="${qualification.institution}"/></td></tr>
-                            	<tr><td>Date:<input type="text" name="date_taken" id="date_taken" value="${qualification.date_taken}" /></td></tr>
-                            	<tr><td>Grade: <input type="text"  name="grade" id="grade" value="${qualification.grade}"/></td></tr>
-                             	<tr><td>	<input type="hidden" name="qualId" id="qualId" value="${qualification.id}"/></td></tr>
-                             	
-                            </#list>
-                          <tr>
+                            	<td>Grade</td>
+                            	<td>Institution</td>
+                            	<td>Award Date</td>
+ 							<tr>
  								<td>
-                               Degree: <input type="text"  name="degree" id="degree" value= "" />
+                               	${qualification.type}
                                </td>
-                              </tr>
-                            	<tr><td>Institution:<input type="text"  name="institution" id="institution" value=""/></td></tr>
-                            	<tr><td>Date:<input type="text" name="date_taken" id="date_taken" value="" /></td></tr>
-                            	<tr><td>Grade: <input type="text"  name="grade" id="grade" value=""/></td></tr>
-                            </table>
-                            <br/>
+                            	<td>${qualification.grade}</td>
+                            	<td>${qualification.institution}</td>
+                            	<td>${qualification.award_date}</td>
+                             	<input type="hidden" name="qualId" id="qualId" value="${qualification.id}"/></tr>
+                             </table>	
+                            </#list>
+                           	Provider <input type="text" id="q_provider" value=""/> <br/>
+                            Name <input type="text" id="q_name" value=""/> <br/>
+                            Start Date <input type="text"  id="q_start_date" value=""/> <br/>
+                            Termination Reason <input type="text" id="q_term_reason" value=""/> <br/>
+                            Termination Date <input type="text"  id="q_term_date" value=""/> <br/>
+                            Country <input type="text"  id="q_country" value=""/> <br/>
+                            Language <input type="text"  id="q_language" value=""/> <br/>
+                            Level <input type="text"  id="q_level" value=""/> <br/>
+                            Type <input type="text"  id="q_type" value=""/> <br/>
+                            Grade <input type="text"  id="q_grade" value=""/> <br/>
+                            Score <input type="text"  id="q_score" value=""/> <br/>
+                            Award Date <input type="text"  id="q_award_date" value=""/> <br/>
+                            Attachment <input type="text"  id="q_attachment" value=""/> <br/>
                             <div class="buttons">
                                     <a class="button blue" href="#">Close</a>
                                     <a class="button blue" type="submit" id="qualificationsSaveButton">Save</a>

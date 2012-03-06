@@ -9,6 +9,10 @@
                             <#if model.hasError('numberOfAddresses')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>                        
                             </#if>
+                            <#if model.hasError('numberOfContactAddresses')>                           
+                                    <span style="color:red;"><@spring.message  model.result.getFieldError('numberOfContactAddresses').code /></span><br/>                        
+                            </#if>
+                            
                              <table cellspacing=10>
                                  <tr align=left><th>Address</th><th>From</th><th>To</th></tr>
                                 <#list model.applicationForm.addresses as address>

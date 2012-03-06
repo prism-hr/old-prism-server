@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
@@ -57,6 +58,16 @@ public class SubmitApplicationFormController {
 		}
 
 		appForm.setNumberOfAddresses(applicationForm.getAddresses().size());
+		
+		int numberOfContactAddresses = 0;
+		for (com.zuehlke.pgadmissions.domain.Address address : applicationForm.getAddresses()) {
+			if (address.getContactAddress() == AddressStatus.YES) {
+				numberOfContactAddresses ++;
+			}
+		}
+		
+		appForm.setNumberOfContactAddresses(numberOfContactAddresses);
+		
 		ApplicationFormValidator validator = new ApplicationFormValidator();
 		
 		validator.validate(appForm, result);
@@ -68,7 +79,7 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setApplicationForm(applicationForm);
 			viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(applicationForm));
 			viewApplicationModel.setAddress(new Address());
-			viewApplicationModel.setFunding(DTOUtils.createFunding(applicationForm));
+			viewApplicationModel.setFunding(new com.zuehlke.pgadmissions.dto.Funding());
 			viewApplicationModel.setMessage("Some required fields are missing, please review your application form.");
 			viewApplicationModel.setResult(result);
 			viewApplicationModel.setUser(user);

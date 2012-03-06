@@ -152,22 +152,29 @@ public class UpdateApplicationFormController {
 		if (application.isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
-
-		FundingValidator fundingValidator = new FundingValidator();
-		fundingValidator.validate(fund, result);
-		if (!result.hasErrors()) {
-			application.setFunding(fund.getFunding());
-			applicationService.save(application);
-		}
-
 		RegisteredUser user = userService.getUser(id);
 
 		ApplicationPageModel model = new ApplicationPageModel();
 		model.setUser(user);
 		ApplicationForm applicationForm = application;
 		model.setApplicationForm(applicationForm);
-		model.setFunding(fund);
 		model.setResult(result);
+
+		FundingValidator fundingValidator = new FundingValidator();
+		fundingValidator.validate(fund, result);
+		if (!result.hasErrors()) {
+			com.zuehlke.pgadmissions.domain.Funding funding = new com.zuehlke.pgadmissions.domain.Funding();
+			funding.setApplication(application);
+			funding.setType(fund.getFundingType());
+			funding.setDescription(fund.getFundingDescription());
+			funding.setValue(fund.getFundingValue());
+			funding.setAwardDate(fund.getFundingAwardDate());
+			application.getFundings().add(funding);
+			applicationService.save(application);
+			model.setFunding(new Funding());
+		} else {
+			model.setFunding(fund);
+		}
 		modelMap.put("model", model);
 
 		return new ModelAndView("private/pgStudents/form/components/funding_details", modelMap);

@@ -190,26 +190,28 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 
 		Funding funding = new Funding();
-		funding.setFunding("self-funded");
+		funding.setFundingType("scholarship");
+		funding.setFundingDescription("my description");
+		funding.setFundingValue("2000");
+		funding.setFundingAwardDate(new Date());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
 		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/funding_details", modelAndView.getViewName());
-		Assert.assertEquals("self-funded", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getFunding());
+		Assert.assertEquals("scholarship", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getFundings().get(0).getType());
 	}
 
 	@Test
 	public void shouldNotSaveNewFunding() {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).funding("scholarship").toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Funding funding = new Funding();
-		funding.setFunding("         ");
+		funding.setFundingType("         ");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
 		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/funding_details", modelAndView.getViewName());
-		Assert.assertEquals("scholarship", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getFunding());
 	}
 	
 	@Test(expected=CannotUpdateApplicationException.class)
@@ -222,7 +224,6 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 
 		Funding funding = new Funding();
-		funding.setFunding("self-funded");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
 		applicationController.addFunding(funding, 1, 2, mappingResult, new ModelMap());
 	}

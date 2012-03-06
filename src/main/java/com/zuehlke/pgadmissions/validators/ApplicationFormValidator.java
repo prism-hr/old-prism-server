@@ -15,9 +15,17 @@ public class ApplicationFormValidator implements Validator{
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ApplicationFormDetails applicationForm = (ApplicationFormDetails) target;
-		if (applicationForm.getNumberOfAddresses() == 0) {
+		ApplicationFormDetails applicationFormDetails = (ApplicationFormDetails) target;
+		if (applicationFormDetails.getNumberOfAddresses() == 0) {
 			errors.rejectValue("numberOfAddresses", "user.addresses.notempty");
+		}
+		
+		if (applicationFormDetails.getNumberOfContactAddresses() == 0) {
+			errors.rejectValue("numberOfContactAddresses", "user.contactAddresses.notempty");
+		}
+		
+		if (applicationFormDetails.getNumberOfContactAddresses() > 1) {
+			errors.rejectValue("numberOfContactAddresses", "user.contactAddresses.notvalid");
 		}
 	}
 }

@@ -6,7 +6,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -25,8 +27,6 @@ public class ApplicationFormBuilder {
 	
 	private Project project;
 	
-	private String funding;
-	
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
 	
 	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
@@ -34,6 +34,9 @@ public class ApplicationFormBuilder {
 	private Date appDate;
 	
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
+	
+	private List<Address> addresses = new ArrayList<Address>();
+	private List<Funding> fundings = new ArrayList<Funding>();
 	
 	public ApplicationFormBuilder applicant (RegisteredUser applicant) {
 		this.applicant = applicant;
@@ -58,6 +61,20 @@ public class ApplicationFormBuilder {
 	public ApplicationFormBuilder qualifications(Qualification... qualifications) {
 		for (Qualification qualification : qualifications) {
 			this.qualifications.add(qualification);
+		}
+		return this;
+	}
+	
+	public ApplicationFormBuilder fundings(Funding... fundings) {
+		for (Funding funding : fundings) {
+			this.fundings.add(funding);
+		}
+		return this;
+	}
+	
+	public ApplicationFormBuilder addresses(Address... addresses) {
+		for (Address address : addresses) {
+			this.addresses.add(address);
 		}
 		return this;
 	}
@@ -87,10 +104,6 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
-	public ApplicationFormBuilder funding(String funding) {
-		this.funding = funding;
-		return this;
-	}
 	
 	public ApplicationForm toApplicationForm() {
 		ApplicationForm application = new ApplicationForm();	
@@ -104,8 +117,9 @@ public class ApplicationFormBuilder {
 		application.setProject(project);
 		application.setSubmissionStatus(submissionStatus);
 		application.setApplicationTimestamp(appDate);
-		application.setFunding(funding);
 		application.getQualifications().addAll(qualifications);
+		application.getAddresses().addAll(addresses);
+		application.getFundings().addAll(fundings);
 		return application;
 	}
 }

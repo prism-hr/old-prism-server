@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
@@ -38,7 +39,7 @@ public class SubmitApplicationFormControllerTest {
 
 	@Test
 	public void shouldLoadApplicationFormByIdAndChangeSubmissionStatusToSubmitted() {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).funding("test").toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		form.setApplicant(student);
 		com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
 		address.setApplication(form);
@@ -48,6 +49,7 @@ public class SubmitApplicationFormControllerTest {
 		address.setEndDate(new Date());
 		address.setPostCode("test");
 		address.setPurpose("parents");
+		address.setContactAddress(AddressStatus.YES);
 		
 		form.getAddresses().add(address);
 		applicationsServiceMock.save(form);

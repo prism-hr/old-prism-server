@@ -63,11 +63,6 @@ public class ApplicationReviewDAO {
 				.add(Restrictions.eq("application", application)).list();
 	}
 
-	public void saveQualification(Qualification qualification) {
-		sessionFactory.getCurrentSession().saveOrUpdate(qualification);
-		
-	}
-
 	public void saveUser(RegisteredUser currentuser) {
 		sessionFactory.getCurrentSession().saveOrUpdate(currentuser);
 		

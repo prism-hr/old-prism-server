@@ -27,7 +27,7 @@
 
 		<div id="wrapper">
 			
-			  <#include "/private/common/header_global.ftl"/>
+			  <#include "/private/common/global_header.ftl"/>
 			  
 			  <!-- Middle. -->
 			  <div id="middle">

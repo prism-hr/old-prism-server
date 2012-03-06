@@ -39,8 +39,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private boolean credentialsNonExpired;
 	private String address;
 
-	private List<Qualification> qualifications = new ArrayList<Qualification>();
-	
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
@@ -54,24 +52,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.id = id;
 	}
 	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APPLICATION_FORM_QUALIFICATION", joinColumns = { @JoinColumn(name = "applicant_id") }, inverseJoinColumns = { @JoinColumn(name = "application_form_id") })
-	@Access(AccessType.PROPERTY)
-	public List<Qualification> getQualifications() {
-		return qualifications;
-	}
-	
-	public void setQualifications(List<Qualification> qualifications) {	
-		for (Qualification qualification : qualifications) {
-			Assert.notNull(qualification.getDegree());
-		}
-		if(this.qualifications.size() == qualifications.size() && this.qualifications.containsAll(qualifications)){
-			return;
-		}
-		this.qualifications.clear();
-		this.qualifications.addAll(qualifications);
-	}
-
 	@Override
 	@Id
 	@GeneratedValue
@@ -214,9 +194,5 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.address = address;
 	}
 	
-	public boolean hasQualifications(){
-		return !qualifications.isEmpty();
-	}
-
 
 }

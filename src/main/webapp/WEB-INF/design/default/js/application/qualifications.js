@@ -1,6 +1,5 @@
 $(document).ready(function(){
 	$('#qualificationsSaveButton').click(function(){
-		alert(data);
 		$.post("/pgadmissions/update/editQualification", { degree: $("#degree").val(), 
 			id: $("#id").val(), 
 			institution: $("#institution").val(), 

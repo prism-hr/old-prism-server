@@ -1,11 +1,14 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -30,6 +33,8 @@ public class ApplicationFormBuilder {
 	
 	private Date appDate;
 	
+	private List<Qualification> qualifications = new ArrayList<Qualification>();
+	
 	public ApplicationFormBuilder applicant (RegisteredUser applicant) {
 		this.applicant = applicant;
 		return this;
@@ -42,6 +47,18 @@ public class ApplicationFormBuilder {
 	
 	public ApplicationFormBuilder approver (RegisteredUser user) {
 		this.approver = user;
+		return this;
+	}
+	
+	public ApplicationFormBuilder qualification(Qualification qualification) {
+		this.qualifications.add(qualification);
+		return this;
+	}
+	
+	public ApplicationFormBuilder qualifications(Qualification... qualifications) {
+		for (Qualification qualification : qualifications) {
+			this.qualifications.add(qualification);
+		}
 		return this;
 	}
 	
@@ -88,6 +105,7 @@ public class ApplicationFormBuilder {
 		application.setSubmissionStatus(submissionStatus);
 		application.setApplicationTimestamp(appDate);
 		application.setFunding(funding);
+		application.getQualifications().addAll(qualifications);
 		return application;
 	}
 }

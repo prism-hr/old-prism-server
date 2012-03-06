@@ -58,15 +58,15 @@ public class CommentControllerTest {
 		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").toQualification();
 		admin = new RegisteredUserBuilder().id(1).username("bob")
 								.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		approver = new RegisteredUserBuilder().id(2).username("mark").qualification(qual)
+		approver = new RegisteredUserBuilder().id(2).username("mark")
 				.role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		reviewer = new RegisteredUserBuilder().id(3).username("jane").qualification(qual)
+		reviewer = new RegisteredUserBuilder().id(3).username("jane")
 				.role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		reviewer2 = new RegisteredUserBuilder().id(3).username("john").qualification(qual)
+		reviewer2 = new RegisteredUserBuilder().id(3).username("john")
 				.role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		applicant = new RegisteredUserBuilder().id(5).username("fred").qualification(qual)
+		applicant = new RegisteredUserBuilder().id(5).username("fred")
 				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		adminAndReviewer = new RegisteredUserBuilder().id(6).username("fred").qualification(qual)
+		adminAndReviewer = new RegisteredUserBuilder().id(6).username("fred")
 				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole(), new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);

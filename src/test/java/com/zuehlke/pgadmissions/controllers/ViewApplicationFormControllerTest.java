@@ -1,9 +1,11 @@
 package com.zuehlke.pgadmissions.controllers;
 
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -29,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
@@ -112,6 +115,25 @@ public class ViewApplicationFormControllerTest {
 		assertEquals("bob", model.getPersonalDetails().getFirstName());
 		assertEquals("Smith", model.getPersonalDetails().getLastName());
 		assertEquals("email@test.com", model.getPersonalDetails().getEmail());
+	}
+	
+	@Test
+	public void shouldCreateQualificationAndSetOnModel() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();		
+		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
+		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
+		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
+		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(userMock, applicationsServiceMock);
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
+		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
+		assertNotNull(model.getQualification());
 	}
 
 	@Test

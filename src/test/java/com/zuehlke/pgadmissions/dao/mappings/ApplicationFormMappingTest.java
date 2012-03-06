@@ -103,6 +103,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test 
+	@Ignore
 	public void shouldSaveAndLoadApplicationFormWithAddress() {
 		ApplicationForm application = new ApplicationForm();
 		application.setProject(project);

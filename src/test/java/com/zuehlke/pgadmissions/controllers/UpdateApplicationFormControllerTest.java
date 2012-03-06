@@ -1,12 +1,10 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.junit.Assert.*;
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -119,16 +117,27 @@ public class UpdateApplicationFormControllerTest {
 	public void shouldSaveNewAddress() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		applicationsServiceMock.save(form);
 		EasyMock.replay(applicationsServiceMock);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
-		userServiceMock.save(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setAddress("london, uk");
+		address.setStreet("1, Main Street");
+		address.setPostCode("NW2345");
+		address.setCity("london");
+		address.setCountry("UK");
+		//TODO
+		address.setStartDate("date1");
+		address.setEndDate("date2");
+		//TODO
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
-		Assert.assertEquals("london, uk", ((PageModel)modelAndView.getModel().get("model")).getUser().getAddress());
+		com.zuehlke.pgadmissions.domain.Address addr = ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getAddresses().get(0);
+		Assert.assertEquals("1, Main Street", addr.getStreet());
+		Assert.assertEquals("NW2345", addr.getPostCode());
+		Assert.assertEquals("london", addr.getCity());
+		Assert.assertEquals("UK", addr.getCountry());
 	}
 
 	@Test
@@ -139,7 +148,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setAddress("");
+		address.setCity("");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
@@ -154,7 +163,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setAddress("london, uk");
+		address.setCity("london, uk");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 	}

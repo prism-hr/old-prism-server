@@ -15,7 +15,12 @@ public class AddressValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "address", "user.address.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "street", "user.street.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "postCode", "user.postCode.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "city", "user.city.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "user.country.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "user.startDate.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "endDate", "user.endDate.notempty");
 	}
 
 }

@@ -5,7 +5,11 @@
                         <div>
                             <br/>
                             <div>
-                             ${model.applicationForm.applicant.address!}
+                            <table>
+                            <#list model.applicationForm.addresses as address>
+                                <tr><td>- ${address.street}, ${address.city}, ${address.postCode}, ${address.country}     ${address.startDate?date}     ${address.endDate?date}</td></tr>
+                            </#list>
+                            </table>
                             </div>
                             <br/>
                         </div>

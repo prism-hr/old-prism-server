@@ -115,9 +115,9 @@ button.plus span { background-position: 0 -10px; }
 a.button { display: inline-block; padding-top: 2px; padding-bottom: 2px; /*vertical-align: text-bottom;*/ }
 span.indicator { border-width: 1px; padding: 1px 5px; vertical-align: text-bottom; }
 
-.button-edit, .button-close, .button-question { background-repeat: no-repeat; display: inline-block; height: 24px; margin-top: -4px; overflow: hidden; text-indent: 99px; vertical-align: middle; width: 24px; }
+.button-edit, .button-delete, .button-question { background-repeat: no-repeat; display: inline-block; height: 24px; margin-top: -4px; overflow: hidden; text-indent: 99px; vertical-align: middle; width: 24px; }
 .button-edit { background-image: url(../images/button_row_edit.png); }
-.button-close { background-image: url(../images/button_row_close.png); }
+.button-delete { background-image: url(../images/button_row_close.png); }
 .button-question { background-image: url(../images/button_question.png); margin-top: 0; width: 20px; height: 20px; }
 
 /* Row arrows */

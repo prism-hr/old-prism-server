@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +82,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	}
 	
 	@Test
-	public void shouldFindAllQualificationsBelongingToSameApplication(){
+	public void shouldFindAllQualificationsBelongingToSameApplication() throws ParseException{
 		List<Qualification> qualifications = getQualificationsBelongingToSameApplication();
 		applicationDAO.save(application);
 		flushAndClearSession();
@@ -129,7 +131,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		return applications;
 	}
 	
-	public List<Qualification> getQualificationsBelongingToSameApplication(){
+	public List<Qualification> getQualificationsBelongingToSameApplication() throws ParseException{
 		
 		application = new ApplicationForm();
 		application.setApplicant(user);
@@ -139,20 +141,34 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		
 		
 		Qualification qualification1 = new Qualification();	
-		qualification1.setApplication(application);
-		qualification1.setDate_taken("");
-		qualification1.setDegree("");
+		qualification1.setAward_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+		qualification1.setCountry("");
 		qualification1.setGrade("");
 		qualification1.setInstitution("");
+		qualification1.setLanguage_of_study("");
+		qualification1.setLevel("");
+		qualification1.setName_of_programme("");
+		qualification1.setScore("");
+		qualification1.setStart_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+		qualification1.setTermination_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+		qualification1.setQualification_termination_reason("");
+		qualification1.setQualification_type("");
 		
 		qualifications.add(qualification1);
 		
 		Qualification qualification2 = new Qualification();	
-		qualification2.setDate_taken("");
-		qualification2.setDegree("");
+		qualification2.setAward_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+		qualification2.setCountry("");
 		qualification2.setGrade("");
 		qualification2.setInstitution("");
-		qualification2.setApplication(application);
+		qualification2.setLanguage_of_study("");
+		qualification2.setLevel("");
+		qualification2.setName_of_programme("");
+		qualification2.setScore("");
+		qualification2.setStart_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+		qualification2.setTermination_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+		qualification2.setQualification_termination_reason("");
+		qualification2.setQualification_type("");
 		
 		
 		qualifications.add(qualification1);

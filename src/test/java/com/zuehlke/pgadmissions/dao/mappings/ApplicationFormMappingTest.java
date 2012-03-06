@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -165,7 +167,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	
 	@Ignore
 	@Test
-	public void shouldSaveQualificationsWithApplication() {
+	public void shouldSaveQualificationsWithApplication() throws ParseException {
 		
 		ApplicationForm application = new ApplicationForm();
 		application.setProject(project);
@@ -174,10 +176,10 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	//	sessionFactory.getCurrentSession().save(application);
 		//Integer id = application.getId();
 		//flushAndClearSession();
+		Qualification qualification1 = new QualificationBuilder().q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_country("").q_grade("").q_institution("").q_language_of_study("").q_level("").q_name_of_programme("").q_score("").q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_termination_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/10/10")).q_termination_reason("").q_type("").toQualification();
+		Qualification qualification2 = new QualificationBuilder().q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_country("").q_grade("").q_institution("").q_language_of_study("").q_level("").q_name_of_programme("").q_score("").q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_termination_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/10/10")).q_termination_reason("").q_type("").toQualification();
 		
-		Qualification qualification1 = new QualificationBuilder().date_taken("").degree("").grade("").institution("").toQualification();
 
-		Qualification qualification2 = new QualificationBuilder().date_taken("").degree("d").grade("1").institution("").toQualification();
 
 		application.getQualifications().addAll(Arrays.asList(qualification1, qualification2));
 

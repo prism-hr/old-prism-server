@@ -2,32 +2,13 @@ package com.zuehlke.pgadmissions.dto;
 
 public class ApplicationFormDetails {
 
-	private PersonalDetails personalDetails;
-	private Address address;
-	private Funding funding;
+	private Integer numberOfAddresses;
 	
-	public PersonalDetails getPersonalDetails() {
-		return personalDetails;
+	public Integer getNumberOfAddresses() {
+		return numberOfAddresses;
 	}
 	
-	public void setPersonalDetails(PersonalDetails personalDetails) {
-		this.personalDetails = personalDetails;
+	public void setNumberOfAddresses(Integer numberOfAddresses) {
+		this.numberOfAddresses = numberOfAddresses;
 	}
-	
-	public void setAddress(Address address) {
-		this.address = address;
-	}
-	
-	public Address getAddress() {
-		return address;
-	}
-	
-	public void setFunding(Funding funding) {
-		this.funding = funding;
-	}
-	
-	public Funding getFunding() {
-		return funding;
-	}
-	
 }

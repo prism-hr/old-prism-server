@@ -15,9 +15,6 @@ public class DTOUtils {
 
 	public static Address createAddress(ApplicationForm applicationForm) {
 		Address address = new Address();
-		if (applicationForm.getApplicant() != null) {
-			address.setAddress(applicationForm.getApplicant().getAddress());
-		}
 		return address;
 	}
 

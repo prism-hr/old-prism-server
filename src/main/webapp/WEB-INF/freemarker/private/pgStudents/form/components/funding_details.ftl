@@ -1,77 +1,141 @@
+<#if model.applicationForm.fundings?has_content>
+	<#assign hasFundings = true>
+<#else>
+	<#assign hasFundings = false>
+</#if>
+
 <#import "/spring.ftl" as spring />
- <h2 class="open">
-                          <span class="left"></span><span class="right"></span><span class="status"></span>
-                          Funding
-                        </h2>
-                        <div>
-                            <br/>
-                            <div>
-                            
-                             <table cellspacing=10>
-                                 <tr align=left><th>Type</th><th>Value</th><th>Award Date</th><th></th></tr>
-                                <#list model.applicationForm.fundings as funding>
-                                <tr>
-                                    <td>${funding.type}</td>
-                                    <td>${funding.value}</td>
-                                    <td>${funding.awardDate?string('yyyy/MM/dd')}</td>
-                                    <td><a class="button blue" type="submit" name="fundingEditButton" id="funding_${funding.id}">Edit</a></td>
-                                    <input type="hidden" id="${funding.id}_fundingIdDP" value="${funding.id}"/>
-                                    <input type="hidden" id="${funding.id}_fundingTypeDP" value="${funding.type}"/>
-                                    <input type="hidden" id="${funding.id}_fundingValueDP" value="${funding.value}"/>
-                                    <input type="hidden" id="${funding.id}_fundingDescriptionDP" value="${funding.description}"/>
-                                    <input type="hidden" id="${funding.id}_fundingAwardDateDP" value="${funding.awardDate?string('yyyy/MM/dd')}"/>
-                               </tr>
-                            </#list>
-                            </table>
-                            
-                            <input type="hidden" id="fundingId" name="fundingId"/>
-                            <table cellspacing=10>
-                                <tr align=left></tr>
-                                <tr><td>Type</td>
-                                <td>
-                                <input type="text" id="fundingType" name="fundingType" value="${model.funding.fundingType!}"/>
-                                <#if model.hasError('fundingType')>                           
-                                    <span style="color:red;"><@spring.message  model.result.getFieldError('fundingType').code /></span>                           
-                                </#if>
-                                </td>
-                                </tr>
-                                
-                                <tr><td>Value</td>
-                                <td>
-                                <input type="text" id="fundingValue" name="fundingValue" value="${model.funding.fundingValue!}"/>
-                                <#if model.hasError('fundingValue')>                           
-                                    <span style="color:red;"><@spring.message  model.result.getFieldError('fundingValue').code /></span>                           
-                                </#if>
-                                </td>
-                                </tr>
-                                
-                                <tr><td>Description</td>
-                                <td>
-                                <input type="text" id="fundingDescription" name="fundingDescription" value="${model.funding.fundingDescription!}"/>
-                                <#if model.hasError('fundingDescription')>                           
-                                    <span style="color:red;"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
-                                </#if>
-                                </td>
-                                </tr>
-                                
-                                <tr><td>Award Date</td>
-                                <td>
-                                <input type="text" id="fundingAwardDate" name="fundingAwardDate" value="${(model.funding.fundingAwardDate?string('yyyy/MM/dd'))!}"/>
-                                <#if model.hasError('fundingAwardDate')>                           
-                                    <span style="color:red;"><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           
-                                </#if>
-                                </td>
-                                </tr>
-                                
-                                </table>
-                            
-                            </div>
-                            <br/>
-                            <div class="buttons">
-                                    <a class="button blue" href="#">Close</a>
-                                    <#if !model.applicationForm.isSubmitted()>
-                                        <a class="button blue" type="submit" id="fundingSaveButton">Save</a>
-                                    </#if>    
-                            </div>
-                        </div>
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>
+
+	<h2 class="empty">
+		<span class="left"></span><span class="right"></span><span class="status"></span>
+			Funding
+	</h2>
+
+	<div>
+	
+		<#if hasFundings>
+			<table class="existing">
+				
+				<colgroup>
+	            	<col style="width: 30px" />
+	                <col style="width: 120px" />
+	                <col />
+	                <col style="width: 120px" />
+	                <col style="width: 30px" />
+	        	</colgroup>
+	            
+	            <thead>
+					<tr>
+	                	<th colspan="2">Funding Type</th>
+	                    <th>Awarding Body</th>
+	                    <th>Issue Date</th>
+	                    <th colspan="1">&nbsp;</th>
+					</tr>
+				</thead>
+	                
+				<tbody>
+				
+					<#list model.applicationForm.fundings as funding>		
+						<tr>
+		                  	<td><a class="row-arrow" href="#">-</a></td>
+		                  	<td>${funding.type}</td>
+		                  	<td>${funding.value}</td>
+		                  	<td>${funding.awardDate?string('yyyy/MM/dd')}</td>
+		                  	<td><a class="button-delete" href="#">delete</a></td>
+		                  	
+		                  	<!-- Non-rendering data -->
+							<input type="hidden" id="${funding.id}_fundingIdDP" value="${funding.id}"/>
+	                        <input type="hidden" id="${funding.id}_fundingTypeDP" value="${funding.type}"/>
+	                        <input type="hidden" id="${funding.id}_fundingValueDP" value="${funding.value}"/>
+	                        <input type="hidden" id="${funding.id}_fundingDescriptionDP" value="${funding.description}"/>
+	                        <input type="hidden" id="${funding.id}_fundingAwardDateDP" value="${funding.awardDate?string('yyyy/MM/dd')}"/>
+		                  	
+		                </tr>
+					</#list>				               
+				</tbody>
+			
+			</table>
+        </#if>
+        <!-- Non-rendering data -->
+        <input type="hidden" id="fundingId" name="fundingId"/>
+              
+		<form>
+                
+			<div>
+				<!-- Award type -->
+                <div class="row">
+                  	<span class="label">Funding Source</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                	
+                	<div class="field">
+                		<input id="fundingType" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
+                		<#if model.hasError('fundingType')>
+                        	<span class="invalid"><@spring.message  model.result.getFieldError('fundingType').code /></span>                           
+                        </#if>
+					</div>
+				</div>
+
+                <!-- Award description -->
+                <div class="row">
+                	<span class="label">Description</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+				
+					<div class="field">
+                    	<input id="fundingDescription" class="full" type="text" value="${model.funding.fundingDescription!}" />
+                    </div>
+                    <#if model.hasError('fundingDescription')>                           
+                    	<span style="color:red;"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
+                    </#if>
+                    
+				</div>
+                  
+                <!-- Value of award -->
+                <div class="row">
+                  	<span class="label">Value of Award</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                    	<input id="fundingValue" class="full" type="text" value="${model.funding.fundingValue!}" />
+                    </div>
+                    <#if model.hasError('fundingValue')>
+                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingValue').code /></span>
+                    </#if>
+				</div>
+                  
+                <!-- Award date -->
+                <div class="row">
+                  	<span class="label" data-desc="Tooltip demonstration.">Award Date</span>
+                    <span class="hint"></span>
+                    <div class="field">
+	                    <input id="fundingAwardDate" class="half" type="date" value="${(model.funding.fundingAwardDate?string('yyyy/MM/dd'))!}" />
+                    </div>
+                    <#if model.hasError('fundingAwardDate')>                           
+                    	<span style="color:red;"><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           
+                    </#if>
+                    
+                </div>
+                  
+                <div class="row">
+                  	<span class="label">Supporting Document</span>
+                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <div class="field">
+                    	<input class="full" type="text" value="" />
+                      	<a class="button" href="#">Browse</a>
+                      	<a class="button" href="#">Upload</a>
+                      	<a class="button plus" href="#">Add Another</a>
+                    </div>	
+				</div>
+
+			</div>
+
+			<div class="buttons">
+            	
+            	<a class="button" href="#">Cancel</a>
+				<button class="blue" type="submit" value="close">Save and Close</button>
+                <button class="blue" type="submit" value="add">Save and Add</button>
+                
+			</div>
+
+		</form>
+	</div>
+
+	<script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>

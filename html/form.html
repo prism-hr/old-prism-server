@@ -7,8 +7,17 @@
 <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
-<link type="text/css" rel="stylesheet" href="css/style.css" />
+<link type="text/css" rel="stylesheet" href="css/global_private.css" />
 <link type="text/css" rel="stylesheet" href="css/application.css" />
+
+<link type="text/css" rel="stylesheet" href="css/programme.css" />
+<link type="text/css" rel="stylesheet" href="css/personal_details.css" />
+<link type="text/css" rel="stylesheet" href="css/address.css" />
+<link type="text/css" rel="stylesheet" href="css/qualifications.css" />
+<link type="text/css" rel="stylesheet" href="css/employment.css" />
+<link type="text/css" rel="stylesheet" href="css/funding.css" />
+<link type="text/css" rel="stylesheet" href="css/references.css" />
+<link type="text/css" rel="stylesheet" href="css/documents.css" />
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -215,14 +224,13 @@
                   <col style="width: 200px" />
                   <col />
                   <col style="width: 30px" />
-                  <col style="width: 30px" />
                 </colgroup>
                 <thead>
                   <tr>
                     <th colspan="2">First name</th>
                     <th>Surname</th>
                     <th>Email</th>
-                    <th colspan="2">&nbsp;</th>
+                    <th>&nbsp;</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -231,7 +239,6 @@
                     <td>Bob</td>
                     <td>Smith</td>
                     <td>bob.smith@test.com</td>
-                    <td><a class="button-edit" href="#">edit</a></td>
                     <td><a class="button-delete" href="#">delete</a></td>
                   </tr>
                 </tbody>
@@ -239,6 +246,7 @@
               <form method="post" action="woooop">
 
                 <div>
+                  <!-- First name -->
                   <div class="row">
                     <label class="label">First Name</label>
                     <span class="hint"></span>
@@ -246,6 +254,8 @@
                       <input class="full" type="text" value="Bob" />
                     </div>
                   </div>
+
+                  <!-- Last name -->
                   <div class="row">
                     <label class="label">Last Name</label>
                     <span class="hint"></span>
@@ -253,21 +263,25 @@
                       <input class="full" type="text" value="Smith" />
                     </div>
                   </div>
+
+                  <!-- Gender / Sex -->
                   <div class="row">
                     <label class="label">Gender</label>
                     <div class="field">
                       <label><input type="radio" name="gender" /> Male</label>
                       <label><input type="radio" name="gender" /> Female</label>
+                      <label><input type="radio" name="gender" /> prefer not to say</label>
                     </div>
                   </div>
+
+                  <!-- Date of birth -->
                   <div class="row">
                     <label class="label">Date of Birth</label>
                     <span class="hint"></span>
                     <input class="half date" type="text" value="" />
                   </div>
-                </div>
 
-                <div>
+                  <!-- Country of birth -->
                   <div class="row">
                     <label class="label">Country of Birth</label>
                     <span class="hint"></span>
@@ -279,9 +293,11 @@
                   </div>
                 </div>
 
+                <!-- Candidate's nationality -->
                 <div>
-                  <p><strong>Nationality</strong>
-                  </p>
+                  <h3>Nationality</h3>
+                  
+                  <!-- Country -->
                   <div class="row">
                     <span class="label">Country</span>
                     <span class="hint"></span>
@@ -289,27 +305,158 @@
                       <select class="full">
                         <option>British</option>
                       </select>
+                    </div>
+                  </div>
+
+                  <!-- Primary country? -->
+                  <div class="row">
+                    <span class="label">&nbsp;</span>
+                    <span class="hint"></span>
+                    <div class="field">
                       <label><input type="radio" /> This is my primary nationality</label>
                     </div>
                   </div>
+                  
+                  <!-- Document -->
                   <div class="row">
-                    <div class="field"><a class="button blue" href="#">Add a nationality</a></div>
+                    <span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add Document</a>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="field"><a class="button" href="#">Add a nationality</a></div>
+                  </div>
+                </div>
+
+                <!-- Maternal guardian's nationality -->
+                <div>
+                  <h3>Maternal Guardian Nationality</h3>
+                  
+                  <!-- Country -->
+                  <div class="row">
+                    <span class="label">Country</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>British</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Primary country? -->
+                  <div class="row">
+                    <span class="label">&nbsp;</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <label><input type="radio" /> 
+                      This is their primary nationality</label>
+                    </div>
+                  </div>
+                  
+                  <!-- Document -->
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add Document</a>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="field"><a class="button" href="#">Add a nationality</a></div>
+                  </div>
+                </div>
+
+                <!-- Paternal guardian's nationality -->
+                <div>
+                  <h3>Paternal Guardian Nationality</h3>
+                  
+                  <!-- Country -->
+                  <div class="row">
+                    <span class="label">Country</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>British</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Primary country? -->
+                  <div class="row">
+                    <span class="label">&nbsp;</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <label><input type="radio" /> 
+                      This is their primary nationality</label>
+                    </div>
+                  </div>
+                  
+                  <!-- Document -->
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input class="full" type="text" value="" />
+                      <a class="button" href="#">Browse</a>
+                      <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add Document</a>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="field"><a class="button" href="#">Add a nationality</a></div>
+                  </div>
+                </div>
+
+                <!-- Residence -->
+                <div>
+                  <h3>Residence</h3>
+                  
+                  <!-- Country -->
+                  <div class="row">
+                    <span class="label">Country</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>United Kingdom</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Status -->
+                  <div class="row">
+                    <span class="label">Status</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <select class="full">
+                        <option>National</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
                 <div>
+                  <!-- Language -->
                   <div class="row">
-                    <label class="label">Language</label>
+                    <span class="label">Language</span>
                     <span class="hint"></span>
                     <div class="field">
                       <select class="full">
                         <option>English</option>
                       </select>
-                      <label><input type="radio" /> This is my primary language</label>
                     </div>
                   </div>
+                  
+                  <!-- Language competency -->
                   <div class="row">
-                    <span class="label">Aptitude</span>
+                    <span class="label">Competency</span>
                     <span class="hint"></span>
                     <div class="field">
                       <select class="full">
@@ -318,49 +465,15 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="field"><a class="button blue" href="#">Add a language</a></div>
+                    <div class="field"><a class="button" href="#">Add a language</a></div>
                   </div>
                 </div>
 
+                <!-- Contact details -->
                 <div>
-                  <p><strong>UK Visa</strong>
-                  </p>
-                  <div class="row">
-                    <span class="label">Type</span>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full">
-                        <option>Student</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <span class="label">Date of Issue</span>
-                    <span class="hint"></span>
-                    <input class="half date" type="text" value="" />
-                  </div>
-                  <div class="row">
-                    <span class="label">Date of Expiry</span>
-                    <span class="hint"></span>
-                    <input class="half date" type="text" value="" />
-                  </div>
-                  <div class="row">
-                    <span class="label">Supporting Document</span>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <input class="full" type="text" value="" />
-                      <a class="button" href="#">Browse</a>
-                      <a class="button" href="#">Upload</a>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="field"><a class="button blue" href="#">Add a visa</a></div>
-                  </div>
-                </div>
-
-                <div>
-                  <p><strong>Contact Details</strong>
-                  </p>
+                  <h3>Contact Details</h3>
+                  
+                  <!-- Email address -->
                   <div class="row">
                     <span class="label">Email</span>
                     <span class="hint"></span>
@@ -372,6 +485,7 @@
                 </div>
                 
                 <div>
+                  <!-- Telephone -->
                   <div class="row">
                     <span class="label">Telephone</span>
                     <span class="hint"></span>
@@ -386,6 +500,7 @@
                 </div>
                 
                 <div>
+                  <!-- Messenger -->
                   <div class="row">
                     <span class="label">Messenger</span>
                     <span class="hint"></span>
@@ -451,10 +566,11 @@
               <form method="post" action="woooop">
 
                 <div>
-                
+                  <h3>Address</h3>
+                  
                   <!-- Address body -->
                   <div class="row">
-                    <span class="label">Street Name &amp; Number</span>
+                    <span class="label">Location</span>
                     <span class="hint"></span>
                     <div class="field">
                       <textarea class="max" rows="6" cols="80"></textarea>
@@ -510,10 +626,12 @@
                       <input class="full" type="text" value="" />
                       <a class="button" href="#">Browse</a>
                       <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add a document</a>
                     </div>  
                   </div>
                   <div class="row">
-                    <div class="field"><a class="button blue" href="#">Add a document</a></div>
+                    <div class="field">                      <a class="button" href="#">Add residency period</a>
+</div>
                   </div>
                 </div>
 

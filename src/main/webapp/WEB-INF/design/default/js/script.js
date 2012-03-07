@@ -1,6 +1,26 @@
 $(document).ready(function()
 {
 	
+	// Form hint tooltips.
+	$('body span.hint').qtip({
+		content: {
+			 text: function(api) {
+         // Retrieve content from custom attribute of the $('.selector') elements.
+         return $(this).attr('data-desc');
+      } 
+		},
+		position: {
+			 my: 'bottom right', // Use the corner...
+			 at: 'top center', // ...and opposite corner
+			 viewport: $(window),
+			 adjust: {
+					method: 'flip shift'
+			 },
+		},
+		style: 'tooltip-pgr ui-tooltip-shadow',
+	});
+	
+	
 	// Expandable content...
 	$('section.folding').each(function()
 	{
@@ -20,15 +40,17 @@ $(document).ready(function()
 	{
 		var $this    = $(this);
 		var $form    = $this.closest('table').next('form');
+		/*
 		$this.bind('click', function() {
 			$form.toggle();
 			$this.toggleClass('open', $form.is(':visible'));
 			return false;
 		});
 		$this.toggleClass('open', $form.is(':visible'));
+		*/
 	});
 	
-		$('section.folding a.comment-open').each(function()
+	$('section.folding a.comment-open').each(function()
 	{
 		var $this = $(this);
 		var $target = $this.closest('section.folding').find('div.comment');
@@ -73,9 +95,24 @@ $(document).ready(function()
 	});
 	
 	// Date pickers.
-	$('input[type=date]').datepicker();
+	$('input.date').datepicker();
 	
 	// Sortable tables.
 	$('table.data').tablesorter();
 	
 });
+
+
+function msg(message, type)
+{
+	var $msg = $('#message-bar');
+	if ($msg.length == 0)
+	{
+		$('body').append('<div id="message-bar" />');
+		$msg = $('#message-bar');
+	}
+	
+	$msg.stop(true, true).hide().removeClass().addClass(type).html(message);
+	$msg.css({ marginLeft: -($msg.width() / 2) + 'px' });
+	$msg.fadeIn(700).delay(3000).fadeOut(700);
+}

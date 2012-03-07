@@ -13,7 +13,7 @@
 	
 	</head>
 
-	<body id="login">
+	<body id="bg">
 
 		<div id="wrapper">
 		
@@ -55,9 +55,7 @@
 		    </section>
 		
 		    <!-- Registration button. -->
-		    <section id="register">
-		    	<a href="#">Register Today...</a>
-		    </section>
+    		<a id="big-button" href="#">Register Today...</a>
 		    
 		  </div>
 		  

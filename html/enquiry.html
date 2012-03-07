@@ -13,7 +13,7 @@
 <![endif]-->
 
 <link type="text/css" rel="stylesheet" href="css/global_public.css" />
-<link type="text/css" rel="stylesheet" href="css/login.css" />
+<link type="text/css" rel="stylesheet" href="css/enquiry.css" />
 </head>
 
 <body id="bg">
@@ -34,25 +34,29 @@
       <div class="tagline">Your Gateway to<br />Research Opportunities</div>
     </header>
     
-    <!-- Blurb. -->
-    <aside id="blurb">
-	    <h2>Welcome to your new gateway to<br />UCL Postgraduate Research programmes<br />in Engineering Sciences.</h2>
-			<p>Register today and begin your application to join some of the world's most highly regarded researchers and academics at the frontiers of discovery.</p>
-    </aside>
-
-    <!-- Login form. -->
-    <section id="login-box">
-    	<form method="post" action="w00pw00p">
-      	<p>&gt; Login</p>
-        <input type="text" name="email" placeholder="Email address" />
-        <input type="password" name="password" placeholder="Password" />
-        <button type="submit" class="blue">Go</button>
-      </form>
-    </section>
-
-    <!-- Registration button. -->
-    <a id="big-button" href="#">Register Today...</a>
+    <!-- New user form. -->
+    <form action="" method="post">
+      <section id="form-box">
+        <label for="field_programme"><strong>I would like to submit an enquiry related to</strong></label>
         
+        <div class="programme row">
+        	<select id="field_programme">
+          	<option>Programme Name</option>
+          </select>
+          <a class="button">Browse Programmes</a>
+        </div>
+        
+        <div class="row">
+        	<label for="field_message">Your Message</label>
+          <div class="field">
+            <textarea id="field_message" name="message" placeholder="Enter Text"></textarea>
+          </div>
+        </div>
+      </section>
+  
+      <!-- Registration button. -->
+      <button id="big-button" type="submit">Submit</button>
+    </form>
   </div>
   
   <!-- Footer. -->

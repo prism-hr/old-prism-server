@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
@@ -87,6 +89,7 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setResult(result);
 			viewApplicationModel.setUser(user);
 			viewApplicationModel.setCountries(countriesDAO.getAllCountries());
+			viewApplicationModel.setAddressPurposes(Arrays.asList(AddressPurpose.values()));
 			
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,"model", viewApplicationModel);
 			

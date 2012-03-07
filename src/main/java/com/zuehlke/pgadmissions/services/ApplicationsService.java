@@ -80,4 +80,9 @@ public class ApplicationsService {
 		return applicationFormDAO.getFundingById(fundingId);
 	}
 
+	@Transactional
+	public com.zuehlke.pgadmissions.domain.Address getAddressById(Integer addressId) {
+		return applicationFormDAO.getAdddressById(addressId);
+	}
+
 }

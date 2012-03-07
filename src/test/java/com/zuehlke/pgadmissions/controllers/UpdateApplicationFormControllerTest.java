@@ -4,7 +4,6 @@ package com.zuehlke.pgadmissions.controllers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import junit.framework.Assert;
 
@@ -16,7 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
@@ -29,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -136,20 +135,20 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setLocation("1, Main Street, London");
-		address.setPostCode("NW2345");
-		address.setPurpose("parents");
-		address.setCountry("UK");
-		address.setStartDate(new Date(2011, 11, 11));
-		address.setEndDate(new Date(2012, 11, 11));
-		address.setContactAddress(AddressStatus.YES);
+		address.setAddressLocation("1, Main Street, London");
+		address.setAddressPostCode("NW2345");
+		address.setAddressPurpose(AddressPurpose.INDUSTRIAL_SPONSOR);
+		address.setAddressCountry("UK");
+		address.setAddressStartDate(new Date(2011, 11, 11));
+		address.setAddressEndDate(new Date(2012, 11, 11));
+		address.setAddressContactAddress(AddressStatus.YES);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
 		com.zuehlke.pgadmissions.domain.Address addr = ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getAddresses().get(0);
 		Assert.assertEquals("1, Main Street, London", addr.getLocation());
 		Assert.assertEquals("NW2345", addr.getPostCode());
-		Assert.assertEquals("parents", addr.getPurpose());
+		Assert.assertEquals(AddressPurpose.INDUSTRIAL_SPONSOR, addr.getPurpose());
 		Assert.assertEquals("UK", addr.getCountry());
 	}
 
@@ -161,9 +160,9 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setLocation("");
-		address.setStartDate(new Date());
-		address.setEndDate(new Date());
+		address.setAddressLocation("");
+		address.setAddressStartDate(new Date());
+		address.setAddressEndDate(new Date());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
@@ -177,7 +176,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setLocation("london, uk");
+		address.setAddressLocation("london, uk");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 	}
@@ -238,8 +237,8 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
 		applicationsServiceMock.save(form);
 		EasyMock.replay(applicationsServiceMock);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,2, mappingResult);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1, 2, mappingResult,  new ModelMap());
 		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals("private/pgStudents/form/components/qualification_details", modelAndView.getViewName());
 	}
@@ -251,112 +250,74 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
 		applicationsServiceMock.save(form);
 		EasyMock.replay(applicationsServiceMock);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
 		
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,2, mappingResult);
-		Assert.assertEquals(qualificationDto.getAward_date(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getAward_date());
-		Assert.assertEquals(qualificationDto.getGrade(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getGrade());
-		Assert.assertEquals(qualificationDto.getInstitution(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getInstitution());
-		Assert.assertEquals(qualificationDto.getLanguage_of_study(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getLanguage_of_study());
-		Assert.assertEquals(qualificationDto.getLevel(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getLevel());
-		Assert.assertEquals(qualificationDto.getName_of_programme(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getName_of_programme());
-		Assert.assertEquals(qualificationDto.getScore(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getScore());
-		Assert.assertEquals(qualificationDto.getStart_date(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getStart_date());
-		Assert.assertEquals(qualificationDto.getQualification_type(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualification_type());
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1,2, mappingResult,  new ModelMap());
+		Assert.assertEquals(qualificationDto.getQualificationAwardDate(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getAward_date());
+		Assert.assertEquals(qualificationDto.getQualificationGrade(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getGrade());
+		Assert.assertEquals(qualificationDto.getQualificationInstitution(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getInstitution());
+		Assert.assertEquals(qualificationDto.getQualificationLanguage(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getLanguage_of_study());
+		Assert.assertEquals(qualificationDto.getQualificationLevel(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getLevel());
+		Assert.assertEquals(qualificationDto.getQualificationProgramName(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getName_of_programme());
+		Assert.assertEquals(qualificationDto.getQualificationScore(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getScore());
+		Assert.assertEquals(qualificationDto.getQualificationStartDate(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getStart_date());
+		Assert.assertEquals(qualificationDto.getQualificationType(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualification_type());
 	}
 	
 	@Test
-	public void shouldNotSaveIfQualificationHasValidationErrors() {
-		BindingResult mappingResult = EasyMock.createMock(BindingResult.class);
-		qualificationDto.setQualId(null);
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		qualificationValidator.validate(qualificationDto, mappingResult);
-		EasyMock.expect(mappingResult.hasErrors()).andReturn(true);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock, mappingResult, qualificationValidator);
-		applicationController.editQualification(qualificationDto,2,mappingResult);
-		EasyMock.verify(applicationsServiceMock);
-		Assert.assertEquals(0, form.getQualifications().size() );
-	}
-	@Test
 	public void shouldReturnInputQualificationDtoIfHasErrors() {
-		BindingResult mappingResult = EasyMock.createMock(BindingResult.class);
-		qualificationDto.setQualId(null);
+		qualificationDto.setQualificationId(null);
+		qualificationDto.setQualificationLevel("");
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		qualificationValidator.validate(qualificationDto, mappingResult);
-		EasyMock.expect(mappingResult.hasErrors()).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock, mappingResult, qualificationValidator);
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,2,mappingResult);
+		EasyMock.replay(applicationsServiceMock, qualificationValidator);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1,2,mappingResult,  new ModelMap());
 		Assert.assertEquals(qualificationDto, ((ApplicationPageModel)modelAndView.getModel().get("model")).getQualification());
 	}
 	@Test
 	public void shouldReturnNewQualificationDtoIfHasNoErrors() {
-		BindingResult mappingResult = EasyMock.createMock(BindingResult.class);
-		qualificationDto.setQualId(null);
+		qualificationDto.setQualificationId(null);
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		qualificationValidator.validate(qualificationDto, mappingResult);
-		EasyMock.expect(mappingResult.hasErrors()).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock, mappingResult, qualificationValidator);
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,2,mappingResult);
+		EasyMock.replay(applicationsServiceMock, qualificationValidator);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1,2,mappingResult,  new ModelMap());
 		Assert.assertNotNull(((ApplicationPageModel)modelAndView.getModel().get("model")).getQualification());
-		Assert.assertNull(((ApplicationPageModel)modelAndView.getModel().get("model")).getQualification().getInstitution());
+		Assert.assertNull(((ApplicationPageModel)modelAndView.getModel().get("model")).getQualification().getQualificationInstitution());
 	}
 	
 	@Test
 	public void shouldCreateANewQualification(){
-		BindingResult mappingResult = EasyMock.createMock(BindingResult.class);
-		qualificationDto.setQualId(null);
+		qualificationDto.setQualificationId(null);
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		qualificationValidator.validate(qualificationDto, mappingResult);
-		EasyMock.expect(mappingResult.hasErrors()).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock, mappingResult, qualificationValidator);
-		applicationController.editQualification(qualificationDto,2,mappingResult);
+		EasyMock.replay(applicationsServiceMock, qualificationValidator);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1,2,mappingResult,  new ModelMap());
 		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals(1, form.getQualifications().size() );
-		Assert.assertEquals(newQualification, form.getQualifications().get(0) );
+		Assert.assertEquals("first", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getGrade());
 		
 	}
 	
 	@Test
 	public void shouldEditExistingQualification(){
-		BindingResult mappingResult = EasyMock.createMock(BindingResult.class);
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		form.getQualifications().add(qualification);
 		qualification.setApplication(form);
-		qualificationValidator.validate(qualificationDto, mappingResult);
-		EasyMock.expect(mappingResult.hasErrors()).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock, mappingResult, qualificationValidator);
-		applicationController.editQualification(qualificationDto,2,mappingResult);
+		EasyMock.replay(applicationsServiceMock, qualificationValidator);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1,2,mappingResult,  new ModelMap());
 		EasyMock.verify(applicationsServiceMock);
-		Assert.assertEquals(1, form.getQualifications().size() );
-		Assert.assertEquals("CS", form.getQualifications().get(0).getName_of_programme() );
+		Assert.assertEquals(1, ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().size());
+		Assert.assertEquals("CS", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getName_of_programme());
 		
-	}
-	
-	
-	
-	@Test
-	
-	public void shouldPopulateUserFromSecurityContext(){
-		BindingResult mappingResult = EasyMock.createMock(BindingResult.class);
-		qualificationDto.setQualId(null);
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		qualificationValidator.validate(qualificationDto, mappingResult);
-		EasyMock.expect(mappingResult.hasErrors()).andReturn(false);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock, mappingResult, qualificationValidator);
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,2,mappingResult);
-		EasyMock.verify(applicationsServiceMock);
-		Assert.assertEquals(student,  ((PageModel)modelAndView.getModel().get("model")).getUser());
 	}
 	
 	@Test
@@ -368,8 +329,6 @@ public class UpdateApplicationFormControllerTest {
 		applicationController.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
 	}
-	
-
 
 	@Before
 	public void setUp() throws ParseException {
@@ -386,7 +345,7 @@ public class UpdateApplicationFormControllerTest {
 		countriesDAOMock = EasyMock.createMock(CountriesDAO.class);
 		
 		applicationController = new UpdateApplicationFormController(userServiceMock, applicationsServiceMock, userPropertyEditorMock, 
-				datePropertyEditorMock, qualificationValidator, countriesDAOMock) {
+				datePropertyEditorMock, countriesDAOMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}
@@ -397,16 +356,16 @@ public class UpdateApplicationFormControllerTest {
 
 		
 		qualificationDto = new QualificationDTO();
-		qualificationDto.setQualId(3);
-		qualificationDto.setAward_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
-		qualificationDto.setGrade("first");
-		qualificationDto.setInstitution("UCL");
-		qualificationDto.setLanguage_of_study("EN");
-		qualificationDto.setLevel("advance");
-		qualificationDto.setName_of_programme("CS");
-		qualificationDto.setScore("100");
-		qualificationDto.setStart_date(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		qualificationDto.setQualification_type("degree");
+		qualificationDto.setQualificationId(3);
+		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
+		qualificationDto.setQualificationGrade("first");
+		qualificationDto.setQualificationInstitution("UCL");
+		qualificationDto.setQualificationLanguage("EN");
+		qualificationDto.setQualificationLevel("advance");
+		qualificationDto.setQualificationProgramName("CS");
+		qualificationDto.setQualificationScore("100");
+		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+		qualificationDto.setQualificationType("degree");
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		qualification = new QualificationBuilder().id(3).q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).q_grade("").q_institution("").q_language_of_study("").q_level("").q_name_of_programme("").q_score("").q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
@@ -45,24 +47,22 @@ public class UpdateApplicationFormController {
 	private final ApplicationsService applicationService;
 	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;
-	private final QualificationValidator qualificationValidator;
 	private final DatePropertyEditor datePropertyEditor;
 	private final CountriesDAO countriesDAO;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService,
-			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, QualificationValidator qualificationValidator,
+			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor,
 			CountriesDAO countriesDAO) {
 			
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.userService = userService;
 		this.datePropertyEditor = datePropertyEditor;
-		this.qualificationValidator = qualificationValidator;
 		this.countriesDAO = countriesDAO;
 
 	}
@@ -105,46 +105,54 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer appId,
-			BindingResult result) {
-		qualificationValidator.validate(qual, result);
+	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer id,
+			@RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+		
 		ApplicationForm application = applicationService.getApplicationById(appId);
-		ApplicationPageModel model = new ApplicationPageModel();
-		model.setUser(((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()));
-		model.setResult(result);
-		if (!result.hasErrors()) {
-			model.setQualification(new QualificationDTO());
-			if (application.isSubmitted()) {
-				throw new CannotUpdateApplicationException();
-			}
-			Qualification qualification;
-			if (qual.getQualId() == null) {
-				qualification = newQualification();
 
+		if (application.isSubmitted()) {
+			throw new CannotUpdateApplicationException();
+		}
+		RegisteredUser user = userService.getUser(id);
+
+		ApplicationPageModel model = new ApplicationPageModel();
+		model.setUser(user);
+		ApplicationForm applicationForm = application;
+		model.setApplicationForm(applicationForm);
+		model.setResult(result);
+
+		QualificationValidator qualificationValidator = new QualificationValidator();
+		qualificationValidator.validate(qual, result);
+		if (!result.hasErrors()) {
+			Qualification qualification;
+			if (qual.getQualificationId() == null) {
+				qualification = new Qualification();
 			} else {
-				qualification = applicationService.getQualificationById(qual.getQualId());
+				qualification = applicationService.getQualificationById(qual.getQualificationId());
 			}
+			
 			qualification.setApplication(application);
-			qualification.setAward_date(qual.getAward_date());
-			qualification.setGrade(qual.getGrade());
-			qualification.setInstitution(qual.getInstitution());
-			qualification.setLanguage_of_study(qual.getLanguage_of_study());
-			qualification.setLevel(qual.getLevel());
-			qualification.setName_of_programme(qual.getName_of_programme());
-			qualification.setScore(qual.getScore());
-			qualification.setStart_date(qual.getStart_date());
-			qualification.setQualification_type(qual.getQualification_type());
-			if (qual.getQualId() == null) {
+			qualification.setAward_date(qual.getQualificationAwardDate());
+			qualification.setGrade(qual.getQualificationGrade());
+			qualification.setInstitution(qual.getQualificationInstitution());
+			qualification.setLanguage_of_study(qual.getQualificationLanguage());
+			qualification.setLevel(qual.getQualificationLevel());
+			qualification.setName_of_programme(qual.getQualificationProgramName());
+			qualification.setScore(qual.getQualificationScore());
+			qualification.setStart_date(qual.getQualificationStartDate());
+			qualification.setQualification_type(qual.getQualificationType());
+			if (qual.getQualificationId() == null) {
 				application.getQualifications().add(qualification);
 			}
-			System.out.println("Before save: qual: " + qualification.getId() + "application " + application.getId() + "nameof pr" + qualification.getName_of_programme());
 			applicationService.save(application);
+			model.setQualification(new QualificationDTO());
 		} else {
 			model.setQualification(qual);
 		}
+		
+		modelMap.put("model", model);
 
-		model.setApplicationForm(application);
-		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, "model", model);
+		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, modelMap);
 	}
 
 	@RequestMapping(value = "/addFunding", method = RequestMethod.POST)
@@ -218,18 +226,27 @@ public class UpdateApplicationFormController {
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
 		model.setCountries(countriesDAO.getAllCountries());
+		model.setAddressPurposes(Arrays.asList(AddressPurpose.values()));
 
 		if (!result.hasErrors()) {
-			com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
+			com.zuehlke.pgadmissions.domain.Address address;
+			if (addr.getAddressId() == null) {
+				address = new com.zuehlke.pgadmissions.domain.Address();
+			} else {
+				address = applicationService.getAddressById(addr.getAddressId());
+			}
+
 			address.setApplication(application);
-			address.setLocation(addr.getLocation());
-			address.setPostCode(addr.getPostCode());
-			address.setCountry(addr.getCountry());
-			address.setPurpose(addr.getPurpose());
-			address.setStartDate(addr.getStartDate());
-			address.setEndDate(addr.getEndDate());
-			address.setContactAddress(addr.getContactAddress());
-			application.getAddresses().add(address);
+			address.setLocation(addr.getAddressLocation());
+			address.setPostCode(addr.getAddressPostCode());
+			address.setCountry(addr.getAddressCountry());
+			address.setPurpose(addr.getAddressPurpose());
+			address.setStartDate(addr.getAddressStartDate());
+			address.setEndDate(addr.getAddressEndDate());
+			address.setContactAddress(addr.getAddressContactAddress());
+			if (addr.getAddressId() == null) {
+				application.getAddresses().add(address);
+			}
 			applicationService.save(application);
 			model.setAddress(new Address());
 		} else {

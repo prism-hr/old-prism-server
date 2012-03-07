@@ -1,111 +1,128 @@
-          <!-- Address -->
+<!--
+ ------------------------------------------------------------
+| ADDRESS section
+ ------------------------------------------------------------
+   - Date fields have been changed to text fields with a "date" class.
+-->
           <section class="folding red">
             <h2 class="empty">
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Address
             </h2>
             <div>
-            	<table class="existing">
-              	<colgroup>
-                	<col style="width: 30px" />
-                	<col />
-                	<col style="width: 100px" />
-                	<col style="width: 100px" />
-                	<col style="width: 30px" />
-                	<col style="width: 30px" />
+              <table class="existing">
+                <colgroup>
+                  <col style="width: 30px" />
+                  <col />
+                  <col style="width: 100px" />
+                  <col style="width: 100px" />
+                  <col style="width: 30px" />
                 </colgroup>
-              	<thead>
-                	<tr>
-                  	<th colspan="2">Address</th>
+                <thead>
+                  <tr>
+                    <th colspan="2">Address</th>
                     <th>From</th>
                     <th>To</th>
-                    <th colspan="2">&nbsp;</th>
+                    <th>&nbsp;</th>
                   </tr>
                 </thead>
                 <tbody>
-                	<tr>
-                  	<td><a class="row-arrow" href="#">-</a></td>
-                  	<td>123 Letsby Avenue, Croydon, Surrey AS3 0LI</td>
-                  	<td>21/07/11</td>
-                  	<td>19/05/12</td>
-                  	<td><a class="button-edit" href="#">edit</a></td>
-                  	<td><a class="button-close" href="#">close</a></td>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>123 Letsby Avenue, Croydon, Surrey AS3 0LI</td>
+                    <td>21/07/11</td>
+                    <td>19/05/12</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
                   </tr>
-                	<tr>
-                  	<td><a class="row-arrow" href="#">-</a></td>
-                  	<td>124 Letsby Avenue, Croydon, Surrey AS3 0LI</td>
-                  	<td>18/07/10</td>
-                  	<td>19/07/11</td>
-                  	<td><a class="button-edit" href="#">edit</a></td>
-                  	<td><a class="button-close" href="#">close</a></td>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>124 Letsby Avenue, Croydon, Surrey AS3 0LI</td>
+                    <td>18/07/10</td>
+                    <td>19/07/11</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
                   </tr>
                 </tbody>
               </table>
               <form method="post" action="woooop">
 
-              	<div>
-                	<div class="row">
-                  	<label class="label">Street Name &amp; Number</label>
+                <div>
+                
+                	<!-- Address body -->
+                  <div class="row">
+                    <span class="label">Street Name &amp; Number</span>
                     <span class="hint"></span>
                     <div class="field">
-                    	<textarea class="max" rows="6" cols="80"></textarea>
+                      <textarea class="max" rows="6" cols="80"></textarea>
                     </div>
                   </div>
-                	<div class="row">
-                  	<label class="label">Postal Code</label>
+
+                	<!-- Postcode -->
+                  <div class="row">
+                    <span class="label">Postal Code</span>
                     <span class="hint"></span>
                     <div class="field">
-                    	<input class="half" type="text" value="" />
+                      <input class="half" type="text" value="" />
                     </div>
                   </div>
-                	<div class="row">
-                  	<label class="label">Country</label>
+
+                	<!-- Country -->
+                  <div class="row">
+                    <span class="label">Country</span>
                     <div class="field">
                       <select class="full">
                         <option>United Kingdom</option>
                       </select>
                     </div>
                   </div>
-                	<div class="row">
-                  	<span class="label">Start Date</span>
+                </div>
+
+								<div>
+                	<h3>Residency Period</h3>
+                  
+                	<!-- Residency period -->
+                  <div class="row">
+                    <span class="label">Dates</span>
                     <span class="hint"></span>
                     <div class="field">
-	                    <input class="half" type="date" value="" />
+                      <label>from <input class="half date" type="text" value="" /></label> <label>to <input class="half date" type="text" value="" /></label>
                     </div>
                   </div>
-                	<div class="row">
-                  	<span class="label">End Date</span>
+
+                	<!-- Purpose -->
+                  <div class="row">
+                    <span class="label">Purpose</span>
                     <span class="hint"></span>
                     <div class="field">
-  	                  <input class="half" type="date" value="" />
+                      <input class="full" type="text" placeholder="e.g. work, travel" />
                     </div>
                   </div>
-                	<div class="row">
-                  	<span class="label">Supporting Document</span>
+
+                	<!-- Supporting document -->
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
                     <span class="hint"></span>
                     <div class="field">
                       <input class="full" type="text" value="" />
                       <a class="button" href="#">Browse</a>
                       <a class="button" href="#">Upload</a>
-                    </div>	
+                    </div>  
                   </div>
-                	<div class="row">
-                  	<div class="field"><a class="button blue" href="#">Add a document</a></div>
+                  <div class="row">
+                    <div class="field"><a class="button blue" href="#">Add a document</a></div>
                   </div>
-                	<div class="row">
-                  	<span class="label">This is my contact address</span>
+                </div>
+
+								<div>
+                	<!-- Is contact address? -->
+                  <div class="row">
+                    <span class="label">&nbsp;</span>
                     <div class="field">
-                    	<label class="half"><input type="checkbox" /></label>
-                    	<label>Reason for living here
-                      <select class="half">
-                        <option>parents</option>
-                      </select>
-                      </label>
+                      <label><input type="checkbox" /> This is my contact address</label>
                     </div>
                   </div>
                 </div>
 
-              	<div class="buttons">
+                <div class="buttons">
                   <a class="button blue" href="#">Close</a>
                   <button class="blue" type="submit">Save</button>
                 </div>

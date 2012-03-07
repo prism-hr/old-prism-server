@@ -8,6 +8,7 @@ public class Funding {
 	private String fundingDescription;
 	private String fundingValue;
 	private Date fundingAwardDate;
+	private Integer fundingId;
 
 	public String getFundingDescription() {
 		return fundingDescription;
@@ -39,6 +40,14 @@ public class Funding {
 	
 	public void setFundingAwardDate(Date fundingAwardDate) {
 		this.fundingAwardDate = fundingAwardDate;
+	}
+	
+	public Integer getFundingId() {
+		return fundingId;
+	}
+	
+	public void setFundingId(Integer fundingId) {
+		this.fundingId = fundingId;
 	}
 	
 }

@@ -94,7 +94,7 @@
 
             <div class="row half">
               <label>Enter email address</label>
-              <input size="39" value="" />
+              <input size="29" value="" />
             </div>
           </div>
           
@@ -105,7 +105,7 @@
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Programme
             </h2>
-            <div style="display: none;">
+            <div>
               <form method="post" action="woooop">
 
                 <div>
@@ -123,7 +123,9 @@
                     <label class="label">Study Option</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                      <input class="full" type="text" placeholder="e.g. full time, part-time, distance" />
+                    	<select class="full">
+	                      <option>e.g. full time, part-time, distance</option>
+                      </select>
                     </div>
                   </div>
 
@@ -174,7 +176,7 @@
                   <div class="row">
                     <label class="label">Start Date</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <input class="half" type="date" value="" />
+                    <input class="half date" type="text" value="" />
                   </div>
 
                   <!-- Referrer -->
@@ -182,7 +184,9 @@
                     <label class="label">Referrer</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                      <textarea class="max"></textarea>
+                    	<select class="full">
+	                      <option>UCL graduate study website</option>
+                      </select>
                     </div>
                   </div>
 
@@ -259,7 +263,7 @@
                   <div class="row">
                     <label class="label">Date of Birth</label>
                     <span class="hint"></span>
-                    <input class="half" type="date" value="" />
+                    <input class="half date" type="text" value="" />
                   </div>
                 </div>
 
@@ -333,12 +337,12 @@
                   <div class="row">
                     <span class="label">Date of Issue</span>
                     <span class="hint"></span>
-                    <input class="half" type="date" value="" />
+                    <input class="half date" type="text" value="" />
                   </div>
                   <div class="row">
                     <span class="label">Date of Expiry</span>
                     <span class="hint"></span>
-                    <input class="half" type="date" value="" />
+                    <input class="half date" type="text" value="" />
                   </div>
                   <div class="row">
                     <span class="label">Supporting Document</span>
@@ -475,13 +479,17 @@
                       </select>
                     </div>
                   </div>
+                </div>
 
+								<div>
+                	<h3>Residency Period</h3>
+                  
                 	<!-- Residency period -->
                   <div class="row">
-                    <span class="label">Residency Period</span>
+                    <span class="label">Dates</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <label>from <input class="half" type="date" value="" /></label> <label>to <input class="half" type="date" value="" /></label>
+                      <label>from <input class="half date" type="text" value="" /></label> <label>to <input class="half date" type="text" value="" /></label>
                     </div>
                   </div>
 
@@ -507,8 +515,10 @@
                   <div class="row">
                     <div class="field"><a class="button blue" href="#">Add a document</a></div>
                   </div>
+                </div>
 
-                	<!-- Contact address -->
+								<div>
+                	<!-- Is contact address? -->
                   <div class="row">
                     <span class="label">&nbsp;</span>
                     <div class="field">
@@ -615,7 +625,7 @@
                     <span class="label">Start Date</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                      <input class="half" type="date" value="" />
+                      <input class="half date" type="text" value="" />
                     </div>
                   </div>
                 </div>
@@ -628,7 +638,7 @@
                     <span class="label">Date of Termination</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                      <input class="half" type="date" value="" />
+                      <input class="half date" type="text" value="" />
                     </div>
                   </div>
                   
@@ -699,7 +709,7 @@
                     <span class="label">Award Date</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                      <input class="half" type="date" value="" />
+                      <input class="half date" type="text" value="" />
                     </div>
                   </div>
 
@@ -801,7 +811,7 @@
                     <span class="label">Start Date</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <input class="half" type="date" value="" />
+                      <input class="half date" type="text" value="" />
                     </div>
                   </div>
                   
@@ -819,7 +829,7 @@
                     <span class="label">Date of ending</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <input class="half" type="date" value="" />
+                      <input class="half date" type="text" value="" />
                     </div>
                   </div>
 
@@ -940,7 +950,7 @@
                     <span class="label" data-desc="Tooltip demonstration.">Award Date</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                      <input class="half" type="date" value="" />
+                      <input class="half date" type="text" value="" />
                     </div>
                   </div>
                   

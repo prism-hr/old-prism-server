@@ -95,7 +95,7 @@ $(document).ready(function()
 	});
 	
 	// Date pickers.
-	$('input[type=date]').datepicker();
+	$('input.date').datepicker();
 	
 	// Sortable tables.
 	$('table.data').tablesorter();

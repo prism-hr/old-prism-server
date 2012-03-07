@@ -2,6 +2,7 @@
  ------------------------------------------------------------
 | ADDRESS section
  ------------------------------------------------------------
+   - Date fields have been changed to text fields with a "date" class.
 -->
           <section class="folding red">
             <h2 class="empty">
@@ -73,13 +74,17 @@
                       </select>
                     </div>
                   </div>
+                </div>
 
+								<div>
+                	<h3>Residency Period</h3>
+                  
                 	<!-- Residency period -->
                   <div class="row">
-                    <span class="label">Residency Period</span>
+                    <span class="label">Dates</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <label>from <input class="half" type="date" value="" /></label> <label>to <input class="half" type="date" value="" /></label>
+                      <label>from <input class="half date" type="text" value="" /></label> <label>to <input class="half date" type="text" value="" /></label>
                     </div>
                   </div>
 
@@ -105,8 +110,10 @@
                   <div class="row">
                     <div class="field"><a class="button blue" href="#">Add a document</a></div>
                   </div>
+                </div>
 
-                	<!-- Contact address -->
+								<div>
+                	<!-- Is contact address? -->
                   <div class="row">
                     <span class="label">&nbsp;</span>
                     <div class="field">

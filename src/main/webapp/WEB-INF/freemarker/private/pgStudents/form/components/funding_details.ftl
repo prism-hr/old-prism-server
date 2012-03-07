@@ -1,4 +1,11 @@
+<#if model.applicationForm.fundings?has_content>
+	<#assign hasFundings = true>
+<#else>
+	<#assign hasFundings = false>
+</#if>
+
 <#import "/spring.ftl" as spring />
+
 	<h2 class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 			Funding
@@ -6,7 +13,7 @@
 
 	<div>
 	
-		<#list model.applicationForm.fundings as funding>
+		<#if hasFundings>
 			<table class="existing">
 				
 				<colgroup>
@@ -27,7 +34,8 @@
 				</thead>
 	                
 				<tbody>
-						
+				
+					<#list model.applicationForm.fundings as funding>		
 						<tr>
 		                  	<td><a class="row-arrow" href="#">-</a></td>
 		                  	<td>${funding.type}</td>
@@ -43,11 +51,11 @@
 	                        <input type="hidden" id="${funding.id}_fundingAwardDateDP" value="${funding.awardDate?string('yyyy/MM/dd')}"/>
 		                  	
 		                </tr>
-						               
+					</#list>				               
 				</tbody>
 			
 			</table>
-        </#list>
+        </#if>
         <!-- Non-rendering data -->
         <input type="hidden" id="fundingId" name="fundingId"/>
               

@@ -58,14 +58,8 @@
 			          
 			          <hr />
 			
-			          <section class="folding violet">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Programme
-			            </h2>
-			            <div>
-			            	<p>Testing...</p>
-			            </div>
+			          <section id="programmeDetailsSection" class="folding violet">
+			          	 <#include "/private/pgStudents/form/components/programme_details.ftl"/>
 			          </section>
 			          
 			          <section id="personalDetailsSection" class="folding purple">

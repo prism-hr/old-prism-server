@@ -8,16 +8,23 @@
                             <div>
                             
                              <table cellspacing=10>
-                                 <tr align=left><th>Type</th><th>Value</th><th>Award Date</th></tr>
+                                 <tr align=left><th>Type</th><th>Value</th><th>Award Date</th><th></th></tr>
                                 <#list model.applicationForm.fundings as funding>
                                 <tr>
                                     <td>${funding.type}</td>
                                     <td>${funding.value}</td>
                                     <td>${funding.awardDate?string('yyyy/MM/dd')}</td>
+                                    <td><a class="button blue" type="submit" name="fundingEditButton" id="funding_${funding.id}">Edit</a></td>
+                                    <input type="hidden" id="${funding.id}_fundingIdDP" value="${funding.id}"/>
+                                    <input type="hidden" id="${funding.id}_fundingTypeDP" value="${funding.type}"/>
+                                    <input type="hidden" id="${funding.id}_fundingValueDP" value="${funding.value}"/>
+                                    <input type="hidden" id="${funding.id}_fundingDescriptionDP" value="${funding.description}"/>
+                                    <input type="hidden" id="${funding.id}_fundingAwardDateDP" value="${funding.awardDate?string('yyyy/MM/dd')}"/>
                                </tr>
                             </#list>
                             </table>
                             
+                            <input type="hidden" id="fundingId" name="fundingId"/>
                             <table cellspacing=10>
                                 <tr align=left></tr>
                                 <tr><td>Type</td>

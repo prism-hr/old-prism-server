@@ -6,68 +6,76 @@ import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 
 public class Address {
 
-	private String location;
-	private String postCode;
-	private String country;
-	private Date startDate;
-	private Date endDate;
-	private String purpose;
+	private String addressLocation;
+	private String addressPostCode;
+	private String addressCountry;
+	private Date addressStartDate;
+	private Date addressEndDate;
+	private String addressPurpose;
+	private Integer addressId;
 	
-	private AddressStatus contactAddress;
-	
-	public String getLocation() {
-		return location;
+	private AddressStatus addressContactAddress;
+
+	public String getAddressLocation() {
+		return addressLocation;
 	}
 	
-	public void setLocation(String location) {
-		this.location = location;
+	public void setAddressLocation(String addressLocation) {
+		this.addressLocation = addressLocation;
 	}
 	
-	public String getPostCode() {
-		return postCode;
+	public String getAddressPostCode() {
+		return addressPostCode;
 	}
 	
-	public void setPostCode(String postCode) {
-		this.postCode = postCode;
+	public void setAddressPostCode(String addressPostCode) {
+		this.addressPostCode = addressPostCode;
 	}
 	
-	public String getCountry() {
-		return country;
+	public String getAddressCountry() {
+		return addressCountry;
 	}
 	
-	public void setCountry(String country) {
-		this.country = country;
+	public void setAddressCountry(String addressCountry) {
+		this.addressCountry = addressCountry;
 	}
 	
-	public String getPurpose() {
-		return purpose;
+	public Date getAddressStartDate() {
+		return addressStartDate;
 	}
 	
-	public void setPurpose(String purpose) {
-		this.purpose = purpose;
+	public void setAddressStartDate(Date addressStartDate) {
+		this.addressStartDate = addressStartDate;
 	}
 	
-	public Date getStartDate() {
-		return startDate;
+	public Date getAddressEndDate() {
+		return addressEndDate;
 	}
 	
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
+	public void setAddressEndDate(Date addressEndDate) {
+		this.addressEndDate = addressEndDate;
 	}
 	
-	public Date getEndDate() {
-		return endDate;
+	public String getAddressPurpose() {
+		return addressPurpose;
+	}
+	public void setAddressPurpose(String addressPurpose) {
+		this.addressPurpose = addressPurpose;
 	}
 	
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
+	public AddressStatus getAddressContactAddress() {
+		return addressContactAddress;
 	}
 	
-	public AddressStatus getContactAddress() {
-		return contactAddress;
+	public void setAddressContactAddress(AddressStatus addressContactAddress) {
+		this.addressContactAddress = addressContactAddress;
 	}
 	
-	public void setContactAddress(AddressStatus contactAddress) {
-		this.contactAddress = contactAddress;
+	public Integer getAddressId() {
+		return addressId;
+	}
+	
+	public void setAddressId(Integer addressId) {
+		this.addressId = addressId;
 	}
 }

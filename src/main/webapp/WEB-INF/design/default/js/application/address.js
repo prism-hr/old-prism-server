@@ -1,15 +1,16 @@
 $(document).ready(function(){
 	$('#addressSaveButton').click(function(){
 		$.post("/pgadmissions/update/editAddress", { 
-			location: $("#location").val(),
-			postCode: $("#postCode").val(), 
-			country: $("#country").val(), 
-			startDate: $("#startDate").val(),
-			endDate: $("#endDate").val(), 
-			purpose: $("#purpose").val(), 
-			contactAddress: $("#contactAddress").val(),
+			addressLocation: $("#addressLocation").val(),
+			addressPostCode: $("#addressPostCode").val(), 
+			addressCountry: $("#addressCountry").val(), 
+			addressStartDate: $("#addressStartDate").val(),
+			addressEndDate: $("#addressEndDate").val(), 
+			addressPurpose: $("#addressPurpose").val(), 
+			addressContactAddress: $("#addressContactAddress").val(),
 			id: $("#id").val(), 
-			appId: $("#appId").val()
+			appId: $("#appId").val(),
+			addressId: $("#addressId").val()
 		},
 		function(data) {
 			$('#addressSection').html(data);
@@ -25,5 +26,19 @@ $(document).ready(function(){
 		}
 		$("#contactAddress").val(verb);
 
-	});	
+	});
+	
+	$('a[name="addressEditButton"]').click(function(){
+		var id = this.id;
+		id = id.replace('address_', '');
+		$("#addressId").val($('#'+id+"_addressIdDP").val());
+		$("#addressLocation").val($('#'+id+"_locationDP").val());
+		$("#addressPostCode").val($('#'+id+"_postCodeDP").val());
+		$("#addressStartDate").val($('#'+id+"_startDateDP").val());
+		$("#addressEndDate").val($('#'+id+"_endDateDP").val());
+		$("#addressPurpose").val($('#'+id+"_purposeDP").val());
+		$("#addressCountry").val("Romania");
+		$("#addressContactAddress").val("NO");
+	});
+
 });

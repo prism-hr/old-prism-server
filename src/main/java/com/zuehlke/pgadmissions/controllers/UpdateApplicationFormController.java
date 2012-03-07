@@ -221,16 +221,24 @@ public class UpdateApplicationFormController {
 		model.setCountries(countriesDAO.getAllCountries());
 
 		if (!result.hasErrors()) {
-			com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
+			com.zuehlke.pgadmissions.domain.Address address;
+			if (addr.getAddressId() == null) {
+				address = new com.zuehlke.pgadmissions.domain.Address();
+			} else {
+				address = applicationService.getAddressById(addr.getAddressId());
+			}
+
 			address.setApplication(application);
-			address.setLocation(addr.getLocation());
-			address.setPostCode(addr.getPostCode());
-			address.setCountry(addr.getCountry());
-			address.setPurpose(addr.getPurpose());
-			address.setStartDate(addr.getStartDate());
-			address.setEndDate(addr.getEndDate());
-			address.setContactAddress(addr.getContactAddress());
-			application.getAddresses().add(address);
+			address.setLocation(addr.getAddressLocation());
+			address.setPostCode(addr.getAddressPostCode());
+			address.setCountry(addr.getAddressCountry());
+			address.setPurpose(addr.getAddressPurpose());
+			address.setStartDate(addr.getAddressStartDate());
+			address.setEndDate(addr.getAddressEndDate());
+			address.setContactAddress(addr.getAddressContactAddress());
+			if (addr.getAddressId() == null) {
+				application.getAddresses().add(address);
+			}
 			applicationService.save(application);
 			model.setAddress(new Address());
 		} else {

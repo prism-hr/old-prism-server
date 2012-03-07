@@ -9,9 +9,9 @@
                                  <tr align=left><th>Address</th><th>From</th><th>To</th></tr>
                                 <#list model.applicationForm.addresses as address>
                                 <tr>
-                                    <td>${address.street}, ${address.city}, ${address.postCode}</td>
-                                    <td>${address.startDate?date}</td>
-                                    <td>${address.endDate?date}</td>
+                                    <td>${address.location}, ${address.postCode}</td>
+                                    <td>${address.startDate?string('yyyy/MM/dd')}</td>
+                                    <td>${address.endDate?string('yyyy/MM/dd')}</td>
                                </tr>
                             </#list>
                             </table>

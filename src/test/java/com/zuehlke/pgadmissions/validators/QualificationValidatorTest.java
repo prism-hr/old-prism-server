@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 
 import junit.framework.Assert;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;

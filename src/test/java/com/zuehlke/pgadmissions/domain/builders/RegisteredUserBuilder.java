@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 
@@ -15,7 +14,6 @@ public class RegisteredUserBuilder {
 	private String username;
 	private String password;
 	private Integer id;
-	private String address;
 	private boolean enabled = true;
 	private boolean accountNonExpired = true;
 	private boolean accountNonLocked = true;
@@ -46,11 +44,7 @@ public class RegisteredUserBuilder {
 		this.lastName = lastName;
 		return this;
 	}
-	public RegisteredUserBuilder address(String address) {
-		this.address = address;
-		return this;
-	}
-	
+
 	public RegisteredUserBuilder firstName(String firstName) {
 		this.firstName = firstName;
 		return this;
@@ -104,7 +98,6 @@ public class RegisteredUserBuilder {
 		user.setAccountNonExpired(accountNonExpired);
 		user.setAccountNonLocked(accountNonLocked);
 		user.setCredentialsNonExpired(credentialsNonExpired);
-		user.setAddress(address);
 		user.getRoles().addAll(roles);
 		return user;
 	}

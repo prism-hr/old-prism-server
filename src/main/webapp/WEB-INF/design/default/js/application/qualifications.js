@@ -9,7 +9,7 @@ $(document).ready(function(){
 			type: $("#q_type").val(),
 			grade: $("#q_grade").val(),
 			score: $("#q_score").val(),
-			award_date: $("#q_award_date").val(),
+			start_date: $("#q_start_date").val(),
 			language_of_study: $("#q_language").val(),
 			appId: $("#appId").val(),
 			id: $("#id").val()
@@ -17,5 +17,12 @@ $(document).ready(function(){
 		function(data) {
 			$('#qualificationsSection').html(data);
 		});
+	});
+	
+	$('a[name="editQualificationLink"]').click(function(){
+		var id = this.id;
+		id = id.replace('qualification_', '');
+		var value = $('#'+id+'_q_provider').val();
+		$('#q_provider').val(value);
 	});
 });

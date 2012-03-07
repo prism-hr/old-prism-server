@@ -16,9 +16,8 @@ public class ApplicationPageModel extends PageModel {
 	private Address address;
 	private Funding funding;
 	private String message;
-	private List<Qualification> qualifications;
 	private ApplicationForm applicationForm;
-	private QualificationDTO qualificationDto;
+	private QualificationDTO qualification;
 	private List<Countries> countries;
 
 	public ApplicationForm getApplicationForm() {
@@ -57,24 +56,16 @@ public class ApplicationPageModel extends PageModel {
 		this.message = message;
 	}
 
-	public void setQualifications(List<Qualification> qualifications) {
-		this.qualifications = qualifications;
-	}
-	
-	public List<Qualification> getQualifications() {
-		return qualifications;
-	}
-
 	public void setApplicationForm(ApplicationForm applicationForm) {
 		this.applicationForm = applicationForm;
 		
 	}
 
 	public QualificationDTO getQualification() {
-		return qualificationDto;
+		return qualification;
 	}
-	public void setQualificationDto(QualificationDTO qualificationDto) {
-		this.qualificationDto = qualificationDto;
+	public void setQualification(QualificationDTO qualificationDto) {
+		this.qualification = qualificationDto;
 	}
 	
 	public void setCountries(List<Countries> countries) {

@@ -52,13 +52,12 @@ public class ApplicationFormDAO {
 				.createCriteria(ApplicationForm.class).list();
 				
 	}
-
+	
 	public Qualification getQualification(Integer id) {
 		return (Qualification) sessionFactory.getCurrentSession().get(
 				Qualification.class, id);
 	}
 
-	@Transactional
 	@SuppressWarnings("unchecked")
 	public List<Qualification> getQualificationsByApplication(
 			ApplicationForm application) {

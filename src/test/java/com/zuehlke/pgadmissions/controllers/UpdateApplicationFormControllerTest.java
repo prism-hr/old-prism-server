@@ -4,7 +4,6 @@ package com.zuehlke.pgadmissions.controllers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import junit.framework.Assert;
 
@@ -29,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -138,7 +138,7 @@ public class UpdateApplicationFormControllerTest {
 		Address address = new Address();
 		address.setAddressLocation("1, Main Street, London");
 		address.setAddressPostCode("NW2345");
-		address.setAddressPurpose("parents");
+		address.setAddressPurpose(AddressPurpose.INDUSTRIAL_SPONSOR);
 		address.setAddressCountry("UK");
 		address.setAddressStartDate(new Date(2011, 11, 11));
 		address.setAddressEndDate(new Date(2012, 11, 11));
@@ -149,7 +149,7 @@ public class UpdateApplicationFormControllerTest {
 		com.zuehlke.pgadmissions.domain.Address addr = ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getAddresses().get(0);
 		Assert.assertEquals("1, Main Street, London", addr.getLocation());
 		Assert.assertEquals("NW2345", addr.getPostCode());
-		Assert.assertEquals("parents", addr.getPurpose());
+		Assert.assertEquals(AddressPurpose.INDUSTRIAL_SPONSOR, addr.getPurpose());
 		Assert.assertEquals("UK", addr.getCountry());
 	}
 

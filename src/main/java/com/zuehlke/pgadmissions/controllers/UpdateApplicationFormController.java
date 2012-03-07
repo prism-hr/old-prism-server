@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
@@ -218,6 +220,7 @@ public class UpdateApplicationFormController {
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
 		model.setCountries(countriesDAO.getAllCountries());
+		model.setAddressPurposes(Arrays.asList(AddressPurpose.values()));
 
 		if (!result.hasErrors()) {
 			com.zuehlke.pgadmissions.domain.Address address;

@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
@@ -112,7 +113,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		Address address = new AddressBuilder().application(application).country("Germany")
-					.location("1 Main Street").postCode("NW2 456").location("london").purpose("parents").startDate(new Date()).endDate(new Date()).toAddress();
+					.location("1 Main Street").postCode("NW2 456").location("london").purpose(AddressPurpose.EMPLOYER).startDate(new Date()).endDate(new Date()).toAddress();
 		application.setAddresses(Arrays.asList(address));
 
 		assertNull(application.getId());

@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -50,7 +51,7 @@ public class SubmitApplicationFormControllerTest {
 		address.setStartDate(new Date());
 		address.setEndDate(new Date());
 		address.setPostCode("test");
-		address.setPurpose("parents");
+		address.setPurpose(AddressPurpose.SCHOLARSHIP);
 		address.setContactAddress(AddressStatus.YES);
 		
 		form.getAddresses().add(address);

@@ -541,7 +541,7 @@
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Qualifications
             </h2>
-            <div style="display: none;">
+            <div>
               <table class="existing">
                 <colgroup>
                   <col style="width: 30px" />
@@ -589,31 +589,19 @@
               </table>
               
               <form method="post" action="woooop">
-
                 <div>
-                  <!-- Country (in which programme was taken) -->
+                  <!-- Provider -->
                   <div class="row">
-                    <label class="label">Country</label>
+                    <span class="label">Provider</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                      <select class="full">
-                        <option>United Kingdom</option>
-                      </select>
+                      <input class="full" type="text" placeholder="e.g. UCL" />
                     </div>
                   </div>
                   
-                  <!-- Institution -->
+                  <!-- Name (of programme) -->
                   <div class="row">
-                    <label class="label">Institution</label>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <div class="field">
-                      <input class="full" type="text" placeholder="Provider of qualification, e.g. UCL" />
-                    </div>
-                  </div>
-                  
-                  <!-- Course -->
-                  <div class="row">
-                    <span class="label">Course</span>
+                    <span class="label">Programme</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
                       <input class="full" type="text" placeholder="e.g. Civil Engineering" />
@@ -628,34 +616,10 @@
                       <input class="half date" type="text" value="" />
                     </div>
                   </div>
-                </div>
 
-                <div>
-                  <h3>Termination</h3>
-                  
-                  <!-- Termination date -->
-                  <div class="row">
-                    <span class="label">Date of Termination</span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <div class="field">
-                      <input class="half date" type="text" value="" />
-                    </div>
-                  </div>
-                  
-                  <!-- Reason for termination -->
-                  <div class="row">
-                    <span class="label">Reason</span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <div class="field">
-                      <input class="full" type="text" placeholder="e.g. completed" />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
                   <!-- Language (in which programme was undertaken) -->
                   <div class="row">
-                    <label class="label">Language of Study</label>
+                    <span class="label">Language of Study</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
                       <select class="full">
@@ -663,17 +627,15 @@
                       </select>
                     </div>
                   </div>
-                </div>
-                
-                <div>
-                  <h3>Qualification</h3>
                   
                   <!-- Qualification level -->
                   <div class="row">
                     <span class="label">Level</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                      <input class="full" type="text" placeholder="e.g. Vocational, Degree, Diploma etc." />
+                      <select class="full">
+                        <option>School</option>
+                      </select>
                     </div>
                   </div>
 
@@ -682,7 +644,9 @@
                     <span class="label">Type</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                      <input class="full" type="text" placeholder="e.g. BEngD, MSc" />
+                      <select class="full">
+                        <option>Employer</option>
+                      </select>
                     </div>
                   </div>
 
@@ -721,6 +685,7 @@
                       <input class="full" type="text" value="" />
                       <a class="button" href="#">Browse</a>
                       <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add Document</a>
                     </div>  
                   </div>
 

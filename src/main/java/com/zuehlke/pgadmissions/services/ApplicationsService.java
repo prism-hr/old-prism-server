@@ -63,7 +63,8 @@ public class ApplicationsService {
 		applicationFormDAO.save(application);
 
 	}
-
+	
+	@Transactional
 	public Qualification getQualificationById(Integer id) {
 		return applicationFormDAO.getQualification(id);
 	}

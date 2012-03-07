@@ -7,11 +7,8 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 
 public class QualificationBuilder {
 
-	private String q_country;
 	private String q_name_of_programme;
 	private String q_institution;
-	private String q_termination_reason;
-	private Date q_termination_date;
 	private String q_language_of_study;
 	private String q_level;
 	private String q_type;
@@ -22,10 +19,6 @@ public class QualificationBuilder {
 	private ApplicationForm application;
 	private Integer id;
 
-	public QualificationBuilder q_country(String q_country) {
-		this.q_country = q_country;
-		return this;
-	}
 	
 	public QualificationBuilder application(ApplicationForm application) {
 		this.application = application;
@@ -48,20 +41,12 @@ public class QualificationBuilder {
 		return this;
 	}
 
-	public QualificationBuilder q_termination_date(Date q_termination_date) {
-		this.q_termination_date = q_termination_date;
-		return this;
-	}
 
 	public QualificationBuilder q_language_of_study(String q_language_of_study) {
 		this.q_language_of_study = q_language_of_study;
 		return this;
 	}
 
-	public QualificationBuilder q_termination_reason(String q_termination_reason) {
-		this.q_termination_reason = q_termination_reason;
-		return this;
-	}
 	
 	public QualificationBuilder q_level(String q_level) {
 		this.q_level = q_level;
@@ -88,7 +73,6 @@ public class QualificationBuilder {
 		Qualification qualification = new Qualification();
 		qualification.setApplication(application);
 		qualification.setAward_date(q_award_date);
-		qualification.setCountry(q_country);
 		qualification.setGrade(q_grade);
 		qualification.setInstitution(q_institution);
 		qualification.setLanguage_of_study(q_language_of_study);
@@ -96,8 +80,6 @@ public class QualificationBuilder {
 		qualification.setName_of_programme(q_name_of_programme);
 		qualification.setScore(q_score);
 		qualification.setStart_date(q_start_date);
-		qualification.setTermination_date(q_termination_date);
-		qualification.setQualification_termination_reason(q_termination_reason);
 		qualification.setQualification_type(q_type);
 		qualification.setId(id);
 		return qualification;

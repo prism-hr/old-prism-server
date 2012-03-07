@@ -123,8 +123,8 @@
                     <label class="label">Study Option</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<select class="full">
-	                      <option>e.g. full time, part-time, distance</option>
+                      <select class="full">
+                        <option>e.g. full time, part-time, distance</option>
                       </select>
                     </div>
                   </div>
@@ -184,8 +184,8 @@
                     <label class="label">Referrer</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<select class="full">
-	                      <option>UCL graduate study website</option>
+                      <select class="full">
+                        <option>UCL graduate study website</option>
                       </select>
                     </div>
                   </div>
@@ -452,7 +452,7 @@
 
                 <div>
                 
-                	<!-- Address body -->
+                  <!-- Address body -->
                   <div class="row">
                     <span class="label">Street Name &amp; Number</span>
                     <span class="hint"></span>
@@ -461,7 +461,7 @@
                     </div>
                   </div>
 
-                	<!-- Postcode -->
+                  <!-- Postcode -->
                   <div class="row">
                     <span class="label">Postal Code</span>
                     <span class="hint"></span>
@@ -470,7 +470,7 @@
                     </div>
                   </div>
 
-                	<!-- Country -->
+                  <!-- Country -->
                   <div class="row">
                     <span class="label">Country</span>
                     <div class="field">
@@ -481,10 +481,10 @@
                   </div>
                 </div>
 
-								<div>
-                	<h3>Residency Period</h3>
+                <div>
+                  <h3>Residency Period</h3>
                   
-                	<!-- Residency period -->
+                  <!-- Residency period -->
                   <div class="row">
                     <span class="label">Dates</span>
                     <span class="hint"></span>
@@ -493,7 +493,7 @@
                     </div>
                   </div>
 
-                	<!-- Purpose -->
+                  <!-- Purpose -->
                   <div class="row">
                     <span class="label">Purpose</span>
                     <span class="hint"></span>
@@ -502,7 +502,7 @@
                     </div>
                   </div>
 
-                	<!-- Supporting document -->
+                  <!-- Supporting document -->
                   <div class="row">
                     <span class="label">Supporting Document</span>
                     <span class="hint"></span>
@@ -517,8 +517,8 @@
                   </div>
                 </div>
 
-								<div>
-                	<!-- Is contact address? -->
+                <div>
+                  <!-- Is contact address? -->
                   <div class="row">
                     <span class="label">&nbsp;</span>
                     <div class="field">
@@ -706,14 +706,13 @@
               <span class="left"></span><span class="right"></span><span class="status"></span>
               Employment
             </h2>
-            <div style="display: none;">
+            <div>
               <table class="existing">
                 <colgroup>
                   <col style="width: 30px" />
                   <col />
-                  <col style="width: 100px" />
-                  <col style="width: 100px" />
-                  <col style="width: 30px" />
+                  <col style="width: 140px" />
+                  <col style="width: 140px" />
                   <col style="width: 30px" />
                 </colgroup>
                 <thead>
@@ -721,7 +720,7 @@
                     <th colspan="2">Title</th>
                     <th>From</th>
                     <th>To</th>
-                    <th colspan="2">&nbsp;</th>
+                    <th>&nbsp;</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -730,48 +729,42 @@
                     <td>Job Title</td>
                     <td>21/07/11</td>
                     <td>19/05/12</td>
-                    <td><a class="button-edit" href="#">edit</a></td>
                     <td><a class="button-delete" href="#">delete</a></td>
                   </tr>
                 </tbody>
               </table>
-              <div class="add buttons">
-                <a class="button" href="#">Add Another Job</a>
-              </div>
               
               <form method="post" action="woooop">
-
                 <div>
+                
+                  <!-- Employer (company name) -->
                   <div class="row">
-                    <label class="label">Employer</label>
+                    <span class="label">Employer</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <input class="full" type="text" value="" />
+                      <input class="full" type="text" placeholder="Provider of employment" />
                     </div>
                   </div>
+                
+                  <!-- Position -->
                   <div class="row">
-                    <label class="label">Country</label>
+                    <span class="label">Position</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select class="full">
-                        <option>United Kingdom</option>
-                      </select>
+                      <input class="full" type="text" placeholder="Title of position" />
                     </div>
                   </div>
+                
+                  <!-- Remit (job description) -->
                   <div class="row">
-                    <label class="label">Position</label>
+                    <span class="label">Remit</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <input class="full" type="text" value="" />
+                      <textarea cols="70" rows="3" class="max" placeholder="Summary of responsibilities"></textarea>
                     </div>
                   </div>
-                  <div class="row">
-                    <label class="label">Remit</label>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <input class="full" type="text" value="" />
-                    </div>
-                  </div>
+                
+                  <!-- Start date -->
                   <div class="row">
                     <span class="label">Start Date</span>
                     <span class="hint"></span>
@@ -779,38 +772,19 @@
                       <input class="half date" type="text" value="" />
                     </div>
                   </div>
-                  
-                  <p><strong>End of Employment</strong></p>
-
+                
+                  <!-- End date -->
                   <div class="row">
-                    <label class="label">Reason for ending</label>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <input class="full" type="text" value="" />
-                    </div>
-                  </div>
-                  
-                  <div class="row">
-                    <span class="label">Date of ending</span>
+                    <span class="label">End date</span>
                     <span class="hint"></span>
                     <div class="field">
                       <input class="half date" type="text" value="" />
                     </div>
                   </div>
-
+                
+                  <!-- Language -->
                   <div class="row">
-                    <label class="label">Country of work</label>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full">
-                        <option>United Kingdom</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <div class="row">
-                    <label class="label">Language of work</label>
+                    <span class="label">Language of work</span>
                     <span class="hint"></span>
                     <div class="field">
                       <select class="full">
@@ -818,7 +792,8 @@
                       </select>
                     </div>
                   </div>
-
+                
+                  <!-- Document -->
                   <div class="row">
                     <span class="label">Supporting Document</span>
                     <span class="hint"></span>
@@ -826,22 +801,16 @@
                       <input class="full" type="text" value="" />
                       <a class="button" href="#">Browse</a>
                       <a class="button" href="#">Upload</a>
+                      <a class="button" href="#">Add Document</a>
                     </div>  
                   </div>
 
-                  <div class="row">
-                    <label class="label">Description</label>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <input class="full" type="text" value="" placeholder="e.g. Letter of employment" />
-                    </div>
-                  </div>
-                  
                 </div>
 
                 <div class="buttons">
-                  <a class="button blue" href="#">Close</a>
-                  <button class="blue" type="submit">Save</button>
+                  <a class="button" href="#">Cancel</a>
+                  <button class="blue" type="submit" value="close">Save and Close</button>
+                  <button class="blue" type="submit" value="add">Save and Add</button>
                 </div>
 
               </form>
@@ -888,8 +857,8 @@
                     <span class="label">Funding Type</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<select class="full">
-                      	<option>Scholarship/grant</option>
+                      <select class="full">
+                        <option>Scholarship/grant</option>
                         <option>Employer</option>
                         <option>Industrial sponsor</option>
                       </select>
@@ -1149,19 +1118,19 @@
               <form method="post" action="woooop">
                 <div>
                 
-                	<!-- Document type -->
+                  <!-- Document type -->
                   <div class="row">
                     <span class="label">Type</span>
                     <span class="hint"></span>
                     <div class="field">
                       <select class="full">
-                      	<option>CV / resume</option>
-                      	<option>Personal statement</option>
+                        <option>CV / resume</option>
+                        <option>Personal statement</option>
                       </select>
                     </div>  
                   </div>
 
-                	<!-- Document upload -->
+                  <!-- Document upload -->
                   <div class="row">
                     <span class="label">Document</span>
                     <span class="hint"></span>

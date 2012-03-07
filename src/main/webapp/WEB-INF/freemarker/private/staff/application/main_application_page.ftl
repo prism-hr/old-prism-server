@@ -75,7 +75,7 @@
 			          
 			          <!-- Address -->
 			          <section class="folding red">
-                        <#include "/wip/pgStudents/address_details.ftl"/>
+                        <#include "/private/staff/application/components/address_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding orange">
@@ -93,7 +93,7 @@
 			          </section>
 			          
 			           <section class="folding green">
-			             <#include "/wip/pgStudents/funding_details.ftl"/>
+			             <#include "/private/staff/application/components/funding_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding navy">

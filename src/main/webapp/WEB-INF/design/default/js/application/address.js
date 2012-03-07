@@ -24,7 +24,7 @@ $(document).ready(function(){
 		}else{
 			verb= "NO";
 		}
-		$("#contactAddress").val(verb);
+		$("#addressContactAddress").val(verb);
 
 	});
 	

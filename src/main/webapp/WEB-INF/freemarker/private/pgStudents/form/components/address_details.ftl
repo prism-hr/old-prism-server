@@ -19,14 +19,14 @@
                                 <tr>
                                     <td>${address.id}, ${address.location}, ${address.postCode}</td>
                                     <td>${address.startDate?string('yyyy/MM/dd')}</td>
-                                    <td>${address.endDate?string('yyyy/MM/dd')}</td>
+                                    <td>${(address.endDate?string('yyyy/MM/dd'))!}</td>
                                     <td><a class="button blue" type="submit" name="addressEditButton" id="address_${address.id}">Edit</a></td>
                                     <input type="hidden" id="${address.id}_addressIdDP" value="${address.id}"/>
                                     <input type="hidden" id="${address.id}_locationDP" value="${address.location}"/>
                                     <input type="hidden" id="${address.id}_postCodeDP" value="${address.postCode}"/>
                                     <input type="hidden" id="${address.id}_countryDP" value="${address.country}"/>
                                     <input type="hidden" id="${address.id}_startDateDP" value="${address.startDate?string('yyyy/MM/dd')}"/>
-                                    <input type="hidden" id="${address.id}_endDateDP" value="${address.endDate?string('yyyy/MM/dd')}"/>
+                                    <input type="hidden" id="${address.id}_endDateDP" value="${(address.endDate?string('yyyy/MM/dd'))!}"/>
                                     <input type="hidden" id="${address.id}_purposeDP" value="${address.purpose}"/>
                                </tr>
                             </#list>

@@ -60,7 +60,7 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(applicationForm));
 		viewApplicationModel.setAddress(new Address());
 		viewApplicationModel.setFunding(new Funding());
-		viewApplicationModel.setQualificationDto(new QualificationDTO());
+		viewApplicationModel.setQualification(new QualificationDTO());
 		viewApplicationModel.setCountries(countriesDAO.getAllCountries());
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");

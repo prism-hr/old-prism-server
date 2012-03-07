@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Cascade;
 
@@ -21,27 +23,18 @@ public class Qualification extends DomainObject<Integer>{
 	 */
 	private static final long serialVersionUID = -8949535622435302565L;
 
-
+	@Temporal(TemporalType.DATE)
 	private Date award_date;
-	private String country;
 	private String name_of_programme;
 	private String institution;
-	private String termination_reason;
-	private Date termination_date;
 	private String language_of_study;
 	private String level;
 	private String qualification_type;
 	private String grade;
 	private String score;
+	@Temporal(TemporalType.DATE)
 	private Date start_date;
 	
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String q_country) {
-		this.country = q_country;
-	}
 
 
 	public String getName_of_programme() {
@@ -58,22 +51,6 @@ public class Qualification extends DomainObject<Integer>{
 
 	public void setInstitution(String q_institution) {
 		this.institution = q_institution;
-	}
-
-	public String getQualification_termination_reason() {
-		return termination_reason;
-	}
-
-	public void setQualification_termination_reason(String q_termination_reason) {
-		this.termination_reason = q_termination_reason;
-	}
-
-	public Date getTermination_date() {
-		return termination_date;
-	}
-
-	public void setTermination_date(Date q_termination_date) {
-		this.termination_date = q_termination_date;
 	}
 
 	public String getLanguage_of_study() {
@@ -132,13 +109,9 @@ public class Qualification extends DomainObject<Integer>{
 		this.award_date = q_award_date;
 	}
 
-
-	
-	
 	@ManyToOne
-	@Cascade( { org.hibernate.annotations.CascadeType.ALL } )
-	@JoinColumn(name="application_form_id", insertable=false, updatable=false, nullable=false)
-	private ApplicationForm application = null;
+	@JoinColumn(name="application_form_id")
+	private ApplicationForm application;
 	
 
 	public ApplicationForm getApplication() {
@@ -164,9 +137,5 @@ public class Qualification extends DomainObject<Integer>{
 		return id;
 	}
 
-	public boolean isAttachedToApplication(
-			ApplicationForm applicationForm, Qualification qualification) {
-		return qualification.getApplication().equals(applicationForm);
-	}
 
 }

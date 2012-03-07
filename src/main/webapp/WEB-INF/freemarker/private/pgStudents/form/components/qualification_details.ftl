@@ -20,36 +20,33 @@
  								<td>
                                	${qualification.qualification_type}
                                </td>
-                            	<td>${qualification.grade}</td>
+                            	<td>${qualification.id}, ${qualification.grade}</td>
                             	<td>${qualification.institution}</td>
                             	<td>${(qualification.award_date?string('yyyy/MM/dd'))!}</td>
-                            	<td><a class="button blue" id="qualification_${qualification.id}" name ="editQualificationLink"> Edit<a/></td>
-                             	<input type="hidden" id="${qualification.id}_qualId" value="${qualification.id}"/></tr>
-                             	 <input type="hidden" id="${qualification.id}_q_provider" value="${qualification.institution!}"/> 
-                           		 <input type="hidden" id="${qualification.id}_q_name" value="${qualification.name_of_programme!}"/> 
-                             	<input type="hidden"  id="${qualification.id}_q_start_date" value="${(qualification.start_date?string('yyyy/MM/dd'))!}"/> 
-                             	<input type="hidden" id="${qualification.id}_q_term_reason" value="${qualification.termination_reason!}"/> 
-                             	<input type="hidden"  id="${qualification.id}_q_term_date" value="${(qualification.termination_date?string('yyyy/MM/dd'))!}"/> 
-                           	 <input type="hidden"  id="${qualification.id}_q_country" value="${qualification.country!}"/> 
-                            	 <input type="hidden"  id="${qualification.id}_q_language" value="${qualification.language_of_study!}"/> 
-                            <input type="hidden"  id="${qualification.id}_q_level" value="${qualification.level!}"/> 
-                             <input type="hidden"  id="${qualification.id}_q_Type" value="${qualification.qualification_type!}"/> 
-                             <input type="hidden"  id="${qualification.id}_q_grade" value="${qualification.grade!}"/> 
-                             <input type="hidden"  id="${qualification.id}_q_score" value="${qualification.score!}"/> 
-                             <input type="hidden"  id="${qualification.id}_q_award_date" value="${(qualification.award_date?string('yyyy/MM/dd'))!}"/> 
-                             <input type="hidden"  id="${qualification.id}_q_attachment" value=""/>
+                            	<td><a class="button blue" type="submit" id="qualification_${qualification.id}" name ="editQualificationLink"> Edit<a/></td>
+                             	<input type="hidden" id="${qualification.id}_qualificationIdDP" value="${qualification.id}"/>
+                             	 <input type="hidden" id="${qualification.id}_qualificationInstitutionDP" value="${qualification.institution!}"/> 
+                           		 <input type="hidden" id="${qualification.id}_qualificationProgramNameDP" value="${qualification.name_of_programme!}"/> 
+                             	<input type="hidden"  id="${qualification.id}_qualificationStartDateDP" value="${(qualification.start_date?string('yyyy/MM/dd'))!}"/> 
+                            	 <input type="hidden"  id="${qualification.id}_qualificationLanguageDP" value="${qualification.language_of_study!}"/> 
+                            <input type="hidden"  id="${qualification.id}_qualificationLevelDP" value="${qualification.level!}"/> 
+                             <input type="hidden"  id="${qualification.id}_qualificationTypeDP" value="${qualification.qualification_type!}"/> 
+                             <input type="hidden"  id="${qualification.id}_qualificationGradeDP" value="${qualification.grade!}"/> 
+                             <input type="hidden"  id="${qualification.id}_qualificationScoreDP" value="${qualification.score!}"/> 
+                             <input type="hidden"  id="${qualification.id}_qualificationAwardDateDP" value="${(qualification.award_date?string('yyyy/MM/dd'))!}"/> 
                             
+                            </tr>
                             </#list>
                              </table>	
                                 
-                              <input type="hidden" id="qualId" name="qualId"/>
-                              <table cellspacing=10>
+                            <input type="hidden" id="qualificationId" name="qualificationId"/>
+                            <table cellspacing=10>
                             <tr><td>
                            	Provider
                            	</td> 
-                           	<td><input type="text" id="q_provider" value="${model.qualification.institution!}"/> 
-                           	<#if model.hasError('institution')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('institution').code /></span>                    		
+                           	<td><input type="text" id="qualificationInstitution" name="qualificationInstitution" value="${model.qualification.qualificationInstitution!}"/> 
+                           	<#if model.hasError('qualificationInstitution')>                    		
+                    			<span style="color:red;"><@spring.message  model.result.getFieldError('qualificationInstitution').code /></span>                    		
                     		</#if>
                     		</td>
                     		</tr>
@@ -57,9 +54,9 @@
                     		<tr><td>
                             Name 
                             </td> 
-                           	<td><input type="text" id="q_name" value="${model.qualification.name_of_programme!}"/> 
-                            <#if model.hasError('name_of_programme')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('name_of_programme').code /></span>                    		
+                           	<td><input type="text" id="qualificationProgramName" name="qualificationProgramName" value="${model.qualification.qualificationProgramName!}"/> 
+                            <#if model.hasError('qualificationProgramName')>                    		
+                    			<span style="color:red;"><@spring.message  model.result.getFieldError('qualificationProgramName').code /></span>                    		
                     		</#if>
 							</td>
                     		</tr>
@@ -67,9 +64,9 @@
                     		<tr><td>
                             Start Date
 							</td> 
-                           	<td><input type="text"  id="q_start_date" value="${(model.qualification.start_date?string('yyyy/MM/dd'))!}"/> 
-                            <#if model.hasError('start_date')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('start_date').code /></span>                    		
+                           	<td><input type="text"  id="qualificationStartDate" name="qualificationStartDate" value="${(model.qualification.qualificationStartDate?string('yyyy/MM/dd'))!}"/> 
+                            <#if model.hasError('qualificationStartDate')>                    		
+                    			<span style="color:red;"><@spring.message  model.result.getFieldError('qualificationStartDate').code /></span>                    		
                     		</#if>
                     		</td>
                     		</tr>
@@ -77,9 +74,9 @@
                     		<tr><td>
                             Language 
                             </td> 
-                           	<td><input type="text"  id="q_language" value="${model.qualification.language_of_study!}"/> 
-                            <#if model.hasError('language_of_study')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('language_of_study').code /></span>                    		
+                           	<td><input type="text"  id="qualificationLanguage" name="qualificationLanguage" value="${model.qualification.qualificationLanguage!}"/> 
+                            <#if model.hasError('qualificationLanguage')>                    		
+                    			<span style="color:red;"><@spring.message  model.result.getFieldError('qualificationLanguage').code /></span>                    		
                     		</#if>
                     		</td>
                     		</tr>
@@ -88,9 +85,9 @@
                            	<td>Level 
                            	</td> 
                            	<td>
-                            <input type="text"  id="q_level" value="${model.qualification.level!}"/> 
-                            <#if model.hasError('level')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('level').code /></span>                    		
+                            <input type="text"  id="qualificationLevel" name="qualificationLevel" value="${model.qualification.qualificationLevel!}"/> 
+                            <#if model.hasError('qualificationLevel')>                    		
+                    			<span style="color:red;"><@spring.message  model.result.getFieldError('qualificationLevel').code /></span>                    		
                     		</#if>
                     		</td>
                     		</tr>
@@ -99,9 +96,9 @@
                            	<td>Type 
                            	</td> 
                            	<td>
-                            <input type="text"  id="q_Type" value="${model.qualification.qualification_type!}"/> 
-                            <#if model.hasError('qualification_type')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('qualification_type').code /></span>                    		
+                            <input type="text"  id="qualificationType" name="qualificationType" value="${model.qualification.qualificationType!}"/> 
+                            <#if model.hasError('qualificationType')>                    		
+                    			<span style="color:red;"><@spring.message  model.result.getFieldError('qualificationType').code /></span>                    		
                     		</#if>
                     		</td>
                     		</tr>
@@ -109,31 +106,25 @@
                     		<tr>
                            	<td>Grade</td> 
                            	<td>
-                             <input type="text"  id="q_grade" value="${model.qualification.grade!}"/> 
-                            <#if model.hasError('grade')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('grade').code /></span>                    		
+                             <input type="text"  id="qualificationGrade" name="qualificationGrade" value="${model.qualification.qualificationGrade!}"/> 
+                            <#if model.hasError('qualificationGrade')>                    		
+                    			<span style="color:red;"><@spring.message  model.result.getFieldError('qualificationGrade').code /></span>                    		
                     		</#if>
                     		</td>
                     		</tr>
                     		<tr> 
                            	<td>Score </td> 
                            	<td>
-                            <input type="text"  id="q_score" value="${model.qualification.score!}"/> 
-                            <#if model.hasError('score')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('score').code /></span>                    		
+                            <input type="text"  id="qualificationScore" name="qualificationScore" value="${model.qualification.qualificationScore!}"/> 
+                            <#if model.hasError('qualificationScore')>                    		
+                    			<span style="color:red;"><@spring.message  model.result.getFieldError('qualificationScore').code /></span>                    		
                     		</#if>
                     		</td>
                     		</tr>
                     		<tr>
                            	<td>Award Date </td> 
                            	<td>
-                            <input type="text"  id="q_award_date" value="${(model.qualification.award_date?string('yyyy/MM/dd'))!}"/> 
-                            </td>
-                    		</tr>
-                    		<tr>
-                           	<td>Attachment </td> 
-                           	<td>
-                            <input type="text"  id="q_attachment" value=""/> 
+                            <input type="text"  id="qualificationAwardDate" name="qualificationAwardDate" value="${(model.qualification.qualificationAwardDate?string('yyyy/MM/dd'))!}"/> 
                             </td>
                     		</tr>
                              </table>

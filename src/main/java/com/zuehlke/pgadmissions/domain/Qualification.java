@@ -12,8 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Cascade;
-
 @Entity(name="APPLICATION_FORM_QUALIFICATION")
 @Access(AccessType.FIELD) 
 public class Qualification extends DomainObject<Integer>{
@@ -111,7 +109,7 @@ public class Qualification extends DomainObject<Integer>{
 
 	@ManyToOne
 	@JoinColumn(name="application_form_id")
-	private ApplicationForm application;
+	private ApplicationForm application = null;
 	
 
 	public ApplicationForm getApplication() {

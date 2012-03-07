@@ -6,7 +6,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -54,9 +53,9 @@ public class ApplicationFormDAO {
 				
 	}
 	
-	public Qualification getQualification(Integer id) {
+	public Qualification getQualification(Integer qualificationId) {
 		return (Qualification) sessionFactory.getCurrentSession().get(
-				Qualification.class, id);
+				Qualification.class, qualificationId);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -76,5 +75,4 @@ public class ApplicationFormDAO {
 		return (Address) sessionFactory.getCurrentSession().get(
 				Address.class, addressId);
 	}
-
 }

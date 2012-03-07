@@ -5,25 +5,26 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.dto.QualificationDTO;
+
 
 @Service
 public class QualificationValidator  implements Validator{
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return Qualification.class.equals(clazz);
+		return QualificationDTO.class.equals(clazz);
 	}
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institution", "qualification.institution.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "name_of_programme", "qualification.name_of_programme.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "start_date", "qualification.start_date.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "language_of_study", "qualification.language_of_study.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "level", "qualification.level.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualification_type", "qualification.type.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "grade", "qualification.grade.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "score", "qualification.score.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", "qualification.institution.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationProgramName", "qualification.name_of_programme.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationStartDate", "qualification.start_date.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLanguage", "qualification.language_of_study.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLevel", "qualification.level.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", "qualification.type.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationGrade", "qualification.grade.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationScore", "qualification.score.notempty");
 	}
 
 

@@ -47,24 +47,22 @@ public class UpdateApplicationFormController {
 	private final ApplicationsService applicationService;
 	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;
-	private final QualificationValidator qualificationValidator;
 	private final DatePropertyEditor datePropertyEditor;
 	private final CountriesDAO countriesDAO;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService,
-			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, QualificationValidator qualificationValidator,
+			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor,
 			CountriesDAO countriesDAO) {
 			
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.userService = userService;
 		this.datePropertyEditor = datePropertyEditor;
-		this.qualificationValidator = qualificationValidator;
 		this.countriesDAO = countriesDAO;
 
 	}
@@ -107,46 +105,54 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer appId,
-			BindingResult result) {
-		qualificationValidator.validate(qual, result);
+	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer id,
+			@RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+		
 		ApplicationForm application = applicationService.getApplicationById(appId);
-		ApplicationPageModel model = new ApplicationPageModel();
-		model.setUser(((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()));
-		model.setResult(result);
-		if (!result.hasErrors()) {
-			model.setQualification(new QualificationDTO());
-			if (application.isSubmitted()) {
-				throw new CannotUpdateApplicationException();
-			}
-			Qualification qualification;
-			if (qual.getQualId() == null) {
-				qualification = newQualification();
 
+		if (application.isSubmitted()) {
+			throw new CannotUpdateApplicationException();
+		}
+		RegisteredUser user = userService.getUser(id);
+
+		ApplicationPageModel model = new ApplicationPageModel();
+		model.setUser(user);
+		ApplicationForm applicationForm = application;
+		model.setApplicationForm(applicationForm);
+		model.setResult(result);
+
+		QualificationValidator qualificationValidator = new QualificationValidator();
+		qualificationValidator.validate(qual, result);
+		if (!result.hasErrors()) {
+			Qualification qualification;
+			if (qual.getQualificationId() == null) {
+				qualification = new Qualification();
 			} else {
-				qualification = applicationService.getQualificationById(qual.getQualId());
+				qualification = applicationService.getQualificationById(qual.getQualificationId());
 			}
+			
 			qualification.setApplication(application);
-			qualification.setAward_date(qual.getAward_date());
-			qualification.setGrade(qual.getGrade());
-			qualification.setInstitution(qual.getInstitution());
-			qualification.setLanguage_of_study(qual.getLanguage_of_study());
-			qualification.setLevel(qual.getLevel());
-			qualification.setName_of_programme(qual.getName_of_programme());
-			qualification.setScore(qual.getScore());
-			qualification.setStart_date(qual.getStart_date());
-			qualification.setQualification_type(qual.getQualification_type());
-			if (qual.getQualId() == null) {
+			qualification.setAward_date(qual.getQualificationAwardDate());
+			qualification.setGrade(qual.getQualificationGrade());
+			qualification.setInstitution(qual.getQualificationInstitution());
+			qualification.setLanguage_of_study(qual.getQualificationLanguage());
+			qualification.setLevel(qual.getQualificationLevel());
+			qualification.setName_of_programme(qual.getQualificationProgramName());
+			qualification.setScore(qual.getQualificationScore());
+			qualification.setStart_date(qual.getQualificationStartDate());
+			qualification.setQualification_type(qual.getQualificationType());
+			if (qual.getQualificationId() == null) {
 				application.getQualifications().add(qualification);
 			}
-			System.out.println("Before save: qual: " + qualification.getId() + "application " + application.getId() + "nameof pr" + qualification.getName_of_programme());
 			applicationService.save(application);
+			model.setQualification(new QualificationDTO());
 		} else {
 			model.setQualification(qual);
 		}
+		
+		modelMap.put("model", model);
 
-		model.setApplicationForm(application);
-		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, "model", model);
+		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, modelMap);
 	}
 
 	@RequestMapping(value = "/addFunding", method = RequestMethod.POST)

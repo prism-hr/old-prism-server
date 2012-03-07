@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
@@ -38,16 +39,17 @@ public class SubmitApplicationFormControllerTest {
 
 	@Test
 	public void shouldLoadApplicationFormByIdAndChangeSubmissionStatusToSubmitted() {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).funding("test").toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		form.setApplicant(student);
 		com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
 		address.setApplication(form);
-		address.setCity("london");
 		address.setCountry("test");
-		address.setStreet("test");
+		address.setLocation("test");
 		address.setStartDate(new Date());
 		address.setEndDate(new Date());
 		address.setPostCode("test");
+		address.setPurpose("parents");
+		address.setContactAddress(AddressStatus.YES);
 		
 		form.getAddresses().add(address);
 		applicationsServiceMock.save(form);
@@ -133,7 +135,7 @@ public class SubmitApplicationFormControllerTest {
 		};
 
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").address("london").firstName("mark").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		authenticationToken.setDetails(student);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);

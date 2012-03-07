@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import java.util.Set;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
-import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -106,7 +105,6 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
 		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
 		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
-		EasyMock.expect(userMock.getAddress()).andReturn("london");
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
@@ -115,6 +113,25 @@ public class ViewApplicationFormControllerTest {
 		assertEquals("bob", model.getPersonalDetails().getFirstName());
 		assertEquals("Smith", model.getPersonalDetails().getLastName());
 		assertEquals("email@test.com", model.getPersonalDetails().getEmail());
+	}
+	
+	@Test
+	public void shouldCreateQualificationAndSetOnModel() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();		
+		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
+		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
+		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
+		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(userMock, applicationsServiceMock);
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
+		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
+		assertNotNull(model.getQualification());
 	}
 
 	@Test

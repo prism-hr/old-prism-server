@@ -112,7 +112,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		Address address = new AddressBuilder().application(application).country("Germany")
-					.street("1 Main Street").postCode("NW2 456").city("london").startDate(new Date()).endDate(new Date()).toAddress();
+					.location("1 Main Street").postCode("NW2 456").location("london").purpose("parents").startDate(new Date()).endDate(new Date()).toAddress();
 		application.setAddresses(Arrays.asList(address));
 
 		assertNull(application.getId());

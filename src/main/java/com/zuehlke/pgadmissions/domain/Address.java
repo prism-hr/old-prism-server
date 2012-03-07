@@ -13,6 +13,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
+
 
 @Entity(name="APPLICATION_FORM_ADDRESS")
 @Access(AccessType.FIELD) 
@@ -28,6 +32,8 @@ public class Address extends DomainObject<Integer>{
 	private String postCode;
 
 	private String country;
+	
+	private String purpose;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name="start_date")
@@ -36,6 +42,10 @@ public class Address extends DomainObject<Integer>{
 	@Temporal(TemporalType.DATE)
 	@Column(name="end_date")
 	private Date endDate;
+	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AddressStatusEnumUserType")
+	@Column(name = "contact_address")
+	private AddressStatus contactAddress;
 
 	public ApplicationForm getApplication() {
 		return application;
@@ -45,10 +55,8 @@ public class Address extends DomainObject<Integer>{
 		this.application = application;
 	}
 
-	private String street;
+	private String location;
 	
-	private String city;
-
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
@@ -93,21 +101,29 @@ public class Address extends DomainObject<Integer>{
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-
-	public String getStreet() {
-		return street;
-	}
-
-	public void setStreet(String street) {
-		this.street = street;
+	
+	public String getLocation() {
+		return location;
 	}
 	
-	public String getCity() {
-		return city;
+	public void setLocation(String location) {
+		this.location = location;
 	}
 	
-	public void setCity(String city) {
-		this.city = city;
+	public String getPurpose() {
+		return purpose;
+	}
+	
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
+	}
+	
+	public AddressStatus getContactAddress() {
+		return contactAddress;
+	}
+	
+	public void setContactAddress(AddressStatus contactAddress) {
+		this.contactAddress = contactAddress;
 	}
 }
 

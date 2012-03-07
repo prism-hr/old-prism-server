@@ -12,6 +12,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.Funding;
+import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
@@ -53,8 +55,8 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setApplicationForm(applicationForm);
 		viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(applicationForm));
 		viewApplicationModel.setAddress(new Address());
-		viewApplicationModel.setFunding(DTOUtils.createFunding(applicationForm));
-		
+		viewApplicationModel.setFunding(new Funding());
+		viewApplicationModel.setQualificationDto(new QualificationDTO());
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}

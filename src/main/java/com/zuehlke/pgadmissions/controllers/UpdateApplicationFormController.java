@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.util.Date;
-import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,7 +26,6 @@ import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -106,8 +104,12 @@ public class UpdateApplicationFormController {
 			BindingResult result) {
 		qualificationValidator.validate(qual, result);
 		ApplicationForm application = applicationService.getApplicationById(appId);
+		ApplicationPageModel model = new ApplicationPageModel();
+		model.setApplicationForm(application);
+		model.setUser(((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()));
+		model.setResult(result);
 		if (!result.hasErrors()) {
-
+			model.setQualificationDto(new QualificationDTO());
 			if (application.isSubmitted()) {
 				throw new CannotUpdateApplicationException();
 			}
@@ -134,11 +136,10 @@ public class UpdateApplicationFormController {
 
 			applicationService.save(application);
 		}
+		else{
+			model.setQualificationDto(qual);
+		}
 
-		PageModel model = new PageModel();
-		model.setApplicationForm(application);
-		model.setUser(((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()));
-		model.setResult(result);
 		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, "model", model);
 	}
 
@@ -151,22 +152,37 @@ public class UpdateApplicationFormController {
 		if (application.isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
-
-		FundingValidator fundingValidator = new FundingValidator();
-		fundingValidator.validate(fund, result);
-		if (!result.hasErrors()) {
-			application.setFunding(fund.getFunding());
-			applicationService.save(application);
-		}
-
 		RegisteredUser user = userService.getUser(id);
 
 		ApplicationPageModel model = new ApplicationPageModel();
 		model.setUser(user);
 		ApplicationForm applicationForm = application;
 		model.setApplicationForm(applicationForm);
-		model.setFunding(fund);
 		model.setResult(result);
+
+		FundingValidator fundingValidator = new FundingValidator();
+		fundingValidator.validate(fund, result);
+		if (!result.hasErrors()) {
+			com.zuehlke.pgadmissions.domain.Funding funding;
+			if (fund.getFundingId() == null) {
+				funding = new com.zuehlke.pgadmissions.domain.Funding();
+			} else {
+				funding = applicationService.getFundingById(fund.getFundingId());
+			}
+			funding.setApplication(application);
+			funding.setType(fund.getFundingType());
+			funding.setDescription(fund.getFundingDescription());
+			funding.setValue(fund.getFundingValue());
+			funding.setAwardDate(fund.getFundingAwardDate());
+			if (fund.getFundingId() == null) {
+				application.getFundings().add(funding);
+			}
+			applicationService.save(application);
+			model.setFunding(new Funding());
+		} 
+		else {
+			model.setFunding(fund);
+		}
 		modelMap.put("model", model);
 
 		return new ModelAndView("private/pgStudents/form/components/funding_details", modelMap);
@@ -193,27 +209,28 @@ public class UpdateApplicationFormController {
 
 		AddressValidator addressValidator = new AddressValidator();
 		addressValidator.validate(addr, result);
-		if (!result.hasErrors()) {
-			com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
-			address.setApplication(application);
-			address.setStreet(addr.getStreet());
-			address.setPostCode(addr.getPostCode());
-			address.setCity(addr.getCity());
-			address.setCountry(addr.getCountry());
-			//TODO
-			address.setStartDate(new Date());
-			address.setEndDate(new Date());
-			//TODO
-			application.getAddresses().add(address);
-			applicationService.save(application);
-		}
-
 		ApplicationPageModel model = new ApplicationPageModel();
 		ApplicationForm applicationForm = application;
 		model.setUser(user);
 		model.setApplicationForm(applicationForm);
-		model.setAddress(addr);
 		model.setResult(result);
+
+		if (!result.hasErrors()) {
+			com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
+			address.setApplication(application);
+			address.setLocation(addr.getLocation());
+			address.setPostCode(addr.getPostCode());
+			address.setCountry(addr.getCountry());
+			address.setPurpose(addr.getPurpose());
+			address.setStartDate(addr.getStartDate());
+			address.setEndDate(addr.getEndDate());
+			address.setContactAddress(addr.getContactAddress());
+			application.getAddresses().add(address);
+			applicationService.save(application);
+			model.setAddress(new Address());
+		} else {
+			model.setAddress(addr);
+		}
 		modelMap.put("model", model);
 
 		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, modelMap);

@@ -1,28 +1,26 @@
 package com.zuehlke.pgadmissions.dto;
 
+import java.util.Date;
+
+import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
+
 public class Address {
 
-	private String street;
-	private String city;
+	private String location;
 	private String postCode;
 	private String country;
-	private String startDate;
-	private String endDate;
+	private Date startDate;
+	private Date endDate;
+	private String purpose;
 	
-	public String getStreet() {
-		return street;
+	private AddressStatus contactAddress;
+	
+	public String getLocation() {
+		return location;
 	}
 	
-	public void setStreet(String street) {
-		this.street = street;
-	}
-	
-	public String getCity() {
-		return city;
-	}
-	
-	public void setCity(String city) {
-		this.city = city;
+	public void setLocation(String location) {
+		this.location = location;
 	}
 	
 	public String getPostCode() {
@@ -41,19 +39,35 @@ public class Address {
 		this.country = country;
 	}
 	
-	public String getStartDate() {
+	public String getPurpose() {
+		return purpose;
+	}
+	
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
+	}
+	
+	public Date getStartDate() {
 		return startDate;
 	}
 	
-	public void setStartDate(String startDate) {
+	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
 	
-	public String getEndDate() {
+	public Date getEndDate() {
 		return endDate;
 	}
 	
-	public void setEndDate(String endDate) {
+	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+	
+	public AddressStatus getContactAddress() {
+		return contactAddress;
+	}
+	
+	public void setContactAddress(AddressStatus contactAddress) {
+		this.contactAddress = contactAddress;
 	}
 }

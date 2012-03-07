@@ -1,16 +1,9 @@
 package com.zuehlke.pgadmissions.utils;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 
 public class DTOUtils {
-
-	public static Funding createFunding(ApplicationForm applicationForm) {
-		Funding funding = new Funding();
-		funding.setFunding(applicationForm.getFunding());
-		return funding;
-	}
 
 	public static PersonalDetails createPersonalDetails(ApplicationForm applicationForm) {
 		PersonalDetails personalDetails = new PersonalDetails();

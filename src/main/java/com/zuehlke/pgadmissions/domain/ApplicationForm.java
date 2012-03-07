@@ -23,7 +23,6 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
-import org.springframework.util.Assert;
 
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -63,8 +62,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	private List<ApplicationReview> applicationComments = new ArrayList<ApplicationReview>();
 
-	private String funding;
-	
 	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
 	@Access(AccessType.PROPERTY)
@@ -76,6 +73,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Access(AccessType.PROPERTY)
 	@JoinColumn(name = "application_form_id")
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
+	
+	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
+	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+	@Access(AccessType.PROPERTY)
+	@JoinColumn(name = "application_form_id")
+	private List<Funding> fundings = new ArrayList<Funding>();
+
 	
 	public List<Qualification> getQualifications() {
 		return qualifications;
@@ -220,14 +224,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return applicationComments!=null;
 	}
 
-	public void setFunding(String funding) {
-		this.funding = funding;
-	}
-	
-	public String getFunding() {
-		return funding;
-	}
-	
 	public List<Address> getAddresses() {
 		return addresses;
 	}
@@ -244,6 +240,17 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return !qualifications.isEmpty();
 	}
 
-
+	public List<Funding> getFundings() {
+		return fundings;
+	}
+	
+	public void setFundings(List<Funding> fundings) {
+		if(this.fundings.size() == fundings.size() && this.fundings.containsAll(fundings)){
+			return;
+		}
+		this.fundings.clear();
+		this.fundings.addAll(fundings);
+	}
+	
 }
 

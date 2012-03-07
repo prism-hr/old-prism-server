@@ -36,7 +36,7 @@ $(document).ready(function(){
 		$("#addressPostCode").val($('#'+id+"_postCodeDP").val());
 		$("#addressStartDate").val($('#'+id+"_startDateDP").val());
 		$("#addressEndDate").val($('#'+id+"_endDateDP").val());
-		$("#addressPurpose").val($('#'+id+"_purposeDP").val());
+		$("#addressPurpose").val("Employer");
 		$("#addressCountry").val("Romania");
 		$("#addressContactAddress").val("NO");
 	});

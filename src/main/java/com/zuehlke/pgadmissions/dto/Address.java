@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 
 public class Address {
@@ -11,7 +12,7 @@ public class Address {
 	private String addressCountry;
 	private Date addressStartDate;
 	private Date addressEndDate;
-	private String addressPurpose;
+	private AddressPurpose addressPurpose;
 	private Integer addressId;
 	
 	private AddressStatus addressContactAddress;
@@ -56,10 +57,11 @@ public class Address {
 		this.addressEndDate = addressEndDate;
 	}
 	
-	public String getAddressPurpose() {
+	public AddressPurpose getAddressPurpose() {
 		return addressPurpose;
 	}
-	public void setAddressPurpose(String addressPurpose) {
+	
+	public void setAddressPurpose(AddressPurpose addressPurpose) {
 		this.addressPurpose = addressPurpose;
 	}
 	

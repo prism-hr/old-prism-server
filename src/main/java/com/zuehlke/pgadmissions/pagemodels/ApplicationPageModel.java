@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Countries;
-import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
@@ -19,6 +19,7 @@ public class ApplicationPageModel extends PageModel {
 	private ApplicationForm applicationForm;
 	private QualificationDTO qualification;
 	private List<Countries> countries;
+	private List<AddressPurpose> addressPurposes;
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -74,5 +75,14 @@ public class ApplicationPageModel extends PageModel {
 	
 	public List<Countries> getCountries() {
 		return countries;
+	}
+	
+	
+	public List<AddressPurpose> getAddressPurposes() {
+		return addressPurposes;
+	}
+	
+	public void setAddressPurposes(List<AddressPurpose> addressPurposes) {
+		this.addressPurposes = addressPurposes;
 	}
 }

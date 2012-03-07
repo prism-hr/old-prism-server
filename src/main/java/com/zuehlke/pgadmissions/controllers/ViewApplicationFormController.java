@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -64,6 +65,7 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setAddress(new Address());
 		viewApplicationModel.setFunding(new Funding());
 		viewApplicationModel.setQualification(new QualificationDTO());
+		viewApplicationModel.setEmploymentPosition(new EmploymentPosition());
 		viewApplicationModel.setCountries(countriesDAO.getAllCountries());
 		viewApplicationModel.setAddressPurposes(Arrays.asList(AddressPurpose.values()));
 		if (view != null && view.equals("errors")) {

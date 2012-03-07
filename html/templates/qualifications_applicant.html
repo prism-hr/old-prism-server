@@ -2,7 +2,8 @@
  ------------------------------------------------------------
 | QUALIFICATIONS section
  ------------------------------------------------------------
-  - js/script.js updated to remove the showing/hiding of the form when the arrows are clicked.
+  - Date fields have been changed to text fields with a "date" class.
+  - Updated the fields based on schema.
 -->
           <section class="folding orange">
             <h2 class="empty">
@@ -10,120 +11,84 @@
               Qualifications
             </h2>
             <div>
-            	<table class="existing">
-              	<colgroup>
-                	<col style="width: 30px" />
-                	<col />
-                	<col style="width: 80px" />
-                	<col />
-                	<col />
-                	<col style="width: 30px" />
+              <table class="existing">
+                <colgroup>
+                  <col style="width: 30px" />
+                  <col />
+                  <col style="width: 80px" />
+                  <col />
+                  <col />
+                  <col style="width: 30px" />
                 </colgroup>
-              	<thead>
-                	<tr>
-                  	<th colspan="2">Qualification</th>
+                <thead>
+                  <tr>
+                    <th colspan="2">Qualification</th>
                     <th>Grade</th>
                     <th>Awarding Body</th>
                     <th>Date Completed</th>
-                    <th>&nbsp;</th>
+                    <th colspan="2">&nbsp;</th>
                   </tr>
                 </thead>
                 <tbody>
-                	<tr>
-                  	<td><a class="row-arrow" href="#">-</a></td>
-                  	<td>MRes</td>
-                  	<td>8.6 GPA</td>
-                  	<td>MiT</td>
-                  	<td>19/05/12</td>
-                  	<td><a class="button-delete" href="#">delete</a></td>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>MRes</td>
+                    <td>8.6 GPA</td>
+                    <td>MiT</td>
+                    <td>19/05/12</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
                   </tr>
-                	<tr>
-                  	<td><a class="row-arrow" href="#">-</a></td>
-                  	<td>MSC Electronic Engineering</td>
-                  	<td>83%</td>
-                  	<td>UCLA Berkeley</td>
-                  	<td>19/07/11</td>
-                  	<td><a class="button-delete" href="#">delete</a></td>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>MSC Electronic Engineering</td>
+                    <td>83%</td>
+                    <td>UCLA Berkeley</td>
+                    <td>19/07/11</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
                   </tr>
-                	<tr>
-                	  <td><a class="row-arrow" href="#">-</a></td>
-                	  <td>BSC Mechanical &amp; Electronic Engineering</td>
-                	  <td>1st</td>
-                	  <td>University of Durham</td>
-                	  <td>04/07/99</td>
-                	  <td><a class="button-delete" href="#">delete</a></td>
-               	  </tr>
+                  <tr>
+                    <td><a class="row-arrow" href="#">-</a></td>
+                    <td>BSC Mechanical &amp; Electronic Engineering</td>
+                    <td>1st</td>
+                    <td>University of Durham</td>
+                    <td>04/07/99</td>
+                    <td><a class="button-delete" href="#">delete</a></td>
+                   </tr>
                 </tbody>
               </table>
               
               <form method="post" action="woooop">
-
-              	<div>
-                	<!-- Country (in which programme was taken) -->
-                	<div class="row">
-                  	<label class="label">Country</label>
+                <div>
+                  <!-- Provider -->
+                  <div class="row">
+                    <span class="label">Provider</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                      <select class="full">
-                        <option>United Kingdom</option>
-                      </select>
+                      <input class="full" type="text" placeholder="e.g. UCL" />
                     </div>
                   </div>
                   
-                  <!-- Institution -->
-                	<div class="row">
-                  	<label class="label">Institution</label>
+                  <!-- Name (of programme) -->
+                  <div class="row">
+                    <span class="label">Programme</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<input class="full" type="text" placeholder="Provider of qualification, e.g. UCL" />
-                    </div>
-                  </div>
-                  
-                  <!-- Course -->
-                	<div class="row">
-                  	<span class="label">Course</span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <div class="field">
-                    	<input class="full" type="text" placeholder="e.g. Civil Engineering" />
+                      <input class="full" type="text" placeholder="e.g. Civil Engineering" />
                     </div>
                   </div>
                   
                   <!-- Start date -->
-                	<div class="row">
-                  	<span class="label">Start Date</span>
+                  <div class="row">
+                    <span class="label">Start Date</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-	                    <input class="half" type="date" value="" />
+                      <input class="half date" type="text" value="" />
                     </div>
                   </div>
-                </div>
 
-              	<div>
-                	<h3>Termination</h3>
-                  
-                  <!-- Termination date -->
-                	<div class="row">
-                  	<span class="label">Date of Termination</span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <div class="field">
-	                    <input class="half" type="date" value="" />
-                    </div>
-                  </div>
-                  
-                  <!-- Reason for termination -->
-                	<div class="row">
-                  	<span class="label">Reason</span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <div class="field">
-                    	<input class="full" type="text" placeholder="e.g. completed" />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                	<!-- Language (in which programme was undertaken) -->
-                	<div class="row">
-                  	<label class="label">Language of Study</label>
+                  <!-- Language (in which programme was undertaken) -->
+                  <div class="row">
+                    <span class="label">Language of Study</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
                       <select class="full">
@@ -131,70 +96,71 @@
                       </select>
                     </div>
                   </div>
-                </div>
-                
-                <div>
-                	<h3>Qualification</h3>
                   
                   <!-- Qualification level -->
-                	<div class="row">
-                  	<span class="label">Level</span>
+                  <div class="row">
+                    <span class="label">Level</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<input class="full" type="text" placeholder="e.g. Vocational, Degree, Diploma etc." />
+                      <select class="full">
+                        <option>School</option>
+                      </select>
                     </div>
                   </div>
 
                   <!-- Qualification type -->
-                	<div class="row">
-                  	<span class="label">Type</span>
+                  <div class="row">
+                    <span class="label">Type</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<input class="full" type="text" placeholder="e.g. BEngD, MSc" />
+                      <select class="full">
+                        <option>Employer</option>
+                      </select>
                     </div>
                   </div>
 
                   <!-- Qualification grade -->
-                	<div class="row">
-                  	<span class="label">Grade</span>
+                  <div class="row">
+                    <span class="label">Grade</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<input class="full" type="text" placeholder="e.g. 2.1, Distinction" />
+                      <input class="full" type="text" placeholder="e.g. 2.1, Distinction" />
                     </div>
                   </div>
 
                   <!-- Qualification score -->
-                	<div class="row">
-                  	<span class="label">Score</span>
+                  <div class="row">
+                    <span class="label">Score</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<input class="full" type="text" placeholder="e.g. 114" />
+                      <input class="full" type="text" placeholder="e.g. 114" />
                     </div>
                   </div>
                   
                   <!-- Award date -->
-                	<div class="row">
-                  	<span class="label">Award Date</span>
+                  <div class="row">
+                    <span class="label">Award Date</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-	                    <input class="half" type="date" value="" />
+                      <input class="half date" type="text" value="" />
                     </div>
                   </div>
 
                   <!-- Attachment / supporting document -->
-                	<div class="row">
-                  	<span class="label">Supporting Document</span>
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
                       <input class="full" type="text" value="" />
                       <a class="button" href="#">Browse</a>
                       <a class="button" href="#">Upload</a>
-                    </div>	
+                      <a class="button" href="#">Add Document</a>
+                    </div>  
                   </div>
 
                 </div>
 
-              	<div class="buttons">
+                <div class="buttons">
                   <a class="button" href="#">Cancel</a>
                   <button class="blue" type="submit" value="close">Save and Close</button>
                   <button class="blue" type="submit" value="add">Save and Add</button>

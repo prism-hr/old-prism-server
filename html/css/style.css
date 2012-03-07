@@ -109,19 +109,20 @@ button, a.button, span.indicator {
 	text-align: center;
 	vertical-align: middle;
 }
+button { padding: 2px 10px; }
 button.blue, a.button.blue, span.indicator.blue { background-position: 0 0; }
 button span { background: url(../images/bg_button_icon.png) no-repeat; display: inline-block; height: 10px; margin-top: -2px; overflow: hidden; text-indent: 999px; vertical-align: middle; width: 10px; }
 button.plus span { background-position: 0 -10px; }
 a.button { display: inline-block; padding-top: 2px; padding-bottom: 2px; /*vertical-align: text-bottom;*/ }
 span.indicator { border-width: 1px; padding: 1px 5px; vertical-align: text-bottom; }
 
-.button-edit, .button-delete, .button-question { background-repeat: no-repeat; display: inline-block; height: 24px; margin-top: -4px; overflow: hidden; text-indent: 99px; vertical-align: middle; width: 24px; }
+.button-edit, .button-delete, .button-question { background-repeat: no-repeat; display: inline-block; height: 24px; /*margin-top: -4px;*/ overflow: hidden; text-indent: 99px; vertical-align: middle; width: 24px; }
 .button-edit { background-image: url(../images/button_row_edit.png); }
 .button-delete { background-image: url(../images/button_row_close.png); }
 .button-question { background-image: url(../images/button_question.png); margin-top: 0; width: 20px; height: 20px; }
 
 /* Row arrows */
-.row-arrow { background: url(../images/button_arrow.png) no-repeat; width: 20px; height: 21px; display: inline-block; text-indent: 99px; overflow: hidden; vertical-align: middle; margin-top: -4px; }
+.row-arrow { background: url(../images/button_arrow.png) no-repeat; width: 20px; height: 21px; display: inline-block; text-indent: 99px; overflow: hidden; vertical-align: middle; /*margin-top: -4px;*/ }
 .row-arrow.open { background-position: 0 -21px; }
 
 
@@ -129,9 +130,9 @@ span.indicator { border-width: 1px; padding: 1px 5px; vertical-align: text-botto
 /* FORM ELEMENTS ----------------------------------------------------------------------------------------- */
 form input, form select, form textarea { border: 1px solid #999; font-family: Arial, Helvetica, sans-serif; }
 form input { padding: 1px 3px; }
-form input[type=date], form input.hasDatepicker { background: url(../images/calendar.png) no-repeat right center; }
+form input.date, form input.hasDatepicker { background: url(../images/calendar.png) no-repeat right center; padding-right: 24px; width: 80px !important; }
 form textarea { padding: 3px; resize: none; }
-form label input { border: none; padding: 0; }
+form input[type=checkbox], form input[type=radio] { border: none; padding: 0; }
 form select[multiple] { vertical-align: top; }
 
 

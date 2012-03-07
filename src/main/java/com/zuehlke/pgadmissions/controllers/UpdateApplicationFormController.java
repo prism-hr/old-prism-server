@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -21,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
@@ -32,6 +34,7 @@ import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
+import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
@@ -42,6 +45,7 @@ public class UpdateApplicationFormController {
 
 	private static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/qualification_details";
 	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/address_details";
+	private static final String APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME = "private/pgStudents/form/components/employment_position_details";
 	private final ApplicationsService applicationService;
 	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;
@@ -190,6 +194,51 @@ public class UpdateApplicationFormController {
 
 		return new ModelAndView("private/pgStudents/form/components/funding_details", modelMap);
 	}
+	
+	@RequestMapping(value = "/addEmploymentPosition", method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer id, @RequestParam Integer appId,
+			BindingResult result, ModelMap modelMap) {
+		
+		ApplicationForm application = applicationService.getApplicationById(appId);
+
+		if (application.isSubmitted()) {
+			throw new CannotUpdateApplicationException();
+		}
+		RegisteredUser user = userService.getUser(id);
+
+		ApplicationPageModel model = new ApplicationPageModel();
+		model.setUser(user);
+		ApplicationForm applicationForm = application;
+		model.setApplicationForm(applicationForm);
+		model.setResult(result);
+
+		EmploymentPositionValidator positionValidator = new EmploymentPositionValidator();
+		positionValidator.validate(positionDto, result);
+		if (!result.hasErrors()) {
+			com.zuehlke.pgadmissions.domain.EmploymentPosition position;
+			if (positionDto.getPositionId() == null) {
+				position = new com.zuehlke.pgadmissions.domain.EmploymentPosition();
+			} else {
+				position = applicationService.getEmploymentPositionById(positionDto.getPositionId());
+			}
+			position.setPosition_employer(positionDto.getPosition_employer());
+			position.setPosition_endDate(positionDto.getPosition_endDate());
+			position.setPosition_language(positionDto.getPosition_language());
+			position.setPosition_remit(positionDto.getPosition_remit());
+			position.setPosition_startDate(positionDto.getPosition_startDate());
+			position.setPosition_title(positionDto.getPosition_title());
+			if (positionDto.getPositionId() == null) {
+				application.getEmploymentPositions().add(position);
+			}
+			applicationService.save(application);
+			model.setEmploymentPosition(new EmploymentPosition());
+		} else {
+			model.setEmploymentPosition(positionDto);
+		}
+		modelMap.put("model", model);
+		return new ModelAndView(APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME, "model", model);
+	}
 
 	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {
@@ -247,5 +296,6 @@ public class UpdateApplicationFormController {
 	Qualification newQualification() {
 		return new Qualification();
 	}
+
 
 }

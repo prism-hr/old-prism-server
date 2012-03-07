@@ -42,12 +42,12 @@
                             </#list>
                              </table>	
                                 
-                              <input type="hidden" id="qualId" name="qualId"/>
+                           
                               <table cellspacing=10>
                             <tr><td>
                            	Provider
                            	</td> 
-                           	<td><input type="text" id="q_provider" value="${model.qualification.institution!}"/> 
+                           	<td><input type="text" id="q_provider" name="institution" value="${model.qualification.institution!}"/> 
                            	<#if model.hasError('institution')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('institution').code /></span>                    		
                     		</#if>
@@ -57,7 +57,7 @@
                     		<tr><td>
                             Name 
                             </td> 
-                           	<td><input type="text" id="q_name" value="${model.qualification.name_of_programme!}"/> 
+                           	<td><input type="text" id="q_name" name="name_of_programme" value="${model.qualification.name_of_programme!}"/> 
                             <#if model.hasError('name_of_programme')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('name_of_programme').code /></span>                    		
                     		</#if>
@@ -67,7 +67,7 @@
                     		<tr><td>
                             Start Date
 							</td> 
-                           	<td><input type="text"  id="q_start_date" value="${(model.qualification.start_date?string('yyyy/MM/dd'))!}"/> 
+                           	<td><input type="text"  id="q_start_date" name="start_date" value="${(model.qualification.start_date?string('yyyy/MM/dd'))!}"/> 
                             <#if model.hasError('start_date')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('start_date').code /></span>                    		
                     		</#if>
@@ -77,7 +77,7 @@
                     		<tr><td>
                             Language 
                             </td> 
-                           	<td><input type="text"  id="q_language" value="${model.qualification.language_of_study!}"/> 
+                           	<td><input type="text"  id="q_language" name="language_of_study" value="${model.qualification.language_of_study!}"/> 
                             <#if model.hasError('language_of_study')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('language_of_study').code /></span>                    		
                     		</#if>
@@ -88,7 +88,7 @@
                            	<td>Level 
                            	</td> 
                            	<td>
-                            <input type="text"  id="q_level" value="${model.qualification.level!}"/> 
+                            <input type="text"  id="q_level" name="level" value="${model.qualification.level!}"/> 
                             <#if model.hasError('level')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('level').code /></span>                    		
                     		</#if>
@@ -99,7 +99,7 @@
                            	<td>Type 
                            	</td> 
                            	<td>
-                            <input type="text"  id="q_Type" value="${model.qualification.qualification_type!}"/> 
+                            <input type="text"  id="q_Type"  name="qualification_type" value="${model.qualification.qualification_type!}"/> 
                             <#if model.hasError('qualification_type')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('qualification_type').code /></span>                    		
                     		</#if>
@@ -109,7 +109,7 @@
                     		<tr>
                            	<td>Grade</td> 
                            	<td>
-                             <input type="text"  id="q_grade" value="${model.qualification.grade!}"/> 
+                             <input type="text"  id="q_grade" name="grade" value="${model.qualification.grade!}"/> 
                             <#if model.hasError('grade')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('grade').code /></span>                    		
                     		</#if>
@@ -118,7 +118,7 @@
                     		<tr> 
                            	<td>Score </td> 
                            	<td>
-                            <input type="text"  id="q_score" value="${model.qualification.score!}"/> 
+                            <input type="text"  id="q_score" name="score" value="${model.qualification.score!}"/> 
                             <#if model.hasError('score')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('score').code /></span>                    		
                     		</#if>
@@ -127,7 +127,14 @@
                     		<tr>
                            	<td>Award Date </td> 
                            	<td>
-                            <input type="text"  id="q_award_date" value="${(model.qualification.award_date?string('yyyy/MM/dd'))!}"/> 
+                            <input type="text"  id="q_award_date" name="award_date" value="${(model.qualification.award_date?string('yyyy/MM/dd'))!}"/> 
+                            </td>
+                    		</tr>
+                    		<tr>
+                    		<tr>
+                           	<td>QualId </td> 
+                           	<td>
+                            <input type="text"  id="qualId" name="qualId" value="${model.qualification.qualId!}"/> 
                             </td>
                     		</tr>
                     		<tr>

@@ -79,6 +79,12 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Access(AccessType.PROPERTY)
 	@JoinColumn(name = "application_form_id")
 	private List<Funding> fundings = new ArrayList<Funding>();
+	
+	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
+	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+	@Access(AccessType.PROPERTY)
+	@JoinColumn(name = "application_form_id")
+	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 
 	
 	public List<Qualification> getQualifications() {
@@ -250,6 +256,18 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 		this.fundings.clear();
 		this.fundings.addAll(fundings);
+	}
+
+	public List<EmploymentPosition> getEmploymentPositions() {
+		return employmentPositions;
+	}
+
+	public void setEmploymentPositions(List<EmploymentPosition> employmentPositions) {
+		if(this.employmentPositions.size() == employmentPositions.size() && this.employmentPositions.containsAll(employmentPositions)){
+			return;
+		}
+		this.employmentPositions.clear();
+		this.employmentPositions.addAll(employmentPositions);
 	}
 	
 }

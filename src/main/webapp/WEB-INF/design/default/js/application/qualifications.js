@@ -30,7 +30,6 @@ $(document).ready(function(){
 		$('#q_Type').val($('#'+id+'_q_Type').val());
 		$('#q_grade').val($('#'+id+'_q_grade').val());
 		$('#q_score').val($('#'+id+'_q_score').val());
-		$('#q_provider').val($('#'+id+'_q_provider').val());
 		$('#q_award_date').val($('#'+id+'_q_award_date').val());
 		$('#qualId').val($('#'+id+'_qualId').val());
 	});

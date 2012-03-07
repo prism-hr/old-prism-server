@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -69,6 +70,11 @@ public class ApplicationFormDAO {
 	public Funding getFundingById(Integer fundingId) {
 		return (Funding) sessionFactory.getCurrentSession().get(
 				Funding.class, fundingId);
+	}
+
+	public EmploymentPosition getEmploymentById(Integer positionId) {
+		return (EmploymentPosition) sessionFactory.getCurrentSession().get(
+				EmploymentPosition.class, positionId);
 	}
 
 }

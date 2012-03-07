@@ -23,9 +23,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -229,6 +231,57 @@ public class UpdateApplicationFormControllerTest {
 		Funding funding = new Funding();
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
 		applicationController.addFunding(funding, 1, 2, mappingResult, new ModelMap());
+	}
+	
+	@Test
+	public void shouldSaveNewEmploymentPosition() throws ParseException {
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		EasyMock.replay(userServiceMock);
+		
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		applicationsServiceMock.save(form);
+		EasyMock.replay(applicationsServiceMock);
+		
+		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
+		positionDto.setPosition_employer("Mark");
+		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+		positionDto.setPosition_language("English");
+		positionDto.setPosition_remit("cashier");
+		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+		positionDto.setPosition_title("head of department");
+//		EmploymentPosition position = new EmploymentPositionBuilder().employer("John").endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06")).language("English").remit("cashier").startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06")).title("manager").toEmploymentPosition();
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
+		ModelAndView modelAndView = applicationController.addEmploymentPosition(positionDto, 1, 2, mappingResult, new ModelMap());
+		Assert.assertEquals("private/pgStudents/form/components/employment_position_details", modelAndView.getViewName());
+		Assert.assertEquals("English", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getEmploymentPositions().get(0).getPosition_language());
+	}
+	
+	@Test
+	public void shouldNotSaveNewEmploymentPosition() {
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		EasyMock.replay(userServiceMock);
+		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
+		positionDto.setPosition_employer("");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
+		applicationController.addEmploymentPosition(positionDto, 1, 2, mappingResult, new ModelMap());
+	}
+	
+	@Test(expected=CannotUpdateApplicationException.class)
+	public void shouldNotSaveNewEmploymentpositionWhenAplicationIsSubmitted() {
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		EasyMock.replay(userServiceMock);
+		
+		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.replay(applicationsServiceMock);
+
+		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "funding");
+		applicationController.addEmploymentPosition(positionDto, 1, 2, mappingResult, new ModelMap());
 	}
 	
 	@Test

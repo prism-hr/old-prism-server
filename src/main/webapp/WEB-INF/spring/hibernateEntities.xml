@@ -19,6 +19,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Address</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Funding</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Countries</value>
+	     		<value>com.zuehlke.pgadmissions.domain.EmploymentPosition</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

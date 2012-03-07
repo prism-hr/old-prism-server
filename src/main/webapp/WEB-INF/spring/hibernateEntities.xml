@@ -18,6 +18,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Qualification</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Address</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Funding</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Countries</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

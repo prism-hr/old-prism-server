@@ -46,7 +46,12 @@
                             
                                 <tr>
                                 <td>Country</td>
-                                <td><input type="text" id="country" name="country" value="${model.address.country!}"/>
+                                <td>
+                                <select name="country" id="country">
+                                    <#list model.countries as country>
+                                        <option value="${country.name}">${country.name}</option>               
+                                    </#list>
+                                <select>
                                 <#if model.hasError('country')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('country').code /></span>                           
                                 </#if>

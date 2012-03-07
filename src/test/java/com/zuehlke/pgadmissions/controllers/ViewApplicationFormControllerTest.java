@@ -20,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -52,6 +53,7 @@ public class ViewApplicationFormControllerTest {
 	ApplicationReview applicationReviewForSubmittedNonApproved1, applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved3, applicationReviewForSubmittedNonApproved4;
 	private Qualification qual;
 	private RegisteredUser applicant;
+	private CountriesDAO countriesDAOMock;
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
@@ -242,6 +244,7 @@ public class ViewApplicationFormControllerTest {
 	public void setUp() {
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		userMock =EasyMock.createMock(RegisteredUser.class);
+		countriesDAOMock = EasyMock.createMock(CountriesDAO.class);
 		authenticationToken.setDetails(userMock);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
@@ -249,7 +252,7 @@ public class ViewApplicationFormControllerTest {
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);
-		controller = new ViewApplicationFormController(applicationsServiceMock, applicationReviewServiceMock);
+		controller = new ViewApplicationFormController(applicationsServiceMock, applicationReviewServiceMock, countriesDAOMock);
 //		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").application(submittedApprovedApplication).toQualification();
 		admin = new RegisteredUserBuilder().id(1).username("bob")
 								.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();

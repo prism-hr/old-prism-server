@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -44,21 +45,24 @@ public class UpdateApplicationFormController {
 	private final ApplicationsService applicationService;
 	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;
-	private QualificationValidator qualificationValidator;
+	private final QualificationValidator qualificationValidator;
 	private final DatePropertyEditor datePropertyEditor;
+	private final CountriesDAO countriesDAO;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService,
-			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, QualificationValidator qualificationValidator) {
+			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, QualificationValidator qualificationValidator,
+			CountriesDAO countriesDAO) {
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.userService = userService;
 		this.datePropertyEditor = datePropertyEditor;
 		this.qualificationValidator = qualificationValidator;
+		this.countriesDAO = countriesDAO;
 
 	}
 
@@ -214,6 +218,7 @@ public class UpdateApplicationFormController {
 		model.setUser(user);
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
+		model.setCountries(countriesDAO.getAllCountries());
 
 		if (!result.hasErrors()) {
 			com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();

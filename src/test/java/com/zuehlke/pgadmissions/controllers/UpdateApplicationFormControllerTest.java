@@ -20,6 +20,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -56,6 +57,7 @@ public class UpdateApplicationFormControllerTest {
 	private Qualification newQualification;
 	private QualificationValidator qualificationValidator;
 	private DatePropertyEditor datePropertyEditorMock;
+	private CountriesDAO countriesDAOMock;
 
 	@Test
 	public void shouldSaveNewPersonalDetails() {
@@ -364,8 +366,10 @@ public class UpdateApplicationFormControllerTest {
 		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
 
 		qualificationValidator = EasyMock.createMock(QualificationValidator.class);
+		countriesDAOMock = EasyMock.createMock(CountriesDAO.class);
 		
-		applicationController = new UpdateApplicationFormController(userServiceMock, applicationsServiceMock, userPropertyEditorMock, datePropertyEditorMock, qualificationValidator) {
+		applicationController = new UpdateApplicationFormController(userServiceMock, applicationsServiceMock, userPropertyEditorMock, 
+				datePropertyEditorMock, qualificationValidator, countriesDAOMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

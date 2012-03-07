@@ -74,6 +74,7 @@ public class ApplicationsService {
 		return applicationFormDAO.getQualificationsByApplication(applicationForm);
 	}
 
+	@Transactional
 	public com.zuehlke.pgadmissions.domain.Funding getFundingById(Integer fundingId) {
 		return applicationFormDAO.getFundingById(fundingId);
 	}

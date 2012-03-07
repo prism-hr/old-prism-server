@@ -15,6 +15,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -35,6 +36,7 @@ public class SubmitApplicationFormControllerTest {
 	private ApplicationsService applicationsServiceMock;
 	private UserPropertyEditor userPropertyEditorMock;
 	private RegisteredUser student;
+	private CountriesDAO countriesDAOMock;
 
 
 	@Test
@@ -127,8 +129,9 @@ public class SubmitApplicationFormControllerTest {
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
+		countriesDAOMock = EasyMock.createMock(CountriesDAO.class);
 
-		applicationController = new SubmitApplicationFormController(applicationsServiceMock, userPropertyEditorMock) {
+		applicationController = new SubmitApplicationFormController(applicationsServiceMock, userPropertyEditorMock, countriesDAOMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

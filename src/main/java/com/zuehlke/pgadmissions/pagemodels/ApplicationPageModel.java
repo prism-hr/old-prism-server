@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.pagemodels;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Countries;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
@@ -18,6 +19,7 @@ public class ApplicationPageModel extends PageModel {
 	private List<Qualification> qualifications;
 	private ApplicationForm applicationForm;
 	private QualificationDTO qualificationDto;
+	private List<Countries> countries;
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -73,5 +75,13 @@ public class ApplicationPageModel extends PageModel {
 	}
 	public void setQualificationDto(QualificationDTO qualificationDto) {
 		this.qualificationDto = qualificationDto;
+	}
+	
+	public void setCountries(List<Countries> countries) {
+		this.countries = countries;
+	}
+	
+	public List<Countries> getCountries() {
+		return countries;
 	}
 }

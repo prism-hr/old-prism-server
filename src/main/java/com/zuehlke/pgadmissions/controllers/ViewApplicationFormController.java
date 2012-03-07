@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -28,17 +29,20 @@ public class ViewApplicationFormController {
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/main_application_page";
 	private ApplicationsService applicationService;
 	private ApplicationReviewService applicationReviewService;
+	private final CountriesDAO countriesDAO;
 
 	ViewApplicationFormController() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
 	public ViewApplicationFormController(
 			ApplicationsService applicationService,
-			ApplicationReviewService applicationReviewService) {
+			ApplicationReviewService applicationReviewService, CountriesDAO countriesDAO) {
 		this.applicationService = applicationService;
 		this.applicationReviewService = applicationReviewService;
+		this.countriesDAO = countriesDAO;
+		
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -57,6 +61,7 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setAddress(new Address());
 		viewApplicationModel.setFunding(new Funding());
 		viewApplicationModel.setQualificationDto(new QualificationDTO());
+		viewApplicationModel.setCountries(countriesDAO.getAllCountries());
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}

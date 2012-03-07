@@ -1,148 +1,174 @@
+<#if model.applicationForm.qualifications?has_content>
+	<#assign hasQualifications = true>
+<#else>
+	<#assign hasQualifications = false>
+</#if> 
+ 
  <#import "/spring.ftl" as spring />
- <h2 class="open">
-                          <span class="left"></span><span class="right"></span><span class="status"></span>
-                          Qualifications
-                        </h2>
-                        <div>
-                            <br/>
-                            <table>
- 							<tr>
- 								<td>
-                             	Type
-                               </td>
-                            	<td>Grade</td>
-                            	<td>Institution</td>
-                            	<td>Award Date</td>
-                            	<td/>
- 							</tr>
-							<#list model.applicationForm.qualifications as qualification >
-							<tr>
- 								<td>
-                               	${qualification.qualification_type}
-                               </td>
-                            	<td>${qualification.grade}</td>
-                            	<td>${qualification.institution}</td>
-                            	<td>${(qualification.award_date?string('yyyy/MM/dd'))!}</td>
-                            	<td><a class="button blue" id="qualification_${qualification.id}" name ="editQualificationLink"> Edit<a/></td>
-                             	<input type="hidden" id="${qualification.id}_qualId" value="${qualification.id}"/></tr>
-                             	 <input type="hidden" id="${qualification.id}_q_provider" value="${qualification.institution!}"/> 
-                           		 <input type="hidden" id="${qualification.id}_q_name" value="${qualification.name_of_programme!}"/> 
-                             	<input type="hidden"  id="${qualification.id}_q_start_date" value="${(qualification.start_date?string('yyyy/MM/dd'))!}"/> 
-                             	<input type="hidden" id="${qualification.id}_q_term_reason" value="${qualification.termination_reason!}"/> 
-                             	<input type="hidden"  id="${qualification.id}_q_term_date" value="${(qualification.termination_date?string('yyyy/MM/dd'))!}"/> 
-                           	 <input type="hidden"  id="${qualification.id}_q_country" value="${qualification.country!}"/> 
-                            	 <input type="hidden"  id="${qualification.id}_q_language" value="${qualification.language_of_study!}"/> 
-                            <input type="hidden"  id="${qualification.id}_q_level" value="${qualification.level!}"/> 
-                             <input type="hidden"  id="${qualification.id}_q_Type" value="${qualification.qualification_type!}"/> 
-                             <input type="hidden"  id="${qualification.id}_q_grade" value="${qualification.grade!}"/> 
-                             <input type="hidden"  id="${qualification.id}_q_score" value="${qualification.score!}"/> 
-                             <input type="hidden"  id="${qualification.id}_q_award_date" value="${(qualification.award_date?string('yyyy/MM/dd'))!}"/> 
-                             <input type="hidden"  id="${qualification.id}_q_attachment" value=""/>
-                            
-                            </#list>
-                             </table>	
-                                
-                              <input type="hidden" id="qualId" name="qualId"/>
-                              <table cellspacing=10>
-                            <tr><td>
-                           	Provider
-                           	</td> 
-                           	<td><input type="text" id="q_provider" value="${model.qualification.institution!}"/> 
-                           	<#if model.hasError('institution')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('institution').code /></span>                    		
-                    		</#if>
-                    		</td>
-                    		</tr>
-                    		
-                    		<tr><td>
-                            Name 
-                            </td> 
-                           	<td><input type="text" id="q_name" value="${model.qualification.name_of_programme!}"/> 
-                            <#if model.hasError('name_of_programme')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('name_of_programme').code /></span>                    		
-                    		</#if>
-							</td>
-                    		</tr>
-                    		
-                    		<tr><td>
-                            Start Date
-							</td> 
-                           	<td><input type="text"  id="q_start_date" value="${(model.qualification.start_date?string('yyyy/MM/dd'))!}"/> 
-                            <#if model.hasError('start_date')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('start_date').code /></span>                    		
-                    		</#if>
-                    		</td>
-                    		</tr>
-                    		
-                    		<tr><td>
-                            Language 
-                            </td> 
-                           	<td><input type="text"  id="q_language" value="${model.qualification.language_of_study!}"/> 
-                            <#if model.hasError('language_of_study')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('language_of_study').code /></span>                    		
-                    		</#if>
-                    		</td>
-                    		</tr>
-                    		
-                            <tr>
-                           	<td>Level 
-                           	</td> 
-                           	<td>
-                            <input type="text"  id="q_level" value="${model.qualification.level!}"/> 
-                            <#if model.hasError('level')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('level').code /></span>                    		
-                    		</#if>
-                    		</td>
-                    		</tr>
-                    		
-                    		<tr>
-                           	<td>Type 
-                           	</td> 
-                           	<td>
-                            <input type="text"  id="q_Type" value="${model.qualification.qualification_type!}"/> 
-                            <#if model.hasError('qualification_type')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('qualification_type').code /></span>                    		
-                    		</#if>
-                    		</td>
-                    		</tr>
-                    		
-                    		<tr>
-                           	<td>Grade</td> 
-                           	<td>
-                             <input type="text"  id="q_grade" value="${model.qualification.grade!}"/> 
-                            <#if model.hasError('grade')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('grade').code /></span>                    		
-                    		</#if>
-                    		</td>
-                    		</tr>
-                    		<tr> 
-                           	<td>Score </td> 
-                           	<td>
-                            <input type="text"  id="q_score" value="${model.qualification.score!}"/> 
-                            <#if model.hasError('score')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('score').code /></span>                    		
-                    		</#if>
-                    		</td>
-                    		</tr>
-                    		<tr>
-                           	<td>Award Date </td> 
-                           	<td>
-                            <input type="text"  id="q_award_date" value="${(model.qualification.award_date?string('yyyy/MM/dd'))!}"/> 
-                            </td>
-                    		</tr>
-                    		<tr>
-                           	<td>Attachment </td> 
-                           	<td>
-                            <input type="text"  id="q_attachment" value=""/> 
-                            </td>
-                    		</tr>
-                             </table>
-                            <div class="buttons">
-                                    <a class="button blue" href="#">Close</a>
-                                    <#if !model.applicationForm.isSubmitted()>
-                                    <a class="button blue" type="submit" id="qualificationsSaveButton">Save</a>
-                                    </#if>
-                            </div>
-                        </div>
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/qualifications.js'/>"></script>
+			
+			<h2 class="empty">
+				<span class="left"></span><span class="right"></span><span class="status"></span>
+				Qualifications
+        	</h2>
+            <div>
+            
+            	<#if hasQualifications>
+            
+	            	<table class="existing">
+		              	
+		              	<colgroup>
+		                	<col style="width: 30px" />
+		                	<col />
+		                	<col style="width: 80px" />
+		                	<col />
+		                	<col />
+		                	<col style="width: 30px" />
+		                </colgroup>
+		              	
+		              	<thead>
+		                	<tr>
+		                  	<th colspan="2">Qualification</th>
+		                    <th>Grade</th>
+		                    <th>Awarding Body</th>
+		                    <th>Date Completed</th>
+		                    <th colspan="2">&nbsp;</th>
+		                  </tr>
+		                </thead>
+		                
+		                <tbody>
+		                
+		                	<#list model.applicationForm.qualifications as qualification>
+			                	<tr>
+				                  	<td><a class="row-arrow" href="#">-</a></td>
+				                  	<td>${qualification.type}</td>
+				                  	<td>${qualification.grade}</td>
+				                  	<td>${qualification.institution}</td>
+				                  	<td>${qualification.award_date}</td>
+				                  	<td><a class="button-delete" href="#">delete</a></td>
+			                  	</tr>
+			                  	
+			                  	<input type="hidden" name="qualId" id="qualId" value="${qualification.id}"/>
+			                  	
+							</#list>
+										
+		                </tbody>
+	              	</table>
+              
+              	</#if>
+              
+              <form>
 
+	              	<div>
+	                  
+	                  	<!-- Provider -->
+	                	<div class="row">
+		                  	<span class="label">Provider</span>
+		                    <span class="hint" data-desc="Tooltip demonstration."></span>
+		                    <div class="field">
+		                    	<input id="q_provider" class="full" type="text" placeholder="e.g. UCL" />
+		                    </div>
+	                  	</div>
+	                  
+	                  	<!-- Name (of programme) -->
+	                	<div class="row">
+		                  	<span class="label">Programme</span>
+		                    <span class="hint" data-desc="Tooltip demonstration."></span>
+		                    <div class="field">
+		                    	<input id="q_name" class="full" type="text" placeholder="e.g. Civil Engineering" />
+		                    </div>
+	             		</div>
+	                  
+	                  	<!-- Start date -->
+	                	<div class="row">
+		                  	<span class="label">Start Date</span>
+		                    <span class="hint" data-desc="Tooltip demonstration."></span>
+		                    <div class="field">
+			                    <input id="q_start_date" class="half date" type="text" value="" />
+		                    </div>
+	                 	</div>
+	                
+                  		<!-- Language (in which programme was undertaken) -->
+                  		<div class="row">
+                    		<span class="label">Language of Study</span>
+                    		<span class="hint" data-desc="Tooltip demonstration."></span>
+                    		<div class="field">
+                      			<select class="full">
+                        			<option>English</option>
+                      			</select>
+                    		</div>
+                  		</div>
+                  
+                  		<!-- Qualification level -->
+	                  	<div class="row">
+	                    	<span class="label">Level</span>
+	                    	<span class="hint" data-desc="Tooltip demonstration."></span>
+	                    	<div class="field">
+	                      		<select class="full">
+	                        		<option>School</option>
+	                      		</select>
+	                    	</div>
+	                  	</div>
+
+                  		<!-- Qualification type -->
+                  		<div class="row">
+                    		<span class="label">Type</span>
+                    		<span class="hint" data-desc="Tooltip demonstration."></span>
+                    		<div class="field">
+                      			<select class="full">
+                        			<option>Employer</option>
+                      			</select>
+                    		</div>
+                  		</div>
+
+                  		<!-- Qualification grade -->
+                  		<div class="row">
+                    		<span class="label">Grade</span>
+                    		<span class="hint" data-desc="Tooltip demonstration."></span>
+                    		<div class="field">
+                      			<input id="q_grade" class="full" type="text" placeholder="e.g. 2.1, Distinction" />
+                    		</div>
+                  		</div>
+
+                  		<!-- Qualification score -->
+                  		<div class="row">
+                    		<span class="label">Score</span>
+                    		<span class="hint" data-desc="Tooltip demonstration."></span>
+                    		<div class="field">
+                      			<input id="q_score" class="full" type="text" placeholder="e.g. 114" />
+                    		</div>
+                  		</div>
+                  
+                  		<!-- Award date -->
+                  		<div class="row">
+                    		<span class="label">Award Date</span>
+                    		<span class="hint" data-desc="Tooltip demonstration."></span>
+                    		<div class="field">
+                      			<input id="q_award_date" class="half date" type="text" value="" />
+                    		</div>
+                  		</div>
+
+                  		<!-- Attachment / supporting document -->
+                  		<div class="row">
+                    		<span class="label">Supporting Document</span>
+                    		<span class="hint" data-desc="Tooltip demonstration."></span>
+                    		<div class="field">
+                      			<input id="q_attachment" class="full" type="text" value="" />
+                      				<a class="button" href="#">Browse</a>
+                      				<a class="button" href="#">Upload</a>
+                      				<a class="button" href="#">Add Document</a>
+                    		</div>  
+                  		</div>
+	                
+	                </div>
+
+		        	<div class="buttons">
+		            	<a class="button" href="#">Cancel</a>
+		                <button class="blue" type="submit" value="close">Save and Close</button>
+		                <button id="qualificationsSaveButton" class="blue" type="submit" value="add">Save and Add</button>
+	                </div>
+
+			  </form>
+		</div>
+		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/qualifications.js'/>"></script>
+ 

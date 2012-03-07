@@ -75,14 +75,8 @@
 			            <#include "/private/pgStudents/form/components/qualification_details.ftl"/>
 			          </section>
 			          
-			           <section class="folding yellow">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Employment
-			            </h2>
-			            <div>
-			              coming soon.
-			            </div>
+			           <section id="positionSection" class="folding yellow">
+			             <#include "/private/pgStudents/form/components/employment_position_details.ftl"/>
 			          </section>
 			          
 			           <section id="fundingSection" class="folding green">

@@ -6,6 +6,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Countries;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
@@ -19,7 +20,9 @@ public class ApplicationPageModel extends PageModel {
 	private ApplicationForm applicationForm;
 	private QualificationDTO qualification;
 	private List<Countries> countries;
+	private EmploymentPosition employmentPosition;
 	private List<AddressPurpose> addressPurposes;
+	
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -76,13 +79,23 @@ public class ApplicationPageModel extends PageModel {
 	public List<Countries> getCountries() {
 		return countries;
 	}
-	
-	
-	public List<AddressPurpose> getAddressPurposes() {
-		return addressPurposes;
+
+	public void setEmploymentPosition(EmploymentPosition employmentPosition) {
+		this.employmentPosition = employmentPosition;
+		
 	}
 	
 	public void setAddressPurposes(List<AddressPurpose> addressPurposes) {
 		this.addressPurposes = addressPurposes;
 	}
+	
+	public EmploymentPosition getEmploymentPosition() {
+		return employmentPosition;
+	}
+	
+	public void setAddressPurposes(List<AddressPurpose> addressPurposes) {
+		this.addressPurposes = addressPurposes;
+	}
+
+
 }

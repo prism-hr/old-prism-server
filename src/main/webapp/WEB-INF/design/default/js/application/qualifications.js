@@ -1,17 +1,17 @@
 $(document).ready(function(){
 	$('#qualificationsSaveButton').click(function(){
 		$.post("/pgadmissions/update/editQualification", {  
-			name_of_programme: $("#q_name").val(), 
-			institution: $("#q_provider").val(), 
-			level: $("#q_level").val(),
-			qualification_type: $("#q_Type").val(),
-			grade: $("#q_grade").val(),
-			score: $("#q_score").val(),
-			start_date: $("#q_start_date").val(),
-			language_of_study: $("#q_language").val(),
-			award_date: $("#q_award_date").val(),
+			qualificationProgramName: $("#qualificationProgramName").val(), 
+			qualificationInstitution: $("#qualificationInstitution").val(), 
+			qualificationLevel: $("#qualificationLevel").val(),
+			qualificationType: $("#qualificationType").val(),
+			qualificationGrade: $("#qualificationGrade").val(),
+			qualificationScore: $("#qualificationScore").val(),
+			qualificationStartDate: $("#qualificationStartDate").val(),
+			qualificationLanguage: $("#qualificationLanguage").val(),
+			qualificationAwardDate: $("#qualificationAwardDate").val(),
 			appId: $("#appId").val(),
-			qualId: $("#qualId").val(),
+			qualificationId: $("#qualificationId").val(),
 			id: $("#id").val()
 		},
 		function(data) {
@@ -22,16 +22,15 @@ $(document).ready(function(){
 	$('a[name="editQualificationLink"]').click(function(){
 		var id = this.id;
 		id = id.replace('qualification_', '');
-		$('#q_provider').val($('#'+id+'_q_provider').val());
-		$('#q_name').val($('#'+id+'_q_name').val());
-		$('#q_start_date').val($('#'+id+'_q_start_date').val());
-		$('#q_language').val($('#'+id+'_q_language').val());
-		$('#q_level').val($('#'+id+'_q_level').val());
-		$('#q_Type').val($('#'+id+'_q_Type').val());
-		$('#q_grade').val($('#'+id+'_q_grade').val());
-		$('#q_score').val($('#'+id+'_q_score').val());
-		$('#q_provider').val($('#'+id+'_q_provider').val());
-		$('#q_award_date').val($('#'+id+'_q_award_date').val());
-		$('#qualId').val($('#'+id+'_qualId').val());
+		$('#qualificationId').val($('#'+id+'_qualificationIdDP').val());
+		$('#qualificationProgramName').val($('#'+id+'_qualificationProgramNameDP').val());
+		$('#qualificationInstitution').val($('#'+id+'_qualificationInstitutionDP').val());
+		$('#qualificationLevel').val($('#'+id+'_qualificationLevelDP').val());
+		$('#qualificationType').val($('#'+id+'_qualificationTypeDP').val());
+		$('#qualificationGrade').val($('#'+id+'_qualificationGradeDP').val());
+		$('#qualificationScore').val($('#'+id+'_qualificationScoreDP').val());
+		$('#qualificationStartDate').val($('#'+id+'_qualificationStartDateDP').val());
+		$('#qualificationLanguage').val($('#'+id+'_qualificationLanguageDP').val());
+		$('#qualificationAwardDate').val($('#'+id+'_qualificationAwardDateDP').val());
 	});
 });

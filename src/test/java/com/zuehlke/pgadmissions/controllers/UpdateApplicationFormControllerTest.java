@@ -4,6 +4,7 @@ package com.zuehlke.pgadmissions.controllers;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -240,7 +241,7 @@ public class UpdateApplicationFormControllerTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
 		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,2, mappingResult);
 		EasyMock.verify(applicationsServiceMock);
-		Assert.assertEquals("wip/qualifications", modelAndView.getViewName());
+		Assert.assertEquals("private/pgStudents/form/components/qualification_details", modelAndView.getViewName());
 	}
 	
 	@Test
@@ -254,7 +255,6 @@ public class UpdateApplicationFormControllerTest {
 		
 		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,2, mappingResult);
 		Assert.assertEquals(qualificationDto.getAward_date(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getAward_date());
-		Assert.assertEquals(qualificationDto.getCountry(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getCountry());
 		Assert.assertEquals(qualificationDto.getGrade(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getGrade());
 		Assert.assertEquals(qualificationDto.getInstitution(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getInstitution());
 		Assert.assertEquals(qualificationDto.getLanguage_of_study(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getLanguage_of_study());
@@ -262,9 +262,7 @@ public class UpdateApplicationFormControllerTest {
 		Assert.assertEquals(qualificationDto.getName_of_programme(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getName_of_programme());
 		Assert.assertEquals(qualificationDto.getScore(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getScore());
 		Assert.assertEquals(qualificationDto.getStart_date(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getStart_date());
-		Assert.assertEquals(qualificationDto.getTermination_date(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getTermination_date());
-		Assert.assertEquals(qualificationDto.getTermination_reason(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualification_termination_reason());
-		Assert.assertEquals(qualificationDto.getType(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualification_type());
+		Assert.assertEquals(qualificationDto.getQualification_type(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualification_type());
 	}
 	
 	@Test
@@ -321,6 +319,25 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals(1, form.getQualifications().size() );
 		Assert.assertEquals(newQualification, form.getQualifications().get(0) );
+		
+	}
+	
+	@Test
+	public void shouldEditExistingQualification(){
+		BindingResult mappingResult = EasyMock.createMock(BindingResult.class);
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		form.getQualifications().add(qualification);
+		qualification.setApplication(form);
+		qualificationValidator.validate(qualificationDto, mappingResult);
+		EasyMock.expect(mappingResult.hasErrors()).andReturn(false);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
+		applicationsServiceMock.save(form);
+		EasyMock.replay(applicationsServiceMock, mappingResult, qualificationValidator);
+		applicationController.editQualification(qualificationDto,2,mappingResult);
+		EasyMock.verify(applicationsServiceMock);
+		Assert.assertEquals(1, form.getQualifications().size() );
+		Assert.assertEquals("CS", form.getQualifications().get(0).getName_of_programme() );
 		
 	}
 	
@@ -382,7 +399,6 @@ public class UpdateApplicationFormControllerTest {
 		qualificationDto = new QualificationDTO();
 		qualificationDto.setQualId(3);
 		qualificationDto.setAward_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
-		qualificationDto.setCountry("UK");
 		qualificationDto.setGrade("first");
 		qualificationDto.setInstitution("UCL");
 		qualificationDto.setLanguage_of_study("EN");
@@ -390,12 +406,9 @@ public class UpdateApplicationFormControllerTest {
 		qualificationDto.setName_of_programme("CS");
 		qualificationDto.setScore("100");
 		qualificationDto.setStart_date(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		qualificationDto.setTermination_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/03/02"));
-		qualificationDto.setTermination_reason("finished");
-		qualificationDto.setTermination_date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/02"));
-		qualificationDto.setType("degree");
+		qualificationDto.setQualification_type("degree");
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		qualification = new QualificationBuilder().id(3).q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).q_country("").q_grade("").q_institution("").q_language_of_study("").q_level("").q_name_of_programme("").q_score("").q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_termination_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/10/10")).q_termination_reason("").q_type("").toQualification();
+		qualification = new QualificationBuilder().id(3).q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).q_grade("").q_institution("").q_language_of_study("").q_level("").q_name_of_programme("").q_score("").q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		authenticationToken.setDetails(student);
 		SecurityContextImpl secContext = new SecurityContextImpl();

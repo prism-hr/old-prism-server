@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.validators.QualificationValidator;
 @RequestMapping("/update")
 public class UpdateApplicationFormController {
 
-	private static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "wip/qualifications";
+	private static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/qualification_details";
 	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/address_details";
 	private final ApplicationsService applicationService;
 	private final UserService userService;
@@ -57,6 +57,7 @@ public class UpdateApplicationFormController {
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService,
 			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, QualificationValidator qualificationValidator,
 			CountriesDAO countriesDAO) {
+			
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.userService = userService;
@@ -109,24 +110,22 @@ public class UpdateApplicationFormController {
 		qualificationValidator.validate(qual, result);
 		ApplicationForm application = applicationService.getApplicationById(appId);
 		ApplicationPageModel model = new ApplicationPageModel();
-		model.setApplicationForm(application);
 		model.setUser(((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()));
 		model.setResult(result);
 		if (!result.hasErrors()) {
-			model.setQualificationDto(new QualificationDTO());
+			model.setQualification(new QualificationDTO());
 			if (application.isSubmitted()) {
 				throw new CannotUpdateApplicationException();
 			}
 			Qualification qualification;
 			if (qual.getQualId() == null) {
 				qualification = newQualification();
-				qualification.setApplication(application);
-				application.getQualifications().add(qualification);
+
 			} else {
 				qualification = applicationService.getQualificationById(qual.getQualId());
 			}
+			qualification.setApplication(application);
 			qualification.setAward_date(qual.getAward_date());
-			qualification.setCountry(qual.getCountry());
 			qualification.setGrade(qual.getGrade());
 			qualification.setInstitution(qual.getInstitution());
 			qualification.setLanguage_of_study(qual.getLanguage_of_study());
@@ -134,16 +133,17 @@ public class UpdateApplicationFormController {
 			qualification.setName_of_programme(qual.getName_of_programme());
 			qualification.setScore(qual.getScore());
 			qualification.setStart_date(qual.getStart_date());
-			qualification.setTermination_date(qual.getTermination_date());
-			qualification.setQualification_termination_reason(qual.getTermination_reason());
-			qualification.setQualification_type(qual.getType());
-
+			qualification.setQualification_type(qual.getQualification_type());
+			if (qual.getQualId() == null) {
+				application.getQualifications().add(qualification);
+			}
+			System.out.println("Before save: qual: " + qualification.getId() + "application " + application.getId() + "nameof pr" + qualification.getName_of_programme());
 			applicationService.save(application);
-		}
-		else{
-			model.setQualificationDto(qual);
+		} else {
+			model.setQualification(qual);
 		}
 
+		model.setApplicationForm(application);
 		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, "model", model);
 	}
 
@@ -183,8 +183,7 @@ public class UpdateApplicationFormController {
 			}
 			applicationService.save(application);
 			model.setFunding(new Funding());
-		} 
-		else {
+		} else {
 			model.setFunding(fund);
 		}
 		modelMap.put("model", model);

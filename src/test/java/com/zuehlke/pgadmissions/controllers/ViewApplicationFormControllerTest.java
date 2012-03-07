@@ -1,11 +1,10 @@
 package com.zuehlke.pgadmissions.controllers;
 
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -31,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
-import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;

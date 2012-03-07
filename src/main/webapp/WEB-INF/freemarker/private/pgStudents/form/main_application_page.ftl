@@ -74,7 +74,7 @@
 			          
 			          <!-- Address -->
 			          <section id="addressSection" class="folding red">
-			             <#include "/private/pgStudents/form/components/address_details.ftl"/>
+			             <#include "/wip/pgStudents/address_details.ftl"/>
 			          </section>
 			          
 			           <section id="qualificationsSection" class="folding orange">
@@ -92,7 +92,7 @@
 			          </section>
 			          
 			           <section id="fundingSection" class="folding green">
-			             <#include "/private/pgStudents/form/components/funding_details.ftl"/>
+			             <#include "/wip/pgStudents/funding_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding navy">

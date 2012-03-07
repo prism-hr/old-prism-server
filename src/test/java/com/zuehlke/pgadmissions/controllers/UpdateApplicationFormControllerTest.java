@@ -136,13 +136,13 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setLocation("1, Main Street, London");
-		address.setPostCode("NW2345");
-		address.setPurpose("parents");
-		address.setCountry("UK");
-		address.setStartDate(new Date(2011, 11, 11));
-		address.setEndDate(new Date(2012, 11, 11));
-		address.setContactAddress(AddressStatus.YES);
+		address.setAddressLocation("1, Main Street, London");
+		address.setAddressPostCode("NW2345");
+		address.setAddressPurpose("parents");
+		address.setAddressCountry("UK");
+		address.setAddressStartDate(new Date(2011, 11, 11));
+		address.setAddressEndDate(new Date(2012, 11, 11));
+		address.setAddressContactAddress(AddressStatus.YES);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
@@ -161,9 +161,9 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setLocation("");
-		address.setStartDate(new Date());
-		address.setEndDate(new Date());
+		address.setAddressLocation("");
+		address.setAddressStartDate(new Date());
+		address.setAddressEndDate(new Date());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
@@ -177,7 +177,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		Address address = new Address();
-		address.setLocation("london, uk");
+		address.setAddressLocation("london, uk");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 	}

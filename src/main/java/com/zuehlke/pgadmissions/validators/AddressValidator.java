@@ -16,16 +16,16 @@ public class AddressValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "location", "user.location.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "postCode", "user.postCode.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "user.country.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "user.startDate.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "endDate", "user.endDate.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "purpose", "user.purpose.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddress", "user.contactAddress.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLocation", "user.location.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressPostCode", "user.postCode.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressCountry", "user.country.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressStartDate", "user.startDate.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressEndDate", "user.endDate.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressPurpose", "user.purpose.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressContactAddress", "user.contactAddress.notempty");
 		Address address = (Address) target;
-		String startDate = address.getStartDate() == null ? "": address.getStartDate().toString();
-		if (StringUtils.isNotBlank(startDate) && address.getStartDate().after(address.getEndDate())) {
+		String startDate = address.getAddressStartDate() == null ? "": address.getAddressStartDate().toString();
+		if (StringUtils.isNotBlank(startDate) && address.getAddressStartDate().after(address.getAddressEndDate())) {
 			errors.rejectValue("startDate", "user.startDate.notvalid");
 		}
 	}

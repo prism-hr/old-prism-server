@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
@@ -91,6 +92,7 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setResult(result);
 			viewApplicationModel.setUser(user);
 			viewApplicationModel.setCountries(countriesDAO.getAllCountries());
+			viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());
 			
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,"model", viewApplicationModel);
 			

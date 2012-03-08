@@ -6,6 +6,7 @@ $(document).ready(function(){
 					firstName: $("#firstName").val(), 
 					lastName: $("#lastName").val(), 
 					email: $("#email").val(), 
+					dateOfBirth: $("#dateOfBirth").val(),
 					id: $("#id").val(), 
 					appId: $("#appId").val()
 				},

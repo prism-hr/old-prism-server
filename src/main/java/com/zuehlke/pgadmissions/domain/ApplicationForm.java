@@ -85,7 +85,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Access(AccessType.PROPERTY)
 	@JoinColumn(name = "application_form_id")
 	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
-
 	
 	public List<Qualification> getQualifications() {
 		return qualifications;
@@ -269,6 +268,5 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.employmentPositions.clear();
 		this.employmentPositions.addAll(employmentPositions);
 	}
-	
 }
 

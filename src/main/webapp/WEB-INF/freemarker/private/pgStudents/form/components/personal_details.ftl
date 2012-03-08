@@ -28,9 +28,9 @@
 			<tbody>
 				<tr>
 			    	<td><a class="row-arrow" href="#">-</a></td>
-			        <td>${model.applicationForm.applicant.firstName}</td>
-			        <td>${model.applicationForm.applicant.lastName}</td>
-			        <td>${model.applicationForm.applicant.email}</td>
+			        <td>${model.personalDetails.firstName}</td>
+			        <td>${model.personalDetails.lastName}</td>
+			        <td>${model.personalDetails.email}</td>
                   	<td><a class="button-edit" href="#">edit</a></td>
                   	<td><a class="button-close" href="#">close</a></td>
 			    </tr>
@@ -78,14 +78,21 @@
                 	<div class="row">
                   	<label class="label">Gender</label>
                     <div class="field">
-                      <label><input class="disabledEle" type="radio" name="gender" /> Male</label>
-                      <label><input class="disabledEle" type="radio" name="gender" /> Female</label>
+                      <label><input type="radio" name="gender" /> Male</label>
+                      <label><input type="radio" name="gender" /> Female</label>
+                      <label><input type="radio" name="gender" /> Prefer not to say</label>
                     </div>
                   </div>
                 	<div class="row">
                   	<label class="label">Date of Birth</label>
                     <span class="hint"></span>
-                    <input class="half disabledEle" type="date" value="" />
+                    <div class="field">
+                    <#if !model.applicationForm.isSubmitted()>
+                        <input class="full" type="date" value="" value="${(model.personalDetails.dateOfBirth?string('yyyy/MM/dd'))!}" name="dateOfBirth" id="dateOfBirth"/>
+                    <#else>
+                        <input class="full" readonly="readonly" type="email" value="${(model.personalDetails.dateOfBirth?string('yyyy/MM/dd'))!}" name="email" id="email" />             
+                    </#if>    
+                    </div>
                   </div>
                 </div>
 
@@ -94,8 +101,10 @@
                   	<label class="label">Country of Birth</label>
                     <span class="hint"></span>
                     <div class="field">
-                      <select class="full disabledEle">
-                        <option>United Kingdom</option>
+                      <select>
+                        <#list model.countries as country>
+                              <option value="${country.name}">${country.name}</option>               
+                        </#list>
                       </select>
                     </div>
                   </div>
@@ -144,37 +153,28 @@
                 </div>
 
               	<div>
-                	<strong>UK Visa</strong>
+                	<strong>Residence</strong>
                 	<div class="row">
-                  	<span class="label">Type</span>
+                  	<span class="label">Country</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select class="full disabledEle">
-                        <option>Student</option>
+                      <select>
+                        <#list model.countries as country>
+                              <option value="${country.name}">${country.name}</option>               
+                        </#list>
                       </select>
                     </div>
                   </div>
-                	<div class="row">
-                  	<span class="label">Date of Issue</span>
-                    <span class="hint"></span>
-                    <input class="half disabledEle" type="date" value="" />
-                  </div>
-                	<div class="row">
-                  	<span class="label">Date of Expiry</span>
-                    <span class="hint"></span>
-                    <input class="half disabledEle" type="date" value="" />
-                  </div>
-                	<div class="row">
-                  	<span class="label">Supporting Document</span>
+                  <div class="row">
+                    <span class="label">Status</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <input class="full disabledEle" type="text" value="" />
-                      <a class="button" href="#">Browse</a>
-                      <a class="button" href="#">Upload</a>
+                      <select>
+                         <#list model.residenceStatuses as residenceStatus>
+                              <option value="${residenceStatus.freeVal}">${residenceStatus.freeVal}</option>               
+                        </#list>
+                      </select>
                     </div>
-                  </div>
-                	<div class="row">
-                  	<div class="field"><a class="button blue disabledEle" href="#">Add a visa</a></div>
                   </div>
                 </div>
 
@@ -196,7 +196,6 @@
                     	<#else>
                     		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.email}" name="email" id="email" />	          
                     	</#if>
-                      <a class="button disabledEle" href="#" style="width: 110px;">Add Email</a>
                     </div>
                   </div>
                 </div>
@@ -206,10 +205,10 @@
                 		<span class="label">Telephone</span>
                     <span class="hint"></span>
                     <div class="field">
-                    	<select class="half disabledEle">
+                    	<select>
                       	<option>Home</option>
                       </select>
-	                    <input class="half disabledEle" type="text" placeholder="Number" />
+	                    <input type="text" placeholder="Number" />
                       <a class="button" href="#" style="width: 110px;">Add Phone</a>
                     </div>
                   </div>
@@ -220,11 +219,11 @@
                 		<span class="label">Messenger</span>
                     <span class="hint"></span>
                     <div class="field">
-                    	<select class="half disabledEle">
+                    	<select>
                       	<option>Skype</option>
                       </select>
-	                    <input class="half disabledEle" type="text" placeholder="Address" />
-                      <a class="button disabledEle" href="#" style="width: 110px;">Add Messenger</a>
+	                    <input type="text" placeholder="Address" />
+                      <a href="#" class="button" style="width: 110px;">Add Messenger</a>
                     </div>
                   </div>
                 </div>

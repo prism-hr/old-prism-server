@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.validators;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 
 
@@ -25,6 +27,11 @@ public class QualificationValidator  implements Validator{
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", "qualification.type.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationGrade", "qualification.grade.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationScore", "qualification.score.notempty");
+		QualificationDTO qualification = (QualificationDTO) target;
+		String startDate = qualification.getQualificationStartDate() == null ? "": qualification.getQualificationStartDate().toString();
+		if (StringUtils.isNotBlank(startDate) && qualification.getQualificationAwardDate() != null && qualification.getQualificationStartDate().after(qualification.getQualificationAwardDate())) {
+			errors.rejectValue("qualificationStartDate", "qualification.start_date.notvalid");
+		}
 	}
 
 

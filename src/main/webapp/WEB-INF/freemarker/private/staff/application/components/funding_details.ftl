@@ -7,11 +7,11 @@
                             <div>
                              
                             <table cellspacing=10>
-                                 <tr align=left><th>Type</th><th>Value</th><th>Award Date</th></tr>
+                                 <tr align=left><th>Funding Type</th><th>Description</th><th>Award Date</th></tr>
                                 <#list model.applicationForm.fundings as funding>
                                 <tr>
                                     <td>${funding.type}</td>
-                                    <td>${funding.value}</td>
+                                    <td>${funding.description}</td>
                                     <td>${funding.awardDate?string('yyyy/MM/dd')}</td>
                                </tr>
                             </#list>

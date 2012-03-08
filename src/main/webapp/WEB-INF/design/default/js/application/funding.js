@@ -40,4 +40,14 @@ $(document).ready(function(){
 		$("#fundingDescription").val($('#'+id+"_fundingDescriptionDP").val());
 		$("#fundingAwardDate").val($('#'+id+"_fundingAwardDateDP").val());
 	});
+	
+	$('a[name="fundingCancelButton"]').click(function(){
+		$("#fundingId").val("");
+		$("#fundingType").val("");
+		$("#fundingValue").val("");
+		$("#fundingDescription").val("");
+		$("#fundingAwardDate").val("");
+		
+	});
+	
 });

@@ -26,9 +26,9 @@
 	            
 	            <thead>
 					<tr>
-	                	<th colspan="2">Funding Type</th>
-	                    <th>Awarding Body</th>
-	                    <th>Issue Date</th>
+	                	<th colspan="2">Funding Source</th>
+	                    <th>Value of Award</th>
+	                    <th>Award Date</th>
 	                    <th colspan="1">&nbsp;</th>
 					</tr>
 				</thead>
@@ -37,7 +37,7 @@
 				
 					<#list model.applicationForm.fundings as funding>		
 						<tr>
-		                  	<td><a class="row-arrow" href="#">-</a></td>
+		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id}">-</a></td>
 		                  	<td>${funding.type}</td>
 		                  	<td>${funding.value}</td>
 		                  	<td>${funding.awardDate?string('yyyy/MM/dd')}</td>
@@ -68,7 +68,7 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                 	
                 	<div class="field">
-                		<input id="fundingType" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
+                		<input id="fundingType" name="fundingType" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
                 		<#if model.hasError('fundingType')>
                         	<span class="invalid"><@spring.message  model.result.getFieldError('fundingType').code /></span>                           
                         </#if>
@@ -81,10 +81,10 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
 				
 					<div class="field">
-                    	<input id="fundingDescription" class="full" type="text" value="${model.funding.fundingDescription!}" />
+                    	<input id="fundingDescription" name="fundingDescription" class="full" type="text" value="${model.funding.fundingDescription!}" />
                     </div>
                     <#if model.hasError('fundingDescription')>                           
-                    	<span style="color:red;"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
+                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
                     </#if>
                     
 				</div>
@@ -94,7 +94,7 @@
                   	<span class="label">Value of Award</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<input id="fundingValue" class="full" type="text" value="${model.funding.fundingValue!}" />
+                    	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${model.funding.fundingValue!}" />
                     </div>
                     <#if model.hasError('fundingValue')>
                     	<span class="invalid"><@spring.message  model.result.getFieldError('fundingValue').code /></span>
@@ -106,10 +106,10 @@
                   	<span class="label" data-desc="Tooltip demonstration.">Award Date</span>
                     <span class="hint"></span>
                     <div class="field">
-	                    <input id="fundingAwardDate" class="half" type="date" value="${(model.funding.fundingAwardDate?string('yyyy/MM/dd'))!}" />
+	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half" type="date" value="${(model.funding.fundingAwardDate?string('yyyy/MM/dd'))!}" />
                     </div>
                     <#if model.hasError('fundingAwardDate')>                           
-                    	<span style="color:red;"><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           
+                    	<span class="invalid""><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           
                     </#if>
                     
                 </div>
@@ -129,9 +129,9 @@
 
 			<div class="buttons">
             	
-            	<a class="button" href="#">Cancel</a>
-				<button class="blue" type="submit" value="close">Save and Close</button>
-                <button class="blue" type="submit" value="add">Save and Add</button>
+            	<a class="button" id="fundingCancelButton">Cancel</a>
+				<button class="blue" type="button" id="fundingSaveCloseButton" value="close">Save and Close</button>
+                <button class="blue" type="button" id="fundingSaveAddButton" value="add">Save and Add</button>
                 
 			</div>
 

@@ -87,12 +87,7 @@
                                 
                                 <tr>
                                 <td>Reason for living here</td>
-                                <td>
-                                <select name="addressPurpose" id="addressPurpose">
-                                    <#list model.addressPurposes as addressPurpose>
-                                        <option value="${addressPurpose.valName}">${addressPurpose.val}</option>               
-                                    </#list>
-                                <select>
+                                <td><input type="text" id="addressPurpose" name="addressPurpose" value="${model.address.addressPurpose!}"/>
                                 <#if model.hasError('addressPurpose')>                           
                                     <span style="color:red;"><@spring.message  model.result.getFieldError('addressPurpose').code /></span>                           
                                 </#if>

@@ -15,7 +15,6 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
-import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 
 
@@ -34,8 +33,7 @@ public class Address extends DomainObject<Integer>{
 
 	private String country;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AddressPurposeEnumUserType")
-	private AddressPurpose purpose;
+	private String purpose;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name="start_date")
@@ -112,11 +110,11 @@ public class Address extends DomainObject<Integer>{
 		this.location = location;
 	}
 	
-	public AddressPurpose getPurpose() {
+	public String getPurpose() {
 		return purpose;
 	}
 	
-	public void setPurpose(AddressPurpose purpose) {
+	public void setPurpose(String purpose) {
 		this.purpose = purpose;
 	}
 	

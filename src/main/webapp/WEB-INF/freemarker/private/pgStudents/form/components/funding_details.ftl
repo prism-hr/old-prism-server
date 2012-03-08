@@ -96,9 +96,9 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
                     	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${model.funding.fundingValue!}" />
-                    <#if model.hasError('fundingValue')>
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingValue').code /></span>
-                    </#if>
+	                    <#if model.hasError('fundingValue')>
+	                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingValue').code /></span>
+	                    </#if>
                     </div>
 				</div>
                   
@@ -107,10 +107,10 @@
                   	<span class="label" data-desc="Tooltip demonstration.">Award Date</span>
                     <span class="hint"></span>
                     <div class="field">
-	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half" type="date" value="${(model.funding.fundingAwardDate?string('yyyy/MM/dd'))!}" />
-                    <#if model.hasError('fundingAwardDate')>                           
-                    	<span class="invalid""><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           
-                    </#if>
+	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('yyyy/MM/dd'))!}" />
+                    	<#if model.hasError('fundingAwardDate')>                           
+                    		<span class="invalid""><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           
+                    	</#if>
                     </div>
                     
                 </div>

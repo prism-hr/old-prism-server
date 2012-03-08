@@ -1,0 +1,243 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Shell template</title>
+<link type="text/css" rel="stylesheet" href="css/global_private.css" />
+</head>
+
+<body>
+
+<div id="wrapper">
+
+  <!-- Header. -->
+  <div id="header">
+    <p>Postgraduate Research Admissions Tool</p>
+  </div>
+  
+  <!-- Middle. -->
+  <div id="middle">
+  
+    <header>
+
+      <!-- App logo and tagline -->
+      <div class="logo"><img src="images/ph_logo_app.png" alt="" /></div>
+
+      <div class="tagline">Your Gateway to Research Opportunities</div>
+
+      <!-- Main tabbed menu -->
+      <nav>
+        <ul>
+          <li><a href="#">My account</a></li>    
+          <li class="current"><a href="#">My applications <span class="indicator blue">1</span></a></li>    
+          <li><a href="#">Messages</a></li>    
+          <li><a href="#">Help</a></li>    
+        </ul>
+        
+        <div class="user">
+          Jonathan Smith
+          <a class="button user-logout">Logout</a>
+        </div>
+      </nav>
+      
+    </header>
+    
+    
+    <!-- Main content area. -->
+    <article id="content" role="main">
+      
+      <!-- content box -->
+      <div class="content-box">
+        <div class="content-box-inner">
+
+					<div id="programme-details">
+          
+          	<div class="row">
+            	<label>Programme Name</label>
+              <input disabled size="109" value="W3P7 - Some Study On Some Course" />
+            </div>
+            
+          	<div class="row half">
+            	<label>Application Number</label>
+              <input disabled size="20" value="3273334B" />
+            </div>
+          </div>
+          
+          <hr />
+
+          <section class="folding violet">
+            <h2>
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Programme
+            </h2>
+            <div>
+            	<p>Testing...</p>
+            </div>
+          </section>
+          
+          <!-- Personal details -->
+          <section class="folding purple">
+            <h2>
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Personal Details
+            </h2>
+            <div>
+            	<table class="existing">
+              	<colgroup>
+                	<col width="30" />
+                	<col width="170" />
+                	<col width="200" />
+                	<col width="*" />
+                	<col width="30" />
+                	<col width="30" />
+                </colgroup>
+              	<thead>
+                	<tr>
+                  	<th colspan="2">First name</th>
+                    <th>Surname</th>
+                    <th>Email</th>
+                    <th colspan="2">&nbsp;</th>
+                  </tr>
+                </thead>
+                <tbody>
+                	<tr>
+                  	<td><a class="row-arrow" href="#">-</a></td>
+                  	<td>Bob</td>
+                  	<td>Smith</td>
+                  	<td>bob.smith@test.com</td>
+                  	<td><a class="button-edit" href="#">edit</a></td>
+                  	<td><a class="button-close" href="#">close</a></td>
+                  </tr>
+                </tbody>
+              </table>
+              <form method="post" action="woooop">
+
+              	<div>
+                	<div class="row">
+                  	<label class="label">First Name</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<input class="full" type="text" value="Bob" />
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Last Name</label>
+                    <span class="hint"></span>
+                    <div class="field">
+                    	<input class="full" type="text" value="Smith" />
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Gender</label>
+                    <div class="field">
+                      <label><input type="radio" name="gender" /> Male</label>
+                      <label><input type="radio" name="gender" /> Female</label>
+                    </div>
+                  </div>
+                	<div class="row">
+                  	<label class="label">Date of Birth</label>
+                    <span class="hint"></span>
+                    <input class="half" type="date" value="" />
+                  </div>
+                </div>
+
+              	<div class="buttons">
+                  <a class="button blue" href="#">Close</a>
+                  <button class="blue" type="submit">Save</button>
+                </div>
+
+             	</form>
+            </div>
+          </section>
+          
+          <!-- Address -->
+          <section class="folding red">
+            <h2>
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Address
+            </h2>
+            <div>
+            	Testing...
+            </div>
+          </section>
+          
+           <section class="folding orange">
+            <h2>
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Qualifications
+            </h2>
+            <div>
+              Testing...
+            </div>
+          </section>
+          
+           <section class="folding yellow">
+            <h2>
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Employment
+            </h2>
+            <div>
+              coming soon.
+            </div>
+          </section>
+          
+           <section class="folding green">
+            <h2>
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Funding
+            </h2>
+            <div>
+              Testing...
+            </div>
+          </section>
+          
+           <section class="folding navy">
+            <h2>
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              References
+            </h2>
+            <div>
+              Testing...
+            </div>
+          </section>
+          
+           <section class="folding blue">
+            <h2>
+              <span class="left"></span><span class="right"></span><span class="status"></span>
+              Documents
+            </h2>
+            <div>
+              Testing...
+            </div>
+          </section>
+          
+          <hr />
+          
+          <a class="button" href="#">Close</a>
+          <button type="submit">Submit</button>
+          
+        </div><!-- .content-box-inner -->
+      </div><!-- .content-box -->
+      
+    </article>
+    
+  </div>
+  
+  <!-- Footer. -->
+  <div id="footer">
+    <ul>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms &amp; conditions</a></li>
+      <li><a href="#">Contact us</a></li>
+      <li><a href="#">Glossary</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/libraries.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+</body>
+</html>

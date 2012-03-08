@@ -303,15 +303,15 @@ public class UpdateApplicationFormControllerTest {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
 		
 		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1,2, mappingResult,  new ModelMap());
-		Assert.assertEquals(qualificationDto.getQualificationAwardDate(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getAward_date());
-		Assert.assertEquals(qualificationDto.getQualificationGrade(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getGrade());
-		Assert.assertEquals(qualificationDto.getQualificationInstitution(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getInstitution());
-		Assert.assertEquals(qualificationDto.getQualificationLanguage(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getLanguage_of_study());
-		Assert.assertEquals(qualificationDto.getQualificationLevel(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getLevel());
-		Assert.assertEquals(qualificationDto.getQualificationProgramName(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getName_of_programme());
-		Assert.assertEquals(qualificationDto.getQualificationScore(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getScore());
-		Assert.assertEquals(qualificationDto.getQualificationStartDate(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getStart_date());
-		Assert.assertEquals(qualificationDto.getQualificationType(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualification_type());
+		Assert.assertEquals(qualificationDto.getQualificationAwardDate(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualificationAwardDate());
+		Assert.assertEquals(qualificationDto.getQualificationGrade(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualificationGrade());
+		Assert.assertEquals(qualificationDto.getQualificationInstitution(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualificationInstitution());
+		Assert.assertEquals(qualificationDto.getQualificationLanguage(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualificationLanguage());
+		Assert.assertEquals(qualificationDto.getQualificationLevel(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualificationLevel());
+		Assert.assertEquals(qualificationDto.getQualificationProgramName(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualificationProgramName());
+		Assert.assertEquals(qualificationDto.getQualificationScore(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualificationScore());
+		Assert.assertEquals(qualificationDto.getQualificationStartDate(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualificationStartDate());
+		Assert.assertEquals(qualificationDto.getQualificationType(), ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualificationType());
 	}
 	
 	@Test
@@ -349,7 +349,7 @@ public class UpdateApplicationFormControllerTest {
 		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1,2,mappingResult,  new ModelMap());
 		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals(1, form.getQualifications().size() );
-		Assert.assertEquals("first", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getGrade());
+		Assert.assertEquals("first", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualificationGrade());
 		
 	}
 	
@@ -366,7 +366,7 @@ public class UpdateApplicationFormControllerTest {
 		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1,2,mappingResult,  new ModelMap());
 		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals(1, ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().size());
-		Assert.assertEquals("CS", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getName_of_programme());
+		Assert.assertEquals("CS", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0).getQualificationProgramName());
 		
 	}
 	

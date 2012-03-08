@@ -133,15 +133,15 @@ public class UpdateApplicationFormController {
 			}
 			
 			qualification.setApplication(application);
-			qualification.setAward_date(qual.getQualificationAwardDate());
-			qualification.setGrade(qual.getQualificationGrade());
-			qualification.setInstitution(qual.getQualificationInstitution());
-			qualification.setLanguage_of_study(qual.getQualificationLanguage());
-			qualification.setLevel(qual.getQualificationLevel());
-			qualification.setName_of_programme(qual.getQualificationProgramName());
-			qualification.setScore(qual.getQualificationScore());
-			qualification.setStart_date(qual.getQualificationStartDate());
-			qualification.setQualification_type(qual.getQualificationType());
+			qualification.setQualificationAwardDate(qual.getQualificationAwardDate());
+			qualification.setQualificationGrade(qual.getQualificationGrade());
+			qualification.setQualificationInstitution(qual.getQualificationInstitution());
+			qualification.setQualificationLanguage(qual.getQualificationLanguage());
+			qualification.setQualificationLevel(qual.getQualificationLevel());
+			qualification.setQualificationProgramName(qual.getQualificationProgramName());
+			qualification.setQualificationScore(qual.getQualificationScore());
+			qualification.setQualificationStartDate(qual.getQualificationStartDate());
+			qualification.setQualificationType(qual.getQualificationType());
 			if (qual.getQualificationId() == null) {
 				application.getQualifications().add(qualification);
 			}

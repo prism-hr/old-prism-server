@@ -59,6 +59,7 @@
         <!-- Non-rendering data -->
         <input type="hidden" id="fundingId" name="fundingId"/>
               
+        <#if !model.applicationForm.isSubmitted()>
 		<form>
                 
 			<div>
@@ -136,6 +137,7 @@
 			</div>
 
 		</form>
+	   </#if>
 	</div>
 
 	<script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -21,12 +22,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.MessengerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -34,6 +39,7 @@ import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
+import com.zuehlke.pgadmissions.dto.Referee;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
@@ -278,6 +284,37 @@ public class UpdateApplicationFormControllerTest {
 		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "funding");
 		applicationController.addEmploymentPosition(positionDto, 1, 2, mappingResult, new ModelMap());
+	}
+	
+	@Test
+	public void shouldSaveNewRefereeWithOneTelephoneAndNoMessenger() throws ParseException {
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		EasyMock.replay(userServiceMock);
+		
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		applicationsServiceMock.save(form);
+		EasyMock.replay(applicationsServiceMock);
+		
+		Telephone telephone = new TelephoneBuilder().telephoneNumber("0123").telephoneType("type").toTelephone();
+		Messenger messenger = new MessengerBuilder().messengerAddress("address").messengerType("type").toMessenger();
+		Referee refereeDto = new Referee();
+		refereeDto.setAddressCountry("UK");
+		refereeDto.setEmail("email");
+		refereeDto.setAddressLocation("location");
+		refereeDto.setAddressPostcode("postcode");
+		refereeDto.setEmail("email");
+		refereeDto.setEmail("firstname");
+		refereeDto.setFirstname("firstaname");
+		refereeDto.setJobEmployer("emplo");
+		refereeDto.setJobTitle("title");
+		refereeDto.setLastname("dhd");
+		refereeDto.setRelationship("relation");
+		refereeDto.setTelephones(Arrays.asList(telephone));
+		refereeDto.setMessengers(Arrays.asList(messenger));
+		ModelAndView modelAndView = applicationController.addReferee(refereeDto, 1, 2, new ModelMap());
+		Assert.assertEquals("private/pgStudents/form/components/referee_details", modelAndView.getViewName());
+		Assert.assertEquals("0123", ((PageModel)modelAndView.getModel().get("model")).getApplicationForm().getReferees().get(0).getTelephones().get(0).getTelephoneNumber());
 	}
 	
 	@Test

@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
+import com.zuehlke.pgadmissions.dto.Referee;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -45,6 +46,7 @@ public class UpdateApplicationFormController {
 	private static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/qualification_details";
 	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/address_details";
 	private static final String APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME = "private/pgStudents/form/components/employment_position_details";
+	private static final String APPLICATON_REFEREEE_VIEW_NAME =  "private/pgStudents/form/components/referee_details";;
 	private final ApplicationsService applicationService;
 	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;
@@ -57,9 +59,8 @@ public class UpdateApplicationFormController {
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService,
-			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor,
-			CountriesDAO countriesDAO) {
-			
+			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, CountriesDAO countriesDAO) {
+
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.userService = userService;
@@ -108,7 +109,7 @@ public class UpdateApplicationFormController {
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
 	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer id,
 			@RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
-		
+
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
 		if (application.isSubmitted()) {
@@ -131,7 +132,7 @@ public class UpdateApplicationFormController {
 			} else {
 				qualification = applicationService.getQualificationById(qual.getQualificationId());
 			}
-			
+
 			qualification.setApplication(application);
 			qualification.setQualificationAwardDate(qual.getQualificationAwardDate());
 			qualification.setQualificationGrade(qual.getQualificationGrade());
@@ -146,19 +147,17 @@ public class UpdateApplicationFormController {
 				application.getQualifications().add(qualification);
 				applicationService.save(application);
 				model.setQualification(new QualificationDTO());
-			}
-			else{
+			} else {
 				applicationService.update(qualification);
 				application.getQualifications().remove(qualification);
 				application.getQualifications().add(qualification);
 				model.setQualification(new QualificationDTO());
 			}
-		}
-		else{
-			
+		} else {
+
 			model.setQualification(qual);
 		}
-		
+
 		modelMap.put("model", model);
 
 		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, modelMap);
@@ -207,12 +206,12 @@ public class UpdateApplicationFormController {
 
 		return new ModelAndView("private/pgStudents/form/components/funding_details", modelMap);
 	}
-	
+
 	@RequestMapping(value = "/addEmploymentPosition", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer id, @RequestParam Integer appId,
-			BindingResult result, ModelMap modelMap) {
-		
+	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer id,
+			@RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
 		if (application.isSubmitted()) {
@@ -310,6 +309,7 @@ public class UpdateApplicationFormController {
 		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, modelMap);
 	}
 
+
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
 	}
@@ -317,6 +317,50 @@ public class UpdateApplicationFormController {
 	Qualification newQualification() {
 		return new Qualification();
 	}
+	
+	@RequestMapping(value = "/addReferee", method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView addReferee(@ModelAttribute Referee ref, @RequestParam Integer id, @RequestParam Integer appId,
+			 ModelMap modelMap) {
+		ApplicationForm application = applicationService.getApplicationById(appId);
 
+		if (application.isSubmitted()) {
+			throw new CannotUpdateApplicationException();
+		}
+		RegisteredUser user = userService.getUser(id);
+
+		ApplicationPageModel model = new ApplicationPageModel();
+		model.setUser(user);
+		ApplicationForm applicationForm = application;
+		model.setApplicationForm(applicationForm);
+//		model.setResult(result);
+
+		com.zuehlke.pgadmissions.domain.Referee referee;
+		if (ref.getRefereeId() == null) {
+			referee = new com.zuehlke.pgadmissions.domain.Referee();
+		} else {
+			referee = applicationService.getRefereeById(ref.getRefereeId());
+		}
+		referee.setApplication(application);
+		referee.setAddressCountry(ref.getAddressCountry());
+		referee.setAddressLocation(ref.getAddressLocation());
+		referee.setAddressPostcode(ref.getAddressPostcode());
+		referee.setEmail(ref.getEmail());
+		referee.setFirstname(ref.getFirstname());
+		referee.setJobEmployer(ref.getJobEmployer());
+		referee.setJobTitle(ref.getJobTitle());
+		referee.setLastname(ref.getLastname());
+		referee.setMessengers(ref.getMessengers());
+		referee.setRelationship(ref.getRelationship());
+		referee.setTelephones(ref.getTelephones());
+		if (ref.getRefereeId() == null) {
+			application.getReferees().add(referee);
+		}
+		applicationService.save(application);
+		model.setReferee(new Referee());
+		modelMap.put("model", model);
+
+		return new ModelAndView(APPLICATON_REFEREEE_VIEW_NAME, "model", model);
+	}
 
 }

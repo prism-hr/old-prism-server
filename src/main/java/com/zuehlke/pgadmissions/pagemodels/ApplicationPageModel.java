@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
+import com.zuehlke.pgadmissions.dto.Referee;
 
 public class ApplicationPageModel extends PageModel {
 
@@ -20,6 +21,7 @@ public class ApplicationPageModel extends PageModel {
 	private QualificationDTO qualification;
 	private List<Countries> countries;
 	private EmploymentPosition employmentPosition;
+	private Referee referee;
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -84,5 +86,13 @@ public class ApplicationPageModel extends PageModel {
 
 	public EmploymentPosition getEmploymentPosition() {
 		return employmentPosition;
+	}
+
+	public void setReferee(Referee referee) {
+		this.referee = referee;
+	}
+	
+	public Referee getReferee() {
+		return referee;
 	}
 }

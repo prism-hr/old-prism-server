@@ -144,10 +144,18 @@ public class UpdateApplicationFormController {
 			qualification.setQualificationType(qual.getQualificationType());
 			if (qual.getQualificationId() == null) {
 				application.getQualifications().add(qualification);
+				applicationService.save(application);
+				model.setQualification(new QualificationDTO());
 			}
-			applicationService.save(application);
-			model.setQualification(new QualificationDTO());
-		} else {
+			else{
+				applicationService.update(qualification);
+				application.getQualifications().remove(qualification);
+				application.getQualifications().add(qualification);
+				model.setQualification(new QualificationDTO());
+			}
+		}
+		else{
+			
 			model.setQualification(qual);
 		}
 		

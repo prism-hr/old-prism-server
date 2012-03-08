@@ -90,5 +90,11 @@ public class ApplicationsService {
 	public com.zuehlke.pgadmissions.domain.Address getAddressById(Integer addressId) {
 		return applicationFormDAO.getAdddressById(addressId);
 	}
+	
+	@Transactional
+	public void update(Qualification qualification) {
+		applicationFormDAO.update(qualification);
+		
+	}
 
 }

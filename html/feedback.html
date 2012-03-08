@@ -37,7 +37,7 @@
       <nav>
         <ul>
           <li><a href="#">My account</a></li>    
-          <li class="current"><a href="#">My applications <span class="indicator blue">1</span></a></li>    
+          <li class="current"><a href="#">My applications</a></li>    
           <li><a href="#">Messages</a></li>    
           <li><a href="#">Help</a></li>    
         </ul>
@@ -53,99 +53,78 @@
     
     <!-- Main content area. -->
     <article id="content" role="main">
-          
-      <!-- content box -->
+      
       <div class="content-box">
-        <div class="content-box-inner">
+      	<div class="content-box-inner">
+        
+          <h1>Examples of UI components</h1>
+          <br />
           
-					<div id="programme-details">
-          
-          	<div class="row">
-            	<label>Programme Name</label>
-              <input disabled size="109" value="W3P7 - Some Study On Some Course" />
-            </div>
+          <form>
+            <h2>Radio buttons</h2>
+            <fieldset class="radio-list">
+              <legend>Would you like to...</legend>
+              <label>Recommend this candidate? <input type="radio" name="ex_radio" /></label>
+              <label>Interview this candidate? <input type="radio" name="ex_radio" /></label>
+              <label>Approve this candidate? <input type="radio" name="ex_radio" /></label>
+            </fieldset>
+    
+            <fieldset class="radio-row">
+              <legend>1) How would you rate this applicant's understanding of the subject?</legend>
+              <label>Unsatisfactory <input type="radio" name="ex_radio" /></label>
+              <label>Satisfactory <input type="radio" name="ex_radio" /></label>
+              <label>Good <input type="radio" name="ex_radio" /></label>
+              <label>Excellent <input type="radio" name="ex_radio" /></label>
+            </fieldset>
             
-          	<div class="row half">
-            	<label>Application Number</label>
-              <input disabled size="20" value="3273334B" />
-            </div>
+            <h2>Sliders</h2>
+            <fieldset class="slider radio-row">
+              <legend>Does the candidate show an aptitude for Mathematics?</legend>
+              <label><input type="radio" /> <span>Strongly disagree</span></label>
+              <label><input type="radio" /> <span>Disagree</span></label>
+              <label><input type="radio" checked="checked" /> <span>Neither</span></label>
+              <label><input type="radio" /> <span>Agree</span></label>
+              <label><input type="radio" /> <span>Strongly agree</span></label>
+            </fieldset>
+            
+            <h2>Text area</h2>
+            <p><textarea placeholder="Text" rows="6" cols="80"></textarea></p>
 
-          	<div class="row half">
-            	<label>Submission deadline</label>
-              <input disabled size="20" value="01/08/2011" />
+            <h2>Multiple select list</h2>
+            <p>
+              <select multiple size="12">
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+                <option>item</option>
+              </select>
+            </p>
+            
+            <hr>
+            
+            <div class="buttons">
+              <a class="button blue">Back</a>
+              <button class="blue" type="submit">Save</button>
             </div>
-
-          	<div class="row half">
-            	<label>Have you discussed with potential supervisor?</label>
-              <label class="checkbox"><input type="checkbox" /> Yes</label>
-            </div>
-
-          	<div class="row half">
-            	<label>Enter email address</label>
-              <input size="39" value="" />
-            </div>
-          </div>
-          
-          <hr />
-
-					<div id="feedback">
-
-						<ul class="key">
-            	<li><img src="images/circle_attention.png" alt="" /> Attention</li>
-            	<li><img src="images/circle_stopped.png" alt="" /> Stopped</li>
-            	<li><img src="images/circle_in_progress.png" alt="" /> In Progress</li>
-            	<li><img src="images/circle_complete.png" alt="" /> Completed</li>
-            </ul>
-                                
-          	<div class="row complete">
-            	<div class="bar">
-                <strong>Application started</strong>
-                All sections commenced
-                <span class="more">More...</span>
-                <span class="icon"></span>
-              </div>
-              <div class="information">
-              	content in here
-              </div>
-            </div>
-          
-          	<div class="row attention">
-            	<div class="bar">
-                <strong>Application form started</strong>
-                All sections saved and form submitted
-                <span class="more">More...</span>
-                <span class="icon"></span>
-              </div>
-              <div class="information">
-              	content in here
-              </div>
-            </div>
-          
-          	<div class="row progress">
-            	<div class="bar">
-                <strong>Interview invitation received</strong>
-                from Bob Smith
-                <span class="more">More...</span>
-                <span class="icon"></span>
-              </div>
-              <div class="information">
-              	content in here
-              </div>
-            </div>
-          
-          	<div class="row stopped">
-            	<div class="bar">
-                <strong>Application under review</strong>
-                Admissions committee review
-                <span class="more">More...</span>
-                <span class="icon"></span>
-              </div>
-              <div class="information">
-              	content in here
-              </div>
-            </div>
-          
-          </div><!-- #feedback -->
+          </form>
           
         </div><!-- .content-box-inner -->
       </div><!-- .content-box -->
@@ -170,5 +149,6 @@
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/libraries.js"></script>
 <script type="text/javascript" src="js/script.js"></script>
+<script type="text/javascript" src="js/help.js"></script>
 </body>
 </html>

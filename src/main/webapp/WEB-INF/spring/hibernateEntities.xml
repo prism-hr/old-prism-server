@@ -20,7 +20,11 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Funding</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Countries</value>
 	     		<value>com.zuehlke.pgadmissions.domain.EmploymentPosition</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Referee</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Telephone</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Messenger</value>	    
 	     		<value>com.zuehlke.pgadmissions.domain.PersonalDetail</value>
+	     		
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

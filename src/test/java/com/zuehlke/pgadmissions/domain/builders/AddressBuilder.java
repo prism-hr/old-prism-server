@@ -4,7 +4,6 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 
 public class AddressBuilder {
@@ -15,7 +14,7 @@ public class AddressBuilder {
 	private String location;
 	private String postCode;
 	private String country;
-	private AddressPurpose purpose;
+	private String purpose;
 	
 	private Date startDate;
 	private Date endDate;
@@ -38,7 +37,7 @@ public class AddressBuilder {
 		return this;
 	}
 	
-	public AddressBuilder purpose(AddressPurpose purpose) {
+	public AddressBuilder purpose(String purpose) {
 		this.purpose = purpose;
 		return this;
 	}

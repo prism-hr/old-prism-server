@@ -59,7 +59,6 @@
 			          <hr />
 			
 			          <section id="programmeDetailsSection" class="folding violet">
-			          	 <#include "/private/pgStudents/form/components/programme_details.ftl"/>
 			          </section>
 			          
 			          <section id="personalDetailsSection" class="folding purple">

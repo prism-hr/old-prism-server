@@ -83,13 +83,7 @@
 			          </section>
 			          
 			           <section class="folding yellow">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Employment
-			            </h2>
-			            <div>
-			              coming soon.
-			            </div>
+			             <#include "/private/staff/application/components/employment_position_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding green">

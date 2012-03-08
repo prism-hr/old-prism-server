@@ -39,15 +39,14 @@
 		                
 		                	<#list model.applicationForm.qualifications as qualification>
 			                	<tr>
-				                  	<td><a class="row-arrow" href="#">-</a></td>
+				                  	<td><a class="row-arrow" id="qualification_${qualification.id}" name ="editQualificationLink">-</a></td>
 				                  	<td>${qualification.qualificationType}</td>
-				                  	<td>${qualification.id}, ${qualification.qualificationGrade}</td>
+				                  	<td>${qualification.qualificationGrade}</td>
 				                  	<td>${qualification.qualificationInstitution}</td>
 				                  	<td>${(qualification.qualificationAwardDate?string('yyyy/MM/dd'))!}</td>
 				                  	<td><a class="button-delete" href="#">delete</a></td>
 			                  	</tr>
 			                  	
-                            	<td><a class="button blue" type="submit" id="qualification_${qualification.id}" name ="editQualificationLink"> Edit<a/></td>
                              	<input type="hidden" id="${qualification.id}_qualificationIdDP" value="${qualification.id}"/>
                              	<input type="hidden" id="${qualification.id}_qualificationInstitutionDP" value="${qualification.qualificationInstitution!}"/> 
                            		<input type="hidden" id="${qualification.id}_qualificationProgramNameDP" value="${qualification.qualificationProgramName!}"/> 
@@ -209,9 +208,9 @@
 	                </div>
 
 		        	<div class="buttons">
-		            	<a class="button" href="#">Cancel</a>
-		                <button class="blue" type="submit" value="close">Save and Close</button>
-		                <button id="qualificationsSaveButton" class="blue" type="submit" value="add">Save and Add</button>
+		            	<a class="button" id="qualificationCancelButton" name="qualificationCancelButton">Cancel</a>
+		                <button class="blue" type="button" id="qualificationSaveCloseButton"  name="id="qualificationSaveCloseButton"" value="close">Save and Close</button>
+		                <button id="qualificationsSaveButton" class="blue" type="button" value="add">Save and Add</button>
 	                </div>
 
 			  </form>

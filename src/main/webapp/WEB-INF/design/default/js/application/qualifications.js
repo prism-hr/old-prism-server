@@ -19,6 +19,26 @@ $(document).ready(function(){
 		});
 	});
 	
+	$('#qualificationSaveCloseButton').click(function(){
+		$.post("/pgadmissions/update/editQualification", {  
+			qualificationProgramName: $("#qualificationProgramName").val(), 
+			qualificationInstitution: $("#qualificationInstitution").val(), 
+			qualificationLevel: $("#qualificationLevel").val(),
+			qualificationType: $("#qualificationType").val(),
+			qualificationGrade: $("#qualificationGrade").val(),
+			qualificationScore: $("#qualificationScore").val(),
+			qualificationStartDate: $("#qualificationStartDate").val(),
+			qualificationLanguage: $("#qualificationLanguage").val(),
+			qualificationAwardDate: $("#qualificationAwardDate").val(),
+			appId: $("#appId").val(),
+			qualificationId: $("#qualificationId").val(),
+			id: $("#id").val()
+		},
+		function(data) {
+			$('#qualificationsSection').html(data);
+		});
+	});
+	
 	$('a[name="editQualificationLink"]').click(function(){
 		var id = this.id;
 		id = id.replace('qualification_', '');
@@ -33,4 +53,18 @@ $(document).ready(function(){
 		$('#qualificationLanguage').val($('#'+id+'_qualificationLanguageDP').val());
 		$('#qualificationAwardDate').val($('#'+id+'_qualificationAwardDateDP').val());
 	});
+	
+	$('a[name="qualificationCancelButton"]').click(function(){
+		$("#qualificationId").val("");
+		$("#qualificationProgramName").val("");
+		$("#qualificationInstitution").val("");
+		$("#qualificationLevel").val("");
+		$("#qualificationGrade").val("");
+		$("#qualificationScore").val("");
+		$("#qualificationStartDate").val("");
+		$("#qualificationLanguage").val("");
+		$("#qualificationAwardDate").val("");
+		
+	});
+	
 });

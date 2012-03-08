@@ -26,8 +26,8 @@
 	            
 	            <thead>
 					<tr>
-	                	<th colspan="2">Funding Source</th>
-	                    <th>Value of Award</th>
+	                	<th colspan="2">Funding Type</th>
+	                    <th>Description</th>
 	                    <th>Award Date</th>
 	                    <th colspan="1">&nbsp;</th>
 					</tr>
@@ -39,7 +39,7 @@
 						<tr>
 		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id}">-</a></td>
 		                  	<td>${funding.type}</td>
-		                  	<td>${funding.value}</td>
+		                  	<td>${funding.description}</td>
 		                  	<td>${funding.awardDate?string('yyyy/MM/dd')}</td>
 		                  	<td><a class="button-delete" href="#">delete</a></td>
 		                  	
@@ -64,7 +64,7 @@
 			<div>
 				<!-- Award type -->
                 <div class="row">
-                  	<span class="label">Funding Source</span>
+                  	<span class="label">Funding Type</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                 	
                 	<div class="field">
@@ -82,10 +82,10 @@
 				
 					<div class="field">
                     	<input id="fundingDescription" name="fundingDescription" class="full" type="text" value="${model.funding.fundingDescription!}" />
-                    </div>
                     <#if model.hasError('fundingDescription')>                           
                     	<span class="invalid"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
                     </#if>
+                    </div>
                     
 				</div>
                   
@@ -95,10 +95,10 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
                     	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${model.funding.fundingValue!}" />
-                    </div>
                     <#if model.hasError('fundingValue')>
                     	<span class="invalid"><@spring.message  model.result.getFieldError('fundingValue').code /></span>
                     </#if>
+                    </div>
 				</div>
                   
                 <!-- Award date -->
@@ -107,10 +107,10 @@
                     <span class="hint"></span>
                     <div class="field">
 	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half" type="date" value="${(model.funding.fundingAwardDate?string('yyyy/MM/dd'))!}" />
-                    </div>
                     <#if model.hasError('fundingAwardDate')>                           
                     	<span class="invalid""><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           
                     </#if>
+                    </div>
                     
                 </div>
                   

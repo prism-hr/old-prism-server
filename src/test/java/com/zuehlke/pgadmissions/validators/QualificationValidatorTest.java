@@ -8,6 +8,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 
@@ -80,6 +81,16 @@ public class QualificationValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.score.notempty",mappingResult.getFieldError("qualificationScore").getCode());
 	}
+	
+	@Test
+	public void shouldRejectIfStartDateIsAfterEndDate() throws ParseException{
+		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+		qualificationDto.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
+		qualificationValidator.validate(qualificationDto, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("qualification.start_date.notvalid",mappingResult.getFieldError("qualificationStartDate").getCode());
+	}
 
 	@Before
 	public void setup() throws ParseException{
@@ -87,13 +98,13 @@ public class QualificationValidatorTest {
 		qualificationValidator = new QualificationValidator();
 		qualificationDto = new QualificationDTO();
 		qualificationDto.setQualificationId(3);
-		qualificationDto.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
+		qualificationDto.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
 		qualificationDto.setQualificationGrade("first");
 		qualificationDto.setQualificationInstitution("UCL");
 		qualificationDto.setQualificationLanguage("EN");
 		qualificationDto.setQualificationLevel("advance");
 		qualificationDto.setQualificationProgramName("CS");
 		qualificationDto.setQualificationScore("100");
-		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
 		qualificationDto.setQualificationType("degree");	}
 }

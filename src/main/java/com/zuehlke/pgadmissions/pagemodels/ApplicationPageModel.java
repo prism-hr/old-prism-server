@@ -65,8 +65,8 @@ public class ApplicationPageModel extends PageModel {
 	public QualificationDTO getQualification() {
 		return qualification;
 	}
-	public void setQualification(QualificationDTO qualificationDto) {
-		this.qualification = qualificationDto;
+	public void setQualification(QualificationDTO qualification) {
+		this.qualification = qualification;
 	}
 
 	public void setCountries(List<Countries> countries) {

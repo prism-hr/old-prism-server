@@ -72,15 +72,15 @@ public class QualificationBuilder {
 	public Qualification toQualification() {
 		Qualification qualification = new Qualification();
 		qualification.setApplication(application);
-		qualification.setAward_date(q_award_date);
-		qualification.setGrade(q_grade);
-		qualification.setInstitution(q_institution);
-		qualification.setLanguage_of_study(q_language_of_study);
-		qualification.setLevel(q_level);
-		qualification.setName_of_programme(q_name_of_programme);
-		qualification.setScore(q_score);
-		qualification.setStart_date(q_start_date);
-		qualification.setQualification_type(q_type);
+		qualification.setQualificationAwardDate(q_award_date);
+		qualification.setQualificationGrade(q_grade);
+		qualification.setQualificationInstitution(q_institution);
+		qualification.setQualificationLanguage(q_language_of_study);
+		qualification.setQualificationLevel(q_level);
+		qualification.setQualificationProgramName(q_name_of_programme);
+		qualification.setQualificationScore(q_score);
+		qualification.setQualificationStartDate(q_start_date);
+		qualification.setQualificationType(q_type);
 		qualification.setId(id);
 		return qualification;
 	}

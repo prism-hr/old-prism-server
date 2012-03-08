@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -22,89 +23,106 @@ public class Qualification extends DomainObject<Integer>{
 	private static final long serialVersionUID = -8949535622435302565L;
 
 	@Temporal(TemporalType.DATE)
-	private Date award_date;
-	private String name_of_programme;
-	private String institution;
-	private String language_of_study;
-	private String level;
-	private String qualification_type;
-	private String grade;
-	private String score;
+	@Column(name="award_date")
+	private Date qualificationAwardDate;
+	
+	@Column(name="name_of_programme")
+	private String qualificationProgramName;
+	
+	@Column(name="institution")
+	private String qualificationInstitution;
+	
+	@Column(name="language_of_study")
+	private String qualificationLanguage;
+	
+	@Column(name="level")
+	private String qualificationLevel;
+	
+	@Column(name="qualification_type")
+	private String qualificationType;
+	
+	@Column(name="grade")
+	private String qualificationGrade;
+	
+	@Column(name="score")
+	private String qualificationScore;
+	
+	@Column(name="start_date")
 	@Temporal(TemporalType.DATE)
-	private Date start_date;
+	private Date qualificationStartDate;
 	
 
 
-	public String getName_of_programme() {
-		return name_of_programme;
+	public String getQualificationProgramName() {
+		return qualificationProgramName;
 	}
 
-	public void setName_of_programme(String q_name_of_programme) {
-		this.name_of_programme = q_name_of_programme;
+	public void setQualificationProgramName(String q_name_of_programme) {
+		this.qualificationProgramName = q_name_of_programme;
 	}
 
-	public String getInstitution() {
-		return institution;
+	public String getQualificationInstitution() {
+		return qualificationInstitution;
 	}
 
-	public void setInstitution(String q_institution) {
-		this.institution = q_institution;
+	public void setQualificationInstitution(String q_institution) {
+		this.qualificationInstitution = q_institution;
 	}
 
-	public String getLanguage_of_study() {
-		return language_of_study;
+	public String getQualificationLanguage() {
+		return qualificationLanguage;
 	}
 
-	public void setLanguage_of_study(String q_language_of_study) {
-		this.language_of_study = q_language_of_study;
+	public void setQualificationLanguage(String q_language_of_study) {
+		this.qualificationLanguage = q_language_of_study;
 	}
 
-	public String getLevel() {
-		return level;
+	public String getQualificationLevel() {
+		return qualificationLevel;
 	}
 
-	public void setLevel(String q_level) {
-		this.level = q_level;
+	public void setQualificationLevel(String q_level) {
+		this.qualificationLevel = q_level;
 	}
 
-	public String getQualification_type() {
-		return qualification_type;
+	public String getQualificationType() {
+		return qualificationType;
 	}
 
-	public void setQualification_type(String q_type) {
-		this.qualification_type = q_type;
+	public void setQualificationType(String q_type) {
+		this.qualificationType = q_type;
 	}
 
-	public String getGrade() {
-		return grade;
+	public String getQualificationGrade() {
+		return qualificationGrade;
 	}
 
-	public void setGrade(String q_grade) {
-		this.grade = q_grade;
+	public void setQualificationGrade(String q_grade) {
+		this.qualificationGrade = q_grade;
 	}
 
-	public String getScore() {
-		return score;
+	public String getQualificationScore() {
+		return qualificationScore;
 	}
 
-	public void setScore(String q_score) {
-		this.score = q_score;
+	public void setQualificationScore(String q_score) {
+		this.qualificationScore = q_score;
 	}
 
-	public Date getStart_date() {
-		return start_date;
+	public Date getQualificationStartDate() {
+		return qualificationStartDate;
 	}
 
-	public void setStart_date(Date q_start_date) {
-		this.start_date = q_start_date;
+	public void setQualificationStartDate(Date q_start_date) {
+		this.qualificationStartDate = q_start_date;
 	}
 
-	public Date getAward_date() {
-		return award_date;
+	public Date getQualificationAwardDate() {
+		return qualificationAwardDate;
 	}
 
-	public void setAward_date(Date q_award_date) {
-		this.award_date = q_award_date;
+	public void setQualificationAwardDate(Date q_award_date) {
+		this.qualificationAwardDate = q_award_date;
 	}
 
 	@ManyToOne

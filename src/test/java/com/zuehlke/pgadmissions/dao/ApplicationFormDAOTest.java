@@ -141,28 +141,28 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		
 		
 		Qualification qualification1 = new Qualification();	
-		qualification1.setAward_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-		qualification1.setGrade("");
-		qualification1.setInstitution("");
-		qualification1.setLanguage_of_study("");
-		qualification1.setLevel("");
-		qualification1.setName_of_programme("");
-		qualification1.setScore("");
-		qualification1.setStart_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-		qualification1.setQualification_type("");
+		qualification1.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+		qualification1.setQualificationGrade("");
+		qualification1.setQualificationInstitution("");
+		qualification1.setQualificationLanguage("");
+		qualification1.setQualificationLevel("");
+		qualification1.setQualificationProgramName("");
+		qualification1.setQualificationScore("");
+		qualification1.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+		qualification1.setQualificationType("");
 		
 		qualifications.add(qualification1);
 		
 		Qualification qualification2 = new Qualification();	
-		qualification2.setAward_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-		qualification2.setGrade("");
-		qualification2.setInstitution("");
-		qualification2.setLanguage_of_study("");
-		qualification2.setLevel("");
-		qualification2.setName_of_programme("");
-		qualification2.setScore("");
-		qualification2.setStart_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
-		qualification2.setQualification_type("");
+		qualification2.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+		qualification2.setQualificationGrade("");
+		qualification2.setQualificationInstitution("");
+		qualification2.setQualificationLanguage("");
+		qualification2.setQualificationLevel("");
+		qualification2.setQualificationProgramName("");
+		qualification2.setQualificationScore("");
+		qualification2.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
+		qualification2.setQualificationType("");
 		
 		
 		qualifications.add(qualification1);

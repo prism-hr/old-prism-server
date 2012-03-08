@@ -20,7 +20,7 @@
  								<td>
                                	${qualification.qualificationType}
                                </td>
-                            	<td>${qualification.id}, ${qualification.qualificationGrade}</td>
+                            	<td>${qualification.qualificationGrade}</td>
                             	<td>${qualification.qualificationInstitution}</td>
                             	<td>${(qualification.qualificationAwardDate?string('yyyy/MM/dd'))!}</td>
                             	<td><a class="button blue" type="submit" id="qualification_${qualification.id}" name ="editQualificationLink"> Edit<a/></td>

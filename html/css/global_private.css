@@ -152,14 +152,6 @@ div.buttons { text-align: right; }
 
 
 /* TABLES ------------------------------------------------------------------------------------------------ */
-table.data { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; width: 100%; }
-table.data thead th { background: url(../images/bg_table_head.png) repeat-x; cursor: pointer; font-weight: bold; text-align: left; padding: 5px 3px; }
-table.data th, table.data td { padding: 3px; vertical-align: middle; }
-table.data tr td, table.data tr th { border-bottom: 1px solid #999; }
-table.data tbody td { background: url(../images/bg_table_row.jpg) repeat-x 0 100%; }
-table.data select { width: 100%; }
-table.data thead th.headerSortDown, table.data thead th.headerSortUp { background-color: #06C; color: #FFF; }
-
 table.multiples { border-spacing: 0 4px; width: 70%; margin-top: 1em; }
 table.multiples .align-left { text-align: left; }
 table.multiples input[type=text] { width: 100%; }

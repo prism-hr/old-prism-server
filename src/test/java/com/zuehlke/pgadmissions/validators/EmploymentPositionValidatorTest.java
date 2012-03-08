@@ -63,6 +63,15 @@ public class EmploymentPositionValidatorTest {
 		positionValidator.validate(positionDto, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
+	@Test
+	public void shouldRejectIfStartDateIsAfterEndDate() throws ParseException{
+		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
+		positionValidator.validate(positionDto, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("position.position_startDate.notvalid",mappingResult.getFieldError("position_startDate").getCode());
+	}
 	
 	@Before
 	public void setup() throws ParseException{

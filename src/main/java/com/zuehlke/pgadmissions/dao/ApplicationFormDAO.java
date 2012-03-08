@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -13,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 
 @Repository
 public class ApplicationFormDAO {
@@ -31,6 +33,23 @@ public class ApplicationFormDAO {
 	
 	public void save(ApplicationForm application) {
 		sessionFactory.getCurrentSession().saveOrUpdate(application);
+	}
+	
+	public void update(Qualification qualification) {
+//		sessionFactory.getCurrentSession().update(application);
+//		sessionFactory.getCurrentSession().flush();
+		DatePropertyEditor dateEditor = new DatePropertyEditor();
+		dateEditor.setValue(qualification.getQualificationStartDate());
+		String sd = dateEditor.getAsText();
+		dateEditor.setValue(qualification.getQualificationAwardDate());
+		String sa = dateEditor.getAsText();
+		sessionFactory.getCurrentSession().createQuery("update APPLICATION_FORM_QUALIFICATION set application_form_id = '" + qualification.getApplication().getId()
+				+"', name_of_programme = '" + qualification.getQualificationProgramName() +"', institution = '" + qualification.getQualificationProgramName()
+				+"', language_of_study = '" + qualification.getQualificationLanguage() +"', level = '" + qualification.getQualificationLevel()
+				+"', qualification_type = '" + qualification.getQualificationType() +"', grade = '" + qualification.getQualificationGrade()
+				+"', start_date = '" + sd +"', award_date = '" + sa
+				+"', score = '" + qualification.getQualificationScore()
+				+ "' where id = " + qualification.getId()).executeUpdate(); 
 	}
 
 
@@ -81,4 +100,5 @@ public class ApplicationFormDAO {
 		return (Address) sessionFactory.getCurrentSession().get(
 				Address.class, addressId);
 	}
+
 }

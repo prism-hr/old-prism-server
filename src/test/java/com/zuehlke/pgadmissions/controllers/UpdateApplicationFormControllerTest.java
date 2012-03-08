@@ -285,7 +285,7 @@ public class UpdateApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().qualification(qualification).id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
-		applicationsServiceMock.save(form);
+		applicationsServiceMock.update(qualification);
 		EasyMock.replay(applicationsServiceMock);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
 		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1, 2, mappingResult,  new ModelMap());
@@ -299,6 +299,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
 		applicationsServiceMock.save(form);
+		applicationsServiceMock.update(qualification);
 		EasyMock.replay(applicationsServiceMock);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
 		
@@ -360,7 +361,7 @@ public class UpdateApplicationFormControllerTest {
 		qualification.setApplication(form);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
-		applicationsServiceMock.save(form);
+		applicationsServiceMock.update(qualification);
 		EasyMock.replay(applicationsServiceMock, qualificationValidator);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
 		ModelAndView modelAndView = applicationController.editQualification(qualificationDto,1,2,mappingResult,  new ModelMap());

@@ -28,6 +28,7 @@
                                     <input type="hidden" id="${address.id}_startDateDP" value="${address.startDate?string('yyyy/MM/dd')}"/>
                                     <input type="hidden" id="${address.id}_endDateDP" value="${(address.endDate?string('yyyy/MM/dd'))!}"/>
                                     <input type="hidden" id="${address.id}_purposeDP" value="${address.purpose}"/>
+                                    <input type="hidden" id="${address.id}_contactAddressDP" value="${address.contactAddress}"/>
                                </tr>
                             </#list>
                             </table>
@@ -96,8 +97,8 @@
                             
                             </table>
                             <label>This is my contact address</label>
-                            <label><input type="radio" name="isCA" value="YES"/> Yes</label>
-                            <label><input type="radio" name="isCA" value="NO"/> No</label>
+                            <label><input type="radio" name="isCA" id="radioYES" value="YES"/> Yes</label>
+                            <label><input type="radio" name="isCA" id="radioNO" value="NO"/> No</label>
                             <input type="hidden" id="addressContactAddress" name="addressContactAddress"/>
                             </div>
                             <br/>

@@ -36,9 +36,14 @@ $(document).ready(function(){
 		$("#addressPostCode").val($('#'+id+"_postCodeDP").val());
 		$("#addressStartDate").val($('#'+id+"_startDateDP").val());
 		$("#addressEndDate").val($('#'+id+"_endDateDP").val());
-		$("#addressPurpose").val("Employer");
+		$("#addressPurpose").val($('#'+id+"_purposeDP").val());
 		$("#addressCountry").val("Romania");
-		$("#addressContactAddress").val("NO");
+		$("#addressContactAddress").val($('#'+id+"_contactAddressDP").val());
+		if ($("#addressContactAddress").val()=='YES'){
+			$("#radioYES").attr('checked', 'checked');
+		} else {
+			$("#radioNO").attr('checked', 'checked');
+		}
 	});
 
 });

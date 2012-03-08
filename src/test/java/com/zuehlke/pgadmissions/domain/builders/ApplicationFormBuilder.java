@@ -8,6 +8,7 @@ import java.util.Set;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -34,6 +35,8 @@ public class ApplicationFormBuilder {
 	private Date appDate;
 	
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
+
+	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 	
 	private List<Address> addresses = new ArrayList<Address>();
 	private List<Funding> fundings = new ArrayList<Funding>();
@@ -61,6 +64,18 @@ public class ApplicationFormBuilder {
 	public ApplicationFormBuilder qualifications(Qualification... qualifications) {
 		for (Qualification qualification : qualifications) {
 			this.qualifications.add(qualification);
+		}
+		return this;
+	}
+	
+	public ApplicationFormBuilder employmentPosition(EmploymentPosition employmentPosition) {
+		this.employmentPositions.add(employmentPosition);
+		return this;
+	}
+	
+	public ApplicationFormBuilder employmentPositions(EmploymentPosition... employmentPositions) {
+		for (EmploymentPosition employmentPosition : employmentPositions) {
+			this.employmentPositions.add(employmentPosition);
 		}
 		return this;
 	}

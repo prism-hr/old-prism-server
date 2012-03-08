@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 
@@ -99,6 +100,11 @@ public class ApplicationFormDAO {
 	public Address getAdddressById(Integer addressId) {
 		return (Address) sessionFactory.getCurrentSession().get(
 				Address.class, addressId);
+	}
+
+	public Referee getRefereeById(Integer id) {
+		return (Referee) sessionFactory.getCurrentSession().get(
+				Referee.class, id);
 	}
 
 }

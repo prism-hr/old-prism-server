@@ -37,7 +37,7 @@ $(document).ready(function(){
 		$("#addressStartDate").val($('#'+id+"_startDateDP").val());
 		$("#addressEndDate").val($('#'+id+"_endDateDP").val());
 		$("#addressPurpose").val($('#'+id+"_purposeDP").val());
-		$("#addressCountry").val("Romania");
+		$("#addressCountry").val($('#'+id+"_countryDP").val());
 		$("#addressContactAddress").val($('#'+id+"_contactAddressDP").val());
 		if ($("#addressContactAddress").val()=='YES'){
 			$("#radioYES").attr('checked', 'checked');

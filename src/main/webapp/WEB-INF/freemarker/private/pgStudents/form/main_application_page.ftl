@@ -83,14 +83,8 @@
 			             <#include "/private/pgStudents/form/components/funding_details.ftl"/>
 			          </section>
 			          
-			           <section class="folding navy">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              References
-			            </h2>
-			            <div>
-			              Testing...
-			            </div>
+			           <section id="referencesSection" class="folding navy">
+			           <#include "/private/pgStudents/form/components/references_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding blue">

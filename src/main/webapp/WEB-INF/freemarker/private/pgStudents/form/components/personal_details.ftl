@@ -28,9 +28,9 @@
 			<tbody>
 				<tr>
 			    	<td><a class="row-arrow" href="#">-</a></td>
-			        <td>${model.personalDetails.firstName}</td>
-			        <td>${model.personalDetails.lastName}</td>
-			        <td>${model.personalDetails.email}</td>
+			        <td>${model.personalDetails.firstName!}</td>
+			        <td>${model.personalDetails.lastName!}</td>
+			        <td>${model.personalDetails.email!}</td>
                   	<td><a class="button-edit" href="#">edit</a></td>
                   	<td><a class="button-close" href="#">close</a></td>
 			    </tr>
@@ -41,18 +41,18 @@
 				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id?string("######")}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
               	<div>
+        <#if model.hasError('personalDetails')>                           
+                <p style="color:red;"><@spring.message  model.result.getFieldError('personalDetails').code /></p>                        
+        </#if>
                 	<div class="row">
                   	<label class="label">First Name</label>
                     <span class="hint"></span>
                     <div class="field">                    	
                     <#if !model.applicationForm.isSubmitted()>
-                    	<input class="full" type="text" value="${model.personalDetails.firstName}" name="firstName" id="firstName"/>
+                    	<input class="full" type="text" value="${model.personalDetails.firstName!}" name="firstName" id="firstName"/>
                     	<#if model.hasError('firstName')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
                     	</#if>
-                    	<#if model.hasError('personalDetails.firstName')>                          
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('personalDetails.firstName').code /></span>                           
-                        </#if>
                     	<#else>
                     		<input class="full" readonly="readonly" type="text" value="${model.personalDetails.firstName}" name="firstName" id="firstName" />	          
                     	</#if>
@@ -63,13 +63,10 @@
                     <span class="hint"></span>
                     <div class="field">
                      <#if !model.applicationForm.isSubmitted()>
-                    	<input class="full" type="text" value="${model.personalDetails.lastName}" name="lastName" id="lastName"/>
+                    	<input class="full" type="text" value="${model.personalDetails.lastName!}" name="lastName" id="lastName"/>
                     	<#if model.hasError('lastName')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
                     	</#if>
-                    	<#if model.hasError('personalDetails.lastName')>                          
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('personalDetails.lastName').code /></span>                           
-                        </#if>
                     <#else>
                     		<input class="full" readonly="readonly" type="text" value="${model.personalDetails.lastName}" name="lastName" id="lastName" />	          
                     </#if>
@@ -82,6 +79,9 @@
                       <label><input type="radio" name="genderRadio" id="femaleGender" value="FEMALE"/> Female</label>
                       <label><input type="radio" name="genderRadio" id="notSaidGender" value="PREFER NOT TO SAY"/> Prefer not to say</label>
                       <input type="hidden" id="gender" name="gender"/>
+                      <#if model.hasError('gender')>                         
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('gender').code /></span>                           
+                      </#if>
                     </div>
                   </div>
                 	<div class="row">
@@ -90,6 +90,9 @@
                     <div class="field">
                     <#if !model.applicationForm.isSubmitted()>
                         <input class="full" type="date" value="${(model.personalDetails.dateOfBirth?string('yyyy/MM/dd'))!}" name="dateOfBirth" id="dateOfBirth"/>
+                        <#if model.hasError('dateOfBirth')>                           
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('dateOfBirth').code /></span>                           
+                        </#if>
                     <#else>
                         <input class="full" readonly="readonly" type="date" value="${(model.personalDetails.dateOfBirth?string('yyyy/MM/dd'))!}" name="dateOfBirth" id="dateOfBirth" />             
                     </#if>    
@@ -107,6 +110,9 @@
                               <option value="${country.name}">${country.name}</option>               
                         </#list>
                       </select>
+                      <#if model.hasError('country')>                         
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('country').code /></span>                           
+                        </#if>
                     </div>
                   </div>
                 </div>
@@ -164,6 +170,9 @@
                               <option value="${country.name}">${country.name}</option>               
                         </#list>
                       </select>
+                      <#if model.hasError('residenceCountry')>                         
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('residenceCountry').code /></span>                           
+                        </#if>
                     </div>
                   </div>
                   <div class="row">
@@ -175,6 +184,9 @@
                               <option value="${residenceStatus}">${residenceStatus.freeVal}</option>               
                         </#list>
                       </select>
+                      <#if model.hasError('residenceStatus')>                         
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('residenceStatus').code /></span>                           
+                        </#if>
                     </div>
                   </div>
                 </div>
@@ -186,14 +198,10 @@
                     <span class="hint"></span>
                     <div class="field">
                         <#if !model.applicationForm.isSubmitted()>
-	                    	<input class="full" type="email" value="${model.personalDetails.email}" name="email" id="email" />	                    
+	                    	<input class="full" type="email" value="${model.personalDetails.email!}" name="email" id="email" />	                    
 	                     	<#if model.hasError('email')>                    		
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('email').code /></span>                    		
                     		</#if>
-                    		<#if model.hasError('personalDetails.email')>                         
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('personalDetails.email').code /></span>                           
-                            </#if>
-                    		
                     	<#else>
                     		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.email}" name="email" id="email" />	          
                     	</#if>
@@ -206,7 +214,7 @@
                 		<span class="label">Telephone</span>
                     <span class="hint"></span>
                     <div class="field">
-                    	<select>
+                    	<select class="full disabledEle">
                       	<option>Home</option>
                       </select>
 	                    <input type="text" placeholder="Number" />
@@ -220,7 +228,7 @@
                 		<span class="label">Messenger</span>
                     <span class="hint"></span>
                     <div class="field">
-                    	<select>
+                    	<select class="full disabledEle">
                       	<option>Skype</option>
                       </select>
 	                    <input type="text" placeholder="Address" />

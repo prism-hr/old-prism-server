@@ -16,13 +16,18 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Countries;
+import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -37,6 +42,7 @@ public class SubmitApplicationFormControllerTest {
 	private UserPropertyEditor userPropertyEditorMock;
 	private RegisteredUser student;
 	private CountriesDAO countriesDAOMock;
+	private PersonalDetailDAO personalDetailDAOMock;
 
 
 	@Test
@@ -56,10 +62,24 @@ public class SubmitApplicationFormControllerTest {
 		form.getAddresses().add(address);
 		applicationsServiceMock.save(form);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock);
 		ApplicationFormDetails applDetails = new ApplicationFormDetails();
 		BindingResult mappingResult = new BeanPropertyBindingResult(applDetails, "applicationFormDetails", true, 100);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
+		PersonalDetail personalDetail = new PersonalDetail();
+		personalDetail.setId(2);
+		personalDetail.setApplication(form);
+		Countries country = new Countries();
+		country.setId(1); country.setName("ENGLAND"); country.setCode("EN");
+		personalDetail.setCountry(country);
+		personalDetail.setDateOfBirth(new Date());
+		personalDetail.setGender(Gender.FEMALE);
+		personalDetail.setFirstName("test");
+		personalDetail.setLastName("test");
+		personalDetail.setEmail("email@test.com");
+		personalDetail.setResidenceCountry(country);
+		personalDetail.setResidenceStatus(ResidenceStatus.EXCEPTIONAL_LEAVE_TO_REMAIN);
+		EasyMock.expect(personalDetailDAOMock.getPersonalDetailWithApplication(form)).andReturn(personalDetail);
+		EasyMock.replay(applicationsServiceMock, personalDetailDAOMock);
 		assertEquals("redirect:/applications?submissionSuccess=true", applicationController.submitApplication(applDetails, 2, mappingResult).getViewName());
 		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
 		EasyMock.verify(applicationsServiceMock);
@@ -71,7 +91,8 @@ public class SubmitApplicationFormControllerTest {
 		form.setApplicant(student);
 		applicationsServiceMock.save(form);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(personalDetailDAOMock.getPersonalDetailWithApplication(form)).andReturn(new PersonalDetail());
+		EasyMock.replay(applicationsServiceMock, personalDetailDAOMock);
 		ApplicationFormDetails applDetails = new ApplicationFormDetails();
 		BindingResult mappingResult = new BeanPropertyBindingResult(applDetails, "applicationFormDetails", true, 100);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
@@ -130,8 +151,9 @@ public class SubmitApplicationFormControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
 		countriesDAOMock = EasyMock.createMock(CountriesDAO.class);
+		personalDetailDAOMock = EasyMock.createMock(PersonalDetailDAO.class);
 
-		applicationController = new SubmitApplicationFormController(applicationsServiceMock, userPropertyEditorMock, countriesDAOMock) {
+		applicationController = new SubmitApplicationFormController(applicationsServiceMock, userPropertyEditorMock, countriesDAOMock, personalDetailDAOMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

@@ -86,7 +86,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "application_form_id")
 	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 	
-	
 	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
 	@Access(AccessType.PROPERTY)
@@ -288,6 +287,5 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.referees.clear();
 		this.referees.addAll(referees);
 	}
-	
 }
 

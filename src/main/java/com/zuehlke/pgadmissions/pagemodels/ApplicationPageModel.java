@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Countries;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
@@ -22,6 +25,7 @@ public class ApplicationPageModel extends PageModel {
 	private List<Countries> countries;
 	private EmploymentPosition employmentPosition;
 	private Referee referee;
+	private List<ResidenceStatus> residenceStatuses = new LinkedList<ResidenceStatus>();
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -95,4 +99,14 @@ public class ApplicationPageModel extends PageModel {
 	public Referee getReferee() {
 		return referee;
 	}
+	
+	public List<ResidenceStatus> getResidenceStatuses() {
+		return residenceStatuses;
+	}
+
+	public void setResidenceStatuses(ResidenceStatus[] values) {
+		this.residenceStatuses.addAll(Arrays.asList(values));
+		
+	}
+	
 }

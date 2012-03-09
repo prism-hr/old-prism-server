@@ -21,8 +21,10 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Messenger;
+import com.zuehlke.pgadmissions.domain.Countries;
+import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -34,6 +36,8 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
@@ -63,29 +67,44 @@ public class UpdateApplicationFormControllerTest {
 	private QualificationValidator qualificationValidator;
 	private DatePropertyEditor datePropertyEditorMock;
 	private CountriesDAO countriesDAOMock;
+	private PersonalDetailDAO personalDetailDAOMock;
 
 	@Test
 	public void shouldSaveNewPersonalDetails() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		applicationsServiceMock.save(form);
 		EasyMock.replay(applicationsServiceMock);
 
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
-		userServiceMock.save(student);
-		EasyMock.replay(userServiceMock);
+		Countries country = new Countries();
+		country.setCode("EN"); country.setName("England"); country.setId(1);
+		EasyMock.expect(countriesDAOMock.getAllCountries()).andReturn(Arrays.asList(country));
+		PersonalDetail ps = new PersonalDetail();
+		ps.setId(2);
+		EasyMock.expect(personalDetailDAOMock.getPersonalDetailWithApplication(form)).andReturn(ps);
+		personalDetailDAOMock.save(ps);
+		EasyMock.replay(userServiceMock, countriesDAOMock, personalDetailDAOMock);
 
 		PersonalDetails personalDetails = new PersonalDetails();
 		personalDetails.setFirstName("New First Name");
 		personalDetails.setLastName("New Last Name");
 		personalDetails.setEmail("newemail@email.com");
+		personalDetails.setGender(Gender.FEMALE);
+		personalDetails.setDateOfBirth(new Date());
+		personalDetails.setCountry(country);
+		personalDetails.setResidenceCountry(country);
+		personalDetails.setResidenceStatus(ResidenceStatus.REFUGEE_STATUS);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
 		ModelAndView modelAndView = applicationController.editPersonalDetails(personalDetails, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/personal_details", modelAndView.getViewName());
-		PageModel model = (PageModel) modelAndView.getModel().get("model");
-		RegisteredUser user = model.getUser();
-		Assert.assertEquals("New First Name", user.getFirstName());
-		Assert.assertEquals("New Last Name", user.getLastName());
-		Assert.assertEquals("newemail@email.com", user.getEmail());
+		Assert.assertEquals("New First Name", ps.getFirstName());
+		Assert.assertEquals("New Last Name", ps.getLastName());
+		Assert.assertEquals("newemail@email.com", ps.getEmail());
+		Assert.assertEquals(Gender.FEMALE, ps.getGender());
+		Assert.assertEquals("EN", ps.getCountry().getCode());
+		Assert.assertEquals("EN", ps.getResidenceCountry().getCode());
+		Assert.assertEquals(ResidenceStatus.REFUGEE_STATUS, ps.getResidenceStatus());
 	}
 	
 	
@@ -432,8 +451,10 @@ public class UpdateApplicationFormControllerTest {
 		qualificationValidator = EasyMock.createMock(QualificationValidator.class);
 		countriesDAOMock = EasyMock.createMock(CountriesDAO.class);
 		
+		personalDetailDAOMock = EasyMock.createMock(PersonalDetailDAO.class);
+		
 		applicationController = new UpdateApplicationFormController(userServiceMock, applicationsServiceMock, userPropertyEditorMock, 
-				datePropertyEditorMock, countriesDAOMock) {
+				datePropertyEditorMock, countriesDAOMock, personalDetailDAOMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

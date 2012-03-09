@@ -22,6 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
+import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Countries;
 import com.zuehlke.pgadmissions.domain.Messenger;
@@ -69,6 +70,7 @@ public class UpdateApplicationFormControllerTest {
 	private DatePropertyEditor datePropertyEditorMock;
 	private CountriesDAO countriesDAOMock;
 	private PersonalDetailDAO personalDetailDAOMock;
+	private ProgrammeDetailDAO programmeDetailDAOMock;
 
 	@Test
 	public void shouldSaveNewPersonalDetails() {
@@ -455,9 +457,10 @@ public class UpdateApplicationFormControllerTest {
 		countriesDAOMock = EasyMock.createMock(CountriesDAO.class);
 		
 		personalDetailDAOMock = EasyMock.createMock(PersonalDetailDAO.class);
+		programmeDetailDAOMock = EasyMock.createMock(ProgrammeDetailDAO.class);
 		
 		applicationController = new UpdateApplicationFormController(userServiceMock, applicationsServiceMock, userPropertyEditorMock, 
-				datePropertyEditorMock, countriesDAOMock, personalDetailDAOMock) {
+				datePropertyEditorMock, countriesDAOMock, personalDetailDAOMock, programmeDetailDAOMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

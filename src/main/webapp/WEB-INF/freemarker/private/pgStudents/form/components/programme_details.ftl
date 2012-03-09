@@ -11,7 +11,10 @@
 	
 	<div>
     	<form>
-
+            
+            <input type="hidden" name="id1" id="id1" value="${model.user.id?string("######")}"/>
+            <input type="hidden" id="appId1" name="appId1" value="${model.applicationForm.id?string("######")}"/>
+                
 			<div>
             	
             	<!-- Programme name (disabled) -->
@@ -19,7 +22,7 @@
                 	<label class="label">Programme</label>
                     <span class="hint" title="Tooltip demonstration."></span>
                     <div class="field">
-                    	<input class="full" type="text" value="Programme of interest" disabled="disabled" />
+                    	<input class="full" id="programmeDetailsProgrammeName" name="programmeDetailsProgrammeName" type="text" value="${model.applicationForm.project.program.title}" disabled="disabled" />
                     </div>
 				</div>
                   
@@ -28,8 +31,10 @@
                     <label class="label">Study Option</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                		<select class="full">
-	                    	<option>e.g. full time, part-time, distance</option>
+                		<select class="full" id="programmeDetailsStudyOption" name="programmeDetailsStudyOption">
+                		  <#list model.studyOptions as studyOption>
+                              <option value="${studyOption}">${studyOption.freeVal}</option>               
+                        </#list>
                       	</select>
                     </div>
 				</div>
@@ -39,7 +44,7 @@
                     <label class="label">Project</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                		<input class="full" type="text" placeholder="Project of interest" />
+                		<input class="full" id="programmeDetailsProjectName" name="programmeDetailsProjectName" type="text" value="${model.applicationForm.project.title}" disabled="disabled"/>
                     </div>
 				</div>
 			
@@ -88,7 +93,7 @@
                 <div class="row">
                 	<label class="label">Start Date</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <input class="half date" type="text" value="" />
+                    <input class="full" type="date" id="programmeDetailsStartDate" name="programmeDetailsStartDate" value="${(model.programme.programmeDetailsStartDate?string('yyyy/MM/dd'))!}"/>
                 </div>
 
                 <!-- Referrer -->
@@ -96,8 +101,10 @@
                 	<label class="label">Referrer</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<select class="full">
-	                    	<option>UCL graduate study website</option>
+                    	<select class="full" id="programmeDetailsReferrer" name="programmeDetailsReferrer">
+                    	 <#list model.referrers as referrer>
+                              <option value="${referrer}">${referrer.freeVal}</option>               
+                        </#list>
                       	</select>
                     </div>
 				</div>
@@ -106,8 +113,12 @@
 
             <div class="buttons">
             	<a class="button blue" href="#">Close</a>
-                <button class="blue" type="submit">Save</button>
+            	<#if !model.applicationForm.isSubmitted()>
+                    <button class="blue" type="button" id="programmeSaveButton">Save</button>
+                </#if>    
 			</div>
 
 		</form>
 	</div>
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>

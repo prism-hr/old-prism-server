@@ -6,11 +6,14 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Countries;
+import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
+import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
+import com.zuehlke.pgadmissions.dto.ProgrammeDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.dto.Referee;
 
@@ -26,6 +29,9 @@ public class ApplicationPageModel extends PageModel {
 	private EmploymentPosition employmentPosition;
 	private Referee referee;
 	private List<ResidenceStatus> residenceStatuses = new LinkedList<ResidenceStatus>();
+	private List<StudyOption> studyOptions = new LinkedList<StudyOption>();
+	private List<Referrer> referrers = new LinkedList<Referrer>();
+	private ProgrammeDetails programme;
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -106,7 +112,29 @@ public class ApplicationPageModel extends PageModel {
 
 	public void setResidenceStatuses(ResidenceStatus[] values) {
 		this.residenceStatuses.addAll(Arrays.asList(values));
-		
 	}
 	
+	public List<StudyOption> getStudyOptions() {
+		return studyOptions;
+	}
+	
+	public void setStudyOptions(StudyOption[] values) {
+		this.studyOptions.addAll(Arrays.asList(values));
+	}
+	
+	public List<Referrer> getReferrers() {
+		return referrers;
+	}
+	
+	public void setReferrers(Referrer[] values) {
+		this.referrers.addAll(Arrays.asList(values));
+	}
+
+	public void setProgrammeDetails(ProgrammeDetails programme) {
+		this.programme = programme;
+	}
+	
+	public ProgrammeDetails getProgramme() {
+		return programme;
+	}
 }

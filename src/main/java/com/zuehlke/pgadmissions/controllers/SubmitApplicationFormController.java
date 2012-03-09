@@ -18,11 +18,14 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
+import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
+import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
+import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
@@ -44,19 +47,21 @@ public class SubmitApplicationFormController {
 	private final UserPropertyEditor userPropertyEditor;
 	private final CountriesDAO countriesDAO;
 	private final PersonalDetailDAO personalDetailDAO;
+	private final ProgrammeDetailDAO proogrammeDetailDAO;
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/main_application_page";
 
 	SubmitApplicationFormController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public SubmitApplicationFormController(ApplicationsService applicationService,
-			UserPropertyEditor userPropertyEditor, CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO) {
+	public SubmitApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor, 
+			CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO, ProgrammeDetailDAO programmeDetailDAO) {
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.countriesDAO = countriesDAO;
 		this.personalDetailDAO = personalDetailDAO;
+		this.proogrammeDetailDAO = programmeDetailDAO;
 	}
 
 
@@ -101,6 +106,9 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setUser(user);
 			viewApplicationModel.setCountries(countriesDAO.getAllCountries());
 			viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());
+			viewApplicationModel.setStudyOptions(StudyOption.values());
+			viewApplicationModel.setReferrers(Referrer.values());
+			viewApplicationModel.setProgrammeDetails(DTOUtils.createProgrammeDetails(proogrammeDetailDAO.getProgrammeDetailWithApplication(applicationForm)));
 			
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,"model", viewApplicationModel);
 			

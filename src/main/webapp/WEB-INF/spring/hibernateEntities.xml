@@ -24,7 +24,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Telephone</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Messenger</value>	    
 	     		<value>com.zuehlke.pgadmissions.domain.PersonalDetail</value>
-	     		
+	     		<value>com.zuehlke.pgadmissions.domain.ProgrammeDetail</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

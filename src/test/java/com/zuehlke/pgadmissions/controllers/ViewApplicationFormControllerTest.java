@@ -21,6 +21,8 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
+import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -54,6 +56,8 @@ public class ViewApplicationFormControllerTest {
 	private Qualification qual;
 	private RegisteredUser applicant;
 	private CountriesDAO countriesDAOMock;
+	private PersonalDetailDAO personalDetailDAOMock;
+	private ProgrammeDetailDAO programmeDetailDAOMock;
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
@@ -248,7 +252,10 @@ public class ViewApplicationFormControllerTest {
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);
-		controller = new ViewApplicationFormController(applicationsServiceMock, applicationReviewServiceMock, countriesDAOMock);
+		personalDetailDAOMock = EasyMock.createMock(PersonalDetailDAO.class);
+		programmeDetailDAOMock = EasyMock.createMock(ProgrammeDetailDAO.class);
+		controller = new ViewApplicationFormController(applicationsServiceMock, applicationReviewServiceMock, 
+				countriesDAOMock, personalDetailDAOMock, programmeDetailDAOMock);
 //		Qualification qual = new QualificationBuilder().date_taken("2011/2/2").date_taken("sd").grade("ddf").institution("").application(submittedApprovedApplication).toQualification();
 		admin = new RegisteredUserBuilder().id(1).username("bob")
 								.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();

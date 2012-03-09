@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
+import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
+import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
@@ -34,18 +37,22 @@ public class ViewApplicationFormController {
 	private ApplicationsService applicationService;
 	private ApplicationReviewService applicationReviewService;
 	private final CountriesDAO countriesDAO;
+	private final PersonalDetailDAO personalDetailDAO;
+	private final ProgrammeDetailDAO proogrammeDetailDAO;
 
 	ViewApplicationFormController() {
-		this(null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public ViewApplicationFormController(
-			ApplicationsService applicationService,
-			ApplicationReviewService applicationReviewService, CountriesDAO countriesDAO) {
+			ApplicationsService applicationService, ApplicationReviewService applicationReviewService, 
+			CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO, ProgrammeDetailDAO programmeDetailDAO) {
 		this.applicationService = applicationService;
 		this.applicationReviewService = applicationReviewService;
 		this.countriesDAO = countriesDAO;
+		this.personalDetailDAO = personalDetailDAO;
+		this.proogrammeDetailDAO = programmeDetailDAO;
 		
 	}
 
@@ -61,7 +68,7 @@ public class ViewApplicationFormController {
 		ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
 
 		viewApplicationModel.setApplicationForm(applicationForm);
-		viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(new PersonalDetail()));
+		viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(personalDetailDAO.getPersonalDetailWithApplication(applicationForm)));
 		viewApplicationModel.setAddress(new Address());
 		viewApplicationModel.setFunding(new Funding());
 		viewApplicationModel.setQualification(new QualificationDTO());
@@ -69,6 +76,9 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setReferee(new Referee());
 		viewApplicationModel.setCountries(countriesDAO.getAllCountries());
 		viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());
+		viewApplicationModel.setStudyOptions(StudyOption.values());
+		viewApplicationModel.setReferrers(Referrer.values());
+		viewApplicationModel.setProgrammeDetails(DTOUtils.createProgrammeDetails(proogrammeDetailDAO.getProgrammeDetailWithApplication(applicationForm)));
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}

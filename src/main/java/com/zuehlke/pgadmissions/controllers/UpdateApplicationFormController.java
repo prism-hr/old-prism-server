@@ -18,16 +18,21 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
+import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
+import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
+import com.zuehlke.pgadmissions.dto.ProgrammeDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.dto.Referee;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
@@ -41,6 +46,7 @@ import com.zuehlke.pgadmissions.validators.AddressValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
 import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
+import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 
 @Controller
@@ -57,15 +63,17 @@ public class UpdateApplicationFormController {
 	private final DatePropertyEditor datePropertyEditor;
 	private final CountriesDAO countriesDAO;
 	private final PersonalDetailDAO personalDetailDAO;
+	private final ProgrammeDetailDAO programmeDetailDAO;
 
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService,
-			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO) {
+			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, 
+			CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO, ProgrammeDetailDAO programmeDetailDAO) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
@@ -73,6 +81,7 @@ public class UpdateApplicationFormController {
 		this.datePropertyEditor = datePropertyEditor;
 		this.countriesDAO = countriesDAO;
 		this.personalDetailDAO = personalDetailDAO;
+		this.programmeDetailDAO = programmeDetailDAO;
 
 	}
 
@@ -100,18 +109,18 @@ public class UpdateApplicationFormController {
 			if (ps == null) {
 				ps = new PersonalDetail();
 			}
-				
-				ps.setFirstName(personalDetails.getFirstName());
-				ps.setLastName(personalDetails.getLastName());
-				ps.setEmail(personalDetails.getEmail());
-				ps.setGender(Gender.fromString(personalDetails.getGender()));
-				ps.setDateOfBirth(personalDetails.getDateOfBirth());
-				ps.setCountry(countriesDAO.getCountryWithName(personalDetails.getCountry()));
-				ps.setResidenceCountry(countriesDAO.getCountryWithName(personalDetails.getResidenceCountry()));
-				ps.setResidenceStatus(personalDetails.getResidenceStatus());
-				ps.setApplication(application);
-				
-				personalDetailDAO.save(ps);
+
+			ps.setFirstName(personalDetails.getFirstName());
+			ps.setLastName(personalDetails.getLastName());
+			ps.setEmail(personalDetails.getEmail());
+			ps.setGender(Gender.fromString(personalDetails.getGender()));
+			ps.setDateOfBirth(personalDetails.getDateOfBirth());
+			ps.setCountry(countriesDAO.getCountryWithName(personalDetails.getCountry()));
+			ps.setResidenceCountry(countriesDAO.getCountryWithName(personalDetails.getResidenceCountry()));
+			ps.setResidenceStatus(personalDetails.getResidenceStatus());
+			ps.setApplication(application);
+
+			personalDetailDAO.save(ps);
 
 		}
 
@@ -126,6 +135,54 @@ public class UpdateApplicationFormController {
 		modelMap.put("formDisplayState", "open");
 
 		return new ModelAndView("private/pgStudents/form/components/personal_details", modelMap);
+	}
+
+	@RequestMapping(value = "/editProgramme", method = RequestMethod.POST)
+	@Transactional
+	public ModelAndView editPersonalDetails(@ModelAttribute ProgrammeDetails programme, @RequestParam Integer id1,
+			@RequestParam Integer appId1, BindingResult result, ModelMap modelMap) {
+
+		ApplicationForm application = applicationService.getApplicationById(appId1);
+
+		if (application.isSubmitted()) {
+			throw new CannotUpdateApplicationException();
+		}
+
+		ProgrammeDetailsValidator personalDetailsValidator = new ProgrammeDetailsValidator();
+		personalDetailsValidator.validate(programme, result);
+
+		RegisteredUser user = userService.getUser(id1);
+		if (!user.equals(SecurityContextHolder.getContext().getAuthentication().getDetails())) {
+			throw new AccessDeniedException();
+		}
+
+		if (!result.hasErrors()) {
+			ProgrammeDetail pd =  programmeDetailDAO.getProgrammeDetailWithApplication(application);
+			if (pd == null) {
+				pd = new ProgrammeDetail();
+			}
+
+			pd.setProgrammeName(programme.getProgrammeDetailsProgrammeName());
+			pd.setProjectName(programme.getProgrammeDetailsProjectName());
+			pd.setStartDate(programme.getProgrammeDetailsStartDate());
+			pd.setReferrer(programme.getProgrammeDetailsReferrer());
+			pd.setStudyOption(programme.getProgrammeDetailsStudyOption());
+			pd.setApplication(application);
+
+			programmeDetailDAO.save(pd);
+
+		}
+
+		ApplicationPageModel model = new ApplicationPageModel();
+		model.setUser(user);
+		model.setApplicationForm(application);
+		model.setProgrammeDetails(programme);
+		model.setStudyOptions(StudyOption.values());
+		model.setReferrers(Referrer.values());
+		model.setResult(result);
+		modelMap.put("model", model);
+
+		return new ModelAndView("private/pgStudents/form/components/programme_details", modelMap);
 	}
 
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
@@ -339,11 +396,11 @@ public class UpdateApplicationFormController {
 	Qualification newQualification() {
 		return new Qualification();
 	}
-	
+
 	@RequestMapping(value = "/addReferee", method = RequestMethod.POST)
 	@Transactional
 	public ModelAndView addReferee(@ModelAttribute Referee ref, @RequestParam Integer id, @RequestParam Integer appId,
-			 ModelMap modelMap) {
+			ModelMap modelMap) {
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
 		if (application.isSubmitted()) {
@@ -355,7 +412,7 @@ public class UpdateApplicationFormController {
 		model.setUser(user);
 		ApplicationForm applicationForm = application;
 		model.setApplicationForm(applicationForm);
-//		model.setResult(result);
+		//		model.setResult(result);
 
 		com.zuehlke.pgadmissions.domain.Referee referee;
 		if (ref.getRefereeId() == null) {

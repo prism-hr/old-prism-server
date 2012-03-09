@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.utils;
 
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
+import com.zuehlke.pgadmissions.dto.ProgrammeDetails;
 
 public class DTOUtils {
 
@@ -24,5 +26,17 @@ public class DTOUtils {
 			}
 		}
 		return personalDetails;
+	}
+
+	public static ProgrammeDetails createProgrammeDetails(ProgrammeDetail programmeDetailWithApplication) {
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();
+		if (programmeDetailWithApplication != null) {
+			programmeDetails.setProgrammeDetailsProgrammeName(programmeDetailWithApplication.getProgrammeName());
+			programmeDetails.setProgrammeDetailsProjectName(programmeDetailWithApplication.getProjectName());
+			programmeDetails.setProgrammeDetailsReferrer(programmeDetailWithApplication.getReferrer());
+			programmeDetails.setProgrammeDetailsStartDate(programmeDetailWithApplication.getStartDate());
+			programmeDetails.setProgrammeDetailsStudyOption(programmeDetailWithApplication.getStudyOption());
+		}
+		return programmeDetails;
 	}
 }

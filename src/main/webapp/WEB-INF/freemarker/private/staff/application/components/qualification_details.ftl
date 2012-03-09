@@ -17,7 +17,7 @@
                                     <td>${(qualification.qualificationAwardDate?string('yyyy/MM/dd'))!}</td>
                                     <td>${qualification.qualificationScore}</td>
                                     <td>${qualification.qualificationLevel}</td>
-                                    <td>${qualification.qualificationStartDate?string('yyyy/MM/dd')}</td>
+                                    <td>${(qualification.qualificationStartDate?string('yyyy/MM/dd'))!}</td>
                                     <td>${qualification.qualificationLanguage}</td>
                                     <td>${qualification.qualificationProgramName}</td>
                                </tr>

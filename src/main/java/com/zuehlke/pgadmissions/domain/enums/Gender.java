@@ -14,4 +14,15 @@ public enum Gender {
 
 		return displayValue;
 	}
+	
+	 public static Gender fromString(String text) {
+		    if (text != null) {
+		      for (Gender b : Gender.values()) {
+		        if (text.equalsIgnoreCase(b.displayValue)) {
+		          return b;
+		        }
+		      }
+		    }
+		    return null;
+		  }
 }

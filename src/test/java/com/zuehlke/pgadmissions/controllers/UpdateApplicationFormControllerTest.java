@@ -81,6 +81,8 @@ public class UpdateApplicationFormControllerTest {
 		Countries country = new Countries();
 		country.setCode("EN"); country.setName("England"); country.setId(1);
 		EasyMock.expect(countriesDAOMock.getAllCountries()).andReturn(Arrays.asList(country));
+		EasyMock.expect(countriesDAOMock.getCountryWithName("England")).andReturn(country);
+		EasyMock.expect(countriesDAOMock.getCountryWithName("England")).andReturn(country);
 		PersonalDetail ps = new PersonalDetail();
 		ps.setId(2);
 		EasyMock.expect(personalDetailDAOMock.getPersonalDetailWithApplication(form)).andReturn(ps);
@@ -91,10 +93,10 @@ public class UpdateApplicationFormControllerTest {
 		personalDetails.setFirstName("New First Name");
 		personalDetails.setLastName("New Last Name");
 		personalDetails.setEmail("newemail@email.com");
-		personalDetails.setGender(Gender.FEMALE);
+		personalDetails.setGender("Female");
 		personalDetails.setDateOfBirth(new Date());
-		personalDetails.setCountry(country);
-		personalDetails.setResidenceCountry(country);
+		personalDetails.setCountry("England");
+		personalDetails.setResidenceCountry("England");
 		personalDetails.setResidenceStatus(ResidenceStatus.REFUGEE_STATUS);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
 		ModelAndView modelAndView = applicationController.editPersonalDetails(personalDetails, 1, 2, mappingResult, new ModelMap());

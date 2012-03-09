@@ -31,6 +31,7 @@ public class PersonalDetail extends DomainObject<Integer>{
 	@Column(name = "last_name")
 	private String lastName;
 	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.GenderEnumUserType")
 	private Gender gender;
 	private String email;
 	

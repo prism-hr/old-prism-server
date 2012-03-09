@@ -54,7 +54,7 @@
                                 <span style="color:red;"><@spring.message  model.result.getFieldError('personalDetails.firstName').code /></span>                           
                         </#if>
                     	<#else>
-                    		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.firstName}" name="email" id="email" />	          
+                    		<input class="full" readonly="readonly" type="text" value="${model.personalDetails.firstName}" name="firstName" id="firstName" />	          
                     	</#if>
                     </div>
                   </div>
@@ -71,16 +71,17 @@
                                 <span style="color:red;"><@spring.message  model.result.getFieldError('personalDetails.lastName').code /></span>                           
                         </#if>
                     <#else>
-                    		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.lastName}" name="email" id="email" />	          
+                    		<input class="full" readonly="readonly" type="text" value="${model.personalDetails.lastName}" name="lastName" id="lastName" />	          
                     </#if>
                     </div>
                   </div>
                 	<div class="row">
                   	<label class="label">Gender</label>
                     <div class="field">
-                      <label><input type="radio" name="gender" /> Male</label>
-                      <label><input type="radio" name="gender" /> Female</label>
-                      <label><input type="radio" name="gender" /> Prefer not to say</label>
+                      <label><input type="radio" name="genderRadio" id="maleGender" value="MALE"/> Male</label>
+                      <label><input type="radio" name="genderRadio" id="femaleGender" value="FEMALE"/> Female</label>
+                      <label><input type="radio" name="genderRadio" id="notSaidGender" value="PREFER NOT TO SAY"/> Prefer not to say</label>
+                      <input type="hidden" id="gender" name="gender"/>
                     </div>
                   </div>
                 	<div class="row">
@@ -88,9 +89,9 @@
                     <span class="hint"></span>
                     <div class="field">
                     <#if !model.applicationForm.isSubmitted()>
-                        <input class="full" type="date" value="" value="${(model.personalDetails.dateOfBirth?string('yyyy/MM/dd'))!}" name="dateOfBirth" id="dateOfBirth"/>
+                        <input class="full" type="date" value="${(model.personalDetails.dateOfBirth?string('yyyy/MM/dd'))!}" name="dateOfBirth" id="dateOfBirth"/>
                     <#else>
-                        <input class="full" readonly="readonly" type="email" value="${(model.personalDetails.dateOfBirth?string('yyyy/MM/dd'))!}" name="email" id="email" />             
+                        <input class="full" readonly="readonly" type="date" value="${(model.personalDetails.dateOfBirth?string('yyyy/MM/dd'))!}" name="dateOfBirth" id="dateOfBirth" />             
                     </#if>    
                     </div>
                   </div>
@@ -101,7 +102,7 @@
                   	<label class="label">Country of Birth</label>
                     <span class="hint"></span>
                     <div class="field">
-                      <select>
+                      <select name="country" id="country">
                         <#list model.countries as country>
                               <option value="${country.name}">${country.name}</option>               
                         </#list>
@@ -158,7 +159,7 @@
                   	<span class="label">Country</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select>
+                      <select name="residenceCountry" id="residenceCountry">
                         <#list model.countries as country>
                               <option value="${country.name}">${country.name}</option>               
                         </#list>
@@ -169,9 +170,9 @@
                     <span class="label">Status</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select>
+                      <select name="residenceStatus" id="residenceStatus">
                          <#list model.residenceStatuses as residenceStatus>
-                              <option value="${residenceStatus.freeVal}">${residenceStatus.freeVal}</option>               
+                              <option value="${residenceStatus}">${residenceStatus.freeVal}</option>               
                         </#list>
                       </select>
                     </div>

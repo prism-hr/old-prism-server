@@ -24,7 +24,7 @@ public class PersonalDetailDAO {
 
 	@Transactional
 	public PersonalDetail getPersonalDetailWithApplication(ApplicationForm form) {
-		return (PersonalDetail) sessionFactory.getCurrentSession().createCriteria(PersonalDetail.class).add(Restrictions.eq("application", form));
+		return (PersonalDetail) sessionFactory.getCurrentSession().createCriteria(PersonalDetail.class).add(Restrictions.eq("application", form)).uniqueResult();
 	}
 
 	@Transactional

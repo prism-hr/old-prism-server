@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
@@ -103,10 +104,10 @@ public class UpdateApplicationFormController {
 				ps.setFirstName(personalDetails.getFirstName());
 				ps.setLastName(personalDetails.getLastName());
 				ps.setEmail(personalDetails.getEmail());
-				ps.setGender(personalDetails.getGender());
+				ps.setGender(Gender.fromString(personalDetails.getGender()));
 				ps.setDateOfBirth(personalDetails.getDateOfBirth());
-				ps.setCountry(personalDetails.getCountry());
-				ps.setResidenceCountry(personalDetails.getResidenceCountry());
+				ps.setCountry(countriesDAO.getCountryWithName(personalDetails.getCountry()));
+				ps.setResidenceCountry(countriesDAO.getCountryWithName(personalDetails.getResidenceCountry()));
 				ps.setResidenceStatus(personalDetails.getResidenceStatus());
 				ps.setApplication(application);
 				

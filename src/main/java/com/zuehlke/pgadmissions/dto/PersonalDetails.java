@@ -4,8 +4,6 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.Countries;
-import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 
 @Component
@@ -14,10 +12,10 @@ public class PersonalDetails {
 	private String firstName;
 	private String lastName;
 	private String email;
-	private Gender gender;
+	private String gender;
 	private Date dateOfBirth;
-	private Countries country;
-	private Countries residenceCountry;
+	private String country;
+	private String residenceCountry;
 	private ResidenceStatus residenceStatus;
 	
 	public String getEmail() {
@@ -44,11 +42,11 @@ public class PersonalDetails {
 		this.lastName = lastName;
 	}
 	
-	public Gender getGender() {
+	public String getGender() {
 		return gender;
 	}
 	
-	public void setGender(Gender gender) {
+	public void setGender(String gender) {
 		this.gender = gender;
 	}
 	
@@ -60,28 +58,28 @@ public class PersonalDetails {
 		this.dateOfBirth = dateOfBirth;
 	}
 	
-	public Countries getCountry() {
-		return country;
-	}
-	
-	public void setCountry(Countries country) {
-		this.country = country;
-	}
-	
-	public Countries getResidenceCountry() {
-		return residenceCountry;
-	}
-	
-	public void setResidenceCountry(Countries residenceCountry) {
-		this.residenceCountry = residenceCountry;
-	}
-	
 	public ResidenceStatus getResidenceStatus() {
 		return residenceStatus;
 	}
 	
 	public void setResidenceStatus(ResidenceStatus residenceStatus) {
 		this.residenceStatus = residenceStatus;
+	}
+	
+	public String getCountry() {
+		return country;
+	}
+	
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	
+	public String getResidenceCountry() {
+		return residenceCountry;
+	}
+	
+	public void setResidenceCountry(String residenceCountry) {
+		this.residenceCountry = residenceCountry;
 	}
 	
 }

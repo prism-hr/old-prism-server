@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import javax.persistence.Column;
-
 import com.zuehlke.pgadmissions.domain.Messenger;
 
 public class MessengerBuilder {

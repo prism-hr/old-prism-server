@@ -50,7 +50,7 @@
                 	
                 	<div class="row">
                   		<label class="label">Date of Birth</label>
-                    	<div class="field">${(model.personalDetails.?string('yyyy/MM/dd'))!}</div>
+                    	<div class="field">${(model.personalDetails.dateOfBirth?string('yyyy/MM/dd'))!}</div>
                   	</div>
                 
                 </div>

@@ -54,7 +54,7 @@
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
                     	</#if>
                     	<#else>
-                    		<input class="full" readonly="readonly" type="text" value="${model.personalDetails.firstName}" name="firstName" id="firstName" />	          
+                    		<input class="full" readonly="readonly" type="text" value="${model.personalDetails.firstName!}" name="firstName" id="firstName" />	          
                     	</#if>
                     </div>
                   </div>
@@ -68,7 +68,7 @@
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
                     	</#if>
                     <#else>
-                    		<input class="full" readonly="readonly" type="text" value="${model.personalDetails.lastName}" name="lastName" id="lastName" />	          
+                    		<input class="full" readonly="readonly" type="text" value="${model.personalDetails.lastName!}" name="lastName" id="lastName" />	          
                     </#if>
                     </div>
                   </div>
@@ -203,7 +203,7 @@
                     			<span style="color:red;"><@spring.message  model.result.getFieldError('email').code /></span>                    		
                     		</#if>
                     	<#else>
-                    		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.email}" name="email" id="email" />	          
+                    		<input class="full" readonly="readonly" type="email" value="${model.personalDetails.email!}" name="email" id="email" />	          
                     	</#if>
                     </div>
                   </div>

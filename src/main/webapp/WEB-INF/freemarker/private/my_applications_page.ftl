@@ -9,14 +9,16 @@
 
 		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		
+		<!-- Styles for Application List Page -->
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application_list.css' />"/>
+		<!-- Styles for Application List Page -->
 
-		<link type="text/css" rel="stylesheet" href="css/style.css" />
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 	
-		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/style.css' />"/>
-		
 		<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
 	    <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>

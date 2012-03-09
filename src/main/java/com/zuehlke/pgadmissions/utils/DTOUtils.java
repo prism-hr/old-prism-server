@@ -1,16 +1,27 @@
 package com.zuehlke.pgadmissions.utils;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.dto.PersonalDetails;
 
 public class DTOUtils {
 
-	public static PersonalDetails createPersonalDetails(ApplicationForm applicationForm) {
+	public static PersonalDetails createPersonalDetails(PersonalDetail detail) {
 		PersonalDetails personalDetails = new PersonalDetails();
-		if(applicationForm.getApplicant() != null){
-			personalDetails.setFirstName(applicationForm.getApplicant().getFirstName());
-			personalDetails.setLastName(applicationForm.getApplicant().getLastName());
-			personalDetails.setEmail(applicationForm.getApplicant().getEmail());
+		if (detail != null) {
+			personalDetails.setFirstName(detail.getFirstName());
+			personalDetails.setLastName(detail.getLastName());
+			personalDetails.setEmail(detail.getEmail());
+			personalDetails.setDateOfBirth(detail.getDateOfBirth());
+			if (detail.getCountry()!= null) {
+				personalDetails.setCountry(detail.getCountry().getName());
+			}
+			if (detail.getResidenceCountry() != null) {
+				personalDetails.setResidenceCountry(detail.getResidenceCountry().getName());
+			}
+			personalDetails.setResidenceStatus(detail.getResidenceStatus());
+			if (detail.getGender()!= null) {
+				personalDetails.setGender(detail.getGender().displayValue());
+			}
 		}
 		return personalDetails;
 	}

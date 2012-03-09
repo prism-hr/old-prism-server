@@ -95,27 +95,6 @@ public class ViewApplicationFormControllerTest {
 	}
 	
 	@Test
-	public void shouldCreatePersonalDetailsFromApplicationApplicantAndSetOnModel() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();		
-		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
-		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
-		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
-		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
-		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
-		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
-		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
-		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(userMock, applicationsServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
-		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
-		assertEquals("bob", model.getPersonalDetails().getFirstName());
-		assertEquals("Smith", model.getPersonalDetails().getLastName());
-		assertEquals("email@test.com", model.getPersonalDetails().getEmail());
-	}
-	
-	@Test
 	public void shouldCreateQualificationAndSetOnModel() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();		
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);

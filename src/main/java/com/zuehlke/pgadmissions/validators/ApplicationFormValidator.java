@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
+import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -19,13 +20,25 @@ public class ApplicationFormValidator implements Validator{
 		if (applicationFormDetails.getNumberOfAddresses() == 0) {
 			errors.rejectValue("numberOfAddresses", "user.addresses.notempty");
 		}
-		
+
 		if (applicationFormDetails.getNumberOfContactAddresses() == 0) {
 			errors.rejectValue("numberOfContactAddresses", "user.contactAddresses.notempty");
 		}
-		
+
 		if (applicationFormDetails.getNumberOfContactAddresses() > 1) {
 			errors.rejectValue("numberOfContactAddresses", "user.contactAddresses.notvalid");
+		}
+
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationFormDetails.getPersonalDetails(), "personalDetails");
+
+		if (applicationFormDetails.getPersonalDetails() == null) {
+			errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
+		} else {
+			PersonalDetailsValidator validator = new PersonalDetailsValidator();
+			validator.validate(applicationFormDetails.getPersonalDetails(), mappingResult);
+			if (mappingResult.hasErrors()) {
+				errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
+			}
 		}
 	}
 }

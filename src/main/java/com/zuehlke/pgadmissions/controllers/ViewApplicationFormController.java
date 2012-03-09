@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
@@ -60,7 +61,7 @@ public class ViewApplicationFormController {
 		ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
 
 		viewApplicationModel.setApplicationForm(applicationForm);
-		viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(applicationForm));
+		viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(new PersonalDetail()));
 		viewApplicationModel.setAddress(new Address());
 		viewApplicationModel.setFunding(new Funding());
 		viewApplicationModel.setQualification(new QualificationDTO());

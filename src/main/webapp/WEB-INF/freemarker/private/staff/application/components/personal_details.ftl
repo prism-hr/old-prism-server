@@ -30,27 +30,27 @@
 					<div class="row">
                   		<label class="label">First Name</label>
                     	<div class="field">
-                    		${model.applicationForm.applicant.firstName}
+                    		${model.personalDetails.firstName}
                     	</div>
                     </div>
 
                 	<div class="row">
 	                  	<label class="label">Last Name</label>
     	                <div class="field">
-        	            	${model.applicationForm.applicant.lastName}
+        	            	${model.personalDetails.lastName}
             	        </div>
                  	</div>
 
                 	<div class="row">
                   		<label class="label">Gender</label>
                     	<div class="field">
-                      		Male
+                      		${model.personalDetails.gender}
                     	</div>
                   	</div>
                 	
                 	<div class="row">
                   		<label class="label">Date of Birth</label>
-                    	<div class="field">39/08/92</div>
+                    	<div class="field">${model.personalDetails.dateOfBirth}</div>
                   	</div>
                 
                 </div>
@@ -61,7 +61,7 @@
                 	<div class="row">
                   		<label class="label">Country of Birth</label>
                     	<div class="field">
-                    		United Kingdom
+                    		${model.personalDetails.country}
                     	</div>
                   	</div>
                   	
@@ -70,13 +70,19 @@
 				<!-- Nationality -->
               	<div>
                 	
-                	<strong>Nationality</strong>
+                	<strong>Residence</strong>
                 	<div class="row">
                   		<span class="label">Country</span>
                     	<div class="field">
-                      		British
+                      		${model.personalDetails.residenceCountry}
                     	</div>
                   	</div>
+                  	<div class="row">
+                        <span class="label">Status</span>
+                        <div class="field">
+                            ${model.personalDetails.residenceStatus.freeVal}
+                        </div>
+                    </div>
                   	
                 </div>
 
@@ -99,35 +105,6 @@
                 
                 </div>
 
-				<!-- Visa Status -->
-              	<div>
-                	<strong>UK Visa</strong>
-                	<div class="row">
-                  		<span class="label">Type</span>
-                    	<div class="field">
-                      		Student
-                    	</div>
-                  	</div>
-                	
-                	<div class="row">
-                  		<span class="label">Date of Issue</span>
-                    	<div class="field">98/16/64</div>
-                  	</div>
-                	
-                	<div class="row">
-                  		<span class="label">Date of Expiry</span>
-                    	<div class="field">98/16/65</div>
-                  	</div>
-                	
-                	<div class="row">
-                  		<span class="label">Supporting Document</span>
-                    	<div class="field">
-                    		...
-                    	</div>
-                  	</div>
-                
-                </div>
-
 				<!-- Contact Details -->
               	<div>
                 	
@@ -135,7 +112,7 @@
                 	<div class="row">
                 		<span class="label">Email</span>
                     	<div class="field">
-	                    	bob@smith.com
+	                    	${model.personalDetails.email}
                     	</div>
                   	</div>
                 

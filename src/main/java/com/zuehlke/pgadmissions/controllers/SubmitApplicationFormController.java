@@ -17,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
@@ -40,19 +42,21 @@ public class SubmitApplicationFormController {
 
 	private final ApplicationsService applicationService;
 	private final UserPropertyEditor userPropertyEditor;
-	private CountriesDAO countriesDAO;
+	private final CountriesDAO countriesDAO;
+	private final PersonalDetailDAO personalDetailDAO;
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/main_application_page";
 
 	SubmitApplicationFormController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
 	public SubmitApplicationFormController(ApplicationsService applicationService,
-			UserPropertyEditor userPropertyEditor, CountriesDAO countriesDAO) {
+			UserPropertyEditor userPropertyEditor, CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO) {
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.countriesDAO = countriesDAO;
+		this.personalDetailDAO = personalDetailDAO;
 	}
 
 
@@ -65,6 +69,8 @@ public class SubmitApplicationFormController {
 		}
 
 		appForm.setNumberOfAddresses(applicationForm.getAddresses().size());
+		PersonalDetail personalDetailforApplication = personalDetailDAO.getPersonalDetailWithApplication(applicationForm);
+		appForm.setPersonalDetails(DTOUtils.createPersonalDetails(personalDetailforApplication));
 		
 		int numberOfContactAddresses = 0;
 		for (com.zuehlke.pgadmissions.domain.Address address : applicationForm.getAddresses()) {
@@ -84,7 +90,7 @@ public class SubmitApplicationFormController {
 			ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
 
 			viewApplicationModel.setApplicationForm(applicationForm);
-			viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(applicationForm));
+			viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(personalDetailforApplication));
 			viewApplicationModel.setAddress(new Address());
 			viewApplicationModel.setFunding(new com.zuehlke.pgadmissions.dto.Funding());
 			viewApplicationModel.setQualification(new QualificationDTO());

@@ -7,10 +7,10 @@
                             <br/>
                             <div>
                             <#if model.hasError('numberOfAddresses')>                           
-                                    <span style="color:red;"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>                        
+                                    <p style="color:red;"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></p>                        
                             </#if>
                             <#if model.hasError('numberOfContactAddresses')>                           
-                                    <span style="color:red;"><@spring.message  model.result.getFieldError('numberOfContactAddresses').code /></span><br/>                        
+                                    <p style="color:red;"><@spring.message  model.result.getFieldError('numberOfContactAddresses').code /></p>                      
                             </#if>
                             
                              <table cellspacing=10>

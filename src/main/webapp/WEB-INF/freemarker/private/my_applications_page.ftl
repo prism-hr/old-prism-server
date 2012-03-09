@@ -26,7 +26,16 @@
 	    
 	</head>
 	
+	<!--[if IE 9]>
+	<body class="ie9">
+	<![endif]-->
+	<!--[if lt IE 9]>
+	<body class="old-ie">
+	<![endif]-->
+	<!--[if (gte IE 9)|!(IE)]><!-->
 	<body>
+	<!--<![endif]-->
+	
 		<!-- Wrapper Starts -->
 		<div id="wrapper">
 

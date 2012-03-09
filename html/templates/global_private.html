@@ -16,8 +16,16 @@
 <link type="text/css" rel="stylesheet" href="../css/login.css" />
 </head>
 
-<!-- UPDATED: changed BODY tag's ID to "bg" from "login". -->
-<body id="bg">
+<!-- UPDATED: using conditional comments for IE to add a class to the body tag, based on the IE version number. -->
+<!--[if IE 9]>
+<body class="ie9">
+<![endif]-->
+<!--[if lt IE 9]>
+<body class="old-ie">
+<![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<body>
+<!--<![endif]-->
 
 <div id="wrapper">
 

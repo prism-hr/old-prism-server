@@ -18,12 +18,12 @@ ul.key li { float: left; margin-right: 1em; }
 #filter select { margin-left: 10px; padding: 2px 0; width: 160px }
 #filter .search-box button { margin-top: 1px; }
 
-#pagination { display: table; margin: 20px auto 0; width: 100%; }
+#pagination { margin: 20px auto 0; overflow: hidden; width: 100%; }
 #pagination a { color: #448; }
-#pagination div { display: table-cell; text-align: center; }
+#pagination div { float: left; text-align: center; }
 #pagination .page-number, #pagination .show-number { width: 20%; }
 #pagination .previous, #pagination .next { width: 10%; }
-#pagination ul.pages { display: table-cell; list-style: none; text-align: center; width: 40%; }
+#pagination ul.pages { float: left; overflow: hidden; list-style: none; text-align: center; width: 40%; }
 #pagination ul.pages li { display: inline; }
 #pagination ul.pages li a { padding: 0 5px; }
 #pagination ul.pages li.current { font-weight: bold; }

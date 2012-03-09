@@ -56,7 +56,6 @@ public class UpdateApplicationFormController {
 	private final DatePropertyEditor datePropertyEditor;
 	private final CountriesDAO countriesDAO;
 	private final PersonalDetailDAO personalDetailDAO;
-	private static final String APPLICATON_REFEREEE_VIEW_NAME =  "private/pgStudents/form/components/referee_details";;
 
 
 	UpdateApplicationFormController() {
@@ -65,8 +64,7 @@ public class UpdateApplicationFormController {
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService,
-			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, CountriesDAO countriesDAO) {
-			CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO) {
+			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;

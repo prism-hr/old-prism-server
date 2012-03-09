@@ -24,6 +24,11 @@ public class PersonalDetailsValidator implements Validator{
 		if (!EmailValidator.getInstance().isValid(personalDetails.getEmail())) {
 			errors.rejectValue("email", "user.email.notvalid");
 		}
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", "user.gemder.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", "user.dateOfBirth.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "user.country.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", "user.residenceCountry.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceStatus", "user.residenceStatus.notempty");
 	}
 
 }

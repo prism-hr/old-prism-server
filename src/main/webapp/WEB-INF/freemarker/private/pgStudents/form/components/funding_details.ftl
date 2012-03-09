@@ -59,7 +59,6 @@
         <!-- Non-rendering data -->
         <input type="hidden" id="fundingId" name="fundingId"/>
               
-        <#if !model.applicationForm.isSubmitted()>
 		<form>
                 
 			<div>
@@ -69,9 +68,13 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                 	
                 	<div class="field">
+                	<#if !model.applicationForm.isSubmitted()>
                 		<input id="fundingType" name="fundingType" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
                 		<#if model.hasError('fundingType')>
                         	<span class="invalid"><@spring.message  model.result.getFieldError('fundingType').code /></span>                           
+                        </#if>
+                        <#else>
+                            <input id="fundingType" name="fundingType" readonly="readonly" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
                         </#if>
 					</div>
 				</div>
@@ -80,11 +83,14 @@
                 <div class="row">
                 	<span class="label">Description</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
-				
 					<div class="field">
+				    <#if !model.applicationForm.isSubmitted()>
                     	<input id="fundingDescription" name="fundingDescription" class="full" type="text" value="${model.funding.fundingDescription!}" />
                     <#if model.hasError('fundingDescription')>                           
                     	<span class="invalid"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
+                    </#if>
+                    <#else>
+                        <input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${model.funding.fundingDescription!}" />
                     </#if>
                     </div>
                     
@@ -95,10 +101,14 @@
                   	<span class="label">Value of Award</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
+                    <#if !model.applicationForm.isSubmitted()>
                     	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${model.funding.fundingValue!}" />
 	                    <#if model.hasError('fundingValue')>
 	                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingValue').code /></span>
 	                    </#if>
+                    <#else>
+                       <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${model.funding.fundingValue!}" />
+                    </#if>
                     </div>
 				</div>
                   
@@ -107,10 +117,14 @@
                   	<span class="label" data-desc="Tooltip demonstration.">Award Date</span>
                     <span class="hint"></span>
                     <div class="field">
+                    <#if !model.applicationForm.isSubmitted()>
 	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('yyyy/MM/dd'))!}" />
                     	<#if model.hasError('fundingAwardDate')>                           
                     		<span class="invalid""><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           
                     	</#if>
+                    <#else>
+                        <input id="fundingAwardDate" name="fundingAwardDate" readonly="readonly" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('yyyy/MM/dd'))!}" />	
+                    </#if>
                     </div>
                     
                 </div>
@@ -128,6 +142,7 @@
 
 			</div>
 
+        <#if !model.applicationForm.isSubmitted()>
 			<div class="buttons">
             	
             	<a class="button" type="button" id="fundingCancelButton" name="fundingCancelButton">Cancel</a>
@@ -135,9 +150,9 @@
                 <button class="blue" type="button" id="fundingSaveAddButton" name="fundingSaveAddButton" value="add">Save and Add</button>
                 
 			</div>
+	   </#if>
 
 		</form>
-	   </#if>
 	</div>
 
 	<script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>

@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
@@ -66,6 +67,7 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setEmploymentPosition(new EmploymentPosition());
 		viewApplicationModel.setReferee(new Referee());
 		viewApplicationModel.setCountries(countriesDAO.getAllCountries());
+		viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}

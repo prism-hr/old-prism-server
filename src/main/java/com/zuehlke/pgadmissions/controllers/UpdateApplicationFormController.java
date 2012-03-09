@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
@@ -52,20 +55,25 @@ public class UpdateApplicationFormController {
 	private final UserPropertyEditor userPropertyEditor;
 	private final DatePropertyEditor datePropertyEditor;
 	private final CountriesDAO countriesDAO;
+	private final PersonalDetailDAO personalDetailDAO;
+	private static final String APPLICATON_REFEREEE_VIEW_NAME =  "private/pgStudents/form/components/referee_details";;
+
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService,
 			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, CountriesDAO countriesDAO) {
+			CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.userService = userService;
 		this.datePropertyEditor = datePropertyEditor;
 		this.countriesDAO = countriesDAO;
+		this.personalDetailDAO = personalDetailDAO;
 
 	}
 
@@ -89,10 +97,23 @@ public class UpdateApplicationFormController {
 		}
 
 		if (!result.hasErrors()) {
-			user.setLastName(personalDetails.getLastName());
-			user.setFirstName(personalDetails.getFirstName());
-			user.setEmail(personalDetails.getEmail());
-			userService.save(user);
+			PersonalDetail ps = personalDetailDAO.getPersonalDetailWithApplication(application);
+			if (ps == null) {
+				ps = new PersonalDetail();
+			}
+				
+				ps.setFirstName(personalDetails.getFirstName());
+				ps.setLastName(personalDetails.getLastName());
+				ps.setEmail(personalDetails.getEmail());
+				ps.setGender(personalDetails.getGender());
+				ps.setDateOfBirth(personalDetails.getDateOfBirth());
+				ps.setCountry(personalDetails.getCountry());
+				ps.setResidenceCountry(personalDetails.getResidenceCountry());
+				ps.setResidenceStatus(personalDetails.getResidenceStatus());
+				ps.setApplication(application);
+				
+				personalDetailDAO.save(ps);
+
 		}
 
 		ApplicationPageModel model = new ApplicationPageModel();
@@ -100,6 +121,8 @@ public class UpdateApplicationFormController {
 		model.setApplicationForm(application);
 		model.setPersonalDetails(personalDetails);
 		model.setResult(result);
+		model.setResidenceStatuses(ResidenceStatus.values());
+		model.setCountries(countriesDAO.getAllCountries());
 		modelMap.put("model", model);
 		modelMap.put("formDisplayState", "open");
 

@@ -30,27 +30,27 @@
 					<div class="row">
                   		<label class="label">First Name</label>
                     	<div class="field">
-                    		${model.personalDetails.firstName}
+                    		${model.personalDetails.firstName!}
                     	</div>
                     </div>
 
                 	<div class="row">
 	                  	<label class="label">Last Name</label>
     	                <div class="field">
-        	            	${model.personalDetails.lastName}
+        	            	${model.personalDetails.lastName!}
             	        </div>
                  	</div>
 
                 	<div class="row">
                   		<label class="label">Gender</label>
                     	<div class="field">
-                      		${model.personalDetails.gender}
+                      		${model.personalDetails.gender!}
                     	</div>
                   	</div>
                 	
                 	<div class="row">
                   		<label class="label">Date of Birth</label>
-                    	<div class="field">${model.personalDetails.dateOfBirth}</div>
+                    	<div class="field">${(model.personalDetails.?string('yyyy/MM/dd'))!}</div>
                   	</div>
                 
                 </div>
@@ -61,7 +61,7 @@
                 	<div class="row">
                   		<label class="label">Country of Birth</label>
                     	<div class="field">
-                    		${model.personalDetails.country}
+                    		${model.personalDetails.country!}
                     	</div>
                   	</div>
                   	
@@ -74,13 +74,13 @@
                 	<div class="row">
                   		<span class="label">Country</span>
                     	<div class="field">
-                      		${model.personalDetails.residenceCountry}
+                      		${model.personalDetails.residenceCountry!}
                     	</div>
                   	</div>
                   	<div class="row">
                         <span class="label">Status</span>
                         <div class="field">
-                            ${model.personalDetails.residenceStatus.freeVal}
+                            TO DO
                         </div>
                     </div>
                   	
@@ -112,7 +112,7 @@
                 	<div class="row">
                 		<span class="label">Email</span>
                     	<div class="field">
-	                    	${model.personalDetails.email}
+	                    	${model.personalDetails.email!}
                     	</div>
                   	</div>
                 

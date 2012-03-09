@@ -1,6 +1,8 @@
 $(document).ready(function()
 {
   
+  //$('body.old-ie button').wrap('<span />');
+  
   // Form hint tooltips.
   $('body span.hint').qtip({
     content: {
@@ -15,9 +17,9 @@ $(document).ready(function()
        viewport: $(window),
        adjust: {
           method: 'flip shift'
-       },
+       }
     },
-    style: 'tooltip-pgr ui-tooltip-shadow',
+    style: 'tooltip-pgr ui-tooltip-shadow'
   });
   
   
@@ -99,7 +101,7 @@ $(document).ready(function()
   
   // Sortable tables.
   $('table.data').tablesorter();
-  $('table.data thead th').not(':first,:last').append('<span class="arrow" />');
+  $('table.data thead th').not(':first,:last').wrapInner('<span class="arrow" />');
   
 });
 

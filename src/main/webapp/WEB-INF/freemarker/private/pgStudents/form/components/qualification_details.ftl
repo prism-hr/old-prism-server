@@ -31,7 +31,7 @@
 		                    <th>Grade</th>
 		                    <th>Awarding Body</th>
 		                    <th>Date Completed</th>
-		                    <th colspan="2">&nbsp;</th>
+		                    <th>&nbsp;</th>
 		                  </tr>
 		                </thead>
 		                

@@ -15,15 +15,40 @@
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Shell template</title>
-		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/style.css' />"/>
-		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/application.css' />"/>
+		
+		<!-- Styles for Application Page -->
+		
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/field_controls.css' />"/>
+		
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/additional_information.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/address.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/documents.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/employment.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/funding.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/personal_details.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/programme.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/qualifications.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/references.css' />"/>
+		
 			<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
+		
+		<!-- Styles for Application List Page -->
+		
 	</head>
 
+	<!--[if IE 9]>
+	<body class="ie9">
+	<![endif]-->
+	<!--[if lt IE 9]>
+	<body class="old-ie">
+	<![endif]-->
+	<!--[if (gte IE 9)|!(IE)]><!-->
 	<body>
+	<!--<![endif]-->
 
 		<div id="wrapper">
 			

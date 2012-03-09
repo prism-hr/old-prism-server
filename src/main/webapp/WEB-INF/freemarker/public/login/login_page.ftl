@@ -5,15 +5,28 @@
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Shell template</title>
-		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/style.css' />"/>
-		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/login.css' />"/>
+		
+		<!-- Styles for Login List Page -->
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/global_public.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/login.css' />"/>
+		
+		<!-- Styles for login List Page -->
+		
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 	
 	</head>
 
-	<body id="bg">
+	<!--[if IE 9]>
+	<body class="ie9">
+	<![endif]-->
+	<!--[if lt IE 9]>
+	<body class="old-ie">
+	<![endif]-->
+	<!--[if (gte IE 9)|!(IE)]><!-->
+	<body>
+	<!--<![endif]-->
 
 		<div id="wrapper">
 		

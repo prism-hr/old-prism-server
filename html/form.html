@@ -24,7 +24,15 @@
 <![endif]-->
 </head>
 
+<!--[if IE 9]>
+<body class="ie9">
+<![endif]-->
+<!--[if lt IE 9]>
+<body class="old-ie">
+<![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
 <body>
+<!--<![endif]-->
 
 <div id="wrapper">
 
@@ -223,15 +231,15 @@
                   <col style="width: 30px" />
                   <col style="width: 170px" />
                   <col style="width: 200px" />
-                  <col />
+                  <col style="width: auto" />
                   <col style="width: 30px" />
                 </colgroup>
                 <thead>
                   <tr>
-                    <th colspan="2">First name</th>
-                    <th>Surname</th>
-                    <th>Email</th>
-                    <th>&nbsp;</th>
+                    <th scope="col" colspan="2">First name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">&nbsp;</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -534,7 +542,7 @@
               <table class="existing">
                 <colgroup>
                   <col style="width: 30px" />
-                  <col />
+                  <col style="width: auto" />
                   <col style="width: 100px" />
                   <col style="width: 100px" />
                   <col style="width: 30px" />
@@ -664,10 +672,10 @@
               <table class="existing">
                 <colgroup>
                   <col style="width: 30px" />
-                  <col />
+                  <col style="width: auto" />
                   <col style="width: 80px" />
-                  <col />
-                  <col />
+                  <col style="width: auto" />
+                  <col style="width: auto" />
                   <col style="width: 30px" />
                 </colgroup>
                 <thead>
@@ -676,7 +684,7 @@
                     <th>Grade</th>
                     <th>Awarding Body</th>
                     <th>Date Completed</th>
-                    <th colspan="2">&nbsp;</th>
+                    <th>&nbsp;</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -829,7 +837,7 @@
               <table class="existing">
                 <colgroup>
                   <col style="width: 30px" />
-                  <col />
+                  <col style="width: auto" />
                   <col style="width: 140px" />
                   <col style="width: 140px" />
                   <col style="width: 30px" />
@@ -946,7 +954,7 @@
                 <colgroup>
                   <col style="width: 30px" />
                   <col style="width: 120px" />
-                  <col />
+                  <col style="width: auto" />
                   <col style="width: 120px" />
                   <col style="width: 30px" />
                 </colgroup>
@@ -1046,7 +1054,7 @@
                   <col style="width: 160px" />
                   <col style="width: 160px" />
                   <col style="width: 260px" />
-                  <col />
+                  <col style="width: auto" />
                   <col style="width: 30px" />
                 </colgroup>
                 <thead>
@@ -1212,7 +1220,7 @@
                 <colgroup>
                   <col style="width: 30px" />
                   <col style="width: 150px" />
-                  <col />
+                  <col style="width: auto" />
                   <col style="width: 120px" />
                   <col style="width: 30px" />
                 </colgroup>

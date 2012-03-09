@@ -4,16 +4,6 @@
 
 #help-keyword, #help-results { background: #FFF;  padding: 20px; margin-bottom: 5px; }
 
-/* Keyword/search box */
-#help-keyword input.search {
-	background: url(../images/button_arrow.png) no-repeat 100% -1px;
-	border-radius: 10px;
-	font-weight: bold;
-  height: 17px;
-	margin-left: 1em;
-	padding-left: 20px;
-	width: 400px;
-}
 
 /* Autocomplete input box */
 ul.ui-autocomplete { box-shadow: 0 3px 6px #666; border-radius: 10px; font-size: 9pt; }

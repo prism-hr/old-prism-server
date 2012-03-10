@@ -25,7 +25,7 @@
 	            
 	            <thead>
 	            	<tr>
-	                	<th colspan="2">Title</th>
+	                	<th colspan="2">Position</th>
 	                    <th>From</th>
 	                    <th>To</th>
 	                    <th>&nbsp;</th>
@@ -36,13 +36,13 @@
 	            
 	            	<#list model.applicationForm.employmentPositions as position>
 		            	<tr>
-		                    <td><a class="row-arrow" href="#">-</a></td>
+		                    <td><a class="row-arrow" name="positionEditButton" id="position_${position.id}">-</a></td>
 		                    <td>${position.position_title}</td>
 		                    <td>${position.position_startDate?string('yyyy/MM/dd')}</td>
 		                    <td>${position.position_endDate?string('yyyy/MM/dd')}</td>
 		                    <td>
 		                    	<a class="button-delete" 
-		                    			type="submit" name="positionEditButton" id="position_${position.id}">Edit</a>
+		                    			type="submit">Delete</a>
 		                    </td>
 		                    
 							<input type="hidden" id="${position.id}_positionId" value="${position.id}"/>
@@ -161,9 +161,9 @@
 			</div>
 
 			<div class="buttons">
-            	<a class="button" href="#">Cancel</a>
-                <button class="blue" type="submit" value="close" id="positionSaveButton">Save and Close</button>
-                <button class="blue" type="submit" value="add">Save and Add</button>
+            	<a class="button" type="button" id="positionCancelButton" name="positionCancelButton">Cancel</a>
+                <button class="blue" type="button" value="close" id="positionSaveAndCloseButton" name="positionSaveButton">Save and Close</button>
+                <button class="blue" type="button" value="add" id="positionSaveAndAddButton" name="positionSaveAndAddButton">Save and Add</button>
             </div>
 
 		</form>

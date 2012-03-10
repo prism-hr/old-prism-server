@@ -1,5 +1,5 @@
 $(document).ready(function(){
-$('#positionSaveButton').click(function(){
+$('#positionSaveAndCloseButton').click(function(){
 		$.post("/pgadmissions/update/addEmploymentPosition", { 
 			position_title: $("#position_title").val(),
 			position_startDate: $("#position_startDate").val(), 
@@ -16,6 +16,23 @@ $('#positionSaveButton').click(function(){
 				   });
 	});
 
+$('#positionSaveAndAddButton').click(function(){
+	$.post("/pgadmissions/update/addEmploymentPosition", { 
+		position_title: $("#position_title").val(),
+		position_startDate: $("#position_startDate").val(), 
+		position_endDate: $("#position_endDate").val(), 
+		position_remit: $("#position_remit").val(), 
+		position_language: $("#position_language").val(), 
+		position_employer: $("#position_employer").val(), 
+		appId: $("#appId").val(),
+		id: $("#id").val(), 
+		positionId: $("#positionId").val()
+							},
+			   function(data) {
+			     $('#positionSection').html(data);
+			   });
+});
+
 $('a[name="positionEditButton"]').click(function(){
 	var id = this.id;
 	id = id.replace('position_', '');
@@ -26,6 +43,17 @@ $('a[name="positionEditButton"]').click(function(){
 	$("#position_title").val($('#'+id+"_positionTitle").val());
 	$("#position_startDate").val($('#'+id+"_positionStartDate").val());
 	$("#position_endDate").val($('#'+id+"_positionEndDate").val());
+});
+
+$('a[name="positionCancelButton"]').click(function(){
+	$("#positionId").val("");
+	$("#position_employer").val("");
+	$("#position_remit").val("");
+	$("#position_language").val("");
+	$("#position_title").val("");
+	$("#position_startDate").val("");
+	$("#position_endDate").val("");
+	
 });
 
 });

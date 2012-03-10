@@ -15,7 +15,7 @@
                                     <td>${position.position_title}</td>
                                     <td>${position.position_remit}</td>
                                     <td>${position.position_startDate?string('yyyy/MM/dd')}</td>
-                                    <td>${position.position_endDate?string('yyyy/MM/dd')}</td>
+                                    <td>${(position.position_endDate?string('yyyy/MM/dd'))!}</td>
                                     <td>${position.position_language}</td>
                                </tr>
                             </#list>

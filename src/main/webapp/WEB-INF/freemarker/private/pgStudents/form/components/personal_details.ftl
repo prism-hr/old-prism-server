@@ -41,9 +41,9 @@
 				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id?string("######")}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
               	<div>
-        <#if model.hasError('personalDetails')>                           
-                <p style="color:red;"><@spring.message  model.result.getFieldError('personalDetails').code /></p>                        
-        </#if>
+                <#if model.hasError('personalDetails')>                           
+                    <p style="color:red;"><@spring.message  model.result.getFieldError('personalDetails').code /></p>                        
+                </#if>
                 	<div class="row">
                   	<label class="label">First Name</label>
                     <span class="hint"></span>
@@ -112,7 +112,7 @@
                       </select>
                       <#if model.hasError('country')>                         
                                 <span style="color:red;"><@spring.message  model.result.getFieldError('country').code /></span>                           
-                        </#if>
+                      </#if>
                     </div>
                   </div>
                 </div>
@@ -181,7 +181,7 @@
                     <div class="field">
                       <select name="residenceStatus" id="residenceStatus">
                          <#list model.residenceStatuses as residenceStatus>
-                              <option value="${residenceStatus}">${residenceStatus.freeVal}</option>               
+                              <option value="${residenceStatus.freeVal}">${residenceStatus.freeVal}</option>               
                         </#list>
                       </select>
                       <#if model.hasError('residenceStatus')>                         

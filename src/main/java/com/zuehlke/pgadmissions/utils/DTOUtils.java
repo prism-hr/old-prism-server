@@ -20,7 +20,9 @@ public class DTOUtils {
 			if (detail.getResidenceCountry() != null) {
 				personalDetails.setResidenceCountry(detail.getResidenceCountry().getName());
 			}
-			personalDetails.setResidenceStatus(detail.getResidenceStatus());
+			if (detail.getResidenceStatus() != null) {
+				personalDetails.setResidenceStatus(detail.getResidenceStatus().displayValue());
+			}
 			if (detail.getGender()!= null) {
 				personalDetails.setGender(detail.getGender().displayValue());
 			}
@@ -33,9 +35,9 @@ public class DTOUtils {
 		if (programmeDetailWithApplication != null) {
 			programmeDetails.setProgrammeDetailsProgrammeName(programmeDetailWithApplication.getProgrammeName());
 			programmeDetails.setProgrammeDetailsProjectName(programmeDetailWithApplication.getProjectName());
-			programmeDetails.setProgrammeDetailsReferrer(programmeDetailWithApplication.getReferrer());
+			programmeDetails.setProgrammeDetailsReferrer(programmeDetailWithApplication.getReferrer().displayValue());
 			programmeDetails.setProgrammeDetailsStartDate(programmeDetailWithApplication.getStartDate());
-			programmeDetails.setProgrammeDetailsStudyOption(programmeDetailWithApplication.getStudyOption());
+			programmeDetails.setProgrammeDetailsStudyOption(programmeDetailWithApplication.getStudyOption().displayValue());
 		}
 		return programmeDetails;
 	}

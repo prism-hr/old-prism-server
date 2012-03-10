@@ -99,7 +99,7 @@ public class UpdateApplicationFormControllerTest {
 		personalDetails.setDateOfBirth(new Date());
 		personalDetails.setCountry("England");
 		personalDetails.setResidenceCountry("England");
-		personalDetails.setResidenceStatus(ResidenceStatus.REFUGEE_STATUS);
+		personalDetails.setResidenceStatus("Refugee Status");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
 		ModelAndView modelAndView = applicationController.editPersonalDetails(personalDetails, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/personal_details", modelAndView.getViewName());
@@ -311,7 +311,7 @@ public class UpdateApplicationFormControllerTest {
 	}
 	
 	@Test
-	public void shouldSaveNewRefereeWithOneTelephoneAndNoMessenger() throws ParseException {
+	public void shouldSaveNewRefereeWithOneTelephoneAndNoMessenger() {
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		

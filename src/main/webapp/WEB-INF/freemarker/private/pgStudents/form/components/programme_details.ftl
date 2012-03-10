@@ -33,9 +33,12 @@
                     <div class="field">
                 		<select class="full" id="programmeDetailsStudyOption" name="programmeDetailsStudyOption">
                 		  <#list model.studyOptions as studyOption>
-                              <option value="${studyOption}">${studyOption.freeVal}</option>               
+                              <option value="${studyOption.freeVal}">${studyOption.freeVal}</option>               
                         </#list>
                       	</select>
+                      	<#if model.hasError('programmeDetailsStudyOption')>                            
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('programmeDetailsStudyOption').code /></span>                           
+                        </#if>
                     </div>
 				</div>
 
@@ -94,6 +97,9 @@
                 	<label class="label">Start Date</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <input class="full" type="date" id="programmeDetailsStartDate" name="programmeDetailsStartDate" value="${(model.programme.programmeDetailsStartDate?string('yyyy/MM/dd'))!}"/>
+                    <#if model.hasError('programmeDetailsStartDate')>                            
+                          <span style="color:red;"><@spring.message  model.result.getFieldError('programmeDetailsStartDate').code /></span>                           
+                    </#if>
                 </div>
 
                 <!-- Referrer -->
@@ -103,9 +109,12 @@
                     <div class="field">
                     	<select class="full" id="programmeDetailsReferrer" name="programmeDetailsReferrer">
                     	 <#list model.referrers as referrer>
-                              <option value="${referrer}">${referrer.freeVal}</option>               
+                              <option value="${referrer.freeVal}">${referrer.freeVal}</option>               
                         </#list>
                       	</select>
+                      	 <#if model.hasError('programmeDetailsReferrer')>                            
+                            <span style="color:red;"><@spring.message  model.result.getFieldError('programmeDetailsReferrer').code /></span>                           
+                         </#if>
                     </div>
 				</div>
 

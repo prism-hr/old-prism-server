@@ -4,8 +4,6 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
-
 @Component
 public class PersonalDetails {
 
@@ -16,7 +14,7 @@ public class PersonalDetails {
 	private Date dateOfBirth;
 	private String country;
 	private String residenceCountry;
-	private ResidenceStatus residenceStatus;
+	private String residenceStatus;
 	
 	public String getEmail() {
 		return email;
@@ -58,14 +56,6 @@ public class PersonalDetails {
 		this.dateOfBirth = dateOfBirth;
 	}
 	
-	public ResidenceStatus getResidenceStatus() {
-		return residenceStatus;
-	}
-	
-	public void setResidenceStatus(ResidenceStatus residenceStatus) {
-		this.residenceStatus = residenceStatus;
-	}
-	
 	public String getCountry() {
 		return country;
 	}
@@ -82,4 +72,12 @@ public class PersonalDetails {
 		this.residenceCountry = residenceCountry;
 	}
 	
+	
+	public String getResidenceStatus() {
+		return residenceStatus;
+	}
+	
+	public void setResidenceStatus(String residenceStatus) {
+		this.residenceStatus = residenceStatus;
+	}
 }

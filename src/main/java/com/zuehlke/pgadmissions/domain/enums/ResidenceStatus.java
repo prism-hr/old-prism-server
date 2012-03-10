@@ -26,5 +26,16 @@ public enum ResidenceStatus {
 		this.freeVal = freeVal;
 	}
 	
+	public static ResidenceStatus fromString(String text) {
+	    if (text != null) {
+	      for (ResidenceStatus b : ResidenceStatus.values()) {
+	        if (text.equalsIgnoreCase(b.displayValue)) {
+	          return b;
+	        }
+	      }
+	    }
+	    return null;
+	  }
+	
 	
 }

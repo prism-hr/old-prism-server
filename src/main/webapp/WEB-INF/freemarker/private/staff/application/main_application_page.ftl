@@ -86,15 +86,7 @@
 			          
 			          <hr />
 			
-			          <section class="folding violet">
-			            <h2 class="tick open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Programme
-			            </h2>
-			            <div>
-			            	<p>Testing...</p>
-			            </div>
-			          </section>
+			          <#include "/private/staff/application/components/programme_details.ftl"/>
 			          
 			          <#include "/private/staff/application/components/personal_details.ftl"/>
 			          

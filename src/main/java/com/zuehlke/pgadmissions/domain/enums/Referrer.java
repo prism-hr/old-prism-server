@@ -42,4 +42,14 @@ public enum Referrer {
 		this.freeVal = freeVal;
 	}
 
+	public static Referrer fromString(String text) {
+	    if (text != null) {
+	      for (Referrer b : Referrer.values()) {
+	        if (text.equalsIgnoreCase(b.displayValue)) {
+	          return b;
+	        }
+	      }
+	    }
+	    return null;
+	  }
 }

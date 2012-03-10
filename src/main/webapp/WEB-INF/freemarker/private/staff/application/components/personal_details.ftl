@@ -80,7 +80,7 @@
                   	<div class="row">
                         <span class="label">Status</span>
                         <div class="field">
-                            TO DO
+                            ${model.personalDetails.residenceStatus!}
                         </div>
                     </div>
                   	

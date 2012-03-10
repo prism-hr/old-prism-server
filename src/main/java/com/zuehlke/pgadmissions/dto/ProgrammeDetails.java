@@ -2,16 +2,13 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
-
 public class ProgrammeDetails {
 
 	private String programmeDetailsProgrammeName;
 	private String programmeDetailsProjectName;
-	private StudyOption programmeDetailsStudyOption;
+	private String programmeDetailsStudyOption;
 	private Date programmeDetailsStartDate;
-	private Referrer programmeDetailsReferrer;
+	private String programmeDetailsReferrer;
 	
 	public String getProgrammeDetailsProgrammeName() {
 		return programmeDetailsProgrammeName;
@@ -29,14 +26,6 @@ public class ProgrammeDetails {
 		this.programmeDetailsProjectName = programmeDetailsProjectName;
 	}
 	
-	public Referrer getProgrammeDetailsReferrer() {
-		return programmeDetailsReferrer;
-	}
-	
-	public void setProgrammeDetailsReferrer(Referrer programmeDetailsReferrer) {
-		this.programmeDetailsReferrer = programmeDetailsReferrer;
-	}
-	
 	public Date getProgrammeDetailsStartDate() {
 		return programmeDetailsStartDate;
 	}
@@ -45,11 +34,20 @@ public class ProgrammeDetails {
 		this.programmeDetailsStartDate = programmeDetailsStartDate;
 	}
 	
-	public StudyOption getProgrammeDetailsStudyOption() {
+	public String getProgrammeDetailsReferrer() {
+		return programmeDetailsReferrer;
+	}
+	
+	public void setProgrammeDetailsReferrer(String programmeDetailsReferrer) {
+		this.programmeDetailsReferrer = programmeDetailsReferrer;
+	}
+	
+	public String getProgrammeDetailsStudyOption() {
 		return programmeDetailsStudyOption;
 	}
 	
-	public void setProgrammeDetailsStudyOption(StudyOption programmeDetailsStudyOption) {
+	public void setProgrammeDetailsStudyOption(String programmeDetailsStudyOption) {
 		this.programmeDetailsStudyOption = programmeDetailsStudyOption;
 	}
+	
 }

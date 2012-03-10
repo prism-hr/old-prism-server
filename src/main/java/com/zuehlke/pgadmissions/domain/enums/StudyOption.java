@@ -23,4 +23,15 @@ public enum StudyOption {
 	public void setFreeVal(String freeVal) {
 		this.freeVal = freeVal;
 	}
+	
+	public static StudyOption fromString(String text) {
+	    if (text != null) {
+	      for (StudyOption b : StudyOption.values()) {
+	        if (text.equalsIgnoreCase(b.displayValue)) {
+	          return b;
+	        }
+	      }
+	    }
+	    return null;
+	  }
 }

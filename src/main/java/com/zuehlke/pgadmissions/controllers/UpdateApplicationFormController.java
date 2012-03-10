@@ -117,7 +117,7 @@ public class UpdateApplicationFormController {
 			ps.setDateOfBirth(personalDetails.getDateOfBirth());
 			ps.setCountry(countriesDAO.getCountryWithName(personalDetails.getCountry()));
 			ps.setResidenceCountry(countriesDAO.getCountryWithName(personalDetails.getResidenceCountry()));
-			ps.setResidenceStatus(personalDetails.getResidenceStatus());
+			ps.setResidenceStatus(ResidenceStatus.fromString(personalDetails.getResidenceStatus()));
 			ps.setApplication(application);
 
 			personalDetailDAO.save(ps);
@@ -165,8 +165,8 @@ public class UpdateApplicationFormController {
 			pd.setProgrammeName(programme.getProgrammeDetailsProgrammeName());
 			pd.setProjectName(programme.getProgrammeDetailsProjectName());
 			pd.setStartDate(programme.getProgrammeDetailsStartDate());
-			pd.setReferrer(programme.getProgrammeDetailsReferrer());
-			pd.setStudyOption(programme.getProgrammeDetailsStudyOption());
+			pd.setReferrer(Referrer.fromString(programme.getProgrammeDetailsReferrer()));
+			pd.setStudyOption(StudyOption.fromString(programme.getProgrammeDetailsStudyOption()));
 			pd.setApplication(application);
 
 			programmeDetailDAO.save(pd);

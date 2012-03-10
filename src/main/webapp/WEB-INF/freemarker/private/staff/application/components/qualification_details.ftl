@@ -12,10 +12,10 @@
                                 <#list model.applicationForm.qualifications as qualification>
                                 <tr>
                                     <td>${qualification.qualificationType}</td>
-                                    <td>${qualification.qualificationGrade}</td>
+                                    <td>${qualification.qualificationGrade!}</td>
                                     <td>${qualification.qualificationInstitution}</td>
                                     <td>${(qualification.qualificationAwardDate?string('yyyy/MM/dd'))!}</td>
-                                    <td>${qualification.qualificationScore}</td>
+                                    <td>${qualification.qualificationScore!}</td>
                                     <td>${qualification.qualificationLevel}</td>
                                     <td>${(qualification.qualificationStartDate?string('yyyy/MM/dd'))!}</td>
                                     <td>${qualification.qualificationLanguage}</td>

@@ -51,7 +51,11 @@ $(document).ready(function(){
 	
 	
 	$("input[name*='isCA']").click(function() {
-		$("#addressContactAddress").val("YES");
+		if ($("#addressContactAddress").val() =='YES'){
+			$("#addressContactAddress").val("NO");
+		} else {		
+			$("#addressContactAddress").val("YES");
+		}
 
 	});
 	

@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -9,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -54,6 +57,12 @@ public class PersonalDetail extends DomainObject<Integer>{
 	@OneToOne
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application = null;
+	
+	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
+	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+	@Access(AccessType.PROPERTY)
+	@JoinColumn(name = "personal_detail_id")
+	private List<Supervisor> supervisors = new ArrayList<Supervisor>();
 	
 	@Override
 	public void setId(Integer id) {
@@ -138,5 +147,17 @@ public class PersonalDetail extends DomainObject<Integer>{
 	
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public List<Supervisor> getSupervisors() {
+		return supervisors;
+	}
+	
+	public void setSupervisors(List<Supervisor> supervisors) {
+		if(this.supervisors.size() == supervisors.size() && this.supervisors.containsAll(supervisors)){
+			return;
+		}
+		this.supervisors.clear();
+		this.supervisors.addAll(supervisors);
 	}
 }

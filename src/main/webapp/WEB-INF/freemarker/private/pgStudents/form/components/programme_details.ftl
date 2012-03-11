@@ -78,7 +78,7 @@
 						<!-- repeat these rows for every existing supervisor. -->
                       	<tr>
 	                        <th class="align-left"><input class="full" type="text" placeholder="Email address" /></th>
-	                        <th><input type="radio" /></th>
+	                        <th><input type="checkbox" /></th>
 	                        <th><input type="checkbox" /></th>
                       	</tr>
                       	<!-- end repeat -->
@@ -86,10 +86,6 @@
                     
 				</table>
                 
-                <div class="row">
-                	<a class="button" href="#">Add supervisor</a>
-                </div>
-			
 			</div>
 
             <div>
@@ -123,9 +119,10 @@
 			</div>
 
             <div class="buttons">
-            	<a class="button blue" href="#">Close</a>
             	<#if !model.applicationForm.isSubmitted()>
-                    <button class="blue" type="button" id="programmeSaveButton">Save</button>
+            	<a class="button" type="button" id="programmeCancelButton" name="programmeCancelButton">Cancel</a>
+                    <button class="blue" type="button" id="programmeSaveCloseButton">Save and Close</button>
+                    <button class="blue" type="button" id="programmeSaveAddButton">Save and Add</button>
                 </#if>    
 			</div>
 

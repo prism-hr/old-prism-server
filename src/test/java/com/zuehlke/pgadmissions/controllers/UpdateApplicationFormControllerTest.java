@@ -36,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
-import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
@@ -170,7 +169,7 @@ public class UpdateApplicationFormControllerTest {
 		address.setAddressCountry("UK");
 		address.setAddressStartDate(new Date(2011, 11, 11));
 		address.setAddressEndDate(new Date(2012, 11, 11));
-		address.setAddressContactAddress(AddressStatus.YES);
+		address.setAddressContactAddress("YES");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());

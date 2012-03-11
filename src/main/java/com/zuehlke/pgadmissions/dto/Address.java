@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
-import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
-
 public class Address {
 
 	private String addressLocation;
@@ -14,7 +12,7 @@ public class Address {
 	private String addressPurpose;
 	private Integer addressId;
 	
-	private AddressStatus addressContactAddress;
+	private String addressContactAddress;
 
 	public String getAddressLocation() {
 		return addressLocation;
@@ -64,19 +62,19 @@ public class Address {
 		this.addressPurpose = addressPurpose;
 	}
 	
-	public AddressStatus getAddressContactAddress() {
-		return addressContactAddress;
-	}
-	
-	public void setAddressContactAddress(AddressStatus addressContactAddress) {
-		this.addressContactAddress = addressContactAddress;
-	}
-	
 	public Integer getAddressId() {
 		return addressId;
 	}
 	
 	public void setAddressId(Integer addressId) {
 		this.addressId = addressId;
+	}
+	
+	public String getAddressContactAddress() {
+		return addressContactAddress;
+	}
+	
+	public void setAddressContactAddress(String addressContactAddress) {
+		this.addressContactAddress = addressContactAddress;
 	}
 }

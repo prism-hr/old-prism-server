@@ -43,11 +43,11 @@
 			        <tbody>
 			        	<#list model.applicationForm.addresses as address>
 				        	<tr>
-				            	<td><a class="row-arrow" href="#">-</a></td>
-				                <td>${address.id}, ${address.location}, ${address.postCode}</td>
+				            	<td><a class="row-arrow"  name="addressEditButton" id="address_${address.id}">-</a></td>
+				                <td>${address.location}, ${address.postCode}</td>
 				                <td>${address.startDate?string('yyyy/MM/dd')}</td>
 				                <td>${(address.endDate?string('yyyy/MM/dd'))!}</td>
-				                <td><a class="button-delete" type="submit" name="addressEditButton" id="address_${address.id}">Edit</a></td>
+				                <td><a class="button-delete" type="submit">Delete</a></td>
 				                
 								<input type="hidden" id="${address.id}_addressIdDP" value="${address.id}"/>
 	                            <input type="hidden" id="${address.id}_locationDP" value="${address.location}"/>
@@ -176,12 +176,6 @@
                     	</div>  
                   	</div>
                   	
-                  	<div class="row">
-                    	<div class="field">                      
-                    		<a class="button" href="#">Add residency period</a>
-						</div>
-                  	</div>
-                
                 </div>
 
                 <div>
@@ -190,16 +184,19 @@
                     	<span class="label">&nbsp;</span>
                     	<div class="field">
                       		<label>
-                      			<input type="checkbox" /> This is my contact address
+                      			<input type="checkbox" name="isCA" id="isCA"/> This is my contact address
                       		</label>
+                      		<input type="hidden" id="addressContactAddress" value="${model.address.addressContactAddress!}"/>
                     	</div>
                   	</div>
                 </div>
 
                 <div class="buttons">
-                	<a class="button blue" href="#">Close</a>
-                  	<button class="blue" type="submit" id="addressSaveButton">Save</button>
+                <a class="button" type="button" id="addressCancelButton" name="addressCancelButton">Cancel</a>
+                  	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save And Add</button>
+                  	<button class="blue" type="button" id="addressSaveAndCloseButton" name="addressSaveAndCloseButton">Save And Close</button>
                 </div>
 
 			</form>
 	</div>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/address.js'/>"></script>

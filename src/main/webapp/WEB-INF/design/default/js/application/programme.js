@@ -1,4 +1,8 @@
 $(document).ready(function(){
+	
+	$("#programmeDetailsStudyOption").val($("#programmeDetailsStudyOptionDP").val());
+	$("#programmeDetailsReferrer").val($("#programmeDetailsReferrerDP").val());
+	
 	$('#programmeSaveButton').click(function(){
 		$.post("/pgadmissions/update/editProgramme", { 
 			programmeDetailsProgrammeName: $("#programmeDetailsProgrammeName").val(),

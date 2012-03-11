@@ -36,6 +36,7 @@
                               <option value="${studyOption.freeVal}">${studyOption.freeVal}</option>               
                         </#list>
                       	</select>
+                      	<input type="hidden" id="programmeDetailsStudyOptionDP" value="${model.programme.programmeDetailsStudyOption!}"/>
                       	<#if model.hasError('programmeDetailsStudyOption')>                            
                                 <span style="color:red;"><@spring.message  model.result.getFieldError('programmeDetailsStudyOption').code /></span>                           
                         </#if>
@@ -106,6 +107,7 @@
                 <div class="row">
                 	<label class="label">Referrer</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
+                    <input type="hidden" id="programmeDetailsReferrerDP" value="${model.programme.programmeDetailsReferrer!}"/>
                     <div class="field">
                     	<select class="full" id="programmeDetailsReferrer" name="programmeDetailsReferrer">
                     	 <#list model.referrers as referrer>

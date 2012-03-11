@@ -11,9 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Service("applicationsService")
@@ -50,7 +52,7 @@ public class ApplicationsService {
 				}
 			}
 		}
-		
+
 		Collections.sort(visibleApplications);
 		return visibleApplications;
 	}
@@ -65,20 +67,19 @@ public class ApplicationsService {
 		applicationFormDAO.save(application);
 
 	}
-	
+
 	@Transactional
 	public Qualification getQualificationById(Integer id) {
 		return applicationFormDAO.getQualification(id);
 	}
-	
+
 	@Transactional
 	public Referee getRefereeById(Integer id) {
 		return applicationFormDAO.getRefereeById(id);
 	}
 
 	@Transactional
-	public List<Qualification> getQualificationsByApplication(
-			ApplicationForm applicationForm) {
+	public List<Qualification> getQualificationsByApplication(ApplicationForm applicationForm) {
 		return applicationFormDAO.getQualificationsByApplication(applicationForm);
 	}
 
@@ -86,7 +87,7 @@ public class ApplicationsService {
 	public com.zuehlke.pgadmissions.domain.Funding getFundingById(Integer fundingId) {
 		return applicationFormDAO.getFundingById(fundingId);
 	}
-	
+
 	@Transactional
 	public EmploymentPosition getEmploymentPositionById(Integer positionId) {
 		return applicationFormDAO.getEmploymentById(positionId);
@@ -96,11 +97,40 @@ public class ApplicationsService {
 	public com.zuehlke.pgadmissions.domain.Address getAddressById(Integer addressId) {
 		return applicationFormDAO.getAdddressById(addressId);
 	}
-	
+
 	@Transactional
 	public void update(Qualification qualification) {
 		applicationFormDAO.update(qualification);
-		
+
 	}
+
+	@Transactional
+	public Messenger getMessengerById(Integer id) {
+		return applicationFormDAO.getMessengerById(id);
+	}
+
+	@Transactional
+	public Telephone getTelephoneById(Integer id) {
+		return applicationFormDAO.getTelephoneById(id);
+	}
+
+	@Transactional
+	public void saveTelephone(Telephone telephone) {
+		applicationFormDAO.saveTelephone(telephone);
+
+	}
+
+	@Transactional
+	public void saveMessenger(Messenger messenger) {
+		applicationFormDAO.saveMessenger(messenger);
+
+	}
+
+	@Transactional
+	public void saveReferee(com.zuehlke.pgadmissions.domain.Referee referee) {
+		applicationFormDAO.saveReferee(referee);
+
+	}
+
 
 }

@@ -33,15 +33,14 @@ public class Referee extends DomainObject<Integer>{
 	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
 	@Access(AccessType.PROPERTY)
-	@JoinColumn(name = "telephone_id")
+	@JoinColumn(name = "referee_id")
 	private List<Telephone> telephones = new ArrayList<Telephone>();
 	
 	
-
 	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
 	@Access(AccessType.PROPERTY)
-	@JoinColumn(name = "messenger_id")
+	@JoinColumn(name = "referee_id")
 	private List<Messenger> messengers = new ArrayList<Messenger>();
 	
 	

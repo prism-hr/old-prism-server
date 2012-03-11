@@ -26,13 +26,13 @@
                                     <input type="hidden" id="${referee.id}_addressPostcode" value="${referee.addressPostcode}"/>
                                     <input type="hidden" id="${referee.id}_addressCountry" value="${referee.addressCountry}"/>
                                     <input type="hidden" id="${referee.id}_email" value="${referee.email}"/>
-                                    <input type="hidden" id="${referee.id}_messengers" value="${referee.messengers}"/>
-                                    <input type="hidden" id="${referee.id}_telephones" value="${referee.telephones}"/>
                                </tr>
                             </#list>
                             </table>
                             
                             <input type="hidden" id="refereeId" name="refereeId"/>
+                            <input type="hidden" id="messengerId" name="messengerId"/>
+                            <input type="hidden" id="telephoneId" name="telephoneId"/>
                             <table cellspacing=10>
                                 <tr align=left></tr>
                                 <tr><td>First Name</td>
@@ -88,24 +88,29 @@
                                 <input type="text" id="ref_email" name="ref_email" value="${model.referee.email!}"/>
                                 </td>
                                 </tr>
+                                
+                                
                                 <table id="telephones">
                                 <#list model.referee.telephones as telephone>
                                 <tr><td>Telephone Type</td>
                                 <td>
-                                <input type="text" id="ref_telephone_type" name="ref_telephone_type" value="${telephone.telephoneType!}"/>
+                                <div id="divId" style="margin-bottom:4px;" class="divId">
+                                <input type="text" id="ref_telephone_type${telephone.id!}" name="ref_telephone_type${telephone.id!}" value="${telephone.telephoneType!}"/>
+                                </div>  
                                 </td>
                                 </tr>                                
-                                <tr><td>Telephone Type</td>
+                                <tr><td>Telephone Number</td>
                                 <td>
-                                <input type="text" id="ref_telephone_number" name="ref_telephone_number" value="${telephone.telephoneNumber!}"/>
+                                <input type="text" id="ref_telephone_number${telephone.id!}" name="ref_telephone_number${telephone.id!}" value="${telephone.telephoneNumber!}"/>
                                 </td>
-                                </tr>                                
-                                </#list>
+                                </tr> 
+                                </#list>                             
                                 </table>
-                                 <a class="button blue" id="addTelephoneButton" href="#">Add Phone</a>
                                 
-                                <table id="messengers">
+                                
+                                 <a class="button blue" id="addTelephoneButton">Add Phone</a>
                                 <#list model.referee.messengers as messenger>
+                                <table id="messengers">
                                 <tr><td>Messenger Type</td>
                                 <td>
                                 <input type="text" id="ref_messenger_type" name="ref_messenger_type" value="${messenger.messengerType!}"/>
@@ -114,11 +119,11 @@
                                                             
                                 <tr><td>Messenger Address</td>
                                 <td>
-                                <input type="text" id="ref_messenger_number" name="ref_messenger_address" value="${messenger.messengerAddress!}"/>
+                                <input type="text" id="ref_messenger_address" name="ref_messenger_address" value="${messenger.messengerAddress!}"/>
                                 </td>
                                 </tr>                                
-                                </#list>
                                 </table>
+                                </#list>
                                  <a class="button blue" id="addMessengerButton" href="#">Add Messenger</a>
                                 
                                 </table>
@@ -132,4 +137,4 @@
                                     </#if>    
                             </div>
                         </div>
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/referee.js'/>"></script>    
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/referee.js'/>"></script>   

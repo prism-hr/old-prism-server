@@ -193,8 +193,8 @@
 
                 <div class="buttons">
                 <a class="button" type="button" id="addressCancelButton" name="addressCancelButton">Cancel</a>
-                  	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save And Add</button>
-                  	<button class="blue" type="button" id="addressSaveAndCloseButton" name="addressSaveAndCloseButton">Save And Close</button>
+                  	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save and Add</button>
+                  	<button class="blue" type="button" id="addressSaveAndCloseButton" name="addressSaveAndCloseButton">Save and Close</button>
                 </div>
 
 			</form>

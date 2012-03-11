@@ -25,6 +25,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Messenger</value>	    
 	     		<value>com.zuehlke.pgadmissions.domain.PersonalDetail</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ProgrammeDetail</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Supervisor</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

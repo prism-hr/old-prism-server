@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
@@ -374,7 +375,8 @@ public class UpdateApplicationFormController {
 			address.setPurpose(addr.getAddressPurpose());
 			address.setStartDate(addr.getAddressStartDate());
 			address.setEndDate(addr.getAddressEndDate());
-			address.setContactAddress(addr.getAddressContactAddress());
+			address.setContactAddress(AddressStatus.fromString(addr.getAddressContactAddress()));
+			
 			if (addr.getAddressId() == null) {
 				application.getAddresses().add(address);
 			}

@@ -1,5 +1,8 @@
 $(document).ready(function(){
-	$('#addressSaveButton').click(function(){
+	
+	$("#addressContactAddress").val("NO");
+	
+	$('#addressSaveAndAddButton').click(function(){
 		$.post("/pgadmissions/update/editAddress", { 
 			addressLocation: $("#addressLocation").val(),
 			addressPostCode: $("#addressPostCode").val(), 
@@ -17,14 +20,38 @@ $(document).ready(function(){
 		});
 	});
 	
+	$('#addressSaveAndCloseButton').click(function(){
+		$.post("/pgadmissions/update/editAddress", { 
+			addressLocation: $("#addressLocation").val(),
+			addressPostCode: $("#addressPostCode").val(), 
+			addressCountry: $("#addressCountry").val(), 
+			addressStartDate: $("#addressStartDate").val(),
+			addressEndDate: $("#addressEndDate").val(), 
+			addressPurpose: $("#addressPurpose").val(), 
+			addressContactAddress: $("#addressContactAddress").val(),
+			id: $("#id").val(), 
+			appId: $("#appId").val(),
+			addressId: $("#addressId").val()
+		},
+		function(data) {
+			$('#addressSection').html(data);
+		});
+	});
+	
+	$('a[name="addressCancelButton"]').click(function(){
+		$("#addressId").val("");
+		$("#addressLocation").val("");
+		$("#addressPostCode").val("");
+		$("#addressCountry").val("");
+		$("#addressStartDate").val("");
+		$("#addressEndDate").val("");
+		$("#addressPurpose").val("");
+		$("#addressContactAddress").val("");
+	});
+	
+	
 	$("input[name*='isCA']").click(function() {
-		var verb = "";
-		if($(this).val() == 'YES'){
-			verb = "YES";
-		}else{
-			verb= "NO";
-		}
-		$("#addressContactAddress").val(verb);
+		$("#addressContactAddress").val("YES");
 
 	});
 	
@@ -39,10 +66,10 @@ $(document).ready(function(){
 		$("#addressPurpose").val($('#'+id+"_purposeDP").val());
 		$("#addressCountry").val($('#'+id+"_countryDP").val());
 		$("#addressContactAddress").val($('#'+id+"_contactAddressDP").val());
-		if ($("#addressContactAddress").val()=='YES'){
-			$("#radioYES").attr('checked', 'checked');
+		if ($("#addressContactAddress").val() =='YES'){
+			$("#isCA").attr('checked', true);
 		} else {
-			$("#radioNO").attr('checked', 'checked');
+			$("#isCA").attr('checked', false);
 		}
 	});
 

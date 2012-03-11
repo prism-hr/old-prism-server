@@ -1,11 +1,17 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 
 
@@ -23,6 +29,14 @@ public class Messenger extends DomainObject<Integer>{
 	
 	@Column(name = "address")
 	private String messengerAddress;
+	
+
+	@ManyToOne(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
+	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+	@Access(AccessType.PROPERTY)
+	@JoinColumn(name = "referee_id")
+	private Referee referee = new Referee();
+
 	
 	public String getMessengerType() {
 		return messengerType;
@@ -51,5 +65,13 @@ public class Messenger extends DomainObject<Integer>{
 	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
+	}
+
+	public Referee getReferee() {
+		return referee;
+	}
+
+	public void setReferee(Referee referee) {
+		this.referee = referee;
 	}
 }

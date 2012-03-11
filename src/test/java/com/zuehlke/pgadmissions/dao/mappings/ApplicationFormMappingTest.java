@@ -21,16 +21,23 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.MessengerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
@@ -192,6 +199,76 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(2, reloadedApplication.getQualifications().size());
 		
 	}
+	
+	@Ignore
+ 	@Test
+	public void shouldSaveRefereeWithTelephoneAndMessengerToApplication() {
+		ApplicationForm application = new ApplicationForm();
+		application.setProject(project);
+		application.setApplicant(user);
+
+		Telephone telephone = new TelephoneBuilder().telephoneNumber("0123").telephoneType("type").toTelephone();
+		Messenger messenger = new MessengerBuilder().messengerAddress("address").messengerType("type").toMessenger();
+		Referee referee = new RefereeBuilder().addressCountry("uk").addressLocation("loc").addressPostcode("pos").application(application).email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").messenger(messenger).relationship("rel").telephone(telephone).toReferee();
+		messenger.setReferee(referee);
+		telephone.setReferee(referee);
+		save(referee);
+		save(messenger);
+		application.getReferees().add(referee);
+		sessionFactory.getCurrentSession().save(application);
+//		assertNotNull(telephone.getId());
+//		assertNotNull(messenger.getId());
+//		flushAndClearSession();
+		assertNotNull(referee.getId());
+		Integer id = application.getId();
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+		assertEquals(1,reloadedApplication.getReferees().size());
+		assertTrue(reloadedApplication.getReferees().contains(referee));
+		assertEquals(1, reloadedApplication.getReferees().get(0).getMessengers().size());
+//		assertEquals(1, reloadedApplication.getReferees().get(0).getTelephones().size());
+		
+		
+	}
+ 	
+ 	@Test 
+ 	public void shouldSaveAndLoadMessenger(){
+ 		Messenger messenger = new MessengerBuilder().messengerAddress("address").messengerType("type").toMessenger();
+ 		Telephone telephone = new TelephoneBuilder().telephoneNumber("0123").telephoneType("type").toTelephone();
+ 		Referee referee = new RefereeBuilder().telephone(telephone).addressCountry("uk").messenger(messenger).addressLocation("loc").addressPostcode("pos").email("email").firstname("name").relationship("relationship").jobEmployer("emplo").jobTitle("titl").lastname("lastname").toReferee();
+ 		sessionFactory.getCurrentSession().save(messenger);
+ 		sessionFactory.getCurrentSession().save(referee);
+ 		
+ 		flushAndClearSession();
+ 		
+ 		assertNotNull(messenger.getId());
+ 		
+ 		Integer id = referee.getId();
+		Referee reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, id);
+		assertEquals(1,reloadedReferee.getMessengers().size());
+		
+ 	}
+ 	
+ 	
+ 	@Ignore
+ 	@Test 
+ 	public void shouldSaveAndLoadTelephone(){
+ 		ApplicationForm form = new ApplicationFormBuilder().applicant(user).project(project).id(3).toApplicationForm();
+// 		Messenger messenger = new MessengerBuilder().messengerAddress("address").referee(referee).messengerType("type").toMessenger();
+ 		Referee referee = new RefereeBuilder().application(form).addressCountry("uk").addressLocation("loc").addressPostcode("pos").email("email").firstname("name").relationship("relationship").jobEmployer("emplo").jobTitle("titl").lastname("lastname").toReferee();
+ 		Telephone telephone = new TelephoneBuilder().telephoneNumber("0123").referee(referee).telephoneType("type").toTelephone();
+// 		sessionFactory.getCurrentSession().save(telephone);
+ 		sessionFactory.getCurrentSession().save(form);
+ 		sessionFactory.getCurrentSession().save(referee);
+ 		
+ 		flushAndClearSession();
+ 		
+ 		assertNotNull(telephone.getId());
+ 		
+ 		Integer id = referee.getId();
+ 		Referee reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, id);
+		assertEquals(1,reloadedReferee.getTelephones().size());
+ 		
+ 	}
 
 	@Before
 	public void setup() {

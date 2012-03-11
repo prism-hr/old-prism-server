@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Telephone;
 
 public class TelephoneBuilder {
@@ -7,6 +8,7 @@ public class TelephoneBuilder {
 
 	private Integer id;
 	private String telephoneType;
+	private Referee referee;
 	
 	private String telephoneNumber;
 	
@@ -25,9 +27,15 @@ public class TelephoneBuilder {
 		return this;
 	}
 	
+	public TelephoneBuilder referee(Referee referee) {
+		this.referee = referee;
+		return this;
+	}
+	
 	public Telephone toTelephone(){
 		Telephone telephone = new Telephone();
 		telephone.setId(id);
+		telephone.setReferee(referee);
 		telephone.setTelephoneType(telephoneType);
 		telephone.setTelephoneNumber(telephoneNumber);
 		return telephone;

@@ -17,13 +17,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.MessengerDAO;
 import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
+import com.zuehlke.pgadmissions.dao.TelephoneDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
@@ -57,7 +61,7 @@ public class UpdateApplicationFormController {
 	private static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/qualification_details";
 	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/address_details";
 	private static final String APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME = "private/pgStudents/form/components/employment_position_details";
-	private static final String APPLICATON_REFEREEE_VIEW_NAME =  "private/pgStudents/form/components/referee_details";;
+	private static final String APPLICATON_REFEREEE_VIEW_NAME =  "private/pgStudents/form/components/references_details";
 	private final ApplicationsService applicationService;
 	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;
@@ -65,16 +69,18 @@ public class UpdateApplicationFormController {
 	private final CountriesDAO countriesDAO;
 	private final PersonalDetailDAO personalDetailDAO;
 	private final ProgrammeDetailDAO programmeDetailDAO;
+	private final MessengerDAO messengerDAO;
+	private final TelephoneDAO telephoneDAO;
 
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService,
 			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, 
-			CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO, ProgrammeDetailDAO programmeDetailDAO) {
+			CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO, ProgrammeDetailDAO programmeDetailDAO, MessengerDAO messengerDAO, TelephoneDAO telephoneDAO) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
@@ -83,7 +89,8 @@ public class UpdateApplicationFormController {
 		this.countriesDAO = countriesDAO;
 		this.personalDetailDAO = personalDetailDAO;
 		this.programmeDetailDAO = programmeDetailDAO;
-
+		this.messengerDAO = messengerDAO;
+		this.telephoneDAO = telephoneDAO;
 	}
 
 	@RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
@@ -401,7 +408,7 @@ public class UpdateApplicationFormController {
 
 	@RequestMapping(value = "/addReferee", method = RequestMethod.POST)
 	@Transactional
-	public ModelAndView addReferee(@ModelAttribute Referee ref, @RequestParam Integer id, @RequestParam Integer appId,
+	public ModelAndView addReferee(@ModelAttribute Referee ref,  @ModelAttribute com.zuehlke.pgadmissions.dto.Telephone tel, @ModelAttribute com.zuehlke.pgadmissions.dto.Messenger mes, @RequestParam Integer id, @RequestParam Integer appId,
 			ModelMap modelMap) {
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
@@ -412,18 +419,37 @@ public class UpdateApplicationFormController {
 
 		ApplicationPageModel model = new ApplicationPageModel();
 		model.setUser(user);
-		ApplicationForm applicationForm = application;
-		model.setApplicationForm(applicationForm);
+		model.setApplicationForm(application);
 		//		model.setResult(result);
 
 		com.zuehlke.pgadmissions.domain.Referee referee;
+		Messenger messenger;
+		Telephone telephone;
 		if (ref.getRefereeId() == null) {
 			referee = new com.zuehlke.pgadmissions.domain.Referee();
 		} else {
 			referee = applicationService.getRefereeById(ref.getRefereeId());
 		}
+		if(mes.getMessengerId() == null) {
+			messenger = new Messenger();
+			} else {
+				messenger = applicationService.getMessengerById(mes.getMessengerId());
+			}
+		if(tel.getTelephoneId() == null) {
+						telephone = new Telephone();
+			} else {
+					telephone = applicationService.getTelephoneById(tel.getTelephoneId());
+			}
+		System.out.println("DAO: address:" + mes.getMessengerAddress()+" type: " + mes.getMessengerType());
+		messenger.setMessengerAddress(mes.getMessengerAddress());
+		messenger.setMessengerType(mes.getMessengerType());
+		messenger.setReferee(referee);
+		telephone.setTelephoneNumber(tel.getTelephoneNumber());
+		telephone.setTelephoneType(tel.getTelephoneType());
+		telephone.setReferee(referee);
 		referee.setApplication(application);
 		referee.setAddressCountry(ref.getAddressCountry());
+		referee.setRelationship(ref.getRelationship());
 		referee.setAddressLocation(ref.getAddressLocation());
 		referee.setAddressPostcode(ref.getAddressPostcode());
 		referee.setEmail(ref.getEmail());
@@ -431,14 +457,19 @@ public class UpdateApplicationFormController {
 		referee.setJobEmployer(ref.getJobEmployer());
 		referee.setJobTitle(ref.getJobTitle());
 		referee.setLastname(ref.getLastname());
-		referee.setMessengers(ref.getMessengers());
-		referee.setRelationship(ref.getRelationship());
-		referee.setTelephones(ref.getTelephones());
+		referee.getMessengers().add(messenger);
+		referee.getTelephones().add(telephone);
 		if (ref.getRefereeId() == null) {
 			application.getReferees().add(referee);
 		}
 		applicationService.save(application);
-		model.setReferee(new Referee());
+		applicationService.saveReferee(referee);
+		messengerDAO.save(messenger);
+//		telephoneDAO.save(telephone);
+		Referee newReferee = new Referee();
+		newReferee.getTelephones().add(new com.zuehlke.pgadmissions.dto.Telephone());
+		newReferee.getMessengers().add(new com.zuehlke.pgadmissions.dto.Messenger());
+		model.setReferee(newReferee);
 		modelMap.put("model", model);
 
 		return new ModelAndView(APPLICATON_REFEREEE_VIEW_NAME, "model", model);

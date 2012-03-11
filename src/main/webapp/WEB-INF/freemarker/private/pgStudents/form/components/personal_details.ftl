@@ -75,10 +75,10 @@
                 	<div class="row">
                   	<label class="label">Gender</label>
                     <div class="field">
-                      <label><input type="radio" name="genderRadio" id="maleGender" value="MALE"/> Male</label>
-                      <label><input type="radio" name="genderRadio" id="femaleGender" value="FEMALE"/> Female</label>
-                      <label><input type="radio" name="genderRadio" id="notSaidGender" value="PREFER NOT TO SAY"/> Prefer not to say</label>
-                      <input type="hidden" id="gender" name="gender"/>
+                      <label><input type="radio" name="genderRadio" id="maleGender" value="MALE"/>Male</label>
+                      <label><input type="radio" name="genderRadio" id="femaleGender" value="FEMALE"/>Female</label>
+                      <label><input type="radio" name="genderRadio" id="notSaidGender" value="PREFER NOT TO SAY"/>Prefer not to say</label>
+                      <input type="hidden" id="gender" name="gender" value="${model.personalDetails.gender!}"/>
                       <#if model.hasError('gender')>                         
                                 <span style="color:red;"><@spring.message  model.result.getFieldError('gender').code /></span>                           
                       </#if>
@@ -110,6 +110,7 @@
                               <option value="${country.name}">${country.name}</option>               
                         </#list>
                       </select>
+                      <input type="hidden" id="countryDP" value="${model.personalDetails.country!}"/>
                       <#if model.hasError('country')>                         
                                 <span style="color:red;"><@spring.message  model.result.getFieldError('country').code /></span>                           
                       </#if>
@@ -170,6 +171,7 @@
                               <option value="${country.name}">${country.name}</option>               
                         </#list>
                       </select>
+                      <input type="hidden" id="residenceCountryDP" value="${model.personalDetails.residenceCountry!}"/>
                       <#if model.hasError('residenceCountry')>                         
                                 <span style="color:red;"><@spring.message  model.result.getFieldError('residenceCountry').code /></span>                           
                         </#if>
@@ -184,6 +186,7 @@
                               <option value="${residenceStatus.freeVal}">${residenceStatus.freeVal}</option>               
                         </#list>
                       </select>
+                      <input type="hidden" id="residenceStatusDP" value="${model.personalDetails.residenceStatus!}"/>
                       <#if model.hasError('residenceStatus')>                         
                                 <span style="color:red;"><@spring.message  model.result.getFieldError('residenceStatus').code /></span>                           
                         </#if>

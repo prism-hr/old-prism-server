@@ -1,4 +1,16 @@
 $(document).ready(function(){
+
+	$("#country").val($("#countryDP").val());
+	$("#residenceCountry").val($("#residenceCountryDP").val());
+	$("#residenceStatus").val($("#residenceStatusDP").val());
+	var savedGender = $("#gender").val();
+	if (savedGender =='Male'){
+		$("#maleGender").attr('checked', true);
+	} else if (savedGender =='Female'){
+		$("#femaleGender").attr('checked', true);
+	} else {
+		$("#notSaidGender").attr('checked', true);
+	}
 	
 	$('#personalDetailsSaveButton').on("click", function(){
 		$.post("/pgadmissions/update/editPersonalDetails",

@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -62,12 +61,6 @@ public class PersonalDetail extends DomainObject<Integer> {
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application = null;
 
-	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
-	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-	@Access(AccessType.PROPERTY)
-	@JoinColumn(name = "personal_detail_id")
-	private List<Supervisor> supervisors = new ArrayList<Supervisor>();
-	
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
@@ -153,18 +146,6 @@ public class PersonalDetail extends DomainObject<Integer> {
 		this.email = email;
 	}
 	
-	public List<Supervisor> getSupervisors() {
-		return supervisors;
-	}
-	
-	public void setSupervisors(List<Supervisor> supervisors) {
-		if(this.supervisors.size() == supervisors.size() && this.supervisors.containsAll(supervisors)){
-			return;
-		}
-		this.supervisors.clear();
-		this.supervisors.addAll(supervisors);
-	}
-
 	public List<Telephone> getPhoneNumbers() {
 		return phoneNumbers;
 	}

@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEdito;
+import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.validators.PersonalDetailValidator;
@@ -55,7 +55,7 @@ public class PersonalDetailsControllerTest {
 	private CountryPropertyEditor countryPropertyEditorMock;
 	private DatePropertyEditor datePropertyEditorMock;
 	private PersonalDetailValidator personalDetailValidatorMock;
-	private PhoneNumberJSONPropertyEdito phoneNumberJSONPropertyEditorMock;
+	private PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditorMock;
 
 	@Test
 	public void shouldBindPropertyEditors() {
@@ -243,7 +243,7 @@ public class PersonalDetailsControllerTest {
 		countryPropertyEditorMock = EasyMock.createMock(CountryPropertyEditor.class);
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 		personalDetailValidatorMock = EasyMock.createMock(PersonalDetailValidator.class);
-		phoneNumberJSONPropertyEditorMock = EasyMock.createMock(PhoneNumberJSONPropertyEdito.class);
+		phoneNumberJSONPropertyEditorMock = EasyMock.createMock(PhoneNumberJSONPropertyEditor.class);
 		controller = new PersonalDetailsController(personalDetailsServiceMock, countryServiceMock, applicationFormPropertyEditorMock,
 				countryPropertyEditorMock, datePropertyEditorMock, personalDetailValidatorMock, phoneNumberJSONPropertyEditorMock);
 

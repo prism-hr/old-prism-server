@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 
 
 public class PhoneNumberJSONPropertyEditorTest {
-	private PhoneNumberJSONPropertyEdito editor;
+	private PhoneNumberJSONPropertyEditor editor;
 	private SimpleDateFormat dateFormat;
 	
 
@@ -59,6 +59,6 @@ public class PhoneNumberJSONPropertyEditorTest {
 	@Before
 	public void setup(){
 		
-		editor = new PhoneNumberJSONPropertyEdito();
+		editor = new PhoneNumberJSONPropertyEditor();
 	}
 }

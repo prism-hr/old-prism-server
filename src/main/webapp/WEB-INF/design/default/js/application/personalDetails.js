@@ -19,7 +19,7 @@ $(document).ready(function(){
 			}
 			
 		
-			$.post( "/pgadmissions/personalDetails"  ,$.param(postData) + "&" + $('[input[name="phoneNumbers"]').serialize(),
+			$.post( "/pgadmissions/personalDetails" ,$.param(postData) + "&" + $('[input[name="phoneNumbers"]').serialize(),
 				 function(data) {
 				    $('#personalDetailsSection').html(data);
 				  });

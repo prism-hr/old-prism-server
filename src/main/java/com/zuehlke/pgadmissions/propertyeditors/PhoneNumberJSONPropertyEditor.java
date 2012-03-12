@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 
 @Component
-public class PhoneNumberJSONPropertyEdito extends PropertyEditorSupport {
+public class PhoneNumberJSONPropertyEditor extends PropertyEditorSupport {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setAsText(String jsonStirng) throws IllegalArgumentException {

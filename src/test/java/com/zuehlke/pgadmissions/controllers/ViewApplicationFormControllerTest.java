@@ -131,7 +131,7 @@ public class ViewApplicationFormControllerTest {
 		assertNotNull(model.getAddress());
 		assertNotNull(model.getFunding());
 		assertNotNull(model.getEmploymentPosition());
-		assertNotNull(model.getReferee());
+		assertNotNull(model.getReferrers());
 		assertNotNull(model.getProgramme());
 		
 		assertSame(countries, model.getCountries());

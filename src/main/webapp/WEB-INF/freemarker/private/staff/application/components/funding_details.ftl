@@ -12,7 +12,7 @@
                                 <tr>
                                     <td>${funding.type}</td>
                                     <td>${funding.description}</td>
-                                    <td>${funding.awardDate?string('yyyy/MM/dd')}</td>
+                                    <td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
                                </tr>
                             </#list>
                             </table>

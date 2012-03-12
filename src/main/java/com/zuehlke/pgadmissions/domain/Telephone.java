@@ -9,6 +9,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.PhoneType;
+
 @Entity(name = "TELEPHONE")
 @Access(AccessType.FIELD)
 public class Telephone extends DomainObject<Integer>{
@@ -22,7 +26,7 @@ public class Telephone extends DomainObject<Integer>{
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
 	@Access(AccessType.PROPERTY)
 	@JoinColumn(name = "referee_id")
-	private Referee referee = new Referee();
+	private Referee referee = null;
 
 
 	public Referee getReferee() {
@@ -34,16 +38,17 @@ public class Telephone extends DomainObject<Integer>{
 	}
 	
 	@Column(name = "telephone_type")
-	private String telephoneType;
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.PhoneTypeEnumUserType")
+	private PhoneType telephoneType;
 	
 	@Column(name = "number")
 	private String telephoneNumber;
 	
-	public String getTelephoneType() {
+	public PhoneType getTelephoneType() {
 		return telephoneType;
 	}
 
-	public void setTelephoneType(String telephoneType) {
+	public void setTelephoneType(PhoneType telephoneType) {
 		this.telephoneType = telephoneType;
 	}
 

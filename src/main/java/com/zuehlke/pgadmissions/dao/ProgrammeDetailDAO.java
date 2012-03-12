@@ -22,12 +22,13 @@ public class ProgrammeDetailDAO {
 		this.sessionFactory = sessionFactory;
 	}
 
+
 	@Transactional
+	@Deprecated
 	public ProgrammeDetail getProgrammeDetailWithApplication(ApplicationForm form) {
 		return (ProgrammeDetail) sessionFactory.getCurrentSession().createCriteria(ProgrammeDetail.class).add(Restrictions.eq("application", form)).uniqueResult();
 	}
 
-	@Transactional
 	public void save(ProgrammeDetail pd) {
 		sessionFactory.getCurrentSession().saveOrUpdate(pd);
 	}

@@ -17,7 +17,7 @@ public class DatePropertyEditorTest {
 
 	@Test	
 	public void shouldParseAndSetAsValue() throws ParseException{
-		editor.setAsText("2001/02/02");
+		editor.setAsText("02-Feb-2001");
 		assertEquals(dateFormat.parse("2001/02/02"), editor.getValue());
 		
 	}
@@ -47,7 +47,7 @@ public class DatePropertyEditorTest {
 	@Test	
 	public void shouldReturnDateAsCorrectString() throws ParseException{			
 		editor.setValue(dateFormat.parse("2001/02/02"));
-		assertEquals("2001/02/02", editor.getAsText());
+		assertEquals("02-Feb-2001", editor.getAsText());
 	}
 	
 	@Before

@@ -5,7 +5,6 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -22,6 +21,7 @@ import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.dao.TelephoneDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
@@ -30,13 +30,12 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.dto.ProgrammeDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.dto.Referee;
@@ -50,7 +49,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
-import com.zuehlke.pgadmissions.validators.PersonalDetailsValidator;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 
@@ -61,7 +59,7 @@ public class UpdateApplicationFormController {
 	private static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/qualification_details";
 	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/address_details";
 	private static final String APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME = "private/pgStudents/form/components/employment_position_details";
-	private static final String APPLICATON_REFEREEE_VIEW_NAME =  "private/pgStudents/form/components/references_details";
+	private static final String APPLICATON_REFEREEE_VIEW_NAME = "private/pgStudents/form/components/references_details";
 	private final ApplicationsService applicationService;
 	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;
@@ -72,15 +70,16 @@ public class UpdateApplicationFormController {
 	private final MessengerDAO messengerDAO;
 	private final TelephoneDAO telephoneDAO;
 
-
 	UpdateApplicationFormController() {
 		this(null, null, null, null, null, null, null, null, null);
 	}
+	
+	
 
 	@Autowired
-	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService,
-			UserPropertyEditor userPropertyEditor, DatePropertyEditor datePropertyEditor, 
-			CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO, ProgrammeDetailDAO programmeDetailDAO, MessengerDAO messengerDAO, TelephoneDAO telephoneDAO) {
+	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService, UserPropertyEditor userPropertyEditor,
+			DatePropertyEditor datePropertyEditor, CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO, ProgrammeDetailDAO programmeDetailDAO,
+			MessengerDAO messengerDAO, TelephoneDAO telephoneDAO) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
@@ -93,62 +92,16 @@ public class UpdateApplicationFormController {
 		this.telephoneDAO = telephoneDAO;
 	}
 
-	@RequestMapping(value = "/editPersonalDetails", method = RequestMethod.POST)
-	@Transactional
-	public ModelAndView editPersonalDetails(@ModelAttribute PersonalDetails personalDetails, @RequestParam Integer id,
-			@RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+	@InitBinder
+	public void registerPropertyEditors(WebDataBinder binder) {
+		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);
+		binder.registerCustomEditor(Date.class, datePropertyEditor);
 
-		ApplicationForm application = applicationService.getApplicationById(appId);
-
-		if (application.isSubmitted()) {
-			throw new CannotUpdateApplicationException();
-		}
-
-		PersonalDetailsValidator personalDetailsValidator = new PersonalDetailsValidator();
-		personalDetailsValidator.validate(personalDetails, result);
-
-		RegisteredUser user = userService.getUser(id);
-		if (!user.equals(SecurityContextHolder.getContext().getAuthentication().getDetails())) {
-			throw new AccessDeniedException();
-		}
-
-		if (!result.hasErrors()) {
-			PersonalDetail ps = personalDetailDAO.getPersonalDetailWithApplication(application);
-			if (ps == null) {
-				ps = new PersonalDetail();
-			}
-
-			ps.setFirstName(personalDetails.getFirstName());
-			ps.setLastName(personalDetails.getLastName());
-			ps.setEmail(personalDetails.getEmail());
-			ps.setGender(Gender.fromString(personalDetails.getGender()));
-			ps.setDateOfBirth(personalDetails.getDateOfBirth());
-			ps.setCountry(countriesDAO.getCountryWithName(personalDetails.getCountry()));
-			ps.setResidenceCountry(countriesDAO.getCountryWithName(personalDetails.getResidenceCountry()));
-			ps.setResidenceStatus(ResidenceStatus.fromString(personalDetails.getResidenceStatus()));
-			ps.setApplication(application);
-
-			personalDetailDAO.save(ps);
-
-		}
-
-		ApplicationPageModel model = new ApplicationPageModel();
-		model.setUser(user);
-		model.setApplicationForm(application);
-		model.setPersonalDetails(personalDetails);
-		model.setResult(result);
-		model.setResidenceStatuses(ResidenceStatus.values());
-		model.setCountries(countriesDAO.getAllCountries());
-		modelMap.put("model", model);
-		modelMap.put("formDisplayState", "open");
-
-		return new ModelAndView("private/pgStudents/form/components/personal_details", modelMap);
 	}
-
+	
 	@RequestMapping(value = "/editProgramme", method = RequestMethod.POST)
-	@Transactional
-	public ModelAndView editPersonalDetails(@ModelAttribute ProgrammeDetails programme, @RequestParam Integer id1,
-			@RequestParam Integer appId1, BindingResult result, ModelMap modelMap) {
+	public ModelAndView editPersonalDetails(@ModelAttribute ProgrammeDetails programme, @RequestParam Integer id1, @RequestParam Integer appId1,
+			BindingResult result, ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId1);
 
@@ -165,7 +118,7 @@ public class UpdateApplicationFormController {
 		}
 
 		if (!result.hasErrors()) {
-			ProgrammeDetail pd =  programmeDetailDAO.getProgrammeDetailWithApplication(application);
+			ProgrammeDetail pd = programmeDetailDAO.getProgrammeDetailWithApplication(application);
 			if (pd == null) {
 				pd = new ProgrammeDetail();
 			}
@@ -194,8 +147,8 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer id,
-			@RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result,
+			ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
@@ -251,9 +204,7 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/addFunding", method = RequestMethod.POST)
-	@Transactional
-	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer id, @RequestParam Integer appId,
-			BindingResult result, ModelMap modelMap) {
+	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
 		if (application.isSubmitted()) {
@@ -295,9 +246,8 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/addEmploymentPosition", method = RequestMethod.POST)
-	@Transactional
-	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer id,
-			@RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result,
+			ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
@@ -339,17 +289,8 @@ public class UpdateApplicationFormController {
 		return new ModelAndView(APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME, "model", model);
 	}
 
-	@InitBinder
-	public void registerPropertyEditors(WebDataBinder binder) {
-		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);
-		binder.registerCustomEditor(Date.class, datePropertyEditor);
-
-	}
-
 	@RequestMapping(value = "/editAddress", method = RequestMethod.POST)
-	@Transactional
-	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer id,
-			@RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
 		if (application.isSubmitted()) {
@@ -383,7 +324,7 @@ public class UpdateApplicationFormController {
 			address.setStartDate(addr.getAddressStartDate());
 			address.setEndDate(addr.getAddressEndDate());
 			address.setContactAddress(AddressStatus.fromString(addr.getAddressContactAddress()));
-			
+
 			if (addr.getAddressId() == null) {
 				application.getAddresses().add(address);
 			}
@@ -397,7 +338,6 @@ public class UpdateApplicationFormController {
 		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, modelMap);
 	}
 
-
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
 	}
@@ -407,9 +347,8 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/addReferee", method = RequestMethod.POST)
-	@Transactional
-	public ModelAndView addReferee(@ModelAttribute Referee ref,  @ModelAttribute com.zuehlke.pgadmissions.dto.Telephone tel, @ModelAttribute com.zuehlke.pgadmissions.dto.Messenger mes, @RequestParam Integer id, @RequestParam Integer appId,
-			ModelMap modelMap) {
+	public ModelAndView addReferee(@ModelAttribute Referee ref, @ModelAttribute com.zuehlke.pgadmissions.dto.Telephone tel,
+			@ModelAttribute com.zuehlke.pgadmissions.dto.Messenger mes, @RequestParam Integer id, @RequestParam Integer appId, ModelMap modelMap) {
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
 		if (application.isSubmitted()) {
@@ -420,7 +359,7 @@ public class UpdateApplicationFormController {
 		ApplicationPageModel model = new ApplicationPageModel();
 		model.setUser(user);
 		model.setApplicationForm(application);
-		//		model.setResult(result);
+		// model.setResult(result);
 
 		com.zuehlke.pgadmissions.domain.Referee referee;
 		Messenger messenger;
@@ -430,22 +369,22 @@ public class UpdateApplicationFormController {
 		} else {
 			referee = applicationService.getRefereeById(ref.getRefereeId());
 		}
-		if(mes.getMessengerId() == null) {
+		if (mes.getMessengerId() == null) {
 			messenger = new Messenger();
-			} else {
-				messenger = applicationService.getMessengerById(mes.getMessengerId());
-			}
-		if(tel.getTelephoneId() == null) {
-						telephone = new Telephone();
-			} else {
-					telephone = applicationService.getTelephoneById(tel.getTelephoneId());
-			}
-		System.out.println("DAO: address:" + mes.getMessengerAddress()+" type: " + mes.getMessengerType());
+		} else {
+			messenger = applicationService.getMessengerById(mes.getMessengerId());
+		}
+		if (tel.getTelephoneId() == null) {
+			telephone = new Telephone();
+		} else {
+			telephone = applicationService.getTelephoneById(tel.getTelephoneId());
+		}
+		System.out.println("DAO: address:" + mes.getMessengerAddress() + " type: " + mes.getMessengerType());
 		messenger.setMessengerAddress(mes.getMessengerAddress());
 		messenger.setMessengerType(mes.getMessengerType());
 		messenger.setReferee(referee);
 		telephone.setTelephoneNumber(tel.getTelephoneNumber());
-		telephone.setTelephoneType(tel.getTelephoneType());
+		telephone.setTelephoneType(PhoneType.valueOf(tel.getTelephoneType()));
 		telephone.setReferee(referee);
 		referee.setApplication(application);
 		referee.setAddressCountry(ref.getAddressCountry());
@@ -465,7 +404,7 @@ public class UpdateApplicationFormController {
 		applicationService.save(application);
 		applicationService.saveReferee(referee);
 		messengerDAO.save(messenger);
-//		telephoneDAO.save(telephone);
+		// telephoneDAO.save(telephone);
 		Referee newReferee = new Referee();
 		newReferee.getTelephones().add(new com.zuehlke.pgadmissions.dto.Telephone());
 		newReferee.getMessengers().add(new com.zuehlke.pgadmissions.dto.Messenger());

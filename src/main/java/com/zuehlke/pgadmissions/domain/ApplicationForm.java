@@ -46,49 +46,52 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "applicant_id")
 	private RegisteredUser applicant = null;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "approver_user_id")
 	private RegisteredUser approver = null;
 
 	@ManyToOne
 	@JoinColumn(name = "project_id")
 	private Project project;
+	
+	@OneToOne(mappedBy="application")
+	private PersonalDetail personalDetails ;
+
+	
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.SubmissionStatusEnumUserType")
 	@Column(name = "submission_status")
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
 	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
 
+	@OneToMany(mappedBy="application")
 	private List<ApplicationReview> applicationComments = new ArrayList<ApplicationReview>();
 
 	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-	@Access(AccessType.PROPERTY)
 	@JoinColumn(name = "application_form_id")
 	private List<Address> addresses = new ArrayList<Address>();
 
 	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-	@Access(AccessType.PROPERTY)
 	@JoinColumn(name = "application_form_id")
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
 	
 	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-	@Access(AccessType.PROPERTY)
 	@JoinColumn(name = "application_form_id")
 	private List<Funding> fundings = new ArrayList<Funding>();
 	
 	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-	@Access(AccessType.PROPERTY)
 	@JoinColumn(name = "application_form_id")
 	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 	
 	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-	@Access(AccessType.PROPERTY)
 	@JoinColumn(name = "application_form_id")
 	private List<Referee> referees = new ArrayList<Referee>();
 
@@ -105,20 +108,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.qualifications.addAll(qualifications);
 	}
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
-	@Access(AccessType.PROPERTY)
+	
 	public List<RegisteredUser> getReviewers() {
 		return reviewers;
 	}
 
 	public void setReviewers(List<RegisteredUser> reviewers) {	
-		//THIS IS A HACK. To be changed.
-		if(this.reviewers.size() == reviewers.size() && this.reviewers.containsAll(reviewers)){
-			return;
-		}
-		this.reviewers.clear();
-		this.reviewers.addAll(reviewers);
+		this.reviewers = reviewers;
 	}
 
 	public Project getProject() {
@@ -214,22 +210,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return approvalStatus != null;
 	}
 	
-	@OneToMany(mappedBy="application")
-	@Access(AccessType.PROPERTY)
+
 	public List<ApplicationReview> getApplicationComments() {
 		return applicationComments;
 	}
 
 	public void setApplicationComments(List<ApplicationReview> applicationComments) {
-		
-		/*for (ApplicationReview applicationReview : applicationComments) {
-			Assert.notNull(applicationReview.getComment());
-		}*/
-		if(this.applicationComments.size() == applicationComments.size() && this.applicationComments.containsAll(applicationComments)){
-			return;
-		}
-		this.applicationComments.clear();
-		this.applicationComments.addAll(applicationComments);
+		this.applicationComments = applicationComments;
 	}
 
 	public boolean hasComments() {
@@ -241,11 +228,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 	
 	public void setAddresses(List<Address> addresses) {
-		if(this.addresses.size() == addresses.size() && this.addresses.containsAll(addresses)){
-			return;
-		}
-		this.addresses.clear();
-		this.addresses.addAll(addresses);
+		this.addresses = addresses;
 	}
 	
 	public boolean hasQualifications(){
@@ -257,11 +240,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 	
 	public void setFundings(List<Funding> fundings) {
-		if(this.fundings.size() == fundings.size() && this.fundings.containsAll(fundings)){
-			return;
-		}
-		this.fundings.clear();
-		this.fundings.addAll(fundings);
+		this.fundings = fundings;
 	}
 
 	public List<EmploymentPosition> getEmploymentPositions() {
@@ -269,11 +248,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public void setEmploymentPositions(List<EmploymentPosition> employmentPositions) {
-		if(this.employmentPositions.size() == employmentPositions.size() && this.employmentPositions.containsAll(employmentPositions)){
-			return;
-		}
-		this.employmentPositions.clear();
-		this.employmentPositions.addAll(employmentPositions);
+		this.employmentPositions = employmentPositions;
 	}
 
 	public List<Referee> getReferees() {
@@ -281,11 +256,18 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public void setReferees(List<Referee> referees) {
-		if(this.referees.size() == referees.size() && this.referees.containsAll(referees)){
-			return;
+		this.referees = referees;
+	}
+
+	public PersonalDetail getPersonalDetails() {
+		if(personalDetails == null){
+			return new PersonalDetail();
 		}
-		this.referees.clear();
-		this.referees.addAll(referees);
+		return personalDetails;
+	}
+
+	public void setPersonalDetails(PersonalDetail personalDetails) {
+		this.personalDetails = personalDetails;
 	}
 }
 

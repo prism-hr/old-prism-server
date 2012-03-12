@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 @Repository
@@ -36,6 +35,7 @@ public class ApplicationReviewDAO {
 	}
 	
 	public List<ApplicationReview> getReviewsByUser(RegisteredUser user) {
+		@SuppressWarnings("unchecked")
 		List<ApplicationReview> list = sessionFactory.getCurrentSession()
 				.createCriteria(ApplicationReview.class)
 				.add(Restrictions.eq("user", user)).list();

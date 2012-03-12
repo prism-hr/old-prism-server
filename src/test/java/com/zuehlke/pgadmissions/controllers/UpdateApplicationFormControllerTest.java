@@ -327,7 +327,7 @@ public class UpdateApplicationFormControllerTest {
 		final Referee refereeDetails = new RefereeBuilder().refereeId(1).toReferee();
 
 		applicationController = new UpdateApplicationFormController(userServiceMock, applicationsServiceMock, userPropertyEditorMock,
-				datePropertyEditorMock, countriesServiceMock, personalDetailDAOMock, programmeDetailDAOMock
+				datePropertyEditorMock, countriesServiceMock,  programmeDetailDAOMock
 				, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock){
 			Referee newReferee() {
 				return new Referee();
@@ -611,8 +611,7 @@ public class UpdateApplicationFormControllerTest {
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		
 		applicationController = new UpdateApplicationFormController(userServiceMock, applicationsServiceMock, userPropertyEditorMock,
-				datePropertyEditorMock, countriesServiceMock, personalDetailDAOMock, programmeDetailDAOMock
-				, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock){
+				datePropertyEditorMock, countriesServiceMock,  programmeDetailDAOMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock){
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

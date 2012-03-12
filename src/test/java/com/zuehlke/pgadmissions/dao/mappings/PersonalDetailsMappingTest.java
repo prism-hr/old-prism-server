@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -21,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
@@ -101,6 +103,44 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
 		assertEquals(2, reloadedDetails.getPhoneNumbers().size());
 		assertTrue(reloadedDetails.getPhoneNumbers().containsAll(Arrays.asList(telephone1, telephone3)));
+
+	}
+	
+	@Test
+	public void shouldSaveAndLoadPersonalDetailsWithLanguages() throws Exception {
+		Language language1 = new LanguageBuilder().name("aa").toLanguage();
+		Language language2 = new LanguageBuilder().name("bb").toLanguage();
+		Language language3 = new LanguageBuilder().name("cc").toLanguage();
+		save(language1, language2, language3);
+		flushAndClearSession();
+
+		PersonalDetail personalDetails = new PersonalDetailsBuilder().languages(language1, language2).country(country1)
+				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
+				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
+				.toPersonalDetails();
+
+		sessionFactory.getCurrentSession().save(personalDetails);
+		
+		flushAndClearSession();
+		PersonalDetail reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(2, reloadedDetails.getLanguages().size());
+		assertTrue(reloadedDetails.getLanguages().containsAll(Arrays.asList(language1, language2)));
+
+		reloadedDetails.getLanguages().remove(1);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
+
+		flushAndClearSession();
+		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(1, reloadedDetails.getLanguages().size());
+		assertTrue(reloadedDetails.getLanguages().containsAll(Arrays.asList(language1)));
+
+		reloadedDetails.getLanguages().add(language3);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
+		flushAndClearSession();
+		
+		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(2, reloadedDetails.getLanguages().size());
+		assertTrue(reloadedDetails.getLanguages().containsAll(Arrays.asList(language1, language3)));
 
 	}
 

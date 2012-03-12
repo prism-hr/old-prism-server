@@ -15,11 +15,12 @@ $(document).ready(function(){
 				residenceStatus: $("#residenceStatus").val(),
 				personalDetailsId: $("#id").val(), 
 				application: $("#appId").val(),
-				gender: $("input[name='genderRadio']:checked").val()	
+				gender: $("input[name='genderRadio']:checked").val(),
+				languages: $('#languageSelect').val()
 			}
 			
 		
-			$.post( "/pgadmissions/personalDetails" ,$.param(postData) + "&" + $('[input[name="phoneNumbers"]').serialize(),
+			$.post( "/pgadmissions/personalDetails" ,$.param(postData) + "&" + $('[input[name="languages"]').serialize()+ "&" + $('[input[name="phoneNumbers"]').serialize(),
 				 function(data) {
 				    $('#personalDetailsSection').html(data);
 				  });

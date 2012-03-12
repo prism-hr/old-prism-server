@@ -73,26 +73,21 @@ public class UpdateApplicationFormController {
 	private final PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor;
 	private final MessengerJSONPropertyEditor messengerJSONPropertyEditor;
 
-	private PersonalDetailDAO personalDetailDAO;
-
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null);
 	}
-	
-	
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService, UserPropertyEditor userPropertyEditor,
-			DatePropertyEditor datePropertyEditor, CountryService countryService, PersonalDetailDAO personalDetailDAO, ProgrammeDetailDAO programmeDetailDAO
-			, RefereeService refereeService, PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, MessengerJSONPropertyEditor messengerJSONPropertyEditor,
+			DatePropertyEditor datePropertyEditor, CountryService countryService, ProgrammeDetailDAO programmeDetailDAO, RefereeService refereeService,
+			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, MessengerJSONPropertyEditor messengerJSONPropertyEditor,
 			ApplicationFormPropertyEditor applicationFormPropertyEditor) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.userService = userService;
 		this.datePropertyEditor = datePropertyEditor;
-		this.countryService = countryService;	
-		this.personalDetailDAO = personalDetailDAO;
+		this.countryService = countryService;
 		this.programmeDetailDAO = programmeDetailDAO;
 		this.refereeService = refereeService;
 		this.phoneNumberJSONPropertyEditor = phoneNumberJSONPropertyEditor;
@@ -107,11 +102,9 @@ public class UpdateApplicationFormController {
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
 		binder.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditor);
 		binder.registerCustomEditor(Messenger.class, messengerJSONPropertyEditor);
-		
-		
 
 	}
-	
+
 	@RequestMapping(value = "/editProgramme", method = RequestMethod.POST)
 	public ModelAndView editPersonalDetails(@ModelAttribute ProgrammeDetails programme, @RequestParam Integer id1, @RequestParam Integer appId1,
 			BindingResult result, ModelMap modelMap) {
@@ -361,8 +354,8 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/refereeDetails", method = RequestMethod.POST)
-	public ModelAndView editReferee(@ModelAttribute("refereeDetails") Referee refereeDetails,  BindingResult errors) {
-		
+	public ModelAndView editReferee(@ModelAttribute("refereeDetails") Referee refereeDetails, BindingResult errors) {
+
 		if (refereeDetails.getApplication() != null && refereeDetails.getApplication().isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
@@ -370,15 +363,15 @@ public class UpdateApplicationFormController {
 				&& !getCurrentUser().equals(refereeDetails.getApplication().getApplicant())) {
 			throw new ResourceNotFoundException();
 		}
-		
-		if (!errors.hasErrors()) {			
+
+		if (!errors.hasErrors()) {
 			refereeService.save(refereeDetails);
-		} 
-		
+		}
+
 		if (refereeDetails.getApplication() != null) {
 			refereeDetails.getApplication().setReferees(java.util.Arrays.asList(refereeDetails));
 		}
-		
+
 		ApplicationPageModel applicationPageModel = new ApplicationPageModel();
 		applicationPageModel.setApplicationForm(refereeDetails.getApplication());
 		applicationPageModel.setUser(getCurrentUser());
@@ -391,7 +384,7 @@ public class UpdateApplicationFormController {
 		modelAndView.addObject("formDisplayState", "open");
 		return modelAndView;
 	}
-	
+
 	private RegisteredUser getCurrentUser() {
 		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 	}
@@ -407,10 +400,9 @@ public class UpdateApplicationFormController {
 		}
 		return refereeDetails;
 	}
-	
+
 	Referee newReferee() {
 		return new Referee();
 	}
-	
 
 }

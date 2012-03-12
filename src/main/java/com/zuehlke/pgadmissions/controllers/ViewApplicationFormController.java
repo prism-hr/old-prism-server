@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.utils.DTOUtils;
 
 @Controller
@@ -39,17 +40,19 @@ public class ViewApplicationFormController {
 	private ApplicationReviewService applicationReviewService;
 	private final CountryService countryService;
 	private final ProgrammeDetailDAO proogrammeDetailDAO;
+	private final LanguageService languageService;
 
 	ViewApplicationFormController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public ViewApplicationFormController(ApplicationsService applicationService, ApplicationReviewService applicationReviewService,
-			CountryService countryService, ProgrammeDetailDAO programmeDetailDAO) {
+			CountryService countryService, LanguageService languageService, ProgrammeDetailDAO programmeDetailDAO) {
 		this.applicationService = applicationService;
 		this.applicationReviewService = applicationReviewService;
 		this.countryService = countryService;
+		this.languageService = languageService;
 		this.proogrammeDetailDAO = programmeDetailDAO;
 
 	}
@@ -70,6 +73,7 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setReferee(new Referee());
 		viewApplicationModel.setEmploymentPosition(new EmploymentPosition());
 		viewApplicationModel.setCountries(countryService.getAllCountries());
+		viewApplicationModel.setLanguages(languageService.getAllLanguages());
 		viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());
 		viewApplicationModel.setStudyOptions(StudyOption.values());
 		viewApplicationModel.setReferrers(Referrer.values());

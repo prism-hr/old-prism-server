@@ -14,8 +14,8 @@
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 		
-		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/global_public.css' />" />
-		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/register.css' />" />
+		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/global_public.css' />" />
+		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/register.css' />" />
 		
 	</head>
 

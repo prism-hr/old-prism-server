@@ -40,7 +40,7 @@
 		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id}">-</a></td>
 		                  	<td>${funding.type}</td>
 		                  	<td>${funding.description}</td>
-		                  	<td>${funding.awardDate?string('yyyy/MM/dd')}</td>
+		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
 		                  	<td><a class="button-delete" href="#">delete</a></td>
 		                  	
 		                  	<!-- Non-rendering data -->
@@ -48,7 +48,7 @@
 	                        <input type="hidden" id="${funding.id}_fundingTypeDP" value="${funding.type}"/>
 	                        <input type="hidden" id="${funding.id}_fundingValueDP" value="${funding.value}"/>
 	                        <input type="hidden" id="${funding.id}_fundingDescriptionDP" value="${funding.description}"/>
-	                        <input type="hidden" id="${funding.id}_fundingAwardDateDP" value="${funding.awardDate?string('yyyy/MM/dd')}"/>
+	                        <input type="hidden" id="${funding.id}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
 		                  	
 		                </tr>
 					</#list>				               
@@ -118,12 +118,12 @@
                     <span class="hint"></span>
                     <div class="field">
                     <#if !model.applicationForm.isSubmitted()>
-	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('yyyy/MM/dd'))!}" />
+	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}" />
                     	<#if model.hasError('fundingAwardDate')>                           
                     		<span class="invalid""><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           
                     	</#if>
                     <#else>
-                        <input id="fundingAwardDate" name="fundingAwardDate" readonly="readonly" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('yyyy/MM/dd'))!}" />	
+                        <input id="fundingAwardDate" name="fundingAwardDate" readonly="readonly" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}" />	
                     </#if>
                     </div>
                     

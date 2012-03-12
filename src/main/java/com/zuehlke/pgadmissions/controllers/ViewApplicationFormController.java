@@ -14,6 +14,8 @@ import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
@@ -28,6 +30,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.utils.DTOUtils;
 
 @Controller
@@ -38,39 +41,34 @@ public class ViewApplicationFormController {
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/main_application_page";
 	private ApplicationsService applicationService;
 	private ApplicationReviewService applicationReviewService;
-	private final CountriesDAO countriesDAO;
-	private final PersonalDetailDAO personalDetailDAO;
+	private final CountryService countryService;
 	private final ProgrammeDetailDAO proogrammeDetailDAO;
 
 	ViewApplicationFormController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public ViewApplicationFormController(
-			ApplicationsService applicationService, ApplicationReviewService applicationReviewService, 
-			CountriesDAO countriesDAO, PersonalDetailDAO personalDetailDAO, ProgrammeDetailDAO programmeDetailDAO) {
+	public ViewApplicationFormController(ApplicationsService applicationService, ApplicationReviewService applicationReviewService,
+			CountryService countryService, ProgrammeDetailDAO programmeDetailDAO) {
 		this.applicationService = applicationService;
 		this.applicationReviewService = applicationReviewService;
-		this.countriesDAO = countriesDAO;
-		this.personalDetailDAO = personalDetailDAO;
+		this.countryService = countryService;
 		this.proogrammeDetailDAO = programmeDetailDAO;
-		
+
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getViewApplicationPage(@RequestParam(required=false) String view, @RequestParam Integer id) {
-		RegisteredUser currentuser = (RegisteredUser) SecurityContextHolder
-		.getContext().getAuthentication().getDetails();
-		ApplicationForm applicationForm = applicationService
-		.getApplicationById(id);
+	public ModelAndView getViewApplicationPage(@RequestParam(required = false) String view, @RequestParam Integer id) {
+		RegisteredUser currentuser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		ApplicationForm applicationForm = applicationService.getApplicationById(id);
 		if (applicationForm == null || !currentuser.canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 		ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
 
 		viewApplicationModel.setApplicationForm(applicationForm);
-		viewApplicationModel.setPersonalDetails(DTOUtils.createPersonalDetails(personalDetailDAO.getPersonalDetailWithApplication(applicationForm)));
+		//
 		viewApplicationModel.setAddress(new Address());
 		viewApplicationModel.setFunding(new Funding());
 		viewApplicationModel.setQualification(new QualificationDTO());
@@ -79,33 +77,34 @@ public class ViewApplicationFormController {
 		referee.getTelephones().add(new Telephone());
 		referee.getMessengers().add(new Messenger());
 		viewApplicationModel.setReferee(referee);
-		viewApplicationModel.setCountries(countriesDAO.getAllCountries());
+		viewApplicationModel.setCountries(countryService.getAllCountries());
+		
 		viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());
 		viewApplicationModel.setStudyOptions(StudyOption.values());
 		viewApplicationModel.setReferrers(Referrer.values());
+		viewApplicationModel.setPhoneTypes(PhoneType.values());
+		viewApplicationModel.setGenders(Gender.values());
 		viewApplicationModel.setProgrammeDetails(DTOUtils.createProgrammeDetails(proogrammeDetailDAO.getProgrammeDetailWithApplication(applicationForm)));
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}
-		
+
 		viewApplicationModel.setUser(currentuser);
 		if (applicationForm.hasComments()) {
-			if (currentuser.isInRole(Authority.ADMINISTRATOR)|| currentuser.isInRole(Authority.APPROVER)) {
+			if (currentuser.isInRole(Authority.ADMINISTRATOR) || currentuser.isInRole(Authority.APPROVER)) {
 				viewApplicationModel.setApplicationComments(applicationReviewService.getApplicationReviewsByApplication(applicationForm));
 			} else if (currentuser.isInRole(Authority.REVIEWER)) {
-				viewApplicationModel.setApplicationComments((applicationReviewService.getVisibleComments(applicationForm,currentuser)));
+				viewApplicationModel.setApplicationComments((applicationReviewService.getVisibleComments(applicationForm, currentuser)));
 			}
 		}
 
 		if (currentuser.isInRole(Authority.APPLICANT)) {
-			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,
-					"model", viewApplicationModel);
+			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME, "model", viewApplicationModel);
 		}
-		if(view!=null) viewApplicationModel.setView(view);
+		if (view != null)
+			viewApplicationModel.setView(view);
 
-		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model",
-				viewApplicationModel);
+		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", viewApplicationModel);
 	}
 
 }
-

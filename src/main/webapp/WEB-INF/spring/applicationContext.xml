@@ -18,7 +18,7 @@
 	<bean id="simplerHandlerMapping" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter" />
 	
 	<mvc:annotation-driven />
-	
+ 
 	<bean id="messageSource"
 		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename">

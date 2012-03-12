@@ -106,7 +106,7 @@ $(document).ready(function()
 });
 
 
-function msg(message, type)
+function msg(message, type),,,,,,
 {
   var $msg = $('#message-bar');
   if ($msg.length == 0)

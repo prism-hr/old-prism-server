@@ -17,7 +17,7 @@ public class DatePropertyEditor extends PropertyEditorSupport{
 			return;
 		}
 		try {
-			setValue(new SimpleDateFormat("yyyy/MM/dd").parse(strDate));
+			setValue(new SimpleDateFormat("dd-MMM-yyyy").parse(strDate));
 		} catch (ParseException e) {
 			throw new IllegalArgumentException(e);
 		}
@@ -29,6 +29,6 @@ public class DatePropertyEditor extends PropertyEditorSupport{
 		if(getValue() == null){
 			return null;
 		}
-		return new SimpleDateFormat("yyyy/MM/dd").format(getValue());
+		return new SimpleDateFormat("dd-MMM-yyyy").format(getValue());
 	}
 }

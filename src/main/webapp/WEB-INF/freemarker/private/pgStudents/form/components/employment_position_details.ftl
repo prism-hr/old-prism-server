@@ -38,8 +38,8 @@
 		            	<tr>
 		                    <td><a class="row-arrow" name="positionEditButton" id="position_${position.id}">-</a></td>
 		                    <td>${position.position_title}</td>
-		                    <td>${position.position_startDate?string('yyyy/MM/dd')}</td>
-		                    <td>${position.position_endDate?string('yyyy/MM/dd')}</td>
+		                    <td>${position.position_startDate?string('dd-MMM-yyyy')}</td>
+		                    <td>${position.position_endDate?string('dd-MMM-yyyy')}</td>
 		                    <td>
 		                    	<a class="button-delete" 
 		                    			type="submit">Delete</a>
@@ -50,8 +50,8 @@
                             <input type="hidden" id="${position.id}_remit" value="${position.position_remit}"/>
                             <input type="hidden" id="${position.id}_language" value="${position.position_language}"/>
                             <input type="hidden" id="${position.id}_positionTitle" value="${position.position_title}"/>
-                            <input type="hidden" id="${position.id}_positionStartDate" value="${position.position_startDate?string('yyyy/MM/dd')}"/>
-                            <input type="hidden" id="${position.id}_positionEndDate" value="${position.position_endDate?string('yyyy/MM/dd')}"/>
+                            <input type="hidden" id="${position.id}_positionStartDate" value="${position.position_startDate?string('dd-MMM-yyyy')}"/>
+                            <input type="hidden" id="${position.id}_positionEndDate" value="${position.position_endDate?string('dd-MMM-yyyy')}"/>
 		                    
 		                </tr>
 		            </#list>
@@ -113,7 +113,7 @@
                     <span class="hint"></span>
                     <div class="field">
                       	<input class="half date" type="text" id="position_startDate" name="position_startDate" 
-                      			value="${(model.employmentPosition.position_startDate?string('yyyy/MM/dd'))!}"/>
+                      			value="${(model.employmentPosition.position_startDate?string('dd-MMM-yyyy'))!}"/>
                       	<#if model.hasError('position_startDate')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_startDate').code /></span>                           
                         </#if>
@@ -126,7 +126,7 @@
                     <span class="hint"></span>
                     <div class="field">
                       	<input class="half date" type="text" id="position_endDate" name="position_endDate" 
-                      			value="${(model.employmentPosition.position_endDate?string('yyyy/MM/dd'))!}"/>
+                      			value="${(model.employmentPosition.position_endDate?string('dd-MMM-yyyy'))!}"/>
 						<#if model.hasError('position_endDate')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_endDate').code /></span>                           
                         </#if>

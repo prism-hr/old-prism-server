@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 @Entity(name="COUNTRIES")
 @Access(AccessType.FIELD) 
-public class Countries extends DomainObject<Integer>{
+public class Country extends DomainObject<Integer>{
 
 	private static final long serialVersionUID = 2746228908173552617L;
 

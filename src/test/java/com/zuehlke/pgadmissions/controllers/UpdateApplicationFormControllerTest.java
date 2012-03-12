@@ -26,9 +26,7 @@ import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.dao.TelephoneDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Countries;
 import com.zuehlke.pgadmissions.domain.Messenger;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -40,12 +38,10 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
+import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.PersonalDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.dto.Referee;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
@@ -76,90 +72,10 @@ public class UpdateApplicationFormControllerTest {
 	private MessengerDAO messengerDAOMock;
 	private TelephoneDAO telephoneDAOMock;
 
-	@Test
-	public void shouldSaveNewPersonalDetails() {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
 
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
-		Countries country = new Countries();
-		country.setCode("EN");
-		country.setName("England");
-		country.setId(1);
-		EasyMock.expect(countriesDAOMock.getAllCountries()).andReturn(Arrays.asList(country));
-		EasyMock.expect(countriesDAOMock.getCountryWithName("England")).andReturn(country);
-		EasyMock.expect(countriesDAOMock.getCountryWithName("England")).andReturn(country);
-		PersonalDetail ps = new PersonalDetail();
-		ps.setId(2);
-		EasyMock.expect(personalDetailDAOMock.getPersonalDetailWithApplication(form)).andReturn(ps);
-		personalDetailDAOMock.save(ps);
-		EasyMock.replay(userServiceMock, countriesDAOMock, personalDetailDAOMock);
+	
+	
 
-		PersonalDetails personalDetails = new PersonalDetails();
-		personalDetails.setFirstName("New First Name");
-		personalDetails.setLastName("New Last Name");
-		personalDetails.setEmail("newemail@email.com");
-		personalDetails.setGender("Female");
-		personalDetails.setDateOfBirth(new Date());
-		personalDetails.setCountry("England");
-		personalDetails.setResidenceCountry("England");
-		personalDetails.setResidenceStatus("Refugee Status");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
-		ModelAndView modelAndView = applicationController.editPersonalDetails(personalDetails, 1, 2, mappingResult,
-				new ModelMap());
-		Assert.assertEquals("private/pgStudents/form/components/personal_details", modelAndView.getViewName());
-		Assert.assertEquals("New First Name", ps.getFirstName());
-		Assert.assertEquals("New Last Name", ps.getLastName());
-		Assert.assertEquals("newemail@email.com", ps.getEmail());
-		Assert.assertEquals(Gender.FEMALE, ps.getGender());
-		Assert.assertEquals("EN", ps.getCountry().getCode());
-		Assert.assertEquals("EN", ps.getResidenceCountry().getCode());
-		Assert.assertEquals(ResidenceStatus.REFUGEE_STATUS, ps.getResidenceStatus());
-	}
-
-	@Test(expected = CannotUpdateApplicationException.class)
-	public void shouldNotSaveNewPersonalDetailsWhenApplicationSubmitted() {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED)
-				.toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock);
-
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
-		EasyMock.replay(userServiceMock);
-
-		PersonalDetails personalDetails = new PersonalDetails();
-		personalDetails.setFirstName("New First Name");
-		personalDetails.setLastName("New Last Name");
-		personalDetails.setEmail("newemail@email.com");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
-		applicationController.editPersonalDetails(personalDetails, 1, 2, mappingResult, new ModelMap());
-	}
-
-	@Test
-	public void shouldNotSaveNewPersonalDetails() {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock);
-
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
-		EasyMock.replay(userServiceMock);
-
-		PersonalDetails personalDetails = new PersonalDetails();
-		personalDetails.setFirstName("");
-		personalDetails.setLastName("   ");
-		personalDetails.setEmail("newemail@email");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "personalDetails");
-		ModelAndView modelAndView = applicationController.editPersonalDetails(personalDetails, 1, 2, mappingResult,
-				new ModelMap());
-		Assert.assertEquals("private/pgStudents/form/components/personal_details", modelAndView.getViewName());
-		PageModel model = (PageModel) modelAndView.getModel().get("model");
-		RegisteredUser user = model.getUser();
-		Assert.assertEquals("mark", user.getFirstName());
-		Assert.assertEquals("ham", user.getLastName());
-		Assert.assertEquals("mark@gmail.com", user.getEmail());
-	}
 
 	@SuppressWarnings("deprecation")
 	@Test
@@ -331,7 +247,7 @@ public class UpdateApplicationFormControllerTest {
 	@Ignore
 	@Test
 	public void shouldSaveNewRefereeWithOneMessenger() throws ParseException {
-		EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
+		/*EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
 		EasyMock.replay(userServiceMock);
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		com.zuehlke.pgadmissions.domain.Referee ref = new RefereeBuilder().addressCountry("").toReferee();
@@ -342,12 +258,9 @@ public class UpdateApplicationFormControllerTest {
 		applicationsServiceMock.saveReferee(ref);
 //		messengerDAOMock.save(mes);
 		EasyMock.replay(applicationsServiceMock);
-		com.zuehlke.pgadmissions.dto.Telephone telephoneDTO = new com.zuehlke.pgadmissions.dto.Telephone();
-		com.zuehlke.pgadmissions.dto.Messenger messengerDTO = new com.zuehlke.pgadmissions.dto.Messenger();
-		telephoneDTO.setTelephoneNumber("0123");
-		telephoneDTO.setTelephoneType("type");
-		messengerDTO.setMessengerType("skype");
-		messengerDTO.setMessengerAddress("skypeaddress");
+		
+		Telephone telephone = new TelephoneBuilder().telephoneNumber("0123").telephoneType(PhoneType.HOME).toTelephone();
+		Messenger messenger = new MessengerBuilder().messengerAddress("address").messengerType("type").toMessenger();
 		Referee refereeDto = new Referee();
 		refereeDto.setAddressCountry("UK");
 		refereeDto.setEmail("email");
@@ -368,7 +281,7 @@ public class UpdateApplicationFormControllerTest {
 		Assert.assertEquals("0123", ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
 				.getReferees().get(0).getTelephones().get(0).getTelephoneNumber());
 		Assert.assertEquals("skypeaddress", ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
-				.getReferees().get(0).getMessengers().get(0).getMessengerAddress());
+				.getReferees().get(0).getMessengers().get(0).getMessengerAddress());*/
 	}
 
 	@Test

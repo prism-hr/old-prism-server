@@ -45,8 +45,8 @@ public class Supervisor extends DomainObject<Integer>{
 	private AwareStatus awareSupervisor;
 	
 	@ManyToOne
-	@JoinColumn(name="personal_detail_id")
-	private PersonalDetail personalDetail = null;
+	@JoinColumn(name="programme_detail_id")
+	private ProgrammeDetail programmeDetail = null;
 	
 	private String email;
 	
@@ -58,12 +58,12 @@ public class Supervisor extends DomainObject<Integer>{
 		this.email = email;
 	}
 	
-	public PersonalDetail getPersonalDetail() {
-		return personalDetail;
+	public ProgrammeDetail getProgrammeDetail() {
+		return programmeDetail;
 	}
 	
-	public void setPersonalDetail(PersonalDetail personalDetail) {
-		this.personalDetail = personalDetail;
+	public void setProgrammeDetail(ProgrammeDetail programmeDetail) {
+		this.programmeDetail = programmeDetail;
 	}
 	
 	public PrimaryStatus getPrimarySupervisor() {

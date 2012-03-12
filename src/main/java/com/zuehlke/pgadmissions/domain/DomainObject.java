@@ -33,6 +33,9 @@ public abstract class DomainObject<T> implements Serializable {
 
 	@Override
 	public int hashCode() {
+		if(id == null){
+			return LARGE_PRIME;
+		}
 		return LARGE_PRIME * id.hashCode();
 	}
 }

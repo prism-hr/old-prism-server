@@ -5,7 +5,7 @@ public class ApplicationFormDetails {
 
 	private Integer numberOfAddresses;
 	private Integer numberOfContactAddresses;
-	private PersonalDetails personalDetails;
+	private PersonalDetailsDTO personalDetails;
 	
 	public Integer getNumberOfAddresses() {
 		return numberOfAddresses;
@@ -23,11 +23,11 @@ public class ApplicationFormDetails {
 		this.numberOfContactAddresses = numberOfContactAddresses;
 	}
 	
-	public PersonalDetails getPersonalDetails() {
+	public PersonalDetailsDTO getPersonalDetails() {
 		return personalDetails;
 	}
 	
-	public void setPersonalDetails(PersonalDetails personalDetails) {
+	public void setPersonalDetails(PersonalDetailsDTO personalDetails) {
 		this.personalDetails = personalDetails;
 	}
 }

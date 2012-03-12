@@ -136,6 +136,7 @@
 			          	      <input type="hidden" id="applicationFormId" name="applicationForm" value="${model.applicationForm.id?string("######")}"/>
 			             </form>
 			    	 </#if>
+			    	 <p></p>
 			          <#include "/private/common/feedback.ftl"/>
 			        </div><!-- .content-box-inner -->
 			      </div><!-- .content-box -->

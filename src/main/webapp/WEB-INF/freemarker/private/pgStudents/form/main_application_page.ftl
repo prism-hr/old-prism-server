@@ -131,7 +131,8 @@
 			          	      									value="${model.applicationForm.id?string("######")}"/>
 									</form>
 									
-								</#if>		    	 
+								</#if>
+								<p></p>		    	 
 			          			<#include "/private/common/feedback.ftl"/>
 			        
 			        		</div><!-- .content-box-inner -->

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,8 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.CountriesDAO;
-import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
@@ -84,6 +81,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
@@ -100,6 +98,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
@@ -115,6 +114,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
 		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
 		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
 		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
@@ -156,6 +156,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
 		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
 		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
 		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
@@ -176,6 +177,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
 

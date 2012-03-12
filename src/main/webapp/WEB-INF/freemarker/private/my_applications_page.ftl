@@ -122,7 +122,9 @@
 				
 				          <p class="right">
 				          	<a href="#" class="button">Download - coming soon</a>
+				          	<#include "/private/common/feedback.ftl"/>
 				          </p>
+                    	  
 				        </div><!-- .content-box-inner -->
 				      </div><!-- .content-box -->
 				      

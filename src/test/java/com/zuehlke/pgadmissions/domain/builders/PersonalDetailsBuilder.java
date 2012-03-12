@@ -15,6 +15,7 @@ import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -33,9 +34,15 @@ public class PersonalDetailsBuilder {
 	private ResidenceStatus residenceStatus;
 	private ApplicationForm applicationForm;
 	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();
+	private List<Language> languages = new ArrayList<Language>();
 
 	public PersonalDetailsBuilder id(Integer id) {
 		this.id = id;
+		return this;
+	}
+	
+	public PersonalDetailsBuilder languages(Language...languages) {
+		this.languages.addAll(Arrays.asList(languages));
 		return this;
 	}
 	
@@ -102,6 +109,7 @@ public class PersonalDetailsBuilder {
 		personalDetails.setResidenceCountry(residenceCountry);
 		personalDetails.setResidenceStatus(residenceStatus);
 		personalDetails.setPhoneNumbers(phoneNumbers);
+		personalDetails.setLanguages(languages);
 		return personalDetails;
 	}
 }

@@ -2,7 +2,7 @@ $(document).ready(function()
 {
   
   //$('body.old-ie button').wrap('<span />');
-  
+	
   // Form hint tooltips.
   $('body span.hint').qtip({
     content: {
@@ -106,7 +106,7 @@ $(document).ready(function()
 });
 
 
-function msg(message, type),,,,,,
+function msg(message, type)
 {
   var $msg = $('#message-bar');
   if ($msg.length == 0)
@@ -119,3 +119,10 @@ function msg(message, type),,,,,,
   $msg.css({ marginLeft: -($msg.width() / 2) + 'px' });
   $msg.fadeIn(700).delay(3000).fadeOut(700);
 }
+
+// Back to top functionalirt, project manager style.
+function backToTop()
+{
+	$.scrollTo('#wrapper', 900);
+}
+  

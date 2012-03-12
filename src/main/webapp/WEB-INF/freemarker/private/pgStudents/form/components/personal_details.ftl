@@ -36,7 +36,7 @@
 			    </tr>
 			</tbody>
 		</table>
-		<form>
+		<form id ="documentUploadForm" enctype="multipart/form-data" method="post" action="/pgadmissions/documents" target="myframe">		
 				<input type="hidden" name="id" id="id" value="${(model.applicationForm.personalDetails.id?string("######"))!}"/>
 				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id?string("######")}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
@@ -139,10 +139,24 @@
                       <label><input class="disabledEle" type="radio" /> This is my primary nationality</label>
                     </div>
                   </div>
+                             <!-- Document -->
+                  <div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                     <iframe id="myframe" name="myframe" src="#" style=""><script language="javascript" type="text/javascript">
+						
+					</script>
+					</iframe>
+                    
+						<input type="file" id="file" name="file">
+						<input type="submit" value="Upload"/>
+				
+                      <a class="button" href="#">Add Document</a>                  
+                  
                 	<div class="row">
-                  	<div class="field"><a class="button blue disabledEle" href="#">Add a nationality</a></div>
+                  		<div class="field"><a class="button blue disabledEle" href="#">Add a nationality</a></div>
                   </div>
-                </div>
+                
               	
               	<div>
                 	<div class="row">
@@ -272,4 +286,6 @@
                 </div>
            </form>
 	</div>
+
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>
+		

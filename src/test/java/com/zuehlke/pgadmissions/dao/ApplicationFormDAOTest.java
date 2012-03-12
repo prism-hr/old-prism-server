@@ -32,8 +32,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	private Program program;
 	private Project project;
 	private ApplicationForm application;
-	
-	
+		
 	@Before
 	public void setup() {
 		applicationDAO = new ApplicationFormDAO(sessionFactory);

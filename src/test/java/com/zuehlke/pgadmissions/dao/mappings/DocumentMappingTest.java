@@ -18,6 +18,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 		String contentString = builder.toString();
 		document.setContent(contentString.getBytes());
 		document.setFileName("name.txt");
+		document.setContentType("bob");
 		
 		sessionFactory.getCurrentSession().save(document);
 		assertNotNull(document.getId());
@@ -31,6 +32,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 		assertNotSame(document, reloadedDoc);
 		assertEquals(document,reloadedDoc);
 		assertEquals("name.txt", reloadedDoc.getFileName());
+		assertEquals("bob", reloadedDoc.getContentType());
 		assertEquals(contentString, new String(reloadedDoc.getContent()));
 		
 	}

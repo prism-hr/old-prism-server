@@ -16,7 +16,7 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Shell template</title>
 		
-		<!-- Styles for Application Page -->
+		<!-- Styles for Application Page -->		
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>	
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/field_controls.css' />"/>

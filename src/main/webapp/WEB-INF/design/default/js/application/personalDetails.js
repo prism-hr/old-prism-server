@@ -37,5 +37,7 @@ $(document).ready(function(){
 	})
 	
 	// To make uncompleted functionalities disable.
-	$(".disabledEle").attr("disabled", "disabled");
+	$(".disabledEle").attr("disabled", "disabled");	
+	
+
 });

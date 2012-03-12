@@ -13,6 +13,9 @@ public class Document extends DomainObject<Integer> {
 
 
 	private static final long serialVersionUID = -6396463075916267580L;
+	
+	@Column(name = "content_type")
+	private String contentType;	
 
 	@Column(name = "file_name")
 	private String fileName;
@@ -47,5 +50,13 @@ public class Document extends DomainObject<Integer> {
 
 	public void setContent(byte[] content) {
 		this.content = content;
+	}
+	
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
 }

@@ -47,6 +47,15 @@ section.folding div.comment .buttons { background-color: transparent; padding: 5
 section.folding div.comment .previous { margin-bottom: 10px; }
 section.folding div.comment .previous a.more { float: right; font-weight: bold; }
 section.folding div.comment .previous ul { list-style: none; margin: 10px 0; }
-section.folding div.comment .previous ul li { background: #DDD; margin-bottom: 0.5em; padding: 5px; }
+section.folding div.comment .previous ul li { background: #DDD; margin-bottom: 0.5em; padding: 10px; }
 section.folding div.comment .previous ul li.even { background: #EEE; }
 section.folding div.comment .previous ul li span { display: block; }
+
+
+/* Floating toolbar */
+#view-toolbar { background: #333; border-radius: 5px 0 0 5px; list-style: none; padding: 5px 10px; position: fixed; right: 0; top: 200px; }
+#view-toolbar li { margin: 10px 0; }
+#view-toolbar li a { background: no-repeat; display: block; height: 15px; overflow: hidden; text-indent: 15px; width: 15px; }
+#view-toolbar li.top a { background-image: url(../images/float_up.png) }
+#view-toolbar li.pdf a { background-image: url(../images/float_download.png) }
+#view-toolbar li.print a { background-image: url(../images/float_print.png) }

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -15,7 +16,7 @@ public class RefereeBuilder {
 	
 	private ApplicationForm application;
 	
-	private List<Telephone> telephones = new ArrayList<Telephone>();
+	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();
 	
 	private List<Messenger> messengers = new ArrayList<Messenger>();
 	
@@ -82,26 +83,19 @@ public class RefereeBuilder {
 		return this;
 	}
 
-	public RefereeBuilder telephone(Telephone telephone) {
-		this.telephones.add(telephone);
+	
+	public RefereeBuilder phoneNumbers(Telephone...phoneNumbers) {
+		this.phoneNumbers.addAll(Arrays.asList(phoneNumbers));
 		return this;
 	}
 	
-	public RefereeBuilder telephones(Telephone... telephones) {
-		for (Telephone telephone : telephones) {
-			this.telephones.add(telephone);
-		}
-		return this;
-	}
 	public RefereeBuilder messenger(Messenger messenger) {
 		this.messengers.add(messenger);
 		return this;
 	}
 	
 	public RefereeBuilder messengers(Messenger... messengers) {
-		for (Messenger messenger : messengers) {
-			this.messengers.add(messenger);
-		}
+		this.messengers.addAll(Arrays.asList(messengers));
 		return this;
 	}
 	
@@ -117,8 +111,8 @@ public class RefereeBuilder {
 		referee.setJobEmployer(jobEmployer);
 		referee.setJobTitle(jobTitle);
 		referee.setLastname(lastname);
-		referee.getMessengers().addAll(messengers);
-		referee.getTelephones().addAll(telephones);
+		referee.setMessengersRef(messengers);
+		referee.setPhoneNumbersRef(phoneNumbers);
 		referee.setRelationship(relationship);
 		return referee;
 	}

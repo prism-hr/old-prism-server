@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEdito;
+import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.validators.PersonalDetailValidator;
@@ -44,7 +44,7 @@ public class PersonalDetailsController {
 	private final DatePropertyEditor datePropertyEditor;
 	private final CountryService countryService;
 	private final PersonalDetailValidator personalDetailValidator;
-	private final PhoneNumberJSONPropertyEdito phoneNumberJSONPropertyEditor;
+	private final PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor;
 
 	PersonalDetailsController() {
 		this(null, null, null, null, null, null, null);
@@ -53,7 +53,7 @@ public class PersonalDetailsController {
 	@Autowired
 	public PersonalDetailsController(PersonalDetailsService personalDetailsService, CountryService countryService,
 			ApplicationFormPropertyEditor applicationFormPropertyEditor, CountryPropertyEditor countryPropertyEditor, DatePropertyEditor datePropertyEditor,
-			PersonalDetailValidator personalDetailValidator, PhoneNumberJSONPropertyEdito phoneNumberJSONPropertyEditor) {
+			PersonalDetailValidator personalDetailValidator, PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor) {
 		this.personalDetailsService = personalDetailsService;
 		this.countryService = countryService;	
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;

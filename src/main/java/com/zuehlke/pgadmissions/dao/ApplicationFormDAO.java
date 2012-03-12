@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.Date;
 import java.util.List;
 
 import org.hibernate.SessionFactory;

@@ -15,4 +15,5 @@ $(document).ready(function() {
 			window.location.href = "/pgadmissions/comments/showAll?id=" + id;
 		}
 	});
+	
 });

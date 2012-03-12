@@ -6,21 +6,21 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.dto.PersonalDetails;
+import com.zuehlke.pgadmissions.dto.PersonalDetailsDTO;
 
 @Service
 public class PersonalDetailsValidator implements Validator{
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return PersonalDetails.class.equals(clazz);
+		return PersonalDetailsDTO.class.equals(clazz);
 	}
 
 	@Override
 	public void validate(Object target, Errors errors) {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "user.firstname.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "user.lastname.notempty");
-		PersonalDetails personalDetails = (PersonalDetails) target;
+		PersonalDetailsDTO personalDetails = (PersonalDetailsDTO) target;
 		if (!EmailValidator.getInstance().isValid(personalDetails.getEmail())) {
 			errors.rejectValue("email", "user.email.notvalid");
 		}

@@ -4,7 +4,7 @@
 #review-comments td.comment a.button { float: right; }
 
 table.data { font-size: 9pt; }
-table.data td.flag span { background: url(../images/msgs_flag.png) no-repeat 100% center; padding-right: 10px; }
+table.data td.flag span { background: url(../../../images/msgs_flag.png) no-repeat 100% center; padding-right: 10px; }
 
 span.swatch { display: inline-block; height: 20px; margin-right: 5px; vertical-align: text-bottom; width: 20px; }
 tr.row-near-deadline td, .swatch.row-near-deadline { background: #FF3 !important; }

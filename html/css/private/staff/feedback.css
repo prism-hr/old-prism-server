@@ -26,7 +26,7 @@ div.slider {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#333333', endColorstr='#999999',GradientType=0 ); /* IE6-8 */
 	border: none; height: 6px; margin: 0 70px 0 30px;
 }
-div.slider .ui-slider-handle { background: transparent url(../images/slider.png) no-repeat; border: none; height: 16px; width: 16px; }
+div.slider .ui-slider-handle { background: transparent url(../../../images/slider.png) no-repeat; border: none; height: 16px; width: 16px; }
 
 
 /* lists of radio buttons. */

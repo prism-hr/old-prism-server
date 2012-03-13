@@ -17,6 +17,6 @@ table.data thead th {
 }
 table.data th, table.data td { padding: 3px; vertical-align: middle; }
 table.data tr td, table.data tr th { border-bottom: 1px solid #999; }
-table.data tbody td { background: url(../images/bg_table_row.jpg) repeat-x 0 100%; }
+table.data tbody td { background: url(../../images/bg_table_row.jpg) repeat-x 0 100%; }
 table.data select { width: 100%; }
 table.data thead th.headerSortDown, table.data thead th.headerSortUp { background-color: #06C; color: #FFF; }

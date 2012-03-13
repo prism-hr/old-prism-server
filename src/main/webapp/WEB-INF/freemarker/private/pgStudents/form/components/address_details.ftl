@@ -45,16 +45,16 @@
 				        	<tr>
 				            	<td><a class="row-arrow"  name="addressEditButton" id="address_${address.id}">-</a></td>
 				                <td>${address.location}, ${address.postCode}</td>
-				                <td>${address.startDate?string('yyyy/MM/dd')}</td>
-				                <td>${(address.endDate?string('yyyy/MM/dd'))!}</td>
+				                <td>${address.startDate?string('dd-MMM-yyyy')}</td>
+				                <td>${(address.endDate?string('dd-MMM-yyyy'))!}</td>
 				                <td><a class="button-delete" type="submit">Delete</a></td>
 				                
 								<input type="hidden" id="${address.id}_addressIdDP" value="${address.id}"/>
 	                            <input type="hidden" id="${address.id}_locationDP" value="${address.location}"/>
 	                            <input type="hidden" id="${address.id}_postCodeDP" value="${address.postCode}"/>
 	                            <input type="hidden" id="${address.id}_countryDP" value="${address.country}"/>
-	                            <input type="hidden" id="${address.id}_startDateDP" value="${address.startDate?string('yyyy/MM/dd')}"/>
-	                            <input type="hidden" id="${address.id}_endDateDP" value="${(address.endDate?string('yyyy/MM/dd'))!}"/>
+	                            <input type="hidden" id="${address.id}_startDateDP" value="${address.startDate?string('dd-MMM-yyyy')}"/>
+	                            <input type="hidden" id="${address.id}_endDateDP" value="${(address.endDate?string('dd-MMM-yyyy'))!}"/>
 	                            <input type="hidden" id="${address.id}_purposeDP" value="${address.purpose}"/>
 	                            <input type="hidden" id="${address.id}_contactAddressDP" value="${address.contactAddress}"/>
 				                

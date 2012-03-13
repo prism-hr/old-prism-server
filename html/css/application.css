@@ -24,7 +24,7 @@ section.folding table.existing td { background: url(../images/bg_table_row.jpg) 
 section.folding table.existing td, section.folding table.existing th { line-height: 25px; padding: 0 3px; vertical-align: middle; }
 
 section.folding form { background: #BBB; padding: 10px; }
-section.folding form > div { background: #FFF; border: 1px solid #999; margin-bottom: 2px; padding: 10px; }
+section.folding form > div { background: #FFF; border: 1px solid #999; margin-bottom: 2px; overflow: hidden; padding: 10px; }
 section.folding form h3 { margin-bottom: 1em; }
 section.folding form .row { line-height: 24px; margin-bottom: 2px; clear: left; }
 section.folding form .label { float: left; line-height: 1.2; width: 180px; }

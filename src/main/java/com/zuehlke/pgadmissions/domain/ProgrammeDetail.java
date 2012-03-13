@@ -124,5 +124,14 @@ public class ProgrammeDetail  extends DomainObject<Integer>{
 	
 	public void setSupervisors(List<Supervisor> supervisors) {
 		this.supervisors = supervisors;
+		if(supervisors != null && !supervisors.isEmpty()){
+			int size = supervisors.size();
+			for (int i = size -1; i >= 0 ;i--){
+				Supervisor supervisor = supervisors.get(i);
+				if(supervisor == null){
+					supervisors.remove(i);
+				}
+			}
+		}
 	}
 }

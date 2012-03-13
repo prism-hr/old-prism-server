@@ -39,6 +39,9 @@ $(document).ready(function(){
 	
 	// To make uncompleted functionalities disable.
 	$(".disabledEle").attr("disabled", "disabled");	
-	
+	$('#primaryNationalityUploadButton').on("click", function(){
+		$('#documentUploadForm').attr("action", "/pgadmissions/documents");
+		$('#documentUploadForm').submit();
+	});
 
 });

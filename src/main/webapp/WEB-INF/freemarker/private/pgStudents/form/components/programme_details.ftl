@@ -59,6 +59,17 @@
             <div>
             	
             	<h3>Supervision</h3>
+                 
+                 
+                 <div id="supervisor_div">
+                   <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
+                   <span name="supervisor_span">
+                        ${supervisor.email}<a class="button">delete</a>
+                       <input type="hidden" name="supervisors" value='{"email" :"${supervisor.email}", "primarySupervisor":"${supervisor.primarySupervisor}", "awareSupervisor":"${supervisor.awareSupervisor}"}' />                             
+                       <br/>
+                  </span>
+                  </#list>
+                </div>
                   
                 <!-- supervisor rows -->
                 <table class="multiples">
@@ -79,15 +90,17 @@
                     <tbody>
 						<!-- repeat these rows for every existing supervisor. -->
                       	<tr>
-	                        <th class="align-left"><input class="full" type="text" placeholder="Email address" name="supervisor_email"/></th>
-	                        <th><input type="checkbox" name="supervisor_primary"/></th>
-	                        <th><input type="checkbox" /></th>
+	                        <th class="align-left"><input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/></th>
+	                        <th><input type="checkbox" name="primarySupervisorCB" id="primarySupervisorCB"/></th>
+	                        <input type="hidden" name="primarySupervisor" id="primarySupervisor"/>
+	                        <th><input type="checkbox" name="awareSupervisorCB" id="awareSupervisorCB"/></th>
+	                        <input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
                       	</tr>
                       	<!-- end repeat -->
                     </tbody>
                     
 				</table>
-                 <a id="addSuperVisor" class="button" style="width: 110px;">Add Supervisor</a>
+                    <a id="addSupervisorButton" class="button" style="width: 110px;">Add Supervisor</a>
 			</div>
 
             <div>
@@ -124,8 +137,8 @@
 			</div>
 
             <div class="buttons">
+            	<a class="button blue" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</a>
             	<#if !model.applicationForm.isSubmitted()>
-            	<a class="button" type="button" id="programmeCancelButton" name="programmeCancelButton">Cancel</a>
                 <a class="button blue" id="programmeSaveButton">Save</a>
                 </#if>    
 			</div>

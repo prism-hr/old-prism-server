@@ -6,8 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.Type;
 
@@ -44,10 +42,6 @@ public class Supervisor extends DomainObject<Integer>{
 	@Column(name="aware_supervisor")
 	private AwareStatus awareSupervisor;
 	
-	@ManyToOne
-	@JoinColumn(name="programme_detail_id")
-	private ProgrammeDetail programmeDetail = null;
-	
 	private String email;
 	
 	public String getEmail() {
@@ -56,14 +50,6 @@ public class Supervisor extends DomainObject<Integer>{
 	
 	public void setEmail(String email) {
 		this.email = email;
-	}
-	
-	public ProgrammeDetail getProgrammeDetail() {
-		return programmeDetail;
-	}
-	
-	public void setProgrammeDetail(ProgrammeDetail programmeDetail) {
-		this.programmeDetail = programmeDetail;
 	}
 	
 	public PrimaryStatus getPrimarySupervisor() {

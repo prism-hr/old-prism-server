@@ -8,12 +8,9 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -21,12 +18,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
 
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 
 @Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL")
 @Access(AccessType.FIELD)
+
 public class PersonalDetail extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = 6549850558507667533L;
@@ -39,8 +38,22 @@ public class PersonalDetail extends DomainObject<Integer> {
 	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "personal_details_id")
+	@Where(clause="nationality_type='CANDIDATE'")
 	private List<Nationality> candidateNationalities= new ArrayList<Nationality>();
-
+	
+	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "personal_details_id")
+	@Where(clause="nationality_type='MATERNAL_GUARDIAN'")
+	private List<Nationality> maternalGuardianNationalities= new ArrayList<Nationality>();
+	
+	
+	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "personal_details_id")
+	@Where(clause="nationality_type='PATERNAL_GUARDIAN'")
+	private List<Nationality> paternalGuardianNationalities= new ArrayList<Nationality>();
+	
 	
 
 	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
@@ -201,5 +214,31 @@ public class PersonalDetail extends DomainObject<Integer> {
 			}
 		}
 	
+	}
+
+	public List<Nationality> getMaternalGuardianNationalities() {
+		return maternalGuardianNationalities;
+	}
+
+	public void setMaternalGuardianNationalities(List<Nationality> maternalGuardianNationalities) {
+		this.maternalGuardianNationalities.clear();
+		for (Nationality nationality : maternalGuardianNationalities) {
+			if(nationality != null){
+				this.maternalGuardianNationalities.add(nationality);
+			}
+		}
+	}
+
+	public List<Nationality> getPaternalGuardianNationalities() {
+		return paternalGuardianNationalities;
+	}
+
+	public void setPaternalGuardianNationalities(List<Nationality> paternalGuardianNationalities) {
+		this.paternalGuardianNationalities.clear();
+		for (Nationality nationality : paternalGuardianNationalities) {
+			if(nationality != null){
+				this.paternalGuardianNationalities.add(nationality);
+			}
+		}
 	}
 }

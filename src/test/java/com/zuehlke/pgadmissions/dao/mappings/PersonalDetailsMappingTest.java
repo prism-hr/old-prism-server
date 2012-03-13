@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -141,8 +140,12 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		Nationality nationality3 = new Nationality();
 		nationality3.setCountry(country);
 		nationality3.setType(NationalityType.CANDIDATE);
+
+		Nationality nationality4 = new Nationality();
+		nationality4.setCountry(country);
+		nationality4.setType(NationalityType.MATERNAL_GUARDIAN);
 		
-		PersonalDetail personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality1, nationality2).country(country1)
+		PersonalDetail personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality1, nationality2).maternalGuardianNationalities(nationality4).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
 				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
 				.toPersonalDetails();
@@ -169,6 +172,129 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
 		assertEquals(2, reloadedDetails.getCandidateNationalities().size());
 		assertTrue(reloadedDetails.getCandidateNationalities().containsAll(Arrays.asList(nationality1, nationality3)));
+		
+		 assertNull(sessionFactory.getCurrentSession().get(Nationality.class, tobeRemovedId));
+	}
+	
+	
+	@Test
+	public void shouldSaveAndLoadPersonalDetailsWithMaternalGuardianNationalities() throws Exception {
+		Country country = new CountryBuilder().code("aa").name("aaaaa").toCountry();
+		sessionFactory.getCurrentSession().save(country);
+
+		Document document1 = new DocumentBuilder().content("aa".getBytes()).fileName("bob").toDocument();
+		Document document2 = new DocumentBuilder().content("bb".getBytes()).fileName("fred").toDocument();
+		save(document1, document2);
+
+		flushAndClearSession();
+		
+		Nationality nationality1 = new Nationality();
+		nationality1.setCountry(country);
+		nationality1.setSupportingDocuments(Arrays.asList(document1, document2));
+		nationality1.setType(NationalityType.MATERNAL_GUARDIAN);
+		
+		Nationality nationality2 = new Nationality();
+		nationality2.setCountry(country);
+		nationality2.setType(NationalityType.MATERNAL_GUARDIAN);
+	
+		
+		Nationality nationality3 = new Nationality();
+		nationality3.setCountry(country);
+		nationality3.setType(NationalityType.MATERNAL_GUARDIAN);
+		
+		Nationality nationality4 = new Nationality();
+		nationality4.setCountry(country);
+		nationality4.setType(NationalityType.CANDIDATE);
+		
+		
+		PersonalDetail personalDetails = new PersonalDetailsBuilder().maternalGuardianNationalities(nationality1, nationality2).candiateNationalities(nationality4).country(country1)
+				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
+				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
+				.toPersonalDetails();
+
+		sessionFactory.getCurrentSession().save(personalDetails);
+		
+		flushAndClearSession();
+		PersonalDetail reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(2, reloadedDetails.getMaternalGuardianNationalities().size());
+		assertTrue(reloadedDetails.getMaternalGuardianNationalities().containsAll(Arrays.asList(nationality1,nationality2)));
+		Integer tobeRemovedId = nationality2.getId();
+		reloadedDetails.getMaternalGuardianNationalities().remove(1);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
+
+		flushAndClearSession();
+		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(1, reloadedDetails.getMaternalGuardianNationalities().size());
+		assertTrue(reloadedDetails.getMaternalGuardianNationalities().containsAll(Arrays.asList(nationality1)));
+
+		reloadedDetails.getMaternalGuardianNationalities().add(nationality3);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
+		flushAndClearSession();
+		
+		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(2, reloadedDetails.getMaternalGuardianNationalities().size());
+		assertTrue(reloadedDetails.getMaternalGuardianNationalities().containsAll(Arrays.asList(nationality1, nationality3)));
+		
+		 assertNull(sessionFactory.getCurrentSession().get(Nationality.class, tobeRemovedId));
+	}
+	
+	@Test
+	public void shouldSaveAndLoadPersonalDetailsWithPaternalGuardianNationalities() throws Exception {
+		Country country = new CountryBuilder().code("aa").name("aaaaa").toCountry();
+		sessionFactory.getCurrentSession().save(country);
+
+		Document document1 = new DocumentBuilder().content("aa".getBytes()).fileName("bob").toDocument();
+		Document document2 = new DocumentBuilder().content("bb".getBytes()).fileName("fred").toDocument();
+		save(document1, document2);
+
+		flushAndClearSession();
+		
+		Nationality nationality1 = new Nationality();
+		nationality1.setCountry(country);
+		nationality1.setSupportingDocuments(Arrays.asList(document1, document2));
+		nationality1.setType(NationalityType.PATERNAL_GUARDIAN);
+		
+		Nationality nationality2 = new Nationality();
+		nationality2.setCountry(country);
+		nationality2.setType(NationalityType.PATERNAL_GUARDIAN);
+	
+		
+		Nationality nationality3 = new Nationality();
+		nationality3.setCountry(country);
+		nationality3.setType(NationalityType.PATERNAL_GUARDIAN);
+		
+		Nationality nationality4 = new Nationality();
+		nationality4.setCountry(country);
+		nationality4.setType(NationalityType.CANDIDATE);
+		
+		
+		PersonalDetail personalDetails = new PersonalDetailsBuilder().paternalGuardianNationalities(nationality1, nationality2).candiateNationalities(nationality4).country(country1)
+				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
+				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
+				.toPersonalDetails();
+
+		sessionFactory.getCurrentSession().save(personalDetails);
+		
+		flushAndClearSession();
+		PersonalDetail reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(2, reloadedDetails.getPaternalGuardianNationalities().size());
+		assertTrue(reloadedDetails.getPaternalGuardianNationalities().containsAll(Arrays.asList(nationality1,nationality2)));
+		Integer tobeRemovedId = nationality2.getId();
+		reloadedDetails.getPaternalGuardianNationalities().remove(1);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
+
+		flushAndClearSession();
+		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(1, reloadedDetails.getPaternalGuardianNationalities().size());
+		assertTrue(reloadedDetails.getPaternalGuardianNationalities().containsAll(Arrays.asList(nationality1)));
+
+		reloadedDetails.getPaternalGuardianNationalities().add(nationality3);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
+		flushAndClearSession();
+		
+		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(2, reloadedDetails.getPaternalGuardianNationalities().size());
+		assertTrue(reloadedDetails.getPaternalGuardianNationalities().containsAll(Arrays.asList(nationality1, nationality3)));
 		
 		 assertNull(sessionFactory.getCurrentSession().get(Nationality.class, tobeRemovedId));
 	}

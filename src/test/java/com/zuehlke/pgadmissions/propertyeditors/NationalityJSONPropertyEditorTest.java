@@ -35,16 +35,32 @@ public class NationalityJSONPropertyEditorTest {
 		EasyMock.expect(countryServiceMock.getCountryById(1)).andReturn(country);
 		EasyMock.replay(documentServiceMock, countryServiceMock);
 
-		editor.setAsText("{\"type\": \"CANDIDATE\", \"country\": 1, \"supportingDocuments\": [1,2]}");
+		editor.setAsText("{\"type\": \"CANDIDATE\", \"country\": 1, \"supportingDocuments\": [1,2], \"primary\": \"true\"}");
 
 		Nationality nationality = (Nationality) editor.getValue();
 		assertEquals(country, nationality.getCountry());
 		assertEquals(2, nationality.getSupportingDocuments().size());
 		assertTrue(nationality.getSupportingDocuments().containsAll(Arrays.asList(document1, document2)));
 		assertEquals(NationalityType.CANDIDATE, nationality.getType());
+		assertTrue(nationality.isPrimary());
 
 	}
 
+	@Test
+	public void shouldIgnoreIfNoDocumentsFieldPresent() throws ParseException {
+		Country country = new CountryBuilder().id(1).toCountry();
+		EasyMock.expect(countryServiceMock.getCountryById(1)).andReturn(country);
+		EasyMock.replay(documentServiceMock, countryServiceMock);
+
+		editor.setAsText("{\"type\": \"CANDIDATE\", \"country\": 1, \"primary\": \"true\"}");
+
+		Nationality nationality = (Nationality) editor.getValue();
+		assertEquals(country, nationality.getCountry());
+		assertTrue(nationality.getSupportingDocuments().isEmpty());
+		assertEquals(NationalityType.CANDIDATE, nationality.getType());
+		assertTrue(nationality.isPrimary());
+
+	}
 	@Test(expected = IllegalArgumentException.class)
 	public void shouldThrowIllegalArgumentExceptionIfAStringNotInTheRightFormat() {
 		Document document1 = new DocumentBuilder().id(1).toDocument();
@@ -88,7 +104,7 @@ public class NationalityJSONPropertyEditorTest {
 		nationality.setSupportingDocuments(Arrays.asList(document1, document2));
 
 		editor.setValue(nationality);
-		assertEquals("{\"type\": \"CANDIDATE\", \"country\": 1, \"supportingDocuments\": [1,2]}", editor.getAsText());
+		assertEquals("{\"type\": \"CANDIDATE\", \"country\": 1, \"supportingDocuments\": [1,2], \"primary\": \"false\"}", editor.getAsText());
 	}
 
 	@Before

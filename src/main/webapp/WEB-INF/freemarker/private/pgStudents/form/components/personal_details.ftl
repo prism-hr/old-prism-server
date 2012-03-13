@@ -127,25 +127,9 @@
                   </div>
                 </div>
 
-              	<div>
-                	<span id="existingcandidatenationalities">
-            	   <#list model.applicationForm.personalDetails.candidateNationalities as nationality>            	               	
-                  	  <span name="candidatenationality">
-                  	   	<div class="row">
-                  	  		<label class="label">Nationality</label>
-	                  		<div class="field">${nationality.country.name}
-	                   	 	<#list nationality.supportingDocuments as document>
-	                   	 		${document.fileName}&nbsp;
-	                   	 	</#list>
-                   	 		<a class="button">delete</a>
-                   	 		 </div>                 	 	
-                 		</div>
-                 		
-                 
-                 	<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
-                 	</span>
-            	   </#list>
-            	   </span>
+              	<div>    
+
+       
             	    <strong>Nationality</strong>        
                 	<div class="row">     
                   	
@@ -156,10 +140,9 @@
 	                        	<#list model.countries as country>
 	                              <option value="${country.id}">${country.name}</option>               
 	                       	 </#list>
-	                     	 </select>   
-	                     	 
-	                     	 <input type="hidden" id="currentCandiateNationality" name="candidateNationalities" value=''/>			
-	                      	 <label><input type="radio" /> This is my primary nationality</label>              
+	                     	 </select>             	 
+	                     
+	                      	 <label><input type="radio" id="primaryCandidateNationality"/> This is my primary nationality</label>              
 	                   	 </div>
                 	</div>
                 	
@@ -168,6 +151,83 @@
                 	<div class="row">
                   		<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add nationality</a></div>
                   	</div>
+                  	 <div class="row" id="existingCandidateNationalities">
+                  	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
+                  	  	<span>
+                  	  	 ${nationality.country.name}  <#if nationality.primary>Primary</#if>
+                  	  	<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
+                  	  	<a class="button">Delete</a><br/>
+                  	  	</span>
+                  	  </#list>
+                  </div>
+                </div>
+
+
+				<div>       
+            	    <strong>Maternal Guardian Nationality</strong>        
+                	<div class="row">     
+                  	
+                  		<span class="label">Country</span>
+	                  	 <div class="field">
+	                     	 <select name="maternalNationalityCountry" id="maternalNationalityCountry">
+	                      		<option value="">Select...</option>
+	                        	<#list model.countries as country>
+	                              <option value="${country.id}">${country.name}</option>               
+	                       	 </#list>
+	                     	 </select>             	 
+	                     
+	                      	 <label><input type="radio" id="primaryMaternalNationality"/> This is her primary nationality</label>              
+	                   	 </div>
+                	</div>
+                	
+                      
+                  
+                	<div class="row">
+                  		<div class="field"><a class="button blue" id="addMaternalNationalityButton">Add nationality</a></div>
+                  	</div>
+                  	 <div class="row" id="existingMaternalNationalities">
+                  	  <#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
+                  	  	<span>
+                  	  	 ${nationality.country.name}  <#if nationality.primary>Primary</#if>
+                  	  	<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
+                  	  	<a class="button">Delete</a><br/>
+                  	  	</span>
+                  	  </#list>
+                  </div>
+                </div>
+              	
+              	
+              	<div>       
+            	    <strong>Paternal Guardian Nationality</strong>        
+                	<div class="row">     
+                  	
+                  		<span class="label">Country</span>
+	                  	 <div class="field">
+	                     	 <select name="paternalNationalityCountry" id="paternalNationalityCountry">
+	                      		<option value="">Select...</option>
+	                        	<#list model.countries as country>
+	                              <option value="${country.id}">${country.name}</option>               
+	                       	 </#list>
+	                     	 </select>             	 
+	                     
+	                      	 <label><input type="radio" id="primaryPaternalNationality"/> This is his primary nationality</label>              
+	                   	 </div>
+                	</div>
+                	
+                      
+                  
+                	<div class="row">
+                  		<div class="field"><a class="button blue" id="addPaternalNationalityButton">Add nationality</a></div>
+                  	</div>
+                  	 <div class="row" id="existingPaternalNationalities">
+                  	  <#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
+                  	  	<span>
+                  	  	 ${nationality.country.name}  <#if nationality.primary>Primary</#if>
+                  	  	<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
+                  	  	<a class="button">Delete</a><br/>
+                  	  	</span>
+                  	  </#list>
+                  </div>
                 </div>
               	
               	<div>

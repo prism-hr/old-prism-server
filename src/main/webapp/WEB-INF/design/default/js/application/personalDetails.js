@@ -16,28 +16,75 @@ $(document).ready(function(){
 		'<a class="button">Delete</a><br/></span>';
 		$('#existingProficiencies').append(html);
 		$('#languageSelect').val("");
+		$('#primaryLanguage').prop('checked', false);
 	});
 	
 	
-	
+	//candidate nationalities
 	$('#addCandidateNationalityButton').on("click", function(){
-		$('#currentCandiateNationality').val('{"type": "CANDIDATE", "country": ' + $('#candidateNationalityCountry').val() + ', "supportingDocuments":[]}');
+		var primary = "";
+		var jsonPrimary = "false";
+		if($('#primaryCandidateNationality').is(':checked') ){
+			primary = "Primary";
+			jsonPrimary = "true"
+		}
 		
-		$('#existingcandidatenationalities').append(
-				  '<span name="candidatenationality">'+
-            	   '<div class="row">'+
-            	  		'<label class="label">Nationality</label>'+
-                		'<div class="field">'+ $('#candidateNationalityCountry option:selected').text() +
-             	 		'<a class="button">delete</a> </div>'+                  	 	
-           		'</div>'+		
-				
-				"<input type='text' value='" +  $('#currentCandiateNationality').val() + "'/>" +
-				 '</span>');
+		var html = 	'<span>' + $('#candidateNationalityCountry option:selected').text() + " " + primary +
+		"<input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  +
+		', "primary": "' + jsonPrimary + '"}' + "'/>" + 
+		'<a class="button">Delete</a><br/></span>';
+		$('#existingCandidateNationalities').append(html);
+		
+		$('#candidateNationalityCountry').val("");
+		$('#primaryCandidateNationality').prop('checked', false);
+		
+	});
+	
+	
+	//maternal guardian nationalities
+	$('#addMaternalNationalityButton').on("click", function(){
+		var primary = "";
+		var jsonPrimary = "false";
+		if($('#primaryMaternalNationality').is(':checked') ){
+			primary = "Primary";
+			jsonPrimary = "true"
+		}
+		
+		var html = 	'<span>' + $('#maternalNationalityCountry option:selected').text() + " " + primary +
+		"<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  +
+		', "primary": "' + jsonPrimary + '"}' + "'/>" + 
+		'<a class="button">Delete</a><br/></span>';
+		$('#existingMaternalNationalities').append(html);
+		
+		$('#maternalNationalityCountry').val("");
+		$('#primaryMaternalNationality').prop('checked', false);
+		
+	});
+	
+	//paternal guardian nationalities
+	$('#addPaternalNationalityButton').on("click", function(){
+		var primary = "";
+		var jsonPrimary = "false";
+		if($('#primaryPaternalNationality').is(':checked') ){
+			primary = "Primary";
+			jsonPrimary = "true"
+		}
+		
+		var html = 	'<span>' + $('#paternalNationalityCountry option:selected').text() + " " + primary +
+		"<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()  +
+		', "primary": "' + jsonPrimary + '"}' + "'/>" + 
+		'<a class="button">Delete</a><br/></span>';
+		$('#existingPaternalNationalities').append(html);
+		
+		$('#paternalNationalityCountry').val("");
+		$('#primaryPaternalNationality').prop('checked', false);
 		
 	});
 	
 	
 	$('#personalDetailsSaveButton').on("click", function(){		
+		
+		//language proficiencies
 		if( $('#languageSelect option:selected').val()!= ''){
 			var primary = "";
 			var jsonPrimary = "false";
@@ -50,6 +97,54 @@ $(document).ready(function(){
 			', "primary": "' + jsonPrimary + '"}' + "'/></span>";
 			$('#existingProficiencies').append(	html);
 		}
+		
+		//candidate nationalities
+		if( $('#candidateNationalityCountry option:selected').val()!= ''){
+			var primary = "";
+			var jsonPrimary = "false";
+			if($('#primaryCandidateNationality').is(':checked') ){
+				primary = "Primary";
+				jsonPrimary = "true"
+			}
+			
+			var html = 	"<span><input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  +
+			', "primary": "' + jsonPrimary + '"}' + "'/></span>";
+			
+			$('#existingCandidateNationalities').append(html);
+		}
+		
+
+		//maternal nationalities
+		if( $('#maternalNationalityCountry option:selected').val()!= ''){
+			var primary = "";
+			var jsonPrimary = "false";
+			if($('#primaryMaternalNationality').is(':checked') ){
+				primary = "Primary";
+				jsonPrimary = "true"
+			}
+			
+			var html = 	"<span><input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  +
+			', "primary": "' + jsonPrimary + '"}' + "'/></span>";
+			
+			$('#existingMaternalNationalities').append(html);
+		}
+		
+		//paternal nationalities
+		if( $('#paternalNationalityCountry option:selected').val()!= ''){
+			var primary = "";
+			var jsonPrimary = "false";
+			if($('#primaryPaternalNationality').is(':checked') ){
+				primary = "Primary";
+				jsonPrimary = "true"
+			}
+			
+			var html = 	"<span><input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()  +
+			', "primary": "' + jsonPrimary + '"}' + "'/></span>";
+			
+			$('#existingPaternalNationalities').append(html);
+		}
+		
+		//general post data
 		var postData ={ 
 				firstName: $("#firstName").val(), 
 				lastName: $("#lastName").val(), 
@@ -61,19 +156,24 @@ $(document).ready(function(){
 				personalDetailsId: $("#id").val(), 
 				application: $("#appId").val(),
 				gender: $("input[name='genderRadio']:checked").val(),
-				languageProficiencies:""
-				
+				languageProficiencies:"",
+				candidateNationalities:"",
+				maternalGuardianNationalities:"",
+				paternalGuardianNationalities:""
 				
 			}
 			
-		
-			$.post( "/pgadmissions/personalDetails" ,$.param(postData) + 
+			//do the post!
+			$.post( "/pgadmissions/personalDetails" ,
+					$.param(postData) + 
 					"&" + $('[input[name="languageProficiencies"]').serialize()+ 
 					"&" + $('[input[name="candidateNationalities"]').serialize()+
+					"&" + $('[input[name="maternalGuardianNationalities"]').serialize()+
+					"&" + $('[input[name="paternalGuardianNationalities"]').serialize()+
 					"&" + $('[input[name="phoneNumbers"]').serialize(),
-				 function(data) {
-				    $('#personalDetailsSection').html(data);
-				  });
+					 function(data) {
+					    $('#personalDetailsSection').html(data);
+					  });
 	});
 	
 	$('#addPhoneButton').on('click', function(){
@@ -103,8 +203,18 @@ $(document).ready(function(){
 		
 	});
 	
-	$("#existingcandidatenationalities").on("click", "a", function(){	
-		$(this).parent("div").parent("div").parent("span").remove();
+	$("#existingCandidateNationalities").on("click", "a", function(){	
+		$(this).parent("span").remove();
+		
+	});
+	
+	$("#existingMaternalNationalities").on("click", "a", function(){	
+		$(this).parent("span").remove();
+		
+	});
+	
+	$("#existingPaternalNationalities").on("click", "a", function(){	
+		$(this).parent("span").remove();
 		
 	});
 	

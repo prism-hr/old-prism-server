@@ -15,11 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
-import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Messenger;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -27,15 +24,11 @@ import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.ProgrammeDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
-import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -51,7 +44,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
-import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 
 @Controller
@@ -67,19 +59,18 @@ public class UpdateApplicationFormController {
 	private final UserPropertyEditor userPropertyEditor;
 	private final DatePropertyEditor datePropertyEditor;
 	private final CountryService countryService;
-	private final ProgrammeDetailDAO programmeDetailDAO;
 	private final RefereeService refereeService;
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor;
 	private final MessengerJSONPropertyEditor messengerJSONPropertyEditor;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService, UserPropertyEditor userPropertyEditor,
-			DatePropertyEditor datePropertyEditor, CountryService countryService, ProgrammeDetailDAO programmeDetailDAO, RefereeService refereeService,
+			DatePropertyEditor datePropertyEditor, CountryService countryService, RefereeService refereeService,
 			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, MessengerJSONPropertyEditor messengerJSONPropertyEditor,
 			ApplicationFormPropertyEditor applicationFormPropertyEditor) {
 
@@ -88,7 +79,6 @@ public class UpdateApplicationFormController {
 		this.userService = userService;
 		this.datePropertyEditor = datePropertyEditor;
 		this.countryService = countryService;
-		this.programmeDetailDAO = programmeDetailDAO;
 		this.refereeService = refereeService;
 		this.phoneNumberJSONPropertyEditor = phoneNumberJSONPropertyEditor;
 		this.messengerJSONPropertyEditor = messengerJSONPropertyEditor;
@@ -103,54 +93,6 @@ public class UpdateApplicationFormController {
 		binder.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditor);
 		binder.registerCustomEditor(Messenger.class, messengerJSONPropertyEditor);
 
-	}
-
-	@RequestMapping(value = "/editProgramme", method = RequestMethod.POST)
-	public ModelAndView editPersonalDetails(@ModelAttribute ProgrammeDetails programme, @RequestParam Integer id1, @RequestParam Integer appId1,
-			BindingResult result, ModelMap modelMap) {
-
-		ApplicationForm application = applicationService.getApplicationById(appId1);
-
-		if (application.isSubmitted()) {
-			throw new CannotUpdateApplicationException();
-		}
-
-		ProgrammeDetailsValidator personalDetailsValidator = new ProgrammeDetailsValidator();
-		personalDetailsValidator.validate(programme, result);
-
-		RegisteredUser user = userService.getUser(id1);
-		if (!user.equals(SecurityContextHolder.getContext().getAuthentication().getDetails())) {
-			throw new AccessDeniedException();
-		}
-
-		if (!result.hasErrors()) {
-			@SuppressWarnings("deprecation")
-			ProgrammeDetail pd = programmeDetailDAO.getProgrammeDetailWithApplication(application);
-			if (pd == null) {
-				pd = new ProgrammeDetail();
-			}
-
-			pd.setProgrammeName(programme.getProgrammeDetailsProgrammeName());
-			pd.setProjectName(programme.getProgrammeDetailsProjectName());
-			pd.setStartDate(programme.getProgrammeDetailsStartDate());
-			pd.setReferrer(Referrer.fromString(programme.getProgrammeDetailsReferrer()));
-			pd.setStudyOption(StudyOption.fromString(programme.getProgrammeDetailsStudyOption()));
-			pd.setApplication(application);
-
-			programmeDetailDAO.save(pd);
-
-		}
-
-		ApplicationPageModel model = new ApplicationPageModel();
-		model.setUser(user);
-		model.setApplicationForm(application);
-		model.setProgrammeDetails(programme);
-		model.setStudyOptions(StudyOption.values());
-		model.setReferrers(Referrer.values());
-		model.setResult(result);
-		modelMap.put("model", model);
-
-		return new ModelAndView("private/pgStudents/form/components/programme_details", modelMap);
 	}
 
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)

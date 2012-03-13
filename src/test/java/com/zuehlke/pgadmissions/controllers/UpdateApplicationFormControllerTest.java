@@ -1,13 +1,14 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
 import junit.framework.Assert;
 
@@ -25,32 +26,19 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.CountriesDAO;
-import com.zuehlke.pgadmissions.dao.MessengerDAO;
-import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
-import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
-import com.zuehlke.pgadmissions.dao.TelephoneDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Messenger;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
-import com.zuehlke.pgadmissions.domain.builders.MessengerBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
@@ -83,8 +71,6 @@ public class UpdateApplicationFormControllerTest {
 	private Qualification newQualification;
 	private QualificationValidator qualificationValidator;
 	private DatePropertyEditor datePropertyEditorMock;
-	private PersonalDetailDAO personalDetailDAOMock;
-	private ProgrammeDetailDAO programmeDetailDAOMock;
 	private CountryService countriesServiceMock;
 	private RefereeService refereeServiceMock;
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
@@ -327,8 +313,7 @@ public class UpdateApplicationFormControllerTest {
 		final Referee refereeDetails = new RefereeBuilder().refereeId(1).toReferee();
 
 		applicationController = new UpdateApplicationFormController(userServiceMock, applicationsServiceMock, userPropertyEditorMock,
-				datePropertyEditorMock, countriesServiceMock,  programmeDetailDAOMock
-				, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock){
+				datePropertyEditorMock, countriesServiceMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock){
 			Referee newReferee() {
 				return new Referee();
 			}
@@ -606,12 +591,10 @@ public class UpdateApplicationFormControllerTest {
 		qualificationValidator = EasyMock.createMock(QualificationValidator.class);
 		countriesServiceMock = EasyMock.createMock(CountryService.class);
 
-		personalDetailDAOMock = EasyMock.createMock(PersonalDetailDAO.class);
-		programmeDetailDAOMock = EasyMock.createMock(ProgrammeDetailDAO.class);
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		
 		applicationController = new UpdateApplicationFormController(userServiceMock, applicationsServiceMock, userPropertyEditorMock,
-				datePropertyEditorMock, countriesServiceMock,  programmeDetailDAOMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock){
+				datePropertyEditorMock, countriesServiceMock,  refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock){
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

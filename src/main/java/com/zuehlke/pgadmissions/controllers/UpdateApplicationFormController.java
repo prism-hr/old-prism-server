@@ -99,7 +99,7 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result,
+	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer appId, BindingResult result,
 			ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
@@ -107,10 +107,9 @@ public class UpdateApplicationFormController {
 		if (application.isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
-		RegisteredUser user = userService.getUser(id);
 
 		ApplicationPageModel model = new ApplicationPageModel();
-		model.setUser(user);
+		model.setUser(getCurrentUser());
 		ApplicationForm applicationForm = application;
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
@@ -156,16 +155,14 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/addFunding", method = RequestMethod.POST)
-	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
 		if (application.isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
-		RegisteredUser user = userService.getUser(id);
-
 		ApplicationPageModel model = new ApplicationPageModel();
-		model.setUser(user);
+		model.setUser(getCurrentUser());
 		ApplicationForm applicationForm = application;
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
@@ -198,7 +195,7 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/addEmploymentPosition", method = RequestMethod.POST)
-	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result,
+	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer appId, BindingResult result,
 			ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
@@ -206,10 +203,9 @@ public class UpdateApplicationFormController {
 		if (application.isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
-		RegisteredUser user = userService.getUser(id);
 
 		ApplicationPageModel model = new ApplicationPageModel();
-		model.setUser(user);
+		model.setUser(getCurrentUser());
 		ApplicationForm applicationForm = application;
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
@@ -242,20 +238,18 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/editAddress", method = RequestMethod.POST)
-	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer id, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
 		if (application.isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
 
-		RegisteredUser user = userService.getUser(id);
-
 		AddressValidator addressValidator = new AddressValidator();
 		addressValidator.validate(addr, result);
 		ApplicationPageModel model = new ApplicationPageModel();
 		ApplicationForm applicationForm = application;
-		model.setUser(user);
+		model.setUser(getCurrentUser());
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
 		model.setCountries(countryService.getAllCountries());

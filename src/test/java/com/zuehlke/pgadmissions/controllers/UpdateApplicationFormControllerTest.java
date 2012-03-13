@@ -106,7 +106,7 @@ public class UpdateApplicationFormControllerTest {
 		address.setAddressEndDate(new Date(2012, 11, 11));
 		address.setAddressContactAddress("YES");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
+		ModelAndView modelAndView = applicationController.editAddress(address, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
 		com.zuehlke.pgadmissions.domain.Address addr = ((PageModel) modelAndView.getModel().get("model"))
 				.getApplicationForm().getAddresses().get(0);
@@ -128,7 +128,7 @@ public class UpdateApplicationFormControllerTest {
 		address.setAddressStartDate(new Date());
 		address.setAddressEndDate(new Date());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		ModelAndView modelAndView = applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
+		ModelAndView modelAndView = applicationController.editAddress(address, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
 	}
 
@@ -143,7 +143,7 @@ public class UpdateApplicationFormControllerTest {
 		Address address = new Address();
 		address.setAddressLocation("london, uk");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
-		applicationController.editAddress(address, 1, 2, mappingResult, new ModelMap());
+		applicationController.editAddress(address, 2, mappingResult, new ModelMap());
 	}
 
 	@Test
@@ -162,7 +162,7 @@ public class UpdateApplicationFormControllerTest {
 		funding.setFundingValue("2000");
 		funding.setFundingAwardDate(new Date());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult, new ModelMap());
+		ModelAndView modelAndView = applicationController.addFunding(funding, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/funding_details", modelAndView.getViewName());
 		Assert.assertEquals("scholarship", ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
 				.getFundings().get(0).getType());
@@ -178,7 +178,7 @@ public class UpdateApplicationFormControllerTest {
 		Funding funding = new Funding();
 		funding.setFundingType("         ");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = applicationController.addFunding(funding, 1, 2, mappingResult, new ModelMap());
+		ModelAndView modelAndView = applicationController.addFunding(funding, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/funding_details", modelAndView.getViewName());
 	}
 
@@ -194,7 +194,7 @@ public class UpdateApplicationFormControllerTest {
 
 		Funding funding = new Funding();
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		applicationController.addFunding(funding, 1, 2, mappingResult, new ModelMap());
+		applicationController.addFunding(funding, 2, mappingResult, new ModelMap());
 	}
 
 	@Test
@@ -215,7 +215,7 @@ public class UpdateApplicationFormControllerTest {
 		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		positionDto.setPosition_title("head of department");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		ModelAndView modelAndView = applicationController.addEmploymentPosition(positionDto, 1, 2, mappingResult,
+		ModelAndView modelAndView = applicationController.addEmploymentPosition(positionDto, 2, mappingResult,
 				new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/employment_position_details",
 				modelAndView.getViewName());
@@ -233,7 +233,7 @@ public class UpdateApplicationFormControllerTest {
 		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
 		positionDto.setPosition_employer("");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		applicationController.addEmploymentPosition(positionDto, 1, 2, mappingResult, new ModelMap());
+		applicationController.addEmploymentPosition(positionDto, 2, mappingResult, new ModelMap());
 	}
 
 	@Test(expected = CannotUpdateApplicationException.class)
@@ -248,7 +248,7 @@ public class UpdateApplicationFormControllerTest {
 
 		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "funding");
-		applicationController.addEmploymentPosition(positionDto, 1, 2, mappingResult, new ModelMap());
+		applicationController.addEmploymentPosition(positionDto, 2, mappingResult, new ModelMap());
 	}
 	
 	@Test
@@ -389,7 +389,7 @@ public class UpdateApplicationFormControllerTest {
 		applicationsServiceMock.update(qualification);
 		EasyMock.replay(applicationsServiceMock);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 1, 2, mappingResult,
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2, mappingResult,
 				new ModelMap());
 		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals("private/pgStudents/form/components/qualification_details", modelAndView.getViewName());
@@ -405,7 +405,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
 
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 1, 2, mappingResult,
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2, mappingResult,
 				new ModelMap());
 		Assert.assertEquals(qualificationDto.getQualificationAwardDate(),
 				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
@@ -443,7 +443,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock, qualificationValidator);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 1, 2, mappingResult,
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2, mappingResult,
 				new ModelMap());
 		Assert.assertEquals(qualificationDto,
 				((ApplicationPageModel) modelAndView.getModel().get("model")).getQualification());
@@ -457,7 +457,7 @@ public class UpdateApplicationFormControllerTest {
 		applicationsServiceMock.save(form);
 		EasyMock.replay(applicationsServiceMock, qualificationValidator);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 1, 2, mappingResult,
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2, mappingResult,
 				new ModelMap());
 		Assert.assertNotNull(((ApplicationPageModel) modelAndView.getModel().get("model")).getQualification());
 		Assert.assertNull(((ApplicationPageModel) modelAndView.getModel().get("model")).getQualification()
@@ -472,7 +472,7 @@ public class UpdateApplicationFormControllerTest {
 		applicationsServiceMock.save(form);
 		EasyMock.replay(applicationsServiceMock, qualificationValidator);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 1, 2, mappingResult,
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2, mappingResult,
 				new ModelMap());
 		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals(1, form.getQualifications().size());
@@ -491,7 +491,7 @@ public class UpdateApplicationFormControllerTest {
 		applicationsServiceMock.update(qualification);
 		EasyMock.replay(applicationsServiceMock, qualificationValidator);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 1, 2, mappingResult,
+		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2, mappingResult,
 				new ModelMap());
 		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals(1, ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()

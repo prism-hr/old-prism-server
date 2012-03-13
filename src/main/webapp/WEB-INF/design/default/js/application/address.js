@@ -47,6 +47,7 @@ $(document).ready(function(){
 		$("#addressEndDate").val("");
 		$("#addressPurpose").val("");
 		$("#addressContactAddress").val("");
+		$("#isCA").attr('checked', false);
 	});
 	
 	

@@ -171,7 +171,7 @@
                 	<div class="row">
                   	<label class="label">Language</label>
                     <span class="hint"></span>
-                    <#list model.applicationForm.personalDetails.languages as language>
+                    <#list model.applicationForm.personalDetails.languages! as language>
                     <div class="field">                     
                        ${language.name}
                        <input type="hidden" name="languages" value="${language.id}"/>

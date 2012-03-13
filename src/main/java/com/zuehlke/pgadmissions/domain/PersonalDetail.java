@@ -7,9 +7,13 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -25,12 +29,23 @@ import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 public class PersonalDetail extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = 6549850558507667533L;
-
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "PERSONAL_DETAIL_LANGUAGE_LINK", joinColumns = { @JoinColumn(name = "personal_detail_id") }, inverseJoinColumns = { @JoinColumn(name = "language_id") })
+	private List<Language> languages;
+	
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "personal_detail_id")
 	private List<Telephone> phoneNumbers;
 
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "personal_details_id")
+	private List<Nationality> candiateNationalities;
+
+	
+	
 	@Column(name = "first_name")
 	private String firstName;
 
@@ -45,11 +60,11 @@ public class PersonalDetail extends DomainObject<Integer> {
 	@Temporal(TemporalType.DATE)
 	private Date dateOfBirth;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "country_id")
 	private Country country;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "residence_country_id")
 	private Country residenceCountry;
 
@@ -154,5 +169,21 @@ public class PersonalDetail extends DomainObject<Integer> {
 		this.phoneNumbers =phoneNumbers;
 		
 		
+	}
+
+	public List<Language> getLanguages() {
+		return languages;
+	}
+
+	public void setLanguages(List<Language> languages) {
+		this.languages = languages;
+	}
+
+	public List<Nationality> getCandiateNationalities() {
+		return candiateNationalities;
+	}
+
+	public void setCandiateNationalities(List<Nationality> candiateNationalities) {
+		this.candiateNationalities = candiateNationalities;
 	}
 }

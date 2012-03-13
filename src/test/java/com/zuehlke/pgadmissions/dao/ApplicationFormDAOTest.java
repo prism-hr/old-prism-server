@@ -27,13 +27,13 @@ import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	
+	
 	private ApplicationFormDAO applicationDAO;
 	private RegisteredUser user;
 	private Program program;
 	private Project project;
 	private ApplicationForm application;
-	
-	
+		
 	@Before
 	public void setup() {
 		applicationDAO = new ApplicationFormDAO(sessionFactory);
@@ -44,8 +44,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
 		save(user, program, project);
 
-		flushAndClearSession();
-		
+		flushAndClearSession();		
 	}
 
 	@Test

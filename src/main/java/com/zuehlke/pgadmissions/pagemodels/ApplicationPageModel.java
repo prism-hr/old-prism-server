@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
@@ -16,7 +18,6 @@ import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.ProgrammeDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
-import com.zuehlke.pgadmissions.dto.Referee;
 
 public class ApplicationPageModel extends PageModel {
 
@@ -26,8 +27,8 @@ public class ApplicationPageModel extends PageModel {
 	private ApplicationForm applicationForm;
 	private QualificationDTO qualification;
 	private List<Country> countries;
+	private List<Language> languages;
 	private EmploymentPosition employmentPosition;
-	private Referee referee;
 	private List<ResidenceStatus> residenceStatuses = new LinkedList<ResidenceStatus>();
 	private List<Gender> genders = new LinkedList<Gender>();
 	private List<PhoneType> phoneTypes = new LinkedList<PhoneType>();
@@ -35,6 +36,7 @@ public class ApplicationPageModel extends PageModel {
 	private List<StudyOption> studyOptions = new LinkedList<StudyOption>();
 	private List<Referrer> referrers = new LinkedList<Referrer>();
 	private ProgrammeDetails programme;
+	private Referee referee;
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -94,14 +96,6 @@ public class ApplicationPageModel extends PageModel {
 		return employmentPosition;
 	}
 
-	public void setReferee(Referee referee) {
-		this.referee = referee;
-	}
-
-	public Referee getReferee() {
-		return referee;
-	}
-
 	public List<ResidenceStatus> getResidenceStatuses() {
 		return residenceStatuses;
 	}
@@ -147,6 +141,22 @@ public class ApplicationPageModel extends PageModel {
 	}
 
 	public void setPhoneTypes(PhoneType[] phoneTypes) {
-		this.phoneTypes.addAll(Arrays.asList(phoneTypes));	
+		this.phoneTypes.addAll(Arrays.asList(phoneTypes));
+	}
+
+	public void setReferee(Referee referee) {
+		this.referee = referee;
+	}
+
+	public Referee getReferee() {
+		return referee;
+	}
+
+	public List<Language> getLanguages() {
+		return languages;
+	}
+
+	public void setLanguages(List<Language> languages) {
+		this.languages = languages;
 	}
 }

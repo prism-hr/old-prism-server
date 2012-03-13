@@ -31,8 +31,6 @@
                             </table>
                             
                             <input type="hidden" id="refereeId" name="refereeId"/>
-                            <input type="hidden" id="messengerId" name="messengerId"/>
-                            <input type="hidden" id="telephoneId" name="telephoneId"/>
                             <table cellspacing=10>
                                 <tr align=left></tr>
                                 <tr><td>First Name</td>
@@ -89,42 +87,44 @@
                                 </td>
                                 </tr>
                                 
-                                
-                                <table id="telephones">
-                                <#list model.referee.telephones as telephone>
-                                <tr><td>Telephone Type</td>
-                                <td>
-                                <div id="divId" style="margin-bottom:4px;" class="divId">
-                                <input type="text" id="ref_telephone_type${telephone.id!}" name="ref_telephone_type${telephone.id!}" value="${telephone.telephoneType!}"/>
-                                </div>  
-                                </td>
-                                </tr>                                
-                                <tr><td>Telephone Number</td>
-                                <td>
-                                <input type="text" id="ref_telephone_number${telephone.id!}" name="ref_telephone_number${telephone.id!}" value="${telephone.telephoneNumber!}"/>
-                                </td>
-                                </tr> 
-                                </#list>                             
-                                </table>
-                                
-                                
-                                 <a class="button blue" id="addTelephoneButton">Add Phone</a>
-                                <#list model.referee.messengers as messenger>
-                                <table id="messengers">
-                                <tr><td>Messenger Type</td>
-                                <td>
-                                <input type="text" id="ref_messenger_type" name="ref_messenger_type" value="${messenger.messengerType!}"/>
-                                </td>
-                                </tr>    
-                                                            
-                                <tr><td>Messenger Address</td>
-                                <td>
-                                <input type="text" id="ref_messenger_address" name="ref_messenger_address" value="${messenger.messengerAddress!}"/>
-                                </td>
-                                </tr>                                
-                                </table>
-                                </#list>
-                                 <a class="button blue" id="addMessengerButton" href="#">Add Messenger</a>
+                				<tr><td>Telephone</td>
+                    			<div id="phonenumbersref"  class="field">
+                   				 <#list model.referee.phoneNumbers! as phoneNumber>
+                    				<span name="phone_number_ref">
+                   		 				${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} <a class="button">delete</a>
+										<input type="hidden" name="phoneNumbersRef" value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />								
+									<br/>
+									</span>
+                   				 </#list>
+                  					</div>
+                    			<td>
+                    			<select class="full" id="phoneTypeRef">
+                    			 <#list model.phoneTypes as phoneType >
+                      				<option value="${phoneType}">${phoneType.displayValue}</option>
+                      			</#list>
+                      			</select>
+                      			</td>
+                      			<td>
+	                   		 	<input type="text" placeholder="Number" id="phoneNumberRef"/>
+                     			 	<a id="addPhoneRefButton" class="button" style="width: 110px;">Add Phone</a>
+                     			</td>
+                  				</tr>
+                  				
+                  				<tr><td>Messenger</td>
+                    			<div id="messengersref"  class="field">
+                   				 <#list model.messengers! as messenger>
+                    				<span name="messenger_ref">
+                   		 				${messenger.messengerAddress} <a class="button" id = "mesDel" >delete</a>
+										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress}"}' />								
+									<br/>
+									</span>
+                   				 </#list>
+                  					</div>
+                      			<td>
+	                   		 	<input type="text" placeholder="Address" id="messengerAddressRef"/>
+                     			 	<a id="addMessengerRefButton" class="button" style="width: 110px;">Add Messenger</a>
+                     			</td>
+                  				</tr>
                                 
                                 </table>
                             

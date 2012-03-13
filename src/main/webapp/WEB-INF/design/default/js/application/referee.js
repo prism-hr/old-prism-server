@@ -1,6 +1,17 @@
 $(document).ready(function(){
+	
+	$("#phonenumbersref").on("click", "a", function(){	
+		$(this).parent("span").remove();
+		
+	});
+	
+	$("#messengersref").on("click", "a", function(){	
+		$(this).parent("span").remove();
+		
+	});
+	
 $('#refereeSaveButton').click(function(){
-		$.post("/pgadmissions/update/addReferee", { 
+	var postData ={ 
 			firstname: $("#ref_firstname").val(),
 			lastname: $("#ref_lastname").val(), 
 			relationship: $("#ref_relationship").val(), 
@@ -9,15 +20,12 @@ $('#refereeSaveButton').click(function(){
 			addressLocation: $("#ref_address_location").val(), 
 			addressPostcode: $("#ref_address_postcode").val(), 
 			addressCountry: $("#ref_address_country").val(), 
-			messengerAddress: $("#ref_messenger_address").val(), 
-			messengerType: $("#ref_messenger_type").val(), 
-			telephoneType: $("#ref_telephone_type").val(), 
-			telephoneNumber: $("#ref_telephone_number").val(), 
 			email: $("#ref_email").val(), 
-			appId: $("#appId").val(),
-			id: $("#id").val(), 
+			application: $("#appId").val(),
 			refereeId: $("#refereeId").val()
-		},
+		}
+	$.post( "/pgadmissions/update/refereeDetails" , $.param(postData) + "&" + $('[input[name="phoneNumbersRef"]').serialize() + "&" + $('[input[name="messengersRef"]').serialize(),
+			
 				   function(data) {
 				     $('#referencesSection').html(data);
 				   });
@@ -26,8 +34,6 @@ $('#refereeSaveButton').click(function(){
 $('a[name="refereeEditButton"]').click(function(){
 	var id = this.id;
 	id = id.replace('referee_', '');
-	var messengerId =  $("#messenger_id").val();
-	var telephoneId =  $("#telephone_id").val();
 	$("#refereeId").val($('#'+id+"_refereeId").val());
 	$("#ref_firstname").val($('#'+id+"_firstname").val());
 	$("#ref_lastname").val($('#'+id+"_lastname").val());
@@ -41,8 +47,29 @@ $('a[name="refereeEditButton"]').click(function(){
 });
 
 
-$('a[name="addTelephoneButton"]').click(function() {
-	$('#telephones tr:last').after('<tr><td>Telephone Type</td><td><input type=\"text\" id=\"ref_telephone_type${telephone.id!}\" name=\"ref_telephone_type${telephone.id!}\" value=\"${telephone.telephoneType!}\"/></div></td></tr> <tr><td>Telephone Number</td><td><input type=\"text\" id=\"ref_telephone_number${telephone.id!}\" name=\"ref_telephone_number${telephone.id!}\" value=\"${telephone.telephoneNumber!}\"/></td> </tr>');
-});
+$('#addPhoneRefButton').on('click', function(){
+	if($('#phoneNumberRef').val() =="Number" || $('#phoneNumberRef').val().trim()== ''){
+		alert("Please enter phone number");
+		return;
+	}
+	$('#phonenumbersref').append('<span name="phone_number_ref">'+ 
+			$('#phoneTypeRef option:selected').text() + " " + $('#phoneNumberRef').val()+ " "+'<a class="button">delete</a>'+
+			'<input type="hidden" name="phoneNumbersRef" value=' +"'" + '{"type":"' +  $('#phoneTypeRef').val()+ '", "number":"' + $('#phoneNumberRef').val()+ '"} ' + "'" + "/>"									
+			+'<br/></span>');
+})
+
+$('#addMessengerRefButton').on('click', function(){
+	if($('#messengerAddressRef').val() =="Address" || $('#messengerAddressRef').val().trim()== ''){
+		alert("Please enter address");
+		return;
+	}
+	$('#messengersref').append('<span name="messenger_ref">'+ 
+			$('#messengerAddressRef').val()+ " "+'<a class="button">delete</a>'+
+			'<input type="hidden" name="messengersRef" value=' +"'" + '{"address":"' + $('#messengerAddressRef').val()+ '"} ' + "'" + "/>"									
+			+'<br/></span>');
+})
+
+// To make uncompleted functionalities disable.
+$(".disabledEle").attr("disabled", "disabled");
 
 });

@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -20,15 +21,13 @@ import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.Messenger;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
-import com.zuehlke.pgadmissions.dto.Referee;
-import com.zuehlke.pgadmissions.dto.Telephone;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.utils.DTOUtils;
 
 @Controller
@@ -41,17 +40,19 @@ public class ViewApplicationFormController {
 	private ApplicationReviewService applicationReviewService;
 	private final CountryService countryService;
 	private final ProgrammeDetailDAO proogrammeDetailDAO;
+	private final LanguageService languageService;
 
 	ViewApplicationFormController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public ViewApplicationFormController(ApplicationsService applicationService, ApplicationReviewService applicationReviewService,
-			CountryService countryService, ProgrammeDetailDAO programmeDetailDAO) {
+			CountryService countryService, LanguageService languageService, ProgrammeDetailDAO programmeDetailDAO) {
 		this.applicationService = applicationService;
 		this.applicationReviewService = applicationReviewService;
 		this.countryService = countryService;
+		this.languageService = languageService;
 		this.proogrammeDetailDAO = programmeDetailDAO;
 
 	}
@@ -66,17 +67,13 @@ public class ViewApplicationFormController {
 		ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
 
 		viewApplicationModel.setApplicationForm(applicationForm);
-		//
 		viewApplicationModel.setAddress(new Address());
 		viewApplicationModel.setFunding(new Funding());
 		viewApplicationModel.setQualification(new QualificationDTO());
+		viewApplicationModel.setReferee(new Referee());
 		viewApplicationModel.setEmploymentPosition(new EmploymentPosition());
-		Referee referee = new Referee();
-		referee.getTelephones().add(new Telephone());
-		referee.getMessengers().add(new Messenger());
-		viewApplicationModel.setReferee(referee);
 		viewApplicationModel.setCountries(countryService.getAllCountries());
-		
+		viewApplicationModel.setLanguages(languageService.getAllLanguages());
 		viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());
 		viewApplicationModel.setStudyOptions(StudyOption.values());
 		viewApplicationModel.setReferrers(Referrer.values());

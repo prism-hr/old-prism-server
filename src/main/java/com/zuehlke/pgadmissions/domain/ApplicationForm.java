@@ -57,8 +57,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne(mappedBy="application")
 	private PersonalDetail personalDetails ;
 
-	
-
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.SubmissionStatusEnumUserType")
 	@Column(name = "submission_status")
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
@@ -95,7 +93,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "application_form_id")
 	private List<Referee> referees = new ArrayList<Referee>();
 
-	
 	public List<Qualification> getQualifications() {
 		return qualifications;
 	}
@@ -265,7 +262,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 		return personalDetails;
 	}
-
+	
 	public void setPersonalDetails(PersonalDetail personalDetails) {
 		this.personalDetails = personalDetails;
 	}

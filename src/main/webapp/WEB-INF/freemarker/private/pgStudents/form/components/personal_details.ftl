@@ -36,7 +36,7 @@
 			    </tr>
 			</tbody>
 		</table>
-		<form>
+		<form id ="documentUploadForm" enctype="multipart/form-data" method="post" action="">		
 				<input type="hidden" name="id" id="id" value="${(model.applicationForm.personalDetails.id?string("######"))!}"/>
 				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id?string("######")}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
@@ -137,22 +137,54 @@
                         <option>British</option>
                       </select>
                       <label><input class="disabledEle" type="radio" /> This is my primary nationality</label>
-                    </div>
-                  </div>
+                    </div>                  
+                	
                 	<div class="row">
-                  	<div class="field"><a class="button blue disabledEle" href="#">Add a nationality</a></div>
+                  	<span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input type="file" name="file"/>         
+                      <a class="button" id="primaryNationalityUploadButton">Upload</a> 
+                    </div>
+                    
                   </div>
-                </div>
+                             <!-- Document -->
+                  <!--<div class="row">
+                    <span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                     <iframe id="myframe" name="myframe" src="#" style=""><script language="javascript" type="text/javascript">
+						
+					</script>
+					</iframe>
+                    
+						<input type="file" id="file" name="file">
+						<input type="submit" value="Upload"/>
+				
+                      <a class="button" href="#">Add Document</a> -->                 
+                  
+                	<div class="row">
+                  		<div class="field"><a class="button blue disabledEle" href="#">Add a nationality</a></div>
+                  </div>
+                
               	
               	<div>
                 	<div class="row">
                   	<label class="label">Language</label>
                     <span class="hint"></span>
+                    <#list model.applicationForm.personalDetails.languages as language>
+                    <div class="field">                     
+                       ${language.name}
+                       <input type="hidden" name="languages" value="${language.id}"/>
+                     </div>  
+                    </#list>
                     <div class="field">
-                      <select class="full disabledEle">
-                        <option>English</option>
+                      <select class="full" id="languageSelect">
+                        <option value="">Select...</option>
+                         <#list model.languages as language>
+                         	<option value="${language.id}">${language.name}</option>
+                         </#list>
                       </select>
-                      <label><input class="disabledEle" type="radio" /> This is my primary language</label>
+                      <label><input type="radio" /> This is my primary language</label>
                     </div>
                   </div>
                 	<div class="row">
@@ -165,7 +197,7 @@
                     </div>
                   </div>
                 	<div class="row">
-                  	<div class="field"><a class="button blue disabledEle" href="#">Add a language</a></div>
+                  		<div class="field"><a class="button blue disabledEle" href="#">Add a language</a></div>
                   </div>
                 </div>
 
@@ -272,4 +304,6 @@
                 </div>
            </form>
 	</div>
+
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>
+		

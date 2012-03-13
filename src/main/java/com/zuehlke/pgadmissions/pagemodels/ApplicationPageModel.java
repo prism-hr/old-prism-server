@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.ProgrammeDetails;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 
 public class ApplicationPageModel extends PageModel {
@@ -35,7 +34,6 @@ public class ApplicationPageModel extends PageModel {
 
 	private List<StudyOption> studyOptions = new LinkedList<StudyOption>();
 	private List<Referrer> referrers = new LinkedList<Referrer>();
-	private ProgrammeDetails programme;
 	private Referee referee;
 
 	public ApplicationForm getApplicationForm() {
@@ -118,14 +116,6 @@ public class ApplicationPageModel extends PageModel {
 
 	public void setReferrers(Referrer[] values) {
 		this.referrers.addAll(Arrays.asList(values));
-	}
-
-	public void setProgrammeDetails(ProgrammeDetails programme) {
-		this.programme = programme;
-	}
-
-	public ProgrammeDetails getProgramme() {
-		return programme;
 	}
 
 	public List<Gender> getGenders() {

@@ -19,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
@@ -36,7 +35,6 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
-import com.zuehlke.pgadmissions.utils.DTOUtils;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
 @Controller
@@ -108,7 +106,6 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());
 			viewApplicationModel.setStudyOptions(StudyOption.values());
 			viewApplicationModel.setReferrers(Referrer.values());
-			viewApplicationModel.setProgrammeDetails(DTOUtils.createProgrammeDetails(proogrammeDetailDAO.getProgrammeDetailWithApplication(applicationForm)));
 			
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,"model", viewApplicationModel);
 			

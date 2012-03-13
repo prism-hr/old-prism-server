@@ -1,12 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 
 @Repository
@@ -23,10 +20,8 @@ public class ProgrammeDetailDAO {
 	}
 
 
-	@Transactional
-	@Deprecated
-	public ProgrammeDetail getProgrammeDetailWithApplication(ApplicationForm form) {
-		return (ProgrammeDetail) sessionFactory.getCurrentSession().createCriteria(ProgrammeDetail.class).add(Restrictions.eq("application", form)).uniqueResult();
+	public ProgrammeDetail getProgrammeDetailWithId(Integer id) {
+		return (ProgrammeDetail) sessionFactory.getCurrentSession().get(ProgrammeDetail.class, id);
 	}
 
 	public void save(ProgrammeDetail pd) {

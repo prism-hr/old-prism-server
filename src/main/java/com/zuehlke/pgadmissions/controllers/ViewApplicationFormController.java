@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
-import com.zuehlke.pgadmissions.utils.DTOUtils;
 
 @Controller
 @RequestMapping(value = { "application" })
@@ -79,7 +78,6 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setReferrers(Referrer.values());
 		viewApplicationModel.setPhoneTypes(PhoneType.values());
 		viewApplicationModel.setGenders(Gender.values());
-		viewApplicationModel.setProgrammeDetails(DTOUtils.createProgrammeDetails(proogrammeDetailDAO.getProgrammeDetailWithApplication(applicationForm)));
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}

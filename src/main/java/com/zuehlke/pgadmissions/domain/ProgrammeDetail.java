@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -9,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -62,6 +65,10 @@ public class ProgrammeDetail  extends DomainObject<Integer>{
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application = null;
 	
+	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
+	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+	@JoinColumn(name = "programme_detail_id")
+	private List<Supervisor> supervisors = new ArrayList<Supervisor>();
 	
 	public String getProgrammeName() {
 		return programmeName;
@@ -109,5 +116,13 @@ public class ProgrammeDetail  extends DomainObject<Integer>{
 	
 	public void setApplication(ApplicationForm application) {
 		this.application = application;
+	}
+	
+	public List<Supervisor> getSupervisors() {
+		return supervisors;
+	}
+	
+	public void setSupervisors(List<Supervisor> supervisors) {
+		this.supervisors = supervisors;
 	}
 }

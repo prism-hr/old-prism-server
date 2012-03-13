@@ -8,7 +8,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
 <link type="text/css" rel="stylesheet" href="css/private/global_private.css" />
-<link type="text/css" rel="stylesheet" href="css/private/application_list.css" />
+<link type="text/css" rel="stylesheet" href="css/superadmin.css" />
 <!--[if lt IE 9]>
 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
@@ -37,7 +37,7 @@
       <nav>
         <ul>
           <li><a href="#">My account</a></li>    
-          <li class="current"><a href="#">My applications <span class="indicator blue">1</span></a></li>    
+          <li class="current"><a href="#">My applications</a></li>    
           <li><a href="#">Messages</a></li>    
           <li><a href="#">Help</a></li>    
         </ul>
@@ -54,57 +54,61 @@
     <!-- Main content area. -->
     <article id="content" role="main">
       
-      <!-- "Tools" -->
-      <div id="tools">
-        <ul class="left">
-          <li class="icon-pdf"><a href="#">Generate PDF</a></li>
-          <li class="icon-print"><a href="#">Print Page</a></li>
-        </ul>
-        <ul class="right">
-          <li class="icon-progress"><a href="#">Progress</a></li>
-          <li class="current icon-application"><a href="#">View Application</a></li>
-        </ul>
-      </div>
-          
-      <!-- content box -->
       <div class="content-box">
-        <div class="content-box-inner">
+      	<div class="content-box-inner">
+        
+        	<h1>Programme: LoLo EngD</h1>
+          <form class="roles">
+          
+          	<div class="row">
+            	<label>Email address</label>
+              <input type="text" name="email" />
+            </div>
 
-					<table class="data" border="0">
-          	<colgroup>
-            	<col style="width: 30px;" />
-            	<col />
-            	<col style="width: 160px;" />
-            	<col style="width: 160px;" />
-            	<col style="width: 120px;" />
-            	<col style="width: 50px;" />
+          	<div class="row">
+            	<label>Role(s) in application process</label>
+              <select multiple size="4">
+              	<option>Administrator</option>
+              	<option>Approver</option>
+              	<option>Interviewer</option>
+              	<option>Reviewer</option>
+              </select>
+            </div>
+
+            <button class="plus"><span></span> Add another</button>
+
+          </form>
+          
+          <hr>
+          
+          <table class="data" border="0">
+            <colgroup>
+              <col style="width: 220px;" />
+              <col style="width: auto;" />
+              <col style="width: 200px;" />
             </colgroup>
-          	<thead>
+            <thead>
               <tr>
-                <th scope="col">&nbsp;</th>
-                <th scope="col">Programme Name</th>
-                <th scope="col">Application Number</th>
-                <th scope="col">Submission Deadline</th>
-                <th scope="col">Status</th>
-                <th class="centre" scope="col">Select</th>
+                <th scope="col">Email address</th>
+                <th scope="col">Name</th>
+                <th scope="col">Role(s)</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><a class="row-arrow" href="#">&gt;</a></td>
-                <td>W1P8 - Engineering Characterisation of Single...</td>
-                <td>656354146B</td>
-                <td>04/01/2011</td>
-                <td>Pending</td>
-                <td class="centre"><input type="checkbox" name="select" /></td>
+                <td scope="col">crispy@quentin.com</td>
+                <td scope="col">Quentin Crisp</td>
+                <td scope="col">Interviewer, Reviewer</td>
               </tr>
               <tr>
-                <td><a class="row-arrow" href="#">&gt;</a></td>
-                <td>W3P7 - Development of Robust Sustainability...</td>
-                <td>512156473X</td>
-                <td>01/08/2011</td>
-                <td>Pending</td>
-                <td class="centre"><input type="checkbox" name="select" /></td>
+                <td scope="col">rich@kipling.com</td>
+                <td scope="col">-</td>
+                <td scope="col">Administrator</td>
+              </tr>
+              <tr>
+                <td scope="col">erol@erik.com</td>
+                <td scope="col">Errol Erickson</td>
+                <td scope="col">Approver, Interviewer</td>
               </tr>
             </tbody>
           </table>
@@ -129,8 +133,9 @@
 </div>
 
 <!-- Scripts -->
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/libraries.js"></script>
 <script type="text/javascript" src="js/script.js"></script>
+<script type="text/javascript" src="js/help.js"></script>
 </body>
 </html>

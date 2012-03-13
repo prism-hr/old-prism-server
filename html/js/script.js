@@ -89,7 +89,7 @@ $(document).ready(function()
     $target.hide();
   });
   
-    $('#feedback span.more').bind('click', function()
+  $('#progress span.more').bind('click', function()
   {
     var $this   = $(this);
     var $parent = $this.parent().parent();

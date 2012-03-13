@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -14,7 +15,9 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -22,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -29,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.NationalityType;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 
@@ -144,6 +149,61 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 	}
 
+
+	@Test
+	public void shouldSaveAndLoadPersonalDetailsWithCandiateNationalities() throws Exception {
+		Country country = new CountryBuilder().code("aa").name("aaaaa").toCountry();
+		sessionFactory.getCurrentSession().save(country);
+
+		Document document1 = new DocumentBuilder().content("aa".getBytes()).fileName("bob").toDocument();
+		Document document2 = new DocumentBuilder().content("bb".getBytes()).fileName("fred").toDocument();
+		save(document1, document2);
+
+		flushAndClearSession();
+		
+		Nationality nationality1 = new Nationality();
+		nationality1.setCountry(country);
+		nationality1.setSupportingDocuments(Arrays.asList(document1, document2));
+		nationality1.setType(NationalityType.CANDIDATE);
+		
+		Nationality nationality2 = new Nationality();
+		nationality2.setCountry(country);
+		nationality2.setType(NationalityType.CANDIDATE);
+	
+		
+		Nationality nationality3 = new Nationality();
+		nationality3.setCountry(country);
+		nationality3.setType(NationalityType.CANDIDATE);
+		
+		PersonalDetail personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality1, nationality2).country(country1)
+				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
+				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
+				.toPersonalDetails();
+
+		sessionFactory.getCurrentSession().save(personalDetails);
+		
+		flushAndClearSession();
+		PersonalDetail reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(2, reloadedDetails.getCandiateNationalities().size());
+		assertTrue(reloadedDetails.getCandiateNationalities().containsAll(Arrays.asList(nationality1,nationality2)));
+
+		reloadedDetails.getCandiateNationalities().remove(1);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
+
+		flushAndClearSession();
+		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(1, reloadedDetails.getCandiateNationalities().size());
+		assertTrue(reloadedDetails.getCandiateNationalities().containsAll(Arrays.asList(nationality1)));
+
+		reloadedDetails.getCandiateNationalities().add(nationality3);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
+		flushAndClearSession();
+		
+		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(2, reloadedDetails.getCandiateNationalities().size());
+		assertTrue(reloadedDetails.getCandiateNationalities().containsAll(Arrays.asList(nationality1, nationality3)));
+	}
+	
 	@Before
 	public void setUp() {
 		super.setUp();

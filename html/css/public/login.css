@@ -2,7 +2,7 @@
 
 /* LOGIN page -------------------------------------------------------------------------------------------- */
 #login-box {
-	background: #828386 url(../images/bg_login_box.jpg) repeat-x; /* Old browsers */
+	background: #828386 url(../../images/bg_login_box.jpg) repeat-x; /* Old browsers */
 	background: -moz-linear-gradient(top, #e6e6e7 0%, #828386 100%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e6e6e7), color-stop(100%,#828386)); /* Chrome,Safari4+ */
 	background: -webkit-linear-gradient(top, #e6e6e7 0%,#828386 100%); /* Chrome10+,Safari5.1+ */

@@ -29,6 +29,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Document</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Language</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Nationality</value>
+	     		<value>com.zuehlke.pgadmissions.domain.LanguageProficiency</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

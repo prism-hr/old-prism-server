@@ -24,7 +24,7 @@ public class DocumentService {
 		documentDAO.save(document);		
 	}
 	
-	@Transactional
+
 	public Document getDocumentById(Integer id) {
 		return documentDAO.getDocumentbyId(id);
 	}

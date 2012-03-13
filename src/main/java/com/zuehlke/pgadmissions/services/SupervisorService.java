@@ -23,7 +23,7 @@ public class SupervisorService {
 
 	}
 
-	@Transactional
+
 	public Supervisor getSupervisorWithId(Integer id) {
 		return supervisorDAO.getSupervisorWithId(id);
 	}

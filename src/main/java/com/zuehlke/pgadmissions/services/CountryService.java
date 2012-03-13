@@ -24,12 +24,12 @@ public class CountryService {
 	
 	}
 
-	@Transactional
+
 	public List<Country> getAllCountries() {
 		return countriesDAO.getAllCountries();
 	}
 
-	@Transactional
+
 	public Country getCountryById(Integer id) {
 		return countriesDAO.getCountryById(id);
 	}

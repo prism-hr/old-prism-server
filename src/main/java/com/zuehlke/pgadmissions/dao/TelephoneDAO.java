@@ -21,7 +21,7 @@ public class TelephoneDAO {
 		this.sessionFactory = sessionFactory;
 	}
 	
-	@Transactional
+
 	public void save(Telephone telephone) {
 		sessionFactory.getCurrentSession().saveOrUpdate(telephone);
 	}

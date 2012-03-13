@@ -27,7 +27,7 @@ public class ProjectController {
 		this.projectDAO = projectDAO;
 	}
 	
-	@Transactional
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getProjectsPage() {
 		

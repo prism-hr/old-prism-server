@@ -22,7 +22,7 @@ public class RefereeService {
 
 	}
 
-	@Transactional
+
 	public Referee getRefereeById(Integer id) {
 		return refereeDAO.getRefereeById(id);
 	}

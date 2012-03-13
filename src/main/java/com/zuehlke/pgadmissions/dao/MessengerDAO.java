@@ -21,7 +21,7 @@ public class MessengerDAO {
 		this.sessionFactory = sessionFactory;
 	}
 	
-	@Transactional
+	
 	public void save(Messenger messenger) {
 		sessionFactory.getCurrentSession().saveOrUpdate(messenger);
 	}

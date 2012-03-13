@@ -8,6 +8,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -29,9 +30,17 @@ public class PersonalDetailsBuilder {
 	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();
 	private List<Language> languages = new ArrayList<Language>();
 	private List<Nationality> candiateNationalities = new ArrayList<Nationality>();
+	
+	private List<LanguageProficiency> languageProficiencies= new ArrayList<LanguageProficiency>();
 
 	public PersonalDetailsBuilder id(Integer id) {
 		this.id = id;
+		return this;
+	}
+	
+	
+	public PersonalDetailsBuilder languageProficiencies(LanguageProficiency...languageProficiencies) {
+		this.languageProficiencies.addAll(Arrays.asList(languageProficiencies));
 		return this;
 	}
 	
@@ -109,7 +118,8 @@ public class PersonalDetailsBuilder {
 		personalDetails.setResidenceStatus(residenceStatus);
 		personalDetails.setPhoneNumbers(phoneNumbers);
 		personalDetails.setLanguages(languages);
-		personalDetails.setCandiateNationalities(candiateNationalities);
+		personalDetails.setCandidateNationalities(candiateNationalities);
+		personalDetails.setLanguageProficiencies(languageProficiencies);
 		return personalDetails;
 	}
 }

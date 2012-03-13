@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.dao.mappings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -17,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -33,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.NationalityType;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
@@ -42,6 +45,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 	private Country country1;
 	private Country country2;
 	private ApplicationForm applicationForm;
+	
 
 	@Test
 	public void shouldSaveAndLoadPersonalDetails() throws Exception {
@@ -184,25 +188,80 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		PersonalDetail reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
-		assertEquals(2, reloadedDetails.getCandiateNationalities().size());
-		assertTrue(reloadedDetails.getCandiateNationalities().containsAll(Arrays.asList(nationality1,nationality2)));
-
-		reloadedDetails.getCandiateNationalities().remove(1);
+		assertEquals(2, reloadedDetails.getCandidateNationalities().size());
+		assertTrue(reloadedDetails.getCandidateNationalities().containsAll(Arrays.asList(nationality1,nationality2)));
+		Integer tobeRemovedId = nationality2.getId();
+		reloadedDetails.getCandidateNationalities().remove(1);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
 
 		flushAndClearSession();
 		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
-		assertEquals(1, reloadedDetails.getCandiateNationalities().size());
-		assertTrue(reloadedDetails.getCandiateNationalities().containsAll(Arrays.asList(nationality1)));
+		assertEquals(1, reloadedDetails.getCandidateNationalities().size());
+		assertTrue(reloadedDetails.getCandidateNationalities().containsAll(Arrays.asList(nationality1)));
 
-		reloadedDetails.getCandiateNationalities().add(nationality3);
+		reloadedDetails.getCandidateNationalities().add(nationality3);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
 		flushAndClearSession();
 		
 		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
-		assertEquals(2, reloadedDetails.getCandiateNationalities().size());
-		assertTrue(reloadedDetails.getCandiateNationalities().containsAll(Arrays.asList(nationality1, nationality3)));
+		assertEquals(2, reloadedDetails.getCandidateNationalities().size());
+		assertTrue(reloadedDetails.getCandidateNationalities().containsAll(Arrays.asList(nationality1, nationality3)));
+		
+		 assertNull(sessionFactory.getCurrentSession().get(Nationality.class, tobeRemovedId));
 	}
+	
+	
+	@Test
+	public void shouldSaveAndLoadPersonalDetailsWithLanguageProficiencies() throws Exception {
+		Language language = new LanguageBuilder().name("aaaaa").toLanguage();
+		sessionFactory.getCurrentSession().save(language);
+
+		flushAndClearSession();
+		
+		LanguageProficiency prof1 = new LanguageProficiency();
+		prof1.setLanguage(language);
+		prof1.setAptitude(LanguageAptitude.ELEMENTARY);
+		
+		LanguageProficiency prof2 = new LanguageProficiency();
+		prof2.setLanguage(language);
+		prof2.setAptitude(LanguageAptitude.FULL);
+		
+		LanguageProficiency prof3 = new LanguageProficiency();
+		prof3.setLanguage(language);
+		prof3.setAptitude(LanguageAptitude.LIMITED);
+		
+		
+		PersonalDetail personalDetails = new PersonalDetailsBuilder().languageProficiencies(prof1, prof2).country(country1)
+				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
+				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
+				.toPersonalDetails();
+
+		sessionFactory.getCurrentSession().save(personalDetails);
+		
+		flushAndClearSession();
+		PersonalDetail reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(2, reloadedDetails.getLanguageProficiencies().size());
+		assertTrue(reloadedDetails.getLanguageProficiencies().containsAll(Arrays.asList(prof1,prof2)));
+		Integer tobeRemovedId = prof2.getId();
+		reloadedDetails.getLanguageProficiencies().remove(1);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
+
+		flushAndClearSession();
+		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(1, reloadedDetails.getLanguageProficiencies().size());
+		assertTrue(reloadedDetails.getLanguageProficiencies().containsAll(Arrays.asList(prof1)));
+
+		reloadedDetails.getLanguageProficiencies().add(prof3);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
+		flushAndClearSession();
+		
+		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
+		assertEquals(2, reloadedDetails.getLanguageProficiencies().size());
+		assertTrue(reloadedDetails.getLanguageProficiencies().containsAll(Arrays.asList(prof1, prof3)));
+		
+		 assertNull(sessionFactory.getCurrentSession().get(Nationality.class, tobeRemovedId));
+	}
+	
 	
 	@Before
 	public void setUp() {

@@ -5,85 +5,129 @@
                         </h2>
                         <div>
                             <br/>
+                            <#if model.hasError('numberOfReferees')>                           
+	        					<span class="invalid"><@spring.message  model.result.getFieldError('numberOfReferees').code /></span><br/>                        
+	       					 </#if>
                             <div>
                             
                              <table cellspacing=10>
                                  <tr align=left><th>First Name</th><th>Surname</th><th>Relationship</th><th>Email</th></tr>
                                 <#list model.applicationForm.referees as referee>
                                 <tr>
-                                    <td>${referee.firstname}</td>
-                                    <td>${referee.lastname}</td>
-                                    <td>${referee.relationship}</td>
-                                    <td>${referee.email}</td>
-                                    <td><a class="button blue" type="submit" name="refereeEditButton" id="referee_${referee.id}">Edit</a></td>
-                                    <input type="hidden" id="${referee.id}_refereeId" value="${referee.id}"/>
-                                    <input type="hidden" id="${referee.id}_firstname" value="${referee.firstname}"/>
-                                    <input type="hidden" id="${referee.id}_lastname" value="${referee.lastname}"/>
-                                    <input type="hidden" id="${referee.id}_relationship" value="${referee.relationship}"/>
-                                    <input type="hidden" id="${referee.id}_jobEmployer" value="${referee.jobEmployer}"/>
-                                    <input type="hidden" id="${referee.id}_jobTitle" value="${referee.jobTitle}"/>
-                                    <input type="hidden" id="${referee.id}_addressLocation" value="${referee.addressLocation}"/>
-                                    <input type="hidden" id="${referee.id}_addressPostcode" value="${referee.addressPostcode}"/>
-                                    <input type="hidden" id="${referee.id}_addressCountry" value="${referee.addressCountry}"/>
-                                    <input type="hidden" id="${referee.id}_email" value="${referee.email}"/>
+                                    <td>${referee.firstname!}</td>
+                                    <td>${referee.lastname!}</td>
+                                    <td>${referee.relationship!}</td>
+                                    <td>${referee.email!}</td>
+                                    <td><a class="button blue" type="submit" name="refereeEditButton" id="referee_${referee.id!}">Edit</a></td>
+                                    <input type="hidden" id="${referee.id!}_refereeId" value="${referee.id!}"/>
+                                    <input type="hidden" id="${referee.id!}_firstname" value="${referee.firstname!}"/>
+                                    <input type="hidden" id="${referee.id!}_lastname" value="${referee.lastname!}"/>
+                                    <input type="hidden" id="${referee.id!}_relationship" value="${referee.relationship!}"/>
+                                    <input type="hidden" id="${referee.id!}_jobEmployer" value="${referee.jobEmployer!}"/>
+                                    <input type="hidden" id="${referee.id!}_jobTitle" value="${referee.jobTitle!}"/>
+                                    <input type="hidden" id="${referee.id!}_addressLocation" value="${referee.addressLocation!}"/>
+                                    <input type="hidden" id="${referee.id!}_addressPostcode" value="${referee.addressPostcode!}"/>
+                                    <input type="hidden" id="${referee.id!}_addressCountry" value="${referee.addressCountry!}"/>
+                                    <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
+									<#list referee.phoneNumbersRef! as phoneNumber>
+                    				<span name="hiddenPhones" style="display:none">
+                   		 				${phoneNumber.telephoneType.displayValue!} ${phoneNumber.telephoneNumber!} <a class="button">delete</a>
+										<input type="hidden" name="phoneNumbersRef" value='{"type" :"${phoneNumber.telephoneType!}", "number":"${phoneNumber.telephoneNumber!}"}' />								
+									<br/>
+									</span>
+                   				 	</#list>
+                   				 	<#list referee.messengersRef! as messenger>
+                    				<span name="hiddenMessengers" style="display:none">
+                   		 				${messenger.messengerAddress!} <a class="button" id = "mesDel" >delete</a>
+										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress!}"}' />								
+									<br/>
+									</span>
+                   				 	</#list>
                                </tr>
                             </#list>
                             </table>
-                            
                             <input type="hidden" id="refereeId" name="refereeId"/>
                             <table cellspacing=10>
                                 <tr align=left></tr>
                                 <tr><td>First Name</td>
                                 <td>
                                 <input type="text" id="ref_firstname" name="ref_firstname" value="${model.referee.firstname!}"/>
+                                 
+                           		 <#if model.hasError('firstname')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('firstname').code /></span>                           
+                            	</#if>
                                 </td>
                                 </tr>
                                 
                                 <tr><td>Last Name</td>
                                 <td>
                                 <input type="text" id="ref_lastname" name="ref_lastname" value="${model.referee.lastname!}"/>
+                                 <#if model.hasError('lastname')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('lastname').code /></span>                           
+                            	</#if>
                                 </td>
                                 </tr>
                                 
                                 <tr><td>Relationship</td>
                                 <td>
                                 <input type="text" id="ref_relationship" name="ref_relationship" value="${model.referee.relationship!}"/>
+                                <#if model.hasError('relationship')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('relationship').code /></span>                           
+                            	</#if>
                                 </td>
                                 </tr>
                                 
                                 <tr><td>Employer</td>
                                 <td>
                                 <input type="text" id="ref_employer" name="ref_employer" value="${model.referee.jobEmployer!}"/>
+                                 <#if model.hasError('jobEmployer')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('jobEmployer').code /></span>                           
+                            	</#if>
                                 </td>
                                 </tr>
                                 
                                 <tr><td>Position</td>
                                 <td>
                                 <input type="text" id="ref_position" name="ref_position" value="${model.referee.jobTitle!}"/>
+                                <#if model.hasError('jobTitle')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('jobTitle').code /></span>                           
+                            	</#if>
                                 </td>
                                 </tr>
 
                                 <tr><td>Address Location</td>
                                 <td>
                                 <input type="text" id="ref_address_location" name="ref_address_location" value="${model.referee.addressLocation!}"/>
+                                <#if model.hasError('addressLocation')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('addressLocation').code /></span>                           
+                            	</#if>
                                 </td>
                                 </tr>
                                 
                                 <tr><td>Address Post Code</td>
                                 <td>
                                 <input type="text" id="ref_address_postcode" name="ref_address_postcode" value="${model.referee.addressPostcode!}"/>
+                                <#if model.hasError('addressPostcode')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('addressPostcode').code /></span>                           
+                            	</#if>
                                 </td>
                                 </tr>
                                 
                                 <tr><td>Address Country</td>
                                 <td>
                                 <input type="text" id="ref_address_country" name="ref_address_country" value="${model.referee.addressCountry!}"/>
+                                <#if model.hasError('addressCountry')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('addressCountry').code /></span>                           
+                            	</#if>
                                 </td>
                                 </tr>
                                 
                                 <tr><td>Email</td>
                                 <td>
                                 <input type="text" id="ref_email" name="ref_email" value="${model.referee.email!}"/>
+                                <#if model.hasError('email')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                           
+                            	</#if>
                                 </td>
                                 </tr>
                                 
@@ -107,6 +151,9 @@
                       			<td>
 	                   		 	<input type="text" placeholder="Number" id="phoneNumberRef"/>
                      			 	<a id="addPhoneRefButton" class="button" style="width: 110px;">Add Phone</a>
+                     			 	 <#if model.hasError('phoneNumbersRef')>                           
+                            			<span class="invalid"><@spring.message  model.result.getFieldError('phoneNumbersRef').code /></span>                           
+                            		</#if>
                      			</td>
                   				</tr>
                   				

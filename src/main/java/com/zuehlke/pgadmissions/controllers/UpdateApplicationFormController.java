@@ -45,6 +45,7 @@ import com.zuehlke.pgadmissions.validators.AddressValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
+import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
 @Controller
 @RequestMapping("/update")
@@ -63,16 +64,17 @@ public class UpdateApplicationFormController {
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor;
 	private final MessengerJSONPropertyEditor messengerJSONPropertyEditor;
+	private final RefereeValidator refereeValidator;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService, UserPropertyEditor userPropertyEditor,
 			DatePropertyEditor datePropertyEditor, CountryService countryService, RefereeService refereeService,
 			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, MessengerJSONPropertyEditor messengerJSONPropertyEditor,
-			ApplicationFormPropertyEditor applicationFormPropertyEditor) {
+			ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
@@ -83,6 +85,7 @@ public class UpdateApplicationFormController {
 		this.phoneNumberJSONPropertyEditor = phoneNumberJSONPropertyEditor;
 		this.messengerJSONPropertyEditor = messengerJSONPropertyEditor;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
+		this.refereeValidator = refereeValidator;
 	}
 
 	@InitBinder
@@ -305,15 +308,15 @@ public class UpdateApplicationFormController {
 				&& !getCurrentUser().equals(refereeDetails.getApplication().getApplicant())) {
 			throw new ResourceNotFoundException();
 		}
-
+		refereeValidator.validate(refereeDetails, errors);
 		if (!errors.hasErrors()) {
 			refereeService.save(refereeDetails);
 		}
 
 		if (refereeDetails.getApplication() != null) {
+			//this is so that the entered values are re-displayed correctly on the form
 			refereeDetails.getApplication().setReferees(java.util.Arrays.asList(refereeDetails));
 		}
-
 		ApplicationPageModel applicationPageModel = new ApplicationPageModel();
 		applicationPageModel.setApplicationForm(refereeDetails.getApplication());
 		applicationPageModel.setUser(getCurrentUser());

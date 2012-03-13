@@ -5,6 +5,7 @@ public class ApplicationFormDetails {
 
 	private Integer numberOfAddresses;
 	private Integer numberOfContactAddresses;
+	private Integer numberOfReferees;
 	private PersonalDetailsDTO personalDetails;
 	
 	public Integer getNumberOfAddresses() {
@@ -29,5 +30,13 @@ public class ApplicationFormDetails {
 	
 	public void setPersonalDetails(PersonalDetailsDTO personalDetails) {
 		this.personalDetails = personalDetails;
+	}
+
+	public Integer getNumberOfReferees() {
+		return numberOfReferees;
+	}
+	
+	public void setNumberOfReferees(Integer numberOfReferees) {
+		this.numberOfReferees = numberOfReferees;
 	}
 }

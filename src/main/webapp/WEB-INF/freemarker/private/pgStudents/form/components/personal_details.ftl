@@ -36,7 +36,7 @@
 			    </tr>
 			</tbody>
 		</table>
-		<form id ="documentUploadForm" enctype="multipart/form-data" method="post" action="">		
+		<form id ="UploadForm" enctype="multipart/form-data" method="post" action="">		
 				<input type="hidden" name="id" id="id" value="${(model.applicationForm.personalDetails.id?string("######"))!}"/>
 				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id?string("######")}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
@@ -128,55 +128,52 @@
                 </div>
 
               	<div>
-                	<strong>Nationality</strong>
-                	<div class="row">
-                  	<span class="label">Country</span>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full disabledEle">
-                        <option>British</option>
-                      </select>
-                      <label><input class="disabledEle" type="radio" /> This is my primary nationality</label>
-                    </div>                  
+                	<span id="existingcandidatenationalities">
+            	   <#list model.applicationForm.personalDetails.candidateNationalities as nationality>            	               	
+                  	  <span name="candidatenationality">
+                  	   	<div class="row">
+                  	  		<label class="label">Nationality</label>
+	                  		<div class="field">${nationality.country.name}
+	                   	 	<#list nationality.supportingDocuments as document>
+	                   	 		${document.fileName}&nbsp;
+	                   	 	</#list>
+                   	 		<a class="button">delete</a>
+                   	 		 </div>                 	 	
+                 		</div>
+                 		
+                 
+                 	<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
+                 	</span>
+            	   </#list>
+            	   </span>
+            	    <strong>Nationality</strong>        
+                	<div class="row">     
+                  	
+                  		<span class="label">Country</span>
+	                  	 <div class="field">
+	                     	 <select name="candidateNationalityCountry" id="candidateNationalityCountry">
+	                      		<option value="">Select...</option>
+	                        	<#list model.countries as country>
+	                              <option value="${country.id}">${country.name}</option>               
+	                       	 </#list>
+	                     	 </select>   
+	                     	 
+	                     	 <input type="hidden" id="currentCandiateNationality" name="candidateNationalities" value=''/>			
+	                      	 <label><input type="radio" /> This is my primary nationality</label>              
+	                   	 </div>
+                	</div>
                 	
-                	<div class="row">
-                  	<span class="label">Supporting Document</span>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <input type="file" name="file"/>         
-                      <a class="button" id="primaryNationalityUploadButton">Upload</a> 
-                    </div>
-                    
-                  </div>
-                             <!-- Document -->
-                  <!--<div class="row">
-                    <span class="label">Supporting Document</span>
-                    <span class="hint"></span>
-                     <iframe id="myframe" name="myframe" src="#" style=""><script language="javascript" type="text/javascript">
-						
-					</script>
-					</iframe>
-                    
-						<input type="file" id="file" name="file">
-						<input type="submit" value="Upload"/>
-				
-                      <a class="button" href="#">Add Document</a> -->                 
+                      
                   
                 	<div class="row">
-                  		<div class="field"><a class="button blue disabledEle" href="#">Add a nationality</a></div>
-                  </div>
-                
+                  		<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add nationality</a></div>
+                  	</div>
+                </div>
               	
               	<div>
                 	<div class="row">
                   	<label class="label">Language</label>
-                    <span class="hint"></span>
-                    <#list model.applicationForm.personalDetails.languages! as language>
-                    <div class="field">                     
-                       ${language.name}
-                       <input type="hidden" name="languages" value="${language.id}"/>
-                     </div>  
-                    </#list>
+                    <span class="hint"></span>                    
                     <div class="field">
                       <select class="full" id="languageSelect">
                         <option value="">Select...</option>
@@ -191,13 +188,24 @@
                   	<span class="label">Aptitude</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select class="full disabledEle">
-                        <option>Native Speaker</option>
+                      <select class="full" id="aptitude" name="aptitude">                      	
+                       <#list model.languageAptitudes as aptitude >
+                      		<option value="${aptitude}">${aptitude.displayValue}</option>
+                      	</#list>
                       </select>
                     </div>
                   </div>
                 	<div class="row">
-                  		<div class="field"><a class="button blue disabledEle" href="#">Add a language</a></div>
+                  		<div class="field"><a class="button blue" id="addLanguageButton">Add language</a></div>
+                  </div>
+                  <div class="row" id="existingProficiencies">
+                  	  <#list model.applicationForm.personalDetails.languageProficiencies as prof >
+                  	  	<span>
+                  	  	 ${prof.language.name} ${prof.aptitude.displayValue}
+                  	  	<input type="hidden" name="languageProficiencies" value='${prof.asJson}'/>
+                  	  	<a class="button">Delete</a>
+                  	  	</span>
+                  	  </#list>
                   </div>
                 </div>
 
@@ -295,7 +303,16 @@
                     </div>
                   </div>
                 </div>
-
+                <div>
+					<div class="row">
+                  		<span class="label">Supporting Document</span>
+                   	 	<span class="hint"></span>
+                   		 <div class="field">
+                     	 	<input id ="primaryNationalityDocument" type="file" name="file"/>         
+                     		<a class="button" id="primaryNationalityUploadButton">Upload</a>                     		  
+                 	  	</div>
+                 	  </div>
+                 	 </div>
               	<div class="buttons">
                   <a id="close-section-button"class="button blue">Close</a>
                   <#if !model.applicationForm.isSubmitted()>

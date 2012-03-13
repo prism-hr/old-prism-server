@@ -29,7 +29,7 @@ public class ApplicationReviewService {
 		this.applicationReviewDAO = applicationReviewDAO;
 	}
 	
-	@Transactional
+
 	public List<ApplicationReview> getApplicationReviewsByApplication(ApplicationForm application){
 		return applicationReviewDAO.getReviewsByApplication(application);
 	}
@@ -39,12 +39,11 @@ public class ApplicationReviewService {
 		applicationReviewDAO.save(applicationReview);
 	}
 
-	@Transactional
+
 	public ApplicationReview getReviewById(int id) {
 		return applicationReviewDAO.get(id);
 	}
 
-	@Transactional
 	public List<ApplicationReview> getVisibleComments(
 			ApplicationForm application, RegisteredUser user) {
 		List<ApplicationReview> visibleComments = new ArrayList<ApplicationReview>();

@@ -21,12 +21,12 @@ public class LanguageService {
 		this.languageDAO = languageDAO;		
 	}
 	
-	@Transactional
+
 	public List<Language> getAllLanguages() {
 		return languageDAO.getAllLanguages();
 	}
 	
-	@Transactional
+
 	public Language getLanguageById(Integer id) {
 		return languageDAO.getLanguageById(id);
 	}

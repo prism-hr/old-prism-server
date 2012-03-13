@@ -22,7 +22,6 @@ public class PersonalDetailsService {
 
 	}
 
-	@Transactional
 	public PersonalDetail getPersonalDetailsById(Integer id) {
 		return personalDetailDAO.getPersonalDetailsById(id);
 	}

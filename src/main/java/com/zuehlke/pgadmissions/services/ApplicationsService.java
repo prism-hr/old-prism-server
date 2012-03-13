@@ -32,7 +32,7 @@ public class ApplicationsService {
 		this.applicationFormDAO = applicationFormDAO;
 	}
 
-	@Transactional
+
 	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
 		List<ApplicationForm> visibleApplications = new ArrayList<ApplicationForm>();
 
@@ -57,7 +57,7 @@ public class ApplicationsService {
 		return visibleApplications;
 	}
 
-	@Transactional
+
 	public ApplicationForm getApplicationById(Integer id) {
 		return applicationFormDAO.get(id);
 	}
@@ -68,32 +68,32 @@ public class ApplicationsService {
 
 	}
 
-	@Transactional
+
 	public Qualification getQualificationById(Integer id) {
 		return applicationFormDAO.getQualification(id);
 	}
 
-	@Transactional
+
 	public Referee getRefereeById(Integer id) {
 		return applicationFormDAO.getRefereeById(id);
 	}
 
-	@Transactional
+
 	public List<Qualification> getQualificationsByApplication(ApplicationForm applicationForm) {
 		return applicationFormDAO.getQualificationsByApplication(applicationForm);
 	}
 
-	@Transactional
+
 	public com.zuehlke.pgadmissions.domain.Funding getFundingById(Integer fundingId) {
 		return applicationFormDAO.getFundingById(fundingId);
 	}
 
-	@Transactional
+
 	public EmploymentPosition getEmploymentPositionById(Integer positionId) {
 		return applicationFormDAO.getEmploymentById(positionId);
 	}
 
-	@Transactional
+
 	public com.zuehlke.pgadmissions.domain.Address getAddressById(Integer addressId) {
 		return applicationFormDAO.getAdddressById(addressId);
 	}
@@ -104,12 +104,12 @@ public class ApplicationsService {
 
 	}
 
-	@Transactional
+
 	public Messenger getMessengerById(Integer id) {
 		return applicationFormDAO.getMessengerById(id);
 	}
 
-	@Transactional
+
 	public Telephone getTelephoneById(Integer id) {
 		return applicationFormDAO.getTelephoneById(id);
 	}

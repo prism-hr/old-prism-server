@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.DocumentService;
@@ -35,13 +36,15 @@ public class FileManagementController {
 	
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFile(@RequestParam("appId") Integer id,   @RequestParam("file") MultipartFile multipartFile) throws IOException {
+	public ModelAndView uploadFile(@RequestParam("appId") Integer id,  @RequestParam("file") MultipartFile multipartFile) throws IOException {
 		
 		Document document = new Document();
 		document.setFileName(multipartFile.getOriginalFilename());
 		document.setContentType(multipartFile.getContentType());
 		document.setContent(multipartFile.getBytes());
 		documentService.save(document);
+		ApplicationForm applicationById = apService.getApplicationById(id);
+	
 		return new ModelAndView("redirect:/application", "id",id );
 	}
 

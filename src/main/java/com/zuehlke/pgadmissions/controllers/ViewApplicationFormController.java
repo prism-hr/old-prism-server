@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 
 @Controller
@@ -73,6 +75,7 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setStudyOptions(StudyOption.values());
 		viewApplicationModel.setReferrers(Referrer.values());
 		viewApplicationModel.setPhoneTypes(PhoneType.values());
+		viewApplicationModel.setLanguageAptitudes(LanguageAptitude.values());
 		viewApplicationModel.setGenders(Gender.values());
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");

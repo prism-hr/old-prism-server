@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,18 +33,24 @@ public class PersonalDetail extends DomainObject<Integer> {
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "PERSONAL_DETAIL_LANGUAGE_LINK", joinColumns = { @JoinColumn(name = "personal_detail_id") }, inverseJoinColumns = { @JoinColumn(name = "language_id") })
-	private List<Language> languages;
+	private List<Language> languages = new ArrayList<Language>();
 	
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "personal_detail_id")
 	private List<Telephone> phoneNumbers;
 
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "personal_details_id")
-	private List<Nationality> candiateNationalities;
+	private List<Nationality> candidateNationalities= new ArrayList<Nationality>();
 
+	
+
+	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "personal_details_id")
+	private List<LanguageProficiency> languageProficiencies= new ArrayList<LanguageProficiency>();
 	
 	
 	@Column(name = "first_name")
@@ -179,11 +186,31 @@ public class PersonalDetail extends DomainObject<Integer> {
 		this.languages = languages;
 	}
 
-	public List<Nationality> getCandiateNationalities() {
-		return candiateNationalities;
+	public List<Nationality> getCandidateNationalities() {
+		return candidateNationalities;
 	}
 
-	public void setCandiateNationalities(List<Nationality> candiateNationalities) {
-		this.candiateNationalities = candiateNationalities;
+	public void setCandidateNationalities(List<Nationality> candiateNationalities) {
+		this.candidateNationalities.clear();
+		for (Nationality nationality : candiateNationalities) {
+			if(nationality != null){
+				this.candidateNationalities.add(nationality);
+			}
+		}
+		
+	}
+
+	public List<LanguageProficiency> getLanguageProficiencies() {
+		return languageProficiencies;
+	}
+
+	public void setLanguageProficiencies(List<LanguageProficiency> languageProficiencies) {
+		this.languageProficiencies.clear();
+		for (LanguageProficiency languageProficiency : languageProficiencies) {
+			if(languageProficiency != null){
+				this.languageProficiencies.add(languageProficiency);
+			}
+		}
+	
 	}
 }

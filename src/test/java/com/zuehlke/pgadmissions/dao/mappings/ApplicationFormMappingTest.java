@@ -187,6 +187,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertTrue(reloadedApplication.getApplicationComments().containsAll(Arrays.asList(applicationReviewOne, applicationReviewTwo)));
 	}
 
+	
+	
 	@Test
 	public void shouldSaveQualificationsWithApplication() throws ParseException {
 

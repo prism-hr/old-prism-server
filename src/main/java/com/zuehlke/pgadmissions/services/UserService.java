@@ -30,7 +30,7 @@ public class UserService {
 		this.roleDAO = roleDAO;
 	}
 	
-	@Transactional
+
 	public List<RegisteredUser> getReviewersForApplication(ApplicationForm application){
 		List<RegisteredUser> users = userDAO.getAllUsers();
 		List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
@@ -43,13 +43,11 @@ public class UserService {
 		return reviewers;
 	}
 
-	@Transactional
+
 	public RegisteredUser getUser(Integer id) {
-		return userDAO.get(id);
-	
+		return userDAO.get(id);	
 	}
 	
-	@Transactional
 	public List<RegisteredUser> getUsersInRole(Authority auth) {
 		return userDAO.getUsersInRole(roleDAO.getRoleByAuthority(auth));
 	}

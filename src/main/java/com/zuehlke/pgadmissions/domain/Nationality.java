@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Access;
@@ -29,7 +30,7 @@ public class Nationality extends DomainObject<Integer> {
 	
 	@OneToMany	
 	@JoinColumn(name = "nationality_id")
-	private List<Document> supportingDocuments;
+	private List<Document> supportingDocuments= new ArrayList<Document>();
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.NationalityTypeEnumUserType")
 	@Column(name="nationality_type")
@@ -75,6 +76,20 @@ public class Nationality extends DomainObject<Integer> {
 
 	public NationalityType getType() {
 		return nationalityType;
+	}
+
+	public String getAsJson() {
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		stringBuilder.append("{\"type\": \"" + this.getType() + "\", \"country\": " + this.getCountry().getId() + ", \"supportingDocuments\": [");
+		for(int i = 0; i < this.getSupportingDocuments().size(); i++){
+			stringBuilder.append(this.getSupportingDocuments().get(i).getId());
+			if(i < this.getSupportingDocuments().size() -1){
+				stringBuilder.append(",");
+			}
+		}
+		stringBuilder.append("]}");
+		return stringBuilder.toString();
 	}
 
 	

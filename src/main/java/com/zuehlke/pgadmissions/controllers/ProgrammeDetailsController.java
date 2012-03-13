@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
@@ -23,6 +24,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.SupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgrammeService;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 
@@ -34,24 +36,27 @@ public class ProgrammeDetailsController {
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final DatePropertyEditor datePropertyEditor;
 	private final ProgrammeDetailsValidator programmeDetailsValidator;
+	private final SupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
 	
 	ProgrammeDetailsController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 	
 	@Autowired
 	public ProgrammeDetailsController(ProgrammeService programmeDetailsService,	
 			ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor,
-			ProgrammeDetailsValidator programmeDetailsValidator) {
+			ProgrammeDetailsValidator programmeDetailsValidator, SupervisorJSONPropertyEditor supervisorJSONPropertyEditor) {
 		this.programmeDetailsService = programmeDetailsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
 		this.programmeDetailsValidator = programmeDetailsValidator;
+		this.supervisorJSONPropertyEditor = supervisorJSONPropertyEditor;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView editProgrammeDetails(@ModelAttribute("programmeDetails") ProgrammeDetail programmeDetails, BindingResult result) {
 		
+		System.out.println("!!!!!!!!!!! I have "+programmeDetails.getSupervisors().size() + " supervisors.");
 		if (programmeDetails.getApplication() != null && programmeDetails.getApplication().isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
@@ -104,6 +109,7 @@ public class ProgrammeDetailsController {
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
+		binder.registerCustomEditor(Supervisor.class, supervisorJSONPropertyEditor);
 	}
 
 

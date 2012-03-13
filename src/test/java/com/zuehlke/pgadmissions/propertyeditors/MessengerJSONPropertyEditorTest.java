@@ -18,7 +18,7 @@ public class MessengerJSONPropertyEditorTest {
 	
 
 	@Test	
-	public void shouldParseAndSetAsValue() throws ParseException{
+	public void shouldParseAndSetAsValue(){
 		editor.setAsText("{\"address\": \"something\"}");
 		Messenger expected = new MessengerBuilder().messengerAddress("something").toMessenger();
 		Messenger messenger =   (Messenger) editor.getValue();

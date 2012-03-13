@@ -25,7 +25,7 @@ public class CountriesDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Country> getAllCountries() {
-		return (List<Country>) sessionFactory.getCurrentSession().createCriteria(Country.class).addOrder(Order.asc("name")).list();
+		return sessionFactory.getCurrentSession().createCriteria(Country.class).addOrder(Order.asc("name")).list();
 	}
 
 	public Country getCountryById(Integer id) {

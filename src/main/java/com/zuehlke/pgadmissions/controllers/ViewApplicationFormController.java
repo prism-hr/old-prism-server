@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -38,22 +37,19 @@ public class ViewApplicationFormController {
 	private ApplicationsService applicationService;
 	private ApplicationReviewService applicationReviewService;
 	private final CountryService countryService;
-	private final ProgrammeDetailDAO proogrammeDetailDAO;
 	private final LanguageService languageService;
 
 	ViewApplicationFormController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
 	public ViewApplicationFormController(ApplicationsService applicationService, ApplicationReviewService applicationReviewService,
-			CountryService countryService, LanguageService languageService, ProgrammeDetailDAO programmeDetailDAO) {
+			CountryService countryService, LanguageService languageService) {
 		this.applicationService = applicationService;
 		this.applicationReviewService = applicationReviewService;
 		this.countryService = countryService;
 		this.languageService = languageService;
-		this.proogrammeDetailDAO = programmeDetailDAO;
-
 	}
 
 	@RequestMapping(method = RequestMethod.GET)

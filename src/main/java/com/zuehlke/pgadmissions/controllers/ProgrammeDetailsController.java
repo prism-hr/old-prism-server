@@ -56,7 +56,6 @@ public class ProgrammeDetailsController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView editProgrammeDetails(@ModelAttribute("programmeDetails") ProgrammeDetail programmeDetails, BindingResult result) {
 		
-		System.out.println("!!!!!!!!!!! I have "+programmeDetails.getSupervisors().size() + " supervisors.");
 		if (programmeDetails.getApplication() != null && programmeDetails.getApplication().isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}

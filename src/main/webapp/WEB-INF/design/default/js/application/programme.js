@@ -2,6 +2,8 @@ $(document).ready(function(){
 	
 	$("#awareSupervisorCB").attr('checked', false);
 	$("#primarySupervisorCB").attr('checked', false);
+	$("#primarySupervisor").val("NO");
+	$("#awareSupervisor").val("NO");
 	
 	$("#supervisor_div").on("click", "a", function(){	
 		$(this).parent("span").remove();
@@ -34,7 +36,8 @@ $(document).ready(function(){
 			startDate: $("#startDate").val(),
 			referrer: $("#referrer").val(),
 			application: $("#appId1").val(),
-			programmeDetailsId: $("#programmeDetailsId").val()
+			programmeDetailsId: $("#programmeDetailsId").val(),
+			supervisors: ""
 		}
 		
 		$.post( "/pgadmissions/programme" ,$.param(postData) +"&" + $('[input[name="supervisors"]').serialize(),

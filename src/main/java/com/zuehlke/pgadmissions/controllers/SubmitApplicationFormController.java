@@ -74,6 +74,7 @@ public class SubmitApplicationFormController {
 		}
 
 		appForm.setNumberOfAddresses(applicationForm.getAddresses().size());
+		appForm.setNumberOfReferees(applicationForm.getReferees().size());
 		//PersonalDetail personalDetailforApplication = personalDetailDAO.getPersonalDetailWithApplication(applicationForm);
 		//appForm.setPersonalDetails(DTOUtils.createPersonalDetails(personalDetailforApplication));
 		

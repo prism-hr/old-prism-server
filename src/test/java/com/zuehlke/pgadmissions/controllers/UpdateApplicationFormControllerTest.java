@@ -28,11 +28,13 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Messenger;
+import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -57,6 +59,7 @@ import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
+import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
 public class UpdateApplicationFormControllerTest {
 
@@ -77,6 +80,8 @@ public class UpdateApplicationFormControllerTest {
 	private PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditorMock;
 	private MessengerJSONPropertyEditor messengerJSONPropertyEditorMock;
 	private RegisteredUser currentUser;
+	private Referee referee;
+	private RefereeValidator refereeValidator;
 
 
 	
@@ -246,48 +251,6 @@ public class UpdateApplicationFormControllerTest {
 		applicationController.addEmploymentPosition(positionDto, 1, 2, mappingResult, new ModelMap());
 	}
 	
-	@Ignore
-	@Test
-	public void shouldSaveNewRefereeWithOneMessenger() throws ParseException {
-		/*EasyMock.expect(userServiceMock.getUser(1)).andReturn(student);
-		EasyMock.replay(userServiceMock);
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		com.zuehlke.pgadmissions.domain.Referee ref = new RefereeBuilder().addressCountry("").toReferee();
-//		Telephone tel = new TelephoneBuilder()
-		Messenger mes = new MessengerBuilder().toMessenger();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		applicationsServiceMock.save(form);
-		applicationsServiceMock.saveReferee(ref);
-//		messengerDAOMock.save(mes);
-		EasyMock.replay(applicationsServiceMock);
-		
-		Telephone telephone = new TelephoneBuilder().telephoneNumber("0123").telephoneType(PhoneType.HOME).toTelephone();
-		Messenger messenger = new MessengerBuilder().messengerAddress("address").messengerType("type").toMessenger();
-		Referee refereeDto = new Referee();
-		refereeDto.setAddressCountry("UK");
-		refereeDto.setEmail("email");
-		refereeDto.setAddressLocation("location");
-		refereeDto.setAddressPostcode("postcode");
-		refereeDto.setEmail("email");
-		refereeDto.setEmail("firstname");
-		refereeDto.setFirstname("firstaname");
-		refereeDto.setJobEmployer("emplo");
-		refereeDto.setJobTitle("title");
-		refereeDto.setLastname("dhd");
-		refereeDto.setRelationship("relation");
-		ModelAndView modelAndView = applicationController.addReferee(refereeDto, telephoneDTO, messengerDTO, 1, 2,
-				new ModelMap());
-//		EasyMock.verify(applicationsServiceMock);
-//		EasyMock.verify(messengerDAOMock);
-		Assert.assertEquals("private/pgStudents/form/components/references_details", modelAndView.getViewName());
-		Assert.assertEquals("0123", ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
-				.getReferees().get(0).getTelephones().get(0).getTelephoneNumber());
-		Assert.assertEquals("skypeaddress", ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
-				.getReferees().get(0).getMessengers().get(0).getMessengerAddress());*/
-	}
-	
-	
-	
 	@Test
 	public void shouldGetRefereeDetailsFromService() {
 		Referee referee = new RefereeBuilder().refereeId(1).toReferee();
@@ -313,7 +276,7 @@ public class UpdateApplicationFormControllerTest {
 		final Referee refereeDetails = new RefereeBuilder().refereeId(1).toReferee();
 
 		applicationController = new UpdateApplicationFormController(userServiceMock, applicationsServiceMock, userPropertyEditorMock,
-				datePropertyEditorMock, countriesServiceMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock){
+				datePropertyEditorMock, countriesServiceMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator){
 			Referee newReferee() {
 				return new Referee();
 			}
@@ -324,10 +287,14 @@ public class UpdateApplicationFormControllerTest {
 		assertEquals(refereeDetails, details);
 	}
 	
-	@Ignore
 	@Test
 	public void validateRefereeDetails() {
-		fail();
+		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+		Referee referee = new RefereeBuilder().refereeId(1).toReferee();
+		refereeValidator.validate(referee, errorsMock);
+		EasyMock.replay(refereeValidator);
+		applicationController.editReferee(referee, errorsMock);
+		EasyMock.verify(refereeValidator);
 	}
 	
 	@Test
@@ -335,10 +302,11 @@ public class UpdateApplicationFormControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		
-		Referee referee = new Referee();
+		Referee referee = new RefereeBuilder().refereeId(1).toReferee();
+		refereeValidator.validate(referee, errorsMock);
 		refereeServiceMock.save(EasyMock.same(referee));
 		
-		EasyMock.replay(errorsMock, refereeServiceMock);
+		EasyMock.replay(errorsMock, refereeServiceMock, refereeValidator);
 
 		applicationController.editReferee(referee, errorsMock);
 		EasyMock.verify(refereeServiceMock);
@@ -359,41 +327,16 @@ public class UpdateApplicationFormControllerTest {
 	}
 	
 	@Test
-	public void shouldSaveDBIfNotNewAndValid() {
-		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-
-		Referee referee = new RefereeBuilder().refereeId(1).toReferee();
-		refereeServiceMock.save(referee);
-
-		EasyMock.replay(errorsMock, refereeServiceMock);
-		
-		applicationController.editReferee(referee, errorsMock);
-		EasyMock.verify(refereeServiceMock);
-
-	}
-	
-	@Test
-	public void shoulNotdFlushToDBIfNotNewButNotdValid() {
-		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-
-		Referee referee = new RefereeBuilder().refereeId(1).toReferee();
-		
-		EasyMock.replay(errorsMock, refereeServiceMock);
-
-		applicationController.editReferee(referee, errorsMock);
-		EasyMock.verify(refereeServiceMock);
-	}
-	
-	@Test
 	public void shouldSetRefereeDetailsOnApplicationForm() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
 		Referee referee = new RefereeBuilder().application(applicationForm).refereeId(1).toReferee();
+		refereeValidator.validate(referee, errorsMock);
+		refereeServiceMock.save(EasyMock.same(referee));
 		
-		EasyMock.replay(errorsMock);
+		referee.setApplication(applicationForm);
+		EasyMock.replay(errorsMock, refereeValidator);
 
 		applicationController.editReferee(referee, errorsMock);
 		assertTrue(applicationForm.getReferees().contains(referee));
@@ -421,7 +364,8 @@ public class UpdateApplicationFormControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(currentUser).toApplicationForm();
-		Referee referee = new RefereeBuilder().application(form).refereeId(5).toReferee();
+		referee.setFirstname("firstname");
+		referee.setApplication(form);
 		refereeServiceMock.save(referee);
 
 		ModelAndView modelAndView = applicationController.editReferee(referee, errorsMock);
@@ -573,6 +517,13 @@ public class UpdateApplicationFormControllerTest {
 	@Before
 	public void setUp() throws ParseException {
 		
+		refereeValidator = EasyMock.createMock(RefereeValidator.class);
+		
+		referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(1).toApplicationForm()).email("email@test.com").firstname("bob")
+				.lastname("smith").addressCountry("uk").addressLocation("london").addressPostcode("postcode").jobEmployer("zuhlke").jobTitle("se")
+				.messenger(new Messenger()).phoneNumbers(new Telephone()).relationship("friend").toReferee();
+		
+		
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
 		
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
@@ -594,7 +545,7 @@ public class UpdateApplicationFormControllerTest {
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		
 		applicationController = new UpdateApplicationFormController(userServiceMock, applicationsServiceMock, userPropertyEditorMock,
-				datePropertyEditorMock, countriesServiceMock,  refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock){
+				datePropertyEditorMock, countriesServiceMock,  refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator){
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

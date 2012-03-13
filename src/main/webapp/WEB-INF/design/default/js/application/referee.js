@@ -1,5 +1,4 @@
 $(document).ready(function(){
-	
 	$("#phonenumbersref").on("click", "a", function(){	
 		$(this).parent("span").remove();
 		
@@ -34,6 +33,8 @@ $('#refereeSaveButton').click(function(){
 $('a[name="refereeEditButton"]').click(function(){
 	var id = this.id;
 	id = id.replace('referee_', '');
+	var alreadyAppendedTels = false; 
+	var alreadyAppendedMessengers = false;
 	$("#refereeId").val($('#'+id+"_refereeId").val());
 	$("#ref_firstname").val($('#'+id+"_firstname").val());
 	$("#ref_lastname").val($('#'+id+"_lastname").val());
@@ -44,6 +45,19 @@ $('a[name="refereeEditButton"]').click(function(){
 	$("#ref_address_postcode").val($('#'+id+"_addressPostcode").val());
 	$("#ref_address_country").val($('#'+id+"_addressCountry").val());
 	$("#ref_email").val($('#'+id+"_email").val());
+	if(alreadyAppendedTels) return; 
+	$("span[name='hiddenPhones']").each(function(){
+		$('#phonenumbersref').append('<span name="phone_number_ref">'+ $(this).html() + '</span>');
+		 
+		});
+	alreadyAppendedTels = true;
+	if(alreadyAppendedMessengers) return; 
+	$("span[name='hiddenMessengers']").each(function(){
+		$('#messengersref').append('<span name="messenger_ref">'+ $(this).html() + '</span>');
+		  
+	});
+	$(this).unbind('click'); 
+	alreadyAppendedMessengers = true; 
 });
 
 

@@ -9,6 +9,9 @@ $(document).ready(function(){
 		
 	});
 	
+	$('#delBtn').on('click', function(){
+		$(this).parent("span").remove();
+	});
 $('#refereeSaveButton').click(function(){
 	var postData ={ 
 			firstname: $("#ref_firstname").val(),
@@ -21,9 +24,11 @@ $('#refereeSaveButton').click(function(){
 			addressCountry: $("#ref_address_country").val(), 
 			email: $("#ref_email").val(), 
 			application: $("#appId").val(),
-			refereeId: $("#refereeId").val()
+			refereeId: $("#refereeId").val(),
+			phoneNumbersRef: "",
+			messengersRef: ""
 		}
-	$.post( "/pgadmissions/update/refereeDetails" , $.param(postData) + "&" + $('[input[name="phoneNumbersRef"]').serialize() + "&" + $('[input[name="messengersRef"]').serialize(),
+	$.post( "/pgadmissions/update/refereeDetails" , $.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbersRef"]').serialize() + "&" + $('#messengersref input[name="messengersRef"]').serialize(),
 			
 				   function(data) {
 				     $('#referencesSection').html(data);
@@ -33,8 +38,6 @@ $('#refereeSaveButton').click(function(){
 $('a[name="refereeEditButton"]').click(function(){
 	var id = this.id;
 	id = id.replace('referee_', '');
-	var alreadyAppendedTels = false; 
-	var alreadyAppendedMessengers = false;
 	$("#refereeId").val($('#'+id+"_refereeId").val());
 	$("#ref_firstname").val($('#'+id+"_firstname").val());
 	$("#ref_lastname").val($('#'+id+"_lastname").val());
@@ -45,19 +48,16 @@ $('a[name="refereeEditButton"]').click(function(){
 	$("#ref_address_postcode").val($('#'+id+"_addressPostcode").val());
 	$("#ref_address_country").val($('#'+id+"_addressCountry").val());
 	$("#ref_email").val($('#'+id+"_email").val());
-	if(alreadyAppendedTels) return; 
-	$("span[name='hiddenPhones']").each(function(){
+	
+	$("span[name='"+id+"_hiddenPhones']").each(function(){
+		$('#phonenumbersref').html("");
 		$('#phonenumbersref').append('<span name="phone_number_ref">'+ $(this).html() + '</span>');
-		 
-		});
-	alreadyAppendedTels = true;
-	if(alreadyAppendedMessengers) return; 
-	$("span[name='hiddenMessengers']").each(function(){
+	});
+	$("span[name='"+id+"_hiddenMessengers']").each(function(){
+		$('#messengersref').html("");
 		$('#messengersref').append('<span name="messenger_ref">'+ $(this).html() + '</span>');
 		  
 	});
-	$(this).unbind('click'); 
-	alreadyAppendedMessengers = true; 
 });
 
 

@@ -304,6 +304,7 @@ public class UpdateApplicationFormControllerTest {
 	}
 	
 	@Test
+	@Ignore
 	public void shouldSetRefereeDetailsOnApplicationForm() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);

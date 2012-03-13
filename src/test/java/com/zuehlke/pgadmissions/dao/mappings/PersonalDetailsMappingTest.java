@@ -115,43 +115,6 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 	}
 	
-	@Test
-	public void shouldSaveAndLoadPersonalDetailsWithLanguages() throws Exception {
-		Language language1 = new LanguageBuilder().name("aa").toLanguage();
-		Language language2 = new LanguageBuilder().name("bb").toLanguage();
-		Language language3 = new LanguageBuilder().name("cc").toLanguage();
-		save(language1, language2, language3);
-		flushAndClearSession();
-
-		PersonalDetail personalDetails = new PersonalDetailsBuilder().languages(language1, language2).country(country1)
-				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
-				.toPersonalDetails();
-
-		sessionFactory.getCurrentSession().save(personalDetails);
-		
-		flushAndClearSession();
-		PersonalDetail reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
-		assertEquals(2, reloadedDetails.getLanguages().size());
-		assertTrue(reloadedDetails.getLanguages().containsAll(Arrays.asList(language1, language2)));
-
-		reloadedDetails.getLanguages().remove(1);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
-
-		flushAndClearSession();
-		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
-		assertEquals(1, reloadedDetails.getLanguages().size());
-		assertTrue(reloadedDetails.getLanguages().containsAll(Arrays.asList(language1)));
-
-		reloadedDetails.getLanguages().add(language3);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
-		flushAndClearSession();
-		
-		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
-		assertEquals(2, reloadedDetails.getLanguages().size());
-		assertTrue(reloadedDetails.getLanguages().containsAll(Arrays.asList(language1, language3)));
-
-	}
 
 
 	@Test

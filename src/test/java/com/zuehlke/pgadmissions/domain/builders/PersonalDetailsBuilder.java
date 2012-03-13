@@ -27,38 +27,31 @@ public class PersonalDetailsBuilder {
 	private Country residenceCountry;
 	private ResidenceStatus residenceStatus;
 	private ApplicationForm applicationForm;
-	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();
-	private List<Language> languages = new ArrayList<Language>();
+	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();;
 	private List<Nationality> candiateNationalities = new ArrayList<Nationality>();
-	
-	private List<LanguageProficiency> languageProficiencies= new ArrayList<LanguageProficiency>();
+
+	private List<LanguageProficiency> languageProficiencies = new ArrayList<LanguageProficiency>();
 
 	public PersonalDetailsBuilder id(Integer id) {
 		this.id = id;
 		return this;
 	}
-	
-	
-	public PersonalDetailsBuilder languageProficiencies(LanguageProficiency...languageProficiencies) {
+
+	public PersonalDetailsBuilder languageProficiencies(LanguageProficiency... languageProficiencies) {
 		this.languageProficiencies.addAll(Arrays.asList(languageProficiencies));
 		return this;
 	}
-	
-	public PersonalDetailsBuilder candiateNationalities(Nationality...nationalities) {
+
+	public PersonalDetailsBuilder candiateNationalities(Nationality... nationalities) {
 		this.candiateNationalities.addAll(Arrays.asList(nationalities));
 		return this;
 	}
-	
-	public PersonalDetailsBuilder languages(Language...languages) {
-		this.languages.addAll(Arrays.asList(languages));
-		return this;
-	}
-	
-	public PersonalDetailsBuilder phoneNumbers(Telephone...phoneNumbers) {
+
+	public PersonalDetailsBuilder phoneNumbers(Telephone... phoneNumbers) {
 		this.phoneNumbers.addAll(Arrays.asList(phoneNumbers));
 		return this;
 	}
-	
+
 	public PersonalDetailsBuilder firstName(String firstName) {
 		this.firstName = firstName;
 		return this;
@@ -103,8 +96,8 @@ public class PersonalDetailsBuilder {
 		this.applicationForm = applicationForm;
 		return this;
 	}
-	
-	public PersonalDetail toPersonalDetails(){
+
+	public PersonalDetail toPersonalDetails() {
 		PersonalDetail personalDetails = new PersonalDetail();
 		personalDetails.setId(id);
 		personalDetails.setApplication(applicationForm);
@@ -117,7 +110,7 @@ public class PersonalDetailsBuilder {
 		personalDetails.setResidenceCountry(residenceCountry);
 		personalDetails.setResidenceStatus(residenceStatus);
 		personalDetails.setPhoneNumbers(phoneNumbers);
-		personalDetails.setLanguages(languages);
+
 		personalDetails.setCandidateNationalities(candiateNationalities);
 		personalDetails.setLanguageProficiencies(languageProficiencies);
 		return personalDetails;

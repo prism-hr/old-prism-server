@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -26,10 +27,11 @@ public class LanguageProficiency extends DomainObject<Integer> {
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.LanguageAptitudeEnumUserType")
 	private LanguageAptitude aptitude;
 
+	@Column(name="primary_language")
+	private boolean primary;
+	
 	public void setLanguage(Language language) {
 		this.language = language;
-
-		
 	}
 
 	public Language getLanguage() {
@@ -62,7 +64,15 @@ public class LanguageProficiency extends DomainObject<Integer> {
 	}
 
 	public String getAsJson() {
-		return "{\"aptitude\": \"" + this.getAptitude() + "\", \"language\": " + this.getLanguage().getId() + "}";
+		return  "{\"aptitude\": \"" + this.getAptitude() + "\", \"language\": " + this.getLanguage().getId() + ", \"primary\": \"" + this.isPrimary() + "\"}";
+	}
+
+	public boolean isPrimary() {
+		return primary;
+	}
+
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
 	}
 
 }

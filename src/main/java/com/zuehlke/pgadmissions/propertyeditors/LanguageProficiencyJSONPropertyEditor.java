@@ -42,6 +42,9 @@ public class LanguageProficiencyJSONPropertyEditor extends PropertyEditorSupport
 			LanguageProficiency languageProficiency = new LanguageProficiency();
 			languageProficiency.setAptitude(LanguageAptitude.valueOf((String) properties.get("aptitude")));
 			languageProficiency.setLanguage(languageService.getLanguageById((Integer) properties.get("language")));
+			if("true".equals(properties.get("primary"))){
+				languageProficiency.setPrimary(true);
+			}
 
 			setValue(languageProficiency);
 
@@ -57,7 +60,7 @@ public class LanguageProficiencyJSONPropertyEditor extends PropertyEditorSupport
 		}
 		LanguageProficiency languageProficiency = (LanguageProficiency) getValue();
 			
-		return "{\"aptitude\": \"" + languageProficiency.getAptitude() + "\", \"language\": " + languageProficiency.getLanguage().getId() + "}";
+		return "{\"aptitude\": \"" + languageProficiency.getAptitude() + "\", \"language\": " + languageProficiency.getLanguage().getId() + ", \"primary\": \"" + languageProficiency.isPrimary() + "\"}";
 	}
 
 }

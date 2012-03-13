@@ -18,7 +18,7 @@ public class LanguageProficiencyTest {
 		languageProficiency.setAptitude(LanguageAptitude.ELEMENTARY);
 		languageProficiency.setLanguage(language);
 	
-		assertEquals("{\"aptitude\": \"ELEMENTARY\", \"language\": 1}", languageProficiency.getAsJson());
+		assertEquals("{\"aptitude\": \"ELEMENTARY\", \"language\": 1, \"primary\": \"false\"}", languageProficiency.getAsJson());
 	}
 	
 }

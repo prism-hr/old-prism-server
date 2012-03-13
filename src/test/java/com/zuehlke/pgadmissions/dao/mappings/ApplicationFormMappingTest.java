@@ -15,36 +15,28 @@ import java.util.Date;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
-import com.zuehlke.pgadmissions.domain.builders.MessengerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 

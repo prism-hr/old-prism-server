@@ -26,7 +26,7 @@ public class LanguageDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Language> getAllLanguages() {
-		return (List<Language>) sessionFactory.getCurrentSession().createCriteria(Language.class).addOrder(Order.asc("name")).list();
+		return sessionFactory.getCurrentSession().createCriteria(Language.class).addOrder(Order.asc("name")).list();
 	
 	}
 

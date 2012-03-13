@@ -40,7 +40,6 @@ import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.RefereeService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
@@ -56,7 +55,6 @@ public class UpdateApplicationFormController {
 	private static final String APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME = "private/pgStudents/form/components/employment_position_details";
 	private static final String APPLICATON_REFEREEE_VIEW_NAME = "private/pgStudents/form/components/references_details";
 	private final ApplicationsService applicationService;
-	private final UserService userService;
 	private final UserPropertyEditor userPropertyEditor;
 	private final DatePropertyEditor datePropertyEditor;
 	private final CountryService countryService;
@@ -67,18 +65,17 @@ public class UpdateApplicationFormController {
 	private final RefereeValidator refereeValidator;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public UpdateApplicationFormController(UserService userService, ApplicationsService applicationService, UserPropertyEditor userPropertyEditor,
+	public UpdateApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor,
 			DatePropertyEditor datePropertyEditor, CountryService countryService, RefereeService refereeService,
 			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, MessengerJSONPropertyEditor messengerJSONPropertyEditor,
 			ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
-		this.userService = userService;
 		this.datePropertyEditor = datePropertyEditor;
 		this.countryService = countryService;
 		this.refereeService = refereeService;

@@ -32,7 +32,7 @@ table.messages thead th {
 }
 table.messages th, table.messages td { padding: 3px; vertical-align: middle; }
 table.messages tr td, table.messages tr th { border-bottom: 1px solid #999; }
-table.data tbody td, table.messages tbody td { background: #FFF; border-bottom: 1px solid #999; }
+table.data tbody td, table.messages tbody td { background: #FFF; border-bottom: 	 1px solid #999; }
 table.messages tr.unread td { font-weight: bold; }
 table tfoot td { background: #FFF; height: 30px; }
 
@@ -42,3 +42,13 @@ table.messages tr.message-body p { line-height: 1.2; width: 80%; }
 
 a.delete-button { background: url(../images/message-delete.png) no-repeat 0 -15px; display: block; height: 15px; margin: 0 auto; overflow: hidden; text-indent: 15px; width: 15px; }
 a.delete-button:hover { background-position: 0 0; }
+
+
+#message-compose { background: #666 url(../images/bg_button.png) repeat-x 0 -20px; border: 1px solid #999; padding-top: 20px; }
+#message-compose form { background: #FFF; padding: 20px 20px 2px; }
+#message-compose div.row { margin-bottom: 15px; }
+#message-compose label span { display: inline-block; width: 100px; }
+#message-compose select { width: 200px; }
+#message-compose textarea { width: 100%; }
+#message-compose div.carbon-copy { padding-left: 100px; }
+#message-compose div.carbon-copy a.button { background: none; border: none; box-shadow: none; color: #000; }

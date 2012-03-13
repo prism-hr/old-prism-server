@@ -13,11 +13,11 @@ label input { vertical-align: middle; }
 .row { overflow: visible; }
 
 /* WRAPPER ------------------------------------------------------------------------------------------------ */
-#wrapper { background: url(../images/bg_wrapper.jpg) no-repeat 0 55px; margin: 0 auto; width: 950px; }
+#wrapper { background: url(../../images/bg_wrapper.jpg) no-repeat 0 55px; margin: 0 auto; width: 950px; }
 
 
 /* HEADER ------------------------------------------------------------------------------------------------- */
-#header { background: url(../images/logo_ucl.png) no-repeat 100% 100%; color: #FFF; font-weight: bold; height: 108px; text-transform: uppercase; }
+#header { background: url(../../images/logo_ucl.png) no-repeat 100% 100%; color: #FFF; font-weight: bold; height: 108px; text-transform: uppercase; }
 #header p { padding: 30px 0 0 30px; }
 
 /* MIDDLE ------------------------------------------------------------------------------------------------- */
@@ -78,12 +78,12 @@ button.blue, a.button.blue, span.indicator.blue {
   background: linear-gradient(top,  rgba(0,188,241,1) 0%,rgba(0,152,216,1) 50%,rgba(0,115,189,1) 51%,rgba(0,143,213,1) 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00bcf1', endColorstr='#008fd5',GradientType=0 ); /* IE6-8 */
 }
-button span { background: url(../images/bg_button_icon.png) no-repeat; display: inline-block; height: 10px; margin-top: -2px; overflow: hidden; text-indent: 999px; vertical-align: middle; width: 10px; }
+button span { background: url(../../images/bg_button_icon.png) no-repeat; display: inline-block; height: 10px; margin-top: -2px; overflow: hidden; text-indent: 999px; vertical-align: middle; width: 10px; }
 button.plus span { background-position: 0 -10px; }
 a.button { display: inline-block; padding-top: 2px; padding-bottom: 2px; /*vertical-align: text-bottom;*/ }
 span.indicator { border-width: 1px; padding: 1px 5px; vertical-align: text-bottom; }
 #big-button {
-  background: url(../images/button_register.png) no-repeat;
+  background: url(../../images/button_register.png) no-repeat;
   border: none;
   bottom: 70px;
   color: #FFF;
@@ -102,7 +102,7 @@ span.indicator { border-width: 1px; padding: 1px 5px; vertical-align: text-botto
 
 
 /* Row arrows */
-.row-arrow { background: url(../images/button_arrow.png) no-repeat; width: 20px; height: 21px; display: inline-block; text-indent: 99px; overflow: hidden; vertical-align: middle; /*margin-top: -4px;*/ }
+.row-arrow { background: url(../../images/button_arrow.png) no-repeat; width: 20px; height: 21px; display: inline-block; text-indent: 99px; overflow: hidden; vertical-align: middle; /*margin-top: -4px;*/ }
 .row-arrow.open { background-position: 0 -21px; }
 
 
@@ -110,11 +110,11 @@ span.indicator { border-width: 1px; padding: 1px 5px; vertical-align: text-botto
 /* FORM ELEMENTS ----------------------------------------------------------------------------------------- */
 form input, form select, form textarea { border: 1px solid #999; font-family: Arial, Helvetica, sans-serif; }
 form input { padding: 1px 3px; }
-form input.date, form input.hasDatepicker { background: url(../images/calendar.png) no-repeat right center; padding-right: 24px; width: 80px !important; }
+form input.date, form input.hasDatepicker { background: url(../../images/calendar.png) no-repeat right center; padding-right: 24px; width: 80px !important; }
 form textarea { padding: 3px; resize: none; }
 form input[type=checkbox], form input[type=radio] { border: none !important; padding: 0; }
 form select[multiple] { vertical-align: top; }
 
 /* Validation errors. */
-span.invalid { background: url(../images/button_exclaim.png) no-repeat 0 .1em; color: red; display: inline-block; margin-left: 10px; padding-left: 24px; }
+span.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; color: red; display: inline-block; margin-left: 10px; padding-left: 24px; }
 input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin: -1px; }

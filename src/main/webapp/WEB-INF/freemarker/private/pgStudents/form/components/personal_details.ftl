@@ -36,7 +36,7 @@
 			    </tr>
 			</tbody>
 		</table>
-		<form id ="documentUploadForm" enctype="multipart/form-data" method="post" action="/pgadmissions/documents" target="myframe">		
+		<form id ="documentUploadForm" enctype="multipart/form-data" method="post" action="">		
 				<input type="hidden" name="id" id="id" value="${(model.applicationForm.personalDetails.id?string("######"))!}"/>
 				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id?string("######")}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
@@ -137,7 +137,16 @@
                         <option>British</option>
                       </select>
                       <label><input class="disabledEle" type="radio" /> This is my primary nationality</label>
+                    </div>                  
+                	
+                	<div class="row">
+                  	<span class="label">Supporting Document</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                      <input type="file" name="file"/>         
+                      <a class="button" id="primaryNationalityUploadButton">Upload</a> 
                     </div>
+                    
                   </div>
                              <!-- Document -->
                   <!--<div class="row">
@@ -162,7 +171,7 @@
                 	<div class="row">
                   	<label class="label">Language</label>
                     <span class="hint"></span>
-                    <#list model.applicationForm.personalDetails.languages as language>
+                    <#list model.applicationForm.personalDetails.languages! as language>
                     <div class="field">                     
                        ${language.name}
                        <input type="hidden" name="languages" value="${language.id}"/>
@@ -188,7 +197,7 @@
                     </div>
                   </div>
                 	<div class="row">
-                  	<div class="field"><a class="button blue disabledEle" href="#">Add a language</a></div>
+                  		<div class="field"><a class="button blue disabledEle" href="#">Add a language</a></div>
                   </div>
                 </div>
 

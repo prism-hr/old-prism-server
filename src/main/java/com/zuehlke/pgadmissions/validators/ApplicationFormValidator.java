@@ -28,6 +28,10 @@ public class ApplicationFormValidator implements Validator{
 		if (applicationFormDetails.getNumberOfContactAddresses() > 1) {
 			errors.rejectValue("numberOfContactAddresses", "user.contactAddresses.notvalid");
 		}
+		
+		if (applicationFormDetails.getNumberOfReferees() < 2) {
+			errors.rejectValue("numberOfReferees", "user.referees.notvalid");
+		}
 
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationFormDetails.getPersonalDetails(), "personalDetails");
 
@@ -40,5 +44,6 @@ public class ApplicationFormValidator implements Validator{
 				errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
 			}
 		}
+		
 	}
 }

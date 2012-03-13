@@ -8,7 +8,6 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
-import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 

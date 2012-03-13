@@ -20,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -64,7 +63,6 @@ public class ViewApplicationFormControllerTest {
 			applicationReviewForSubmittedNonApproved4;
 
 	private CountryService countryServiceMock;
-	private ProgrammeDetailDAO programmeDetailDAOMock;
 	private LanguageService languageServiceMock;
 
 	
@@ -138,7 +136,6 @@ public class ViewApplicationFormControllerTest {
 		assertNotNull(model.getFunding());
 		assertNotNull(model.getEmploymentPosition());
 		assertNotNull(model.getReferrers());
-		assertNotNull(model.getProgramme());
 		
 		assertSame(countries, model.getCountries());
 		assertSame(languages, model.getLanguages());
@@ -295,8 +292,7 @@ public class ViewApplicationFormControllerTest {
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);
-		programmeDetailDAOMock = EasyMock.createMock(ProgrammeDetailDAO.class);
-		controller = new ViewApplicationFormController(applicationsServiceMock, applicationReviewServiceMock, countryServiceMock, languageServiceMock, programmeDetailDAOMock);
+		controller = new ViewApplicationFormController(applicationsServiceMock, applicationReviewServiceMock, countryServiceMock, languageServiceMock);
 
 		admin = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 

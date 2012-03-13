@@ -30,15 +30,15 @@
                                     <input type="hidden" id="${referee.id!}_addressCountry" value="${referee.addressCountry!}"/>
                                     <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
 									<#list referee.phoneNumbersRef! as phoneNumber>
-                    				<span name="hiddenPhones" style="display:none">
-                   		 				${phoneNumber.telephoneType.displayValue!} ${phoneNumber.telephoneNumber!} <a class="button">delete</a>
-										<input type="hidden" name="phoneNumbersRef" value='{"type" :"${phoneNumber.telephoneType!}", "number":"${phoneNumber.telephoneNumber!}"}' />								
+                    				<span name="${referee.id!}_hiddenPhones" style="display:none">
+                   		 				${phoneNumber.telephoneType.displayValue!} ${phoneNumber.telephoneNumber!} <a class="button" id="delBtn">delete</a>
+										<input type="hidden" name="phoneNumbersRef"  value='{"type" :"${phoneNumber.telephoneType!}", "number":"${phoneNumber.telephoneNumber!}"}' />								
 									<br/>
 									</span>
                    				 	</#list>
                    				 	<#list referee.messengersRef! as messenger>
-                    				<span name="hiddenMessengers" style="display:none">
-                   		 				${messenger.messengerAddress!} <a class="button" id = "mesDel" >delete</a>
+                    				<span name="${referee.id!}_hiddenMessengers" style="display:none">
+                   		 				${messenger.messengerAddress!} <a class="button" id="delBtn" >delete</a>
 										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress!}"}' />								
 									<br/>
 									</span>

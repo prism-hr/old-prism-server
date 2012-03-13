@@ -1,92 +1,110 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.ModelMap;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
-import com.zuehlke.pgadmissions.dto.ProgrammeDetails;
-import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.services.ProgrammeService;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 
+@Controller
+@RequestMapping("/programme")
 public class ProgrammeDetailsController {
 
-	private final ProgrammeDetailDAO programmeDetailDAO;
-	private final ApplicationsService applicationService;
-	private final UserService userService;
+	private final ProgrammeService programmeDetailsService;
+	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
+	private final DatePropertyEditor datePropertyEditor;
+	private final ProgrammeDetailsValidator programmeDetailsValidator;
 	
 	ProgrammeDetailsController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 	
 	@Autowired
-	public ProgrammeDetailsController(ProgrammeDetailDAO programmeDetailDAO, ApplicationsService applicationService, UserService userService) {
-		this.programmeDetailDAO = programmeDetailDAO;
-		this.applicationService = applicationService;
-		this.userService = userService;
+	public ProgrammeDetailsController(ProgrammeService programmeDetailsService,	
+			ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor,
+			ProgrammeDetailsValidator programmeDetailsValidator) {
+		this.programmeDetailsService = programmeDetailsService;
+		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
+		this.datePropertyEditor = datePropertyEditor;
+		this.programmeDetailsValidator = programmeDetailsValidator;
 	}
 	
-	@RequestMapping(value = "/editProgramme", method = RequestMethod.POST)
-	public ModelAndView editPersonalDetails(@ModelAttribute ProgrammeDetails programme, @RequestParam Integer id1, @RequestParam Integer appId1,
-			BindingResult result, ModelMap modelMap) {
-
-		ApplicationForm application = applicationService.getApplicationById(appId1);
-
-		if (application.isSubmitted()) {
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView editProgrammeDetails(@ModelAttribute("programmeDetails") ProgrammeDetail programmeDetails, BindingResult result) {
+		
+		if (programmeDetails.getApplication() != null && programmeDetails.getApplication().isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
-
-		ProgrammeDetailsValidator personalDetailsValidator = new ProgrammeDetailsValidator();
-		personalDetailsValidator.validate(programme, result);
-
-		RegisteredUser user = userService.getUser(id1);
-		if (!user.equals(SecurityContextHolder.getContext().getAuthentication().getDetails())) {
-			throw new AccessDeniedException();
+		if (programmeDetails.getApplication() != null && programmeDetails.getApplication().getApplicant() != null
+				&& !getCurrentUser().equals(programmeDetails.getApplication().getApplicant())) {
+			throw new ResourceNotFoundException();
 		}
-
+		
+		programmeDetailsValidator.validate(programmeDetails, result);
 		if (!result.hasErrors()) {
-			@SuppressWarnings("deprecation")
-			ProgrammeDetail pd = programmeDetailDAO.getProgrammeDetailWithApplication(application);
-			if (pd == null) {
-				pd = new ProgrammeDetail();
-			}
-
-			pd.setProgrammeName(programme.getProgrammeDetailsProgrammeName());
-			pd.setProjectName(programme.getProgrammeDetailsProjectName());
-			pd.setStartDate(programme.getProgrammeDetailsStartDate());
-			pd.setReferrer(Referrer.fromString(programme.getProgrammeDetailsReferrer()));
-			pd.setStudyOption(StudyOption.fromString(programme.getProgrammeDetailsStudyOption()));
-			pd.setApplication(application);
-
-			programmeDetailDAO.save(pd);
-
+			programmeDetailsService.save(programmeDetails);
 		}
+		
+		if (programmeDetails.getApplication() != null) {
+			programmeDetails.getApplication().setProgrammeDetails(programmeDetails);
+		}
+		
+		ApplicationPageModel applicationPageModel = new ApplicationPageModel();
+		applicationPageModel.setApplicationForm(programmeDetails.getApplication());
+		applicationPageModel.setUser(getCurrentUser());
+		applicationPageModel.setResult(result);
+		applicationPageModel.setStudyOptions(StudyOption.values());
+		applicationPageModel.setReferrers(Referrer.values());
 
-		ApplicationPageModel model = new ApplicationPageModel();
-		model.setUser(user);
-		model.setApplicationForm(application);
-		model.setProgrammeDetails(programme);
-		model.setStudyOptions(StudyOption.values());
-		model.setReferrers(Referrer.values());
-		model.setResult(result);
-		modelMap.put("model", model);
-
-		return new ModelAndView("private/pgStudents/form/components/programme_details", modelMap);
+		return new ModelAndView("private/pgStudents/form/components/programme_details", "model", applicationPageModel);
 	}
+	
+	@ModelAttribute("programmeDetails")
+	public ProgrammeDetail getProgrammeDetails(Integer programmeDetailsId) {
+		if (programmeDetailsId == null) {
+			return newProgrammeDetail();
+		}
+		ProgrammeDetail programmeDetails = programmeDetailsService.getProgrammeDetailsById(programmeDetailsId);
+		if (programmeDetails == null) {
+			throw new ResourceNotFoundException();
+		}
+		
+		return programmeDetails;
+	}
+	
+	private RegisteredUser getCurrentUser() {
+		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+	}
+	
+	ProgrammeDetail newProgrammeDetail() {
+		return new ProgrammeDetail();
+	}
+	
+	@InitBinder
+	public void registerPropertyEditors(WebDataBinder binder) {
+		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+		binder.registerCustomEditor(Date.class, datePropertyEditor);
+	}
+
 
 }

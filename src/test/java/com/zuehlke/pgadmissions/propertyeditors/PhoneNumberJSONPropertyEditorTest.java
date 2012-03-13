@@ -3,9 +3,6 @@ package com.zuehlke.pgadmissions.propertyeditors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,11 +13,9 @@ import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 
 public class PhoneNumberJSONPropertyEditorTest {
 	private PhoneNumberJSONPropertyEditor editor;
-	private SimpleDateFormat dateFormat;
-	
 
 	@Test	
-	public void shouldParseAndSetAsValue() throws ParseException{
+	public void shouldParseAndSetAsValue(){
 		editor.setAsText("{\"type\": \"MOBILE\", \"number\": \"something\"}");
 		Telephone expected = new TelephoneBuilder().telephoneType(PhoneType.MOBILE).telephoneNumber("something").toTelephone();
 		Telephone telephone =   (Telephone) editor.getValue();
@@ -51,7 +46,7 @@ public class PhoneNumberJSONPropertyEditorTest {
 	}
 	
 	@Test	
-	public void shouldReturnCorrectjsonString() throws ParseException{			
+	public void shouldReturnCorrectjsonString(){			
 		editor.setValue(new TelephoneBuilder().telephoneType(PhoneType.MOBILE).telephoneNumber("something").toTelephone());
 		assertEquals("{\"type\": \"MOBILE\", \"number\": \"something\"}", editor.getAsText());
 	}

@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
@@ -29,7 +28,9 @@ public class PersonalDetailsBuilder {
 	private ApplicationForm applicationForm;
 	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();;
 	private List<Nationality> candiateNationalities = new ArrayList<Nationality>();
-
+	private List<Nationality> maternalGuardianNationalities= new ArrayList<Nationality>();
+	private List<Nationality> paternalGuardianNationalities= new ArrayList<Nationality>();
+	
 	private List<LanguageProficiency> languageProficiencies = new ArrayList<LanguageProficiency>();
 
 	public PersonalDetailsBuilder id(Integer id) {
@@ -41,7 +42,17 @@ public class PersonalDetailsBuilder {
 		this.languageProficiencies.addAll(Arrays.asList(languageProficiencies));
 		return this;
 	}
-
+	
+	public PersonalDetailsBuilder paternalGuardianNationalities(Nationality... nationalities) {
+		this.maternalGuardianNationalities.addAll(Arrays.asList(nationalities));
+		return this;
+	}
+	
+	public PersonalDetailsBuilder maternalGuardianNationalities(Nationality... nationalities) {
+		this.paternalGuardianNationalities.addAll(Arrays.asList(nationalities));
+		return this;
+	}
+	
 	public PersonalDetailsBuilder candiateNationalities(Nationality... nationalities) {
 		this.candiateNationalities.addAll(Arrays.asList(nationalities));
 		return this;
@@ -110,7 +121,8 @@ public class PersonalDetailsBuilder {
 		personalDetails.setResidenceCountry(residenceCountry);
 		personalDetails.setResidenceStatus(residenceStatus);
 		personalDetails.setPhoneNumbers(phoneNumbers);
-
+		personalDetails.setMaternalGuardianNationalities(maternalGuardianNationalities);
+		personalDetails.setPaternalGuardianNationalities(paternalGuardianNationalities);
 		personalDetails.setCandidateNationalities(candiateNationalities);
 		personalDetails.setLanguageProficiencies(languageProficiencies);
 		return personalDetails;

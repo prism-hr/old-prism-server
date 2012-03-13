@@ -47,8 +47,13 @@ public class NationalityJSONPropertyEditor extends PropertyEditorSupport {
 			Nationality nationality = new Nationality();
 			nationality.setType(NationalityType.valueOf((String) properties.get("type")));
 			nationality.setCountry(countryService.getCountryById((Integer) properties.get("country")));
-			for (Integer id : (Iterable<Integer>) properties.get("supportingDocuments")) {
-				nationality.getSupportingDocuments().add(documentService.getDocumentById(id));
+			if("true".equals(properties.get("primary"))){
+				nationality.setPrimary(true);
+			}
+			if (properties.get("supportingDocuments") != null) {
+				for (Integer id : (Iterable<Integer>) properties.get("supportingDocuments")) {
+					nationality.getSupportingDocuments().add(documentService.getDocumentById(id));
+				}
 			}
 			setValue(nationality);
 
@@ -63,16 +68,7 @@ public class NationalityJSONPropertyEditor extends PropertyEditorSupport {
 			return null;
 		}
 		Nationality nationality = (Nationality) getValue();
-		StringBuilder stringBuilder = new StringBuilder();
-		
-		stringBuilder.append("{\"type\": \"" + nationality.getType() + "\", \"country\": " + nationality.getCountry().getId() + ", \"supportingDocuments\": [");
-		for(int i = 0; i < nationality.getSupportingDocuments().size(); i++){
-			stringBuilder.append(nationality.getSupportingDocuments().get(i).getId());
-			if(i < nationality.getSupportingDocuments().size() -1){
-				stringBuilder.append(",");
-			}
-		}
-		stringBuilder.append("]}");
-		return stringBuilder.toString();
+
+		return nationality.getAsJson();
 	}
 }

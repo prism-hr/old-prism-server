@@ -2,13 +2,20 @@ $(document).ready(function(){
 	
 	
 	$('#addLanguageButton').on("click", function(){
-		$('#existingProficiencies').append(
-				'<span>' + $('#languageSelect option:selected').text() + " " + $('#aptitude option:selected').text() +
-				"<input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + 
-				'", "language":' + $('#languageSelect option:selected').val()  + "}'/>" + 
-				'</span>'
-		);
 		
+		var primary = "";
+		var jsonPrimary = "false";
+		if($('#primaryLanguage').is(':checked') ){
+			primary = "Primary";
+			jsonPrimary = "true"
+		}
+		var html = 	'<span>' + $('#languageSelect option:selected').text() + " " + $('#aptitude option:selected').text() +" " + primary +
+		"<input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + 
+		'", "language":' + $('#languageSelect option:selected').val()  +
+		', "primary": "' + jsonPrimary + '"}' + "'/>" + 
+		'<a class="button">Delete</a><br/></span>';
+		$('#existingProficiencies').append(html);
+		$('#languageSelect').val("");
 	});
 	
 	
@@ -32,11 +39,16 @@ $(document).ready(function(){
 	
 	$('#personalDetailsSaveButton').on("click", function(){		
 		if( $('#languageSelect option:selected').val()!= ''){
-			$('#existingProficiencies').append(
-					"<span><input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + 
-					'", "language":' + $('#languageSelect option:selected').val()  + "}'/>" + 
-					'</span>'
-			);
+			var primary = "";
+			var jsonPrimary = "false";
+			if($('#primaryLanguage').is(':checked') ){
+				primary = "Primary";
+				jsonPrimary = "true"
+			}
+			var html = 	"<span><input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + 
+			'", "language":' + $('#languageSelect option:selected').val()  +
+			', "primary": "' + jsonPrimary + '"}' + "'/></span>";
+			$('#existingProficiencies').append(	html);
 		}
 		var postData ={ 
 				firstName: $("#firstName").val(), 

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class LanguageProficiencyMappingTest extends AutomaticRollbackTestCase {
 
 		LanguageProficiency proficiency = new LanguageProficiency();
 		proficiency.setLanguage(language);
-
+		proficiency.setPrimary(true);
 		proficiency.setAptitude(LanguageAptitude.ELEMENTARY);
 		sessionFactory.getCurrentSession().save(proficiency);
 
@@ -39,7 +40,7 @@ public class LanguageProficiencyMappingTest extends AutomaticRollbackTestCase {
 		assertNotSame(proficiency, reloadedLanguageProficiency);
 		assertEquals(proficiency, reloadedLanguageProficiency);
 		assertEquals(language, reloadedLanguageProficiency.getLanguage());
-
+		assertTrue(reloadedLanguageProficiency.isPrimary());
 		assertEquals(LanguageAptitude.ELEMENTARY, reloadedLanguageProficiency.getAptitude());
 
 	}

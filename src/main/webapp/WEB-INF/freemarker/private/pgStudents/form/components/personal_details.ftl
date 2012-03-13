@@ -181,7 +181,7 @@
                          	<option value="${language.id}">${language.name}</option>
                          </#list>
                       </select>
-                      <label><input type="radio" /> This is my primary language</label>
+                      <label><input type="radio" name="primaryLanguage" id="primaryLanguage"/> This is my primary language</label>
                     </div>
                   </div>
                 	<div class="row">
@@ -201,9 +201,9 @@
                   <div class="row" id="existingProficiencies">
                   	  <#list model.applicationForm.personalDetails.languageProficiencies as prof >
                   	  	<span>
-                  	  	 ${prof.language.name} ${prof.aptitude.displayValue}
+                  	  	 ${prof.language.name} ${prof.aptitude.displayValue} <#if prof.primary>Primary</#if>
                   	  	<input type="hidden" name="languageProficiencies" value='${prof.asJson}'/>
-                  	  	<a class="button">Delete</a>
+                  	  	<a class="button">Delete</a><br/>
                   	  	</span>
                   	  </#list>
                   </div>

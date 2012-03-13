@@ -12,9 +12,8 @@
 	<div>
     	<form>
             
-            <input type="hidden" name="id1" id="id1" value="${model.user.id?string("######")}"/>
-            <input type="hidden" id="appId1" name="appId1" value="${model.applicationForm.id?string("######")}"/>
-                
+            <input type="hidden" name="programmeDetailsId" id="programmeDetailsId" value="${(model.applicationForm.programmeDetails.id?string("######"))!}"/>
+            <input type="hidden" id="appId1" name="appId1" value="${model.applicationForm.id?string("######")}"/>    
 			<div>
             	
             	<!-- Programme name (disabled) -->
@@ -22,7 +21,7 @@
                 	<label class="label">Programme</label>
                     <span class="hint" title="Tooltip demonstration."></span>
                     <div class="field">
-                    	<input class="full" id="programmeDetailsProgrammeName" name="programmeDetailsProgrammeName" type="text" value="${model.applicationForm.project.program.title}" disabled="disabled" />
+                    	<input class="full" id="programmeName" name="programmeName" type="text" value="${model.applicationForm.project.program.title}" disabled="disabled" />
                     </div>
 				</div>
                   
@@ -31,14 +30,17 @@
                     <label class="label">Study Option</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                		<select class="full" id="programmeDetailsStudyOption" name="programmeDetailsStudyOption">
+                		<select class="full" id="studyOption" name="studyOption">
                 		  <#list model.studyOptions as studyOption>
-                              <option value="${studyOption.freeVal}">${studyOption.freeVal}</option>               
+                              <option value="${studyOption}"
+                              <#if model.applicationForm.programmeDetails.studyOption?? &&  model.applicationForm.programmeDetails.studyOption == studyOption >
+                                selected="selected"
+                                </#if>  
+                              >${studyOption.freeVal}</option>               
                         </#list>
                       	</select>
-                      	<input type="hidden" id="programmeDetailsStudyOptionDP" value="${model.programme.programmeDetailsStudyOption!}"/>
-                      	<#if model.hasError('programmeDetailsStudyOption')>                            
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('programmeDetailsStudyOption').code /></span>                           
+                      	<#if model.hasError('studyOption')>                            
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('studyOption').code /></span>                           
                         </#if>
                     </div>
 				</div>
@@ -48,7 +50,7 @@
                     <label class="label">Project</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                		<input class="full" id="programmeDetailsProjectName" name="programmeDetailsProjectName" type="text" value="${model.applicationForm.project.title}" disabled="disabled"/>
+                		<input class="full" id="projectName" name="projectName" type="text" value="${model.applicationForm.project.title}" disabled="disabled"/>
                     </div>
 				</div>
 			
@@ -93,9 +95,9 @@
                 <div class="row">
                 	<label class="label">Start Date</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <input class="full date" type="date" id="programmeDetailsStartDate" name="programmeDetailsStartDate" value="${(model.programme.programmeDetailsStartDate?string('dd-MMM-YYYY'))!}"/>
-                    <#if model.hasError('programmeDetailsStartDate')>                            
-                          <span style="color:red;"><@spring.message  model.result.getFieldError('programmeDetailsStartDate').code /></span>                           
+                    <input class="full date" type="date" id="startDate" name="startDate" value="${(model.applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}"/>
+                    <#if model.hasError('startDate')>                            
+                          <span style="color:red;"><@spring.message  model.result.getFieldError('startDate').code /></span>                           
                     </#if>
                 </div>
 
@@ -103,15 +105,18 @@
                 <div class="row">
                 	<label class="label">Referrer</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <input type="hidden" id="programmeDetailsReferrerDP" value="${model.programme.programmeDetailsReferrer!}"/>
                     <div class="field">
-                    	<select class="full" id="programmeDetailsReferrer" name="programmeDetailsReferrer">
+                    	<select class="full" id="referrer" name="referrer">
                     	 <#list model.referrers as referrer>
-                              <option value="${referrer.freeVal}">${referrer.freeVal}</option>               
+                              <option value="${referrer}"
+                               <#if model.applicationForm.programmeDetails.referrer?? &&  model.applicationForm.programmeDetails.referrer == referrer >
+                                selected="selected"
+                                </#if>
+                              >${referrer.freeVal}</option>               
                         </#list>
                       	</select>
-                      	 <#if model.hasError('programmeDetailsReferrer')>                            
-                            <span style="color:red;"><@spring.message  model.result.getFieldError('programmeDetailsReferrer').code /></span>                           
+                      	 <#if model.hasError('referrer')>                            
+                            <span style="color:red;"><@spring.message  model.result.getFieldError('referrer').code /></span>                           
                          </#if>
                     </div>
 				</div>
@@ -121,8 +126,7 @@
             <div class="buttons">
             	<#if !model.applicationForm.isSubmitted()>
             	<a class="button" type="button" id="programmeCancelButton" name="programmeCancelButton">Cancel</a>
-                    <button class="blue" type="button" id="programmeSaveCloseButton">Save and Close</button>
-                    <button class="blue" type="button" id="programmeSaveAddButton">Save and Add</button>
+                <a class="button blue" id="programmeSaveButton">Save</a>
                 </#if>    
 			</div>
 

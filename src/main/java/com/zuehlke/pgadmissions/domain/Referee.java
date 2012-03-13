@@ -77,6 +77,15 @@ public class Referee extends DomainObject<Integer>{
 	
 	public void setPhoneNumbersRef(List<Telephone> phoneNumbers) {
 		this.phoneNumbersRef = phoneNumbers;
+		if(phoneNumbersRef != null && !phoneNumbersRef.isEmpty()){
+			int size = phoneNumbersRef.size();
+			for (int i = size -1; i >= 0 ;i--){
+				Telephone telephone = phoneNumbersRef.get(i);
+				if(telephone == null){
+					phoneNumbersRef.remove(i);
+				}
+			}
+		}
 	}
 	
 	public List<Messenger> getMessengersRef() {
@@ -85,6 +94,15 @@ public class Referee extends DomainObject<Integer>{
 	
 	public void setMessengersRef(List<Messenger> messengers) {
 		this.messengersRef = messengers;
+		if(messengersRef != null && !messengersRef.isEmpty()){
+			int size = messengersRef.size();
+			for (int i = size -1; i >= 0 ;i--){
+				Messenger messenger = messengersRef.get(i);
+				if(messenger == null){
+					messengersRef.remove(i);
+				}
+			}
+		}
 	}
 	public ApplicationForm getApplication() {
 		return application;

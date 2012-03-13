@@ -1,35 +1,20 @@
 $(document).ready(function(){
 	
-	$("#programmeDetailsStudyOption").val($("#programmeDetailsStudyOptionDP").val());
-	$("#programmeDetailsReferrer").val($("#programmeDetailsReferrerDP").val());
-	
-	$('#programmeSaveCloseButton').click(function(){
-		$.post("/pgadmissions/update/editProgramme", { 
-			programmeDetailsProgrammeName: $("#programmeDetailsProgrammeName").val(),
-			programmeDetailsProjectName: $("#programmeDetailsProjectName").val(), 
-			programmeDetailsStudyOption: $("#programmeDetailsStudyOption").val(), 
-			programmeDetailsStartDate: $("#programmeDetailsStartDate").val(),
-			programmeDetailsReferrer: $("#programmeDetailsReferrer").val(), 
-			id1: $("#id1").val(), 
-			appId1: $("#appId1").val()
-		},
+	$('#programmeSaveButton').on("click",function(){
+		var postData = {
+			programmeName: $("#programmeName").val(),
+			projectName: $("#projectName").val(), 
+			studyOption: $("#studyOption").val(), 
+			startDate: $("#startDate").val(),
+			referrer: $("#referrer").val(),
+			application: $("#appId1").val(),
+			programmeDetailsId: $("#programmeDetailsId").val()
+		}
+		
+		$.post( "/pgadmissions/programme" ,$.param(postData),
 		function(data) {
 			$('#programmeDetailsSection').html(data);
 		});
 	});
 	
-	$('#programmeSaveAddButton').click(function(){
-		$.post("/pgadmissions/update/editProgramme", { 
-			programmeDetailsProgrammeName: $("#programmeDetailsProgrammeName").val(),
-			programmeDetailsProjectName: $("#programmeDetailsProjectName").val(), 
-			programmeDetailsStudyOption: $("#programmeDetailsStudyOption").val(), 
-			programmeDetailsStartDate: $("#programmeDetailsStartDate").val(),
-			programmeDetailsReferrer: $("#programmeDetailsReferrer").val(), 
-			id1: $("#id1").val(), 
-			appId1: $("#appId1").val()
-		},
-		function(data) {
-			$('#programmeDetailsSection').html(data);
-		});
-	});
 });

@@ -56,6 +56,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	
 	@OneToOne(mappedBy="application")
 	private PersonalDetail personalDetails ;
+	
+	@OneToOne(mappedBy="application")
+	private ProgrammeDetail programmeDetails ;
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.SubmissionStatusEnumUserType")
 	@Column(name = "submission_status")
@@ -265,6 +268,17 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	
 	public void setPersonalDetails(PersonalDetail personalDetails) {
 		this.personalDetails = personalDetails;
+	}
+	
+	public ProgrammeDetail getProgrammeDetails() {
+		if(programmeDetails == null){
+			return new ProgrammeDetail();
+		}
+		return programmeDetails;
+	}
+	
+	public void setProgrammeDetails(ProgrammeDetail programmeDetails) {
+		this.programmeDetails = programmeDetails;
 	}
 }
 

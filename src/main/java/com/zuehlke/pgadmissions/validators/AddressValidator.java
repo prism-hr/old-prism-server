@@ -25,7 +25,7 @@ public class AddressValidator implements Validator {
 		Address address = (Address) target;
 		String startDate = address.getAddressStartDate() == null ? "": address.getAddressStartDate().toString();
 		if (StringUtils.isNotBlank(startDate) && address.getAddressEndDate() != null && address.getAddressStartDate().after(address.getAddressEndDate())) {
-			errors.rejectValue("startDate", "user.startDate.notvalid");
+			errors.rejectValue("addressStartDate", "user.startDate.notvalid");
 		}
 	}
 

@@ -32,9 +32,9 @@ table.messages thead th {
 }
 table.messages th, table.messages td { padding: 3px; vertical-align: middle; }
 table.messages tr td, table.messages tr th { border-bottom: 1px solid #999; }
-table.messages td { background: #FFF; border-bottom: 1px solid #999; }
+table.data tbody td, table.messages tbody td { background: #FFF; border-bottom: 1px solid #999; }
 table.messages tr.unread td { font-weight: bold; }
-table.messages tfoot td { background: #FFF; height: 30px; }
+table tfoot td { background: #FFF; height: 30px; }
 
 table.messages tr.message-body td { border-bottom: none; color: #666; padding: 20px 20px 0; }
 table.messages tr.message-body h1 { border-bottom: 1px solid #999; font-size: 12pt; font-weight: normal; margin-bottom: .6em; padding-bottom: .6em; }

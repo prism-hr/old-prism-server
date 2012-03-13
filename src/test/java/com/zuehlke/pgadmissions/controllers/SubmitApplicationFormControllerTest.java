@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.LanguageService;
 
 public class SubmitApplicationFormControllerTest {
 
@@ -43,6 +44,7 @@ public class SubmitApplicationFormControllerTest {
 	private UserPropertyEditor userPropertyEditorMock;
 	private RegisteredUser student;
 	private CountryService countryServiceMock;
+	private LanguageService languageServiceMock;
 
 	@Test
 	@Ignore
@@ -153,9 +155,10 @@ public class SubmitApplicationFormControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
 		countryServiceMock = EasyMock.createMock(CountryService.class);
+		languageServiceMock = EasyMock.createMock(LanguageService.class);
 
 		applicationController = new SubmitApplicationFormController(applicationsServiceMock, userPropertyEditorMock, 
-				countryServiceMock) {
+				countryServiceMock, languageServiceMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

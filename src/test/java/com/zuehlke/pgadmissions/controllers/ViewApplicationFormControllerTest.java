@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,16 +20,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.CountriesDAO;
-import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -46,6 +45,7 @@ import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.LanguageService;
 
 public class ViewApplicationFormControllerTest {
 
@@ -65,6 +65,7 @@ public class ViewApplicationFormControllerTest {
 
 	private CountryService countryServiceMock;
 	private ProgrammeDetailDAO programmeDetailDAOMock;
+	private LanguageService languageServiceMock;
 
 	
 
@@ -84,6 +85,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
@@ -100,6 +102,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
 		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
@@ -115,6 +118,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
 		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
 		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
 		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
@@ -122,7 +126,9 @@ public class ViewApplicationFormControllerTest {
 		applicationsServiceMock.save(applicationForm);
 		List<Country> countries = Arrays.asList(new CountryBuilder().id(1).toCountry());
 		EasyMock.expect(countryServiceMock.getAllCountries()).andReturn(countries);
-		EasyMock.replay(userMock, applicationsServiceMock, countryServiceMock);
+		List<Language> languages = Arrays.asList(new LanguageBuilder().id(1).toLanguage());
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(languages);
+		EasyMock.replay(userMock, applicationsServiceMock, countryServiceMock,languageServiceMock );
 
 		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
 		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
@@ -131,10 +137,11 @@ public class ViewApplicationFormControllerTest {
 		assertNotNull(model.getAddress());
 		assertNotNull(model.getFunding());
 		assertNotNull(model.getEmploymentPosition());
-		assertNotNull(model.getReferee());
+		assertNotNull(model.getReferrers());
 		assertNotNull(model.getProgramme());
 		
 		assertSame(countries, model.getCountries());
+		assertSame(languages, model.getLanguages());
 		assertEquals(userMock, model.getUser());
 		assertEquals(ResidenceStatus.values().length, model.getResidenceStatuses().size());
 		assertTrue(model.getResidenceStatuses().containsAll(Arrays.asList(ResidenceStatus.values())));
@@ -156,6 +163,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
 		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
 		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
 		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
@@ -176,6 +184,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
 
@@ -278,6 +287,7 @@ public class ViewApplicationFormControllerTest {
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		userMock = EasyMock.createMock(RegisteredUser.class);
 		countryServiceMock = EasyMock.createMock(CountryService.class);
+		languageServiceMock = EasyMock.createMock(LanguageService.class);
 		authenticationToken.setDetails(userMock);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
@@ -286,7 +296,7 @@ public class ViewApplicationFormControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);
 		programmeDetailDAOMock = EasyMock.createMock(ProgrammeDetailDAO.class);
-		controller = new ViewApplicationFormController(applicationsServiceMock, applicationReviewServiceMock, countryServiceMock, programmeDetailDAOMock);
+		controller = new ViewApplicationFormController(applicationsServiceMock, applicationReviewServiceMock, countryServiceMock, languageServiceMock, programmeDetailDAOMock);
 
 		admin = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 

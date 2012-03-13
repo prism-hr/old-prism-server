@@ -21,4 +21,17 @@ public class DocumentDAOTest extends AutomaticRollbackTestCase {
 		Document reloadDocument = (Document) sessionFactory.getCurrentSession().get(Document.class, document.getId());
 		assertEquals(document, reloadDocument);
 	}
+	
+
+	@Test
+	public void shouldGetDocumentById(){
+		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).toDocument();
+		DocumentDAO dao = new DocumentDAO(sessionFactory);
+		dao.save(document);
+		
+		flushAndClearSession();
+		
+		Document reloadDocument = dao.getDocumentbyId(document.getId());
+		assertEquals(document, reloadDocument);
+	}
 }

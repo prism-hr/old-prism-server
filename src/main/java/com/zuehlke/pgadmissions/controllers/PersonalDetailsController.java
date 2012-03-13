@@ -17,6 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.dao.HibernateFlusher;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -29,8 +30,10 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEdito;
+import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.PersonalDetailsService;
 import com.zuehlke.pgadmissions.validators.PersonalDetailValidator;
 
@@ -44,20 +47,24 @@ public class PersonalDetailsController {
 	private final DatePropertyEditor datePropertyEditor;
 	private final CountryService countryService;
 	private final PersonalDetailValidator personalDetailValidator;
-	private final PhoneNumberJSONPropertyEdito phoneNumberJSONPropertyEditor;
+	private final PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor;
+	private final LanguageService languageService;
+	private final LanguagePropertyEditor languagePropertyEditor;
 
 	PersonalDetailsController() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public PersonalDetailsController(PersonalDetailsService personalDetailsService, CountryService countryService,
-			ApplicationFormPropertyEditor applicationFormPropertyEditor, CountryPropertyEditor countryPropertyEditor, DatePropertyEditor datePropertyEditor,
-			PersonalDetailValidator personalDetailValidator, PhoneNumberJSONPropertyEdito phoneNumberJSONPropertyEditor) {
+			LanguageService languageService, ApplicationFormPropertyEditor applicationFormPropertyEditor, CountryPropertyEditor countryPropertyEditor, LanguagePropertyEditor languagePropertyEditor, DatePropertyEditor datePropertyEditor,
+			PersonalDetailValidator personalDetailValidator, PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor) {
 		this.personalDetailsService = personalDetailsService;
-		this.countryService = countryService;	
+		this.countryService = countryService;
+		this.languageService = languageService;	
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.countryPropertyEditor = countryPropertyEditor;
+		this.languagePropertyEditor = languagePropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
 		this.personalDetailValidator = personalDetailValidator;
 		this.phoneNumberJSONPropertyEditor = phoneNumberJSONPropertyEditor;
@@ -88,6 +95,7 @@ public class PersonalDetailsController {
 		applicationPageModel.setApplicationForm(personalDetail.getApplication());
 		applicationPageModel.setUser(getCurrentUser());
 		applicationPageModel.setCountries(countryService.getAllCountries());
+		applicationPageModel.setLanguages(languageService.getAllLanguages());
 		applicationPageModel.setResult(errors);
 		applicationPageModel.setResidenceStatuses(ResidenceStatus.values());
 		applicationPageModel.setGenders(Gender.values());
@@ -122,6 +130,7 @@ public class PersonalDetailsController {
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
 		binder.registerCustomEditor(Country.class, countryPropertyEditor);
+		binder.registerCustomEditor(Language.class, languagePropertyEditor);
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditor);
 	}

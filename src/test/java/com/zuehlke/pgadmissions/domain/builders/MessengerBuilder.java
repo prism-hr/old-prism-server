@@ -6,7 +6,6 @@ import com.zuehlke.pgadmissions.domain.Referee;
 public class MessengerBuilder {
 
 	private Integer id;
-	private String messengerType;
 	
 	private String messengerAddress;
 	private Referee referee;
@@ -21,10 +20,6 @@ public class MessengerBuilder {
 		return this;
 	}
 	
-	public MessengerBuilder messengerType(String messengerType) {
-		this.messengerType = messengerType;
-		return this;
-	}
 	
 	public MessengerBuilder messengerAddress(String messengerAddress) {
 		this.messengerAddress = messengerAddress;
@@ -36,8 +31,6 @@ public class MessengerBuilder {
 		Messenger messenger = new Messenger();
 		messenger.setId(id);
 		messenger.setMessengerAddress(messengerAddress);
-		messenger.setMessengerType(messengerType);
-		messenger.setReferee(referee);
 		return messenger;
 	}
 }

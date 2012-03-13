@@ -24,28 +24,10 @@ public class Messenger extends DomainObject<Integer>{
 	 */
 	private static final long serialVersionUID = 8563165735037557238L;
 
-	@Column(name = "messenger_type")
-	private String messengerType;
 	
 	@Column(name = "address")
 	private String messengerAddress;
 	
-
-	@ManyToOne(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
-	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-	@Access(AccessType.PROPERTY)
-	@JoinColumn(name = "referee_id")
-	private Referee referee = new Referee();
-
-	
-	public String getMessengerType() {
-		return messengerType;
-	}
-
-	public void setMessengerType(String messengerType) {
-		this.messengerType = messengerType;
-	}
-
 	public String getMessengerAddress() {
 		return messengerAddress;
 	}
@@ -65,13 +47,5 @@ public class Messenger extends DomainObject<Integer>{
 	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
-	}
-
-	public Referee getReferee() {
-		return referee;
-	}
-
-	public void setReferee(Referee referee) {
-		this.referee = referee;
 	}
 }

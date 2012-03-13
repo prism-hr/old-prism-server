@@ -77,15 +77,15 @@
                     <tbody>
 						<!-- repeat these rows for every existing supervisor. -->
                       	<tr>
-	                        <th class="align-left"><input class="full" type="text" placeholder="Email address" /></th>
-	                        <th><input type="checkbox" /></th>
+	                        <th class="align-left"><input class="full" type="text" placeholder="Email address" name="supervisor_email"/></th>
+	                        <th><input type="checkbox" name="supervisor_primary"/></th>
 	                        <th><input type="checkbox" /></th>
                       	</tr>
                       	<!-- end repeat -->
                     </tbody>
                     
 				</table>
-                
+                 <a id="addSuperVisor" class="button" style="width: 110px;">Add Supervisor</a>
 			</div>
 
             <div>
@@ -93,7 +93,7 @@
                 <div class="row">
                 	<label class="label">Start Date</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <input class="full" type="date" id="programmeDetailsStartDate" name="programmeDetailsStartDate" value="${(model.programme.programmeDetailsStartDate?string('yyyy/MM/dd'))!}"/>
+                    <input class="full date" type="date" id="programmeDetailsStartDate" name="programmeDetailsStartDate" value="${(model.programme.programmeDetailsStartDate?string('dd-MMM-YYYY'))!}"/>
                     <#if model.hasError('programmeDetailsStartDate')>                            
                           <span style="color:red;"><@spring.message  model.result.getFieldError('programmeDetailsStartDate').code /></span>                           
                     </#if>

@@ -8,6 +8,7 @@ import org.springframework.validation.ObjectError;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 
 public class PageModel {
 
@@ -17,7 +18,8 @@ public class PageModel {
 	private List<ApplicationReview> applicationComments;
 	private String view;
 	private BindingResult result;
-	
+	private String userRoles;
+
 	public BindingResult getResult() {
 		return result;
 	}
@@ -33,7 +35,7 @@ public class PageModel {
 	public List<ObjectError> getErrorObjs() {
 		return errorObjs;
 	}
-	
+
 	public void setErrorObjs(List<ObjectError> errorObjs) {
 		this.errorObjs = errorObjs;
 	}
@@ -52,6 +54,7 @@ public class PageModel {
 
 	public void setUser(RegisteredUser user) {
 		this.user = user;
+		setUserRoles(user);
 	}
 
 	public List<ApplicationReview> getApplicationComments() {
@@ -64,14 +67,29 @@ public class PageModel {
 
 	public void setView(String view) {
 		this.view = view;
-		
+
 	}
-	
+
 	public boolean hasError(String fieldname){
 		if(result != null && result.getFieldError(fieldname) != null){
 			return true;
 		}
 		return false;
+	}
+
+	private void setUserRoles(RegisteredUser user) {
+		StringBuilder userRoles = new StringBuilder();
+		if (user != null && user.getAuthorities()!= null) {
+			for (Role role : user.getAuthorities()) {
+				userRoles.append(role.getAuthority());
+				userRoles.append(";");
+			}
+		}
+		this.userRoles = userRoles.toString();
+	}
+
+	public String getUserRoles() {
+		return userRoles;
 	}
 
 }

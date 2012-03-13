@@ -25,4 +25,9 @@ public class DocumentDAO {
 		
 	}
 
+
+	public Document getDocumentbyId(Integer id) {
+		return (Document) sessionFactory.getCurrentSession().get(Document.class, id);
+	}
+
 }

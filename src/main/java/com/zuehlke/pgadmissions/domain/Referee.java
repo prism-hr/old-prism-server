@@ -30,18 +30,18 @@ public class Referee extends DomainObject<Integer>{
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
 	
-	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
-	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
-	@Access(AccessType.PROPERTY)
+
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "referee_id")
-	private List<Telephone> telephones = new ArrayList<Telephone>();
+	private List<Telephone> phoneNumbersRef ;
 	
 	
-	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
-	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@Access(AccessType.PROPERTY)
 	@JoinColumn(name = "referee_id")
-	private List<Messenger> messengers = new ArrayList<Messenger>();
+	private List<Messenger> messengersRef = new ArrayList<Messenger>();
 	
 	
 	@Column(name="firstname")
@@ -71,28 +71,20 @@ public class Referee extends DomainObject<Integer>{
 	@Column(name="email")
 	private String email;
 	
-	public List<Telephone> getTelephones() {
-		return telephones;
+	public List<Telephone> getPhoneNumbersRef() {
+		return phoneNumbersRef;
 	}
 	
-	public void setTelephones(List<Telephone> telephones) {
-		if(this.telephones.size() == telephones.size() && this.telephones.containsAll(telephones)){
-			return;
-		}
-		this.telephones.clear();
-		this.telephones.addAll(telephones);
+	public void setPhoneNumbersRef(List<Telephone> phoneNumbers) {
+		this.phoneNumbersRef = phoneNumbers;
 	}
 	
-	public List<Messenger> getMessengers() {
-		return messengers;
+	public List<Messenger> getMessengersRef() {
+		return messengersRef;
 	}
 	
-	public void setMessengers(List<Messenger> messengers) {
-		if(this.messengers.size() == messengers.size() && this.messengers.containsAll(messengers)){
-			return;
-		}
-		this.messengers.clear();
-		this.messengers.addAll(messengers);
+	public void setMessengersRef(List<Messenger> messengers) {
+		this.messengersRef = messengers;
 	}
 	public ApplicationForm getApplication() {
 		return application;

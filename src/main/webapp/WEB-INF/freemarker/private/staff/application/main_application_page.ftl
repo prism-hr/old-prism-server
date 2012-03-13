@@ -86,9 +86,15 @@
 			          
 			          <hr />
 			
-			          <#include "/private/staff/application/components/programme_details.ftl"/>
+					  <!-- Programme -->
+					  <section id="programmeDetailsSection" class="folding violet">
+			          	<#include "/private/staff/application/components/programme_details.ftl"/>
+			          </section>
 			          
-			          <#include "/private/staff/application/components/personal_details.ftl"/>
+			          <!-- Personal Details -->
+			          <section id="personalDetailsSection" class="folding purple">
+			          	<#include "/private/staff/application/components/personal_details.ftl"/>
+			          </section>
 			          
 			          <!-- Address -->
 			          <section class="folding red">

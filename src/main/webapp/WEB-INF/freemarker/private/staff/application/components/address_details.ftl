@@ -87,8 +87,12 @@
                   	<div class="row">
                     	<span class="label">Country</span>
 	                    <div class="field">
-	                    <input readonly="readonly" class="half" type="text" id="addressCountry" 
-                                                name="addressCountry" value="${model.address.country!}" />
+	                       <select class="full" name="addressCountry" id="addressCountry"
+                                            disabled="disabled">
+                                <#list model.countries as country>
+                                    <option value="${country.name}">${country.name}</option>               
+                                </#list>
+                            </select>
 						</div>
 					</div>
 					

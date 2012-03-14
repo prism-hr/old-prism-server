@@ -32,8 +32,8 @@
                     <div class="field">
                 		<select class="full" id="studyOption" name="studyOption" 
                 		<#if model.applicationForm.isSubmitted()>
-                		disabled="disabled">
-                		</#if>
+                		disabled="disabled"
+                		</#if>>
                 		  <option value="">Select...</option>
                 		  <#list model.studyOptions as studyOption>
                               <option value="${studyOption}"
@@ -116,8 +116,8 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <input class="full date" type="date" id="startDate" name="startDate" value="${(model.applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}"
                     <#if model.applicationForm.isSubmitted()>
-                        disabled="disabled">
-                        </#if>
+                        disabled="disabled"
+                        </#if>>
                     </input>
                     <#if model.hasError('startDate')>                            
                           <span style="color:red;"><@spring.message  model.result.getFieldError('startDate').code /></span>                           
@@ -131,8 +131,8 @@
                     <div class="field">
                     	<select class="full" id="referrer" name="referrer"
                     	<#if model.applicationForm.isSubmitted()>
-                        disabled="disabled">
-                        </#if>
+                        disabled="disabled"
+                        </#if>>
                     	<option value="">Select...</option>
                     	 <#list model.referrers as referrer>
                               <option value="${referrer}"

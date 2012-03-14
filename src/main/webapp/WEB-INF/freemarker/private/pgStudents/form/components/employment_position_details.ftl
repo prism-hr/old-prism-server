@@ -132,8 +132,8 @@
                       	<input class="half date" type="text" id="position_startDate" name="position_startDate" 
                       			value="${(model.employmentPosition.position_startDate?string('dd-MMM-yyyy'))!}"
                       			<#if model.applicationForm.isSubmitted()>
-                                          disabled="disabled">
-                                </#if>
+                                          disabled="disabled"
+                                </#if>>
                         </input>        
                       	<#if model.hasError('position_startDate')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_startDate').code /></span>                           
@@ -149,8 +149,8 @@
                       	<input class="half date" type="text" id="position_endDate" name="position_endDate" 
                       			value="${(model.employmentPosition.position_endDate?string('dd-MMM-yyyy'))!}"
                       			<#if model.applicationForm.isSubmitted()>
-                                          disabled="disabled">
-                                </#if>
+                                          disabled="disabled"
+                                </#if>>
                       	</input>		
 						<#if model.hasError('position_endDate')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_endDate').code /></span>                           

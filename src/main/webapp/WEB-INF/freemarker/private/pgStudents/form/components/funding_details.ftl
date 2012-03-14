@@ -119,8 +119,8 @@
                     <div class="field">
 	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}"
 	                       <#if model.applicationForm.isSubmitted()>
-                                                disabled="disabled">
-                                            </#if>
+                                                disabled="disabled"
+                                            </#if>>
                                     </input>
                     	<#if model.hasError('fundingAwardDate')>                           
                     		<span class="invalid""><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           

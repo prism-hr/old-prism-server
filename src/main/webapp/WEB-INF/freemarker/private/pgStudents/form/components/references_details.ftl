@@ -92,11 +92,14 @@
                     		<span class="label">First Name</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    			
+                    			<#if !model.applicationForm.isSubmitted()>
                     			<input class="full" id="ref_firstname" name="ref_firstname" value="${model.referee.firstname!}"/> 
                                  
                            		<#if model.hasError('firstname')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('firstname').code /></span>                           
+                            	</#if>
+                            	<#else>
+                            	   <input readonly="readonly" class="full" id="ref_firstname" name="ref_firstname" value="${model.referee.firstname!}"/>
                             	</#if>
                       			
                     		</div>
@@ -107,9 +110,13 @@
                     		<span class="label">Last Name</span>
                     		<span class="hint"></span>
                     		<div class="field">
+                    		<#if !model.applicationForm.isSubmitted()>
                       			<input class="full" id="ref_lastname" name="ref_lastname" value="${model.referee.lastname!}"/>
                                 <#if model.hasError('lastname')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('lastname').code /></span>                           
+                            	</#if>
+                            	<#else>
+                            	   <input readonly="readonly" class="full" id="ref_lastname" name="ref_lastname" value="${model.referee.lastname!}"/>
                             	</#if>
                     		</div>
                   		</div>
@@ -119,9 +126,13 @@
                     		<span class="label">Relationship</span>
                     		<span class="hint"></span>
                     		<div class="field">
+                    		<#if !model.applicationForm.isSubmitted()>
                       			<input class="full" id="ref_relationship" name="ref_relationship" value="${model.referee.relationship!}"/>
                                 <#if model.hasError('relationship')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('relationship').code /></span>                           
+                            	</#if>
+                            	<#else>
+                            	   <input readonly="readonly" class="full" id="ref_relationship" name="ref_relationship" value="${model.referee.relationship!}"/>
                             	</#if>
                     		</div>
                   		</div>
@@ -137,9 +148,13 @@
                     		<span class="label">Employer</span>
                     		<span class="hint"></span>
                     		<div class="field">
+                    		<#if !model.applicationForm.isSubmitted()>
                       			<input class="full" id="ref_employer" name="ref_employer" value="${model.referee.jobEmployer!}"/>
                                 <#if model.hasError('jobEmployer')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('jobEmployer').code /></span>                           
+                            	</#if>
+                            	<#else>
+                            	   <input readonly="readonly" class="full" id="ref_employer" name="ref_employer" value="${model.referee.jobEmployer!}"/>
                             	</#if>
                     		</div>
                   		</div>
@@ -149,10 +164,14 @@
                     		<span class="label">Title</span>
                     		<span class="hint"></span>
                     		<div class="field">
+                    		<#if !model.applicationForm.isSubmitted()>
                       			<input class="full" id="ref_position" name="ref_position" value="${model.referee.jobTitle!}"/>
                                 <#if model.hasError('jobTitle')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('jobTitle').code /></span>                           
                             	</#if>
+                            	<#else>
+                            	   <input readonly="readonly" class="full" id="ref_position" name="ref_position" value="${model.referee.jobTitle!}"/>
+                            	</#if>   
                     		</div>
                   		</div>
                   		
@@ -167,11 +186,16 @@
                     		<span class="label">Location</span>
                     		<span class="hint"></span>
                     		<div class="field">
+                    		<#if !model.applicationForm.isSubmitted()>
                       			<textarea class="max" rows="6" cols="70" id="ref_address_location" 
                       				name="ref_address_location" value="${model.referee.addressLocation!}"></textarea>
                       			<#if model.hasError('addressLocation')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('addressLocation').code /></span>                           
                             	</#if>
+                            	<#else>
+                            	   <textarea readonly="readonly" class="max" rows="6" cols="70" id="ref_address_location" 
+                                    name="ref_address_location" value="${model.referee.addressLocation!}"></textarea>
+                            	</#if> 
                     		</div>
                   		</div>
                 
@@ -180,9 +204,13 @@
                     		<span class="label">Postal Code</span>
                     		<span class="hint"></span>
                     		<div class="field">
+                    		<#if !model.applicationForm.isSubmitted()>
                       			<input class="half" id="ref_address_postcode" name="ref_address_postcode" value="${model.referee.addressPostcode!}"/>
                                 <#if model.hasError('addressPostcode')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('addressPostcode').code /></span>                           
+                            	</#if>
+                            	<#else>
+                            	   <input readonly="readonly" class="half" id="ref_address_postcode" name="ref_address_postcode" value="${model.referee.addressPostcode!}"/>
                             	</#if>
                     		</div>
                   		</div>
@@ -192,9 +220,13 @@
                     		<span class="label">Country</span>
                     		<span class="hint"></span>
                     		<div class="field">
+                    		<#if !model.applicationForm.isSubmitted()>
                       			<input class="half" id="ref_address_country" name="ref_address_country" value="${model.referee.addressCountry!}"/>
                                 <#if model.hasError('addressCountry')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('addressCountry').code /></span>                           
+                            	</#if>
+                            	<#else>
+                            	   <input readonly="readonly" class="half" id="ref_address_country" name="ref_address_country" value="${model.referee.addressCountry!}"/>
                             	</#if>
                     		</div>
                   		</div>
@@ -210,9 +242,13 @@
                     		<span class="label">Email</span>
                     		<span class="hint"></span>
                     		<div class="field">
+                    		<#if !model.applicationForm.isSubmitted()>
                       			<input class="full" type="email" id="ref_email" name="ref_email" value="${model.referee.email!}"/>
                                 <#if model.hasError('email')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                           
+                            	</#if>
+                            	<#else>
+                            	   <input readonly="readonly" class="full" type="email" id="ref_email" name="ref_email" value="${model.referee.email!}"/>
                             	</#if>
                     		</div>
                   		</div>
@@ -225,12 +261,13 @@
                     		<div class="field" id="phonenumbersref">
                     			<#list model.referee.phoneNumbers! as phoneNumber>
                     			<span name="phone_number_ref">
-                   		 				${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} <a class="button">delete</a>
+                   		 				${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} <#if !model.applicationForm.isSubmitted()><a class="button">delete</a></#if>
 										<input type="hidden" name="phoneNumbersRef" value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />								
 									</span>
 
 		                      	</#list>
                     		</div>
+                    		<#if !model.applicationForm.isSubmitted()>
                     		<span class="label">Telephone</span>
                     		<span class="hint"></span>
                     		<select class="full" id="phoneTypeRef">
@@ -240,6 +277,7 @@
                       			</select>
                       				<input type="text" placeholder="Number" id="phoneNumberRef"/>
                      			 	<a class="button" id="addPhoneRefButton" style="width: 110px;">Add Phone</a>
+                     		</#if>	 	
                   		</div>
 
 	                  	<!-- Skype address -->
@@ -247,23 +285,29 @@
 	                    	<div class="field" id="messengersref">
 	                    		<#list model.referee.messengers! as messenger>
 	                    			<span name="messenger_ref">
-                   		 				${messenger.messengerAddress} <a class="button">delete</a>
+                   		 				${messenger.messengerAddress} <#if !model.applicationForm.isSubmitted()><a class="button">delete</a></#if>
 										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress}"}' />								
 									</span>
 	                      		</#list>
 	                    	</div>
+	                    	<#if !model.applicationForm.isSubmitted()>
 	                    	<span class="label">Skype</span>
 	                    	<span class="hint"></span>
 	                    	<input class="full" type="text" placeholder="Skype address" id="messengerAddressRef" />
 	                      		<a id="addMessengerRefButton" class="button" style="width: 110px;">Add Messenger</a>
+	                      	</#if>	
 	                  	</div>
                   	
                 	</div>
 
                 	<div class="buttons">
+                	 <#if !model.applicationForm.isSubmitted()>
                   		 <a class="button" type="button" id="refereeCancelButton" name="refereeCancelButton">Cancel</a>
                   		<button class="blue" type="button" value="close" id="refereeSaveButton">Save and Close</button>
                   		<button class="blue" type="button" id="refereeSaveAndAddButton" value="add">Save and Add</button>
+                  	 <#else>
+                        <a id="close-section-button"class="button blue">Close</a>   
+                    </#if> 	
                 	</div>
 
 				</form>

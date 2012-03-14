@@ -23,9 +23,9 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
 
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "APPLICATION_FORM")
@@ -294,6 +294,24 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public void setSupportingDocuments(List<Document> supportingDocuments) {
 		this.supportingDocuments.clear();
 		this.supportingDocuments.addAll(supportingDocuments);
+	}
+
+	public boolean isCVUploaded() {
+		for (Document document : supportingDocuments) {
+			if(DocumentType.CV ==document.getType()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isPersonalStatementUploaded() {
+		for (Document document : supportingDocuments) {
+			if(DocumentType.PERSONAL_STATEMENT ==document.getType()){
+				return true;
+			}
+		}
+		return false;
 	}
 }
 

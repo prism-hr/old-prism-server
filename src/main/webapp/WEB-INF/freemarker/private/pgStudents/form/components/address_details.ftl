@@ -114,8 +114,8 @@
 	                      	
 	                      	<select class="full" name="addressCountry" id="addressCountry"
 	                      	<#if model.applicationForm.isSubmitted()>
-                                            disabled="disabled">
-                            </#if>
+                                            disabled="disabled"
+                            </#if>>
                             	<#list model.countries as country>
                                 	<option value="${country.name}">${country.name}</option>               
                             	</#list>
@@ -143,8 +143,8 @@
                       				<input class="half date" type="text" id="addressStartDate" name="addressStartDate" 
                       						value="${(model.address.addressStartDate?string('dd-MMM-yyyy'))!}"
                       						<#if model.applicationForm.isSubmitted()>
-                                                disabled="disabled">
-                                            </#if>
+                                                disabled="disabled"
+                                            </#if>>
                       				</input>		
                       		</label>
                       		
@@ -156,8 +156,8 @@
                       			<input class="half date" type="text" id="addressEndDate" name="addressEndDate" 
                       									value="${(model.address.addressEndDate?string('dd-MMM-yyyy'))!}"
                       									<#if model.applicationForm.isSubmitted()>
-                                                            disabled="disabled">
-                                                        </#if>
+                                                            disabled="disabled"
+                                                        </#if>>
                       			</input>						
                       		</label>
                             <#if model.hasError('addressEndDate')>                           
@@ -207,8 +207,8 @@
                       		<label>
                       			<input type="checkbox" name="isCA" id="isCA"
                       			<#if model.applicationForm.isSubmitted()>
-                                      disabled="disabled">
-                                </#if>
+                                      disabled="disabled"
+                                </#if>>
                       			</input> This is my contact address
                       		</label>
                       		<input type="hidden" id="addressContactAddress" value="${model.address.addressContactAddress!}"/>

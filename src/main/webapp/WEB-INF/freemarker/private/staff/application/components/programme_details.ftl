@@ -64,7 +64,7 @@
             	  <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
             	  <div class="row">
             	   <div class="field">
-            	       ${supervisor.email}
+            	       ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor}
             	       <br/>
             	   </div>
             	 </div>

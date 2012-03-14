@@ -68,7 +68,7 @@
                  <div id="supervisor_div">
                    <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
                    <span name="supervisor_span">
-                        ${supervisor.email}<#if !model.applicationForm.isSubmitted()><a class="button">delete</a></#if>
+                        ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor} <#if !model.applicationForm.isSubmitted()><a class="button">delete</a></#if>
                        <input type="hidden" name="supervisors" value='{"email" :"${supervisor.email}", "primarySupervisor":"${supervisor.primarySupervisor}", "awareSupervisor":"${supervisor.awareSupervisor}"}' />                             
                        <p></p>
                   </span>

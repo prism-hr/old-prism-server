@@ -52,7 +52,7 @@ $(document).ready(function(){
 			return;
 		}
 		$('#supervisor_div').append('<span name="supervisor_span">'+ 
-				$('#supervisorEmail').val()+ " "+'<a class="button">delete</a>'+
+				$('#supervisorEmail').val()+ ", Primary:" + $('#primarySupervisor').val() +", Aware:" + $('#awareSupervisor').val() +'<a class="button">delete</a>'+
 				'<input type="hidden" name="supervisors" value=' +"'" + '{"email":"' +  $('#supervisorEmail').val()+ '", "primarySupervisor":"' + $('#primarySupervisor').val() + '", "awareSupervisor":"' + $('#awareSupervisor').val()+ '"} ' + "'" + "/>"									
 				+'<br/></span>');
 	})

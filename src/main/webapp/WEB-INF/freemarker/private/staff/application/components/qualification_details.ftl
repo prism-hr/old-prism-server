@@ -139,14 +139,14 @@
                     		</div>
                   		</div>
 
-                  		<!-- Attachment / supporting document -->
+                  		<!-- Attachment / supporting document 
                   		<div class="row">
                     		<span class="label">Supporting Document</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     			<!-- Add freemarker expression to pull contnet for supporting document -->
                     		</div>  
-                  		</div>
+                  		</div> -->
 	                
 	                </div>
 

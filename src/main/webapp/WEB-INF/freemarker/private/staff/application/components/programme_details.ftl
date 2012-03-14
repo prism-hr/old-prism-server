@@ -40,7 +40,9 @@
                     <label class="label">Study Option</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	${model.programme.programmeDetailsStudyOption!}
+                    <#if model.applicationForm.programmeDetails?? && model.applicationForm.programmeDetails.studyOption??>
+                    	${model.applicationForm.programmeDetails.studyOption.freeVal}
+                    </#if>
                     </div>
 				</div>
 
@@ -58,43 +60,16 @@
             <div>
             	
             	<h3>Supervision</h3>
+            	
+            	  <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
+            	  <div class="row">
+            	   <div class="field">
+            	       ${supervisor.email}
+            	       <br/>
+            	   </div>
+            	 </div>
+            	  </#list>
                   
-                <!-- supervisor rows -->
-                <!-- Add freemarker list to pull the rows for Supervisors -->
-                <table class="multiples">
-                	<colgroup>
-                    	<col />
-                      	<col style="width: 80px;" />
-                      	<col style="width: 80px;" />
-                    </colgroup>
-                    
-                    <thead>
-                    	<tr>
-	                        <th class="align-left">Supervisor</th>
-	                        <th>Primary</th>
-	                        <th>Aware</th>
-                    	</tr>
-                    </thead>
-                    
-                    <tbody>
-						<!-- repeat these rows for every existing supervisor. -->
-                      	<tr>
-	                        <th class="align-left">
-	                        	<!-- Add freemarker expression to pull the content for Supervisor email -->
-							</th>
-	                        <th>
-	                        	<!-- Add freemarker expression to pull the content for value property -->
-	                        	<input type="checkbox" name="supervisor_primary"/ value="" disabled="disabled">
-	                        </th>
-	                        <th>
-	                        	<!-- Add freemarker expression to pull the content for value property -->
-	                        	<input type="checkbox" value="" disabled="disabled"/>
-	                        </th>
-                      	</tr>
-                      	<!-- end repeat -->
-                    </tbody>
-                    
-				</table>
 			</div>
 
             <div>
@@ -102,7 +77,7 @@
                 <div class="row">
                 	<label class="label">Start Date</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
-                    ${(model.programme.programmeDetailsStartDate?string('dd-MMM-YYYY'))!}
+                    ${(model.applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}
                 </div>
 
                 <!-- Referrer -->
@@ -110,7 +85,9 @@
                 	<label class="label">Referrer</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-						${model.programme.programmeDetailsReferrer!}                    
+                        <#if model.applicationForm.programmeDetails?? && model.applicationForm.programmeDetails.referrer??>                    
+						${model.applicationForm.programmeDetails.referrer.freeVal}
+						</#if>                    
 					</div>
 				</div>
 

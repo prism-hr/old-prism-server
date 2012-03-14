@@ -10,20 +10,27 @@ import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.ApplicantRecord;
 import com.zuehlke.pgadmissions.domain.builders.ApplicantRecordBuilder;
+import com.zuehlke.pgadmissions.dto.ApplicantRecordDTO;
 
 public class ApplicantRecordValidatorTest {
 
-	private ApplicantRecord record;
+	private ApplicantRecordDTO record;
 	private ApplicantRecordValidator recordValidator;
 	
 	@Test
 	public void shouldSupportApplicantRecordValidator() {
-		assertTrue(recordValidator.supports(ApplicantRecord.class));
+		assertTrue(recordValidator.supports(ApplicantRecordDTO.class));
 	}
 
 	@Before
 	public void setup(){
-		record = new ApplicantRecordBuilder().email("test@gmail.com").firstname("firstname").lastname("lastname").password("1234").confirmPassword("1234").toApplicantRecord();
+//		record = new ApplicantRecordBuilder().email("test@gmail.com").firstname("firstname").lastname("lastname").password("1234").confirmPassword("1234").toApplicantRecord();
+		record = new ApplicantRecordDTO();
+		record.setFirstname("Mark");
+		record.setLastname("Euston");
+		record.setEmail("meuston@gmail.com");
+		record.setPassword("1234");
+		record.setConfirmPassword("1234");
 		recordValidator = new ApplicantRecordValidator();
 	}
 	

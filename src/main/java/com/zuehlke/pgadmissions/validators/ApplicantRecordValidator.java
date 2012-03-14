@@ -7,12 +7,13 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ApplicantRecord;
+import com.zuehlke.pgadmissions.dto.ApplicantRecordDTO;
 @Service
 public class ApplicantRecordValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return ApplicantRecord.class.equals(clazz);
+		return ApplicantRecordDTO.class.equals(clazz);
 	}
 
 	@Override
@@ -22,7 +23,7 @@ public class ApplicantRecordValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "record.email.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "record.password.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword", "record.confirmPassword.notempty");
-		ApplicantRecord record = (ApplicantRecord) target;
+		ApplicantRecordDTO record = (ApplicantRecordDTO) target;
 		if(record.getConfirmPassword()!=null && record.getPassword() !=null && !record.getConfirmPassword().equals(record.getPassword())){
 			errors.rejectValue("password", "record.password.notvalid");
 			errors.rejectValue("confirmPassword", "record.confirmPassword.notvalid");

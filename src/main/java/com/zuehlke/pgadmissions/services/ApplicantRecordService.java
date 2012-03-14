@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.ApplicantRecordDAO;
 import com.zuehlke.pgadmissions.domain.ApplicantRecord;
 
-@Service("applicantRecordService")
+@Service
 public class ApplicantRecordService {
 
 	private final ApplicantRecordDAO applicationRecordDAO;

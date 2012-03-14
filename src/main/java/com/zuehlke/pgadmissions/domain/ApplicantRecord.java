@@ -25,16 +25,7 @@ public class ApplicantRecord extends DomainObject<Integer> {
 	@Column(name="password")
 	private String password;
 	
-	private String confirmPassword;
 	
-	public String getConfirmPassword() {
-		return confirmPassword;
-	}
-
-	public void setConfirmPassword(String confirmPassword) {
-		this.confirmPassword = confirmPassword;
-	}
-
 	public String getFirstname() {
 		return firstname;
 	}

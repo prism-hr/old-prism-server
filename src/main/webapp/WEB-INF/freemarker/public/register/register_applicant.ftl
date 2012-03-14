@@ -33,19 +33,20 @@
 	  
 			    <header>
 					<!-- App logo and tagline. -->
-			      	<div class="logo"><img src="images/ph_logo_login.png" alt="" /></div>
+			      	<!--<div class="logo"><img src="images/ph_logo_login.png" alt="" /></div>. -->
 			      	<div class="tagline">Your Gateway to<br />Research Opportunities</div>
 			    </header>
 	    
 		    	<!-- New user form. -->
-		    	<form>
+		    	<form action= "/pgadmissions/register/submit" method="POST">
+		    		<input id="recordId" type="hidden" name="recordId" />
 		      		<section id="form-box">
 		        		<h1>New User? Please register</h1>
 		        
 		        		<div class="row">
 		        			<label for="field_first_name">First name</label>
 		          			<div class="field">
-		            			<input id="rec_firstname" type="text" name="firstname" value="${model.record.firstname!}" />
+		            			<input id="firstname" type="text" name="firstname" value="${model.record.firstname!}" />
 		          			<#if model.hasError('firstname')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('firstname').code /></span>                           
                             </#if>
@@ -56,7 +57,7 @@
 		        		<div class="row">
 		        			<label for="field_surname">Last name</label>
 		          			<div class="field">
-		            			<input id="rec_lastname" type="text" name="surname" value="${model.record.lastname!}" />
+		            			<input id="lastname" type="text" name="lastname" value="${model.record.lastname!}" />
 		            		<#if model.hasError('lastname')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('lastname').code /></span>                           
                             </#if>
@@ -66,7 +67,7 @@
 		        		<div class="row">
 		        			<label for="field_email">Email Address</label>
 		          			<div class="field">
-		            			<input id="rec_email" type="text" name="email" value="${model.record.email!}" />
+		            			<input id="email" type="text" name="email" value="${model.record.email!}" />
 		            		<#if model.hasError('email')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                           
                             </#if>
@@ -76,7 +77,7 @@
 		        		<div class="row">
 		        			<label for="field_password">Password</label>
 		          			<div class="field">
-		            			<input id="rec_password" type="password" name="password" />
+		            			<input id="password" type="password" name="password" />
 		            		<#if model.hasError('password')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('password').code /></span>                           
                             </#if>
@@ -86,7 +87,7 @@
 		        		<div class="row">
 		        			<label for="field_password_confirm">Confirm Password</label>
 		          			<div class="field">
-		            			<input id="rec_password_confirm" type="password" name="password_confirm" />
+		            			<input id="confirmPassword" type="password" name="confirmPassword" />
 		            		<#if model.hasError('confirmPassword')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('confirmPassword').code /></span>                           
                             </#if>
@@ -96,7 +97,7 @@
 		      		</section>
 		  
 		      		<!-- Registration button. -->
-		      		<button id="registerSubmit" type="button" value ="Submit"> Submit </button>
+		      		<input id="big-button" type="submit" value="Submit"/>
 		    	</form>
 	  		</div>
 	  
@@ -113,6 +114,5 @@
 		</div>
 		<!-- Scripts -->
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/register.js'/>"></script>   
 	</body>
 </html>

@@ -87,14 +87,14 @@
 						${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}                    
 					</div>
                 </div>
-                  
+                
+                <!--  
                 <div class="row">
                   	<span class="label">Supporting Document</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<!-- Add freemarker expression to pull content -->
                     </div>	
-				</div>
+				</div> -->
 
 			</div>
 

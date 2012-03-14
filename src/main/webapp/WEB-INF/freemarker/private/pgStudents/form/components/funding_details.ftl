@@ -117,18 +117,19 @@
                   	<span class="label" data-desc="Tooltip demonstration.">Award Date</span>
                     <span class="hint"></span>
                     <div class="field">
-                    <#if !model.applicationForm.isSubmitted()>
-	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}" />
+	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}"
+	                       <#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled">
+                                            </#if>
+                                    </input>
                     	<#if model.hasError('fundingAwardDate')>                           
                     		<span class="invalid""><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           
                     	</#if>
-                    <#else>
-                        <input id="fundingAwardDate" name="fundingAwardDate" readonly="readonly" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}" />	
-                    </#if>
                     </div>
                     
                 </div>
-                  
+               
+               <!--   
                 <div class="row">
                   	<span class="label">Supporting Document</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
@@ -138,19 +139,20 @@
                       	<a class="button" href="#">Upload</a>
                       	<a class="button plus" href="#">Add Another</a>
                     </div>	
-				</div>
+				</div> -->
 
 			</div>
 
+		<div class="buttons">
         <#if !model.applicationForm.isSubmitted()>
-			<div class="buttons">
             	
             	<a class="button" type="button" id="fundingCancelButton" name="fundingCancelButton">Cancel</a>
 				<button class="blue" type="button" id="fundingSaveCloseButton" name="fundingSaveCloseButton" value="close">Save and Close</button>
                 <button class="blue" type="button" id="fundingSaveAddButton" name="fundingSaveAddButton" value="add">Save and Add</button>
-                
-			</div>
+              <#else>
+                    <a id="close-section-button"class="button blue">Close</a>  
 	   </#if>
+	   </div>
 
 		</form>
 	</div>

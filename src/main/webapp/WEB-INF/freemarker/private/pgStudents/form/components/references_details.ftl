@@ -32,7 +32,7 @@
 	                  		<tr>
 			                    <th colspan="2">First name</th>
 			                    <th>Surname</th>
-			                    <th>Phone Number</th>
+			                    <th>Job Title</th>
 			                    <th>Email</th>
 			                    <th>&nbsp;</th>
 		                  	</tr>
@@ -41,14 +41,11 @@
 	                	<tbody>
 	                		<#list model.applicationForm.referees as referee>
 			                  	<tr>
-				                    <td><a class="row-arrow" href="#">-</a></td>
+				                    <td><a class="row-arrow" name="refereeEditButton" id="referee_${referee.id!}">-</a></td>
 				                    <td>${referee.firstname!}</td>
 				                    <td>${referee.lastname!}</td>
-				                    <td>0800 5555555</td>
+				                    <td>${referee.jobTitle!}</td>
 				                    <td>${referee.email!}</td>
-				                    
-                                    <td><a class="button blue" type="submit" name="refereeEditButton" id="referee_${referee.id!}">Edit</a></td>
-                                    
                                     <input type="hidden" id="${referee.id!}_refereeId" value="${referee.id!}"/>
                                     <input type="hidden" id="${referee.id!}_firstname" value="${referee.firstname!}"/>
                                     <input type="hidden" id="${referee.id!}_lastname" value="${referee.lastname!}"/>
@@ -59,19 +56,24 @@
                                     <input type="hidden" id="${referee.id!}_addressPostcode" value="${referee.addressPostcode!}"/>
                                     <input type="hidden" id="${referee.id!}_addressCountry" value="${referee.addressCountry!}"/>
                                     <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
-
-									<span name="${referee.id!}_hiddenPhones" style="display:none">
-                   		 				${phoneNumber.telephoneType.displayValue!} ${phoneNumber.telephoneNumber!} <a class="button" id="delBtn">delete</a>
-										<input type="hidden" name="phoneNumbersRef"  value='{"type" :"${phoneNumber.telephoneType!}", "number":"${phoneNumber.telephoneNumber!}"}' />								
-										<br/>
-									</span>
+									
+									<#list referee.phoneNumbersRef! as phoneNumber>
+									<span name="${referee.id!}_hiddenPhones" style="display:none" >
+                   		 				<select class="half" value="${phoneNumber.telephoneType.displayValue!}"> 
+                   		 				<option>${phoneNumber.telephoneType.displayValue}</option>
+		                      			</select>
+		                        		${phoneNumber.telephoneNumber!}
+		                      			<a class="button">delete</a>
+											<input class="half" type="hidden" placeholder="Number" name="phoneNumbersRef" 
+		                      			value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />
+		                      				</span>
+									</#list>
 									
 									<#list referee.messengersRef! as messenger>
-	                    				<span name="${referee.id!}_hiddenMessengers" style="display:none">
-	                   		 				${messenger.messengerAddress!} <a class="button" id="delBtn" >delete</a>
-											<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress!}"}' />								
-											<br/>
-										</span>
+									<span name="${referee.id!}_hiddenMessengers" style="display:none" >
+                   		 				${messenger.messengerAddress!} <a class="button">delete</a>
+										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress!}"}' />								
+									</span>
                    				 	</#list>
 
 			                  	</tr>
@@ -221,23 +223,34 @@
                   		<div class="row">
                     		<span class="label">Telephone</span>
                     		<span class="hint"></span>
-                    		<div class="field">
+                    		<div class="field" id="phonenumbersref">
                     			<#list model.referee.phoneNumbers! as phoneNumber>
-		                      		<select class="half" value="${phoneType}">
+                    			<span name="phone_number_ref">
+		                      		<select class="half" value="${phoneNumber.telephoneType.displayValue}">
 		                        		<option>${phoneNumber.telephoneType.displayValue}</option>
 		                      		</select>
-		                      		<select class="half">
-		                        		<option>${phoneNumber.telephoneNumber}</option>
-		                      		</select>
+		                        		${phoneNumber.telephoneNumber}
 		                      		
 		                      		<a class="button">delete</a>
 		                      		
 		                      		<input class="half" type="hidden" placeholder="Number" name="phoneNumbersRef" 
 		                      			value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />
-		                      			
+		                      			</span>	
 		                      	</#list>
-	                      		<a class="button" href="#" style="width: 110px;">Add Phone</a>
                     		</div>
+                    		<select class="full" id="phoneTypeRef">
+                    			 <#list model.phoneTypes as phoneType >
+                      				<option value="${phoneType}">${phoneType.displayValue}</option>
+                      			</#list>
+                      			
+                      			</select>
+                      			<input type="text" placeholder="Number" id="phoneNumberRef"/>
+                     			 	<a class="button" id="addPhoneRefButton" style="width: 110px;">Add Phone</a>
+                     			 	 <#if model.hasError('phoneNumbersRef')>                           
+                            			<span class="invalid"><@spring.message  model.result.getFieldError('phoneNumbersRef').code /></span>                           
+                            		</#if>
+                      			
+                    		
                     	
                   		</div>
 
@@ -245,19 +258,25 @@
 	                  	<div class="row">
 	                  		<span class="label">Skype</span>
 	                    	<span class="hint"></span>
-	                    	<div class="field">
+	                    	<div class="field" id="messengersref">
 	                    		<#list model.referee.messengers! as messenger>
-	                      			<input class="full" type="text" placeholder="Skype address" value="${messenger.messengerAddress}"/>
+	                    			<span name="messenger_ref">
+                   		 				${messenger.messengerAddress} <a class="button">delete</a>
+										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress}"}' />								
+									</span>
 	                      		</#list>
+	                      			<input class="full" type="text" placeholder="Skype address" id="messengerAddressRef" />
+	                      			<a id="addMessengerRefButton" class="button" style="width: 110px;">Add Messenger</a>
+	                      			
 	                    	</div>
 	                  	</div>
                   	
                 	</div>
 
                 	<div class="buttons">
-                  		<a class="button" href="#">Cancel</a>
-                  		<button class="blue" type="submit" value="close" id="refereeSaveButton">Save and Close</button>
-                  		<button class="blue" type="submit" value="add">Save and Add</button>
+                  		 <a class="button" type="button" id="refereeCancelButton" name="refereeCancelButton">Cancel</a>
+                  		<button class="blue" type="button" value="close" id="refereeSaveButton">Save and Close</button>
+                  		<button class="blue" type="button" id="refereeSaveAndAddButton" value="add">Save and Add</button>
                 	</div>
 
 				</form>

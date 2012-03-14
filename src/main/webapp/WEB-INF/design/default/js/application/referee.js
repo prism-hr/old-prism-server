@@ -35,6 +35,42 @@ $('#refereeSaveButton').click(function(){
 				   });
 	});
 
+$('#refereeSaveAndAddButton').click(function(){
+	var postData ={ 
+			firstname: $("#ref_firstname").val(),
+			lastname: $("#ref_lastname").val(), 
+			relationship: $("#ref_relationship").val(), 
+			jobEmployer: $("#ref_employer").val(), 
+			jobTitle: $("#ref_position").val(), 
+			addressLocation: $("#ref_address_location").val(), 
+			addressPostcode: $("#ref_address_postcode").val(), 
+			addressCountry: $("#ref_address_country").val(), 
+			email: $("#ref_email").val(), 
+			application: $("#appId").val(),
+			refereeId: $("#refereeId").val(),
+			phoneNumbersRef: "",
+			messengersRef: ""
+	}
+	$.post( "/pgadmissions/update/refereeDetails" , $.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbersRef"]').serialize() + "&" + $('#messengersref input[name="messengersRef"]').serialize(),
+			
+			function(data) {
+		$('#referencesSection').html(data);
+	});
+});
+
+$('a[name="refereeCancelButton"]').click(function(){
+	$("#ref_firstname").val("");
+	$("#ref_lastname").val("");
+	$("#ref_relationship").val("");
+	$("#ref_employer").val("");
+	$("#ref_position").val("");
+	$("#ref_address_location").val("");
+	$("#ref_address_postcode").val("");
+	$("#ref_address_country").val("");
+	$("#ref_email").val("");
+	$("#ref_address_country").val("");
+});
+
 $('a[name="refereeEditButton"]').click(function(){
 	var id = this.id;
 	id = id.replace('referee_', '');

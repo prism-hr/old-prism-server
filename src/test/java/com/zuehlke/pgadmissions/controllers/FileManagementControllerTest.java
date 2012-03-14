@@ -30,6 +30,7 @@ public class FileManagementControllerTest {
 	private FileManagementController controller;
 	private ApplicationsService applicationsServiceMock;
 	private RegisteredUser currentUser;
+	
 
 	@Test
 	public void shouldGetApplicationFormFromService() {
@@ -57,8 +58,6 @@ public class FileManagementControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		controller.getApplicationForm(2);
-
-
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -107,14 +106,14 @@ public class FileManagementControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 		ModelAndView modelAndView = controller.uploadFile(applicationForm, DocumentType.CV, multipartFileMock);
 		assertEquals("redirect:/application", modelAndView.getViewName());
-		assertEquals(8, modelAndView.getModel().get("id"));
-
-		
+		assertEquals(8, modelAndView.getModel().get("id"));		
 	}
+	
 
 	@Before
 	public void setup() {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		
 		controller = new FileManagementController(applicationsServiceMock);
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);

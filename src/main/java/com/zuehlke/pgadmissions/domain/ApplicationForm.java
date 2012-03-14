@@ -101,8 +101,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")	
 	private List<Document> supportingDocuments= new ArrayList<Document>();
-	
-	
+		
 	public List<Qualification> getQualifications() {
 		return qualifications;
 	}
@@ -293,7 +292,8 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public void setSupportingDocuments(List<Document> supportingDocuments) {
-		this.supportingDocuments = supportingDocuments;
+		this.supportingDocuments.clear();
+		this.supportingDocuments.addAll(supportingDocuments);
 	}
 }
 

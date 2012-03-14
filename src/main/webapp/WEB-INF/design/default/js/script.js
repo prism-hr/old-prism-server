@@ -97,7 +97,11 @@ $(document).ready(function()
   });
   
   // Date pickers.
-  $('input.date').datepicker({ dateFormat: 'yy/mm/dd' });
+  $('input.date').datepicker({
+	  				dateFormat: 'dd-M-yy',
+	 				changeMonth: true,
+	  				changeYear: true,
+	  				yearRange: '1900:defaultDate' });
   
   // Sortable tables.
   $('table.data').tablesorter();

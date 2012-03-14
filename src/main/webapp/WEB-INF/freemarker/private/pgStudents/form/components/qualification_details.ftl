@@ -39,24 +39,24 @@
 		                
 		                	<#list model.applicationForm.qualifications as qualification>
 			                	<tr>
-				                  	<td><a class="row-arrow" id="qualification_${qualification.id}" name ="editQualificationLink">-</a></td>
-				                  	<td>${qualification.qualificationType}</td>
-				                  	<td>${qualification.qualificationGrade}</td>
-				                  	<td>${qualification.qualificationInstitution}</td>
+				                  	<td><a class="row-arrow" id="qualification_${qualification.id!}" name ="editQualificationLink">-</a></td>
+				                  	<td>${qualification.qualificationType!}</td>
+				                  	<td>${qualification.qualificationGrade!}</td>
+				                  	<td>${qualification.qualificationInstitution!}</td>
 				                  	<td>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
 				                  	<td><a class="button-delete" href="#">delete</a></td>
 			                  	</tr>
 			                  	
-                             	<input type="hidden" id="${qualification.id}_qualificationIdDP" value="${qualification.id}"/>
-                             	<input type="hidden" id="${qualification.id}_qualificationInstitutionDP" value="${qualification.qualificationInstitution!}"/> 
-                           		<input type="hidden" id="${qualification.id}_qualificationProgramNameDP" value="${qualification.qualificationProgramName!}"/> 
-                             	<input type="hidden"  id="${qualification.id}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/> 
-                            	<input type="hidden"  id="${qualification.id}_qualificationLanguageDP" value="${qualification.qualificationLanguage!}"/> 
-                            	<input type="hidden"  id="${qualification.id}_qualificationLevelDP" value="${qualification.qualificationLevel!}"/> 
-                             	<input type="hidden"  id="${qualification.id}_qualificationTypeDP" value="${qualification.qualificationType!}"/> 
-                             	<input type="hidden"  id="${qualification.id}_qualificationGradeDP" value="${qualification.qualificationGrade!}"/> 
-                             	<input type="hidden"  id="${qualification.id}_qualificationScoreDP" value="${qualification.qualificationScore!}"/> 
-                             	<input type="hidden"  id="${qualification.id}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
+                             	<input type="hidden" id="${qualification.id!}_qualificationIdDP" value="${qualification.id!}"/>
+                             	<input type="hidden" id="${qualification.id!}_qualificationInstitutionDP" value="${qualification.qualificationInstitution!}"/> 
+                           		<input type="hidden" id="${qualification.id!}_qualificationProgramNameDP" value="${qualification.qualificationProgramName!}"/> 
+                             	<input type="hidden"  id="${qualification.id!}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/> 
+                            	<input type="hidden"  id="${qualification.id!}_qualificationLanguageDP" value="${qualification.qualificationLanguage!}"/> 
+                            	<input type="hidden"  id="${qualification.id!}_qualificationLevelDP" value="${qualification.qualificationLevel!}"/> 
+                             	<input type="hidden"  id="${qualification.id!}_qualificationTypeDP" value="${qualification.qualificationType!}"/> 
+                             	<input type="hidden"  id="${qualification.id!}_qualificationGradeDP" value="${qualification.qualificationGrade!}"/> 
+                             	<input type="hidden"  id="${qualification.id!}_qualificationScoreDP" value="${qualification.qualificationScore!}"/> 
+                             	<input type="hidden"  id="${qualification.id!}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
 			                  	
 							</#list>
 										
@@ -116,17 +116,14 @@
 		                    <div class="field">
 			                    
 			                    <input id="qualificationStartDate" class="half date" type="text" 
-			                    								value="${(model.qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"
-			                    								<#if model.applicationForm.isSubmitted()>
-                                      disabled="disabled">
-                                </#if>
-                                </input>
+			                    								value="${(model.qualification.qualificationStartDate?string('yyyy/MM/dd'))!}" />
 			                    <#if model.hasError('qualificationStartDate')>
 			                    	<span class="invalid"><@spring.message  model.result.getFieldError('qualificationStartDate').code /></span>
 			                    </#if>
 			                    
 		                    </div>
 	                 	</div>
+
 	                
                   		<!-- Language (in which programme was undertaken) -->
                   		<div class="row">
@@ -225,13 +222,10 @@
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     			<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" 
-                    							value="${(model.qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"
-                    							<#if model.applicationForm.isSubmitted()>
-                                      disabled="disabled">
-                                </#if>
-                                </input>
+                    							value="${(model.qualification.qualificationAwardDate?string('yyyy/MM/dd'))!}"/>
                     		</div>
                   		</div>
+
 
                   		<!-- Attachment / supporting document 
                   		<div class="row">

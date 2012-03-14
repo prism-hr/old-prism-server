@@ -1,9 +1,8 @@
 $(document).ready(function(){
 
 	
-	$('#primaryNationalityUploadButton').on("click", function(){
-		$('#documentUploadForm').attr("action", "/pgadmissions/documents");
-		$('#documentUploadForm').submit();
+	$('a[name="deleteButton"]').click( function(){	
+		$(this).parent("form").submit();
 	});
 
 	

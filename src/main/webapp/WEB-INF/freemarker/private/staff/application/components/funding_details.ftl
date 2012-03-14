@@ -41,12 +41,19 @@
 		                  	<td>${funding.type}</td>
 		                  	<td>${funding.description}</td>
 		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
+		                  	<input type="hidden" id="${funding.id}_fundingIdDP" value="${funding.id}"/>
+                            <input type="hidden" id="${funding.id}_fundingTypeDP" value="${funding.type}"/>
+                            <input type="hidden" id="${funding.id}_fundingValueDP" value="${funding.value}"/>
+                            <input type="hidden" id="${funding.id}_fundingDescriptionDP" value="${funding.description}"/>
+                            <input type="hidden" id="${funding.id}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
 		                </tr>
 					</#list>				               
 				</tbody>
 			
 			</table>
         </#if>
+        <!-- Non-rendering data -->
+        <input type="hidden" id="fundingId" name="fundingId"/>
               
 		<form>
                 
@@ -57,7 +64,7 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                 	
                 	<div class="field">
-						${model.funding.fundingType!}
+                	<input id="fundingType" name="fundingType" readonly="readonly" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
 					</div>
 				</div>
 
@@ -66,7 +73,7 @@
                 	<span class="label">Description</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
 					<div class="field">
-						${model.funding.fundingDescription!}                    
+					<input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${model.funding.fundingDescription!}" />
 					</div>
 				</div>
                   
@@ -75,7 +82,7 @@
                   	<span class="label">Value of Award</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-						${model.funding.fundingValue!}                    
+                    <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${model.funding.fundingValue!}" />
 					</div>
 				</div>
                   
@@ -84,7 +91,8 @@
                   	<span class="label" data-desc="Tooltip demonstration.">Award Date</span>
                     <span class="hint"></span>
                     <div class="field">
-						${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}                    
+                     <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}"
+                                                disabled="disabled"/>
 					</div>
                 </div>
                 

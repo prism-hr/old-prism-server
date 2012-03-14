@@ -30,7 +30,11 @@
                     <label class="label">Study Option</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                		<select class="full" id="studyOption" name="studyOption">
+                		<select class="full" id="studyOption" name="studyOption" 
+                		<#if model.applicationForm.isSubmitted()>
+                		disabled="disabled">
+                		</#if>
+                		  <option value="">Select...</option>
                 		  <#list model.studyOptions as studyOption>
                               <option value="${studyOption}"
                               <#if model.applicationForm.programmeDetails.studyOption?? &&  model.applicationForm.programmeDetails.studyOption == studyOption >
@@ -64,13 +68,14 @@
                  <div id="supervisor_div">
                    <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
                    <span name="supervisor_span">
-                        ${supervisor.email}<a class="button">delete</a>
+                        ${supervisor.email}<#if !model.applicationForm.isSubmitted()><a class="button">delete</a></#if>
                        <input type="hidden" name="supervisors" value='{"email" :"${supervisor.email}", "primarySupervisor":"${supervisor.primarySupervisor}", "awareSupervisor":"${supervisor.awareSupervisor}"}' />                             
-                       <br/>
+                       <p></p>
                   </span>
                   </#list>
                 </div>
-                  
+                
+                <#if !model.applicationForm.isSubmitted()>  
                 <!-- supervisor rows -->
                 <table class="multiples">
                 	<colgroup>
@@ -101,6 +106,7 @@
                     
 				</table>
                     <a id="addSupervisorButton" class="button" style="width: 110px;">Add Supervisor</a>
+                    </#if>
 			</div>
 
             <div>
@@ -108,7 +114,11 @@
                 <div class="row">
                 	<label class="label">Start Date</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <input class="full date" type="date" id="startDate" name="startDate" value="${(model.applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}"/>
+                    <input class="full date" type="date" id="startDate" name="startDate" value="${(model.applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}"
+                    <#if model.applicationForm.isSubmitted()>
+                        disabled="disabled">
+                        </#if>
+                    </input>
                     <#if model.hasError('startDate')>                            
                           <span style="color:red;"><@spring.message  model.result.getFieldError('startDate').code /></span>                           
                     </#if>
@@ -119,7 +129,11 @@
                 	<label class="label">Referrer</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<select class="full" id="referrer" name="referrer">
+                    	<select class="full" id="referrer" name="referrer"
+                    	<#if model.applicationForm.isSubmitted()>
+                        disabled="disabled">
+                        </#if>
+                    	<option value="">Select...</option>
                     	 <#list model.referrers as referrer>
                               <option value="${referrer}"
                                <#if model.applicationForm.programmeDetails.referrer?? &&  model.applicationForm.programmeDetails.referrer == referrer >

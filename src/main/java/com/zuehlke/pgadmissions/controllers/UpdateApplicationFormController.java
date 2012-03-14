@@ -304,10 +304,6 @@ public class UpdateApplicationFormController {
 			refereeService.save(refereeDetails);
 		}
 
-		if (refereeDetails.getApplication() != null) {
-			//this is so that the entered values are re-displayed correctly on the form
-			//refereeDetails.getApplication().getReferees().add(refereeDetails);
-		}
 		ApplicationPageModel applicationPageModel = new ApplicationPageModel();
 		applicationPageModel.setApplicationForm(refereeDetails.getApplication());
 		applicationPageModel.setUser(getCurrentUser());

@@ -38,81 +38,65 @@
 			    </header>
 	    
 		    	<!-- New user form. -->
-		    	<form action="" method="post">
+		    	<form>
 		      		<section id="form-box">
 		        		<h1>New User? Please register</h1>
 		        
 		        		<div class="row">
 		        			<label for="field_first_name">First name</label>
 		          			<div class="field">
-		            			<input id="field_first_name" type="text" name="firstname" />
+		            			<input id="rec_firstname" type="text" name="firstname" value="${model.record.firstname!}" />
+		          			<#if model.hasError('firstname')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('firstname').code /></span>                           
+                            </#if>
+		          			
 		          			</div>
 		        		</div>
 		        
 		        		<div class="row">
-		        			<label for="field_surname">Surname</label>
+		        			<label for="field_surname">Last name</label>
 		          			<div class="field">
-		            			<input id="field_surname" type="text" name="surname" />
+		            			<input id="rec_lastname" type="text" name="surname" value="${model.record.lastname!}" />
+		            		<#if model.hasError('lastname')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('lastname').code /></span>                           
+                            </#if>
 		          			</div>
 		        		</div>
 		        
 		        		<div class="row">
 		        			<label for="field_email">Email Address</label>
 		          			<div class="field">
-		            			<input id="field_email" type="text" name="email" />
+		            			<input id="rec_email" type="text" name="email" value="${model.record.email!}" />
+		            		<#if model.hasError('email')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                           
+                            </#if>
 		          			</div>
 		        		</div>
 		        
 		        		<div class="row">
-		        			<label for="field_phone">Phone Number</label>
+		        			<label for="field_password">Password</label>
 		          			<div class="field">
-		            			<input id="field_phone" type="text" name="phone" />
-		          			</div>
-		        		</div>
-		        
-		        		<div class="row">
-		        			<label for="field_home_1">Home</label>
-		          			<div class="field">
-		            			<input id="field_home_1" type="text" name="home_1" /><br>
-		            			<input id="field_home_2" type="text" name="home_2" /><br>
-		            			<input id="field_home_3" type="text" name="home_3" />
-		          			</div>
-		        		</div>
-		        
-		        		<div class="row">
-		        			<label for="field_postcode">Post / ZIP code</label>
-		          			<div class="field">
-		            			<input id="field_postcode" type="text" name="postcode" />
-		          			</div>
-		        		</div>
-		        
-		        		<div class="row">
-		        			<label for="field_country">Country of Birth</label>
-		          			<div class="field">
-		            			<select id="field_country">
-		              				<option>Azerbaijan</option>
-		            			</select>
-		          			</div>
-		        		</div>
-		        
-		        		<div class="row">
-		        			<label for="field_password" id="field_country">Password</label>
-		          			<div class="field">
-		            			<input id="field_password" type="password" name="password" />
+		            			<input id="rec_password" type="password" name="password" />
+		            		<#if model.hasError('password')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('password').code /></span>                           
+                            </#if>
 		          			</div>
 		        		</div>
 		        
 		        		<div class="row">
 		        			<label for="field_password_confirm">Confirm Password</label>
 		          			<div class="field">
-		            			<input id="field_password_confirm" type="password" name="password_confirm" />
+		            			<input id="rec_password_confirm" type="password" name="password_confirm" />
+		            		<#if model.hasError('confirmPassword')>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('confirmPassword').code /></span>                           
+                            </#if>
 		          			</div>
 		        		</div>
 		        
 		      		</section>
 		  
 		      		<!-- Registration button. -->
-		      		<button id="big-button" type="submit">Submit</button>
+		      		<button id="registerSubmit" type="button" value ="Submit"> Submit </button>
 		    	</form>
 	  		</div>
 	  
@@ -127,9 +111,8 @@
 		  	</div>
 	
 		</div>
-	
 		<!-- Scripts -->
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/register.js'/>"></script>   
 	</body>
 </html>

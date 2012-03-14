@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
@@ -11,8 +12,21 @@ public class DocumentBuilder {
 
 	private byte[] content;
 	
+	private ApplicationForm applicationForm;
+	
+	private String contentType;
 	private DocumentType type;
 	
+	
+	public DocumentBuilder applicationForm(ApplicationForm applicationForm){
+		this.applicationForm = applicationForm;
+		return this;
+	}
+	
+	public DocumentBuilder contentType(String contentType){
+		this.contentType = contentType;
+		return this;
+	}
 	
 	public DocumentBuilder type(DocumentType type){
 		this.type = type;
@@ -41,6 +55,8 @@ public class DocumentBuilder {
 		document.setFileName(fileName);
 		document.setContent(content);
 		document.setType(type);
+		document.setContentType(contentType);
+		document.setApplicationForm(applicationForm);
 		return document;
 	}
 }

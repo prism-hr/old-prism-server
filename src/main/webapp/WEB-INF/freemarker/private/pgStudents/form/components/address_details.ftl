@@ -131,7 +131,7 @@
                     	<div class="field">
                       		<label>from 
                       				<input class="half date" type="text" id="addressStartDate" name="addressStartDate" 
-                      						value="${(model.address.addressStartDate?string('yyyy/MM/dd'))!}"/>
+                      						value="${(model.address.addressStartDate?string('dd-MMM-yyyy'))!}"/>
                       		</label>
                       		
 							<#if model.hasError('addressStartDate')>                           
@@ -140,7 +140,7 @@
                       		 
                       		<label>to 
                       			<input class="half date" type="text" id="addressEndDate" name="addressEndDate" 
-                      									value="${(model.address.addressEndDate?string('yyyy/MM/dd'))!}"/>
+                      									value="${(model.address.addressEndDate?string('dd-MMM-yyyy'))!}"/>
                       		</label>
                             <#if model.hasError('addressEndDate')>                           
                             	<span class="invalid"><@spring.message  model.result.getFieldError('addressEndDate').code /></span>                           

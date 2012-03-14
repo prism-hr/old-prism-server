@@ -71,11 +71,16 @@
                 	<span class="label">Employer</span>
                     <span class="hint"></span>
                     <div class="field">
+                    <#if !model.applicationForm.isSubmitted()>
                     	<input class="full" type="text" id="position_employer" name="position_employer" 
                     					value="${model.employmentPosition.position_employer!}" placeholder="Provider of employment" />
                         <#if model.hasError('position_employer')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_employer').code /></span>                           
                         </#if>
+                    <#else>
+                        <input readonly="readonly" class="full" type="text" id="position_employer" name="position_employer" 
+                                        value="${model.employmentPosition.position_employer!}" placeholder="Provider of employment" />
+                    </#if>    
                    	</div>
                 </div>
                 
@@ -84,11 +89,16 @@
                 	<span class="label">Position</span>
                     <span class="hint"></span>
                     <div class="field">
+                        <#if !model.applicationForm.isSubmitted()>
                     	<input class="full" type="text" id="position_title" name="position_title" 
                     					value="${model.employmentPosition.position_title!}" placeholder="Title of position" />
                         <#if model.hasError('position_title')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_title').code /></span>                           
                         </#if>
+                        <#else>
+                            <input readonly="readonly" class="full" type="text" id="position_title" name="position_title" 
+                                        value="${model.employmentPosition.position_title!}" placeholder="Title of position" />
+                        </#if> 
                     </div>
                 </div>
                 
@@ -97,6 +107,7 @@
                     <span class="label">Remit</span>
                     <span class="hint"></span>
                     <div class="field">
+                        <#if !model.applicationForm.isSubmitted()>
                       	<textarea cols="70" rows="3" class="max" id="position_remit" 
                       		name="position_remit" value="${model.employmentPosition.position_remit!}" 
                       		placeholder="Summary of responsibilities"></textarea>
@@ -104,6 +115,12 @@
 						<#if model.hasError('position_remit')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_remit').code /></span>                           
 						</#if>
+						 <#else>
+						    <textarea readonly="readonly" cols="70" rows="3" class="max" id="position_remit" 
+                            name="position_remit" value="${model.employmentPosition.position_remit!}" 
+                            placeholder="Summary of responsibilities"></textarea>  
+						 </#if> 
+						 
                     </div>
              	</div>
                 
@@ -113,7 +130,11 @@
                     <span class="hint"></span>
                     <div class="field">
                       	<input class="half date" type="text" id="position_startDate" name="position_startDate" 
-                      			value="${(model.employmentPosition.position_startDate?string('dd-MMM-yyyy'))!}"/>
+                      			value="${(model.employmentPosition.position_startDate?string('dd-MMM-yyyy'))!}"
+                      			<#if model.applicationForm.isSubmitted()>
+                                          disabled="disabled">
+                                </#if>
+                        </input>        
                       	<#if model.hasError('position_startDate')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_startDate').code /></span>                           
                         </#if>
@@ -126,7 +147,11 @@
                     <span class="hint"></span>
                     <div class="field">
                       	<input class="half date" type="text" id="position_endDate" name="position_endDate" 
-                      			value="${(model.employmentPosition.position_endDate?string('dd-MMM-yyyy'))!}"/>
+                      			value="${(model.employmentPosition.position_endDate?string('dd-MMM-yyyy'))!}"
+                      			<#if model.applicationForm.isSubmitted()>
+                                          disabled="disabled">
+                                </#if>
+                      	</input>		
 						<#if model.hasError('position_endDate')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_endDate').code /></span>                           
                         </#if>
@@ -138,15 +163,20 @@
                     <span class="label">Language of work</span>
                     <span class="hint"></span>
                     <div class="field">
+                    <#if !model.applicationForm.isSubmitted()>
 						<input class="full" type="text" id="position_language" 
 									name="position_language" value="${model.employmentPosition.position_language!}"/>
 						<#if model.hasError('position_language')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_language').code /></span>                           
                         </#if>
+                     <#else>
+                        <input readonly="readonly" class="full" type="text" id="position_language" 
+                                    name="position_language" value="${model.employmentPosition.position_language!}"/>
+                     </#if>   
                     </div>
                	</div>
                 
-                <!-- Document -->
+                <!-- Document
                 <div class="row">
                     <span class="label">Supporting Document</span>
                     <span class="hint"></span>
@@ -156,14 +186,18 @@
                       	<a class="button" href="#">Upload</a>
                       	<a class="button" href="#">Add Document</a>
                     </div>  
-              	</div>
+              	</div>  -->
 
 			</div>
 
 			<div class="buttons">
+			<#if !model.applicationForm.isSubmitted()>
             	<a class="button" type="button" id="positionCancelButton" name="positionCancelButton">Cancel</a>
                 <button class="blue" type="button" value="close" id="positionSaveAndCloseButton" name="positionSaveButton">Save and Close</button>
                 <button class="blue" type="button" value="add" id="positionSaveAndAddButton" name="positionSaveAndAddButton">Save and Add</button>
+            <#else>
+                <a id="close-section-button"class="button blue">Close</a>
+            </#if>    
             </div>
 
 		</form>

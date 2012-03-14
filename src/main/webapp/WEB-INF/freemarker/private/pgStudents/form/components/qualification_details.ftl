@@ -116,7 +116,7 @@
 		                    <div class="field">
 			                    
 			                    <input id="qualificationStartDate" class="half date" type="text" 
-			                    								value="${(model.qualification.qualificationStartDate?string('yyyy/MM/dd'))!}" 
+			                    								value="${(model.qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}" 
 			                    								<#if model.applicationForm.isSubmitted()>
                                             disabled="disabled"
                                             </#if>>
@@ -138,7 +138,7 @@
                       			<input id="qualificationLanguage" class="full" type="text" 
 			                    								value="${model.qualification.qualificationLanguage!}"/>
 								<#if model.hasError('qualificationLanguage')>                    		
-                    				<span class="invalid;"><@spring.message  model.result.getFieldError('qualificationLanguage').code /></span>                    		
+                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationLanguage').code /></span>                    		
                     			</#if>
                     			<#else>
                     			 <input readonly="readonly" id="qualificationLanguage" class="full" type="text" 
@@ -157,7 +157,7 @@
                       			<input id="qualificationLevel" class="full" type="text" 
 			                    								value="${model.qualification.qualificationLevel!}"/>
 								<#if model.hasError('qualificationLevel')>                    		
-                    				<span class="invalid;"><@spring.message  model.result.getFieldError('qualificationLevel').code /></span>                    		
+                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationLevel').code /></span>                    		
                     			</#if>
                     		<#else>
                     		      <input readonly="readonly" id="qualificationLevel" class="full" type="text" 
@@ -175,7 +175,7 @@
                       			<input id="qualificationType" class="full" type="text" 
 			                    								value="${model.qualification.qualificationType!}"/>
 								<#if model.hasError('qualificationType')>                    		
-                    				<span class="invalid;"><@spring.message  model.result.getFieldError('qualificationType').code /></span>                    		
+                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationType').code /></span>                    		
                     			</#if>
                     			<#else>
                     			 <input readonly="readonly" id="qualificationType" class="full" type="text" 
@@ -193,7 +193,7 @@
                       			<input id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction"
 			                    								value="${model.qualification.qualificationGrade!}"/>
 								<#if model.hasError('qualificationGrade')>                    		
-                    				<span class="invalid;"><@spring.message  model.result.getFieldError('qualificationGrade').code /></span>                    		
+                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationGrade').code /></span>                    		
                     			</#if>
                     			<#else>
                     			     <input readonly="readonly" id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction"
@@ -211,7 +211,7 @@
                       			<input id="qualificationScore" class="full" type="text" placeholder="e.g. 114"
 			                    								value="${model.qualification.qualificationScore!}"/>
 								<#if model.hasError('qualificationScore')>                    		
-                    				<span class="invalid;"><@spring.message  model.result.getFieldError('qualificationScore').code /></span>                    		
+                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationScore').code /></span>                    		
                     			</#if>
                     			<#else>
                     			 <input readonly="readonly" id="qualificationScore" class="full" type="text" placeholder="e.g. 114"
@@ -226,7 +226,7 @@
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     			<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" 
-                    							value="${(model.qualification.qualificationAwardDate?string('yyyy/MM/dd'))!}"
+                    							value="${(model.qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"
                     							<#if model.applicationForm.isSubmitted()>
                                             disabled="disabled"
                             </#if>>

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Document;
 
+
 @Repository
 public class DocumentDAO {
 
@@ -28,6 +29,11 @@ public class DocumentDAO {
 
 	public Document getDocumentbyId(Integer id) {
 		return (Document) sessionFactory.getCurrentSession().get(Document.class, id);
+	}
+
+	public void deleteDocument(Document document) {
+		sessionFactory.getCurrentSession().delete(document);
+		
 	}
 
 }

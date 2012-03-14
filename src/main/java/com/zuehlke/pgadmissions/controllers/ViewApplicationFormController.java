@@ -56,7 +56,7 @@ public class ViewApplicationFormController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getViewApplicationPage(@RequestParam(required = false) String view, @RequestParam Integer id) {
+	public ModelAndView getViewApplicationPage(@RequestParam(required = false) String view, @RequestParam Integer id, @RequestParam(required = false) String uploadErrorCode) {
 		RegisteredUser currentuser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		ApplicationForm applicationForm = applicationService.getApplicationById(id);
 		if (applicationForm == null || !currentuser.canSee(applicationForm)) {
@@ -76,13 +76,20 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setStudyOptions(StudyOption.values());
 		viewApplicationModel.setReferrers(Referrer.values());
 		viewApplicationModel.setPhoneTypes(PhoneType.values());
-		viewApplicationModel.setDocumentTypes(DocumentType.values());
+
 		viewApplicationModel.setLanguageAptitudes(LanguageAptitude.values());
 		viewApplicationModel.setGenders(Gender.values());
+		viewApplicationModel.setDocumentTypes(DocumentType.values());
+		if(applicationForm.isCVUploaded()){
+			viewApplicationModel.getDocumentTypes().remove(DocumentType.CV);
+		}
+		if(applicationForm.isPersonalStatementUploaded()){
+			viewApplicationModel.getDocumentTypes().remove(DocumentType.PERSONAL_STATEMENT);
+		}
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}
-
+		viewApplicationModel.setUploadErrorCode(uploadErrorCode);
 		viewApplicationModel.setUser(currentuser);
 		if (applicationForm.hasComments()) {
 			if (currentuser.isInRole(Authority.ADMINISTRATOR) || currentuser.isInRole(Authority.APPROVER)) {

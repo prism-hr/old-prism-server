@@ -246,7 +246,9 @@
 	                  		<span class="label">Skype</span>
 	                    	<span class="hint"></span>
 	                    	<div class="field">
-	                      		<input class="full" type="text" placeholder="Skype address" value="${(messenger.messengerAddress)!}"/>
+	                    		<#list model.referee.messengers! as messenger>
+	                      			<input class="full" type="text" placeholder="Skype address" value="${messenger.messengerAddress}"/>
+	                      		</#list>
 	                    	</div>
 	                  	</div>
                   	

@@ -96,7 +96,7 @@
 		                    <span class="hint" data-desc="Tooltip demonstration."></span>
 		                    <div class="field">
 		                    <input id="qualificationStartDate" class="half date" type="text" 
-                                                                value="${(model.qualification.qualificationStartDate?string('yyyy/MM/dd'))!}" 
+                                                                value="${(model.qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}" 
                                             disabled="disabled">
                             </input>
 		                    </div>
@@ -158,7 +158,7 @@
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     		<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" 
-                                                value="${(model.qualification.qualificationAwardDate?string('yyyy/MM/dd'))!}"
+                                                value="${(model.qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"
                                             disabled="disabled">
                             </input>
                     		</div>

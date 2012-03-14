@@ -76,8 +76,7 @@
                     	<span class="hint"></span>
                     	<div class="field">
                     	   <#if !model.applicationForm.isSubmitted()>
-                      		<textarea id="addressLocation" class="max" rows="6" cols="80" 
-                      								value="${model.address.addressLocation!}"></textarea>
+                      		<textarea id="addressLocation" class="max" rows="6" cols="80" >${model.address.addressLocation!}</textarea>
 							
                                 <#if model.hasError('addressLocation')>                           
                             	   <span class="invalid"><@spring.message  model.result.getFieldError('addressLocation').code /></span>                           
@@ -116,6 +115,7 @@
 	                      	<#if model.applicationForm.isSubmitted()>
                                             disabled="disabled"
                             </#if>>
+                            <option value="">Select...</option>
                             	<#list model.countries as country>
                                 	<option value="${country.name}">${country.name}</option>               
                             	</#list>

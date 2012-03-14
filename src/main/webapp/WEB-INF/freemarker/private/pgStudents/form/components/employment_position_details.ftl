@@ -109,8 +109,8 @@
                     <div class="field">
                         <#if !model.applicationForm.isSubmitted()>
                       	<textarea cols="70" rows="3" class="max" id="position_remit" 
-                      		name="position_remit" value="${model.employmentPosition.position_remit!}" 
-                      		placeholder="Summary of responsibilities"></textarea>
+                      		name="position_remit" 
+                      		placeholder="Summary of responsibilities">${model.employmentPosition.position_remit!}</textarea>
 							
 						<#if model.hasError('position_remit')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_remit').code /></span>                           

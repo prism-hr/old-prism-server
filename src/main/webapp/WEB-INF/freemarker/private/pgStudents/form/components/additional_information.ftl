@@ -5,15 +5,14 @@
 	</h2>
     
     <div>
-    	<form method="post" action="woooop">
+    	<form>
               
         	<!-- Free text field for info. -->
-            <div>
+            <div class="row">
             <#if !model.applicationForm.isSubmitted()>
             	<textarea id="additionalInformation" name="additionalInformation" class="max" rows="5" cols="90" >${model.applicationForm.additionalInformation!}</textarea>
             	<#if model.hasError('additionalInformation')>                           
                     <span class="invalid"><@spring.message  model.result.getFieldError('additionalInformation').code /></span><br/>
-                    <p></p>                        
                 </#if>
                 <#else>
                     <textarea readonly="readonly" id="additionalInformation" name="additionalInformation" class="max" rows="5" cols="90" >${model.applicationForm.additionalInformation!}</textarea>

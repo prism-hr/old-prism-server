@@ -120,7 +120,7 @@ function msg(message, type)
   $msg.fadeIn(700).delay(3000).fadeOut(700);
 }
 
-// Back to top functionalirt, project manager style.
+// Back to top functionality, project manager style.
 function backToTop()
 {
 	$.scrollTo('#wrapper', 900);

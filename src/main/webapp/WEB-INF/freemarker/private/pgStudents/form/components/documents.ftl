@@ -33,11 +33,12 @@
 		                	<#if document.fileName?length <40 >${document.fileName}<#else>${document.fileName?substring(0,37)}...</#if></a></td>
 		                <td>${(document.dateUploaded?string('dd-MMM-yyyy'))!}</td>
 		                <td>
-		                	<form method="Post" action="<@spring.url '/delete'/>" style="padding:0">
-		                		<input type="hidden" name="documentId" value="${document.id}"/>
-		                		<a name="deleteButton" class="button-delete">delete</a>     
-		                		 
-		                	</form>		                
+		                	<#if !model.applicationForm.submitted>
+			                	<form method="Post" action="<@spring.url '/delete'/>" style="padding:0">
+			                		<input type="hidden" name="documentId" value="${document.id}"/>		                		
+			                		<a name="deleteButton" class="button-delete">delete</a>
+			                	</form>
+		                	</#if>
 		               </td>
 	                </tr>
 					</#list>
@@ -53,7 +54,7 @@
                     <span class="label">Type</span>
                     <span class="hint"></span>
                     <div class="field">
-                    	<select class="full" name="documentType">
+                    	<select class="full" name="documentType" <#if model.applicationForm.submitted>disabled="disabled"</#if>>
                     		<#list model.documentTypes as documentType>                    			
                     			<option value="${documentType}">${documentType.displayValue}</option>
                     		</#list>	              
@@ -66,8 +67,8 @@
                     <span class="label">Document</span>
                     <span class="hint"></span>
                     <div class="field">
-                		<input class="full" type="file" name="file" value="" />                      	
-                        <button class="blue" type="submit" value="close">Upload</button>          
+                		<input class="full" type="file" name="file" value=""  <#if model.applicationForm.submitted>disabled="disabled"</#if>/>                      	
+                        <button class="blue" type="submit" value="close"  <#if model.applicationForm.submitted>disabled="disabled"</#if>>Upload</button>          
                     </div>  
 				</div>
 				<#if model.uploadErrorCode?? >

@@ -85,12 +85,12 @@ $('a[name="refereeEditButton"]').click(function(){
 	$("#ref_address_country").val($('#'+id+"_addressCountry").val());
 	$("#ref_email").val($('#'+id+"_email").val());
 	
+	$('#phonenumbersref').html("");
 	$("span[name='"+id+"_hiddenPhones']").each(function(){
-		$('#phonenumbersref').html("");
 		$('#phonenumbersref').append('<span name="phone_number_ref">'+ $(this).html() + '</span>');
 	});
+	$('#messengersref').html("");
 	$("span[name='"+id+"_hiddenMessengers']").each(function(){
-		$('#messengersref').html("");
 		$('#messengersref').append('<span name="messenger_ref">'+ $(this).html() + '</span>');
 		  
 	});

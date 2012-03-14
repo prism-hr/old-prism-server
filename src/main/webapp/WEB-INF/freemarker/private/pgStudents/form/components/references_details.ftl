@@ -59,9 +59,7 @@
 									
 									<#list referee.phoneNumbersRef! as phoneNumber>
 									<span name="${referee.id!}_hiddenPhones" style="display:none" >
-                   		 				<select class="half" value="${phoneNumber.telephoneType.displayValue!}"> 
-                   		 				<option>${phoneNumber.telephoneType.displayValue}</option>
-		                      			</select>
+                   		 				${phoneNumber.telephoneType.displayValue!}
 		                        		${phoneNumber.telephoneNumber!}
 		                      			<a class="button">delete</a>
 											<input class="half" type="hidden" placeholder="Number" name="phoneNumbersRef" 
@@ -221,43 +219,31 @@
 
                   		<!-- Telephone -->
                   		<div class="row">
-                    		<span class="label">Telephone</span>
-                    		<span class="hint"></span>
+                     			 	 <#if model.hasError('phoneNumbersRef')>                           
+                            			<span class="invalid"><@spring.message  model.result.getFieldError('phoneNumbersRef').code /></span>                           
+                            		</#if>
                     		<div class="field" id="phonenumbersref">
                     			<#list model.referee.phoneNumbers! as phoneNumber>
                     			<span name="phone_number_ref">
-		                      		<select class="half" value="${phoneNumber.telephoneType.displayValue}">
-		                        		<option>${phoneNumber.telephoneType.displayValue}</option>
-		                      		</select>
-		                        		${phoneNumber.telephoneNumber}
-		                      		
-		                      		<a class="button">delete</a>
-		                      		
-		                      		<input class="half" type="hidden" placeholder="Number" name="phoneNumbersRef" 
-		                      			value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />
-		                      			</span>	
+                   		 				${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} <a class="button">delete</a>
+										<input type="hidden" name="phoneNumbersRef" value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />								
+									</span>
+
 		                      	</#list>
                     		</div>
+                    		<span class="label">Telephone</span>
+                    		<span class="hint"></span>
                     		<select class="full" id="phoneTypeRef">
                     			 <#list model.phoneTypes as phoneType >
                       				<option value="${phoneType}">${phoneType.displayValue}</option>
                       			</#list>
-                      			
                       			</select>
-                      			<input type="text" placeholder="Number" id="phoneNumberRef"/>
+                      				<input type="text" placeholder="Number" id="phoneNumberRef"/>
                      			 	<a class="button" id="addPhoneRefButton" style="width: 110px;">Add Phone</a>
-                     			 	 <#if model.hasError('phoneNumbersRef')>                           
-                            			<span class="invalid"><@spring.message  model.result.getFieldError('phoneNumbersRef').code /></span>                           
-                            		</#if>
-                      			
-                    		
-                    	
                   		</div>
 
 	                  	<!-- Skype address -->
 	                  	<div class="row">
-	                  		<span class="label">Skype</span>
-	                    	<span class="hint"></span>
 	                    	<div class="field" id="messengersref">
 	                    		<#list model.referee.messengers! as messenger>
 	                    			<span name="messenger_ref">
@@ -265,10 +251,11 @@
 										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress}"}' />								
 									</span>
 	                      		</#list>
-	                      			<input class="full" type="text" placeholder="Skype address" id="messengerAddressRef" />
-	                      			<a id="addMessengerRefButton" class="button" style="width: 110px;">Add Messenger</a>
-	                      			
 	                    	</div>
+	                    	<span class="label">Skype</span>
+	                    	<span class="hint"></span>
+	                    	<input class="full" type="text" placeholder="Skype address" id="messengerAddressRef" />
+	                      		<a id="addMessengerRefButton" class="button" style="width: 110px;">Add Messenger</a>
 	                  	</div>
                   	
                 	</div>

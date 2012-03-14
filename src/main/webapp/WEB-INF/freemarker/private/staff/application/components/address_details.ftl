@@ -41,6 +41,16 @@
 				                <td>${address.startDate?string('yyyy/MM/dd')}</td>
 				                <td>${(address.endDate?string('yyyy/MM/dd'))!}</td>
 				                <td><a class="button-delete" type="submit">Delete</a></td>
+				                
+				                <input type="hidden" id="${address.id}_addressIdDP" value="${address.id}"/>
+                                <input type="hidden" id="${address.id}_locationDP" value="${address.location}"/>
+                                <input type="hidden" id="${address.id}_postCodeDP" value="${address.postCode}"/>
+                                <input type="hidden" id="${address.id}_countryDP" value="${address.country}"/>
+                                <input type="hidden" id="${address.id}_startDateDP" value="${address.startDate?string('dd-MMM-yyyy')}"/>
+                                <input type="hidden" id="${address.id}_endDateDP" value="${(address.endDate?string('dd-MMM-yyyy'))!}"/>
+                                <input type="hidden" id="${address.id}_purposeDP" value="${address.purpose}"/>
+                                <input type="hidden" id="${address.id}_contactAddressDP" value="${address.contactAddress}"/>
+                                
 							</tr>
 						</#list>
 					</tbody>
@@ -58,7 +68,8 @@
                     	<span class="label">Location</span>
                     	<span class="hint"></span>
                     	<div class="field">
-                      		${model.address.addressLocation!}
+                    	 <textarea readonly="readonly" id="addressLocation" class="max" rows="6" cols="80" 
+                                                    value="${model.address.addressLocation!}"></textarea>
                     	</div>
                   	</div>
 
@@ -67,7 +78,8 @@
                     	<span class="label">Postal Code</span>
                     	<span class="hint"></span>
                     	<div class="field">
-							${model.address.addressPostCode!}                    	
+                    	<input readonly="readonly" class="half" type="text" id="addressPostCode" 
+                                                name="addressPostCode" value="${model.address.addressPostCode!}" />
 						</div>
                   	</div>
 
@@ -75,7 +87,8 @@
                   	<div class="row">
                     	<span class="label">Country</span>
 	                    <div class="field">
-							${model.address.country!}	                      	
+	                    <input readonly="readonly" class="half" type="text" id="addressCountry" 
+                                                name="addressCountry" value="${model.address.country!}" />
 						</div>
 					</div>
 					
@@ -91,11 +104,15 @@
                     	<span class="hint"></span>
                     	<div class="field">
                       		<label>from 
-								${(model.address.addressStartDate?string('yyyy/MM/dd'))!}                      		
+                      		<input class="half date" type="text" id="addressStartDate" name="addressStartDate" 
+                                            value="${(model.address.addressStartDate?string('dd-MMM-yyyy'))!}"
+                                                disabled="disabled"/>
 							</label>
                       		
-                      		<label>to 
-                      			${(model.address.addressEndDate?string('yyyy/MM/dd'))!}
+                      		<label>to
+                      		<input class="half date" type="text" id="addressEndDate" name="addressEndDate" 
+                                                        value="${(model.address.addressEndDate?string('dd-MMM-yyyy'))!}"
+                                                            disabled="disabled"/>
                       		</label>
                     	</div>
                  	</div>
@@ -105,23 +122,28 @@
                     	<span class="label">Purpose</span>
                     	<span class="hint"></span>
                     	<div class="field">
-                      		${model.address.addressPurpose!}
+                    	 <input readonly="readonly" class="full" type="text" id="addressPurpose" name="addressPurpose" 
+                                        value="${model.address.addressPurpose!}" placeholder="e.g. work, travel" />
                     	</div>
                   	</div>
                   	
                 </div>
-
-                <#if model.address.addressContactAddress?? && model.address.addressContactAddress = true>
-                <div>
-                	<!-- Is contact address? -->
-                  	<div class="row">
-                    	<span class="label">&nbsp;</span>
-                    	<div class="field">
-                      		This is my contact address
-                    	</div>
-                  	</div>
+                
+                 <div>
+                    <!-- Is contact address? -->
+                    <div class="row">
+                        <span class="label">&nbsp;</span>
+                        <div class="field">
+                            <label>
+                                <input type="checkbox" name="isCA" id="isCA"
+                                      disabled="disabled">
+                                </input> This is my contact address
+                            </label>
+                            <input type="hidden" id="addressContactAddress" value="${model.address.addressContactAddress!}"/>
+                        </div>
+                    </div>
                 </div>
-                </#if>
+
 
                 <div class="buttons">
                   	<button class="blue" type="button">Close</button>

@@ -116,7 +116,11 @@
 		                    <div class="field">
 			                    
 			                    <input id="qualificationStartDate" class="half date" type="text" 
-			                    								value="${(model.qualification.qualificationStartDate?string('yyyy/MM/dd'))!}" />
+			                    								value="${(model.qualification.qualificationStartDate?string('yyyy/MM/dd'))!}" 
+			                    								<#if model.applicationForm.isSubmitted()>
+                                            disabled="disabled">
+                                            </#if>
+                            </input>
 			                    <#if model.hasError('qualificationStartDate')>
 			                    	<span class="invalid"><@spring.message  model.result.getFieldError('qualificationStartDate').code /></span>
 			                    </#if>
@@ -222,7 +226,11 @@
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     			<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" 
-                    							value="${(model.qualification.qualificationAwardDate?string('yyyy/MM/dd'))!}"/>
+                    							value="${(model.qualification.qualificationAwardDate?string('yyyy/MM/dd'))!}"
+                    							<#if model.applicationForm.isSubmitted()>
+                                            disabled="disabled">
+                            </#if>
+                            </input>
                     		</div>
                   		</div>
 

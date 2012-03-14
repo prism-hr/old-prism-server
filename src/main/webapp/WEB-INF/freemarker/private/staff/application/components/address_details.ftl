@@ -75,7 +75,7 @@
                   	<div class="row">
                     	<span class="label">Country</span>
 	                    <div class="field">
-							${address.country}	                      	
+							${model.address.country!}	                      	
 						</div>
 					</div>
 					
@@ -111,7 +111,7 @@
                   	
                 </div>
 
-                <#if model.address.addressContactAddress = true>
+                <#if model.address.addressContactAddress?? && model.address.addressContactAddress = true>
                 <div>
                 	<!-- Is contact address? -->
                   	<div class="row">

@@ -75,15 +75,17 @@
                     	<span class="label">Location</span>
                     	<span class="hint"></span>
                     	<div class="field">
+                    	   <#if !model.applicationForm.isSubmitted()>
                       		<textarea id="addressLocation" class="max" rows="6" cols="80" 
                       								value="${model.address.addressLocation!}"></textarea>
 							
-							<!--input type="text" id="addressLocation" name="addressLocation" value="${model.address.addressLocation!}"/-->
-                            
-                            <#if model.hasError('addressLocation')>                           
-                            	<span class="invalid"><@spring.message  model.result.getFieldError('addressLocation').code /></span>                           
+                                <#if model.hasError('addressLocation')>                           
+                            	   <span class="invalid"><@spring.message  model.result.getFieldError('addressLocation').code /></span>                           
+                                </#if>
+                            <#else>
+                      		    <textarea readonly="readonly" id="addressLocation" class="max" rows="6" cols="80" 
+                                                    value="${model.address.addressLocation!}"></textarea>
                             </#if>
-                      		
                     	</div>
                   	</div>
 
@@ -92,11 +94,16 @@
                     	<span class="label">Postal Code</span>
                     	<span class="hint"></span>
                     	<div class="field">
+                    	<#if !model.applicationForm.isSubmitted()>
                       		<input class="half" type="text" id="addressPostCode" 
                       							name="addressPostCode" value="${model.address.addressPostCode!}" />
                             <#if model.hasError('addressPostCode')>                           
                             	<span class="invalid"><@spring.message  model.result.getFieldError('addressPostCode').code /></span>                           
                             </#if>
+                        <#else>
+                            <input readonly="readonly" class="half" type="text" id="addressPostCode" 
+                                                name="addressPostCode" value="${model.address.addressPostCode!}" />
+                        </#if>                            
                     	</div>
                   	</div>
 
@@ -105,7 +112,10 @@
                     	<span class="label">Country</span>
 	                    <div class="field">
 	                      	
-	                      	<select class="full" name="addressCountry" id="addressCountry">
+	                      	<select class="full" name="addressCountry" id="addressCountry"
+	                      	<#if model.applicationForm.isSubmitted()>
+                                            disabled="disabled">
+                            </#if>
                             	<#list model.countries as country>
                                 	<option value="${country.name}">${country.name}</option>               
                             	</#list>
@@ -131,7 +141,11 @@
                     	<div class="field">
                       		<label>from 
                       				<input class="half date" type="text" id="addressStartDate" name="addressStartDate" 
-                      						value="${(model.address.addressStartDate?string('dd-MMM-yyyy'))!}"/>
+                      						value="${(model.address.addressStartDate?string('dd-MMM-yyyy'))!}"
+                      						<#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled">
+                                            </#if>
+                      				</input>		
                       		</label>
                       		
 							<#if model.hasError('addressStartDate')>                           
@@ -140,7 +154,11 @@
                       		 
                       		<label>to 
                       			<input class="half date" type="text" id="addressEndDate" name="addressEndDate" 
-                      									value="${(model.address.addressEndDate?string('dd-MMM-yyyy'))!}"/>
+                      									value="${(model.address.addressEndDate?string('dd-MMM-yyyy'))!}"
+                      									<#if model.applicationForm.isSubmitted()>
+                                                            disabled="disabled">
+                                                        </#if>
+                      			</input>						
                       		</label>
                             <#if model.hasError('addressEndDate')>                           
                             	<span class="invalid"><@spring.message  model.result.getFieldError('addressEndDate').code /></span>                           
@@ -154,17 +172,20 @@
                     	<span class="label">Purpose</span>
                     	<span class="hint"></span>
                     	<div class="field">
-                      		
+                      	  <#if !model.applicationForm.isSubmitted()>
                       		<input class="full" type="text" id="addressPurpose" name="addressPurpose" 
                       					value="${model.address.addressPurpose!}" placeholder="e.g. work, travel" />
                             <#if model.hasError('addressPurpose')>                           
                             	<span class="invalid"><@spring.message  model.result.getFieldError('addressPurpose').code /></span>                           
                             </#if>
-                                                  		
+                          <#else>
+                            <input readonly="readonly" class="full" type="text" id="addressPurpose" name="addressPurpose" 
+                                        value="${model.address.addressPurpose!}" placeholder="e.g. work, travel" />
+                          </#if>                      		
                     	</div>
                   	</div>
 
-                  	<!-- Supporting document -->
+                  	<!-- Supporting document 
                   	<div class="row">
                     	<span class="label">Supporting Document</span>
                     	<span class="hint"></span>
@@ -174,7 +195,7 @@
                       		<a class="button" href="#">Upload</a>
                       		<a class="button" href="#">Add a document</a>
                     	</div>  
-                  	</div>
+                  	</div> -->
                   	
                 </div>
 
@@ -184,7 +205,11 @@
                     	<span class="label">&nbsp;</span>
                     	<div class="field">
                       		<label>
-                      			<input type="checkbox" name="isCA" id="isCA"/> This is my contact address
+                      			<input type="checkbox" name="isCA" id="isCA"
+                      			<#if model.applicationForm.isSubmitted()>
+                                      disabled="disabled">
+                                </#if>
+                      			</input> This is my contact address
                       		</label>
                       		<input type="hidden" id="addressContactAddress" value="${model.address.addressContactAddress!}"/>
                     	</div>
@@ -192,9 +217,13 @@
                 </div>
 
                 <div class="buttons">
+                 <#if !model.applicationForm.isSubmitted()>
                 <a class="button" type="button" id="addressCancelButton" name="addressCancelButton">Cancel</a>
                   	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save and Add</button>
                   	<button class="blue" type="button" id="addressSaveAndCloseButton" name="addressSaveAndCloseButton">Save and Close</button>
+                <#else>
+                    <a id="close-section-button"class="button blue">Close</a>  	
+                </#if>  	
                 </div>
 
 			</form>

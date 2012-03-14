@@ -76,11 +76,15 @@
 		                  	<span class="label">Provider</span>
 		                    <span class="hint" data-desc="Tooltip demonstration."></span>
 		                    <div class="field">
-		                    	
+		                    	<#if !model.applicationForm.isSubmitted()>
 		                    	<input id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL" 
 		                    									value="${model.qualification.qualificationInstitution!}" />
 			                    <#if model.hasError('qualificationInstitution')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationInstitution').code /></span>                    		
+                    			</#if>
+                    			<#else>
+                    			     <input readonly="readonly" id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL" 
+                                                                value="${model.qualification.qualificationInstitution!}" />
                     			</#if>
 			                    									
 		                    </div>
@@ -91,11 +95,15 @@
 		                  	<span class="label">Programme</span>
 		                    <span class="hint" data-desc="Tooltip demonstration."></span>
 		                    <div class="field">
-		                    	
+		                    	<#if !model.applicationForm.isSubmitted()>
 		                    	<input id="qualificationProgramName" class="full" type="text" placeholder="e.g. Civil Engineering" 
 		                    									value="${model.qualification.qualificationProgramName!}"/>
 		       					<#if model.hasError('qualificationProgramName')>
 		       						<span style="color:red;"><@spring.message  model.result.getFieldError('qualificationProgramName').code /></span>
+		       					</#if>
+		       					<#else>
+		       					  <input readonly="readonly" id="qualificationProgramName" class="full" type="text" placeholder="e.g. Civil Engineering" 
+                                                                value="${model.qualification.qualificationProgramName!}"/>
 		       					</#if>
 		       					
 		                    </div>
@@ -108,7 +116,11 @@
 		                    <div class="field">
 			                    
 			                    <input id="qualificationStartDate" class="half date" type="text" 
-			                    								value="${(model.qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}" />
+			                    								value="${(model.qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"
+			                    								<#if model.applicationForm.isSubmitted()>
+                                      disabled="disabled">
+                                </#if>
+                                </input>
 			                    <#if model.hasError('qualificationStartDate')>
 			                    	<span class="invalid"><@spring.message  model.result.getFieldError('qualificationStartDate').code /></span>
 			                    </#if>
@@ -121,11 +133,15 @@
                     		<span class="label">Language of Study</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
-                      			
+                      			<#if !model.applicationForm.isSubmitted()>
                       			<input id="qualificationLanguage" class="full" type="text" 
 			                    								value="${model.qualification.qualificationLanguage!}"/>
 								<#if model.hasError('qualificationLanguage')>                    		
                     				<span class="invalid;"><@spring.message  model.result.getFieldError('qualificationLanguage').code /></span>                    		
+                    			</#if>
+                    			<#else>
+                    			 <input readonly="readonly" id="qualificationLanguage" class="full" type="text" 
+                                                                value="${model.qualification.qualificationLanguage!}"/>
                     			</#if>
 
                     		</div>
@@ -136,11 +152,16 @@
 	                    	<span class="label">Level</span>
 	                    	<span class="hint" data-desc="Tooltip demonstration."></span>
 	                    	<div class="field">
+	                    	<#if !model.applicationForm.isSubmitted()>
                       			<input id="qualificationLevel" class="full" type="text" 
 			                    								value="${model.qualification.qualificationLevel!}"/>
 								<#if model.hasError('qualificationLevel')>                    		
                     				<span class="invalid;"><@spring.message  model.result.getFieldError('qualificationLevel').code /></span>                    		
                     			</#if>
+                    		<#else>
+                    		      <input readonly="readonly" id="qualificationLevel" class="full" type="text" 
+                                                                value="${model.qualification.qualificationLevel!}"/>
+                    		</#if>  	
 	                    	</div>
 	                  	</div>
 
@@ -149,10 +170,15 @@
                     		<span class="label">Type</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
+                    		<#if !model.applicationForm.isSubmitted()>
                       			<input id="qualificationType" class="full" type="text" 
 			                    								value="${model.qualification.qualificationType!}"/>
 								<#if model.hasError('qualificationType')>                    		
                     				<span class="invalid;"><@spring.message  model.result.getFieldError('qualificationType').code /></span>                    		
+                    			</#if>
+                    			<#else>
+                    			 <input readonly="readonly" id="qualificationType" class="full" type="text" 
+                                                                value="${model.qualification.qualificationType!}"/>
                     			</#if>
                     		</div>
                   		</div>
@@ -162,10 +188,15 @@
                     		<span class="label">Grade</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
+                    		<#if !model.applicationForm.isSubmitted()>
                       			<input id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction"
 			                    								value="${model.qualification.qualificationGrade!}"/>
 								<#if model.hasError('qualificationGrade')>                    		
                     				<span class="invalid;"><@spring.message  model.result.getFieldError('qualificationGrade').code /></span>                    		
+                    			</#if>
+                    			<#else>
+                    			     <input readonly="readonly" id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction"
+                                                                value="${model.qualification.qualificationGrade!}"/>
                     			</#if>
                     		</div>
                   		</div>
@@ -175,10 +206,15 @@
                     		<span class="label">Score</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
+                    		<#if !model.applicationForm.isSubmitted()>
                       			<input id="qualificationScore" class="full" type="text" placeholder="e.g. 114"
 			                    								value="${model.qualification.qualificationScore!}"/>
 								<#if model.hasError('qualificationScore')>                    		
                     				<span class="invalid;"><@spring.message  model.result.getFieldError('qualificationScore').code /></span>                    		
+                    			</#if>
+                    			<#else>
+                    			 <input readonly="readonly" id="qualificationScore" class="full" type="text" placeholder="e.g. 114"
+                                                                value="${model.qualification.qualificationScore!}"/>
                     			</#if>
                     		</div>
                   		</div>
@@ -189,11 +225,15 @@
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     			<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" 
-                    							value="${(model.qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/>
+                    							value="${(model.qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"
+                    							<#if model.applicationForm.isSubmitted()>
+                                      disabled="disabled">
+                                </#if>
+                                </input>
                     		</div>
                   		</div>
 
-                  		<!-- Attachment / supporting document -->
+                  		<!-- Attachment / supporting document 
                   		<div class="row">
                     		<span class="label">Supporting Document</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
@@ -203,14 +243,18 @@
                       				<a class="button" href="#">Upload</a>
                       				<a class="button" href="#">Add Document</a>
                     		</div>  
-                  		</div>
+                  		</div> -->
 	                
 	                </div>
 
 		        	<div class="buttons">
+		        	<#if !model.applicationForm.isSubmitted()>
 		            	<a class="button" id="qualificationCancelButton" name="qualificationCancelButton">Cancel</a>
 		                <button class="blue" type="button" id="qualificationSaveCloseButton"  name="id="qualificationSaveCloseButton"" value="close">Save and Close</button>
 		                <button id="qualificationsSaveButton" class="blue" type="button" value="add">Save and Add</button>
+		                <#else>
+                            <a id="close-section-button"class="button blue">Close</a>   
+                    </#if>  
 	                </div>
 
 			  </form>

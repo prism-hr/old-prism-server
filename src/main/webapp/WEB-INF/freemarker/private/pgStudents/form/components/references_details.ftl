@@ -246,7 +246,7 @@
 	                  		<span class="label">Skype</span>
 	                    	<span class="hint"></span>
 	                    	<div class="field">
-	                      		<input class="full" type="text" placeholder="Skype address" value="${messenger.messengerAddress}"/>
+	                      		<input class="full" type="text" placeholder="Skype address" value="${(messenger.messengerAddress)!}"/>
 	                    	</div>
 	                  	</div>
                   	

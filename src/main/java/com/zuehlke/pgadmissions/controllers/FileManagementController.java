@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,39 +14,54 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.DocumentService;
 
 @Controller
 @RequestMapping("/documents")
 public class FileManagementController {
 
-	private final DocumentService documentService;
-	private final ApplicationsService apService;
+
+	private final ApplicationsService applicationService;
 
 	FileManagementController() {
-		this(null, null);
+		this(null);
 	}
 
 	@Autowired
-	public FileManagementController(DocumentService documentService, ApplicationsService apService) {
-		this.documentService = documentService;
-		this.apService = apService;
-
+	public FileManagementController(ApplicationsService applicationService) {
+		this.applicationService = applicationService;
+	
 	}
 	
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFile(@RequestParam("appId") Integer id,  @RequestParam("file") MultipartFile multipartFile) throws IOException {
+	public ModelAndView uploadFile(@ModelAttribute("applicationForm") ApplicationForm applicationForm,  @RequestParam("documentType") DocumentType documentType, @RequestParam("file") MultipartFile multipartFile) throws IOException {
 		
 		Document document = new Document();
 		document.setFileName(multipartFile.getOriginalFilename());
 		document.setContentType(multipartFile.getContentType());
 		document.setContent(multipartFile.getBytes());
-		documentService.save(document);
-		ApplicationForm applicationById = apService.getApplicationById(id);
+		document.setType(documentType);
+		applicationForm.getSupportingDocuments().add(document);
+		applicationService.save(applicationForm);
 	
-		return new ModelAndView("redirect:/application", "id",id );
+		return new ModelAndView("redirect:/application", "id",applicationForm.getId() );
+		
+	}
+
+	@ModelAttribute("applicationForm")
+	public ApplicationForm getApplicationForm(Integer id) {
+		ApplicationForm applicationform = applicationService.getApplicationById(id);
+		if(applicationform == null || !SecurityContextHolder.getContext().getAuthentication().getDetails().equals(applicationform.getApplicant())){
+			throw new ResourceNotFoundException();
+		}
+		if(applicationform.isSubmitted()){
+			throw new CannotUpdateApplicationException();
+		}
+		return applicationform;
 	}
 
 }

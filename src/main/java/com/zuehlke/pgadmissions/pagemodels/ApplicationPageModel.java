@@ -8,6 +8,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
@@ -33,6 +34,7 @@ public class ApplicationPageModel extends PageModel {
 	private List<Gender> genders = new LinkedList<Gender>();
 	private List<PhoneType> phoneTypes = new LinkedList<PhoneType>();
 	private List<LanguageAptitude> languageAptitudes = new LinkedList<LanguageAptitude>();
+	private List<DocumentType> documentTypes = new LinkedList<DocumentType>();
 
 	private List<StudyOption> studyOptions = new LinkedList<StudyOption>();
 	private List<Referrer> referrers = new LinkedList<Referrer>();
@@ -158,5 +160,13 @@ public class ApplicationPageModel extends PageModel {
 
 	public void setLanguageAptitudes(LanguageAptitude[] languageAptitudes) {
 		this.languageAptitudes.addAll(Arrays.asList(languageAptitudes));
+	}
+
+	public List<DocumentType> getDocumentTypes() {
+		return documentTypes;
+	}
+
+	public void setDocumentTypes(DocumentType[] documentTypes) {
+		this.documentTypes.addAll(Arrays.asList(documentTypes));
 	}
 }

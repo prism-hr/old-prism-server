@@ -1,3 +1,4 @@
+<#import "/spring.ftl" as spring />
 	<h2 class="empty">
     	<span class="left"></span><span class="right"></span><span class="status"></span>
         Documents
@@ -24,18 +25,12 @@
                 
                 </thead>
                 <tbody>
-					<tr>
-	                    <td><a class="row-arrow" href="#">-</a></td>
-	                    <td>Personal Statement</td>
-	                    <td>Applicant_Dash_Review_Funding</td>
-	                    <td>19/05/12</td>
-	                    <td><a class="button-delete" href="#">delete</a></td>
-					</tr>
+					<tr/>
                 </tbody>
 		</table>
               
-		<form>
-             
+		<form id="documentUploadForm" method="POST" action="<@spring.url '/documents'/>" enctype="multipart/form-data">
+             <input type="hidden" name="id" value="${model.applicationForm.id}"/>
              <div>
                 
              	<!-- Document type -->
@@ -43,9 +38,10 @@
                     <span class="label">Type</span>
                     <span class="hint"></span>
                     <div class="field">
-                    	<select class="full">
-	                        <option>CV / resume</option>
-	                        <option>Personal statement</option>
+                    	<select class="full" name="documentType">
+                    		<#list model.documentTypes as documentType>
+                    			<option value="${documentType}">${documentType.displayValue}</option>
+                    		</#list>	              
                       	</select>
                     </div>  
 				</div>
@@ -55,9 +51,8 @@
                     <span class="label">Document</span>
                     <span class="hint"></span>
                     <div class="field">
-                		<input class="full" type="text" value="" />
-                      	<a class="button" href="#">Browse</a>
-                      	<a class="button" href="#">Upload</a>
+                		<input class="full" type="file" name="file" value="" />                      	
+                        <button class="blue" type="submit" value="close">Upload</button>          
                     </div>  
 				</div>
 				
@@ -65,9 +60,9 @@
 
 			<div class="buttons">
             	<a class="button" href="#">Cancel</a>
-                <button class="blue" type="submit" value="close">Save and Close</button>
-                <button class="blue" type="submit" value="add">Save and Add</button>
+                <button class="blue" value="close">Close</button>              
 			</div>
 
 		</form>
 	</div>
+	<script type="text/javascript" src="<@spring.url '/design/default/js/application/documents.js'/>"></script>

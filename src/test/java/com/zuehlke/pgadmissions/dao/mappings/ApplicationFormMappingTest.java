@@ -21,6 +21,8 @@ import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -30,12 +32,14 @@ import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -53,7 +57,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setApplicant(user);
 		application.setProject(project);
 		application.setSubmissionStatus(SubmissionStatus.UNSUBMITTED);
-		
+
 		assertNotNull(application.getPersonalDetails());
 		assertNull(application.getId());
 
@@ -73,11 +77,12 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(user, reloadedApplication.getApplicant());
 		assertEquals(project, reloadedApplication.getProject());
 		assertEquals(SubmissionStatus.UNSUBMITTED, reloadedApplication.getSubmissionStatus());
-		
+
 		assertNotNull(application.getPersonalDetails());
-		
+
 		assertNull(application.getPersonalDetails().getId());
 	}
+
 	@Test
 	public void shouldLoadApplicationFormWithPersonalDetails() throws ParseException {
 		Country country1 = new CountryBuilder().code("AA").name("AA").toCountry();
@@ -95,7 +100,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		sessionFactory.getCurrentSession().save(personalDetails);
 		flushAndClearSession();
-		
+
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 		assertEquals(personalDetails, reloadedApplication.getPersonalDetails());
 
@@ -166,6 +171,44 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
+	public void shouldLoadApplicationFormWithSupportingDocuments() {
+
+		ApplicationForm application = new ApplicationForm();
+		application.setProject(project);
+		application.setApplicant(user);
+		Document doc1 = new DocumentBuilder().fileName("bob").type(DocumentType.CV).content("aaa!".getBytes()).toDocument();
+		Document doc2 = new DocumentBuilder().fileName("bob").type(DocumentType.SUPPORTING_ADDRESS).content("aaa!".getBytes()).toDocument();
+		Document doc3 = new DocumentBuilder().fileName("bob").type(DocumentType.SUPPORTING_EMPLOYMENT).content("aaa!".getBytes()).toDocument();
+
+		application.setSupportingDocuments(Arrays.asList(doc1, doc2));
+		sessionFactory.getCurrentSession().save(application);
+		assertNotNull(doc1.getId());
+		assertNotNull(doc2.getId());
+		flushAndClearSession();
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertEquals(2, reloadedApplication.getSupportingDocuments().size());
+		assertTrue(reloadedApplication.getSupportingDocuments().containsAll(Arrays.asList(doc1, doc2)));
+		Integer tobeRemovedId = doc2.getId();
+		reloadedApplication.getSupportingDocuments().remove(doc2);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedApplication);
+
+		flushAndClearSession();
+		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertEquals(1, reloadedApplication.getSupportingDocuments().size());
+		assertTrue(reloadedApplication.getSupportingDocuments().containsAll(Arrays.asList(doc1)));
+
+		reloadedApplication.getSupportingDocuments().add(doc3);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedApplication);
+		flushAndClearSession();
+		
+		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertEquals(2, reloadedApplication.getSupportingDocuments().size());
+		assertTrue(reloadedApplication.getSupportingDocuments().containsAll(Arrays.asList(doc1, doc3)));
+		
+		assertNull(sessionFactory.getCurrentSession().get(Document.class, tobeRemovedId));
+	}
+
+	@Test
 	public void shouldLoadApplicationFormWithComments() {
 
 		ApplicationForm application = new ApplicationForm();
@@ -187,8 +230,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertTrue(reloadedApplication.getApplicationComments().containsAll(Arrays.asList(applicationReviewOne, applicationReviewTwo)));
 	}
 
-	
-	
 	@Test
 	public void shouldSaveQualificationsWithApplication() throws ParseException {
 
@@ -216,7 +257,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(2, reloadedApplication.getQualifications().size());
 
 	}
-	
+
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

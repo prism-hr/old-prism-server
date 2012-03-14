@@ -7,12 +7,21 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+
 @Entity(name = "DOCUMENT")
 @Access(AccessType.FIELD)
 public class Document extends DomainObject<Integer> {
 
 
 	private static final long serialVersionUID = -6396463075916267580L;
+	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.DocumentTypeEnumUserType")
+	@Column(name = "document_type")	
+	private DocumentType type;
+	
 	
 	@Column(name = "content_type")
 	private String contentType;	
@@ -58,5 +67,13 @@ public class Document extends DomainObject<Integer> {
 
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
+	}
+
+	public DocumentType getType() {
+		return type;
+	}
+
+	public void setType(DocumentType type) {
+		this.type = type;
 	}
 }

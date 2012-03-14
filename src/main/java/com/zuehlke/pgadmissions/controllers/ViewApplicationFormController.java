@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
@@ -75,6 +76,7 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setStudyOptions(StudyOption.values());
 		viewApplicationModel.setReferrers(Referrer.values());
 		viewApplicationModel.setPhoneTypes(PhoneType.values());
+		viewApplicationModel.setDocumentTypes(DocumentType.values());
 		viewApplicationModel.setLanguageAptitudes(LanguageAptitude.values());
 		viewApplicationModel.setGenders(Gender.values());
 		if (view != null && view.equals("errors")) {

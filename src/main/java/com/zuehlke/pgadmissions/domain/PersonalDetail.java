@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
@@ -54,7 +55,7 @@ public class PersonalDetail extends DomainObject<Integer> {
 	@Where(clause="nationality_type='PATERNAL_GUARDIAN'")
 	private List<Nationality> paternalGuardianNationalities= new ArrayList<Nationality>();
 	
-	
+
 
 	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -241,4 +242,6 @@ public class PersonalDetail extends DomainObject<Integer> {
 			}
 		}
 	}
+
+	
 }

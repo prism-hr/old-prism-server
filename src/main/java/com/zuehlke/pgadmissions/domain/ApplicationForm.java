@@ -23,6 +23,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
 
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -96,6 +97,12 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "application_form_id")
 	private List<Referee> referees = new ArrayList<Referee>();
 
+	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "application_form_id")	
+	private List<Document> supportingDocuments= new ArrayList<Document>();
+	
+	
 	public List<Qualification> getQualifications() {
 		return qualifications;
 	}
@@ -279,6 +286,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	
 	public void setProgrammeDetails(ProgrammeDetail programmeDetails) {
 		this.programmeDetails = programmeDetails;
+	}
+
+	public List<Document> getSupportingDocuments() {
+		return supportingDocuments;
+	}
+
+	public void setSupportingDocuments(List<Document> supportingDocuments) {
+		this.supportingDocuments = supportingDocuments;
 	}
 }
 

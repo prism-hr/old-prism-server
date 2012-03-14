@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
@@ -154,6 +155,9 @@ public class ViewApplicationFormControllerTest {
 		
 		assertEquals(LanguageAptitude.values().length, model.getLanguageAptitudes().size());
 		assertTrue(model.getLanguageAptitudes().containsAll(Arrays.asList(LanguageAptitude.values())));
+		
+		assertEquals(DocumentType.values().length, model.getDocumentTypes().size());
+		assertTrue(model.getDocumentTypes().containsAll(Arrays.asList(DocumentType.values())));
 	}
 
 	@Test

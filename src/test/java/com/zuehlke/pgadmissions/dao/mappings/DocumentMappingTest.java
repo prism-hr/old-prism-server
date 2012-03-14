@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
 public class DocumentMappingTest extends AutomaticRollbackTestCase {
 
@@ -19,7 +20,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 		document.setContent(contentString.getBytes());
 		document.setFileName("name.txt");
 		document.setContentType("bob");
-		
+		document.setType(DocumentType.PERSONAL_STATEMENT);
 		sessionFactory.getCurrentSession().save(document);
 		assertNotNull(document.getId());
 		
@@ -34,6 +35,6 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 		assertEquals("name.txt", reloadedDoc.getFileName());
 		assertEquals("bob", reloadedDoc.getContentType());
 		assertEquals(contentString, new String(reloadedDoc.getContent()));
-		
+		assertEquals(DocumentType.PERSONAL_STATEMENT, reloadedDoc.getType());
 	}
 }

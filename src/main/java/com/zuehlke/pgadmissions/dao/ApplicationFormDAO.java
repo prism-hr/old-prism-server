@@ -36,29 +36,6 @@ public class ApplicationFormDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(application);
 	}
 
-	public void update(Qualification qualification) {
-		// sessionFactory.getCurrentSession().update(application);
-		// sessionFactory.getCurrentSession().flush();
-		DatePropertyEditor dateEditor = new DatePropertyEditor();
-		dateEditor.setValue(qualification.getQualificationStartDate());
-		String sd = dateEditor.getAsText();
-		dateEditor.setValue(qualification.getQualificationAwardDate());
-		String sa = dateEditor.getAsText();
-		sessionFactory
-				.getCurrentSession()
-				.createQuery(
-						"update APPLICATION_FORM_QUALIFICATION set application_form_id = '"
-								+ qualification.getApplication().getId() + "', name_of_programme = '"
-								+ qualification.getQualificationProgramName() + "', institution = '"
-								+ qualification.getQualificationProgramName() + "', language_of_study = '"
-								+ qualification.getQualificationLanguage() + "', level = '"
-								+ qualification.getQualificationLevel() + "', qualification_type = '"
-								+ qualification.getQualificationType() + "', grade = '"
-								+ qualification.getQualificationGrade() + "', start_date = '" + sd
-								+ "', award_date = '" + sa + "', score = '" + qualification.getQualificationScore()
-								+ "' where id = " + qualification.getId()).executeUpdate();
-	}
-
 	public ApplicationForm get(Integer id) {
 		return (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
 	}

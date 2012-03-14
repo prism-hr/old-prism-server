@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
@@ -23,11 +24,13 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -73,7 +76,7 @@ public class ViewApplicationFormControllerTest {
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getViewApplicationPage("", 1);
+		controller.getViewApplicationPage("", 1, "");
 
 	}
 
@@ -89,7 +92,7 @@ public class ViewApplicationFormControllerTest {
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1,"");
 		assertEquals("private/pgStudents/form/main_application_page", modelAndView.getViewName());
 	}
 
@@ -105,7 +108,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1,"");
 		PageModel model = (PageModel) modelAndView.getModel().get("model");
 		assertEquals(applicationForm, model.getApplicationForm());
 	}
@@ -130,7 +133,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(languages);
 		EasyMock.replay(userMock, applicationsServiceMock, countryServiceMock,languageServiceMock );
 
-		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1,"");
 		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
 
 		assertNotNull(model.getQualification());
@@ -161,6 +164,67 @@ public class ViewApplicationFormControllerTest {
 	}
 
 	@Test
+	public void shouldNotIncludeCVandPersonalStatementDocTypeIfAlreadyUploaded() {
+		Document cv= new DocumentBuilder().type(DocumentType.CV).toDocument();
+		Document statement = new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).toDocument();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
+		applicationForm.getSupportingDocuments().addAll(Arrays.asList(cv, statement));
+		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
+		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
+		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
+		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
+		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+
+		List<Country> countries = Arrays.asList(new CountryBuilder().id(1).toCountry());
+		EasyMock.expect(countryServiceMock.getAllCountries()).andReturn(countries);
+		List<Language> languages = Arrays.asList(new LanguageBuilder().id(1).toLanguage());
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(languages);
+		EasyMock.replay(userMock, applicationsServiceMock, countryServiceMock,languageServiceMock );
+
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1,"");
+		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
+
+		
+		
+		assertEquals(DocumentType.values().length - 2, model.getDocumentTypes().size());
+		assertFalse(model.getDocumentTypes().contains(DocumentType.CV));
+		assertFalse(model.getDocumentTypes().contains(DocumentType.PERSONAL_STATEMENT));
+	}
+
+	
+	
+	@Test
+	public void shouldAddUploadErrorCodeIfPRovided() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
+		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(userMock.isInRole(Authority.APPLICANT)).andReturn(true);
+		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(userMock.getAuthorities()).andReturn(null);
+		EasyMock.expect(userMock.getFirstName()).andReturn("bob");
+		EasyMock.expect(userMock.getLastName()).andReturn("Smith");
+		EasyMock.expect(userMock.getEmail()).andReturn("email@test.com");
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+
+		List<Country> countries = Arrays.asList(new CountryBuilder().id(1).toCountry());
+		EasyMock.expect(countryServiceMock.getAllCountries()).andReturn(countries);
+		List<Language> languages = Arrays.asList(new LanguageBuilder().id(1).toLanguage());
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(languages);
+		EasyMock.replay(userMock, applicationsServiceMock, countryServiceMock,languageServiceMock );
+
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1,"hello.world");
+		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
+
+		assertEquals("hello.world", model.getUploadErrorCode());
+	}
+
+	@Test
 	public void shouldCreateEmploymentPositionAndSetOnModel() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
@@ -175,7 +239,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1,"");
 		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
 		assertNotNull(model.getEmploymentPosition());
 	}
@@ -193,7 +257,7 @@ public class ViewApplicationFormControllerTest {
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(userMock, applicationsServiceMock);
 
-		ModelAndView modelAndView = controller.getViewApplicationPage("", 1);
+		ModelAndView modelAndView = controller.getViewApplicationPage("", 1,"");
 		PageModel model = (PageModel) modelAndView.getModel().get("model");
 		assertEquals(userMock, model.getUser());
 	}
@@ -213,7 +277,7 @@ public class ViewApplicationFormControllerTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 
-		controller.getViewApplicationPage("", 1);
+		controller.getViewApplicationPage("", 1,"");
 	}
 
 	@Test
@@ -229,7 +293,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(applicationReviewServiceMock.getApplicationReviewsByApplication(submittedNonApprovedApplication)).andReturn(comments);
 		applicationsServiceMock.save(submittedNonApprovedApplication);
 		EasyMock.replay(applicationReviewServiceMock, applicationsServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage("view", 2);
+		ModelAndView modelAndView = controller.getViewApplicationPage("view", 2,"");
 		List<ApplicationReview> loadedComments = ((PageModel) modelAndView.getModelMap().get("model")).getApplicationComments();
 		assertEquals(2, loadedComments.size());
 		assertEquals(comments, loadedComments);
@@ -252,7 +316,7 @@ public class ViewApplicationFormControllerTest {
 				Arrays.asList(applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved1));
 		applicationsServiceMock.save(submittedNonApprovedApplication);
 		EasyMock.replay(applicationsServiceMock, applicationReviewServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage("view", 2);
+		ModelAndView modelAndView = controller.getViewApplicationPage("view", 2,"");
 		List<ApplicationReview> loadedComments = ((PageModel) modelAndView.getModelMap().get("model")).getApplicationComments();
 		assertEquals(2, loadedComments.size());
 		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved2));
@@ -278,7 +342,7 @@ public class ViewApplicationFormControllerTest {
 		EasyMock.expect(applicationReviewServiceMock.getVisibleComments(submittedNonApprovedApplication, reviewer)).andReturn(
 				Arrays.asList(applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved1));
 		EasyMock.replay(applicationsServiceMock, applicationReviewServiceMock);
-		ModelAndView modelAndView = controller.getViewApplicationPage("view", 2);
+		ModelAndView modelAndView = controller.getViewApplicationPage("view", 2,"");
 		List<ApplicationReview> loadedComments = ((PageModel) modelAndView.getModelMap().get("model")).getApplicationComments();
 		assertEquals(4, loadedComments.size());
 		assertTrue(loadedComments.contains(applicationReviewForSubmittedNonApproved2));

@@ -8,8 +8,8 @@
     	
     	<table class="existing">
         	<colgroup>
-            	<col style="width: 30px" />
-                <col style="width: 150px" />
+            	<col style="width: 20px" />
+                <col style="width: 300px" />
                 <col />
                 <col style="width: 120px" />
                 <col style="width: 30px" />
@@ -27,15 +27,23 @@
                 <tbody>
 					<#list model.applicationForm.supportingDocuments as document>
 					<tr>
-		                <td colspan="2">${document.type.displayValue}</td>
-		                <td><a href="<@spring.url '/download'/>?documentId=${document.id}">${document.fileName}</a></td>
+						<td>-</td>
+		                <td  nowrap>${document.type.displayValue}</td>
+		                <td ><a href="<@spring.url '/download'/>?documentId=${document.id}">
+		                	<#if document.fileName?length <40 >${document.fileName}<#else>${document.fileName?substring(0,37)}...</#if></a></td>
 		                <td>${(document.dateUploaded?string('dd-MMM-yyyy'))!}</td>
-		                <td/>
+		                <td>
+		                	<form method="Post" action="<@spring.url '/delete'/>" style="padding:0">
+		                		<input type="hidden" name="documentId" value="${document.id}"/>
+		                		<a name="deleteButton" class="button-delete">delete</a>     
+		                		 
+		                	</form>		                
+		               </td>
 	                </tr>
 					</#list>
                 </tbody>
 		</table>
-              
+        
 		<form id="documentUploadForm" method="POST" action="<@spring.url '/documents'/>" enctype="multipart/form-data">
              <input type="hidden" name="id" value="${model.applicationForm.id}"/>
              <div>
@@ -46,7 +54,7 @@
                     <span class="hint"></span>
                     <div class="field">
                     	<select class="full" name="documentType">
-                    		<#list model.documentTypes as documentType>
+                    		<#list model.documentTypes as documentType>                    			
                     			<option value="${documentType}">${documentType.displayValue}</option>
                     		</#list>	              
                       	</select>
@@ -62,11 +70,12 @@
                         <button class="blue" type="submit" value="close">Upload</button>          
                     </div>  
 				</div>
-				
+				<#if model.uploadErrorCode?? >
+					<span style="color:red;"><@spring.message  model.uploadErrorCode /></span>         
+				</#if>				
 			</div>
 
 			<div class="buttons">
-            	<a class="button" href="#">Cancel</a>
                 <button class="blue" value="close">Close</button>              
 			</div>
 

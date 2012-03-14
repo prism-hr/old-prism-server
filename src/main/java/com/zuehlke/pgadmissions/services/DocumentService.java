@@ -28,5 +28,10 @@ public class DocumentService {
 	public Document getDocumentById(Integer id) {
 		return documentDAO.getDocumentbyId(id);
 	}
+	@Transactional
+	public void delete(Document document) {
+		documentDAO.deleteDocument(document);
+		
+	}
 
 }

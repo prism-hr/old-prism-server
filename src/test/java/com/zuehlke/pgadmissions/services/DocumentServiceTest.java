@@ -27,6 +27,16 @@ public class DocumentServiceTest {
 	}
 
 	@Test
+	public void shouldDelegateDeleteToDAO() {
+
+		Document document = new DocumentBuilder().id(1).toDocument();
+		documentDAOMock.deleteDocument(document);
+		EasyMock.replay(documentDAOMock);
+		documentService.delete(document);
+		EasyMock.verify(documentDAOMock);
+
+	}
+	@Test
 	public void shouldGetDocumentFroMDAO() {
 
 		Document document = new DocumentBuilder().id(1).toDocument();

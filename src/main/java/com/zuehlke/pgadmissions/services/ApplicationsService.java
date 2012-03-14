@@ -98,13 +98,6 @@ public class ApplicationsService {
 		return applicationFormDAO.getAdddressById(addressId);
 	}
 
-	@Transactional
-	public void update(Qualification qualification) {
-		applicationFormDAO.update(qualification);
-
-	}
-
-
 	public Messenger getMessengerById(Integer id) {
 		return applicationFormDAO.getMessengerById(id);
 	}

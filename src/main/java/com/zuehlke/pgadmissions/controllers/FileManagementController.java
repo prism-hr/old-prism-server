@@ -24,7 +24,8 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 public class FileManagementController {
 
 
-	private final ApplicationsService applicationService;
+
+	final private ApplicationsService applicationService;
 
 	FileManagementController() {
 		this(null);
@@ -34,12 +35,13 @@ public class FileManagementController {
 	public FileManagementController(ApplicationsService applicationService) {
 		this.applicationService = applicationService;
 	
+
 	}
-	
-	
+
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFile(@ModelAttribute("applicationForm") ApplicationForm applicationForm,  @RequestParam("documentType") DocumentType documentType, @RequestParam("file") MultipartFile multipartFile) throws IOException {
-		
+	public ModelAndView uploadFile(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @RequestParam("documentType") DocumentType documentType,
+			@RequestParam("file") MultipartFile multipartFile) throws IOException {
+
 		Document document = new Document();
 		document.setFileName(multipartFile.getOriginalFilename());
 		document.setContentType(multipartFile.getContentType());
@@ -47,21 +49,22 @@ public class FileManagementController {
 		document.setType(documentType);
 		applicationForm.getSupportingDocuments().add(document);
 		applicationService.save(applicationForm);
-	
-		return new ModelAndView("redirect:/application", "id",applicationForm.getId() );
-		
+		return new ModelAndView("redirect:/application", "id", applicationForm.getId());
+
 	}
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(Integer id) {
 		ApplicationForm applicationform = applicationService.getApplicationById(id);
-		if(applicationform == null || !SecurityContextHolder.getContext().getAuthentication().getDetails().equals(applicationform.getApplicant())){
+		if (applicationform == null || !SecurityContextHolder.getContext().getAuthentication().getDetails().equals(applicationform.getApplicant())) {
 			throw new ResourceNotFoundException();
 		}
-		if(applicationform.isSubmitted()){
+		if (applicationform.isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
 		return applicationform;
 	}
+
+	
 
 }

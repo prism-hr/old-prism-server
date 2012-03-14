@@ -25,7 +25,14 @@
                 
                 </thead>
                 <tbody>
-					<tr/>
+					<#list model.applicationForm.supportingDocuments as document>
+					<tr>
+		                <td colspan="2">${document.type.displayValue}</td>
+		                <td><a href="<@spring.url '/download'/>?documentId=${document.id}">${document.fileName}</a></td>
+		                <td>${(document.dateUploaded?string('dd-MMM-yyyy'))!}</td>
+		                <td/>
+	                </tr>
+					</#list>
                 </tbody>
 		</table>
               

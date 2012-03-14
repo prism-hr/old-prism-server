@@ -1,18 +1,25 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
-import com.zuehlke.pgadmissions.domain.ApplicantRecord;
-
-
+import com.zuehlke.pgadmissions.dto.ApplicantRecordDTO;
 
 public class RegisterPageModel extends PageModel{
 
-	private ApplicantRecord record;
+	private ApplicantRecordDTO record;
+	private String message;
 
-	public ApplicantRecord getRecord() {
+	public ApplicantRecordDTO getRecord() {
 		return record;
 	}
 
-	public void setRecord(ApplicantRecord record) {
+	public void setRecord(ApplicantRecordDTO record) {
 		this.record = record;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
 	}
 }

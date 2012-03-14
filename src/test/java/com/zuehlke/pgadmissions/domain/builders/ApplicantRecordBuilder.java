@@ -15,8 +15,6 @@ public class ApplicantRecordBuilder {
 	
 	private String password;
 
-	private String confirmPassword;
-	
 	public ApplicantRecordBuilder firstname(String firstname){
 		this.firstname = firstname;
 		return this;
@@ -37,11 +35,6 @@ public class ApplicantRecordBuilder {
 		return this;
 	}
 	
-	public ApplicantRecordBuilder confirmPassword(String confirmPassword){
-		this.confirmPassword = confirmPassword;
-		return this;
-	}
-	
 	public ApplicantRecordBuilder id(Integer id){
 		this.id = id;
 		return this;
@@ -54,7 +47,6 @@ public class ApplicantRecordBuilder {
 		record.setId(id);
 		record.setLastname(lastname);
 		record.setPassword(password);
-		record.setConfirmPassword(confirmPassword);
 		return record;
 	}
 }

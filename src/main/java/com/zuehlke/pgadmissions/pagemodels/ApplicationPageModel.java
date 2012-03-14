@@ -39,6 +39,7 @@ public class ApplicationPageModel extends PageModel {
 	private List<StudyOption> studyOptions = new LinkedList<StudyOption>();
 	private List<Referrer> referrers = new LinkedList<Referrer>();
 	private Referee referee;
+	private String uploadErrorCode;
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -168,5 +169,13 @@ public class ApplicationPageModel extends PageModel {
 
 	public void setDocumentTypes(DocumentType[] documentTypes) {
 		this.documentTypes.addAll(Arrays.asList(documentTypes));
+	}
+
+	public String getUploadErrorCode() {
+		return uploadErrorCode;
+	}
+
+	public void setUploadErrorCode(String uploadErrorCode) {
+		this.uploadErrorCode = uploadErrorCode;
 	}
 }

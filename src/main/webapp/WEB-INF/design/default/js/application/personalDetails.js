@@ -13,7 +13,10 @@ $(document).ready(function(){
 		"<input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + 
 		'", "language":' + $('#languageSelect option:selected').val()  +
 		', "primary": "' + jsonPrimary + '"}' + "'/>" + 
-		'<a class="button">Delete</a><br/></span>';
+		'<a class="button-delete">Delete</a><br/></span>';
+		            
+				  	
+	  	
 		$('#existingProficiencies').append(html);
 		$('#languageSelect').val("");
 		$('#primaryLanguage').prop('checked', false);
@@ -22,38 +25,57 @@ $(document).ready(function(){
 	
 	//candidate nationalities
 	$('#addCandidateNationalityButton').on("click", function(){
-		var primary = "";
-		var jsonPrimary = "false";
-		if($('#primaryCandidateNationality').is(':checked') ){
-			primary = "Primary";
-			jsonPrimary = "true"
+		if( $('#candidateNationalityCountry option:selected').val()!= ''){
+			var primary = "";
+			var jsonPrimary = "false";
+			if($('#primaryCandidateNationality').is(':checked') ){
+				primary = "This is my primary nationality";
+				jsonPrimary = "true"
+			}
+					
+			var html = '<span>' +
+	  	 	'<div class="row">'+
+	  	 	'	<label class="label">Nationality</label>'+
+			'	<div class="field">'+
+			'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
+	  		"		<input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  +	', "primary": "' + jsonPrimary + '"}' + "'/>" +
+	  		'		<a class="button-delete">Delete</a>'+ primary +' <br/>'+
+	  		'	</div>'+
+	  		'</div>'+
+	  	'</span> ';
+			
+			$('#existingCandidateNationalities').append(html);
+			
+			$('#candidateNationalityCountry').val("");
+			$('#primaryCandidateNationality').prop('checked', false);
 		}
-		
-		var html = 	'<span>' + $('#candidateNationalityCountry option:selected').text() + " " + primary +
-		"<input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  +
-		', "primary": "' + jsonPrimary + '"}' + "'/>" + 
-		'<a class="button">Delete</a><br/></span>';
-		$('#existingCandidateNationalities').append(html);
-		
-		$('#candidateNationalityCountry').val("");
-		$('#primaryCandidateNationality').prop('checked', false);
 		
 	});
 	
 	
 	//maternal guardian nationalities
 	$('#addMaternalNationalityButton').on("click", function(){
+		
 		var primary = "";
 		var jsonPrimary = "false";
 		if($('#primaryMaternalNationality').is(':checked') ){
-			primary = "Primary";
+			primary = "This is her primary nationality";
 			jsonPrimary = "true"
 		}
+			
 		
-		var html = 	'<span>' + $('#maternalNationalityCountry option:selected').text() + " " + primary +
-		"<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  +
-		', "primary": "' + jsonPrimary + '"}' + "'/>" + 
-		'<a class="button">Delete</a><br/></span>';
+		var html = '<span>' +
+  	 	'<div class="row">'+
+  	 	'	<label class="label">Maternal Guardian Nationality</label>'+
+		'	<div class="field">'+
+		'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
+  		"		<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  +	', "primary": "' + jsonPrimary + '"}' + "'/>" +
+  		'		<a class="button-delete">Delete</a>'+ primary +' <br/>'+
+  		'	</div>'+
+  		'</div>'+
+  	'</span> ';
+		
+		
 		$('#existingMaternalNationalities').append(html);
 		
 		$('#maternalNationalityCountry').val("");
@@ -66,14 +88,22 @@ $(document).ready(function(){
 		var primary = "";
 		var jsonPrimary = "false";
 		if($('#primaryPaternalNationality').is(':checked') ){
-			primary = "Primary";
+			primary = "This is his primary nationality";
 			jsonPrimary = "true"
 		}
 		
-		var html = 	'<span>' + $('#paternalNationalityCountry option:selected').text() + " " + primary +
-		"<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()  +
-		', "primary": "' + jsonPrimary + '"}' + "'/>" + 
-		'<a class="button">Delete</a><br/></span>';
+		var html = '<span>' +
+  	 	'<div class="row">'+
+  	 	'	<label class="label">Paternal Guardian Nationality</label>'+
+		'	<div class="field">'+
+		'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
+  		"		<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()  +	', "primary": "' + jsonPrimary + '"}' + "'/>" +
+  		'		<a class="button-delete">Delete</a>'+ primary +' <br/>'+
+  		'	</div>'+
+  		'</div>'+
+  	'</span> ';
+		
+		
 		$('#existingPaternalNationalities').append(html);
 		
 		$('#paternalNationalityCountry').val("");
@@ -144,6 +174,7 @@ $(document).ready(function(){
 			$('#existingPaternalNationalities').append(html);
 		}
 		
+		
 		//general post data
 		var postData ={ 
 				firstName: $("#firstName").val(), 
@@ -154,15 +185,17 @@ $(document).ready(function(){
 				residenceCountry: $("#residenceCountry").val(),
 				residenceStatus: $("#residenceStatus").val(),
 				personalDetailsId: $("#id").val(), 
-				application: $("#appId").val(),
-				gender: $("input[name='genderRadio']:checked").val(),
+				application: $("#appId").val(),		
 				languageProficiencies:"",
 				candidateNationalities:"",
 				maternalGuardianNationalities:"",
 				paternalGuardianNationalities:""
 				
 			}
-			
+		var gender =  $("input[name='genderRadio']:checked").val();
+		if(gender){
+			postData.gender = gender;
+		}
 			//do the post!
 			$.post( "/pgadmissions/personalDetails" ,
 					$.param(postData) + 
@@ -190,12 +223,6 @@ $(document).ready(function(){
 	// To make uncompleted functionalities disable.
 	$(".disabledEle").attr("disabled", "disabled");	
 	
-	$('#primaryNationalityUploadButton').on("click", function(){
-		$('#documentUploadForm').attr("action", "/pgadmissions/documents");
-		$('#documentUploadForm').submit();
-	});
-
-	
 	
 	/// delete collection items
 	$("#phonenumbers").on("click", "a", function(){	
@@ -204,17 +231,17 @@ $(document).ready(function(){
 	});
 	
 	$("#existingCandidateNationalities").on("click", "a", function(){	
-		$(this).parent("span").remove();
+		$(this).parent("div").parent("div").parent("span").remove();
 		
 	});
 	
 	$("#existingMaternalNationalities").on("click", "a", function(){	
-		$(this).parent("span").remove();
+		$(this).parent("div").parent("div").parent("span").remove();
 		
 	});
 	
 	$("#existingPaternalNationalities").on("click", "a", function(){	
-		$(this).parent("span").remove();
+		$(this).parent("div").parent("div").parent("span").remove();
 		
 	});
 	
@@ -222,4 +249,6 @@ $(document).ready(function(){
 		$(this).parent("span").remove();
 		
 	});
+		
+	
 });

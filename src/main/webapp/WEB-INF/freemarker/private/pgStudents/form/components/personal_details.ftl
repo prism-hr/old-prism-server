@@ -129,11 +129,24 @@
 
               	<div>    
 
-       
-            	    <strong>Nationality</strong>        
-                	<div class="row">     
-                  	
-                  		<span class="label">Country</span>
+                 	 <div class="row" id="existingCandidateNationalities">
+                  	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
+                  	  	<span name="existingCandidateNationality">
+                  	  	 	<div class="row">
+                  	  	 		<label class="label">Nationality</label>    
+                  				<div class="field">
+                  					<label class="full">${nationality.country.name}</label>  
+                  	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
+                  	  				<#if nationality.primary><label>This is my primary nationality</label>"</#if>
+                  	  				<a class="button-delete">Delete</a>
+                  	  			</div>
+                  	  		</div>
+                  	  	</span>                  		
+                  	  </#list>
+                  </div>
+            	    
+                	<div class="row">                    	
+                  		 <label class="label">Nationality</label>       
 	                  	 <div class="field">
 	                     	 <select name="candidateNationalityCountry" id="candidateNationalityCountry">
 	                      		<option value="">Select...</option>
@@ -141,8 +154,10 @@
 	                              <option value="${country.id}">${country.name}</option>               
 	                       	 </#list>
 	                     	 </select>             	 
-	                     
-	                      	 <label><input type="radio" id="primaryCandidateNationality"/> This is my primary nationality</label>              
+	                       <#if model.hasError('candidateNationalities')>                         
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('candidateNationalities').code /></span>                           
+                       	 </#if>
+	                      	 <label><input type="radio" id="primaryCandidateNationality" name="primaryCandidateNationality"/> This is my primary nationality</label>              
 	                   	 </div>
                 	</div>
                 	
@@ -151,23 +166,46 @@
                 	<div class="row">
                   		<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add nationality</a></div>
                   	</div>
-                  	 <div class="row" id="existingCandidateNationalities">
-                  	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
-                  	  	<span>
-                  	  	 ${nationality.country.name}  <#if nationality.primary>Primary</#if>
-                  	  	<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
-                  	  	<a class="button">Delete</a><br/>
-                  	  	</span>
-                  	  </#list>
-                  </div>
+        
                 </div>
 
 
-				<div>       
-            	    <strong>Maternal Guardian Nationality</strong>        
-                	<div class="row">     
-                  	
-                  		<span class="label">Country</span>
+				<div>   	 
+				
+				<div class="row" id="existingCandidateNationalities">
+                  	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
+                  	  	<span name="existingCandidateNationality">
+                  	  	 	<div class="row">
+                  	  	 		<label class="label">Nationality</label>    
+                  				<div class="field">
+                  					<label class="full">${nationality.country.name}</label>  
+                  	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
+                  	  				<#if nationality.primary><label>This is my primary nationality</label></#if>
+                  	  				<a class="button-delete">Delete</a>
+                  	  			</div>
+                  	  		</div>
+                  	  	</span>                  		
+                  	  </#list>
+                  </div>
+            	        
+            	    <div class="row" id="existingMaternalNationalities">
+                  	  <#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
+                  	  	<span>
+                  	  		<div class="row">
+                  	  	 		<label class="label">Maternal Guardian Nationality</label>    
+                  				<div class="field">
+                  					<label class="full">${nationality.country.name}</label>  
+                  	  				<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
+                  	  				<#if nationality.primary><label>This is her primary nationality</label></#if>
+                  	  				<a class="button-delete">Delete</a>
+                  	  			</div>
+                  	  		</div>            
+                  	  	</span>
+                  	  </#list>
+                  </div>
+                  
+                	<div class="row">                     	
+                  		<label class="label">Maternal Guardian Nationality</label>        
 	                  	 <div class="field">
 	                     	 <select name="maternalNationalityCountry" id="maternalNationalityCountry">
 	                      		<option value="">Select...</option>
@@ -175,7 +213,9 @@
 	                              <option value="${country.id}">${country.name}</option>               
 	                       	 </#list>
 	                     	 </select>             	 
-	                     
+	                      <#if model.hasError('maternalGuardianNationalities')>                         
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('maternalGuardianNationalities').code /></span>                           
+                       	 </#if>
 	                      	 <label><input type="radio" id="primaryMaternalNationality"/> This is her primary nationality</label>              
 	                   	 </div>
                 	</div>
@@ -185,23 +225,28 @@
                 	<div class="row">
                   		<div class="field"><a class="button blue" id="addMaternalNationalityButton">Add nationality</a></div>
                   	</div>
-                  	 <div class="row" id="existingMaternalNationalities">
-                  	  <#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
-                  	  	<span>
-                  	  	 ${nationality.country.name}  <#if nationality.primary>Primary</#if>
-                  	  	<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
-                  	  	<a class="button">Delete</a><br/>
-                  	  	</span>
-                  	  </#list>
-                  </div>
+                  	 
                 </div>
               	
               	
               	<div>       
-            	    <strong>Paternal Guardian Nationality</strong>        
-                	<div class="row">     
-                  	
-                  		<span class="label">Country</span>
+            	     <div class="row" id="existingPaternalNationalities">
+                  	  <#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
+                  	  	<span>
+                  	  		<div class="row">
+                  	  	 		<label class="label">Paternal Guardian Nationality</label>    
+                  				<div class="field">
+                  					<label class="full">${nationality.country.name}</label>  
+                  	  				<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
+                  	  				<#if nationality.primary><label>This is his primary nationality</label></#if>
+                  	  				<a class="button-delete">Delete</a>
+                  	  			</div>
+                  	  		</div>            
+                  	  	</span>
+                  	  </#list>
+                  </div>
+                <div class="row">                      	
+                 <label class="label">Paternal Guardian Nationality</label> 
 	                  	 <div class="field">
 	                     	 <select name="paternalNationalityCountry" id="paternalNationalityCountry">
 	                      		<option value="">Select...</option>
@@ -209,25 +254,18 @@
 	                              <option value="${country.id}">${country.name}</option>               
 	                       	 </#list>
 	                     	 </select>             	 
-	                     
+	                          <#if model.hasError('paternalGuardianNationalities')>                         
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('paternalGuardianNationalities').code /></span>                           
+                       	 </#if>
 	                      	 <label><input type="radio" id="primaryPaternalNationality"/> This is his primary nationality</label>              
 	                   	 </div>
                 	</div>
-                	
-                      
+                	                     
                   
                 	<div class="row">
                   		<div class="field"><a class="button blue" id="addPaternalNationalityButton">Add nationality</a></div>
                   	</div>
-                  	 <div class="row" id="existingPaternalNationalities">
-                  	  <#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
-                  	  	<span>
-                  	  	 ${nationality.country.name}  <#if nationality.primary>Primary</#if>
-                  	  	<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
-                  	  	<a class="button">Delete</a><br/>
-                  	  	</span>
-                  	  </#list>
-                  </div>
+                  	 
                 </div>
               	
               	<div>
@@ -263,7 +301,7 @@
                   	  	<span>
                   	  	 ${prof.language.name} ${prof.aptitude.displayValue} <#if prof.primary>Primary</#if>
                   	  	<input type="hidden" name="languageProficiencies" value='${prof.asJson}'/>
-                  	  	<a class="button">Delete</a><br/>
+                  	  	<a class="button-delete">Delete</a><br/>
                   	  	</span>
                   	  </#list>
                   </div>
@@ -363,6 +401,7 @@
                     </div>
                   </div>
                 </div>
+                <!--
                 <div>
 					<div class="row">
                   		<span class="label">Supporting Document</span>
@@ -372,7 +411,7 @@
                      		<a class="button" id="primaryNationalityUploadButton">Upload</a>                     		  
                  	  	</div>
                  	  </div>
-                 	 </div>
+                </div>-->
               	<div class="buttons">
                   <a id="close-section-button"class="button blue">Close</a>
                   <#if !model.applicationForm.isSubmitted()>

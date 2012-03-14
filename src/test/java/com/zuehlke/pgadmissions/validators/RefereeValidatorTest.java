@@ -1,10 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
-import static org.junit.Assert.*;
-
-import java.util.Arrays;
-import java.util.Date;
-
+import static org.junit.Assert.assertTrue;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -16,11 +12,7 @@ import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 
 public class RefereeValidatorTest {
 

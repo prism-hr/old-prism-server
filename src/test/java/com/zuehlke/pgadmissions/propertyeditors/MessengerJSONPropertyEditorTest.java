@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.propertyeditors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.text.ParseException;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -48,7 +46,7 @@ public class MessengerJSONPropertyEditorTest {
 	}
 	
 	@Test	
-	public void shouldReturnCorrectjsonString() throws ParseException{			
+	public void shouldReturnCorrectjsonString(){			
 		editor.setValue(new MessengerBuilder().messengerAddress("something").toMessenger());
 		assertEquals("{ \"address\": \"something\"}", editor.getAsText());
 	}

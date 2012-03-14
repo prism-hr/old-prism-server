@@ -1,10 +1,8 @@
 package com.zuehlke.pgadmissions.propertyeditors;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-
-import java.text.ParseException;
+import static org.junit.Assert.assertTrue;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -21,7 +19,7 @@ public class LanguageProficiencyJSONPropertyEditorTest {
 	private LanguageService languageServiceMock;
 
 	@Test
-	public void shouldParseAndSetAsValue() throws ParseException {	
+	public void shouldParseAndSetAsValue(){	
 		Language language = new LanguageBuilder().id(1).toLanguage();
 	
 		EasyMock.expect(languageServiceMock.getLanguageById(1)).andReturn(language);
@@ -63,7 +61,7 @@ public class LanguageProficiencyJSONPropertyEditorTest {
 	}
 
 	@Test
-	public void shouldReturnCorrectjsonString() throws ParseException {
+	public void shouldReturnCorrectjsonString() {
 
 		Language language = new LanguageBuilder().id(1).toLanguage();
 		LanguageProficiency languageProficiency = new LanguageProficiency();

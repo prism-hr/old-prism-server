@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.security.NoSuchAlgorithmException;
 
@@ -14,7 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicantRecord;
 import com.zuehlke.pgadmissions.domain.builders.ApplicantRecordBuilder;
-import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicantRecordService;
 import com.zuehlke.pgadmissions.validators.ApplicantRecordValidator;

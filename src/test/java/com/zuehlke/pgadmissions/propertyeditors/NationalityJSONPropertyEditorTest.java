@@ -26,7 +26,7 @@ public class NationalityJSONPropertyEditorTest {
 	private CountryService countryServiceMock;
 
 	@Test
-	public void shouldParseAndSetAsValue() throws ParseException {
+	public void shouldParseAndSetAsValue() {
 		Document document1 = new DocumentBuilder().id(1).toDocument();
 		Document document2 = new DocumentBuilder().id(2).toDocument();
 		Country country = new CountryBuilder().id(1).toCountry();

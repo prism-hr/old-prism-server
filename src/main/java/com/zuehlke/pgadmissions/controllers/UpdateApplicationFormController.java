@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
+import com.zuehlke.pgadmissions.dto.AdditionalInformation;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
@@ -40,6 +41,7 @@ import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
@@ -183,6 +185,31 @@ public class UpdateApplicationFormController {
 		modelMap.put("model", model);
 
 		return new ModelAndView("private/pgStudents/form/components/funding_details", modelMap);
+	}
+	
+	@RequestMapping(value = "/addAdditionalInformation", method = RequestMethod.POST)
+	public ModelAndView addAdditionalInfo(@ModelAttribute AdditionalInformation additionalInformation, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+		ApplicationForm application = applicationService.getApplicationById(appId);
+
+		if (application.isSubmitted()) {
+			throw new CannotUpdateApplicationException();
+		}
+		ApplicationPageModel model = new ApplicationPageModel();
+		model.setUser(getCurrentUser());
+		ApplicationForm applicationForm = application;
+		model.setApplicationForm(applicationForm);
+		model.setResult(result);
+		
+		AdditionalInformationValidator validator = new AdditionalInformationValidator();
+		validator.validate(additionalInformation, result);
+		
+		if (!result.hasErrors()) {
+			application.setAdditionalInformation(additionalInformation.getAdditionalInformation());
+			applicationService.save(application);
+		}
+		modelMap.put("model", model);
+
+		return new ModelAndView("private/pgStudents/form/components/additional_information", modelMap);
 	}
 
 	@RequestMapping(value = "/addEmploymentPosition", method = RequestMethod.POST)

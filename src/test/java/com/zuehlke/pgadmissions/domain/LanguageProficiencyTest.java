@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import static org.junit.Assert.assertEquals;
 
-import java.text.ParseException;
-
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
@@ -11,7 +9,7 @@ import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 
 public class LanguageProficiencyTest {
 	@Test
-	public void shouldReturnCorrectjsonString() throws ParseException {
+	public void shouldReturnCorrectjsonString() {
 
 		Language language = new LanguageBuilder().id(1).toLanguage();
 		LanguageProficiency languageProficiency = new LanguageProficiency();

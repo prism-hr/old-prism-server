@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring />
-	<h2 class="empty">
+	<h2 id="documents-H2" class="empty">
     	<span class="left"></span><span class="right"></span><span class="status"></span>
         Documents
 	</h2>
@@ -77,7 +77,7 @@
 			</div>
 
 			<div class="buttons">
-                <button class="blue" value="close">Close</button>              
+                <button class="blue" id="documentsCloseButton" value="close">Close</button>              
 			</div>
 
 		</form>

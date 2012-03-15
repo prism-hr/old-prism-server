@@ -53,8 +53,8 @@
                     <div class="field">                    	
                     <#if !model.applicationForm.isSubmitted()>
                     	<input class="full" type="text" value="${model.applicationForm.personalDetails.firstName!}" name="firstName" id="firstName"/>
-                    	<#if model.hasError('firstName')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
+                    	<#if model.hasError('firstName')>
+                    			<span class="invalid"><@spring.message  model.result.getFieldError('firstName').code /></span><br/>                  		
                     	</#if>
                     	<#else>
                     		<input class="full" readonly="readonly" type="text" value="${model.applicationForm.personalDetails.firstName!}" name="firstName" id="firstName" />	          
@@ -68,7 +68,7 @@
                      <#if !model.applicationForm.isSubmitted()>
                     	<input class="full" type="text" value="${model.applicationForm.personalDetails.lastName!}" name="lastName" id="lastName"/>
                     	<#if model.hasError('lastName')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
+                    			<span class="invalid"><@spring.message  model.result.getFieldError('lastName').code /></span><br/>                    		
                     	</#if>
                     <#else>
                     		<input class="full" readonly="readonly" type="text" value="${model.applicationForm.personalDetails.lastName!}" name="lastName" id="lastName" />	          
@@ -89,7 +89,7 @@
                         </#list>                  		
             
                       <#if model.hasError('gender')>                         
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('gender').code /></span>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('gender').code /></span>                           
                       </#if>
                     </div>
                   </div>
@@ -100,7 +100,7 @@
                     <#if !model.applicationForm.isSubmitted()>
                         <input class="half date" value="${(model.applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>
                         <#if model.hasError('dateOfBirth')>                           
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('dateOfBirth').code /></span>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('dateOfBirth').code /></span>                           
                         </#if>
                     <#else>
                         <input class="full" readonly="readonly" type="date" value="${(model.applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
@@ -125,7 +125,7 @@
                         </#list>
                       </select>
                       <#if model.hasError('country')>                         
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('country').code /></span>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('country').code /></span>                           
                         </#if>
                     </div>
                   </div>
@@ -159,7 +159,7 @@
 	                       	 </#list>
 	                     	 </select>             	 
 	                       <#if model.hasError('candidateNationalities')>                         
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('candidateNationalities').code /></span>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('candidateNationalities').code /></span>                           
                        	 </#if>
 	                      	 <label><input type="radio" id="primaryCandidateNationality" name="primaryCandidateNationality"/> This is my primary nationality</label>              
 	                   	 </div>
@@ -203,7 +203,7 @@
 	                       	 </#list>
 	                     	 </select>             	 
 	                      <#if model.hasError('maternalGuardianNationalities')>                         
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('maternalGuardianNationalities').code /></span>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('maternalGuardianNationalities').code /></span>                           
                        	 </#if>
 	                      	 <label><input type="radio" id="primaryMaternalNationality"/> This is her primary nationality</label>              
 	                   	 </div>
@@ -244,7 +244,7 @@
 	                       	 </#list>
 	                     	 </select>             	 
 	                          <#if model.hasError('paternalGuardianNationalities')>                         
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('paternalGuardianNationalities').code /></span>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('paternalGuardianNationalities').code /></span>                           
                        	 </#if>
 	                      	 <label><input type="radio" id="primaryPaternalNationality"/> This is his primary nationality</label>              
 	                   	 </div>
@@ -304,7 +304,7 @@
                       	</#list>
                       </select>
                         <#if model.hasError('languageProficiencies')>                         
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('languageProficiencies').code /></span>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('languageProficiencies').code /></span>                           
                        	 </#if>
                     </div>
                   </div>
@@ -331,7 +331,7 @@
                         </#list>
                       </select>
                       <#if model.hasError('residenceCountry')>                         
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('residenceCountry').code /></span>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('residenceCountry').code /></span>                           
                         </#if>
                     </div>
                   </div>
@@ -345,7 +345,7 @@
                         </#list>
                       </select>
                       <#if model.hasError('residenceStatus')>                         
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('residenceStatus').code /></span>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('residenceStatus').code /></span>                           
                         </#if>
                     </div>
                   </div>
@@ -360,7 +360,7 @@
                         <#if !model.applicationForm.isSubmitted()>
 	                    	<input class="full" type="email" value="${model.applicationForm.personalDetails.email!}" name="email" id="email" />	                    
 	                     	<#if model.hasError('email')>                    		
-                    			<span style="color:red;"><@spring.message  model.result.getFieldError('email').code /></span>                    		
+                    			<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                    		
                     		</#if>
                     	<#else>
                     		<input class="full" readonly="readonly" type="email" value="${model.applicationForm.personalDetails.email!}" name="email" id="email" />	          

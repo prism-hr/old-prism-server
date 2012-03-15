@@ -2,24 +2,35 @@ $(document).ready(function(){
 	
 	
 	$('#addLanguageButton').on("click", function(){
-		
-		var primary = "";
-		var jsonPrimary = "false";
-		if($('#primaryLanguage').is(':checked') ){
-			primary = "Primary";
-			jsonPrimary = "true"
+		if( $('#languageSelect option:selected').val()!= ''){
+			var primary = "";
+			var jsonPrimary = "false";
+			if($('#primaryLanguage').is(':checked') ){
+				primary = "This is my primary language";
+				jsonPrimary = "true"
+			}			
+			            
+			
+			var html =  '<span>'+
+	  	  	'	<div class="row">'+
+		  	'		<label class="label">Language</label>'+    
+			'		<div class="field">'+
+			'			<label class="full">'+ $('#languageSelect option:selected').text()  +'</label>'+ 
+		  	'			<a class="button-delete">Delete</a> ' + primary +             
+		  	'		</div>'+
+		  	'		<span class="label">Aptitude</span>    '+
+			'		<div class="field">'+
+			'			<label class="full">' +  $('#aptitude option:selected').text() + '</label>'+
+		  	'		</div>'+
+		  	'	</div>   '+
+	        "<input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + '", "language":' + $('#languageSelect option:selected').val()  +', "primary": "' + jsonPrimary + '"}' + "'/>" + 
+		  	'</span>';
+	        
+		  	
+			$('#existingProficiencies').append(html);
+			$('#languageSelect').val("");
+			$('#primaryLanguage').prop('checked', false);
 		}
-		var html = 	'<span>' + $('#languageSelect option:selected').text() + " " + $('#aptitude option:selected').text() +" " + primary +
-		"<input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + 
-		'", "language":' + $('#languageSelect option:selected').val()  +
-		', "primary": "' + jsonPrimary + '"}' + "'/>" + 
-		'<a class="button-delete">Delete</a><br/></span>';
-		            
-				  	
-	  	
-		$('#existingProficiencies').append(html);
-		$('#languageSelect').val("");
-		$('#primaryLanguage').prop('checked', false);
 	});
 	
 	
@@ -119,12 +130,14 @@ $(document).ready(function(){
 			var primary = "";
 			var jsonPrimary = "false";
 			if($('#primaryLanguage').is(':checked') ){
-				primary = "Primary";
+				primary = "This is my primary language";
 				jsonPrimary = "true"
 			}
-			var html = 	"<span><input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + 
-			'", "language":' + $('#languageSelect option:selected').val()  +
-			', "primary": "' + jsonPrimary + '"}' + "'/></span>";
+			var html =  '<span>'+
+	        "<input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + '", "language":' + $('#languageSelect option:selected').val()  +', "primary": "' + jsonPrimary + '"}' + "'/>" + 
+		  	'</span>';
+			
+
 			$('#existingProficiencies').append(	html);
 		}
 		
@@ -246,7 +259,7 @@ $(document).ready(function(){
 	});
 	
 	$("#existingProficiencies").on("click", "a", function(){	
-		$(this).parent("span").remove();
+		$(this).parent("div").parent("div").parent("span").remove();
 		
 	});
 		

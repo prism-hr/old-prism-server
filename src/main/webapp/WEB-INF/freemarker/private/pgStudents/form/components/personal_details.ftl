@@ -170,24 +170,9 @@
                 </div>
 
 
-				<div>   	 
+				<div>   	
 				
-				<div class="row" id="existingCandidateNationalities">
-                  	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
-                  	  	<span name="existingCandidateNationality">
-                  	  	 	<div class="row">
-                  	  	 		<label class="label">Nationality</label>    
-                  				<div class="field">
-                  					<label class="full">${nationality.country.name}</label>  
-                  	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
-                  	  				<#if nationality.primary><label>This is my primary nationality</label></#if>
-                  	  				<a class="button-delete">Delete</a>
-                  	  			</div>
-                  	  		</div>
-                  	  	</span>                  		
-                  	  </#list>
-                  </div>
-            	        
+
             	    <div class="row" id="existingMaternalNationalities">
                   	  <#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
                   	  	<span>
@@ -269,6 +254,27 @@
                 </div>
               	
               	<div>
+                              
+                    <div class="row" id="existingProficiencies">
+                  	  <#list model.applicationForm.personalDetails.languageProficiencies as prof >
+                  	  	<span>
+                  	  		<div class="row">
+                  	  	 		<label class="label">Language</label>    
+                  				<div class="field">
+                  					<label class="full"> ${prof.language.name}</label> 
+                  	  				<a class="button-delete">Delete</a> <#if prof.primary>This is my primary language</#if>              
+                  	  			</div>
+                  	  			<span class="label">Aptitude</span>    
+                  				<div class="field">
+                  					<label class="full"> ${prof.aptitude.displayValue}</label>                   	  				
+                  	  				
+                  	  			</div>
+                  	  		</div>   
+                            <input type="hidden" name="languageProficiencies" value='${prof.asJson}'/>   
+                  	  	</span>
+                  	  </#list>
+                  </div>
+                  
                 	<div class="row">
                   	<label class="label">Language</label>
                     <span class="hint"></span>                    
@@ -296,15 +302,7 @@
                 	<div class="row">
                   		<div class="field"><a class="button blue" id="addLanguageButton">Add language</a></div>
                   </div>
-                  <div class="row" id="existingProficiencies">
-                  	  <#list model.applicationForm.personalDetails.languageProficiencies as prof >
-                  	  	<span>
-                  	  	 ${prof.language.name} ${prof.aptitude.displayValue} <#if prof.primary>Primary</#if>
-                  	  	<input type="hidden" name="languageProficiencies" value='${prof.asJson}'/>
-                  	  	<a class="button-delete">Delete</a><br/>
-                  	  	</span>
-                  	  </#list>
-                  </div>
+                
                 </div>
 
               	<div>

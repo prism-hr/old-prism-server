@@ -75,24 +75,24 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		assertNotNull(telephone2.getId());
 		flushAndClearSession();
 		Referee  reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
-		assertEquals(2, reloadedReferee.getPhoneNumbersRef().size());
-		assertTrue(reloadedReferee.getPhoneNumbersRef().containsAll(Arrays.asList(telephone1, telephone2)));
+		assertEquals(2, reloadedReferee.getPhoneNumbers().size());
+		assertTrue(reloadedReferee.getPhoneNumbers().containsAll(Arrays.asList(telephone1, telephone2)));
 
-		reloadedReferee.getPhoneNumbersRef().remove(1);
+		reloadedReferee.getPhoneNumbers().remove(1);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
 
 		flushAndClearSession();
 		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
-		assertEquals(1, reloadedReferee.getPhoneNumbersRef().size());
-		assertTrue(reloadedReferee.getPhoneNumbersRef().containsAll(Arrays.asList(telephone1)));
+		assertEquals(1, reloadedReferee.getPhoneNumbers().size());
+		assertTrue(reloadedReferee.getPhoneNumbers().containsAll(Arrays.asList(telephone1)));
 
-		reloadedReferee.getPhoneNumbersRef().add(telephone3);
+		reloadedReferee.getPhoneNumbers().add(telephone3);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
 		flushAndClearSession();
 		
 		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
-		assertEquals(2, reloadedReferee.getPhoneNumbersRef().size());
-		assertTrue(reloadedReferee.getPhoneNumbersRef().containsAll(Arrays.asList(telephone1, telephone3)));
+		assertEquals(2, reloadedReferee.getPhoneNumbers().size());
+		assertTrue(reloadedReferee.getPhoneNumbers().containsAll(Arrays.asList(telephone1, telephone3)));
 
 	}
 	
@@ -108,24 +108,24 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		assertNotNull(messenger2.getId());
 		flushAndClearSession();
 		Referee  reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
-		assertEquals(2, reloadedReferee.getMessengersRef().size());
-		assertTrue(reloadedReferee.getMessengersRef().containsAll(Arrays.asList(messenger1, messenger2)));
+		assertEquals(2, reloadedReferee.getMessengers().size());
+		assertTrue(reloadedReferee.getMessengers().containsAll(Arrays.asList(messenger1, messenger2)));
 		
-		reloadedReferee.getMessengersRef().remove(1);
+		reloadedReferee.getMessengers().remove(1);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
 		
 		flushAndClearSession();
 		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
-		assertEquals(1, reloadedReferee.getMessengersRef().size());
-		assertTrue(reloadedReferee.getMessengersRef().containsAll(Arrays.asList(messenger1)));
+		assertEquals(1, reloadedReferee.getMessengers().size());
+		assertTrue(reloadedReferee.getMessengers().containsAll(Arrays.asList(messenger1)));
 		
-		reloadedReferee.getMessengersRef().add(messenger3);
+		reloadedReferee.getMessengers().add(messenger3);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
 		flushAndClearSession();
 		
 		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
-		assertEquals(2, reloadedReferee.getMessengersRef().size());
-		assertTrue(reloadedReferee.getMessengersRef().containsAll(Arrays.asList(messenger1, messenger3)));
+		assertEquals(2, reloadedReferee.getMessengers().size());
+		assertTrue(reloadedReferee.getMessengers().containsAll(Arrays.asList(messenger1, messenger3)));
 		
 	}
 	

@@ -164,8 +164,12 @@
                     <span class="hint"></span>
                     <div class="field">
                     <#if !model.applicationForm.isSubmitted()>
-						<input class="full" type="text" id="position_language" 
-									name="position_language" value="${model.employmentPosition.position_language!}"/>
+                      <select class="full" id="position_language" name="position_language" value="${model.employmentPosition.position_language!}">
+                        <option value="">Select...</option>
+                         <#list model.languages as language>
+                         	<option value="${language.id}">${language.name}</option>
+                         </#list>
+                      </select>
 						<#if model.hasError('position_language')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_language').code /></span>                           
                         </#if>

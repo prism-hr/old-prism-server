@@ -16,7 +16,7 @@
 <#-- Programme Details Rendering -->
 
 
-	<h2 class="tick">
+	<h2 id="programme-H2" class="tick"> 
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Programme
 	</h2>
@@ -94,7 +94,7 @@
 			</div>
 
             <div class="buttons">
-				<button class="blue" type="button">Close</button>
+				<button class="blue"  id="programmeCloseButton" type="button">Close</button>
 			</div>
 
 		</form>

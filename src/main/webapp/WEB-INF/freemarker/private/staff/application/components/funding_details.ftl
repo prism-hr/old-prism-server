@@ -6,7 +6,7 @@
 
 <#import "/spring.ftl" as spring />
 
-	<h2 class="empty">
+	<h2 id="funding-H2" class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 			Funding
 	</h2>
@@ -117,7 +117,7 @@
 			</div>
 
 			<div class="buttons">
-				<button class="blue" type="button">Close</button>
+				<button class="blue" id="fundingCloseButton"  type="button">Close</button>
 			</div>
 
 		</form>

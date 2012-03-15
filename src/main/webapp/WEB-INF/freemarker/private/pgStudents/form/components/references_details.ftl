@@ -346,7 +346,7 @@
                   		<button class="blue" type="button" value="close" id="refereeSaveButton">Save and Close</button>
                   		<button class="blue" type="button" id="refereeSaveAndAddButton" value="add">Save and Add</button>
                   	 <#else>
-                        <a id="refereeCloseButton"class="button blue">Close</a>   
+                        <a id="refereeCloseButton" class="button blue">Close</a>   
                     </#if> 	
                 	</div>
 

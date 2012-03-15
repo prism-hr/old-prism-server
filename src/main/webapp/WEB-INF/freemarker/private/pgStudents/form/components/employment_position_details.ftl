@@ -198,7 +198,7 @@
                 <button class="blue" type="button" value="close" id="positionSaveAndCloseButton" name="positionSaveButton">Save and Close</button>
                 <button class="blue" type="button" value="add" id="positionSaveAndAddButton" name="positionSaveAndAddButton">Save and Add</button>
             <#else>
-                <a id="positionCloseButton"class="button blue">Close</a>
+                <a id="positionCloseButton" class="button blue">Close</a>
             </#if>    
             </div>
 

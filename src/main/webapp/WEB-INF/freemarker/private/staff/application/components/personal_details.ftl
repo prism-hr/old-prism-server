@@ -13,7 +13,7 @@
 
 <!-- Personal details -->
 <section class="folding purple">
-	<h2 class="empty open">
+	<h2 id="personalDetails-H2" class="empty open">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Personal Details
 	</h2>
@@ -200,6 +200,7 @@
 
               	<div class="buttons" id="show-comment-button-div">
                 	<a class="button blue comment-open" href="#" id="comment-button">Comment</a>
+                	 <a id="personalDetailsCloseButton"class="button blue">Close</a>
                 </div>
 
 		</form>

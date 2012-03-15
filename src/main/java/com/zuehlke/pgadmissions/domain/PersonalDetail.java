@@ -188,7 +188,11 @@ public class PersonalDetail extends DomainObject<Integer> {
 
 	public void setPhoneNumbers(List<Telephone> phoneNumbers) {
 		this.phoneNumbers.clear();
-		this.phoneNumbers.addAll(phoneNumbers);
+		for (Telephone telephone : phoneNumbers) {
+			if(telephone != null){
+				this.phoneNumbers.add(telephone);
+			}
+		}
 		
 	}
 
@@ -253,7 +257,12 @@ public class PersonalDetail extends DomainObject<Integer> {
 
 	public void setMessengers(List<Messenger> messengers) {
 		this.messengers.clear();
-		this.messengers.addAll(messengers);
+		for (Messenger messenger : messengers) {
+			if(messenger != null){
+				this.messengers.add(messenger);
+			}
+		}
+		
 	}
 
 	

@@ -6,7 +6,7 @@
 
 <#import "/spring.ftl" as spring />
 	
-	<h2 class="empty">
+	<h2 id="position-H2" class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Employment
 	</h2>
@@ -134,7 +134,7 @@
 			</div>
 
 			<div class="buttons">
-                <button class="blue" type="button">Close</button>
+                <button class="blue" id="positionCloseButton" type="button">Close</button>
             </div>
 
 		</form>

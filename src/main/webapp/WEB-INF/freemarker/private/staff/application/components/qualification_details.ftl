@@ -117,8 +117,17 @@
 	                    	<span class="label">Level</span>
 	                    	<span class="hint" data-desc="Tooltip demonstration."></span>
 	                    	<div class="field">
-	                    	 <input readonly="readonly" id="qualificationLevel" class="full" type="text" 
-                                                                value="${model.qualification.qualificationLevel!}"/>
+	                    	  <select name="qualificationLevel" id="qualificationLevel" value="${model.qualification.qualificationLevel!}"
+                                                disabled="disabled">
+                                     <option value="">Select...</option>
+                                     <#list model.qualificationLevels as level>
+                                         <option value="${level}"
+                                         <#if model.qualification.qualificationLevel?? &&  model.qualification.qualificationLevel == level >
+                                        selected="selected"
+                                        </#if>
+                                >${level.displayValue}</option>               
+                                    </#list>
+                                </select>
 	                    	</div>
 	                  	</div>
 

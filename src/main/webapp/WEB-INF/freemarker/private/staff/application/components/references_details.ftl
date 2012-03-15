@@ -42,7 +42,6 @@
 				                    <td>${referee.lastname!}</td>
 				                    <td>${referee.jobTitle!}</td>
 				                    <td>${referee.email!}</td>
-				                    <td><a class="button-delete" type="submit">Delete</a></td>
                                     <input type="hidden" id="${referee.id!}_refereeId" value="${referee.id!}"/>
                                     <input type="hidden" id="${referee.id!}_firstname" value="${referee.firstname!}"/>
                                     <input type="hidden" id="${referee.id!}_lastname" value="${referee.lastname!}"/>

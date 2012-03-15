@@ -24,30 +24,28 @@
                 
                 </thead>
                 <tbody>
+					<#list model.applicationForm.supportingDocuments as document>
 					<tr>
-						<!-- Replace a freemarker expression to display the value of the field for each row. -->
-	                    <td><a class="row-arrow" href="#">-</a></td>
-	                    <td>Personal Statement</td>
-	                    <td>Applicant_Dash_Review_Funding</td>
-	                    <td>19/05/12</td>
-					</tr>
+						<td>-</td>
+		                <td  nowrap>${document.type.displayValue}</td>
+		                <td ><a href="<@spring.url '/download'/>?documentId=${document.id}">
+		                	<#if document.fileName?length <40 >${document.fileName}<#else>${document.fileName?substring(0,37)}...</#if></a></td>
+		                <td>${(document.dateUploaded?string('dd-MMM-yyyy'))!}</td>
+		                <td>
+		                	<#if !model.applicationForm.submitted>
+			                	<form method="Post" action="<@spring.url '/delete'/>" style="padding:0">
+			                		<input type="hidden" name="documentId" value="${document.id}"/>		                		
+			                		<a name="deleteButton" class="button-delete">delete</a>
+			                	</form>
+		                	</#if>
+		               </td>
+	                </tr>
+					</#list>
                 </tbody>
 		</table>
               
 		<form>
              
-             <div>
-                
-             	<!-- Document type -->
-                <div class="row">
-                    <span class="label">Type</span>
-                    <span class="hint"></span>
-                    <div class="field">
-                    	<!-- Add a freemarker expression to display the value of the field. -->
-                    </div>  
-				</div>
-				
-			</div>
 
 			<div class="buttons">
                 <button class="blue" type="button">Close</button>

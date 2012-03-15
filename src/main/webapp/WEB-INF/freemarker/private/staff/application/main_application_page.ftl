@@ -118,6 +118,10 @@
 			             <#include "/private/staff/application/components/documents.ftl"/>
 			          </section>
 			          
+			          <section id="additionalInformationSection" class="folding lightblue">
+                                    <#include "/private/staff/application/components/additional_information.ftl"/>
+                      </section>
+			          
 			          
 			          <hr />
 			          

@@ -111,10 +111,8 @@
 			          </section>
 			          
 			          <!-- Personal Details -->
-			           <section id="programmeDetailsSection" class="folding violet">
-			          	<!--
+			           <section id="personalDetailsSection" class="folding violet">
 			          	<#include "/private/staff/application/components/personal_details.ftl"/>
-			          	-->
 			          </section>
 			          
 			          <!-- Address -->

@@ -35,11 +35,13 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.MessengerJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
+import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
@@ -65,26 +67,31 @@ public class UpdateApplicationFormController {
 	private final PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor;
 	private final MessengerJSONPropertyEditor messengerJSONPropertyEditor;
 	private final RefereeValidator refereeValidator;
+	private final LanguageService languageService;
+	private final LanguagePropertyEditor languagePropertyEditor;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor,
 			DatePropertyEditor datePropertyEditor, CountryService countryService, RefereeService refereeService,
 			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, MessengerJSONPropertyEditor messengerJSONPropertyEditor,
-			ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator) {
+			ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator,
+			LanguageService languageService, LanguagePropertyEditor languagePropertyEditor) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
 		this.countryService = countryService;
 		this.refereeService = refereeService;
+		this.languagePropertyEditor = languagePropertyEditor;
 		this.phoneNumberJSONPropertyEditor = phoneNumberJSONPropertyEditor;
 		this.messengerJSONPropertyEditor = messengerJSONPropertyEditor;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.refereeValidator = refereeValidator;
+		this.languageService = languageService;	
 	}
 
 	@InitBinder
@@ -126,7 +133,7 @@ public class UpdateApplicationFormController {
 			qualification.setQualificationAwardDate(qual.getQualificationAwardDate());
 			qualification.setQualificationGrade(qual.getQualificationGrade());
 			qualification.setQualificationInstitution(qual.getQualificationInstitution());
-			qualification.setQualificationLanguage(qual.getQualificationLanguage());
+//			qualification.setQualificationLanguage(qual.getQualificationLanguage());
 			qualification.setQualificationLevel(qual.getQualificationLevel());
 			qualification.setQualificationProgramName(qual.getQualificationProgramName());
 			qualification.setQualificationScore(qual.getQualificationScore());
@@ -227,6 +234,7 @@ public class UpdateApplicationFormController {
 		ApplicationForm applicationForm = application;
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
+		model.setLanguages(languageService.getAllLanguages());
 
 		EmploymentPositionValidator positionValidator = new EmploymentPositionValidator();
 		positionValidator.validate(positionDto, result);
@@ -335,6 +343,7 @@ public class UpdateApplicationFormController {
 		applicationPageModel.setResidenceStatuses(ResidenceStatus.values());
 		applicationPageModel.setGenders(Gender.values());
 		applicationPageModel.setPhoneTypes(PhoneType.values());
+		applicationPageModel.setLanguages(languageService.getAllLanguages());
 		ModelAndView modelAndView = new ModelAndView(APPLICATON_REFEREEE_VIEW_NAME, "model", applicationPageModel);
 		modelAndView.addObject("formDisplayState", "open");
 		return modelAndView;

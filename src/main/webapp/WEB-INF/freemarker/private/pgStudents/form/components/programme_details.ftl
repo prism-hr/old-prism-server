@@ -101,7 +101,7 @@
 						<!-- repeat these rows for every existing supervisor. -->
                       	<tr>
 	                        <th class="align-left"><input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/></th>
-	                        <th><input type="radio" name="primarySupervisorCB" id="primarySupervisorCB"/></th>
+	                        <th><input type="checkbox" name="primarySupervisorCB" id="primarySupervisorCB"/></th>
 	                        <input type="hidden" name="primarySupervisor" id="primarySupervisor"/>
 	                        <th><input type="checkbox" name="awareSupervisorCB" id="awareSupervisorCB"/></th>
 	                        <input type="hidden" name="awareSupervisor" id="awareSupervisor"/>

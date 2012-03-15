@@ -6,7 +6,7 @@
  
 <#import "/spring.ftl" as spring />
 
-	<h2 class="empty">
+	<h2 id="address-H2" class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 	    Address
 	</h2>
@@ -158,7 +158,7 @@
 
 
                 <div class="buttons">
-                  	<button class="blue" type="button">Close</button>
+                  	<button id="addressCloseButton" class="blue" type="button">Close</button>
                 </div>
 
 			</form>

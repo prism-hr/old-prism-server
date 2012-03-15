@@ -1,4 +1,4 @@
-	<h2 class="empty">
+	<h2 id="documents-H2" class="empty">
     	<span class="left"></span><span class="right"></span><span class="status"></span>
         Documents
 	</h2>
@@ -48,8 +48,9 @@
              
 
 			<div class="buttons">
-                <button class="blue" type="button">Close</button>
+                <button class="blue"  id="documentsCloseButton" type="button">Close</button>
 			</div>
 
 		</form>
 	</div>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/documents.js'/>"></script>

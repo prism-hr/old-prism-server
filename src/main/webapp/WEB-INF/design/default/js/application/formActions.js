@@ -13,6 +13,11 @@ $(document).ready(function(){
 			$('#commentField').val($('#comment').val());
 			$('#commentForm').submit();
 		});
+		
+		$('#personalDetailsCloseButton').click(function(){
+			$('#personalDetails-H2').trigger('click');
+			return false;
+		});
 		/*
 		 * Keep the view state of the form open or close depending on the user role.
 		 */

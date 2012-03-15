@@ -6,7 +6,7 @@
  
 <#import "/spring.ftl" as spring />
 
-			<h2 class="empty">
+			<h2 id="referee-H2" class="empty">
 				<span class="left"></span><span class="right"></span><span class="status"></span>
         		References
        		</h2>

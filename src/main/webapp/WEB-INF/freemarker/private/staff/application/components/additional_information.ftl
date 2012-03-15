@@ -1,5 +1,5 @@
 	<#import "/spring.ftl" as spring />
-	<h2 class="empty">
+	<h2 id="additional-H2" class="empty">
     	<span class="left"></span><span class="right"></span><span class="status"></span>
         Additional Information
 	</h2>
@@ -13,7 +13,7 @@
 			</div>
 
             <div class="buttons">
-                <button class="blue" type="button">Close</button>
+                <button class="blue" id="additionalCloseButton" type="button">Close</button>
 			</div>
 
 		</form>

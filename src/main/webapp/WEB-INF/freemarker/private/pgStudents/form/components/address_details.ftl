@@ -236,7 +236,7 @@
                   	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save and Add</button>
                   	<button class="blue" type="button" id="addressSaveAndCloseButton" name="addressSaveAndCloseButton">Save and Close</button>
                 <#else>
-                    <a id="addressCloseButton"class="button blue">Close</a>  	
+                    <a id="addressCloseButton" class="button blue">Close</a>  	
                 </#if>  	
                 </div>
 

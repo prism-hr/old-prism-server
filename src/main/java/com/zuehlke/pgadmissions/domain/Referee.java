@@ -34,14 +34,14 @@ public class Referee extends DomainObject<Integer>{
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "referee_id")
-	private List<Telephone> phoneNumbersRef ;
+	private List<Telephone> phoneNumbers ;
 	
 	
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@Access(AccessType.PROPERTY)
 	@JoinColumn(name = "referee_id")
-	private List<Messenger> messengersRef = new ArrayList<Messenger>();
+	private List<Messenger> messengers = new ArrayList<Messenger>();
 	
 	
 	@Column(name="firstname")
@@ -71,35 +71,35 @@ public class Referee extends DomainObject<Integer>{
 	@Column(name="email")
 	private String email;
 	
-	public List<Telephone> getPhoneNumbersRef() {
-		return phoneNumbersRef;
+	public List<Telephone> getPhoneNumbers() {
+		return phoneNumbers;
 	}
 	
-	public void setPhoneNumbersRef(List<Telephone> phoneNumbers) {
-		this.phoneNumbersRef = phoneNumbers;
-		if(phoneNumbersRef != null && !phoneNumbersRef.isEmpty()){
-			int size = phoneNumbersRef.size();
+	public void setPhoneNumbers(List<Telephone> phoneNumbers) {
+		this.phoneNumbers = phoneNumbers;
+		if(phoneNumbers != null && !phoneNumbers.isEmpty()){
+			int size = phoneNumbers.size();
 			for (int i = size -1; i >= 0 ;i--){
-				Telephone telephone = phoneNumbersRef.get(i);
+				Telephone telephone = phoneNumbers.get(i);
 				if(telephone == null){
-					phoneNumbersRef.remove(i);
+					phoneNumbers.remove(i);
 				}
 			}
 		}
 	}
 	
-	public List<Messenger> getMessengersRef() {
-		return messengersRef;
+	public List<Messenger> getMessengers() {
+		return messengers;
 	}
 	
-	public void setMessengersRef(List<Messenger> messengers) {
-		this.messengersRef = messengers;
-		if(messengersRef != null && !messengersRef.isEmpty()){
-			int size = messengersRef.size();
+	public void setMessengers(List<Messenger> messengers) {
+		this.messengers = messengers;
+		if(messengers != null && !messengers.isEmpty()){
+			int size = messengers.size();
 			for (int i = size -1; i >= 0 ;i--){
-				Messenger messenger = messengersRef.get(i);
+				Messenger messenger = messengers.get(i);
 				if(messenger == null){
-					messengersRef.remove(i);
+					messengers.remove(i);
 				}
 			}
 		}

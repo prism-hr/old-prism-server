@@ -1,41 +1,75 @@
 $(document).ready(function(){
 	$("#phonenumbersref").on("click", "a", function(){	
-		$(this).parent("span").remove();
+		$(this).parent("div").parent("div").parent("span").remove();
 		
 	});
 	
 	$("#messengersref").on("click", "a", function(){	
-		$(this).parent("span").remove();
+		$(this).parent("div").parent("div").parent("span").remove();
 		
 	});
 	
 	$('#delBtn').on('click', function(){
 		$(this).parent("span").remove();
 	});
-$('#refereeSaveButton').click(function(){
-	var postData ={ 
-			firstname: $("#ref_firstname").val(),
-			lastname: $("#ref_lastname").val(), 
-			relationship: $("#ref_relationship").val(), 
-			jobEmployer: $("#ref_employer").val(), 
-			jobTitle: $("#ref_position").val(), 
-			addressLocation: $("#ref_address_location").val(), 
-			addressPostcode: $("#ref_address_postcode").val(), 
-			addressCountry: $("#ref_address_country").val(), 
-			email: $("#ref_email").val(), 
-			application: $("#appId").val(),
-			refereeId: $("#refereeId").val(),
-			phoneNumbersRef: "",
-			messengersRef: ""
-		}
-	$.post( "/pgadmissions/update/refereeDetails" , $.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbersRef"]').serialize() + "&" + $('#messengersref input[name="messengersRef"]').serialize(),
+	
+	$('#refereeSaveButton').click(function(){
+	
+		//phonenumbers
+		if( $('#phoneNumberRef').val() != "Number" && $('#phoneNumberRef').val().trim() != ''){	
+			var html = "<input type='hidden' name='phoneNumbers' value='{" + '"type":"' +  $('#phoneTypeRef').val()+ '", "number":"' + $('#phoneNumberRef').val()+ '"}'+  "'/>";
+			$('#phonenumbersref').append(html);
 			
-				   function(data) {
-				     $('#referencesSection').html(data);
-				   });
+		}
+		
+		//messenger
+		if($('#messengerAddressRef').val() !="Skype Address" && $('#messengerAddressRef').val().trim()!= ''){
+			var html ='<input type="hidden" name="messengers" value=' +"'" + '{"address":"' + $('#messengerAddressRef').val()+ '"} ' + "'" + "/>" ;
+			
+			$('#messengersref').append(html);			
+	
+		}
+		
+		
+		var postData ={ 
+				firstname: $("#ref_firstname").val(),
+				lastname: $("#ref_lastname").val(), 
+				relationship: $("#ref_relationship").val(), 
+				jobEmployer: $("#ref_employer").val(), 
+				jobTitle: $("#ref_position").val(), 
+				addressLocation: $("#ref_address_location").val(), 
+				addressPostcode: $("#ref_address_postcode").val(), 
+				addressCountry: $("#ref_address_country").val(), 
+				email: $("#ref_email").val(), 
+				application: $("#appId").val(),
+				refereeId: $("#refereeId").val(),
+				phoneNumbers: "",
+				messengers: ""
+			}
+		
+		$.post( "/pgadmissions/update/refereeDetails" ,
+				$.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbers"]').serialize() + "&" + $('#messengersref input[name="messengers"]').serialize(),
+				function(data) {   $('#referencesSection').html(data);  }
+			);
 	});
 
 $('#refereeSaveAndAddButton').click(function(){
+	
+	//phonenumbers
+	if( $('#phoneNumberRef').val() != "Number" && $('#phoneNumberRef').val().trim() != ''){	
+		var html = "<input type='hidden' name='phoneNumbers' value='{" + '"type":"' +  $('#phoneTypeRef').val()+ '", "number":"' + $('#phoneNumberRef').val()+ '"}'+  "'/>";
+		$('#phonenumbersref').append(html);
+		
+	}
+	
+	//messenger
+	if($('#messengerAddressRef').val() !="Skype Address" && $('#messengerAddressRef').val().trim()!= ''){
+		var html ='<input type="hidden" name="messengers" value=' +"'" + '{"address":"' + $('#messengerAddressRef').val()+ '"} ' + "'" + "/>" ;
+		
+		$('#messengersref').append(html);			
+
+	}
+	
 	var postData ={ 
 			firstname: $("#ref_firstname").val(),
 			lastname: $("#ref_lastname").val(), 
@@ -48,10 +82,10 @@ $('#refereeSaveAndAddButton').click(function(){
 			email: $("#ref_email").val(), 
 			application: $("#appId").val(),
 			refereeId: $("#refereeId").val(),
-			phoneNumbersRef: "",
-			messengersRef: ""
+			phoneNumbers: "",
+			messengers: ""
 	}
-	$.post( "/pgadmissions/update/refereeDetails" , $.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbersRef"]').serialize() + "&" + $('#messengersref input[name="messengersRef"]').serialize(),
+	$.post( "/pgadmissions/update/refereeDetails" , $.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbers"]').serialize() + "&" + $('#messengersref input[name="messengers"]').serialize(),
 			
 			function(data) {
 		$('#referencesSection').html(data);
@@ -98,25 +132,44 @@ $('a[name="refereeEditButton"]').click(function(){
 
 
 $('#addPhoneRefButton').on('click', function(){
-	if($('#phoneNumberRef').val() =="Number" || $('#phoneNumberRef').val().trim()== ''){
-		alert("Please enter phone number");
-		return;
+	if($('#phoneNumberRef').val() !="Number" && $('#phoneNumberRef').val().trim()!= ''){
+		var html = ''+
+			'<span  name="phone_number_ref">'+
+	  	  	'	<div class="row">'+
+	  	  	' 		<span class="label">Telephone</span>  '+  
+	  		'		<div class="field">'+
+	  		'			<label class="full">' + $('#phoneTypeRef option:selected').text() +'</label>'+
+	  		'			<label class="half">'+   $('#phoneNumberRef').val() +'</label> '+
+	  	  	'			<a class="button-delete">Delete</a>'+           
+	  	  	'		</div>'+	  	  			
+	  	  	'	</div>'+   
+			'<input type="hidden" name="phoneNumbers" value=' +"'" + '{"type":"' +  $('#phoneTypeRef').val()+ '", "number":"' + $('#phoneNumberRef').val()+ '"} ' + "'" + "/>"	+  
+			'</span>';
+	
+		$('#phonenumbersref').append(html);
+		
+		$('#phoneNumberRef').val('');
 	}
-	$('#phonenumbersref').append('<span name="phone_number_ref">'+ 
-			$('#phoneTypeRef option:selected').text() + " " + $('#phoneNumberRef').val()+ " "+'<a class="button">delete</a>'+
-			'<input type="hidden" name="phoneNumbersRef" value=' +"'" + '{"type":"' +  $('#phoneTypeRef').val()+ '", "number":"' + $('#phoneNumberRef').val()+ '"} ' + "'" + "/>"									
-			+'<br/></span>');
 })
 
 $('#addMessengerRefButton').on('click', function(){
-	if($('#messengerAddressRef').val() =="Address" || $('#messengerAddressRef').val().trim()== ''){
-		alert("Please enter address");
-		return;
+	if($('#messengerAddressRef').val() !="Skype address" && $('#messengerAddressRef').val().trim()!= ''){
+		var html =''+ 
+			'<span name="messenger_ref">'+
+			'<div class="row">'+
+	  	 	'	<span class="label">Skype</span>'+    
+			'	<div class="field">'+
+			'		<label class="full">'+  $('#messengerAddressRef').val() + '</label>'+ 
+	  		'		<a class="button-delete">Delete</a>'+      
+	  		'	</div>'+                  	  			
+	  		'</div>'+   
+	  		'<input type="hidden" name="messengers" value=' +"'" + '{"address":"' + $('#messengerAddressRef').val()+ '"} ' + "'" + "/>" +						
+	  		'</span>';
+		
+		$('#messengersref').append(html);
+		
+		$('#messengerAddressRef').val('');
 	}
-	$('#messengersref').append('<span name="messenger_ref">'+ 
-			$('#messengerAddressRef').val()+ " "+'<a class="button">delete</a>'+
-			'<input type="hidden" name="messengersRef" value=' +"'" + '{"address":"' + $('#messengerAddressRef').val()+ '"} ' + "'" + "/>"									
-			+'<br/></span>');
 })
 
 // To make uncompleted functionalities disable.

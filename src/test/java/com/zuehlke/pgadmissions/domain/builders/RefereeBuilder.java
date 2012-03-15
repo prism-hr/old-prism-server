@@ -111,8 +111,8 @@ public class RefereeBuilder {
 		referee.setJobEmployer(jobEmployer);
 		referee.setJobTitle(jobTitle);
 		referee.setLastname(lastname);
-		referee.setMessengersRef(messengers);
-		referee.setPhoneNumbersRef(phoneNumbers);
+		referee.setMessengers(messengers);
+		referee.setPhoneNumbers(phoneNumbers);
 		referee.setRelationship(relationship);
 		return referee;
 	}

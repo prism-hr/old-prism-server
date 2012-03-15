@@ -59,7 +59,7 @@
 									<span name="${referee.id!}_hiddenPhones" style="display:none" >
                    		 				${phoneNumber.telephoneType.displayValue!}
 		                        		${phoneNumber.telephoneNumber!}
-		                      			<#if !model.applicationForm.isSubmitted()><a class="button">delete</a></#if>
+		                      			<#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
 											<input class="half" type="hidden" placeholder="Number" name="phoneNumbersRef" 
 		                      			value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />
 		                      				</span>
@@ -67,7 +67,7 @@
 									
 									<#list referee.messengersRef! as messenger>
 									<span name="${referee.id!}_hiddenMessengers" style="display:none" >
-                   		 				${messenger.messengerAddress!} <#if !model.applicationForm.isSubmitted()><a class="button">delete</a></#if>
+                   		 				${messenger.messengerAddress!} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
 										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress!}"}' />								
 									</span>
                    				 	</#list>
@@ -263,7 +263,7 @@
                     		<div class="field" id="phonenumbersref">
                     			<#list model.referee.phoneNumbers! as phoneNumber>
                     			<span name="phone_number_ref">
-                   		 				${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} <#if !model.applicationForm.isSubmitted()><a class="button">delete</a></#if>
+                   		 				${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
 										<input type="hidden" name="phoneNumbersRef" value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />								
 									</span>
 
@@ -292,7 +292,7 @@
 	                    	<div class="field" id="messengersref">
 	                    		<#list model.referee.messengers! as messenger>
 	                    			<span name="messenger_ref">
-                   		 				${messenger.messengerAddress} <#if !model.applicationForm.isSubmitted()><a class="button">delete</a></#if>
+                   		 				${messenger.messengerAddress} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
 										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress}"}' />								
 									</span>
 	                      		</#list>

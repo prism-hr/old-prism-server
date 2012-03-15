@@ -16,11 +16,6 @@
             <input type="hidden" id="appId1" name="appId1" value="${model.applicationForm.id?string("######")}"/>    
 			<div>
             	
-            	<#if model.hasError('programmeDetails')>
-            	 <div class="row">                             
-                    <span class="invalid"><@spring.message  model.result.getFieldError('programmeDetails').code /></span><br/>
-                    </div>                        
-                </#if>
             	<!-- Programme name (disabled) -->
                 <div class="row">
                 	<label class="label">Programme</label>

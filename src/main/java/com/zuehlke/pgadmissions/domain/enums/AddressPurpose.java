@@ -3,8 +3,8 @@ package com.zuehlke.pgadmissions.domain.enums;
 public enum AddressPurpose {
 
 
-		RESIDENCE("Residence"), WORK("work"), EDUCATION("Education"), MARRIAGE("Marriage/Partnership"),
-		TRAVELLING("Travelling(excluding holiday");
+		RESIDENCE("Residence"), WORK("Work"), EDUCATION("Education"), MARRIAGE("Marriage/Partnership"),
+		TRAVELLING("Travelling(excluding holiday)");
 
 		private final String displayValue;
 

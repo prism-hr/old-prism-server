@@ -79,7 +79,8 @@
                           		<label><input type="radio" name="genderRadio" value="${gender}"
                           			<#if model.applicationForm.personalDetails.gender?? &&  model.applicationForm.personalDetails.gender == gender >
 										checked="checked"
-									</#if>     
+									</#if> 
+																		   
                           		/> ${gender.displayValue}</label>
                                              
                         </#list>                  		
@@ -289,7 +290,7 @@
                       <label><input type="radio" name="primaryLanguage" id="primaryLanguage"/> This is my primary language</label>
                     </div>
                   </div>
-                	<div class="row">
+                <div class="row">
                   	<span class="label">Aptitude</span>
                     <span class="hint"></span>
                     <div class="field">
@@ -371,7 +372,7 @@
                     <div id="phonenumbers"  class="field">
                     <#list model.applicationForm.personalDetails.phoneNumbers! as phoneNumber>
                     <span name="phone_number">
-                   		 ${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} <a class="button">delete</a>
+                   		 ${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} <a class="button-delete">delete</a>
 						<input type="hidden" name="phoneNumbers" value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />								
 						<br/>
 					</span>
@@ -384,22 +385,34 @@
                       	</#list>
                       </select>
 	                    <input type="text" placeholder="Number" id="phoneNumber"/>
-                      <a id="addPhoneButton" class="button" style="width: 110px;">Add Phone</a>
+                      <a id="addPhoneButton" class="button blue" style="width: 110px;">Add Phone</a>
                     </div>
                   </div>
                   
                 </div>
                 
               	<div>
+              	           
+                    <div class="row" id="existingMessengers">
+                  	  <#list model.applicationForm.personalDetails.messengers as messenger >
+                  	  	<span>
+                  	  		<div class="row">
+                  	  	 		<span class="label">Skype</span>    
+                  				<div class="field">
+                  					<label class="full">${messenger.messengerAddress}</label> 
+                  	  				<a class="button-delete">Delete</a>            
+                  	  			</div>                  	  			
+                  	  		</div>   
+                            <input type="hidden" name="messengers" value='${messenger.asJson}'/>   
+                  	  	</span>
+                  	  </#list>
+                  </div>
                 	<div class="row">
-                		<span class="label">Messenger</span>
+                		<span class="label">Skype</span>
                     <span class="hint"></span>
-                    <div class="field">
-                    	<select class="full">
-                      	<option>Skype</option>
-                      </select>
-	                    <input type="text" placeholder="Address" />
-                      <a href="#" class="button" style="width: 110px;">Add Messenger</a>
+                    <div class="field">                    
+	                    <input type="text" placeholder="Address"  id="messenger" class="full"/>
+                      <a id="addMessengerButton" class="button blue" style="width: 110px;">Add Skype</a>
                     </div>
                   </div>
                 </div>

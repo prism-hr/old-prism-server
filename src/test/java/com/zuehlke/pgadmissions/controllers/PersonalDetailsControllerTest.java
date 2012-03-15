@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
+import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -46,6 +47,7 @@ import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguageProficiencyJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.MessengerJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.NationalityJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.CountryService;
@@ -68,6 +70,7 @@ public class PersonalDetailsControllerTest {
 	private LanguagePropertyEditor languagePropertyEditorMopck;
 	private NationalityJSONPropertyEditor nationalityJSONPropertyEditorMock;
 	private LanguageProficiencyJSONPropertyEditor languageProficiencyJSONPropertyEditorMock;
+	private MessengerJSONPropertyEditor messengerJSONPropertyEditorMock;
 
 	@Test
 	public void shouldBindPropertyEditors() {
@@ -79,6 +82,7 @@ public class PersonalDetailsControllerTest {
 		binderMock.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditorMock);
 		binderMock.registerCustomEditor(Nationality.class, nationalityJSONPropertyEditorMock);
 		binderMock.registerCustomEditor(LanguageProficiency.class, languageProficiencyJSONPropertyEditorMock);
+		binderMock.registerCustomEditor(Messenger.class, messengerJSONPropertyEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
@@ -109,8 +113,8 @@ public class PersonalDetailsControllerTest {
 		final PersonalDetail personalDetails = new PersonalDetailsBuilder().id(1).toPersonalDetails();
 
 		controller = new PersonalDetailsController(personalDetailsServiceMock, countryServiceMock, languageServiceMok, applicationFormPropertyEditorMock,
-				countryPropertyEditorMock, languagePropertyEditorMopck, datePropertyEditorMock, personalDetailValidatorMock,phoneNumberJSONPropertyEditorMock, 
-				nationalityJSONPropertyEditorMock, languageProficiencyJSONPropertyEditorMock) {
+				countryPropertyEditorMock, languagePropertyEditorMopck, datePropertyEditorMock, personalDetailValidatorMock, phoneNumberJSONPropertyEditorMock,
+				nationalityJSONPropertyEditorMock, languageProficiencyJSONPropertyEditorMock, messengerJSONPropertyEditorMock) {
 			@Override
 			PersonalDetail newPersonalDetail() {
 				return personalDetails;
@@ -232,10 +236,9 @@ public class PersonalDetailsControllerTest {
 		EasyMock.expect(countryServiceMock.getAllCountries()).andReturn(countryList);
 		List<Language> languages = Arrays.asList(new LanguageBuilder().id(1).toLanguage());
 		EasyMock.expect(languageServiceMok.getAllLanguages()).andReturn(languages);
-		
-		EasyMock.replay(errorsMock, personalDetailsServiceMock, countryServiceMock,languageServiceMok);
 
-		
+		EasyMock.replay(errorsMock, personalDetailsServiceMock, countryServiceMock, languageServiceMok);
+
 		ModelAndView modelAndView = controller.editPersonalDetails(personalDetail, errorsMock);
 		assertEquals("private/pgStudents/form/components/personal_details", modelAndView.getViewName());
 		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
@@ -252,7 +255,7 @@ public class PersonalDetailsControllerTest {
 		assertEquals(PhoneType.values().length, model.getPhoneTypes().size());
 		assertTrue(model.getPhoneTypes().containsAll(Arrays.asList(PhoneType.values())));
 		assertEquals("open", modelAndView.getModel().get("formDisplayState"));
-		
+
 		assertEquals(LanguageAptitude.values().length, model.getLanguageAptitudes().size());
 		assertTrue(model.getLanguageAptitudes().containsAll(Arrays.asList(LanguageAptitude.values())));
 
@@ -262,19 +265,23 @@ public class PersonalDetailsControllerTest {
 	public void setup() {
 
 		countryServiceMock = EasyMock.createMock(CountryService.class);
-		 languageServiceMok = EasyMock.createMock(LanguageService.class);
+		languageServiceMok = EasyMock.createMock(LanguageService.class);
 		personalDetailsServiceMock = EasyMock.createMock(PersonalDetailsService.class);
+		personalDetailValidatorMock = EasyMock.createMock(PersonalDetailValidator.class);
+
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
 		countryPropertyEditorMock = EasyMock.createMock(CountryPropertyEditor.class);
 		languagePropertyEditorMopck = EasyMock.createMock(LanguagePropertyEditor.class);
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-		personalDetailValidatorMock = EasyMock.createMock(PersonalDetailValidator.class);
 		phoneNumberJSONPropertyEditorMock = EasyMock.createMock(PhoneNumberJSONPropertyEditor.class);
 		nationalityJSONPropertyEditorMock = EasyMock.createMock(NationalityJSONPropertyEditor.class);
 		languageProficiencyJSONPropertyEditorMock = EasyMock.createMock(LanguageProficiencyJSONPropertyEditor.class);
+		messengerJSONPropertyEditorMock = EasyMock.createMock(MessengerJSONPropertyEditor.class);
+		
+		
 		controller = new PersonalDetailsController(personalDetailsServiceMock, countryServiceMock, languageServiceMok, applicationFormPropertyEditorMock,
 				countryPropertyEditorMock, languagePropertyEditorMopck, datePropertyEditorMock, personalDetailValidatorMock, phoneNumberJSONPropertyEditorMock,
-				nationalityJSONPropertyEditorMock, languageProficiencyJSONPropertyEditorMock);
+				nationalityJSONPropertyEditorMock, languageProficiencyJSONPropertyEditorMock, messengerJSONPropertyEditorMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);

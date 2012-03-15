@@ -96,14 +96,14 @@ $(document).ready(function()
     $('div.information', $parent).toggle();
   });
   
-  // Date pickers.
-  $('input.date').datepicker({ dateFormat: 'yy/mm/dd' });
+  bindDatePickers();
   
   // Sortable tables.
   $('table.data').tablesorter();
   $('table.data thead th').not(':first,:last').wrapInner('<span class="arrow" />');
   
 });
+
 
 
 function msg(message, type)

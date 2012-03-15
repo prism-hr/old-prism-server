@@ -11,11 +11,14 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
+import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
@@ -75,6 +78,9 @@ public class ViewApplicationFormController {
 		viewApplicationModel.setStudyOptions(StudyOption.values());
 		viewApplicationModel.setReferrers(Referrer.values());
 		viewApplicationModel.setPhoneTypes(PhoneType.values());
+		viewApplicationModel.setQualificationLevels(QualificationLevel.values());
+		viewApplicationModel.setFundingTypes(FundingType.values());
+		viewApplicationModel.setAddressPurposes(AddressPurpose.values());
 
 		viewApplicationModel.setLanguageAptitudes(LanguageAptitude.values());
 		viewApplicationModel.setGenders(Gender.values());

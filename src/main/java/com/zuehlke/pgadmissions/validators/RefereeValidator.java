@@ -37,8 +37,8 @@ public class RefereeValidator implements Validator {
 		if((referee.getJobEmployer()!=null && !referee.getJobEmployer().isEmpty()) && (referee.getJobTitle()==null || referee.getJobTitle().isEmpty())){
 			errors.rejectValue("jobTitle", "referee.jobTitle.notempty");
 		}
-		if(referee.getPhoneNumbersRef()==null || referee.getPhoneNumbersRef().size() == 0){
-			errors.rejectValue("phoneNumbersRef", "referee.phoneNumbersRef.notempty");
+		if(referee.getPhoneNumbers()==null || referee.getPhoneNumbers().size() == 0){
+			errors.rejectValue("phoneNumbers", "referee.phoneNumbers.notempty");
 		}
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", "referee.firstname.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", "referee.lastname.notempty");

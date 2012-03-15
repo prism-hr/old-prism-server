@@ -1,5 +1,11 @@
 $(document).ready(function(){
-$('#positionSaveAndCloseButton').click(function(){
+
+	$('#positionCloseButton').click(function(){
+		$('#position-H2').trigger('click');
+		return false;
+	});
+	
+	$('#positionSaveAndCloseButton').click(function(){
 		$.post("/pgadmissions/update/addEmploymentPosition", { 
 			position_title: $("#position_title").val(),
 			position_startDate: $("#position_startDate").val(), 
@@ -56,4 +62,6 @@ $('a[name="positionCancelButton"]').click(function(){
 	
 });
 
+
+bindDatePickers();
 });

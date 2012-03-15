@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
+import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -33,6 +34,7 @@ import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguageProficiencyJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.MessengerJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.NationalityJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.CountryService;
@@ -55,18 +57,21 @@ public class PersonalDetailsController {
 	private final LanguagePropertyEditor languagePropertyEditor;
 	private final NationalityJSONPropertyEditor nationalityJSONPropertyEditor;
 	private final LanguageProficiencyJSONPropertyEditor languageProficiencyJSONPropertyEditor;
+	private final MessengerJSONPropertyEditor messengerJSONPropertyEditor;
 
 	PersonalDetailsController() {
-		this(null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public PersonalDetailsController(PersonalDetailsService personalDetailsService, CountryService countryService,
-			LanguageService languageService, ApplicationFormPropertyEditor applicationFormPropertyEditor, CountryPropertyEditor countryPropertyEditor, LanguagePropertyEditor languagePropertyEditor, DatePropertyEditor datePropertyEditor,
-			PersonalDetailValidator personalDetailValidator, PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, NationalityJSONPropertyEditor nationalityJSONPropertyEditor, LanguageProficiencyJSONPropertyEditor languageProficiencyJSONPropertyEditor) {
+	public PersonalDetailsController(PersonalDetailsService personalDetailsService, CountryService countryService, LanguageService languageService,
+			ApplicationFormPropertyEditor applicationFormPropertyEditor, CountryPropertyEditor countryPropertyEditor,
+			LanguagePropertyEditor languagePropertyEditor, DatePropertyEditor datePropertyEditor, PersonalDetailValidator personalDetailValidator,
+			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, NationalityJSONPropertyEditor nationalityJSONPropertyEditor,
+			LanguageProficiencyJSONPropertyEditor languageProficiencyJSONPropertyEditor, MessengerJSONPropertyEditor messengerJSONPropertyEditor) {
 		this.personalDetailsService = personalDetailsService;
 		this.countryService = countryService;
-		this.languageService = languageService;	
+		this.languageService = languageService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.countryPropertyEditor = countryPropertyEditor;
 		this.languagePropertyEditor = languagePropertyEditor;
@@ -75,10 +80,11 @@ public class PersonalDetailsController {
 		this.phoneNumberJSONPropertyEditor = phoneNumberJSONPropertyEditor;
 		this.nationalityJSONPropertyEditor = nationalityJSONPropertyEditor;
 		this.languageProficiencyJSONPropertyEditor = languageProficiencyJSONPropertyEditor;
+		this.messengerJSONPropertyEditor = messengerJSONPropertyEditor;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView editPersonalDetails(@ModelAttribute("personalDetails") PersonalDetail personalDetail,  BindingResult errors) {
+	public ModelAndView editPersonalDetails(@ModelAttribute("personalDetails") PersonalDetail personalDetail, BindingResult errors) {
 
 		if (personalDetail.getApplication() != null && personalDetail.getApplication().isSubmitted()) {
 			throw new CannotUpdateApplicationException();
@@ -89,13 +95,13 @@ public class PersonalDetailsController {
 		}
 
 		personalDetailValidator.validate(personalDetail, errors);
-		if (!errors.hasErrors()) {			
+		if (!errors.hasErrors()) {
 			personalDetailsService.save(personalDetail);
-		
-			
-		} 
+
+		}
 		if (personalDetail.getApplication() != null) {
-			//this is so that the entered values are re-displayed correctly on the form
+			// this is so that the entered values are re-displayed correctly on
+			// the form
 			personalDetail.getApplication().setPersonalDetails(personalDetail);
 		}
 		ApplicationPageModel applicationPageModel = new ApplicationPageModel();
@@ -111,7 +117,7 @@ public class PersonalDetailsController {
 		ModelAndView modelAndView = new ModelAndView("private/pgStudents/form/components/personal_details", "model", applicationPageModel);
 		modelAndView.addObject("formDisplayState", "open");
 		return modelAndView;
-		
+
 	}
 
 	private RegisteredUser getCurrentUser() {
@@ -143,6 +149,7 @@ public class PersonalDetailsController {
 		binder.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditor);
 		binder.registerCustomEditor(Nationality.class, nationalityJSONPropertyEditor);
 		binder.registerCustomEditor(LanguageProficiency.class, languageProficiencyJSONPropertyEditor);
+		binder.registerCustomEditor(Messenger.class, messengerJSONPropertyEditor);
 	}
 
 }

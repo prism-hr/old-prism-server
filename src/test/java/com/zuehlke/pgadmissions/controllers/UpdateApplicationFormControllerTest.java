@@ -26,6 +26,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -457,6 +458,7 @@ public class UpdateApplicationFormControllerTest {
 		binderMock.registerCustomEditor(RegisteredUser.class, userPropertyEditorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		binderMock.registerCustomEditor(Messenger.class, messengerJSONPropertyEditorMock);
+		binderMock.registerCustomEditor(Language.class, languagePropertyEditorMopck);
 		EasyMock.replay(binderMock);
 		applicationController.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);

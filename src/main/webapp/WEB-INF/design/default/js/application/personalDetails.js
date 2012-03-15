@@ -329,4 +329,6 @@ $(document).ready(function(){
 			
 		});	
 	}
+	
+	  bindDatePickers();
 });

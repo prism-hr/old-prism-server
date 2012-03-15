@@ -85,4 +85,5 @@ $(document).ready(function(){
 		}
 	});
 
+	  bindDatePickers();
 });

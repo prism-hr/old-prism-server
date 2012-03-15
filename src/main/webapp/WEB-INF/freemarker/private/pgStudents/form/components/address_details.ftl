@@ -13,13 +13,6 @@
 	    
 	<div>
 	
-			<#if model.hasError('numberOfAddresses')>                           
-	        	<span class="invalid"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>                        
-	        </#if>
-	        <#if model.hasError('numberOfContactAddresses')>                           
-	        	<span class="invalid"><@spring.message  model.result.getFieldError('numberOfContactAddresses').code /></span><br/>                        
-			</#if>
-	
 			<#if hasAddresses>
 				<table class="existing">
 			    	<colgroup>
@@ -68,6 +61,17 @@
 				
 				<input type="hidden" id="addressId" name="addressId"/>
             	<div>
+            	           <#if model.hasError('numberOfAddresses')>
+            	           <div class="row">
+                                <span class="invalid"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>
+                           </div>                             
+                           </#if>
+                           <#if model.hasError('numberOfContactAddresses')>
+                           <div class="row">                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('numberOfContactAddresses').code /></span><br/>
+                           </div>                              
+                           </#if>
+            	
                 	<h3>Address</h3>
                   
                   	<!-- Address body -->
@@ -117,7 +121,7 @@
                             </#if>>
                             <option value="">Select...</option>
                             	<#list model.countries as country>
-                                	<option value="${country.name}">${country.name}</option>               
+                                	<option value="${country.name}" <#if model.address.addressCountry?? && model.address.addressCountry == country.name> selected="selected"</#if>>${country.name}</option>               
                             	</#list>
                             </select>
                             
@@ -172,16 +176,22 @@
                     	<span class="label">Purpose</span>
                     	<span class="hint"></span>
                     	<div class="field">
-                      	  <#if !model.applicationForm.isSubmitted()>
-                      		<input class="full" type="text" id="addressPurpose" name="addressPurpose" 
-                      					value="${model.address.addressPurpose!}" placeholder="e.g. work, travel" />
+                      	  	<select id="addressPurpose" name="addressPurpose" class="full" value="${model.address.addressPurpose!}"
+                      	  	 <#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled"
+                                            </#if>>
+                        	<option value="">Select...</option>
+                        	<#list model.addressPurposes as purpose>
+                             	<option value="${purpose}"
+                             	<#if model.address.addressPurpose?? &&  model.address.addressPurpose == purpose >
+                                selected="selected"
+                                </#if> 
+                             	>${purpose.displayValue}</option>               
+                        	</#list>
+                      		</select>
                             <#if model.hasError('addressPurpose')>                           
                             	<span class="invalid"><@spring.message  model.result.getFieldError('addressPurpose').code /></span>                           
                             </#if>
-                          <#else>
-                            <input readonly="readonly" class="full" type="text" id="addressPurpose" name="addressPurpose" 
-                                        value="${model.address.addressPurpose!}" placeholder="e.g. work, travel" />
-                          </#if>                      		
                     	</div>
                   	</div>
 
@@ -208,7 +218,11 @@
                       			<input type="checkbox" name="isCA" id="isCA"
                       			<#if model.applicationForm.isSubmitted()>
                                       disabled="disabled"
-                                </#if>>
+                                </#if>
+                                <#if model.address.addressContactAddress?? && model.address.addressContactAddress == 'YES'>
+                                	checked="checked"                                
+                                </#if>
+                                >
                       			</input> This is my contact address
                       		</label>
                       		<input type="hidden" id="addressContactAddress" value="${model.address.addressContactAddress!}"/>

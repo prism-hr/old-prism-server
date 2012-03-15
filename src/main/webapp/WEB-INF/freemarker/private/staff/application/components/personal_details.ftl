@@ -30,27 +30,27 @@
 					<div class="row">
                   		<label class="label">First Name</label>
                     	<div class="field">
-                    		${model.personalDetails.firstName!}
+                    		${model.applicationForm.personalDetails.firstName!}
                     	</div>
                     </div>
 
                 	<div class="row">
 	                  	<label class="label">Last Name</label>
     	                <div class="field">
-        	            	${model.personalDetails.lastName!}
+        	            	${model.applicationForm.personalDetails.lastName!}
             	        </div>
                  	</div>
 
                 	<div class="row">
                   		<label class="label">Gender</label>
                     	<div class="field">
-                      		${model.personalDetails.gender!}
+                      		${model.applicationForm.personalDetails.gender!}
                     	</div>
                   	</div>
                 	
                 	<div class="row">
                   		<label class="label">Date of Birth</label>
-                    	<div class="field">${(model.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}</div>
+                    	<div class="field">${(model.applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}</div>
                   	</div>
                 
                 </div>
@@ -61,7 +61,7 @@
                 	<div class="row">
                   		<label class="label">Country of Birth</label>
                     	<div class="field">
-                    		${model.personalDetails.country!}
+                    		${model.applicationForm.personalDetails.country.name!}
                     	</div>
                   	</div>
                   	
@@ -74,34 +74,87 @@
                 	<div class="row">
                   		<span class="label">Country</span>
                     	<div class="field">
-                      		${model.personalDetails.residenceCountry!}
+                      		${model.applicationForm.personalDetails.residenceCountry.name!}
                     	</div>
                   	</div>
                   	<div class="row">
                         <span class="label">Status</span>
                         <div class="field">
-                            ${model.personalDetails.residenceStatus!}
+                            ${model.applicationForm.personalDetails.residenceStatus.displayValue!}
                         </div>
                     </div>
                   	
                 </div>
+                
+                <!-- candidate nationality -->
+				<div>    
 
+             
+                  	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
+                  	  	<span name="existingCandidateNationality">
+                  	  	 	<div class="row">
+                  	  	 		<label class="label">Nationality</label>    
+                  				<div class="field">
+                  					<label class="full">${nationality.country.name}</label>  
+                  	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
+                  	  				<#if nationality.primary><label>Primary nationality</label>"</#if>                  	  		 
+                  	  			</div>
+                  	  		</div>
+                  	  	</span>                  		
+                  	  </#list>
+                
+                 </div>
+                 
+                 <!--Maternal guardian nationality -->
+                 <div>
+                 <#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
+                  	  	<span>
+                  	  		<div class="row">
+                  	  	 		<label class="label">Maternal Guardian Nationality</label>    
+                  				<div class="field">
+                  					<label class="full">${nationality.country.name}</label>  
+                  	  				<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
+                  	  				<#if nationality.primary><label>Primary nationality</label></#if>                  	  
+                  	  			</div>
+                  	  		</div>            
+                  	  	</span>
+                  	  </#list>
+                 </div>
+                 
+                  <!--Paternal guardian nationality -->
+                 <div>
+                  <#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
+                  	  	<span>
+                  	  		<div class="row">
+                  	  	 		<label class="label">Paternal Guardian Nationality</label>    
+                  				<div class="field">
+                  					<label class="full">${nationality.country.name}</label>  
+                  	  				<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
+                  	  				<#if nationality.primary><label>Primary nationality</label></#if>                  	  
+                  	  			</div>
+                  	  		</div>            
+                  	  	</span>
+                  	  </#list>
+                 </div>
 				<!-- Language -->
               	<div>
                 	
-                	<div class="row">
-                  		<label class="label">Language</label>
-                    	<div class="field">
-                    		English
-                    	</div>
-                  	</div>
-                	
-                	<div class="row">
-                  		<span class="label">Aptitude</span>
-                    	<div class="field">
-                      		Native Speaker
-                    	</div>
-                  	</div>
+                	 <#list model.applicationForm.personalDetails.languageProficiencies as prof >
+                  	  	<span>
+                  	  		<div class="row">
+                  	  	 		<label class="label">Language</label>    
+                  				<div class="field">
+                  					<label class="full"> ${prof.language.name}</label>                  	  		
+                  	  				<#if prof.primary>Primary language</#if>              
+                  	  			</div>
+                  	  			<span class="label">Aptitude</span>    
+                  				<div class="field">
+                  					<label class="full"> ${prof.aptitude.displayValue}</label>    
+                  	  			</div>
+                  	  		</div>   
+                           
+                  	  	</span>
+                  	  </#list>
                 
                 </div>
 
@@ -112,7 +165,7 @@
                 	<div class="row">
                 		<span class="label">Email</span>
                     	<div class="field">
-	                    	${model.personalDetails.email!}
+	                    	${model.applicationForm.personalDetails.email!}
                     	</div>
                   	</div>
                 
@@ -120,24 +173,29 @@
                 
               	<div>
                 	
-                	<div class="row">
-                		<span class="label">Telephone</span>
-                   	 	<div class="field">
-                    		Home 0555 555 5555
-                    	</div>
-                  	</div>
+                	  <#list model.applicationForm.personalDetails.phoneNumbers! as phoneNumber>          
+						<span>
+                  	  		<div class="row">
+                  	  	 		<span class="label">Telephone</span>    
+                  				<div class="field">  ${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} </div>                  	  			
+                  	  		</div>                                
+                  	  	</span>
+                    </#list>
                 
                 </div>
                 
               	<div>
-                	
-                	<div class="row">
-                		<span class="label">Messenger</span>
-                    	<div class="field">
-                    		Skype bob@smith.com
-                    	</div>
-                  	</div>
-                
+                	 <#list model.applicationForm.personalDetails.messengers as messenger >
+                  	  	<span>
+                  	  		<div class="row">
+                  	  	 		<span class="label">Skype</span>    
+                  				<div class="field">
+                  					<label class="full">${messenger.messengerAddress}</label>                   	  				
+                  	  			</div>                  	  			
+                  	  		</div>  
+   
+                  	  	</span>
+                  	  </#list>
                 </div>
 
               	<div class="buttons" id="show-comment-button-div">

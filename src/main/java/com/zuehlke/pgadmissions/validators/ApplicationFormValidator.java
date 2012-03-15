@@ -32,13 +32,24 @@ public class ApplicationFormValidator implements Validator{
 		if (applicationFormDetails.getNumberOfReferees() < 2) {
 			errors.rejectValue("numberOfReferees", "user.referees.notvalid");
 		}
+		
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationFormDetails.getProgrammeDetails(), "programmeDetails");
+		if (applicationFormDetails.getProgrammeDetails() == null) {
+			errors.rejectValue("programmeDetails", "user.personalDetails.incomplete");
+		} else {
+			ProgrammeDetailsValidator validator = new ProgrammeDetailsValidator();
+			validator.validate(applicationFormDetails.getProgrammeDetails(), mappingResult);
+			if (mappingResult.hasErrors()) {
+				errors.rejectValue("programmeDetails", "user.programmeDetails.incomplete");
+			}
+		}
 
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationFormDetails.getPersonalDetails(), "personalDetails");
+		mappingResult = new DirectFieldBindingResult(applicationFormDetails.getPersonalDetails(), "personalDetails");
 
 		if (applicationFormDetails.getPersonalDetails() == null) {
 			errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
 		} else {
-			PersonalDetailsValidator validator = new PersonalDetailsValidator();
+			PersonalDetailValidator validator = new PersonalDetailValidator();
 			validator.validate(applicationFormDetails.getPersonalDetails(), mappingResult);
 			if (mappingResult.hasErrors()) {
 				errors.rejectValue("personalDetails", "user.personalDetails.incomplete");

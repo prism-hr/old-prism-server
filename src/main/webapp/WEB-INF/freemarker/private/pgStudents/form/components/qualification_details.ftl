@@ -135,8 +135,15 @@
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                       			<#if !model.applicationForm.isSubmitted()>
-                      			<input id="qualificationLanguage" class="full" type="text" 
-			                    								value="${model.qualification.qualificationLanguage!}"/>
+                      			<select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${model.qualification.qualificationLanguage!}"
+                      			 <#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled"
+                                            </#if>>
+                        		<option value="">Select...</option>
+                         			<#list model.languages as language>
+                         				<option value="${language.id}">${language.name}</option>
+                         			</#list>
+                      			</select>
 								<#if model.hasError('qualificationLanguage')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationLanguage').code /></span>                    		
                     			</#if>
@@ -153,16 +160,22 @@
 	                    	<span class="label">Level</span>
 	                    	<span class="hint" data-desc="Tooltip demonstration."></span>
 	                    	<div class="field">
-	                    	<#if !model.applicationForm.isSubmitted()>
-                      			<input id="qualificationLevel" class="full" type="text" 
-			                    								value="${model.qualification.qualificationLevel!}"/>
+	                    		<select name="qualificationLevel" id="qualificationLevel" value="${model.qualification.qualificationLevel!}"
+	                    		 <#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled"
+                                            </#if>>
+                        			 <option value="">Select...</option>
+                        			 <#list model.qualificationLevels as level>
+                             			 <option value="${level}"
+                             			 <#if model.qualification.qualificationLevel?? &&  model.qualification.qualificationLevel == level >
+                                        selected="selected"
+                                        </#if>
+                                >${level.displayValue}</option>               
+                        			</#list>
+                      			</select>
 								<#if model.hasError('qualificationLevel')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationLevel').code /></span>                    		
                     			</#if>
-                    		<#else>
-                    		      <input readonly="readonly" id="qualificationLevel" class="full" type="text" 
-                                                                value="${model.qualification.qualificationLevel!}"/>
-                    		</#if>  	
 	                    	</div>
 	                  	</div>
 

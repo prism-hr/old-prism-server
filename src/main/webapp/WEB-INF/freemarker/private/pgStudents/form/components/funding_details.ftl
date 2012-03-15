@@ -68,13 +68,21 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                 	
                 	<div class="field">
-                	<#if !model.applicationForm.isSubmitted()>
-                		<input id="fundingType" name="fundingType" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
+                		<select id="fundingType" name="fundingType" class="full" value="${model.funding.fundingType!}" 
+                		<#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled"
+                                            </#if>>
+                        	<option value="">Select...</option>
+                        	<#list model.fundingTypes as type>
+                             	<option value="${type.displayValue}"
+                             	<#if model.funding.fundingType?? && model.funding.fundingType == type.displayValue>
+                                        selected="selected"
+                                        </#if>
+                             	>${type.displayValue}</option>               
+                        	</#list>
+                      	</select>
                 		<#if model.hasError('fundingType')>
                         	<span class="invalid"><@spring.message  model.result.getFieldError('fundingType').code /></span>                           
-                        </#if>
-                        <#else>
-                            <input id="fundingType" name="fundingType" readonly="readonly" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
                         </#if>
 					</div>
 				</div>

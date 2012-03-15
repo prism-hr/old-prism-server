@@ -403,7 +403,7 @@ public class UpdateApplicationFormControllerTest {
 //		Assert.assertEquals(qualificationDto.getQualificationLanguage(),
 //				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
 //						.getQualificationLanguage());
-		Assert.assertEquals(qualificationDto.getQualificationLevel(),
+		Assert.assertEquals(QualificationLevel.COLLEGE,
 				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
 						.getQualificationLevel());
 		Assert.assertEquals(qualificationDto.getQualificationProgramName(),
@@ -521,7 +521,7 @@ public class UpdateApplicationFormControllerTest {
 		qualificationDto.setQualificationGrade("first");
 		qualificationDto.setQualificationInstitution("UCL");
 		qualificationDto.setQualificationLanguage("EN");
-		qualificationDto.setQualificationLevel("advance");
+		qualificationDto.setQualificationLevel("College");
 		qualificationDto.setQualificationProgramName("CS");
 		qualificationDto.setQualificationScore("100");
 		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));

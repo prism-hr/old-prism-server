@@ -57,4 +57,9 @@ $(document).ready(function(){
 				+'<br/></span>');
 	})
 	
+	$('#programmeCloseButton').click(function(){
+		$('#programme-H2').trigger('click');
+		return false;
+	});
+	
 });

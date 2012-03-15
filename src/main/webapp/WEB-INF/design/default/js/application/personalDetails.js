@@ -1,4 +1,9 @@
 $(document).ready(function(){
+
+	$('#personalDetailsCloseButton').click(function(){
+		$('#personalDetails-H2').trigger('click');
+		return false;
+	});
 	
 	$('#addPhoneButton').on('click', function(){
 		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val().trim()!= ''){	

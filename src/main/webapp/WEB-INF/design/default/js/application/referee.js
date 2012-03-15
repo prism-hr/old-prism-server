@@ -1,4 +1,10 @@
 $(document).ready(function(){
+	
+	$('#refereeCloseButton').click(function(){
+		$('#referee-H2').trigger('click');
+		return false;
+	});
+	
 	$("#phonenumbersref").on("click", "a", function(){	
 		$(this).parent("div").parent("div").parent("span").remove();
 		

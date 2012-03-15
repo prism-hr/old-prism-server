@@ -163,7 +163,6 @@
                     <span class="label">Language of work</span>
                     <span class="hint"></span>
                     <div class="field">
-                    <#if !model.applicationForm.isSubmitted()>
                       <select class="full" id="position_language" name="position_language" value="${model.employmentPosition.position_language!}"
                        <#if model.applicationForm.isSubmitted()>
                                                 disabled="disabled"
@@ -176,10 +175,6 @@
 						<#if model.hasError('position_language')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_language').code /></span>                           
                         </#if>
-                     <#else>
-                        <input readonly="readonly" class="full" type="text" id="position_language" 
-                                    name="position_language" value="${model.employmentPosition.position_language!}"/>
-                     </#if>   
                     </div>
                	</div>
                 

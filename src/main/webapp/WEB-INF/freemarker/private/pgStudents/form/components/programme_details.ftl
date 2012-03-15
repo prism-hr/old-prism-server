@@ -4,7 +4,7 @@
 <#-- Programme Details Rendering -->
 
 
-	<h2 class="tick">
+	<h2 id="programme-H2" class="tick">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Programme
 	</h2>
@@ -44,7 +44,7 @@
                         </#list>
                       	</select>
                       	<#if model.hasError('studyOption')>                            
-                                <span style="color:red;"><@spring.message  model.result.getFieldError('studyOption').code /></span>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('studyOption').code /></span>                           
                         </#if>
                     </div>
 				</div>
@@ -96,7 +96,7 @@
 						<!-- repeat these rows for every existing supervisor. -->
                       	<tr>
 	                        <th class="align-left"><input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/></th>
-	                        <th><input type="checkbox" name="primarySupervisorCB" id="primarySupervisorCB"/></th>
+	                        <th><input type="radio" name="primarySupervisorCB" id="primarySupervisorCB"/></th>
 	                        <input type="hidden" name="primarySupervisor" id="primarySupervisor"/>
 	                        <th><input type="checkbox" name="awareSupervisorCB" id="awareSupervisorCB"/></th>
 	                        <input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
@@ -114,13 +114,13 @@
                 <div class="row">
                 	<label class="label">Start Date</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <input class="full date" type="date" id="startDate" name="startDate" value="${(model.applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}"
+                    <input class="full date" type="text" id="startDate" name="startDate" value="${(model.applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}"
                     <#if model.applicationForm.isSubmitted()>
                         disabled="disabled"
                         </#if>>
                     </input>
                     <#if model.hasError('startDate')>                            
-                          <span style="color:red;"><@spring.message  model.result.getFieldError('startDate').code /></span>                           
+                          <span class="invalid"><@spring.message  model.result.getFieldError('startDate').code /></span>                           
                     </#if>
                 </div>
 
@@ -143,7 +143,7 @@
                         </#list>
                       	</select>
                       	 <#if model.hasError('referrer')>                            
-                            <span style="color:red;"><@spring.message  model.result.getFieldError('referrer').code /></span>                           
+                            <span class="invalid"><@spring.message  model.result.getFieldError('referrer').code /></span>                           
                          </#if>
                     </div>
 				</div>

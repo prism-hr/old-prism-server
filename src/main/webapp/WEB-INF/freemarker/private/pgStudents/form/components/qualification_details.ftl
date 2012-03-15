@@ -99,7 +99,7 @@
 		                    	<input id="qualificationProgramName" class="full" type="text" placeholder="e.g. Civil Engineering" 
 		                    									value="${model.qualification.qualificationProgramName!}"/>
 		       					<#if model.hasError('qualificationProgramName')>
-		       						<span style="color:red;"><@spring.message  model.result.getFieldError('qualificationProgramName').code /></span>
+		       						<span class="invalid"><@spring.message  model.result.getFieldError('qualificationProgramName').code /></span>
 		       					</#if>
 		       					<#else>
 		       					  <input readonly="readonly" id="qualificationProgramName" class="full" type="text" placeholder="e.g. Civil Engineering" 

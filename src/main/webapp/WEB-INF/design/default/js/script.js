@@ -97,11 +97,7 @@ $(document).ready(function()
   });
   
   // Date pickers.
-  $('input.date').datepicker({
-	  				dateFormat: 'dd-M-yy',
-	 				changeMonth: true,
-	  				changeYear: true,
-	  				yearRange: '1900:defaultDate' });
+  $('input.date').datepicker({ dateFormat: 'yy/mm/dd' });
   
   // Sortable tables.
   $('table.data').tablesorter();
@@ -124,7 +120,7 @@ function msg(message, type)
   $msg.fadeIn(700).delay(3000).fadeOut(700);
 }
 
-// Back to top functionalirt, project manager style.
+// Back to top functionality, project manager style.
 function backToTop()
 {
 	$.scrollTo('#wrapper', 900);

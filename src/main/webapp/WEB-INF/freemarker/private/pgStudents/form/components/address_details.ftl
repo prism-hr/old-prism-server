@@ -147,10 +147,6 @@
                                             </#if>>
                       				</input>		
                       		</label>
-                      		
-							<#if model.hasError('addressStartDate')>                           
-                            	<span class="invalid"><@spring.message  model.result.getFieldError('addressStartDate').code /></span>                           
-                            </#if>
                       		 
                       		<label>to 
                       			<input class="half date" type="text" id="addressEndDate" name="addressEndDate" 
@@ -160,8 +156,18 @@
                                                         </#if>>
                       			</input>						
                       		</label>
-                            <#if model.hasError('addressEndDate')>                           
-                            	<span class="invalid"><@spring.message  model.result.getFieldError('addressEndDate').code /></span>                           
+                      		
+                      		<#if model.hasError('addressStartDate')>
+                      			<p>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('addressStartDate').code /></span>
+                            	</p>                           
+                            </#if>
+                      		
+                      		
+                            <#if model.hasError('addressEndDate')>
+                            	<p>                           
+                            		<span class="invalid"><@spring.message  model.result.getFieldError('addressEndDate').code /></span>
+                            	</p>                           
                             </#if>
                       		
                     	</div>

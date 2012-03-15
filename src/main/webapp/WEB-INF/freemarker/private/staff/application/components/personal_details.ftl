@@ -30,27 +30,33 @@
 					<div class="row">
                   		<label class="label">First Name</label>
                     	<div class="field">
-                    		${model.personalDetails.firstName!}
+                    		Andrew
+                    		<!-- ${model.personalDetails.firstName!} -->
                     	</div>
                     </div>
 
                 	<div class="row">
 	                  	<label class="label">Last Name</label>
     	                <div class="field">
-        	            	${model.personalDetails.lastName!}
+    	                	Watson
+        	            	<!-- ${model.personalDetails.lastName!} -->
             	        </div>
                  	</div>
 
                 	<div class="row">
                   		<label class="label">Gender</label>
                     	<div class="field">
-                      		${model.personalDetails.gender!}
+                    		Male
+                      		<!-- ${model.personalDetails.gender!} -->
                     	</div>
                   	</div>
                 	
                 	<div class="row">
                   		<label class="label">Date of Birth</label>
-                    	<div class="field">${(model.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}</div>
+                    	<div class="field">
+                    		1984-07-23
+                    		<!-- ${(model.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!} -->
+                    	</div>
                   	</div>
                 
                 </div>
@@ -61,7 +67,8 @@
                 	<div class="row">
                   		<label class="label">Country of Birth</label>
                     	<div class="field">
-                    		${model.personalDetails.country!}
+                    		UK
+                    		<!-- ${model.personalDetails.country!} -->
                     	</div>
                   	</div>
                   	
@@ -74,13 +81,15 @@
                 	<div class="row">
                   		<span class="label">Country</span>
                     	<div class="field">
-                      		${model.personalDetails.residenceCountry!}
+                    		Spain
+                      		<!-- ${model.personalDetails.residenceCountry!} -->
                     	</div>
                   	</div>
                   	<div class="row">
                         <span class="label">Status</span>
                         <div class="field">
-                            ${model.personalDetails.residenceStatus!}
+                        	EU Citizen
+                            <!-- ${model.personalDetails.residenceStatus!} -->
                         </div>
                     </div>
                   	
@@ -112,7 +121,8 @@
                 	<div class="row">
                 		<span class="label">Email</span>
                     	<div class="field">
-	                    	${model.personalDetails.email!}
+                    		andrew@gmail.com
+	                    	<!-- ${model.personalDetails.email!} -->
                     	</div>
                   	</div>
                 
@@ -151,7 +161,7 @@
 		    <!-- Comment Sectiton -->
                 
             <div class="comment">
-                	
+                <#--	
                    <#if model.applicationForm.hasComments()>
 	                   	<#assign prevComments = "true">
 	                	<div class="previous">
@@ -169,13 +179,15 @@
                   		<#assign prevComments = "false">
                   </#if>
                 <hr />
+                -->
             </div>
 		
+			<#--
 			<input type ="hidden" name="id" value="${model.applicationForm.id?string("######")}"/>
 			<input type ="hidden" id="view-type-comment-form" value="${viewType}"/>
 			<input type ="hidden" id="prev-comment-div" value="${comCount}"/>
 			<input id="commentField" type="hidden" name="comment" value=""/>
-			
+			-->
 			<p><strong>Add a comment</strong></p>
 			<textarea id="comment" lass="max" rows="4" cols="70"></textarea>
                   

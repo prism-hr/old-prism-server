@@ -255,9 +255,6 @@
 
                   		<!-- Telephone -->
                   		<div class="row">
-                     			 	 <#if model.hasError('phoneNumbersRef')>                           
-                            			<span class="invalid"><@spring.message  model.result.getFieldError('phoneNumbersRef').code /></span>                           
-                            		</#if>
                     		<div class="field" id="phonenumbersref">
                     			<#list model.referee.phoneNumbers! as phoneNumber>
                     			<span name="phone_number_ref">
@@ -277,6 +274,9 @@
                       			</select>
                       				<input type="text" placeholder="Number" id="phoneNumberRef"/>
                      			 	<a class="button" id="addPhoneRefButton" style="width: 110px;">Add Phone</a>
+									<#if model.hasError('phoneNumbersRef')>                           
+                            			<span class="invalid"><@spring.message  model.result.getFieldError('phoneNumbersRef').code /></span>                           
+                            		</#if>
                      		</#if>	 	
                   		</div>
 

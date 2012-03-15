@@ -68,11 +68,11 @@
                     <span class="hint"></span>
                     <div class="field">
                 		<input class="full" type="file" name="file" value=""  <#if model.applicationForm.submitted>disabled="disabled"</#if>/>                      	
-                        <button class="blue" type="submit" value="close"  <#if model.applicationForm.submitted>disabled="disabled"</#if>>Upload</button>          
+                        <button style="margin-left:30px" class="blue" type="submit" value="close"  <#if model.applicationForm.submitted>disabled="disabled"</#if>>Upload</button>          
                     </div>  
 				</div>
 				<#if model.uploadErrorCode?? >
-					<span style="color:red;"><@spring.message  model.uploadErrorCode /></span>         
+					<span class="invalid"><@spring.message  model.uploadErrorCode /></span>         
 				</#if>				
 			</div>
 

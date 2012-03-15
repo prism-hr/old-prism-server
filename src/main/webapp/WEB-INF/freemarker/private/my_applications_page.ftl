@@ -56,17 +56,10 @@
 				      <div class="content-box">
 				        <div class="content-box-inner">
 							<!-- confirmation message if application just submitted with email coming soon confirmation -->
-							<p style="color:red;">${model.message}</p>
+							<p class="invalid">${model.message}</p>
 							<table class="data" border="0" >
 					          	<colgroup>
 					            	<col style="width: 30px" />
-					            	<col style="width: 65px" />
-					            	<col style="width: 120px" />
-					            	<col style="width: 120px" />
-					            	<col />
-					            	<col style="width: 100px" />
-					            	<col style="width: 160px" />					            
-					            	<col style="width: 40px" />
 					            </colgroup>
 					          	<thead>
 					              <tr>
@@ -75,7 +68,7 @@
 					                <th scope="col">First Name</th>
 					                <th scope="col">Surname</th>
 					                <th scope="col">Programme</th>					
-					            	<th scope="col">Status</th>
+					            	<th scope="col" class="centre">Status</th>
 					                <th scope="col">Actions</th>
 					                <th class="centre" scope="col">Select</th>
 					              </tr>

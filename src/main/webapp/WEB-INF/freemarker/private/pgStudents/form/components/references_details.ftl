@@ -12,9 +12,6 @@
        		</h2>
 			<div class="open">
 				
-				<#if model.hasError('numberOfReferees')>                           
-	        		<span class="invalid"><@spring.message  model.result.getFieldError('numberOfReferees').code /></span><br/>                        
-	       		</#if>
             	
             	<#if hasReferees>
 	            	<table class="existing">
@@ -88,6 +85,11 @@
                 
                 	<div>
                 
+				<#if model.hasError('numberOfReferees')>
+				<div class="row">                           
+	        		<span class="invalid"><@spring.message  model.result.getFieldError('numberOfReferees').code /></span><br/>
+	        	</div>	                        
+	       		</#if>
                   		<!-- First name -->
                   		<div class="row">
                     		<span class="label">First Name</span>

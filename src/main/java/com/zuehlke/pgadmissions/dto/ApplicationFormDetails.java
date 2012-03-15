@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
+import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+
 
 public class ApplicationFormDetails {
 
@@ -7,6 +9,8 @@ public class ApplicationFormDetails {
 	private Integer numberOfContactAddresses;
 	private Integer numberOfReferees;
 	private PersonalDetailsDTO personalDetails;
+	private ProgrammeDetail programmeDetails;
+
 	
 	public Integer getNumberOfAddresses() {
 		return numberOfAddresses;
@@ -38,5 +42,13 @@ public class ApplicationFormDetails {
 	
 	public void setNumberOfReferees(Integer numberOfReferees) {
 		this.numberOfReferees = numberOfReferees;
+	}
+	
+	public ProgrammeDetail getProgrammeDetails() {
+		return programmeDetails;
+	}
+	
+	public void setProgrammeDetails(ProgrammeDetail programmeDetails) {
+		this.programmeDetails = programmeDetails;
 	}
 }

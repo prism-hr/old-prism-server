@@ -6,7 +6,7 @@
 
 <#import "/spring.ftl" as spring />
 
-	<h2 class="empty">
+	<h2 id="funding-H2" class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 			Funding
 	</h2>
@@ -68,13 +68,21 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                 	
                 	<div class="field">
-                	<#if !model.applicationForm.isSubmitted()>
-                		<input id="fundingType" name="fundingType" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
+                		<select id="fundingType" name="fundingType" class="full" value="${model.funding.fundingType!}" 
+                		<#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled"
+                                            </#if>>
+                        	<option value="">Select...</option>
+                        	<#list model.fundingTypes as type>
+                             	<option value="${type.displayValue}"
+                             	<#if model.funding.fundingType?? && model.funding.fundingType == type.displayValue>
+                                        selected="selected"
+                                        </#if>
+                             	>${type.displayValue}</option>               
+                        	</#list>
+                      	</select>
                 		<#if model.hasError('fundingType')>
                         	<span class="invalid"><@spring.message  model.result.getFieldError('fundingType').code /></span>                           
-                        </#if>
-                        <#else>
-                            <input id="fundingType" name="fundingType" readonly="readonly" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
                         </#if>
 					</div>
 				</div>
@@ -150,11 +158,12 @@
 				<button class="blue" type="button" id="fundingSaveCloseButton" name="fundingSaveCloseButton" value="close">Save and Close</button>
                 <button class="blue" type="button" id="fundingSaveAddButton" name="fundingSaveAddButton" value="add">Save and Add</button>
               <#else>
-                    <a id="close-section-button"class="button blue">Close</a>  
+                    <a id="fundingCloseButton" class="button blue">Close</a>  
 	   </#if>
 	   </div>
 
 		</form>
 	</div>
-
+<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>

@@ -1,6 +1,13 @@
 $(document).ready(function(){
 	
-	$("#addressContactAddress").val("NO");
+	$('#addressCloseButton').click(function(){
+		$('#address-H2').trigger('click');
+		return false;
+	});
+	
+	if($("#addressContactAddress").val() == ''){
+		$("#addressContactAddress").val("NO");
+	}
 	
 	$('#addressSaveAndAddButton').click(function(){
 		$.post("/pgadmissions/update/editAddress", { 
@@ -78,4 +85,5 @@ $(document).ready(function(){
 		}
 	});
 
+	  bindDatePickers();
 });

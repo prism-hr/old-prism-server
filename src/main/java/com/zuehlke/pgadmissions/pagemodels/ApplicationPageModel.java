@@ -8,10 +8,13 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
+import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
@@ -35,11 +38,14 @@ public class ApplicationPageModel extends PageModel {
 	private List<PhoneType> phoneTypes = new LinkedList<PhoneType>();
 	private List<LanguageAptitude> languageAptitudes = new LinkedList<LanguageAptitude>();
 	private List<DocumentType> documentTypes = new LinkedList<DocumentType>();
+	private List<QualificationLevel> qualificationLevels = new LinkedList<QualificationLevel>();
 
 	private List<StudyOption> studyOptions = new LinkedList<StudyOption>();
 	private List<Referrer> referrers = new LinkedList<Referrer>();
 	private Referee referee;
 	private String uploadErrorCode;
+	private List<FundingType> fundingTypes = new LinkedList<FundingType>();
+	private List<AddressPurpose> addressPurposes = new LinkedList<AddressPurpose>();
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -177,5 +183,28 @@ public class ApplicationPageModel extends PageModel {
 
 	public void setUploadErrorCode(String uploadErrorCode) {
 		this.uploadErrorCode = uploadErrorCode;
+	}
+
+	public List<QualificationLevel> getQualificationLevels() {
+		return qualificationLevels;
+	}
+	
+	public void setQualificationLevels(QualificationLevel[] qualificationLevels) {
+		this.qualificationLevels.addAll(Arrays.asList(qualificationLevels));
+	}
+
+	public void setFundingTypes(FundingType[] fundingTypes) {
+		this.fundingTypes.addAll(Arrays.asList(fundingTypes));
+	}
+	public List<FundingType> getFundingTypes() {
+		return fundingTypes;
+	}
+
+	public void setAddressPurposes(AddressPurpose[] addressPurposes) {
+		this.addressPurposes.addAll(Arrays.asList(addressPurposes));
+	}
+	
+	public List<AddressPurpose> getAddressPurposes() {
+		return addressPurposes;
 	}
 }

@@ -28,22 +28,33 @@ public class ApplicationFormValidator implements Validator{
 		if (applicationFormDetails.getNumberOfContactAddresses() > 1) {
 			errors.rejectValue("numberOfContactAddresses", "user.contactAddresses.notvalid");
 		}
-//		
-//		if (applicationFormDetails.getNumberOfReferees() < 2) {
-//			errors.rejectValue("numberOfReferees", "user.referees.notvalid");
-//		}
-//
-//		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationFormDetails.getPersonalDetails(), "personalDetails");
-//
-//		if (applicationFormDetails.getPersonalDetails() == null) {
-//			errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
-//		} else {
-//			PersonalDetailsValidator validator = new PersonalDetailsValidator();
-//			validator.validate(applicationFormDetails.getPersonalDetails(), mappingResult);
-//			if (mappingResult.hasErrors()) {
-//				errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
-//			}
-//		}
+		
+		if (applicationFormDetails.getNumberOfReferees() < 2) {
+			errors.rejectValue("numberOfReferees", "user.referees.notvalid");
+		}
+		
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationFormDetails.getProgrammeDetails(), "programmeDetails");
+		if (applicationFormDetails.getProgrammeDetails() == null) {
+			errors.rejectValue("programmeDetails", "user.personalDetails.incomplete");
+		} else {
+			ProgrammeDetailsValidator validator = new ProgrammeDetailsValidator();
+			validator.validate(applicationFormDetails.getProgrammeDetails(), mappingResult);
+			if (mappingResult.hasErrors()) {
+				errors.rejectValue("programmeDetails", "user.programmeDetails.incomplete");
+			}
+		}
+
+		mappingResult = new DirectFieldBindingResult(applicationFormDetails.getPersonalDetails(), "personalDetails");
+
+		if (applicationFormDetails.getPersonalDetails() == null) {
+			errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
+		} else {
+			PersonalDetailValidator validator = new PersonalDetailValidator();
+			validator.validate(applicationFormDetails.getPersonalDetails(), mappingResult);
+			if (mappingResult.hasErrors()) {
+				errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
+			}
+		}
 		
 	}
 }

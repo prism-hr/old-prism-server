@@ -47,7 +47,7 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
-		
+			<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 		
 	</head>
 
@@ -111,7 +111,7 @@
 			          </section>
 			          
 			          <!-- Personal Details -->
-			          <section id="personalDetailsSection" class="folding purple">
+			           <section id="programmeDetailsSection" class="folding violet">
 			          	<!--
 			          	<#include "/private/staff/application/components/personal_details.ftl"/>
 			          	-->
@@ -135,24 +135,17 @@
 			          </section>
 			          
 			           <section class="folding navy">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              References
-			            </h2>
-			            <div>
-			              Testing...
-			            </div>
+			             <#include "/private/staff/application/components/references_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding blue">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Documents
-			            </h2>
-			            <div>
-			              Testing...
-			            </div>
+			             <#include "/private/staff/application/components/documents.ftl"/>
 			          </section>
+			          
+			          <section id="additionalInformationSection" class="folding lightblue">
+                                    <#include "/private/staff/application/components/additional_information.ftl"/>
+                      </section>
+			          
 			          
 			          <hr />
 			          

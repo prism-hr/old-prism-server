@@ -16,14 +16,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
+import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
+import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.dto.AdditionalInformation;
 import com.zuehlke.pgadmissions.dto.Address;
@@ -101,7 +105,7 @@ public class UpdateApplicationFormController {
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
 		binder.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditor);
 		binder.registerCustomEditor(Messenger.class, messengerJSONPropertyEditor);
-
+		binder.registerCustomEditor(Language.class, languagePropertyEditor);
 	}
 
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
@@ -118,6 +122,8 @@ public class UpdateApplicationFormController {
 		model.setUser(getCurrentUser());
 		model.setApplicationForm(application);
 		model.setResult(result);
+		model.setLanguages(languageService.getAllLanguages());
+		model.setQualificationLevels(QualificationLevel.values());
 
 		QualificationValidator qualificationValidator = new QualificationValidator();
 		qualificationValidator.validate(qual, result);
@@ -166,6 +172,7 @@ public class UpdateApplicationFormController {
 		ApplicationForm applicationForm = application;
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
+		model.setFundingTypes(FundingType.values());
 
 		FundingValidator fundingValidator = new FundingValidator();
 		fundingValidator.validate(fund, result);
@@ -279,6 +286,7 @@ public class UpdateApplicationFormController {
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
 		model.setCountries(countryService.getAllCountries());
+		model.setAddressPurposes(AddressPurpose.values());
 
 		if (!result.hasErrors()) {
 			com.zuehlke.pgadmissions.domain.Address address;
@@ -292,7 +300,7 @@ public class UpdateApplicationFormController {
 			address.setLocation(addr.getAddressLocation());
 			address.setPostCode(addr.getAddressPostCode());
 			address.setCountry(addr.getAddressCountry());
-			address.setPurpose(addr.getAddressPurpose());
+			address.setPurpose(AddressPurpose.fromString(addr.getAddressPurpose()));
 			address.setStartDate(addr.getAddressStartDate());
 			address.setEndDate(addr.getAddressEndDate());
 			address.setContactAddress(AddressStatus.fromString(addr.getAddressContactAddress()));

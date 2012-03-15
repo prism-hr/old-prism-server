@@ -157,11 +157,11 @@ public class RefereeValidatorTest {
 	}
 	@Test
 	public void shouldRejectIfNoTelephones() {
-		referee.setPhoneNumbersRef(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumbersRef");
+		referee.setPhoneNumbers(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumbers");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.phoneNumbersRef.notempty", mappingResult.getFieldError("phoneNumbersRef").getCode());
+		Assert.assertEquals("referee.phoneNumbers.notempty", mappingResult.getFieldError("phoneNumbers").getCode());
 	}
 	
 	@Before

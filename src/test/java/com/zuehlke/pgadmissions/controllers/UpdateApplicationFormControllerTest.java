@@ -98,7 +98,7 @@ public class UpdateApplicationFormControllerTest {
 		Address address = new Address();
 		address.setAddressLocation("1, Main Street, London");
 		address.setAddressPostCode("NW2345");
-		address.setAddressPurpose("industrial sponsor");
+		address.setAddressPurpose("Residence");
 		address.setAddressCountry("UK");
 		address.setAddressStartDate(new Date(2011, 11, 11));
 		address.setAddressEndDate(new Date(2012, 11, 11));
@@ -110,7 +110,7 @@ public class UpdateApplicationFormControllerTest {
 				.getApplicationForm().getAddresses().get(0);
 		Assert.assertEquals("1, Main Street, London", addr.getLocation());
 		Assert.assertEquals("NW2345", addr.getPostCode());
-		Assert.assertEquals("industrial sponsor", addr.getPurpose());
+		Assert.assertEquals("Residence", addr.getPurpose().getDisplayValue());
 		Assert.assertEquals("UK", addr.getCountry());
 	}
 

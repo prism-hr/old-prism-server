@@ -2,9 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -29,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
@@ -69,7 +68,7 @@ public class SubmitApplicationFormControllerTest {
 		address.setStartDate(new Date());
 		address.setEndDate(new Date());
 		address.setPostCode("test");
-		address.setPurpose("scholarship");
+		address.setPurpose(AddressPurpose.EDUCATION);
 		address.setContactAddress(AddressStatus.YES);
 		
 		form.getAddresses().add(address);

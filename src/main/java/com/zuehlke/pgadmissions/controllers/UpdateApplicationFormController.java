@@ -351,6 +351,7 @@ public class UpdateApplicationFormController {
 		applicationPageModel.setResidenceStatuses(ResidenceStatus.values());
 		applicationPageModel.setGenders(Gender.values());
 		applicationPageModel.setPhoneTypes(PhoneType.values());
+		applicationPageModel.setCountries(countryService.getAllCountries());
 		applicationPageModel.setLanguages(languageService.getAllLanguages());
 		ModelAndView modelAndView = new ModelAndView(APPLICATON_REFEREEE_VIEW_NAME, "model", applicationPageModel);
 		modelAndView.addObject("formDisplayState", "open");

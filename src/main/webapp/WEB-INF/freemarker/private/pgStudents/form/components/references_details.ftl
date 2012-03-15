@@ -236,14 +236,15 @@
                     		<span class="label">Country</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<#if !model.applicationForm.isSubmitted()>
-                      			<input class="half" id="ref_address_country" name="ref_address_country" value="${model.referee.addressCountry!}"/>
-                                <#if model.hasError('addressCountry')>                           
-                            		<span class="invalid"><@spring.message  model.result.getFieldError('addressCountry').code /></span>                           
-                            	</#if>
-                            	<#else>
-                            	   <input readonly="readonly" class="half" id="ref_address_country" name="ref_address_country" value="${model.referee.addressCountry!}"/>
-                            	</#if>
+                    		<select class="full" name="ref_address_country" id="ref_address_country" value="${model.referee.addressCountry!}"
+                            <#if model.applicationForm.isSubmitted()>
+                                            disabled="disabled"
+                            </#if>>
+                            <option value="">Select...</option>
+                                <#list model.countries as country>
+                                    <option value="${country.name}" <#if model.referee.addressCountry?? && model.referee.addressCountry == country.name> selected="selected"</#if>>${country.name}</option>               
+                                </#list>
+                            </select>
                     		</div>
                   		</div>
                 	

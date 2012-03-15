@@ -163,7 +163,13 @@
                     		<span class="label">Country</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<input readonly="readonly" class="half" id="ref_address_country" name="ref_address_country" value="${model.referee.addressCountry!}"/>
+                    		   <select class="full" name="ref_address_country" id="ref_address_country" value="${model.referee.addressCountry!}"
+                                            disabled="disabled">
+                            <option value="">Select...</option>
+                                <#list model.countries as country>
+                                    <option value="${country.name}" <#if model.referee.addressCountry?? && model.referee.addressCountry == country.name> selected="selected"</#if>>${country.name}</option>               
+                                </#list>
+                            </select>
                     		</div>
                   		</div>
                 	

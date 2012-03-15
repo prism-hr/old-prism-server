@@ -177,8 +177,14 @@
                     	<span class="hint"></span>
                     	<div class="field">
                       	  <#if !model.applicationForm.isSubmitted()>
-                      		<input class="full" type="text" id="addressPurpose" name="addressPurpose" 
-                      					value="${model.address.addressPurpose!}" placeholder="e.g. work, travel" />
+                      	  	<select id="addressPurpose" name="addressPurpose" class="full" value="${model.address.addressPurpose!}"
+                      	  	 <#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled"
+                                            </#if>>
+                        	<#list model.addressPurposes as purpose>
+                             	<option value="${purpose}">${purpose.displayValue}</option>               
+                        	</#list>
+                      		</select>
                             <#if model.hasError('addressPurpose')>                           
                             	<span class="invalid"><@spring.message  model.result.getFieldError('addressPurpose').code /></span>                           
                             </#if>

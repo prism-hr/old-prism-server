@@ -4,12 +4,13 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.enums.FundingType;
 
 public class FundingBuilder {
 
 	
 	private ApplicationForm application;
-	private String type;
+	private FundingType type;
 	private String description;
 	private String value;
 	private Date awardDate;
@@ -19,7 +20,7 @@ public class FundingBuilder {
 		return this;
 	}
 	
-	public FundingBuilder type(String type) {
+	public FundingBuilder type(FundingType type) {
 		this.type = type;
 		return this;
 	}

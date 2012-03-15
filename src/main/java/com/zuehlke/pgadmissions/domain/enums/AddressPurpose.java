@@ -15,6 +15,17 @@ public enum AddressPurpose {
 		public String getDisplayValue() {
 			return displayValue;
 		}
+		
+		public static AddressPurpose fromString(String text) {
+		    if (text != null) {
+		      for (AddressPurpose b : AddressPurpose.values()) {
+		        if (text.equalsIgnoreCase(b.displayValue)) {
+		          return b;
+		        }
+		      }
+		    }
+		    return null;
+		  }
 
 		
 

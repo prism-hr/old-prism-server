@@ -1,5 +1,6 @@
 <#-- Assignments -->
 <#import "/spring.ftl" as spring />
+<input type="hidden" id="submissionStatus" value="${model.applicationForm.submissionStatus}"/>
 <#-- Personal Details Rendering -->
 <!-- Personal details -->
 	<h2 class="open">
@@ -82,7 +83,7 @@
                           			<#if model.applicationForm.personalDetails.gender?? &&  model.applicationForm.personalDetails.gender == gender >
 										checked="checked"
 									</#if> 
-																		   
+									 <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>									   
                           		/> ${gender.displayValue}</label>
                                              
                         </#list>                  		
@@ -113,7 +114,7 @@
                   	<label class="label">Country of Birth</label>
                     <span class="hint"></span>
                     <div class="field">
-                      <select name="country" id="country">
+                      <select name="country" id="country" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
                       		<option value="">Select...</option>
                         <#list model.countries as country>
                               <option value="${country.id}"
@@ -141,7 +142,7 @@
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
                   	  				<#if nationality.primary><label>This is my primary nationality</label>"</#if>
-                  	  				<a class="button-delete">Delete</a>
+                  	  			<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
                   	  			</div>
                   	  		</div>
                   	  	</span>                  		
@@ -151,7 +152,7 @@
                 	<div class="row">                    	
                   		 <label class="label">Nationality</label>       
 	                  	 <div class="field">
-	                     	 <select name="candidateNationalityCountry" id="candidateNationalityCountry">
+	                     	 <select name="candidateNationalityCountry" id="candidateNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
 	                      		<option value="">Select...</option>
 	                        	<#list model.countries as country>
 	                              <option value="${country.id}">${country.name}</option>               
@@ -185,7 +186,7 @@
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
                   	  				<#if nationality.primary><label>This is her primary nationality</label></#if>
-                  	  				<a class="button-delete">Delete</a>
+                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
                   	  			</div>
                   	  		</div>            
                   	  	</span>
@@ -195,7 +196,7 @@
                 	<div class="row">                     	
                   		<label class="label">Maternal Guardian Nationality</label>        
 	                  	 <div class="field">
-	                     	 <select name="maternalNationalityCountry" id="maternalNationalityCountry">
+	                     	 <select name="maternalNationalityCountry" id="maternalNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
 	                      		<option value="">Select...</option>
 	                        	<#list model.countries as country>
 	                              <option value="${country.id}">${country.name}</option>               
@@ -227,7 +228,7 @@
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
                   	  				<#if nationality.primary><label>This is his primary nationality</label></#if>
-                  	  				<a class="button-delete">Delete</a>
+                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
                   	  			</div>
                   	  		</div>            
                   	  	</span>
@@ -236,7 +237,7 @@
                 <div class="row">                      	
                  <label class="label">Paternal Guardian Nationality</label> 
 	                  	 <div class="field">
-	                     	 <select name="paternalNationalityCountry" id="paternalNationalityCountry">
+	                     	 <select name="paternalNationalityCountry" id="paternalNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
 	                      		<option value="">Select...</option>
 	                        	<#list model.countries as country>
 	                              <option value="${country.id}">${country.name}</option>               
@@ -265,7 +266,8 @@
                   	  	 		<label class="label">Language</label>    
                   				<div class="field">
                   					<label class="full"> ${prof.language.name}</label> 
-                  	  				<a class="button-delete">Delete</a> <#if prof.primary>This is my primary language</#if>              
+                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if> 
+                  	  				<#if prof.primary>This is my primary language</#if>              
                   	  			</div>
                   	  			<span class="label">Aptitude</span>    
                   				<div class="field">
@@ -282,7 +284,7 @@
                   	<label class="label">Language</label>
                     <span class="hint"></span>                    
                     <div class="field">
-                      <select class="full" id="languageSelect">
+                      <select class="full" id="languageSelect" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
                         <option value="">Select...</option>
                          <#list model.languages as language>
                          	<option value="${language.id}">${language.name}</option>
@@ -296,7 +298,7 @@
                   	<span class="label">Aptitude</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select class="full" id="aptitude" name="aptitude">                      	
+                      <select class="full" id="aptitude" name="aptitude" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>                      	
                        <#list model.languageAptitudes as aptitude >
                       		<option value="${aptitude}">${aptitude.displayValue}</option>
                       	</#list>
@@ -318,7 +320,7 @@
                   	<span class="label">Country</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select name="residenceCountry" id="residenceCountry">
+                      <select name="residenceCountry" id="residenceCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
                       	<option value="">Select...</option>
                         <#list model.countries as country>
                               <option value="${country.id}"
@@ -337,7 +339,7 @@
                     <span class="label">Status</span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select name="residenceStatus" id="residenceStatus">
+                      <select name="residenceStatus" id="residenceStatus" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
                          <#list model.residenceStatuses as residenceStatus>
                               <option value="${residenceStatus}">${residenceStatus.displayValue}</option>               
                         </#list>
@@ -368,25 +370,36 @@
                 </div>
                 
               	<div>
+              	 <div id="phonenumbers"  class="row">
+                    <#list model.applicationForm.personalDetails.phoneNumbers! as phoneNumber>          
+						<span>
+                  	  		<div class="row">
+                  	  	 		<span class="label">Telephone</span>    
+                  				<div class="field">
+                  					<label class="full"> ${phoneNumber.telephoneType.displayValue}</label>
+                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
+                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
+                  	  			</div>
+                  	  			
+                  	  		</div>   
+                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson}'/>   
+                  	  	</span>
+                    </#list>
+                  	</div>
+              	
+              	
+              	
                 	<div class="row">
                 		<span class="label">Telephone</span>
                     <span class="hint"></span>
-                    <div id="phonenumbers"  class="field">
-                    <#list model.applicationForm.personalDetails.phoneNumbers! as phoneNumber>
-                    <span name="phone_number">
-                   		 ${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} <a class="button-delete">delete</a>
-						<input type="hidden" name="phoneNumbers" value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />								
-						<br/>
-					</span>
-                    </#list>
-                  	</div>
+                   
                     <div class="field">
-                    	<select class="full" id="phoneType">
+                    	<select class="full" id="phoneType" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
                     	 <#list model.phoneTypes as phoneType >
                       		<option value="${phoneType}">${phoneType.displayValue}</option>
                       	</#list>
                       </select>
-	                    <input type="text" placeholder="Number" id="phoneNumber"/>
+	                    <input type="text" placeholder="Number" id="phoneNumber" class="half" <#if model.applicationForm.isSubmitted()>readonly="readonly"</#if>/>
                       <a id="addPhoneButton" class="button blue" style="width: 110px;">Add Phone</a>
                     </div>
                   </div>
@@ -402,7 +415,7 @@
                   	  	 		<span class="label">Skype</span>    
                   				<div class="field">
                   					<label class="full">${messenger.messengerAddress}</label> 
-                  	  				<a class="button-delete">Delete</a>            
+                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
                   	  			</div>                  	  			
                   	  		</div>   
                             <input type="hidden" name="messengers" value='${messenger.asJson}'/>   
@@ -413,7 +426,7 @@
                 		<span class="label">Skype</span>
                     <span class="hint"></span>
                     <div class="field">                    
-	                    <input type="text" placeholder="Address"  id="messenger" class="full"/>
+	                    <input type="text" placeholder="Address"  id="messenger" class="full" <#if model.applicationForm.isSubmitted()>readonly="readonly"</#if>/>
                       <a id="addMessengerButton" class="button blue" style="width: 110px;">Add Skype</a>
                     </div>
                   </div>

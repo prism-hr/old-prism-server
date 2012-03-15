@@ -1,14 +1,24 @@
 $(document).ready(function(){
 	
 	$('#addPhoneButton').on('click', function(){
-		if($('#phoneNumber').val() =="Number" || $('#phoneNumber').val().trim()== ''){
-			alert("Please enter phone number");
-			return;
+		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val().trim()!= ''){	
+		var html = ''+	
+			'<span>'+
+		  	'	<div class="row">'+
+		  	' 		<span class="label">Telephone</span> '+   
+			'		<div class="field">'+
+			'			<label class="full">' +$('#phoneType option:selected').text() + '</label>'+
+			'			<label class="half">'+ $('#phoneNumber').val()+ '</label>'+ 
+		  	'			<a class="button-delete">Delete</a> '+             
+		  	'		</div>'+		  			
+		  	'	</div>  '+ 
+	        "<input type='hidden' name='phoneNumbers' value='{" + '"type": "'+ $('#phoneType option:selected').val() + '", "number": "' +  $('#phoneNumber').val() + '"}' + "'/>" +
+		  	'</span>';
+		  	  	
+			$('#phonenumbers').append(html);
+			
+			$('#phoneNumber').val('');
 		}
-		$('#phonenumbers').append('<span name="phone_number">'+ 
-				$('#phoneType option:selected').text() + " " + $('#phoneNumber').val()+ " "+'<a class="button-delete">delete</a>'+
-				'<input type="hidden" name="phoneNumbers" value=' +"'" + '{"type":"' +  $('#phoneType').val()+ '", "number":"' + $('#phoneNumber').val()+ '"} ' + "'" + "/>"									
-				+'<br/></span>');
 	});
 	
 	$('#addMessengerButton').on('click', function(){
@@ -98,60 +108,62 @@ $(document).ready(function(){
 	
 	//maternal guardian nationalities
 	$('#addMaternalNationalityButton').on("click", function(){
-		
-		var primary = "";
-		var jsonPrimary = "false";
-		if($('#primaryMaternalNationality').is(':checked') ){
-			primary = "This is her primary nationality";
-			jsonPrimary = "true"
-		}
+		if( $('#maternalNationalityCountry option:selected').val()!= ''){
+			var primary = "";
+			var jsonPrimary = "false";
+			if($('#primaryMaternalNationality').is(':checked') ){
+				primary = "This is her primary nationality";
+				jsonPrimary = "true"
+			}
+				
 			
-		
-		var html = '<span>' +
-  	 	'<div class="row">'+
-  	 	'	<label class="label">Maternal Guardian Nationality</label>'+
-		'	<div class="field">'+
-		'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
-  		"		<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  +	', "primary": "' + jsonPrimary + '"}' + "'/>" +
-  		'		<a class="button-delete">Delete</a>'+ primary +' <br/>'+
-  		'	</div>'+
-  		'</div>'+
-  	'</span> ';
-		
-		
-		$('#existingMaternalNationalities').append(html);
-		
-		$('#maternalNationalityCountry').val("");
-		$('#primaryMaternalNationality').prop('checked', false);
+			var html = '<span>' +
+	  	 	'<div class="row">'+
+	  	 	'	<label class="label">Maternal Guardian Nationality</label>'+
+			'	<div class="field">'+
+			'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
+	  		"		<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  +	', "primary": "' + jsonPrimary + '"}' + "'/>" +
+	  		'		<a class="button-delete">Delete</a>'+ primary +' <br/>'+
+	  		'	</div>'+
+	  		'</div>'+
+	  	'</span> ';
+			
+			
+			$('#existingMaternalNationalities').append(html);
+			
+			$('#maternalNationalityCountry').val("");
+			$('#primaryMaternalNationality').prop('checked', false);
+		}
 		
 	});
 	
 	//paternal guardian nationalities
 	$('#addPaternalNationalityButton').on("click", function(){
-		var primary = "";
-		var jsonPrimary = "false";
-		if($('#primaryPaternalNationality').is(':checked') ){
-			primary = "This is his primary nationality";
-			jsonPrimary = "true"
+		if( $('#paternalNationalityCountry option:selected').val()!= ''){
+			var primary = "";
+			var jsonPrimary = "false";
+			if($('#primaryPaternalNationality').is(':checked') ){
+				primary = "This is his primary nationality";
+				jsonPrimary = "true"
+			}
+			
+			var html = '<span>' +
+	  	 	'<div class="row">'+
+	  	 	'	<label class="label">Paternal Guardian Nationality</label>'+
+			'	<div class="field">'+
+			'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
+	  		"		<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()  +	', "primary": "' + jsonPrimary + '"}' + "'/>" +
+	  		'		<a class="button-delete">Delete</a>'+ primary +' <br/>'+
+	  		'	</div>'+
+	  		'</div>'+
+	  	'</span> ';
+			
+			
+			$('#existingPaternalNationalities').append(html);
+			
+			$('#paternalNationalityCountry').val("");
+			$('#primaryPaternalNationality').prop('checked', false);
 		}
-		
-		var html = '<span>' +
-  	 	'<div class="row">'+
-  	 	'	<label class="label">Paternal Guardian Nationality</label>'+
-		'	<div class="field">'+
-		'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
-  		"		<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()  +	', "primary": "' + jsonPrimary + '"}' + "'/>" +
-  		'		<a class="button-delete">Delete</a>'+ primary +' <br/>'+
-  		'	</div>'+
-  		'</div>'+
-  	'</span> ';
-		
-		
-		$('#existingPaternalNationalities').append(html);
-		
-		$('#paternalNationalityCountry').val("");
-		$('#primaryPaternalNationality').prop('checked', false);
-		
 	});
 	
 	
@@ -159,12 +171,18 @@ $(document).ready(function(){
 		
 		//messengers
 		if($('#messenger').val() != "Address" && $('#messenger').val().trim() != ''){
-			var html =   "<input type='hidden' name='messengers' value='{" + '"address": "' + $('#messenger').val()  + '"' + "}'/>";   
-	
+			var html =   "<input type='hidden' name='messengers' value='{" + '"address": "' + $('#messenger').val()  + '"' + "}'/>";   	
 	  	  	$('#existingMessengers').append(html);
 			
 		}
 		
+		//phonenumbers
+		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val().trim()!= ''){	
+			var html ="<input type='hidden' name='phoneNumbers' value='{" + '"type": "'+ $('#phoneType option:selected').val() + '", "number": "' +  $('#phoneNumber').val() + '"}' + "'/>" ;
+			  	  	
+			$('#phonenumbers').append(html);		
+			
+		}
 		
 		//language proficiencies
 		if( $('#languageSelect option:selected').val()!= ''){
@@ -244,7 +262,8 @@ $(document).ready(function(){
 				candidateNationalities:"",
 				maternalGuardianNationalities:"",
 				paternalGuardianNationalities:"",
-				messengers:""
+				messengers:"",
+				phoneNumbers:""
 				
 			}
 		
@@ -274,34 +293,35 @@ $(document).ready(function(){
 	
 	
 	/// delete collection items
-	$("#phonenumbers").on("click", "a", function(){	
-		$(this).parent("span").remove();
+	if($('#submissionStatus').val()=="UNSUBMITTED"){
+		$("#phonenumbers").on("click", "a", function(){	
+			$(this).parent("div").parent("div").parent("span").remove();
+			
+		});
 		
-	});
-	
-	$("#existingCandidateNationalities").on("click", "a", function(){	
-		$(this).parent("div").parent("div").parent("span").remove();
+		$("#existingCandidateNationalities").on("click", "a", function(){	
+			$(this).parent("div").parent("div").parent("span").remove();
+			
+		});
 		
-	});
-	
-	$("#existingMaternalNationalities").on("click", "a", function(){	
-		$(this).parent("div").parent("div").parent("span").remove();
+		$("#existingMaternalNationalities").on("click", "a", function(){	
+			$(this).parent("div").parent("div").parent("span").remove();
+			
+		});
 		
-	});
-	
-	$("#existingPaternalNationalities").on("click", "a", function(){	
-		$(this).parent("div").parent("div").parent("span").remove();
+		$("#existingPaternalNationalities").on("click", "a", function(){	
+			$(this).parent("div").parent("div").parent("span").remove();
+			
+		});
 		
-	});
-	
-	$("#existingProficiencies").on("click", "a", function(){	
-		$(this).parent("div").parent("div").parent("span").remove();
+		$("#existingProficiencies").on("click", "a", function(){	
+			$(this).parent("div").parent("div").parent("span").remove();
+			
+		});
 		
-	});
-	
-	$("#existingMessengers").on("click", "a", function(){	
-		$(this).parent("div").parent("div").parent("span").remove();
-		
-	});	
-	
+		$("#existingMessengers").on("click", "a", function(){	
+			$(this).parent("div").parent("div").parent("span").remove();
+			
+		});	
+	}
 });

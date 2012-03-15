@@ -49,7 +49,7 @@ public class ApplicationFormValidator implements Validator{
 		if (applicationFormDetails.getPersonalDetails() == null) {
 			errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
 		} else {
-			PersonalDetailsValidator validator = new PersonalDetailsValidator();
+			PersonalDetailValidator validator = new PersonalDetailValidator();
 			validator.validate(applicationFormDetails.getPersonalDetails(), mappingResult);
 			if (mappingResult.hasErrors()) {
 				errors.rejectValue("personalDetails", "user.personalDetails.incomplete");

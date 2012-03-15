@@ -56,4 +56,8 @@ public class Telephone extends DomainObject<Integer>{
 	public Integer getId() {
 		return id;
 	}
+
+	public String getAsJson() {	
+		return "{\"type\": \"" + this.getTelephoneType() + "\", \"number\": \"" + this.getTelephoneNumber() + "\"}";
+	}
 }

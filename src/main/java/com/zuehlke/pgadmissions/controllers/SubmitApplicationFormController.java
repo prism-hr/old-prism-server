@@ -69,7 +69,7 @@ public class SubmitApplicationFormController {
 
 		appForm.setNumberOfAddresses(applicationForm.getAddresses().size());
 		appForm.setNumberOfReferees(applicationForm.getReferees().size());
-		
+		appForm.setPersonalDetails(applicationForm.getPersonalDetails());
 		int numberOfContactAddresses = 0;
 		for (com.zuehlke.pgadmissions.domain.Address address : applicationForm.getAddresses()) {
 			if (address.getContactAddress() == AddressStatus.YES) {

@@ -17,6 +17,11 @@
 			<div>
             	
             	<!-- Programme name (disabled) -->
+            	<#if model.hasError('programmeDetails')>
+                <div class="row">                           
+                    <span class="invalid"><@spring.message  model.result.getFieldError('programmeDetails').code /></span><br/>
+                </div>                          
+                </#if>
                 <div class="row">
                 	<label class="label">Programme</label>
                     <span class="hint" title="Tooltip demonstration."></span>

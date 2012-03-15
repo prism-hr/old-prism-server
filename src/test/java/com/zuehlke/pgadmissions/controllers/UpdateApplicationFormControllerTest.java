@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
+import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.Funding;
@@ -528,7 +529,7 @@ public class UpdateApplicationFormControllerTest {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		qualification = new QualificationBuilder().id(3)
 				.q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).q_grade("").q_institution("")
-				.q_language_of_study("").q_level("").q_name_of_programme("").q_score("")
+				.q_language_of_study("").q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
 				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark")
 				.lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();

@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
+import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	
@@ -144,7 +145,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		qualification1.setQualificationGrade("");
 		qualification1.setQualificationInstitution("");
 		qualification1.setQualificationLanguage("");
-		qualification1.setQualificationLevel("");
+		qualification1.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualification1.setQualificationProgramName("");
 		qualification1.setQualificationScore("");
 		qualification1.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
@@ -157,7 +158,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		qualification2.setQualificationGrade("");
 		qualification2.setQualificationInstitution("");
 		qualification2.setQualificationLanguage("");
-		qualification2.setQualificationLevel("");
+		qualification2.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualification2.setQualificationProgramName("");
 		qualification2.setQualificationScore("");
 		qualification2.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));

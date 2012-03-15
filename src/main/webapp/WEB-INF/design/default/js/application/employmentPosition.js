@@ -62,4 +62,6 @@ $('a[name="positionCancelButton"]').click(function(){
 	
 });
 
+
+bindDatePickers();
 });

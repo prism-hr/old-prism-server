@@ -96,18 +96,14 @@ $(document).ready(function()
     $('div.information', $parent).toggle();
   });
   
-  // Date pickers.
-  $('input.date').datepicker({
-	  				dateFormat: 'dd-M-yy',
-	 				changeMonth: true,
-	  				changeYear: true,
-	  				yearRange: '1900:defaultDate' });
+  bindDatePickers();
   
   // Sortable tables.
   $('table.data').tablesorter();
   $('table.data thead th').not(':first,:last').wrapInner('<span class="arrow" />');
   
 });
+
 
 
 function msg(message, type)

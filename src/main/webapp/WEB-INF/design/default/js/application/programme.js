@@ -62,4 +62,6 @@ $(document).ready(function(){
 		return false;
 	});
 	
+	
+	  bindDatePickers();
 });

@@ -1,8 +1,12 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import org.easymock.EasyMock;
@@ -16,6 +20,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -26,11 +31,17 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
+import com.zuehlke.pgadmissions.domain.enums.PhoneType;
+import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
+import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
@@ -88,7 +99,7 @@ public class SubmitApplicationFormControllerTest {
 	}
 	
 	@Test
-	@Ignore
+
 	public void shouldReLoadApplicationFormWhenIncomplete() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		form.setApplicant(student);
@@ -99,8 +110,36 @@ public class SubmitApplicationFormControllerTest {
 		ApplicationFormDetails applDetails = new ApplicationFormDetails();
 		BindingResult mappingResult = new BeanPropertyBindingResult(applDetails, "applicationFormDetails", true, 100);
 		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
-		assertEquals("private/pgStudents/form/main_application_page", applicationController.submitApplication(applDetails, 2, mappingResult).getViewName());
-		fail("Not testing for model fields");
+		 ModelAndView modelAndView = applicationController.submitApplication(applDetails, 2, mappingResult);
+		assertEquals("private/pgStudents/form/main_application_page",modelAndView.getViewName());
+	
+		ApplicationPageModel model  = (ApplicationPageModel) modelAndView.getModel().get("model");
+		assertNotNull(model.getQualification());
+		assertNotNull(model.getAddress());
+		assertNotNull(model.getFunding());
+		assertNotNull(model.getEmploymentPosition());
+		assertNotNull(model.getReferrers());
+		
+	//	assertSame(countries, model.getCountries());
+	//	assertSame(languages, model.getLanguages());
+	//	assertEquals(userMock, model.getUser());
+		
+		assertEquals(ResidenceStatus.values().length, model.getResidenceStatuses().size());
+		assertTrue(model.getResidenceStatuses().containsAll(Arrays.asList(ResidenceStatus.values())));
+		assertEquals(Gender.values().length, model.getGenders().size());
+		assertTrue(model.getGenders().containsAll(Arrays.asList(Gender.values())));
+		assertEquals(StudyOption.values().length, model.getStudyOptions().size());
+		assertTrue(model.getStudyOptions().containsAll(Arrays.asList(StudyOption.values())));
+		assertEquals(Referrer.values().length, model.getReferrers().size());
+		assertTrue(model.getReferrers().containsAll(Arrays.asList(Referrer.values())));
+		assertEquals(PhoneType.values().length, model.getPhoneTypes().size());
+		assertTrue(model.getPhoneTypes().containsAll(Arrays.asList(PhoneType.values())));
+		
+		assertEquals(LanguageAptitude.values().length, model.getLanguageAptitudes().size());
+		assertTrue(model.getLanguageAptitudes().containsAll(Arrays.asList(LanguageAptitude.values())));
+		
+		assertEquals(DocumentType.values().length, model.getDocumentTypes().size());
+		assertTrue(model.getDocumentTypes().containsAll(Arrays.asList(DocumentType.values())));
 	}
 
 	@Test(expected=ResourceNotFoundException.class)

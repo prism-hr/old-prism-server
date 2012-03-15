@@ -121,7 +121,7 @@
                             </#if>>
                             <option value="">Select...</option>
                             	<#list model.countries as country>
-                                	<option value="${country.name}">${country.name}</option>               
+                                	<option value="${country.name}" <#if model.address.addressCountry?? && model.address.addressCountry == country.name> selected="selected"</#if>>${country.name}</option>               
                             	</#list>
                             </select>
                             
@@ -218,7 +218,11 @@
                       			<input type="checkbox" name="isCA" id="isCA"
                       			<#if model.applicationForm.isSubmitted()>
                                       disabled="disabled"
-                                </#if>>
+                                </#if>
+                                <#if model.address.addressContactAddress?? && model.address.addressContactAddress == 'YES'>
+                                	checked="checked"                                
+                                </#if>
+                                >
                       			</input> This is my contact address
                       		</label>
                       		<input type="hidden" id="addressContactAddress" value="${model.address.addressContactAddress!}"/>

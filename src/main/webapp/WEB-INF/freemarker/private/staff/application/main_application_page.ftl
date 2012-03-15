@@ -92,6 +92,9 @@
 			          </section>
 			          
 			          <!-- Personal Details -->
+			           <section id="programmeDetailsSection" class="folding violet">
+			          	<#include "/private/staff/application/components/personal_details.ftl"/>
+			          </section>
 			          
 			          <!-- Address -->
 			          <section class="folding red">

@@ -320,19 +320,21 @@ public class UpdateApplicationFormController {
 				&& !getCurrentUser().equals(refereeDetails.getApplication().getApplicant())) {
 			throw new ResourceNotFoundException();
 		}
+		ApplicationPageModel applicationPageModel = new ApplicationPageModel();
 		refereeValidator.validate(refereeDetails, errors);
 		if (!errors.hasErrors()) {
 			refereeService.save(refereeDetails);
+			applicationPageModel.setReferee(new Referee());
+		} else {
+			applicationPageModel.setReferee(refereeDetails);
 		}
 
-		ApplicationPageModel applicationPageModel = new ApplicationPageModel();
 		applicationPageModel.setApplicationForm(refereeDetails.getApplication());
 		applicationPageModel.setUser(getCurrentUser());
 		applicationPageModel.setResult(errors);
 		applicationPageModel.setResidenceStatuses(ResidenceStatus.values());
 		applicationPageModel.setGenders(Gender.values());
 		applicationPageModel.setPhoneTypes(PhoneType.values());
-		applicationPageModel.setReferee(new Referee());
 		ModelAndView modelAndView = new ModelAndView(APPLICATON_REFEREEE_VIEW_NAME, "model", applicationPageModel);
 		modelAndView.addObject("formDisplayState", "open");
 		return modelAndView;

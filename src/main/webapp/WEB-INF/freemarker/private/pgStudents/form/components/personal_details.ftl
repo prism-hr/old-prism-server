@@ -285,6 +285,7 @@
                          	<option value="${language.id}">${language.name}</option>
                          </#list>
                       </select>
+                      
                       <label><input type="radio" name="primaryLanguage" id="primaryLanguage"/> This is my primary language</label>
                     </div>
                   </div>
@@ -297,6 +298,9 @@
                       		<option value="${aptitude}">${aptitude.displayValue}</option>
                       	</#list>
                       </select>
+                        <#if model.hasError('languageProficiencies')>                         
+                                <span style="color:red;"><@spring.message  model.result.getFieldError('languageProficiencies').code /></span>                           
+                       	 </#if>
                     </div>
                   </div>
                 	<div class="row">

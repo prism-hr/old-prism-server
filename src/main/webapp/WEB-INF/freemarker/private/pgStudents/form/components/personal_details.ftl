@@ -3,7 +3,7 @@
 <input type="hidden" id="submissionStatus" value="${model.applicationForm.submissionStatus}"/>
 <#-- Personal Details Rendering -->
 <!-- Personal details -->
-	<h2 class="open">
+	<h2 id="personalDetails-H2" class="open">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Personal Details
 	</h2>
@@ -370,22 +370,22 @@
                 </div>
                 
               	<div>
-              	 <div id="phonenumbers"  class="row">
-                    <#list model.applicationForm.personalDetails.phoneNumbers! as phoneNumber>          
-						<span>
-                  	  		<div class="row">
-                  	  	 		<span class="label">Telephone</span>    
-                  				<div class="field">
-                  					<label class="full"> ${phoneNumber.telephoneType.displayValue}</label>
-                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
-                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
-                  	  			</div>
-                  	  			
-                  	  		</div>   
-                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson}'/>   
-                  	  	</span>
-                    </#list>
-                  	</div>
+	              	 <div id="phonenumbers"  class="row">
+	                    <#list model.applicationForm.personalDetails.phoneNumbers! as phoneNumber>          
+							<span>
+	                  	  		<div class="row">
+	                  	  	 		<span class="label">Telephone</span>    
+	                  				<div class="field">
+	                  					<label class="full"> ${phoneNumber.telephoneType.displayValue}</label>
+	                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
+	                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
+	                  	  			</div>
+	                  	  			
+	                  	  		</div>   
+	                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson}'/>   
+	                  	  	</span>
+	                    </#list>
+	                  </div>
               	
               	
               	
@@ -443,7 +443,7 @@
                  	  </div>
                 </div>-->
               	<div class="buttons">
-                  <a id="close-section-button"class="button blue">Close</a>
+                  <a id="personalDetailsCloseButton"class="button blue">Close</a>
                   <#if !model.applicationForm.isSubmitted()>
                     <a class="button blue" id="personalDetailsSaveButton">Save</a>
                   </#if>

@@ -6,7 +6,7 @@
  
 <#import "/spring.ftl" as spring />
 
-			<h2 class="empty">
+			<h2 id="referee-H2" class="empty">
 				<span class="left"></span><span class="right"></span><span class="status"></span>
         		References
        		</h2>
@@ -54,21 +54,33 @@
                                     <input type="hidden" id="${referee.id!}_addressPostcode" value="${referee.addressPostcode!}"/>
                                     <input type="hidden" id="${referee.id!}_addressCountry" value="${referee.addressCountry!}"/>
                                     <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
+									<#list referee.phoneNumbers! as phoneNumber>
+										<span name="${referee.id!}_hiddenPhones" style="display:none" >
+			                  	  		<div class="row">
+			                  	  	 		<span class="label">Telephone</span>    
+			                  				<div class="field">
+			                  					<label class="full"> ${phoneNumber.telephoneType.displayValue}</label>
+			                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
+			                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
+			                  	  			</div>
+			                  	  			
+			                  	  		</div>   
+			                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson}'/>   
+			                            </span>
+		                            </#list>
 									
-									<#list referee.phoneNumbersRef! as phoneNumber>
-									<span name="${referee.id!}_hiddenPhones" style="display:none" >
-                   		 				${phoneNumber.telephoneType.displayValue!}
-		                        		${phoneNumber.telephoneNumber!}
-		                      			<#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
-											<input class="half" type="hidden" placeholder="Number" name="phoneNumbersRef" 
-		                      			value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />
-		                      				</span>
-									</#list>
+								
 									
-									<#list referee.messengersRef! as messenger>
+									<#list referee.messengers! as messenger>
 									<span name="${referee.id!}_hiddenMessengers" style="display:none" >
-                   		 				${messenger.messengerAddress!} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
-										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress!}"}' />								
+	                   		 			<div class="row">
+			                  	  	 		<span class="label">Skype</span>    
+			                  				<div class="field">
+			                  					<label class="full">${messenger.messengerAddress}</label> 
+			                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
+			                  	  			</div>                  	  			
+		                  	  			</div>   
+		                           	 	<input type="hidden" name="messengers" value='${messenger.asJson}'/>   										
 									</span>
                    				 	</#list>
 
@@ -257,18 +269,28 @@
                   		</div>
 
                   		<!-- Telephone -->
+                  		
+                  		<div class="row" id="phonenumbersref" >           
+                    			<#list model.referee.phoneNumbers! as phoneNumber>
+                    			<span  name="phone_number_ref">
+		                  	  		<div class="row">
+		                  	  	 		<span class="label">Telephone</span>    
+		                  				<div class="field">
+		                  					<label class="full"> ${phoneNumber.telephoneType.displayValue}</label>
+		                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
+		                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
+		                  	  			</div>
+		                  	  			
+		                  	  		</div>   
+		                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson}'/>   
+                  	  			</span>              
+		                      	</#list>
+                    		</div>
+                  		
                   		<div class="row">
                   		<span class="label">Telephone</span>
                         <span class="hint"></span>
-                    		<div class="field" id="phonenumbersref">
-                    			<#list model.referee.phoneNumbers! as phoneNumber>
-                    			<span name="phone_number_ref">
-                   		 				${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
-										<input type="hidden" name="phoneNumbersRef" value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />								
-									</span>
-
-		                      	</#list>
-                    		</div>
+                    		
                     		<#if !model.applicationForm.isSubmitted()>
                     		<div class="field">
                     		<select class="full" id="phoneTypeRef">
@@ -277,30 +299,38 @@
                       			</#list>
                       			</select>
                       				<input type="text" placeholder="Number" id="phoneNumberRef"/>
-                     			 	<a class="button" id="addPhoneRefButton" style="width: 110px;">Add Phone</a>
+                     			 	<a class="button blue" id="addPhoneRefButton" style="width: 110px;">Add Phone</a>
                      		</div>
                      		</#if>	 	
-                     		<#if model.hasError('phoneNumbersRef')>                           
-                            	<span class="invalid"><@spring.message  model.result.getFieldError('phoneNumbersRef').code /></span>                           
+                     		<#if model.hasError('phoneNumbers')>                           
+                            	<span class="invalid"><@spring.message  model.result.getFieldError('phoneNumbers').code /></span>                           
                             </#if>
                   		</div>
 
 	                  	<!-- Skype address -->
+	                  	<div class="row" id="messengersref">
+	                    <#list model.referee.messengers! as messenger>
+		                    <span name="messenger_ref">
+	                   			<div class="row">
+	                  	  	 		<span class="label">Skype</span>    
+	                  				<div class="field">
+	                  					<label class="full">${messenger.messengerAddress}</label> 
+	                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
+	                  	  			</div>                  	  			
+	                  	  		</div>   
+	                            <input type="hidden" name="messengers" value='${messenger.asJson}'/>   						
+							</span>
+	                     </#list>
+	                      		
+	                    </div>
 	                  	<div class="row">
 	                  	    <span class="label">Skype</span>
                             <span class="hint"></span>
-	                    	<div class="field" id="messengersref">
-	                    		<#list model.referee.messengers! as messenger>
-	                    			<span name="messenger_ref">
-                   		 				${messenger.messengerAddress} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
-										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress}"}' />								
-									</span>
-	                      		</#list>
-	                    	</div>
+	                    	
 	                    	<#if !model.applicationForm.isSubmitted()>
 	                    	<div class="field">
 	                    	<input class="full" type="text" placeholder="Skype address" id="messengerAddressRef" />
-	                      		<a id="addMessengerRefButton" class="button" style="width: 110px;">Add Messenger</a>
+	                      		<a id="addMessengerRefButton" class="button blue" style="width: 110px;">Add Skype</a>
 	                      	</div>	
 	                      	</#if>	
 	                  	</div>
@@ -313,7 +343,7 @@
                   		<button class="blue" type="button" value="close" id="refereeSaveButton">Save and Close</button>
                   		<button class="blue" type="button" id="refereeSaveAndAddButton" value="add">Save and Add</button>
                   	 <#else>
-                        <a id="close-section-button"class="button blue">Close</a>   
+                        <a id="refereeCloseButton"class="button blue">Close</a>   
                     </#if> 	
                 	</div>
 

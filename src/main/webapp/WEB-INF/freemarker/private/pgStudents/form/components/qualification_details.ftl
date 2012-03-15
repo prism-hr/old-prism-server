@@ -6,7 +6,7 @@
  
  <#import "/spring.ftl" as spring />
 			
-			<h2 class="empty">
+			<h2 id="qualifications-H2" class="empty">
 				<span class="left"></span><span class="right"></span><span class="status"></span>
 				Qualifications
         	</h2>
@@ -268,7 +268,7 @@
 		                <button class="blue" type="button" id="qualificationSaveCloseButton"  name="id="qualificationSaveCloseButton"" value="close">Save and Close</button>
 		                <button id="qualificationsSaveButton" class="blue" type="button" value="add">Save and Add</button>
 		                <#else>
-                            <a id="close-section-button"class="button blue">Close</a>   
+                            <a id="qualificationsCloseButton"class="button blue">Close</a>   
                     </#if>  
 	                </div>
 

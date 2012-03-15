@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 
 @Repository
 public class ApplicationFormDAO {

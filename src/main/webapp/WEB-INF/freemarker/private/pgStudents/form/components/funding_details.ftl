@@ -69,7 +69,14 @@
                 	
                 	<div class="field">
                 	<#if !model.applicationForm.isSubmitted()>
-                		<input id="fundingType" name="fundingType" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
+                		<select id="fundingType" name="fundingType" class="full" value="${model.funding.fundingType!}" 
+                		<#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled"
+                                            </#if>>
+                        	<#list model.fundingTypes as type>
+                             	<option value="${type}">${type.displayValue}</option>               
+                        	</#list>
+                      	</select>
                 		<#if model.hasError('fundingType')>
                         	<span class="invalid"><@spring.message  model.result.getFieldError('fundingType').code /></span>                           
                         </#if>

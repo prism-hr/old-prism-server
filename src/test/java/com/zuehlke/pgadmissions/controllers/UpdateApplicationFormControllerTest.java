@@ -37,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
@@ -99,7 +100,7 @@ public class UpdateApplicationFormControllerTest {
 		Address address = new Address();
 		address.setAddressLocation("1, Main Street, London");
 		address.setAddressPostCode("NW2345");
-		address.setAddressPurpose("Residence");
+		address.setAddressPurpose(AddressPurpose.RESIDENCE);
 		address.setAddressCountry("UK");
 		address.setAddressStartDate(new Date(2011, 11, 11));
 		address.setAddressEndDate(new Date(2012, 11, 11));

@@ -288,7 +288,8 @@ $(document).ready(function(){
 				"&" + $('[input[name="messengers"]').serialize(),
 				 function(data) {
 				    $('#personalDetailsSection').html(data);
-				  });
+				  }
+		);
 });
 	
 

@@ -6,7 +6,7 @@
  
 <#import "/spring.ftl" as spring />
 
-	<h2 class="empty">
+	<h2 id="address-H2" class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 	    Address
 	</h2>
@@ -236,7 +236,7 @@
                   	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save and Add</button>
                   	<button class="blue" type="button" id="addressSaveAndCloseButton" name="addressSaveAndCloseButton">Save and Close</button>
                 <#else>
-                    <a id="close-section-button"class="button blue">Close</a>  	
+                    <a id="addressCloseButton"class="button blue">Close</a>  	
                 </#if>  	
                 </div>
 

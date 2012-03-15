@@ -1,4 +1,10 @@
 $(document).ready(function(){
+	
+	$('#qualificationsCloseButton').click(function(){
+		$('#qualifications-H2').trigger('click');
+		return false;
+	});
+	
 	$('#qualificationsSaveButton').click(function(){
 		$.post("/pgadmissions/update/editQualification", {  
 			qualificationProgramName: $("#qualificationProgramName").val(), 

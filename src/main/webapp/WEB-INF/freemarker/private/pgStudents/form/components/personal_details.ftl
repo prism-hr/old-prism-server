@@ -3,7 +3,7 @@
 <input type="hidden" id="submissionStatus" value="${model.applicationForm.submissionStatus}"/>
 <#-- Personal Details Rendering -->
 <!-- Personal details -->
-	<h2 class="open">
+	<h2 id="personalDetails-H2" class="open">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Personal Details
 	</h2>
@@ -443,7 +443,7 @@
                  	  </div>
                 </div>-->
               	<div class="buttons">
-                  <a id="close-section-button"class="button blue">Close</a>
+                  <a id="personalDetailsCloseButton"class="button blue">Close</a>
                   <#if !model.applicationForm.isSubmitted()>
                     <a class="button blue" id="personalDetailsSaveButton">Save</a>
                   </#if>

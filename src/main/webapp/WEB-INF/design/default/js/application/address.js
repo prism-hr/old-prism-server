@@ -1,5 +1,10 @@
 $(document).ready(function(){
 	
+	$('#addressCloseButton').click(function(){
+		$('#address-H2').trigger('click');
+		return false;
+	});
+	
 	if($("#addressContactAddress").val() == ''){
 		$("#addressContactAddress").val("NO");
 	}

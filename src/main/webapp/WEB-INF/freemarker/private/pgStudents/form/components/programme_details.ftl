@@ -113,6 +113,10 @@
                     <a id="addSupervisorButton" class="button" style="width: 110px;">Add Supervisor</a>
                     </#if>
 			</div>
+			
+			<div>
+				<#include "/private/common/parts/dynamic_data_table.ftl"/>
+			</div>
 
             <div>
             	<!-- Start date -->

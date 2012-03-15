@@ -1,5 +1,6 @@
 $(document).ready(function(){
-	
+
+
 	$('#addressCloseButton').click(function(){
 		$('#address-H2').trigger('click');
 		return false;
@@ -68,6 +69,7 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="addressEditButton"]').click(function(){
+
 		var id = this.id;
 		id = id.replace('address_', '');
 		$("#addressId").val($('#'+id+"_addressIdDP").val());
@@ -86,4 +88,16 @@ $(document).ready(function(){
 	});
 
 	  bindDatePickers();
+
+		//open/close
+		var $header  =$('#address-H2');
+		var $content = $header.next('div');
+		$header.bind('click', function()
+		{
+		  $content.toggle();
+		  $(this).toggleClass('open', $content.is(':visible'));
+		  return false;
+		});
+		
+		
 });

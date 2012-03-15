@@ -53,19 +53,19 @@
                                     <input type="hidden" id="${referee.id!}_addressCountry" value="${referee.addressCountry!}"/>
                                     <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
 									
-									<#list referee.phoneNumbersRef! as phoneNumber>
+									<#list referee.phoneNumbers! as phoneNumber>
 									<span name="${referee.id!}_hiddenPhones" style="display:none" >
                    		 				${phoneNumber.telephoneType.displayValue!}
 		                        		${phoneNumber.telephoneNumber!}
-											<input class="half" type="hidden" placeholder="Number" name="phoneNumbersRef" 
+											<input class="half" type="hidden" placeholder="Number" name="phoneNumbers" 
 		                      			value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />
 		                      				</span>
 									</#list>
 									
-									<#list referee.messengersRef! as messenger>
+									<#list referee.messengers! as messenger>
 									<span name="${referee.id!}_hiddenMessengers" style="display:none" >
                    		 				${messenger.messengerAddress!}
-										<input type="hidden" name="messengersRef" value='{"address":"${messenger.messengerAddress!}"}' />								
+										<input type="hidden" name="messengers" value='{"address":"${messenger.messengerAddress!}"}' />								
 									</span>
                    				 	</#list>
 

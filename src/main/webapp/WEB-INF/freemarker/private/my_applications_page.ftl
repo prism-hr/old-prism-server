@@ -21,7 +21,7 @@
 	
 		<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
 	    <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
-	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>	    
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
 	    
 	</head>

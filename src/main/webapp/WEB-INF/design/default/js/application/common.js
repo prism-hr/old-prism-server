@@ -7,3 +7,4 @@ function bindDatePickers(){
 	  				changeYear: true,
 	  				yearRange: '1900:defaultDate' });
 }
+

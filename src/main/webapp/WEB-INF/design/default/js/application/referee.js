@@ -181,4 +181,15 @@ $('#addMessengerRefButton').on('click', function(){
 // To make uncompleted functionalities disable.
 $(".disabledEle").attr("disabled", "disabled");
 
+//open/close
+var $header  =$('#referee-H2');
+var $content = $header.next('div');
+$header.bind('click', function()
+{
+  $content.toggle();
+  $(this).toggleClass('open', $content.is(':visible'));
+  return false;
 });
+
+});
+

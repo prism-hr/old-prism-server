@@ -24,7 +24,7 @@ $(document).ready(function()
   
   
   // Expandable content...
-  $('section.folding').each(function()
+ /* $('section.folding').each(function()
   {
     var $this    = $(this);
     var $header  = $this.children('h2').filter(':first');
@@ -36,7 +36,7 @@ $(document).ready(function()
       return false;
     });
 
-  });
+  });*/
 
   $('section.folding a.row-arrow').each(function()
   {
@@ -51,6 +51,7 @@ $(document).ready(function()
     $this.toggleClass('open', $form.is(':visible'));
     */
   });
+ 
   
   $('section.folding a.comment-open').each(function()
   {

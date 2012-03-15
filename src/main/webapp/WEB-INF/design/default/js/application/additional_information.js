@@ -20,5 +20,15 @@ $(document).ready(function(){
 	$('a[name="informationCancelButton"]').click(function(){
 		$("#additionalInformation").val("");
 	});
+
+	//open/close
+	var $header  =$('#additional-H2');
+	var $content = $header.next('div');
+	$header.bind('click', function()
+	{
+	  $content.toggle();
+	  $(this).toggleClass('open', $content.is(':visible'));
+	  return false;
+	});
 	
 });

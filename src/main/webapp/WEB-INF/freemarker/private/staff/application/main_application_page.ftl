@@ -143,7 +143,7 @@
 			          </section>
 			          
 			          <section id="additionalInformationSection" class="folding lightblue">
-                                    <#include "/private/staff/application/components/additional_information.ftl"/>
+                           <#include "/private/staff/application/components/additional_information.ftl"/>
                       </section>
 			          
 			          

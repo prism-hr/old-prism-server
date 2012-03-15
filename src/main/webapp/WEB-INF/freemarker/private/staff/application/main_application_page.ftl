@@ -92,9 +92,6 @@
 			          </section>
 			          
 			          <!-- Personal Details -->
-			          <section id="personalDetailsSection" class="folding purple">
-			          	<#include "/private/staff/application/components/personal_details.ftl"/>
-			          </section>
 			          
 			          <!-- Address -->
 			          <section class="folding red">
@@ -118,14 +115,13 @@
 			          </section>
 			          
 			           <section class="folding blue">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Documents
-			            </h2>
-			            <div>
-			              Testing...
-			            </div>
+			             <#include "/private/staff/application/components/documents.ftl"/>
 			          </section>
+			          
+			          <section id="additionalInformationSection" class="folding lightblue">
+                                    <#include "/private/staff/application/components/additional_information.ftl"/>
+                      </section>
+			          
 			          
 			          <hr />
 			          

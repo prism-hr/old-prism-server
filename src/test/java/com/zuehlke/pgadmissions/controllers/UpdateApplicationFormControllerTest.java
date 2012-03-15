@@ -423,7 +423,7 @@ public class UpdateApplicationFormControllerTest {
 	@Test
 	public void shouldReturnInputQualificationDtoIfHasErrors() {
 		qualificationDto.setQualificationId(null);
-		qualificationDto.setQualificationLevel("");
+		qualificationDto.setQualificationLevel(null);
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock, qualificationValidator);
@@ -522,7 +522,7 @@ public class UpdateApplicationFormControllerTest {
 		qualificationDto.setQualificationGrade("first");
 		qualificationDto.setQualificationInstitution("UCL");
 		qualificationDto.setQualificationLanguage("EN");
-		qualificationDto.setQualificationLevel("College");
+		qualificationDto.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualificationDto.setQualificationProgramName("CS");
 		qualificationDto.setQualificationScore("100");
 		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));

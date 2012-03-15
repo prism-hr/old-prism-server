@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
+
 public class QualificationDTO {
 
 	private Date qualificationStartDate;
@@ -9,7 +11,7 @@ public class QualificationDTO {
 	private String qualificationProgramName;
 	private String qualificationInstitution;
 	private String qualificationLanguage;
-	private String qualificationLevel;
+	private QualificationLevel qualificationLevel;
 	private String qualificationType;
 	private String qualificationGrade;
 	private String qualificationScore;
@@ -47,11 +49,11 @@ public class QualificationDTO {
 		this.qualificationLanguage = qualificationLanguage;
 	}
 	
-	public String getQualificationLevel() {
+	public QualificationLevel getQualificationLevel() {
 		return qualificationLevel;
 	}
 	
-	public void setQualificationLevel(String qualificationLevel) {
+	public void setQualificationLevel(QualificationLevel qualificationLevel) {
 		this.qualificationLevel = qualificationLevel;
 	}
 	

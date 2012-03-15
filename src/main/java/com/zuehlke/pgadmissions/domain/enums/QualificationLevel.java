@@ -14,17 +14,4 @@ public enum QualificationLevel {
 	public String getDisplayValue() {
 		return displayValue;
 	}
-	
-	public static QualificationLevel fromString(String text) {
-	    if (text != null) {
-	      for (QualificationLevel b : QualificationLevel.values()) {
-	        if (text.equalsIgnoreCase(b.displayValue)) {
-	          return b;
-	        }
-	      }
-	    }
-	    return null;
-	  }
-
-	
 }

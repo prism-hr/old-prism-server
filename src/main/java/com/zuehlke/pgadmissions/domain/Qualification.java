@@ -13,6 +13,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
+
 @Entity(name="APPLICATION_FORM_QUALIFICATION")
 @Access(AccessType.FIELD) 
 public class Qualification extends DomainObject<Integer>{
@@ -36,7 +40,8 @@ public class Qualification extends DomainObject<Integer>{
 	private String qualificationLanguage;
 	
 	@Column(name="level")
-	private String qualificationLevel;
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.QualificationLevelEnumUserType")
+	private QualificationLevel qualificationLevel;
 	
 	@Column(name="qualification_type")
 	private String qualificationType;
@@ -76,13 +81,13 @@ public class Qualification extends DomainObject<Integer>{
 	public void setQualificationLanguage(String q_language_of_study) {
 		this.qualificationLanguage = q_language_of_study;
 	}
-
-	public String getQualificationLevel() {
+	
+	public QualificationLevel getQualificationLevel() {
 		return qualificationLevel;
 	}
-
-	public void setQualificationLevel(String q_level) {
-		this.qualificationLevel = q_level;
+	
+	public void setQualificationLevel(QualificationLevel qualificationLevel) {
+		this.qualificationLevel = qualificationLevel;
 	}
 
 	public String getQualificationType() {

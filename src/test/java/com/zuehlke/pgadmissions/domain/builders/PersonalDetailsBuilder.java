@@ -8,6 +8,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
+import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -26,7 +27,8 @@ public class PersonalDetailsBuilder {
 	private Country residenceCountry;
 	private ResidenceStatus residenceStatus;
 	private ApplicationForm applicationForm;
-	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();;
+	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();
+	private List<Messenger> messengers = new ArrayList<Messenger>();
 	private List<Nationality> candiateNationalities = new ArrayList<Nationality>();
 	private List<Nationality> maternalGuardianNationalities= new ArrayList<Nationality>();
 	private List<Nationality> paternalGuardianNationalities= new ArrayList<Nationality>();
@@ -62,7 +64,11 @@ public class PersonalDetailsBuilder {
 		this.phoneNumbers.addAll(Arrays.asList(phoneNumbers));
 		return this;
 	}
-
+	
+	public PersonalDetailsBuilder messengers(Messenger... messengers) {
+		this.messengers.addAll(Arrays.asList(messengers));
+		return this;
+	}
 	public PersonalDetailsBuilder firstName(String firstName) {
 		this.firstName = firstName;
 		return this;
@@ -125,6 +131,7 @@ public class PersonalDetailsBuilder {
 		personalDetails.setPaternalGuardianNationalities(paternalGuardianNationalities);
 		personalDetails.setCandidateNationalities(candiateNationalities);
 		personalDetails.setLanguageProficiencies(languageProficiencies);
+		personalDetails.setMessengers(messengers);
 		return personalDetails;
 	}
 }

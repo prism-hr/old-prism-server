@@ -1,5 +1,37 @@
 $(document).ready(function(){
 	
+	$('#addPhoneButton').on('click', function(){
+		if($('#phoneNumber').val() =="Number" || $('#phoneNumber').val().trim()== ''){
+			alert("Please enter phone number");
+			return;
+		}
+		$('#phonenumbers').append('<span name="phone_number">'+ 
+				$('#phoneType option:selected').text() + " " + $('#phoneNumber').val()+ " "+'<a class="button-delete">delete</a>'+
+				'<input type="hidden" name="phoneNumbers" value=' +"'" + '{"type":"' +  $('#phoneType').val()+ '", "number":"' + $('#phoneNumber').val()+ '"} ' + "'" + "/>"									
+				+'<br/></span>');
+	});
+	
+	$('#addMessengerButton').on('click', function(){
+		if($('#messenger').val() != "Address" && $('#messenger').val().trim() != ''){
+			var html = '<span>'+
+      	  	'	<div class="row">'+
+  	  	 	'	<span class="label">Skype</span>'+    
+  			'	<div class="field">'+
+  			'		<label class="full">'+ $('#messenger').val()  + '</label> '+
+  	  		'		<a class="button-delete">Delete</a> '+          
+  	  		'	</div> '+                 	  			
+  	  		'</div>'+   
+	        "    <input type='hidden' name='messengers' value='{" + '"address": "' + $('#messenger').val()  + '"' + "}'/>";   
+	  	  	'</span>';	
+	  	  	
+	  	  	 
+	  	  	
+	  	  	$('#existingMessengers').append(html);
+	  	  	$('#messenger').val('');
+		}
+	});
+	
+	
 	
 	$('#addLanguageButton').on("click", function(){
 		if( $('#languageSelect option:selected').val()!= ''){
@@ -125,6 +157,15 @@ $(document).ready(function(){
 	
 	$('#personalDetailsSaveButton').on("click", function(){		
 		
+		//messengers
+		if($('#messenger').val() != "Address" && $('#messenger').val().trim() != ''){
+			var html =   "<input type='hidden' name='messengers' value='{" + '"address": "' + $('#messenger').val()  + '"' + "}'/>";   
+	
+	  	  	$('#existingMessengers').append(html);
+			
+		}
+		
+		
 		//language proficiencies
 		if( $('#languageSelect option:selected').val()!= ''){
 			var primary = "";
@@ -202,36 +243,31 @@ $(document).ready(function(){
 				languageProficiencies:"",
 				candidateNationalities:"",
 				maternalGuardianNationalities:"",
-				paternalGuardianNationalities:""
+				paternalGuardianNationalities:"",
+				messengers:""
 				
 			}
+		
 		var gender =  $("input[name='genderRadio']:checked").val();
 		if(gender){
 			postData.gender = gender;
 		}
-			//do the post!
-			$.post( "/pgadmissions/personalDetails" ,
-					$.param(postData) + 
-					"&" + $('[input[name="languageProficiencies"]').serialize()+ 
-					"&" + $('[input[name="candidateNationalities"]').serialize()+
-					"&" + $('[input[name="maternalGuardianNationalities"]').serialize()+
-					"&" + $('[input[name="paternalGuardianNationalities"]').serialize()+
-					"&" + $('[input[name="phoneNumbers"]').serialize(),
-					 function(data) {
-					    $('#personalDetailsSection').html(data);
-					  });
-	});
+		
+		//do the post!
+		$.post( "/pgadmissions/personalDetails" ,
+				$.param(postData) + 
+				"&" + $('[input[name="languageProficiencies"]').serialize()+ 
+				"&" + $('[input[name="candidateNationalities"]').serialize()+
+				"&" + $('[input[name="maternalGuardianNationalities"]').serialize()+
+				"&" + $('[input[name="paternalGuardianNationalities"]').serialize()+
+				"&" + $('[input[name="phoneNumbers"]').serialize()+
+				"&" + $('[input[name="messengers"]').serialize(),
+				 function(data) {
+				    $('#personalDetailsSection').html(data);
+				  });
+});
 	
-	$('#addPhoneButton').on('click', function(){
-		if($('#phoneNumber').val() =="Number" || $('#phoneNumber').val().trim()== ''){
-			alert("Please enter phone number");
-			return;
-		}
-		$('#phonenumbers').append('<span name="phone_number">'+ 
-				$('#phoneType option:selected').text() + " " + $('#phoneNumber').val()+ " "+'<a class="button">delete</a>'+
-				'<input type="hidden" name="phoneNumbers" value=' +"'" + '{"type":"' +  $('#phoneType').val()+ '", "number":"' + $('#phoneNumber').val()+ '"} ' + "'" + "/>"									
-				+'<br/></span>');
-	})
+
 	
 	// To make uncompleted functionalities disable.
 	$(".disabledEle").attr("disabled", "disabled");	
@@ -262,6 +298,10 @@ $(document).ready(function(){
 		$(this).parent("div").parent("div").parent("span").remove();
 		
 	});
+	
+	$("#existingMessengers").on("click", "a", function(){	
+		$(this).parent("div").parent("div").parent("span").remove();
 		
+	});	
 	
 });

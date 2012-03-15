@@ -42,4 +42,8 @@ public class Messenger extends DomainObject<Integer>{
 	public Integer getId() {
 		return id;
 	}
+
+	public String getAsJson() {
+		return "{ \"address\": \"" + this.getMessengerAddress() + "\"}";
+	}
 }

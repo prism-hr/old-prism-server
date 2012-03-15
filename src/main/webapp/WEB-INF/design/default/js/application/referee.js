@@ -103,7 +103,7 @@ $('#addPhoneRefButton').on('click', function(){
 		return;
 	}
 	$('#phonenumbersref').append('<span name="phone_number_ref">'+ 
-			$('#phoneTypeRef option:selected').text() + " " + $('#phoneNumberRef').val()+ " "+'<a class="button">delete</a>'+
+			$('#phoneTypeRef option:selected').text() + " " + $('#phoneNumberRef').val()+ " "+'<a class="button-delete">delete</a>'+
 			'<input type="hidden" name="phoneNumbersRef" value=' +"'" + '{"type":"' +  $('#phoneTypeRef').val()+ '", "number":"' + $('#phoneNumberRef').val()+ '"} ' + "'" + "/>"									
 			+'<br/></span>');
 })
@@ -114,7 +114,7 @@ $('#addMessengerRefButton').on('click', function(){
 		return;
 	}
 	$('#messengersref').append('<span name="messenger_ref">'+ 
-			$('#messengerAddressRef').val()+ " "+'<a class="button">delete</a>'+
+			$('#messengerAddressRef').val()+ " "+'<a class="button-delete">delete</a>'+
 			'<input type="hidden" name="messengersRef" value=' +"'" + '{"address":"' + $('#messengerAddressRef').val()+ '"} ' + "'" + "/>"									
 			+'<br/></span>');
 })

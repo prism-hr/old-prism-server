@@ -1,6 +1,8 @@
 $(document).ready(function(){
 	
-	$("#addressContactAddress").val("NO");
+	if($("#addressContactAddress").val() == ''){
+		$("#addressContactAddress").val("NO");
+	}
 	
 	$('#addressSaveAndAddButton').click(function(){
 		$.post("/pgadmissions/update/editAddress", { 

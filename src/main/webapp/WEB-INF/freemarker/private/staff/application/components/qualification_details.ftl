@@ -107,8 +107,13 @@
                     		<span class="label">Language of Study</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
-                    		<input readonly="readonly" id="qualificationLanguage" class="full" type="text" 
-                                                                value="${model.qualification.qualificationLanguage!}"/>
+                    		  <select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${model.qualification.qualificationLanguage!}"
+                                                disabled="disabled">
+                                <option value="">Select...</option>
+                                    <#list model.languages as language>
+                                        <option value="${language.name}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.name> selected="selected"</#if>>${language.name}</option>
+                                    </#list>
+                                </select>
                     		</div>
                   		</div>
                   

@@ -121,8 +121,13 @@
                     <span class="label">Language of work</span>
                     <span class="hint"></span>
                     <div class="field">
-                     <input readonly="readonly" class="full" type="text" id="position_language" 
-                                    name="position_language" value="${model.employmentPosition.position_language!}"/>
+                        <select class="full" id="position_language" name="position_language" value="${model.employmentPosition.position_language!}"
+                                                disabled="disabled">
+                        <option value="">Select...</option>
+                         <#list model.languages as language>
+                            <option value="${language.name}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.name> selected="selected"</#if>>${language.name}</option>
+                         </#list>
+                      </select>
                     </div>
                	</div>
                 

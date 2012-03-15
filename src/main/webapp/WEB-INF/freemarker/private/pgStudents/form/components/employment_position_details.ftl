@@ -169,7 +169,7 @@
                                             </#if>>
                         <option value="">Select...</option>
                          <#list model.languages as language>
-                         	<option value="${language.id}">${language.name}</option>
+                         	<option value="${language.name}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.name> selected="selected"</#if>>${language.name}</option>
                          </#list>
                       </select>
 						<#if model.hasError('position_language')>                           

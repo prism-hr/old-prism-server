@@ -85,7 +85,57 @@
                     </div>
                   	
                 </div>
+                
+                <!-- candidate nationality -->
+				<div>    
 
+             
+                  	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
+                  	  	<span name="existingCandidateNationality">
+                  	  	 	<div class="row">
+                  	  	 		<label class="label">Nationality</label>    
+                  				<div class="field">
+                  					<label class="full">${nationality.country.name}</label>  
+                  	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
+                  	  				<#if nationality.primary><label>Primary nationality</label>"</#if>                  	  		 
+                  	  			</div>
+                  	  		</div>
+                  	  	</span>                  		
+                  	  </#list>
+                
+                 </div>
+                 
+                 <!--Maternal guardian nationality -->
+                 <div>
+                 <#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
+                  	  	<span>
+                  	  		<div class="row">
+                  	  	 		<label class="label">Maternal Guardian Nationality</label>    
+                  				<div class="field">
+                  					<label class="full">${nationality.country.name}</label>  
+                  	  				<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
+                  	  				<#if nationality.primary><label>Primary nationality</label></#if>                  	  
+                  	  			</div>
+                  	  		</div>            
+                  	  	</span>
+                  	  </#list>
+                 </div>
+                 
+                  <!--Paternal guardian nationality -->
+                 <div>
+                  <#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
+                  	  	<span>
+                  	  		<div class="row">
+                  	  	 		<label class="label">Paternal Guardian Nationality</label>    
+                  				<div class="field">
+                  					<label class="full">${nationality.country.name}</label>  
+                  	  				<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
+                  	  				<#if nationality.primary><label>Primary nationality</label></#if>                  	  
+                  	  			</div>
+                  	  		</div>            
+                  	  	</span>
+                  	  </#list>
+                 </div>
 				<!-- Language -->
               	<div>
                 	
@@ -123,24 +173,29 @@
                 
               	<div>
                 	
-                	<div class="row">
-                		<span class="label">Telephone</span>
-                   	 	<div class="field">
-                    		Home 0555 555 5555
-                    	</div>
-                  	</div>
+                	  <#list model.applicationForm.personalDetails.phoneNumbers! as phoneNumber>          
+						<span>
+                  	  		<div class="row">
+                  	  	 		<span class="label">Telephone</span>    
+                  				<div class="field">  ${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} </div>                  	  			
+                  	  		</div>                                
+                  	  	</span>
+                    </#list>
                 
                 </div>
                 
               	<div>
-                	
-                	<div class="row">
-                		<span class="label">Messenger</span>
-                    	<div class="field">
-                    		Skype bob@smith.com
-                    	</div>
-                  	</div>
-                
+                	 <#list model.applicationForm.personalDetails.messengers as messenger >
+                  	  	<span>
+                  	  		<div class="row">
+                  	  	 		<span class="label">Skype</span>    
+                  				<div class="field">
+                  					<label class="full">${messenger.messengerAddress}</label>                   	  				
+                  	  			</div>                  	  			
+                  	  		</div>  
+   
+                  	  	</span>
+                  	  </#list>
                 </div>
 
               	<div class="buttons" id="show-comment-button-div">

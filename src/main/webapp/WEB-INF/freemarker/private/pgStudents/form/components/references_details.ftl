@@ -6,7 +6,7 @@
  
 <#import "/spring.ftl" as spring />
 
-			<h2 class="empty">
+			<h2 id="referee-H2" class="empty">
 				<span class="left"></span><span class="right"></span><span class="status"></span>
         		References
        		</h2>
@@ -343,7 +343,7 @@
                   		<button class="blue" type="button" value="close" id="refereeSaveButton">Save and Close</button>
                   		<button class="blue" type="button" id="refereeSaveAndAddButton" value="add">Save and Add</button>
                   	 <#else>
-                        <a id="close-section-button"class="button blue">Close</a>   
+                        <a id="refereeCloseButton"class="button blue">Close</a>   
                     </#if> 	
                 	</div>
 

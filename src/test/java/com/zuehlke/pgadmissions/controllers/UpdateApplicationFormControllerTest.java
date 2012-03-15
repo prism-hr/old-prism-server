@@ -39,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -151,14 +152,14 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 
 		Funding funding = new Funding();
-		funding.setFundingType("scholarship");
+		funding.setFundingType(FundingType.SCHOLARSHIP);
 		funding.setFundingDescription("my description");
 		funding.setFundingValue("2000");
 		funding.setFundingAwardDate(new Date());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
 		ModelAndView modelAndView = applicationController.addFunding(funding, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/funding_details", modelAndView.getViewName());
-		Assert.assertEquals("scholarship", ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
+		Assert.assertEquals(FundingType.SCHOLARSHIP, ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
 				.getFundings().get(0).getType());
 	}
 
@@ -168,7 +169,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
 		Funding funding = new Funding();
-		funding.setFundingType("         ");
+		funding.setFundingType(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
 		ModelAndView modelAndView = applicationController.addFunding(funding, 2, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/funding_details", modelAndView.getViewName());

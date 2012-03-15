@@ -2,9 +2,11 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.enums.FundingType;
+
 public class Funding {
 	
-	private String fundingType;
+	private FundingType fundingType;
 	private String fundingDescription;
 	private String fundingValue;
 	private Date fundingAwardDate;
@@ -26,11 +28,11 @@ public class Funding {
 		this.fundingValue = fundingValue;
 	}
 	
-	public String getFundingType() {
+	public FundingType getFundingType() {
 		return fundingType;
 	}
 	
-	public void setFundingType(String fundingType) {
+	public void setFundingType(FundingType fundingType) {
 		this.fundingType = fundingType;
 	}
 	

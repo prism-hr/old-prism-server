@@ -13,6 +13,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.FundingType;
+
 @Entity(name="APPLICATION_FORM_FUNDING")
 @Access(AccessType.FIELD) 
 public class Funding extends DomainObject<Integer> {
@@ -20,7 +24,8 @@ public class Funding extends DomainObject<Integer> {
 	private static final long serialVersionUID = -3074034984017639671L;
 	
 	@Column(name="award_type")
-	private String type;
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.FundingTypeEnumUserType")
+	private FundingType type;
 	
 	private String description;
 	
@@ -49,11 +54,11 @@ public class Funding extends DomainObject<Integer> {
 		return id;
 	}
 	
-	public String getType() {
+	public FundingType getType() {
 		return type;
 	}
 	
-	public void setType(String type) {
+	public void setType(FundingType type) {
 		this.type = type;
 	}
 	

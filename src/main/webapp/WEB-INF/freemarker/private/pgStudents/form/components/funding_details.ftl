@@ -38,7 +38,7 @@
 					<#list model.applicationForm.fundings as funding>		
 						<tr>
 		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id}">-</a></td>
-		                  	<td>${funding.type}</td>
+		                  	<td>${funding.type.displayValue}</td>
 		                  	<td>${funding.description}</td>
 		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
 		                  	<td><a class="button-delete" href="#">delete</a></td>
@@ -74,8 +74,8 @@
                                             </#if>>
                         	<option value="">Select...</option>
                         	<#list model.fundingTypes as type>
-                             	<option value="${type.displayValue}"
-                             	<#if model.funding.fundingType?? && model.funding.fundingType == type.displayValue>
+                             	<option value="${type}"
+                             	<#if model.funding.fundingType?? && model.funding.fundingType == type>
                                         selected="selected"
                                         </#if>
                              	>${type.displayValue}</option>               

@@ -66,6 +66,7 @@ $(document).ready(function(){
 		$("#qualificationInstitution").val("");
 		$("#qualificationLevel").val("");
 		$("#qualificationGrade").val("");
+		$("#qualificationType").val("");
 		$("#qualificationScore").val("");
 		$("#qualificationStartDate").val("");
 		$("#qualificationLanguage").val("");

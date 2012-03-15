@@ -33,7 +33,18 @@ public class ApplicationFormValidator implements Validator{
 			errors.rejectValue("numberOfReferees", "user.referees.notvalid");
 		}
 
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationFormDetails.getPersonalDetails(), "personalDetails");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationFormDetails.getProgrammeDetails(), "programmeDetails");
+		if (applicationFormDetails.getProgrammeDetails() == null) {
+			errors.rejectValue("programmeDetails", "user.personalDetails.incomplete");
+		} else {
+			ProgrammeDetailsValidator validator = new ProgrammeDetailsValidator();
+			validator.validate(applicationFormDetails.getProgrammeDetails(), mappingResult);
+			if (mappingResult.hasErrors()) {
+				errors.rejectValue("programmeDetails", "user.programmeDetails.incomplete");
+			}
+		}
+		
+		mappingResult = new DirectFieldBindingResult(applicationFormDetails.getPersonalDetails(), "personalDetails");
 
 		if (applicationFormDetails.getPersonalDetails() == null) {
 			errors.rejectValue("personalDetails", "user.personalDetails.incomplete");

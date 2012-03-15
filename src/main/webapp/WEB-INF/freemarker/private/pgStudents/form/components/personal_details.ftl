@@ -41,8 +41,10 @@
 				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id?string("######")}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
               	<div>
-        <#if model.hasError('personalDetails')>                           
-                <p style="color:red;"><@spring.message  model.result.getFieldError('personalDetails').code /></p>                        
+        <#if model.hasError('personalDetails')>
+        <div class="row">                           
+                <span class="invalid"><@spring.message  model.result.getFieldError('personalDetails').code /></span><br/>        
+                </div>               
         </#if>
                 	<div class="row">
                   	<label class="label">First Name</label>

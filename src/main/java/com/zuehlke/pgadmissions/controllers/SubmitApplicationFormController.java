@@ -78,6 +78,8 @@ public class SubmitApplicationFormController {
 		}
 		
 		appForm.setNumberOfContactAddresses(numberOfContactAddresses);
+		appForm.setProgrammeDetails(applicationForm.getProgrammeDetails());
+		
 		
 		ApplicationFormValidator validator = new ApplicationFormValidator();
 		

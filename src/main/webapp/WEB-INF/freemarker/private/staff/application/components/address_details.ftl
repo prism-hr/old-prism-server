@@ -125,8 +125,17 @@
                     	<span class="label">Purpose</span>
                     	<span class="hint"></span>
                     	<div class="field">
-                    	 <input readonly="readonly" class="full" type="text" id="addressPurpose" name="addressPurpose" 
-                                        value="${model.address.addressPurpose!}" placeholder="e.g. work, travel" />
+                    	   <select id="addressPurpose" name="addressPurpose" class="full" value="${model.address.addressPurpose!}"
+                                                disabled="disabled">
+                            <option value="">Select...</option>
+                            <#list model.addressPurposes as purpose>
+                                <option value="${purpose}"
+                                <#if model.address.addressPurpose?? &&  model.address.addressPurpose == purpose >
+                                selected="selected"
+                                </#if> 
+                                >${purpose.displayValue}</option>               
+                            </#list>
+                            </select>
                     	</div>
                   	</div>
                   	

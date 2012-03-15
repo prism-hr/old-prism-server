@@ -64,7 +64,17 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                 	
                 	<div class="field">
-                	<input id="fundingType" name="fundingType" readonly="readonly" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
+                	<select id="fundingType" name="fundingType" class="full" value="${model.funding.fundingType!}" 
+                                                disabled="disabled">
+                            <option value="">Select...</option>
+                            <#list model.fundingTypes as type>
+                                <option value="${type.displayValue}"
+                                <#if model.funding.fundingType?? && model.funding.fundingType == type.displayValue>
+                                        selected="selected"
+                                        </#if>
+                                >${type.displayValue}</option>               
+                            </#list>
+                        </select>
 					</div>
 				</div>
 

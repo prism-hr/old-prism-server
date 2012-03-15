@@ -30,7 +30,6 @@
 	                    <td>Personal Statement</td>
 	                    <td>Applicant_Dash_Review_Funding</td>
 	                    <td>19/05/12</td>
-	                    <td><a class="button-delete" href="#">delete</a></td>
 					</tr>
                 </tbody>
 		</table>

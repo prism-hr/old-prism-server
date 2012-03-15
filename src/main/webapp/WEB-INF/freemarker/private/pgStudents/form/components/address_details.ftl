@@ -13,13 +13,6 @@
 	    
 	<div>
 	
-			<#if model.hasError('numberOfAddresses')>                           
-	        	<span class="invalid"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>                        
-	        </#if>
-	        <#if model.hasError('numberOfContactAddresses')>                           
-	        	<span class="invalid"><@spring.message  model.result.getFieldError('numberOfContactAddresses').code /></span><br/>                        
-			</#if>
-	
 			<#if hasAddresses>
 				<table class="existing">
 			    	<colgroup>
@@ -68,6 +61,17 @@
 				
 				<input type="hidden" id="addressId" name="addressId"/>
             	<div>
+            	           <#if model.hasError('numberOfAddresses')>
+            	           <div class="row">
+                                <span class="invalid"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>
+                           </div>                             
+                           </#if>
+                           <#if model.hasError('numberOfContactAddresses')>
+                           <div class="row">                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('numberOfContactAddresses').code /></span><br/>
+                           </div>                              
+                           </#if>
+            	
                 	<h3>Address</h3>
                   
                   	<!-- Address body -->

@@ -16,7 +16,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
@@ -31,10 +30,15 @@ public class PersonalDetail extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = 6549850558507667533L;
 	
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "personal_details_id")
+	private List<Messenger> messengers = new ArrayList<Messenger>();
+	
+	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "personal_detail_id")
-	private List<Telephone> phoneNumbers;
+	private List<Telephone> phoneNumbers=  new ArrayList<Telephone>();
 
 	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -183,8 +187,8 @@ public class PersonalDetail extends DomainObject<Integer> {
 	}
 
 	public void setPhoneNumbers(List<Telephone> phoneNumbers) {
-		this.phoneNumbers =phoneNumbers;
-		
+		this.phoneNumbers.clear();
+		this.phoneNumbers.addAll(phoneNumbers);
 		
 	}
 
@@ -241,6 +245,15 @@ public class PersonalDetail extends DomainObject<Integer> {
 				this.paternalGuardianNationalities.add(nationality);
 			}
 		}
+	}
+
+	public List<Messenger> getMessengers() {
+		return messengers;
+	}
+
+	public void setMessengers(List<Messenger> messengers) {
+		this.messengers.clear();
+		this.messengers.addAll(messengers);
 	}
 
 	

@@ -42,10 +42,12 @@
 		                  	<td>${funding.description}</td>
 		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
 		                  	      <td>
+		                  	      	 <#if !model.applicationForm.isSubmitted()>
 				                  	<form method="Post" action="<@spring.url '/deleteentity/funding'/>" style="padding:0">
 			                			<input type="hidden" name="id" value="${funding.id}"/>		                		
 			                			<a name="deleteButton" class="button-delete">delete</a>
 			                		</form>
+			                		</#if>
 				        		</td>
 		                  	
 		                  	<!-- Non-rendering data -->

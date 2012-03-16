@@ -44,7 +44,15 @@
 				                    <td>${referee.lastname!}</td>
 				                    <td>${referee.jobTitle!}</td>
 				                    <td>${referee.email!}</td>
-				                    <td><a class="button-delete" type="submit">Delete</a></td>
+				                     	  <td>
+				                     	 <#if !model.applicationForm.isSubmitted()>
+						                  	<form method="Post" action="<@spring.url '/deleteentity/referee'/>" style="padding:0">
+					                			<input type="hidden" name="id" value="${referee.id}"/>		                		
+					                			<a name="deleteButton" class="button-delete">delete</a>
+					                		</form>
+					                		</#if>
+						        		</td
+				                    
                                     <input type="hidden" id="${referee.id!}_refereeId" value="${referee.id!}"/>
                                     <input type="hidden" id="${referee.id!}_firstname" value="${referee.firstname!}"/>
                                     <input type="hidden" id="${referee.id!}_lastname" value="${referee.lastname!}"/>

@@ -40,7 +40,14 @@
 				                <td>${address.location}, ${address.postCode}</td>
 				                <td>${address.startDate?string('dd-MMM-yyyy')}</td>
 				                <td>${(address.endDate?string('dd-MMM-yyyy'))!}</td>
-				                <td><a class="button-delete" type="submit">Delete</a></td>
+				                <td>
+				                 <#if !model.applicationForm.isSubmitted()>
+				                  	<form method="Post" action="<@spring.url '/deleteentity/address'/>" style="padding:0">
+			                			<input type="hidden" name="id" value="${address.id}"/>		                		
+			                			<a name="deleteButton" class="button-delete">delete</a>
+			                		</form>
+			                		</#if>
+				        </td>
 				                
 								<input type="hidden" id="${address.id}_addressIdDP" value="${address.id}"/>
 	                            <input type="hidden" id="${address.id}_locationDP" value="${address.location}"/>

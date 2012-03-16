@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 public class AddressBuilder {
 
 	
+	private Integer id;
 	private ApplicationForm application;
 	
 	private String location;
@@ -21,8 +22,13 @@ public class AddressBuilder {
 	private Date startDate;
 	private Date endDate;
 	
+	
 	private AddressStatus contactAddress;
 	
+	public AddressBuilder id(Integer id) {
+		this.id = id;
+		return this;
+	}
 	
 	public AddressBuilder application(ApplicationForm application) {
 		this.application = application;
@@ -67,6 +73,7 @@ public class AddressBuilder {
 	
 	public Address toAddress() {
 		Address address = new Address();
+		address.setId(id);
 		address.setApplication(application);
 		address.setLocation(location);
 		address.setPostCode(postCode);

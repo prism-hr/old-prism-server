@@ -5,6 +5,10 @@ $(document).ready(function(){
 		return false;
 	});
 	
+	$('a[name="deleteButton"]').click( function(){	
+		$(this).parent("form").submit();
+	});
+	
 	$('#positionSaveAndCloseButton').click(function(){
 		$.post("/pgadmissions/update/addEmploymentPosition", { 
 			position_title: $("#position_title").val(),

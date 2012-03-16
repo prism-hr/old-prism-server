@@ -8,9 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.AddressDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.EmploymentPositionDAO;
+import com.zuehlke.pgadmissions.dao.FundingDAO;
+import com.zuehlke.pgadmissions.dao.QualificationDAO;
+import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -22,16 +29,26 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 public class ApplicationsService {
 
 	private final ApplicationFormDAO applicationFormDAO;
+	private final AddressDAO addressDAO;
+	private final QualificationDAO qualificationDAO;
+	private final FundingDAO fundingDAO;
+	private final EmploymentPositionDAO employmentPositionDAO;
+	private final RefereeDAO refereeDAO;
 
 	ApplicationsService() {
-		this(null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public ApplicationsService(ApplicationFormDAO applicationFormDAO) {
+	public ApplicationsService(ApplicationFormDAO applicationFormDAO, AddressDAO addressDAO, QualificationDAO qualificationDAO, FundingDAO fundingDAO,
+			EmploymentPositionDAO employmentPositionDAO, RefereeDAO refereeDAO) {
 		this.applicationFormDAO = applicationFormDAO;
+		this.addressDAO = addressDAO;
+		this.qualificationDAO = qualificationDAO;
+		this.fundingDAO = fundingDAO;
+		this.employmentPositionDAO = employmentPositionDAO;
+		this.refereeDAO = refereeDAO;
 	}
-
 
 	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
 		List<ApplicationForm> visibleApplications = new ArrayList<ApplicationForm>();
@@ -57,7 +74,6 @@ public class ApplicationsService {
 		return visibleApplications;
 	}
 
-
 	public ApplicationForm getApplicationById(Integer id) {
 		return applicationFormDAO.get(id);
 	}
@@ -68,31 +84,25 @@ public class ApplicationsService {
 
 	}
 
-
 	public Qualification getQualificationById(Integer id) {
 		return applicationFormDAO.getQualification(id);
 	}
-
 
 	public Referee getRefereeById(Integer id) {
 		return applicationFormDAO.getRefereeById(id);
 	}
 
-
 	public List<Qualification> getQualificationsByApplication(ApplicationForm applicationForm) {
 		return applicationFormDAO.getQualificationsByApplication(applicationForm);
 	}
-
 
 	public com.zuehlke.pgadmissions.domain.Funding getFundingById(Integer fundingId) {
 		return applicationFormDAO.getFundingById(fundingId);
 	}
 
-
 	public EmploymentPosition getEmploymentPositionById(Integer positionId) {
 		return applicationFormDAO.getEmploymentById(positionId);
 	}
-
 
 	public com.zuehlke.pgadmissions.domain.Address getAddressById(Integer addressId) {
 		return applicationFormDAO.getAdddressById(addressId);
@@ -101,7 +111,6 @@ public class ApplicationsService {
 	public Messenger getMessengerById(Integer id) {
 		return applicationFormDAO.getMessengerById(id);
 	}
-
 
 	public Telephone getTelephoneById(Integer id) {
 		return applicationFormDAO.getTelephoneById(id);
@@ -125,5 +134,32 @@ public class ApplicationsService {
 
 	}
 
+	@Transactional
+	public void deleteAddress(Address address) {
+		addressDAO.delete(address);
+
+	}
+
+	@Transactional
+	public void deleteQualification(Qualification qual) {
+		qualificationDAO.delete(qual);
+
+	}
+
+	@Transactional
+	public void deleteFunding(Funding funding) {
+		fundingDAO.delete(funding);
+
+	}
+
+	@Transactional
+	public void deleteEmployment(EmploymentPosition position) {
+		employmentPositionDAO.delete(position);
+	}
+	
+	@Transactional
+	public void deleteReferee(Referee referee) {
+		refereeDAO.delete(referee);		
+	}
 
 }

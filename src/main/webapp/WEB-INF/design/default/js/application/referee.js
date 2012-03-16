@@ -5,6 +5,10 @@ $(document).ready(function(){
 		return false;
 	});
 	
+	$('a[name="deleteButton"]').click( function(){	
+		$(this).parent("form").submit();
+	});
+	
 	$("#phonenumbersref").on("click", "a", function(){	
 		$(this).parent("div").parent("div").parent("span").remove();
 		

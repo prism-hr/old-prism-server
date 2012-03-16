@@ -44,7 +44,14 @@
 				                  	<td>${qualification.qualificationGrade!}</td>
 				                  	<td>${qualification.qualificationInstitution!}</td>
 				                  	<td>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
-				                  	<td><a class="button-delete" href="#">delete</a></td>
+				                  	  <td>
+				                  	  	   <#if !model.applicationForm.isSubmitted()>
+						                  	<form method="Post" action="<@spring.url '/deleteentity/qualification'/>" style="padding:0">
+					                			<input type="hidden" name="id" value="${qualification.id}"/>		                		
+					                			<a name="deleteButton" class="button-delete">delete</a>
+					                		</form>
+					                		</#if>
+						        		</td>
 			                  	</tr>
 			                  	
                              	<input type="hidden" id="${qualification.id!}_qualificationIdDP" value="${qualification.id!}"/>

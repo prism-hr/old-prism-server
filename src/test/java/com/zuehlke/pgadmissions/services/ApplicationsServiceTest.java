@@ -18,10 +18,20 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
+import com.zuehlke.pgadmissions.dao.AddressDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.EmploymentPositionDAO;
+import com.zuehlke.pgadmissions.dao.FundingDAO;
+import com.zuehlke.pgadmissions.dao.QualificationDAO;
+import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -37,6 +47,11 @@ public class ApplicationsServiceTest{
 	private RegisteredUser user;
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApplicationsService applicationsService;
+	private AddressDAO addressDAOMock;
+	private QualificationDAO qualificationDAOMock;
+	private FundingDAO fundingDAOMock;
+	private EmploymentPositionDAO employmentDAOMock;
+	private RefereeDAO refereeDAOMock;
 	
 	@Test
 	public void shouldgetListOfApplicationsForApplicant(){
@@ -95,6 +110,60 @@ public class ApplicationsServiceTest{
 		Assert.assertEquals(app1, visibleApplications.get(1));
 	}
 	
+	
+	
+	@Test
+	public void shouldDelegateDeleteAddressToDAO(){
+		Address address = new AddressBuilder().id(1).toAddress();
+		addressDAOMock.delete(address);
+		EasyMock.replay(addressDAOMock);
+		applicationsService.deleteAddress(address);
+		EasyMock.verify(addressDAOMock);
+	}
+	
+	@Test
+	public void shouldDelegateDeleteQaulificationToDAO(){
+		Qualification qual = new QualificationBuilder().id(1).toQualification();
+		qualificationDAOMock.delete(qual);
+		EasyMock.replay(qualificationDAOMock);
+		applicationsService.deleteQualification(qual);
+		EasyMock.verify(qualificationDAOMock);
+	}
+	
+	
+	@Test
+	public void shouldDelegateDeleteFundingToDAO(){
+		Funding funding = new Funding();
+		funding.setId(1);
+		fundingDAOMock.delete(funding);
+		EasyMock.replay(fundingDAOMock);
+		applicationsService.deleteFunding(funding);
+		EasyMock.verify(fundingDAOMock);
+	}
+	
+	
+	@Test
+	public void shouldDelegateDeleteEmploymentToDAO(){
+		EmploymentPosition position = new EmploymentPosition();
+		position.setId(1);
+		employmentDAOMock.delete(position);
+		EasyMock.replay(employmentDAOMock);
+		applicationsService.deleteEmployment(position);
+		EasyMock.verify(employmentDAOMock);
+	}
+	
+	@Test
+	public void shouldDelegateDeleteRefereeToDAO(){
+		Referee referee = new Referee();
+		referee.setId(1);
+		refereeDAOMock.delete(referee);
+		EasyMock.replay(refereeDAOMock);
+		applicationsService.deleteReferee(referee);
+		EasyMock.verify(refereeDAOMock);
+		
+	}
+	
+	
 	@Before
 	public void setUp(){
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
@@ -105,9 +174,14 @@ public class ApplicationsServiceTest{
 		SecurityContextHolder.setContext(secContext);
 		
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		
-		applicationsService = new ApplicationsService(applicationFormDAOMock);
+		addressDAOMock = EasyMock.createMock(AddressDAO.class);
+		qualificationDAOMock = EasyMock.createMock(QualificationDAO.class);
+		fundingDAOMock = EasyMock.createMock(FundingDAO.class);
+		employmentDAOMock = EasyMock.createMock(EmploymentPositionDAO.class);
+		refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
+		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock, qualificationDAOMock, fundingDAOMock, employmentDAOMock, refereeDAOMock);
 	}
+
 	
 	@After
 	public void tearDown() {

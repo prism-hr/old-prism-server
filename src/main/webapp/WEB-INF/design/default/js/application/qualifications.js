@@ -5,6 +5,11 @@ $(document).ready(function(){
 		return false;
 	});
 	
+	$('a[name="deleteButton"]').click( function(){	
+		$(this).parent("form").submit();
+	});
+	
+	
 	$('#qualificationsSaveButton').click(function(){
 		$.post("/pgadmissions/update/editQualification", {  
 			qualificationProgramName: $("#qualificationProgramName").val(), 

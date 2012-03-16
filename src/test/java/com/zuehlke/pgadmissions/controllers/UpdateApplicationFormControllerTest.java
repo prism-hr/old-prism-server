@@ -89,10 +89,6 @@ public class UpdateApplicationFormControllerTest {
 	private LanguagePropertyEditor languagePropertyEditorMopck;
 
 
-	
-	
-
-
 	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldSaveNewAddress() {
@@ -245,8 +241,10 @@ public class UpdateApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		applicationsServiceMock.save(form);
-		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
-		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
+		Language language = new Language();
+		language.setName("English");
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(language));
+		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(language);
 		EasyMock.replay(applicationsServiceMock, languageServiceMock);
 
 		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
@@ -262,7 +260,7 @@ public class UpdateApplicationFormControllerTest {
 		Assert.assertEquals("private/pgStudents/form/components/employment_position_details",
 				modelAndView.getViewName());
 		Assert.assertEquals("English", ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
-				.getEmploymentPositions().get(0).getPosition_language());
+				.getEmploymentPositions().get(0).getPosition_language().getName());
 		Assert.assertNull(modelAndView.getModel().get("add"));
 	}
 

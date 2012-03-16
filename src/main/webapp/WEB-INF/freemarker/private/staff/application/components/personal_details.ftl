@@ -198,7 +198,7 @@
                 </div>
 
               	<div class="buttons" id="show-comment-button-div">
-                	<a class="button blue comment-open" href="#" id="comment-button">Comment</a>
+                	<a class="button blue comment-open" id="comment-button">Comments</a>
                 	 <a id="personalDetailsCloseButton"class="button blue">Close</a>
                 </div>
 
@@ -209,7 +209,7 @@
 		    <!-- Comment Sectiton -->
                 
             <div class="comment">
-                <#--	
+               	
                    <#if model.applicationForm.hasComments()>
 	                   	<#assign prevComments = "true">
 	                	<div class="previous">
@@ -227,22 +227,22 @@
                   		<#assign prevComments = "false">
                   </#if>
                 <hr />
-                -->
+             
             </div>
 		
-			<#--
+			
 			<input type ="hidden" name="id" value="${model.applicationForm.id?string("######")}"/>
 			<input type ="hidden" id="view-type-comment-form" value="${viewType}"/>
 			<input type ="hidden" id="prev-comment-div" value="${comCount}"/>
 			<input id="commentField" type="hidden" name="comment" value=""/>
-			-->
+	
 			<p><strong>Add a comment</strong></p>
 			<textarea id="comment" lass="max" rows="4" cols="70"></textarea>
                   
             <div class="buttons" id="buttons-inside-comment-div">
             	
-            	<a class="button comment-close" id="comment-close-button">Close</a>
-              	<a class="button blue" id="commentSubmitButton">Submit</a>
+            	<a class="button comment-close" id="comment-close-button">Close Comments</a>
+              	<a class="button blue" id="commentSubmitButton">Submit Comment</a>
                   		
         	</div>
 			

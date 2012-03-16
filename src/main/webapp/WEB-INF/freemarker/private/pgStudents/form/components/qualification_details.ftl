@@ -141,7 +141,6 @@
                     		<span class="label">Language of Study</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
-                      			<#if !model.applicationForm.isSubmitted()>
                       			<select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${model.qualification.qualificationLanguage!}"
                       			 <#if model.applicationForm.isSubmitted()>
                                                 disabled="disabled"
@@ -153,10 +152,6 @@
                       			</select>
 								<#if model.hasError('qualificationLanguage')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationLanguage').code /></span>                    		
-                    			</#if>
-                    			<#else>
-                    			 <input readonly="readonly" id="qualificationLanguage" class="full" type="text" 
-                                                                value="${model.qualification.qualificationLanguage!}"/>
                     			</#if>
 
                     		</div>

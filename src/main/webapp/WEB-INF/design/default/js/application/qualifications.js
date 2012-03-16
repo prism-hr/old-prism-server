@@ -18,7 +18,8 @@ $(document).ready(function(){
 			qualificationAwardDate: $("#qualificationAwardDate").val(),
 			appId: $("#appId").val(),
 			qualificationId: $("#qualificationId").val(),
-			id: $("#id").val()
+			id: $("#id").val(),
+			add:"add"
 		},
 		function(data) {
 			$('#qualificationsSection').html(data);

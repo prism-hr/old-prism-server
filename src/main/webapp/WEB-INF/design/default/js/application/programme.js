@@ -47,7 +47,7 @@ $(document).ready(function(){
 	});
 	
 	$('#addSupervisorButton').on('click', function(){
-		if($('#supervisorEmail').val() =="Email adderss" || $('#supervisorEmail').val().trim()== ''){
+		if($('#supervisorEmail').val() =="Email adderss" || $('#supervisorEmail').val()== ''){
 			alert("Please enter an email address");
 			return;
 		}

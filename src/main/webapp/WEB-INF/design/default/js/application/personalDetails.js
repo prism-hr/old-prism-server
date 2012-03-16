@@ -6,13 +6,13 @@ $(document).ready(function(){
 	});
 	
 	$('#addPhoneButton').on('click', function(){
-		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val().trim()!= ''){	
+		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val()!= ''){	
 		var html = ''+	
 			'<span>'+
 		  	'	<div class="row">'+
 		  	' 		<span class="label">Telephone</span> '+   
 			'		<div class="field">'+
-			'			<label class="full">' +$('#phoneType option:selected').text() + '</label>'+
+			'			<label class="half">' +$('#phoneType option:selected').text() + '</label>'+
 			'			<label class="half">'+ $('#phoneNumber').val()+ '</label>'+ 
 		  	'			<a class="button-delete">Delete</a> '+             
 		  	'		</div>'+		  			
@@ -27,12 +27,12 @@ $(document).ready(function(){
 	});
 	
 	$('#addMessengerButton').on('click', function(){
-		if($('#messenger').val() != "Address" && $('#messenger').val().trim() != ''){
+		if($('#messenger').val() != "Address" && $('#messenger').val() != ''){
 			var html = '<span>'+
       	  	'	<div class="row">'+
   	  	 	'	<span class="label">Skype</span>'+    
   			'	<div class="field">'+
-  			'		<label class="full">'+ $('#messenger').val()  + '</label> '+
+  			'		<label class="half">'+ $('#messenger').val()  + '</label> '+
   	  		'		<a class="button-delete">Delete</a> '+          
   	  		'	</div> '+                 	  			
   	  		'</div>'+   
@@ -54,7 +54,7 @@ $(document).ready(function(){
 			var jsonPrimary = "false";
 			if($('#primaryLanguage').is(':checked') ){
 				primary = "This is my primary language";
-				jsonPrimary = "true"
+				jsonPrimary = "true";
 			}			
 			            
 			
@@ -175,14 +175,14 @@ $(document).ready(function(){
 	$('#personalDetailsSaveButton').on("click", function(){		
 		
 		//messengers
-		if($('#messenger').val() != "Address" && $('#messenger').val().trim() != ''){
+		if($('#messenger').val() != "Address" && $('#messenger').val() != ''){
 			var html =   "<input type='hidden' name='messengers' value='{" + '"address": "' + $('#messenger').val()  + '"' + "}'/>";   	
 	  	  	$('#existingMessengers').append(html);
 			
 		}
 		
 		//phonenumbers
-		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val().trim()!= ''){	
+		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val()!= ''){	
 			var html ="<input type='hidden' name='phoneNumbers' value='{" + '"type": "'+ $('#phoneType option:selected').val() + '", "number": "' +  $('#phoneNumber').val() + '"}' + "'/>" ;
 			  	  	
 			$('#phonenumbers').append(html);		

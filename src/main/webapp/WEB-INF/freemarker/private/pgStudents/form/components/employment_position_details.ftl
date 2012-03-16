@@ -37,9 +37,9 @@
 	            	<#list model.applicationForm.employmentPositions as position>
 		            	<tr>
 		                    <td><a class="row-arrow" name="positionEditButton" id="position_${position.id}">-</a></td>
-		                    <td>${position.position_title}</td>
-		                    <td>${position.position_startDate?string('dd-MMM-yyyy')}</td>
-		                    <td>${position.position_endDate?string('dd-MMM-yyyy')}</td>
+		                    <td>${position.position_title!}</td>
+		                    <td>${(position.position_startDate?string('dd-MMM-yyyy'))!}</td>
+		                    <td>${(position.position_endDate?string('dd-MMM-yyyy'))!}</td>
 		                     <td>
 		                     	                 <#if !model.applicationForm.isSubmitted()>
 				                  	<form method="Post" action="<@spring.url '/deleteentity/employment'/>" style="padding:0">
@@ -50,12 +50,12 @@
 				        		</td>
 		                    
 							<input type="hidden" id="${position.id}_positionId" value="${position.id}"/>
-                            <input type="hidden" id="${position.id}_employer" value="${position.position_employer}"/>
-                            <input type="hidden" id="${position.id}_remit" value="${position.position_remit}"/>
-                            <input type="hidden" id="${position.id}_language" value="${position.position_language}"/>
-                            <input type="hidden" id="${position.id}_positionTitle" value="${position.position_title}"/>
-                            <input type="hidden" id="${position.id}_positionStartDate" value="${position.position_startDate?string('dd-MMM-yyyy')}"/>
-                            <input type="hidden" id="${position.id}_positionEndDate" value="${position.position_endDate?string('dd-MMM-yyyy')}"/>
+                            <input type="hidden" id="${position.id}_employer" value="${position.position_employer!}"/>
+                            <input type="hidden" id="${position.id}_remit" value="${position.position_remit!}"/>
+                            <input type="hidden" id="${position.id}_language" value="${position.position_language!}"/>
+                            <input type="hidden" id="${position.id}_positionTitle" value="${position.position_title!}"/>
+                            <input type="hidden" id="${position.id}_positionStartDate" value="${(position.position_startDate?string('dd-MMM-yyyy'))!}"/>
+                            <input type="hidden" id="${position.id}_positionEndDate" value="${(position.position_endDate?string('dd-MMM-yyyy'))!}"/>
 		                    
 		                </tr>
 		            </#list>

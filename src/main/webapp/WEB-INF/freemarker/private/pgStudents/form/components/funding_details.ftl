@@ -99,9 +99,9 @@
 					<div class="field">
 				    <#if !model.applicationForm.isSubmitted()>
                     	<input id="fundingDescription" name="fundingDescription" class="full" type="text" value="${model.funding.fundingDescription!}" />
-                    <#if model.hasError('fundingDescription')>                           
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
-                    </#if>
+	                    <#if model.hasError('fundingDescription')>                           
+	                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
+	                    </#if>
                     <#else>
                         <input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${model.funding.fundingDescription!}" />
                     </#if>

@@ -47,7 +47,7 @@ public class NationalityJSONPropertyEditorTest {
 	}
 
 	@Test
-	public void shouldIgnoreIfNoDocumentsFieldPresent() throws ParseException {
+	public void shouldIgnoreIfNoDocumentsFieldPresent() {
 		Country country = new CountryBuilder().id(1).toCountry();
 		EasyMock.expect(countryServiceMock.getCountryById(1)).andReturn(country);
 		EasyMock.replay(documentServiceMock, countryServiceMock);

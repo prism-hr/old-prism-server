@@ -9,11 +9,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Nationality;
-import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.NationalityType;
-import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.DocumentService;
 

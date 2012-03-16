@@ -8,8 +8,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
-import com.zuehlke.pgadmissions.domain.ApplicantRecord;
-import com.zuehlke.pgadmissions.domain.builders.ApplicantRecordBuilder;
 import com.zuehlke.pgadmissions.dto.ApplicantRecordDTO;
 
 public class ApplicantRecordValidatorTest {

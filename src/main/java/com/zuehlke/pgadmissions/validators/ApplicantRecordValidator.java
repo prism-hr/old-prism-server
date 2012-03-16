@@ -6,7 +6,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.ApplicantRecord;
 import com.zuehlke.pgadmissions.dto.ApplicantRecordDTO;
 @Service
 public class ApplicantRecordValidator implements Validator {

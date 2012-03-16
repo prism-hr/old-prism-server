@@ -40,10 +40,12 @@
 		                    <td>${position.position_title}</td>
 		                    <td>${position.position_startDate?string('dd-MMM-yyyy')}</td>
 		                    <td>${position.position_endDate?string('dd-MMM-yyyy')}</td>
-		                    <td>
-		                    	<a class="button-delete" 
-		                    			type="submit">Delete</a>
-		                    </td>
+		                     <td>
+				                  	<form method="Post" action="<@spring.url '/deleteentity/employment'/>" style="padding:0">
+			                			<input type="hidden" name="id" value="${position.id}"/>		                		
+			                			<a name="deleteButton" class="button-delete">delete</a>
+			                		</form>
+				        		</td>
 		                    
 							<input type="hidden" id="${position.id}_positionId" value="${position.id}"/>
                             <input type="hidden" id="${position.id}_employer" value="${position.position_employer}"/>

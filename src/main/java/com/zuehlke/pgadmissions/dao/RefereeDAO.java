@@ -27,5 +27,10 @@ public class RefereeDAO {
 	public Referee getRefereeById(Integer id) {
 		return (Referee) sessionFactory.getCurrentSession().get(Referee.class, id);
 	}
+	
+	public void delete(Referee referee) {
+		sessionFactory.getCurrentSession().delete(referee);
+		
+	}
 
 }

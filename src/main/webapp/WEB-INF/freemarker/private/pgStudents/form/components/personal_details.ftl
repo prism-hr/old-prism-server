@@ -122,7 +122,7 @@
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
-                  	  				<#if nationality.primary><label>This is my primary nationality</label>"</#if>
+                  	  				<#if nationality.primary><label>This is my primary nationality</label></#if>
                   	  			<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
                   	  			</div>
                   	  		</div>

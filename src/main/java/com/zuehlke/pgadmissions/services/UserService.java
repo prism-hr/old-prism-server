@@ -70,5 +70,11 @@ public class UserService {
 		return userDAO.getRoleById(id);
 		
 	}
+
+	
+	@Transactional
+	public RegisteredUser getUserByUsername(String username) {
+		return userDAO.getUserByUsername(username);
+	}
 	
 }

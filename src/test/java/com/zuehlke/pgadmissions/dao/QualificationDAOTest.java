@@ -34,8 +34,9 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		application.setProject(project);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		Qualification qualification =new QualificationBuilder().q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_grade("")
-				.q_institution("").q_language_of_study("").q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
+				.q_institution("").q_language_of_study(languageDAO.getLanguageById(1)).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
 				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
 		save(application, qualification);
 		flushAndClearSession();

@@ -61,7 +61,7 @@
                                     <input type="hidden" id="${referee.id!}_jobTitle" value="${referee.jobTitle!}"/>
                                     <input type="hidden" id="${referee.id!}_addressLocation" value="${referee.addressLocation!}"/>
                                     <input type="hidden" id="${referee.id!}_addressPostcode" value="${referee.addressPostcode!}"/>
-                                    <input type="hidden" id="${referee.id!}_addressCountry" value="${referee.addressCountry!}"/>
+                                    <input type="hidden" id="${referee.id!}_addressCountry" <#if referee.addressCountry??> value="${referee.addressCountry.id!}" </#if>/>
                                     <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
 									<#list referee.phoneNumbers! as phoneNumber>
 										<span name="${referee.id!}_hiddenPhones" style="display:none" >
@@ -244,13 +244,13 @@
                     		<span class="label">Country</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<select class="full" name="ref_address_country" id="ref_address_country" value="${model.referee.addressCountry!}"
+                    		<select class="full" name="ref_address_country" id="ref_address_country"
                             <#if model.applicationForm.isSubmitted()>
                                             disabled="disabled"
                             </#if>>
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.name}" <#if model.referee.addressCountry?? && model.referee.addressCountry == country.name> selected="selected"</#if>>${country.name}</option>               
+                                    <option value="${country.id}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
                                 </#list>
                             </select>
                     		</div>

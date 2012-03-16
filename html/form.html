@@ -168,32 +168,45 @@
                   <h3>Supervision</h3>
                   
                   <!-- supervisor rows -->
-                  <table class="multiples">
-                    <colgroup>
-                      <col />
-                      <col style="width: 80px;" />
-                      <col style="width: 80px;" />
-                    </colgroup>
-                    <thead>
-                      <tr>
-                        <th class="align-left">Supervisor</th>
-                        <th>Primary</th>
-                        <th>Aware</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <!-- repeat these rows for every existing supervisor. -->
-                      <tr>
-                        <th class="align-left"><input class="full" type="text" placeholder="Email address" /></th>
-                        <th><input type="radio" /></th>
-                        <th><input type="checkbox" /></th>
-                      </tr>
-                      <!-- end repeat -->
-                    </tbody>
-                  </table>
-                  <div class="row">
-                    <a class="button" href="#">Add supervisor</a>
-                  </div>
+	<table class="data-table">
+		<colgroup>
+    	<col />
+    	<col style="width: 80px;" />
+    	<col style="width: 80px;" />
+    	<col style="width: 120px;" />
+    </colgroup>
+		<thead>
+			<tr>
+				<th>Email</th>
+				<th class="centre">Primary</th>
+				<th class="centre">Aware</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+
+	<tfoot>
+	
+		<tr>
+			<td>
+				<input name="email" type="text" size="40" placeholder="Email Address"/>
+			</td>
+			<td class="centre">
+				<input type="radio" name="isPrimary"/>
+			</td>
+			<td class="centre">
+				<input type="checkbox" name="isAware"/>
+			</td>	
+			<td>
+				<button type="button" name="add">Add Another</button>
+			</td>
+		</tr>	
+	</tfoot>
+	
+	<tbody>
+	
+	</tbody>
+	
+</table>
                 </div>
 
                 <div>
@@ -1341,5 +1354,22 @@
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script type="text/javascript" src="js/libraries.js"></script>
 <script type="text/javascript" src="js/script.js"></script>
+<script type="text/javascript">
+
+	$(document).ready(function(){
+	
+		$('table.data-table button').click(function(){
+		
+			var $copiedRow = $(this).parent().parent().clone();
+		
+			$('table.data-table tbody').append($copiedRow);
+			
+			return false;
+		
+		});
+	
+	});
+
+</script>
 </body>
 </html>

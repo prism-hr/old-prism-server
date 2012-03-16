@@ -1,0 +1,13 @@
+
+h1 { font-size: 14pt; margin-bottom: 1em; }
+div.row { margin-bottom: 10px; overflow: hidden; }
+div.row label { float: left; line-height: 20px; margin-right: 20px; text-align: right; width: 280px; }
+div.row input[type=text], div.row select, div.row textarea { width: 300px; }
+div.row select[multiple] { padding: 3px; }
+
+form.roles { overflow: hidden; position: relative; }
+form.roles .row { float: left; margin-bottom: 0; margin-right: 20px; width: auto; }
+form.roles .row label { display: block; float: none; font-weight: bold; text-align: left; width: auto; }
+form.roles button { top: 2em; position: absolute; }
+
+table.data tbody td { background: #EEE; padding: 4px; }

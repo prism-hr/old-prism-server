@@ -12,8 +12,7 @@
 <#-- Personal Details Rendering -->
 
 <!-- Personal details -->
-<section class="folding purple">
-	<h2 id="personalDetails-H2" class="empty open">
+	<h2 id="personalDetails-H2" class="tick">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Personal Details
 	</h2>
@@ -252,4 +251,3 @@
 			<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>
-</section>

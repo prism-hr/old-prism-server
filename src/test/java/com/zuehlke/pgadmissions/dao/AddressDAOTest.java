@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
 
 import java.util.Date;
 
@@ -10,6 +10,7 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -34,7 +35,9 @@ public class AddressDAOTest extends AutomaticRollbackTestCase {
 		application.setProject(project);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		Address address = new AddressBuilder().application(application).country("Germany").location("1 Main Street").postCode("NW2 456").location("london")
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Country countryById = countriesDAO.getCountryById(1);
+		Address address = new AddressBuilder().application(application).country(countryById).location("1 Main Street").postCode("NW2 456").location("london")
 				.purpose(AddressPurpose.EDUCATION).startDate(new Date()).endDate(new Date()).contactAddress(AddressStatus.NO).toAddress();
 		save(application, address);
 		flushAndClearSession();

@@ -21,7 +21,7 @@
 		<form method="post" method = "GET">
                 <input type ="hidden" id="view-type-personal-form" value="${viewType}"/>
                 <input type="hidden" name="id" value="${model.applicationForm.id?string("######")}"/>
-                <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
+                <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
               	
               	<!-- Basic Details -->
               	<div>

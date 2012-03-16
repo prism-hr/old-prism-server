@@ -441,6 +441,8 @@ public class UpdateApplicationFormControllerTest {
 		assertNull(modelAndView.getModel().get("add"));
 	}
 	
+	
+	
 	@Test
 	public void shouldSetMessageIfRefereeAddMessageProvided() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);

@@ -18,6 +18,7 @@ public class RegisteredUserBuilder {
 	private boolean accountNonExpired = true;
 	private boolean accountNonLocked = true;
 	private boolean credentialsNonExpired = true;
+	private String activationCode;
 	
 
 	private List<Role> roles = new ArrayList<Role>();
@@ -42,6 +43,11 @@ public class RegisteredUserBuilder {
 	
 	public RegisteredUserBuilder lastName(String lastName) {
 		this.lastName = lastName;
+		return this;
+	}
+	
+	public RegisteredUserBuilder activationCode(String activationCode) {
+		this.activationCode = activationCode;
 		return this;
 	}
 
@@ -98,6 +104,7 @@ public class RegisteredUserBuilder {
 		user.setAccountNonExpired(accountNonExpired);
 		user.setAccountNonLocked(accountNonLocked);
 		user.setCredentialsNonExpired(credentialsNonExpired);
+		user.setActivationCode(activationCode);
 		user.getRoles().addAll(roles);
 		return user;
 	}

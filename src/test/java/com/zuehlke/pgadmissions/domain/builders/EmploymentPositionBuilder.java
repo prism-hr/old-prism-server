@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.Language;
 
 public class EmploymentPositionBuilder {
 	
@@ -13,7 +14,7 @@ public class EmploymentPositionBuilder {
 	
 	private String remit;
 	
-	private String language;
+	private Language language;
 	
 	private Date startDate;
 	
@@ -41,7 +42,7 @@ public class EmploymentPositionBuilder {
 		return this;
 	}
 	
-	public EmploymentPositionBuilder language(String language){
+	public EmploymentPositionBuilder language(Language language){
 		this.language = language;
 		return this;
 	}

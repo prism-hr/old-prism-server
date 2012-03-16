@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.math.BigInteger;
 import java.net.Authenticator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.service.ServiceRegistry;
@@ -16,6 +18,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -73,6 +76,8 @@ public class RegisterController {
 		if (!errors.hasErrors()) {
 			if (record.getPassword() != null)
 				record.setPassword(createHash(record.getPassword()));
+			SecureRandom random = new SecureRandom();
+			String activationCode = new BigInteger(80, random).toString(32);
 			RegisteredUser user = new RegisteredUser();
 			user.setUsername(record.getEmail());
 			user.setFirstName(record.getFirstname());
@@ -82,6 +87,7 @@ public class RegisterController {
 			user.setAccountNonLocked(true);
 			user.setPassword(record.getPassword());
 			user.setEnabled(true);
+			user.setActivationCode(activationCode);
 			user.setCredentialsNonExpired(true);
 			user.getRoles().add(userService.getRoleById(2));
 			userService.save(user);
@@ -95,6 +101,17 @@ public class RegisterController {
 		return new ModelAndView("redirect:/register", modelMap);
 	}
 
+	@RequestMapping(value = "/activateAccount", method = RequestMethod.POST)
+	public ModelAndView activateAccount(@ModelAttribute RegisteredUser regUser, @RequestParam String activationCode){
+		RegisterPageModel model = new RegisterPageModel();
+		if(activationCode.equals(regUser.getActivationCode())){
+			regUser.setEnabled(true);
+			userService.save(regUser);
+		}
+		model.setUser(regUser);
+		return new ModelAndView("/", "model", model);
+	}
+	
 	@ModelAttribute("record")
 	public ApplicantRecordDTO getApplicantRecord(Integer id) {
 		System.out.println("HERE");

@@ -125,7 +125,7 @@
                                                 disabled="disabled">
                         <option value="">Select...</option>
                          <#list model.languages as language>
-                            <option value="${language.name}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.name> selected="selected"</#if>>${language.name}</option>
+                            <option value="${language.id}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.id> selected="selected"</#if>>${language.name}</option>
                          </#list>
                       </select>
                     </div>

@@ -72,7 +72,9 @@
                     </div>  
 				</div>
 				<#if model.uploadErrorCode?? >
-					<span class="invalid"><@spring.message  model.uploadErrorCode /></span>         
+				    <div class="row">
+					   <span class="invalid"><@spring.message  model.uploadErrorCode /></span>
+					</div>            
 				</#if>				
 			</div>
 

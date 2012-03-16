@@ -32,11 +32,12 @@ $('#positionSaveAndAddButton').click(function(){
 		position_employer: $("#position_employer").val(), 
 		appId: $("#appId").val(),
 		id: $("#id").val(), 
-		positionId: $("#positionId").val()
-							},
-			   function(data) {
-			     $('#positionSection').html(data);
-			   });
+		positionId: $("#positionId").val(),
+		add: "add"
+		},
+		 function(data) {
+		    $('#positionSection').html(data);
+	   });
 });
 
 $('a[name="positionEditButton"]').click(function(){

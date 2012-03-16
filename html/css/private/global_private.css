@@ -12,7 +12,7 @@ body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 label input { vertical-align: middle; }
 
 .centre { text-align: center !important; }
-.right { text-align: right; }
+.right { text-align: right !important; }
 .row { overflow: visible; }
 
 /* WRAPPER ------------------------------------------------------------------------------------------------ */

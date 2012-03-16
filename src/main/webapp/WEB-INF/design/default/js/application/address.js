@@ -21,7 +21,8 @@ $(document).ready(function(){
 			addressContactAddress: $("#addressContactAddress").val(),
 			id: $("#id").val(), 
 			appId: $("#appId").val(),
-			addressId: $("#addressId").val()
+			addressId: $("#addressId").val(),
+			add:"Add"
 		},
 		function(data) {
 			$('#addressSection').html(data);
@@ -89,15 +90,15 @@ $(document).ready(function(){
 
 	  bindDatePickers();
 
-		//open/close
-		var $header  =$('#address-H2');
-		var $content = $header.next('div');
-		$header.bind('click', function()
-		{
-		  $content.toggle();
-		  $(this).toggleClass('open', $content.is(':visible'));
-		  return false;
-		});
+	//open/close
+	var $header  =$('#address-H2');
+	var $content = $header.next('div');
+	$header.bind('click', function()
+	{
+	  $content.toggle();
+	  $(this).toggleClass('open', $content.is(':visible'));
+	  return false;
+	});
 		
 		
 });

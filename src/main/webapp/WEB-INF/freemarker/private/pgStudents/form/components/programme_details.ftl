@@ -96,7 +96,7 @@
                     
                     <thead>
                     	<tr>
-	                        <th class="align-left">Supervisor</th>
+	                        <th class="align-left">Supervisor email</th>
 	                        <th>Primary</th>
 	                        <th>Aware</th>
                     	</tr>

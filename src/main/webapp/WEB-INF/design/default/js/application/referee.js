@@ -26,14 +26,14 @@ $(document).ready(function(){
 	$('#refereeSaveButton').click(function(){
 	
 		//phonenumbers
-		if( $('#phoneNumberRef').val() != "Number" && $('#phoneNumberRef').val().trim() != ''){	
+		if( $('#phoneNumberRef').val() != "Number" && $('#phoneNumberRef').val() != ''){	
 			var html = "<input type='hidden' name='phoneNumbers' value='{" + '"type":"' +  $('#phoneTypeRef').val()+ '", "number":"' + $('#phoneNumberRef').val()+ '"}'+  "'/>";
 			$('#phonenumbersref').append(html);
 			
 		}
 		
 		//messenger
-		if($('#messengerAddressRef').val() !="Skype Address" && $('#messengerAddressRef').val().trim()!= ''){
+		if($('#messengerAddressRef').val() !="Skype Address" && $('#messengerAddressRef').val()!= ''){
 			var html ='<input type="hidden" name="messengers" value=' +"'" + '{"address":"' + $('#messengerAddressRef').val()+ '"} ' + "'" + "/>" ;
 			
 			$('#messengersref').append(html);			
@@ -66,14 +66,14 @@ $(document).ready(function(){
 $('#refereeSaveAndAddButton').click(function(){
 	
 	//phonenumbers
-	if( $('#phoneNumberRef').val() != "Number" && $('#phoneNumberRef').val().trim() != ''){	
+	if( $('#phoneNumberRef').val() != "Number" && $('#phoneNumberRef').val() != ''){	
 		var html = "<input type='hidden' name='phoneNumbers' value='{" + '"type":"' +  $('#phoneTypeRef').val()+ '", "number":"' + $('#phoneNumberRef').val()+ '"}'+  "'/>";
 		$('#phonenumbersref').append(html);
 		
 	}
 	
 	//messenger
-	if($('#messengerAddressRef').val() !="Skype Address" && $('#messengerAddressRef').val().trim()!= ''){
+	if($('#messengerAddressRef').val() !="Skype Address" && $('#messengerAddressRef').val()!= ''){
 		var html ='<input type="hidden" name="messengers" value=' +"'" + '{"address":"' + $('#messengerAddressRef').val()+ '"} ' + "'" + "/>" ;
 		
 		$('#messengersref').append(html);			
@@ -143,13 +143,13 @@ $('a[name="refereeEditButton"]').click(function(){
 
 
 $('#addPhoneRefButton').on('click', function(){
-	if($('#phoneNumberRef').val() !="Number" && $('#phoneNumberRef').val().trim()!= ''){
+	if($('#phoneNumberRef').val() !="Number" && $('#phoneNumberRef').val()!= ''){
 		var html = ''+
 			'<span  name="phone_number_ref">'+
 	  	  	'	<div class="row">'+
 	  	  	' 		<span class="label">Telephone</span>  '+  
 	  		'		<div class="field">'+
-	  		'			<label class="full">' + $('#phoneTypeRef option:selected').text() +'</label>'+
+	  		'			<label class="half">' + $('#phoneTypeRef option:selected').text() +'</label>'+
 	  		'			<label class="half">'+   $('#phoneNumberRef').val() +'</label> '+
 	  	  	'			<a class="button-delete">Delete</a>'+           
 	  	  	'		</div>'+	  	  			
@@ -164,13 +164,13 @@ $('#addPhoneRefButton').on('click', function(){
 })
 
 $('#addMessengerRefButton').on('click', function(){
-	if($('#messengerAddressRef').val() !="Skype address" && $('#messengerAddressRef').val().trim()!= ''){
+	if($('#messengerAddressRef').val() !="Skype address" && $('#messengerAddressRef').val()!= ''){
 		var html =''+ 
 			'<span name="messenger_ref">'+
 			'<div class="row">'+
 	  	 	'	<span class="label">Skype</span>'+    
 			'	<div class="field">'+
-			'		<label class="full">'+  $('#messengerAddressRef').val() + '</label>'+ 
+			'		<label class="half">'+  $('#messengerAddressRef').val() + '</label>'+ 
 	  		'		<a class="button-delete">Delete</a>'+      
 	  		'	</div>'+                  	  			
 	  		'</div>'+   

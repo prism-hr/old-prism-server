@@ -90,7 +90,7 @@
                                             disabled="disabled">
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id}" <#if model.address.addressCountry?? && model.address.addressCountry == country.name> selected="selected"</#if>>${country.name}</option>               
+                                    <option value="${country.id}" <#if model.address.addressCountry?? && model.address.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
                                 </#list>
                             </select>
 						</div>

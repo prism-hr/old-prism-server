@@ -238,7 +238,8 @@
 
                 <div class="buttons">
                  <#if !model.applicationForm.isSubmitted()>
-                <a class="button" type="button" id="addressCancelButton" name="addressCancelButton">Cancel</a>
+               		<a class="button" type="button" id="addressCancelButton" name="addressCancelButton">Cancel</a>
+               		<button class="blue" type="button" id="addressCloseButton" name="addressCloseButton">Close</button>
                   	<button class="blue" type="button" id="addressSaveAndCloseButton" name="addressSaveAndCloseButton">Save and Close</button>
                   	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save and Add</button>
                 <#else>
@@ -248,7 +249,7 @@
 
 			</form>
 	</div>
-	<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/address.js'/>"></script>
 

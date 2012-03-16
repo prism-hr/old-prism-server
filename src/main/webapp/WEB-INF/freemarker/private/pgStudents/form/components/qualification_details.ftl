@@ -265,6 +265,7 @@
 		        	<div class="buttons">
 		        	<#if !model.applicationForm.isSubmitted()>
 		            	<a class="button" id="qualificationCancelButton" name="qualificationCancelButton">Cancel</a>
+		            	<button class="blue" type="button" id="qualificationsCloseButton" name="qualificationsCloseButton">Close</button>
 		                <button class="blue" type="button" id="qualificationSaveCloseButton"  name="id="qualificationSaveCloseButton"" value="close">Save and Close</button>
 		                <button id="qualificationsSaveButton" class="blue" type="button" value="add">Save and Add</button>
 		                <#else>
@@ -280,8 +281,7 @@
  
  
 <#if (model.result?? && model.result.hasErrors() ) || add??>
-${add}
-${model.result}
+
 <#else >
 <script type="text/javascript">
 	$(document).ready(function(){

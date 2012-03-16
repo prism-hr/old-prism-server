@@ -254,7 +254,6 @@ public class PersonalDetailsControllerTest {
 		assertTrue(model.getGenders().containsAll(Arrays.asList(Gender.values())));
 		assertEquals(PhoneType.values().length, model.getPhoneTypes().size());
 		assertTrue(model.getPhoneTypes().containsAll(Arrays.asList(PhoneType.values())));
-		assertEquals("open", modelAndView.getModel().get("formDisplayState"));
 
 		assertEquals(LanguageAptitude.values().length, model.getLanguageAptitudes().size());
 		assertTrue(model.getLanguageAptitudes().containsAll(Arrays.asList(LanguageAptitude.values())));

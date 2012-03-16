@@ -155,6 +155,7 @@
         <#if !model.applicationForm.isSubmitted()>
             	
             	<a class="button" type="button" id="fundingCancelButton" name="fundingCancelButton">Cancel</a>
+            	<button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>
 				<button class="blue" type="button" id="fundingSaveCloseButton" name="fundingSaveCloseButton" value="close">Save and Close</button>
                 <button class="blue" type="button" id="fundingSaveAddButton" name="fundingSaveAddButton" value="add">Save and Add</button>
               <#else>

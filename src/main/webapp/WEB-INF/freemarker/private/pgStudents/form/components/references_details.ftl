@@ -345,6 +345,7 @@
                 	<div class="buttons">
                 	 <#if !model.applicationForm.isSubmitted()>
                   		 <a class="button" type="button" id="refereeCancelButton" name="refereeCancelButton">Cancel</a>
+                  		 <button class="blue" type="button" id="refereeCloseButton" name="refereeCloseButton">Close</button>
                   		<button class="blue" type="button" value="close" id="refereeSaveButton">Save and Close</button>
                   		<button class="blue" type="button" id="refereeSaveAndAddButton" value="add">Save and Add</button>
                   	 <#else>

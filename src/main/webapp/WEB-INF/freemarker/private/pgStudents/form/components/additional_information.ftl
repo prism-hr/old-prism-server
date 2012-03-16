@@ -29,3 +29,13 @@
 	</div>
 	
 	<script type="text/javascript" src="<@spring.url '/design/default/js/application/additional_information.js'/>"></script>
+	
+<#if model.result?? && model.result.hasErrors()  >
+
+<#else >
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#additional-H2').trigger('click');
+	});
+</script>
+</#if>

@@ -83,3 +83,13 @@
 		</form>
 	</div>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/application/documents.js'/>"></script>
+	
+	<#if model.result?? && model.result.hasErrors()  >
+
+<#else >
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#documents-H2').trigger('click');
+	});
+</script>
+</#if>

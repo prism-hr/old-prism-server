@@ -27,6 +27,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -97,13 +98,17 @@ public class UpdateApplicationFormControllerTest {
 	public void shouldSaveNewAddress() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		Country country = new Country();
+		country.setName("UK");
+		EasyMock.expect(countriesServiceMock.getAllCountries()).andReturn(Arrays.asList(country));
+		EasyMock.expect(countriesServiceMock.getCountryById(6)).andReturn(country);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
+		EasyMock.replay(applicationsServiceMock, countriesServiceMock);
 		Address address = new Address();
 		address.setAddressLocation("1, Main Street, London");
 		address.setAddressPostCode("NW2345");
 		address.setAddressPurpose(AddressPurpose.RESIDENCE);
-		address.setAddressCountry("UK");
+		address.setAddressCountry(6);
 		address.setAddressStartDate(new Date(2011, 11, 11));
 		address.setAddressEndDate(new Date(2012, 11, 11));
 		address.setAddressContactAddress("YES");
@@ -115,7 +120,7 @@ public class UpdateApplicationFormControllerTest {
 		Assert.assertEquals("1, Main Street, London", addr.getLocation());
 		Assert.assertEquals("NW2345", addr.getPostCode());
 		Assert.assertEquals("Residence", addr.getPurpose().getDisplayValue());
-		Assert.assertEquals("UK", addr.getCountry());
+		Assert.assertEquals("UK", addr.getCountry().getName());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -124,12 +129,16 @@ public class UpdateApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
+		Country country = new Country();
+		country.setName("UK");
+		EasyMock.expect(countriesServiceMock.getAllCountries()).andReturn(Arrays.asList(country));
+		EasyMock.expect(countriesServiceMock.getCountryById(6)).andReturn(country);
+		EasyMock.replay(applicationsServiceMock, countriesServiceMock);
 		Address address = new Address();
 		address.setAddressLocation("1, Main Street, London");
 		address.setAddressPostCode("NW2345");
 		address.setAddressPurpose(AddressPurpose.RESIDENCE);
-		address.setAddressCountry("UK");
+		address.setAddressCountry(6);
 		address.setAddressStartDate(new Date(2011, 11, 11));
 		address.setAddressEndDate(new Date(2012, 11, 11));
 		address.setAddressContactAddress("YES");

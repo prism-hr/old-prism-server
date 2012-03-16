@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -39,6 +40,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.MessengerJSONPropertyEditor;
@@ -74,9 +76,10 @@ public class UpdateApplicationFormController {
 	private final RefereeValidator refereeValidator;
 	private final LanguageService languageService;
 	private final LanguagePropertyEditor languagePropertyEditor;
+	private final CountryPropertyEditor countryPropertyEditor;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
@@ -84,7 +87,7 @@ public class UpdateApplicationFormController {
 			DatePropertyEditor datePropertyEditor, CountryService countryService, RefereeService refereeService,
 			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, MessengerJSONPropertyEditor messengerJSONPropertyEditor,
 			ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator,
-			LanguageService languageService, LanguagePropertyEditor languagePropertyEditor) {
+			LanguageService languageService, LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
@@ -96,7 +99,8 @@ public class UpdateApplicationFormController {
 		this.messengerJSONPropertyEditor = messengerJSONPropertyEditor;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.refereeValidator = refereeValidator;
-		this.languageService = languageService;	
+		this.languageService = languageService;
+		this.countryPropertyEditor = countryPropertyEditor;
 	}
 
 	@InitBinder
@@ -107,6 +111,7 @@ public class UpdateApplicationFormController {
 		binder.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditor);
 		binder.registerCustomEditor(Messenger.class, messengerJSONPropertyEditor);
 		binder.registerCustomEditor(Language.class, languagePropertyEditor);
+		binder.registerCustomEditor(Country.class, countryPropertyEditor);
 	}
 
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)

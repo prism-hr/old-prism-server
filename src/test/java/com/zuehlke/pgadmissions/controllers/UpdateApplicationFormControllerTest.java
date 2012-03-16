@@ -53,6 +53,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.MessengerJSONPropertyEditor;
@@ -86,7 +87,8 @@ public class UpdateApplicationFormControllerTest {
 	private Referee referee;
 	private RefereeValidator refereeValidator;
 	private LanguageService languageServiceMock;
-	private LanguagePropertyEditor languagePropertyEditorMopck;
+	private LanguagePropertyEditor languagePropertyEditorMock;
+	private CountryPropertyEditor countryPropertyEditor;
 
 
 	@SuppressWarnings("deprecation")
@@ -337,7 +339,7 @@ public class UpdateApplicationFormControllerTest {
 
 		applicationController = new UpdateApplicationFormController(applicationsServiceMock, userPropertyEditorMock,
 				datePropertyEditorMock, countriesServiceMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
-				languageServiceMock, languagePropertyEditorMopck){
+				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor){
 			Referee newReferee() {
 				return new Referee();
 			}
@@ -581,7 +583,8 @@ public class UpdateApplicationFormControllerTest {
 		binderMock.registerCustomEditor(RegisteredUser.class, userPropertyEditorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		binderMock.registerCustomEditor(Messenger.class, messengerJSONPropertyEditorMock);
-		binderMock.registerCustomEditor(Language.class, languagePropertyEditorMopck);
+		binderMock.registerCustomEditor(Language.class, languagePropertyEditorMock);
+		binderMock.registerCustomEditor(Country.class, countryPropertyEditor);
 		EasyMock.replay(binderMock);
 		applicationController.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
@@ -590,12 +593,12 @@ public class UpdateApplicationFormControllerTest {
 	@Before
 	public void setUp() throws ParseException {
 		 languageServiceMock = EasyMock.createMock(LanguageService.class);
-		 languagePropertyEditorMopck = EasyMock.createMock(LanguagePropertyEditor.class);
+		 languagePropertyEditorMock = EasyMock.createMock(LanguagePropertyEditor.class);
 		
 		refereeValidator = EasyMock.createMock(RefereeValidator.class);
 		
 		referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(1).toApplicationForm()).email("email@test.com").firstname("bob")
-				.lastname("smith").addressCountry("uk").addressLocation("london").addressPostcode("postcode").jobEmployer("zuhlke").jobTitle("se")
+				.lastname("smith").addressCountry(null).addressLocation("london").addressPostcode("postcode").jobEmployer("zuhlke").jobTitle("se")
 				.messenger(new Messenger()).phoneNumbers(new Telephone()).relationship("friend").toReferee();
 		
 		
@@ -609,6 +612,7 @@ public class UpdateApplicationFormControllerTest {
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
 		phoneNumberJSONPropertyEditorMock = EasyMock.createMock(PhoneNumberJSONPropertyEditor.class);
 		messengerJSONPropertyEditorMock = EasyMock.createMock(MessengerJSONPropertyEditor.class);
+		countryPropertyEditor = EasyMock.createMock(CountryPropertyEditor.class);
 		
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
@@ -620,7 +624,7 @@ public class UpdateApplicationFormControllerTest {
 		
 		applicationController = new UpdateApplicationFormController(applicationsServiceMock, userPropertyEditorMock,
 				datePropertyEditorMock, countriesServiceMock,  refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
-				languageServiceMock, languagePropertyEditorMopck){
+				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor){
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

@@ -6,7 +6,7 @@
  
 <#import "/spring.ftl" as spring />
 
-	<h2 class="empty">
+	<h2 id="address-H2" class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 	    Address
 	</h2>
@@ -40,7 +40,6 @@
 				                <td>${address.location}, ${address.postCode}</td>
 				                <td>${address.startDate?string('dd-MMM-yyyy')}</td>
 				                <td>${(address.endDate?string('dd-MMM-yyyy'))!}</td>
-				                <td><a class="button-delete" type="submit">Delete</a></td>
 				                
 				                <input type="hidden" id="${address.id}_addressIdDP" value="${address.id}"/>
                                 <input type="hidden" id="${address.id}_locationDP" value="${address.location}"/>
@@ -126,8 +125,17 @@
                     	<span class="label">Purpose</span>
                     	<span class="hint"></span>
                     	<div class="field">
-                    	 <input readonly="readonly" class="full" type="text" id="addressPurpose" name="addressPurpose" 
-                                        value="${model.address.addressPurpose!}" placeholder="e.g. work, travel" />
+                    	   <select id="addressPurpose" name="addressPurpose" class="full" value="${model.address.addressPurpose!}"
+                                                disabled="disabled">
+                            <option value="">Select...</option>
+                            <#list model.addressPurposes as purpose>
+                                <option value="${purpose}"
+                                <#if model.address.addressPurpose?? &&  model.address.addressPurpose == purpose >
+                                selected="selected"
+                                </#if> 
+                                >${purpose.displayValue}</option>               
+                            </#list>
+                            </select>
                     	</div>
                   	</div>
                   	
@@ -150,10 +158,12 @@
 
 
                 <div class="buttons">
-                  	<button class="blue" type="button">Close</button>
+                  	<button id="addressCloseButton" class="blue" type="button">Close</button>
                 </div>
 
 			</form>
 	</div>
-	
+	<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
+
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/address.js'/>"></script>

@@ -1,6 +1,14 @@
 $(document).ready(function(){
+
+
+	$('#addressCloseButton').click(function(){
+		$('#address-H2').trigger('click');
+		return false;
+	});
 	
-	$("#addressContactAddress").val("NO");
+	if($("#addressContactAddress").val() == ''){
+		$("#addressContactAddress").val("NO");
+	}
 	
 	$('#addressSaveAndAddButton').click(function(){
 		$.post("/pgadmissions/update/editAddress", { 
@@ -61,6 +69,7 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="addressEditButton"]').click(function(){
+
 		var id = this.id;
 		id = id.replace('address_', '');
 		$("#addressId").val($('#'+id+"_addressIdDP").val());
@@ -78,4 +87,17 @@ $(document).ready(function(){
 		}
 	});
 
+	  bindDatePickers();
+
+		//open/close
+		var $header  =$('#address-H2');
+		var $content = $header.next('div');
+		$header.bind('click', function()
+		{
+		  $content.toggle();
+		  $(this).toggleClass('open', $content.is(':visible'));
+		  return false;
+		});
+		
+		
 });

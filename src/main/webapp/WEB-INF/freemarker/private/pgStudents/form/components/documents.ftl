@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring />
-	<h2 class="empty">
+	<h2 id="documents-H2" class="empty">
     	<span class="left"></span><span class="right"></span><span class="status"></span>
         Documents
 	</h2>
@@ -68,18 +68,28 @@
                     <span class="hint"></span>
                     <div class="field">
                 		<input class="full" type="file" name="file" value=""  <#if model.applicationForm.submitted>disabled="disabled"</#if>/>                      	
-                        <button class="blue" type="submit" value="close"  <#if model.applicationForm.submitted>disabled="disabled"</#if>>Upload</button>          
+                        <button style="margin-left:30px" class="blue" type="submit" value="close"  <#if model.applicationForm.submitted>disabled="disabled"</#if>>Upload</button>          
                     </div>  
 				</div>
 				<#if model.uploadErrorCode?? >
-					<span style="color:red;"><@spring.message  model.uploadErrorCode /></span>         
+					<span class="invalid"><@spring.message  model.uploadErrorCode /></span>         
 				</#if>				
 			</div>
 
 			<div class="buttons">
-                <button class="blue" value="close">Close</button>              
+                <button class="blue" id="documentsCloseButton" value="close">Close</button>              
 			</div>
 
 		</form>
 	</div>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/application/documents.js'/>"></script>
+	
+	<#if model.result?? && model.result.hasErrors()  >
+
+<#else >
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#documents-H2').trigger('click');
+	});
+</script>
+</#if>

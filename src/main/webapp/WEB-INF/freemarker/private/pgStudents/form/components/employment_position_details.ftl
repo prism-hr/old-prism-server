@@ -6,7 +6,7 @@
 
 <#import "/spring.ftl" as spring />
 	
-	<h2 class="empty">
+	<h2 id="position-H2" class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Employment
 	</h2>
@@ -163,16 +163,18 @@
                     <span class="label">Language of work</span>
                     <span class="hint"></span>
                     <div class="field">
-                    <#if !model.applicationForm.isSubmitted()>
-						<input class="full" type="text" id="position_language" 
-									name="position_language" value="${model.employmentPosition.position_language!}"/>
+                      <select class="full" id="position_language" name="position_language" value="${model.employmentPosition.position_language!}"
+                       <#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled"
+                                            </#if>>
+                        <option value="">Select...</option>
+                         <#list model.languages as language>
+                         	<option value="${language.name}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.name> selected="selected"</#if>>${language.name}</option>
+                         </#list>
+                      </select>
 						<#if model.hasError('position_language')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_language').code /></span>                           
                         </#if>
-                     <#else>
-                        <input readonly="readonly" class="full" type="text" id="position_language" 
-                                    name="position_language" value="${model.employmentPosition.position_language!}"/>
-                     </#if>   
                     </div>
                	</div>
                 
@@ -196,11 +198,21 @@
                 <button class="blue" type="button" value="close" id="positionSaveAndCloseButton" name="positionSaveButton">Save and Close</button>
                 <button class="blue" type="button" value="add" id="positionSaveAndAddButton" name="positionSaveAndAddButton">Save and Add</button>
             <#else>
-                <a id="close-section-button"class="button blue">Close</a>
+                <a id="positionCloseButton" class="button blue">Close</a>
             </#if>    
             </div>
 
 		</form>
 	</div>
-	
+<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>	
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/employmentPosition.js'/>"></script>
+	<#if model.result?? && model.result.hasErrors()  >
+
+<#else >
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#position-H2').trigger('click');
+	});
+</script>
+</#if>

@@ -6,7 +6,7 @@
 
 <#import "/spring.ftl" as spring />
 
-	<h2 class="empty">
+	<h2 id="funding-H2" class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 			Funding
 	</h2>
@@ -38,7 +38,7 @@
 					<#list model.applicationForm.fundings as funding>		
 						<tr>
 		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id}">-</a></td>
-		                  	<td>${funding.type}</td>
+		                  	<td>${funding.type.displayValue}</td>
 		                  	<td>${funding.description}</td>
 		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
 		                  	<input type="hidden" id="${funding.id}_fundingIdDP" value="${funding.id}"/>
@@ -64,7 +64,17 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                 	
                 	<div class="field">
-                	<input id="fundingType" name="fundingType" readonly="readonly" class="full" type="text" value="${model.funding.fundingType!}" placeholder="e.g. scholarship, industry" />
+                	<select id="fundingType" name="fundingType" class="full" value="${model.funding.fundingType!}" 
+                                                disabled="disabled">
+                            <option value="">Select...</option>
+                            <#list model.fundingTypes as type>
+                                <option value="${type}"
+                                <#if model.funding.fundingType?? && model.funding == type>
+                                        selected="selected"
+                                        </#if>
+                                >${type.displayValue}</option>               
+                            </#list>
+                        </select>
 					</div>
 				</div>
 
@@ -107,7 +117,7 @@
 			</div>
 
 			<div class="buttons">
-				<button class="blue" type="button">Close</button>
+				<button class="blue" id="fundingCloseButton"  type="button">Close</button>
 			</div>
 
 		</form>

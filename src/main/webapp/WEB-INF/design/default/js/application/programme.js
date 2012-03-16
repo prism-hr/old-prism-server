@@ -52,9 +52,27 @@ $(document).ready(function(){
 			return;
 		}
 		$('#supervisor_div').append('<span name="supervisor_span">'+ 
-				$('#supervisorEmail').val()+ ", Primary:" + $('#primarySupervisor').val() +", Aware:" + $('#awareSupervisor').val() +'<a class="button">delete</a>'+
+				$('#supervisorEmail').val()+ ", Primary:" + $('#primarySupervisor').val() +", Aware:" + $('#awareSupervisor').val() +'<a class="button-delete">delete</a>'+
 				'<input type="hidden" name="supervisors" value=' +"'" + '{"email":"' +  $('#supervisorEmail').val()+ '", "primarySupervisor":"' + $('#primarySupervisor').val() + '", "awareSupervisor":"' + $('#awareSupervisor').val()+ '"} ' + "'" + "/>"									
 				+'<br/></span>');
 	})
 	
+	$('#programmeCloseButton').click(function(){
+		$('#programme-H2').trigger('click');
+		return false;
+	});
+	
+	
+	  bindDatePickers();
+
+		//open/close
+		var $header  =$('#programme-H2');
+		var $content = $header.next('div');
+		$header.bind('click', function()
+		{
+		  $content.toggle();
+		  $(this).toggleClass('open', $content.is(':visible'));
+		  return false;
+		});
+		
 });

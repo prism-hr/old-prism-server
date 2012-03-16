@@ -19,7 +19,14 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.enums.FundingType;
+import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
+import com.zuehlke.pgadmissions.domain.enums.PhoneType;
+import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
@@ -69,7 +76,7 @@ public class SubmitApplicationFormController {
 
 		appForm.setNumberOfAddresses(applicationForm.getAddresses().size());
 		appForm.setNumberOfReferees(applicationForm.getReferees().size());
-		
+		appForm.setPersonalDetails(applicationForm.getPersonalDetails());
 		int numberOfContactAddresses = 0;
 		for (com.zuehlke.pgadmissions.domain.Address address : applicationForm.getAddresses()) {
 			if (address.getContactAddress() == AddressStatus.YES) {
@@ -78,6 +85,8 @@ public class SubmitApplicationFormController {
 		}
 		
 		appForm.setNumberOfContactAddresses(numberOfContactAddresses);
+		appForm.setProgrammeDetails(applicationForm.getProgrammeDetails());
+
 		
 		ApplicationFormValidator validator = new ApplicationFormValidator();
 		
@@ -98,10 +107,16 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setUser(user);
 			viewApplicationModel.setCountries(countryService.getAllCountries());
 			viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());
+			viewApplicationModel.setQualificationLevels(QualificationLevel.values());
 			viewApplicationModel.setStudyOptions(StudyOption.values());
 			viewApplicationModel.setReferrers(Referrer.values());
 			viewApplicationModel.setLanguages(languageService.getAllLanguages());
-			
+			viewApplicationModel.setFundingTypes(FundingType.values());
+			viewApplicationModel.setAddressPurposes(AddressPurpose.values());
+			viewApplicationModel.setGenders(Gender.values());
+			viewApplicationModel.setPhoneTypes(PhoneType.values());
+			viewApplicationModel.setLanguageAptitudes(LanguageAptitude.values());
+			viewApplicationModel.setDocumentTypes(DocumentType.values());
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,"model", viewApplicationModel);
 			
 		}

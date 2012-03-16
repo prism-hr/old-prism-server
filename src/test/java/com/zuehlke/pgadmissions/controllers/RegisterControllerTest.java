@@ -19,12 +19,14 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicantRecordBuilder;
 import com.zuehlke.pgadmissions.dto.ApplicantRecordDTO;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicantRecordService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApplicantRecordValidator;
 
 public class RegisterControllerTest {
 
 	private RegisterController registerController;
 	private ApplicantRecordService applicantRecordServiveMock;
+	private UserService userServiceMock;
 	private ApplicantRecord record;
 	private ApplicantRecordValidator validatorMock;
 	
@@ -33,7 +35,8 @@ public class RegisterControllerTest {
 	public void setUp() {
 		validatorMock = EasyMock.createMock(ApplicantRecordValidator.class);
 		applicantRecordServiveMock = EasyMock.createMock(ApplicantRecordService.class);
-		registerController = new RegisterController(applicantRecordServiveMock, validatorMock);
+		userServiceMock = EasyMock.createMock(UserService.class);
+		registerController = new RegisterController(applicantRecordServiveMock, validatorMock, userServiceMock);
 		record = new ApplicantRecordBuilder().id(1).toApplicantRecord();
 	}
 	

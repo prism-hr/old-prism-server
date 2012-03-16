@@ -6,7 +6,7 @@
  
  <#import "/spring.ftl" as spring />
 			
-			<h2 class="empty">
+			<h2 id="qualifications-H2" class="empty">
 				<span class="left"></span><span class="right"></span><span class="status"></span>
 				Qualifications
         	</h2>
@@ -107,8 +107,13 @@
                     		<span class="label">Language of Study</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
-                    		<input readonly="readonly" id="qualificationLanguage" class="full" type="text" 
-                                                                value="${model.qualification.qualificationLanguage!}"/>
+                    		  <select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${model.qualification.qualificationLanguage!}"
+                                                disabled="disabled">
+                                <option value="">Select...</option>
+                                    <#list model.languages as language>
+                                        <option value="${language.name}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.name> selected="selected"</#if>>${language.name}</option>
+                                    </#list>
+                                </select>
                     		</div>
                   		</div>
                   
@@ -117,8 +122,17 @@
 	                    	<span class="label">Level</span>
 	                    	<span class="hint" data-desc="Tooltip demonstration."></span>
 	                    	<div class="field">
-	                    	 <input readonly="readonly" id="qualificationLevel" class="full" type="text" 
-                                                                value="${model.qualification.qualificationLevel!}"/>
+	                    	  <select name="qualificationLevel" id="qualificationLevel" value="${model.qualification.qualificationLevel!}"
+                                                disabled="disabled">
+                                     <option value="">Select...</option>
+                                     <#list model.qualificationLevels as level>
+                                         <option value="${level}"
+                                         <#if model.qualification.qualificationLevel?? &&  model.qualification.qualificationLevel == level >
+                                        selected="selected"
+                                        </#if>
+                                >${level.displayValue}</option>               
+                                    </#list>
+                                </select>
 	                    	</div>
 	                  	</div>
 
@@ -175,7 +189,7 @@
 	                </div>
 
 		        	<div class="buttons">
-		                <button class="blue" type="button">Close</button>
+		                <button class="blue" id="qualificationsCloseButton" type="button">Close</button>
 	                </div>
 
 			  </form>

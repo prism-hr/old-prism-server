@@ -126,6 +126,7 @@
 				</div>
 		        <!-- #actions -->
 		          
+		  <#include "/private/common/feedback.ftl"/>
 		        </div><!-- .content-box-inner -->
 		      </div><!-- .content-box -->
 		      
@@ -135,7 +136,6 @@
 		  
 		  <!-- Footer. -->
 		  <div id="footer">
-		  <#include "/private/common/feedback.ftl"/>
 		    <ul>
 		      <li><a href="#">Privacy</a></li>
 		      <li><a href="#">Terms &amp; conditions</a></li>

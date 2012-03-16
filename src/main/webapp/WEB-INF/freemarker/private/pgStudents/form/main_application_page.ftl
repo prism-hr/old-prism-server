@@ -65,7 +65,7 @@
 				    	<div class="content-box">
 					        <div class="content-box-inner">
 			
-					            <p style="color:red;">${model.message!}</p>
+					            <p style="color:red">${model.message!}</p>
 								<div id="programme-details">
 			          
 						          	<div class="row">
@@ -81,8 +81,9 @@
 					          	</div>
 			          
 					            <hr/>
-			
+								
 					          	<section id="programmeDetailsSection" class="folding violet">
+					          	
 					          		<#include "/private/pgStudents/form/components/programme_details.ftl"/>
 					          	</section>
 			          
@@ -120,20 +121,26 @@
 			          			</section>
 
 			          			<hr/>
-			          
-			          			<a class="button" href="<@spring.url '/applications'/>">Close</a>
-			          			<#if !model.applicationForm.isSubmitted() && model.user.isInRole('APPLICANT')>
+			          			
+			          			<div class="buttons">
+			          			
+									<div style="float:left">		    	 
+			          					<#include "/private/common/feedback.ftl"/>
+			          				</div>
+			          				
+			          				<a class="button" href="<@spring.url '/applications'/>">Close</a>
+			          				<#if !model.applicationForm.isSubmitted() && model.user.isInRole('APPLICANT')>
 			             			
-			             			<a id="submitButton" class="button">Submit</a>
+			             				<a id="submitButton" class="button">Submit</a>
 			             			
-			             			<form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
-			          	      			<input type="hidden" id="applicationFormId" name="applicationFormId" 
+			             				<form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
+			          	      				<input type="hidden" id="applicationFormId" name="applicationFormId" 
 			          	      									value="${model.applicationForm.id?string("######")}"/>
-									</form>
+										</form>
 									
-								</#if>
-								<p></p>		    	 
-			          			<#include "/private/common/feedback.ftl"/>
+									</#if>
+
+			          			</div>
 			        
 			        		</div><!-- .content-box-inner -->
 			      
@@ -156,7 +163,8 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
-		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 	</body>
 	
 </html>
+

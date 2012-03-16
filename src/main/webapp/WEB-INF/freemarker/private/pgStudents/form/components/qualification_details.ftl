@@ -6,7 +6,7 @@
  
  <#import "/spring.ftl" as spring />
 			
-			<h2 class="empty">
+			<h2 id="qualifications-H2" class="empty">
 				<span class="left"></span><span class="right"></span><span class="status"></span>
 				Qualifications
         	</h2>
@@ -99,7 +99,7 @@
 		                    	<input id="qualificationProgramName" class="full" type="text" placeholder="e.g. Civil Engineering" 
 		                    									value="${model.qualification.qualificationProgramName!}"/>
 		       					<#if model.hasError('qualificationProgramName')>
-		       						<span style="color:red;"><@spring.message  model.result.getFieldError('qualificationProgramName').code /></span>
+		       						<span class="invalid"><@spring.message  model.result.getFieldError('qualificationProgramName').code /></span>
 		       					</#if>
 		       					<#else>
 		       					  <input readonly="readonly" id="qualificationProgramName" class="full" type="text" placeholder="e.g. Civil Engineering" 
@@ -135,8 +135,15 @@
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                       			<#if !model.applicationForm.isSubmitted()>
-                      			<input id="qualificationLanguage" class="full" type="text" 
-			                    								value="${model.qualification.qualificationLanguage!}"/>
+                      			<select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${model.qualification.qualificationLanguage!}"
+                      			 <#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled"
+                                            </#if>>
+                        		<option value="">Select...</option>
+                         			<#list model.languages as language>
+                         				<option value="${language.name}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.name> selected="selected"</#if>>${language.name}</option>
+                         			</#list>
+                      			</select>
 								<#if model.hasError('qualificationLanguage')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationLanguage').code /></span>                    		
                     			</#if>
@@ -153,16 +160,22 @@
 	                    	<span class="label">Level</span>
 	                    	<span class="hint" data-desc="Tooltip demonstration."></span>
 	                    	<div class="field">
-	                    	<#if !model.applicationForm.isSubmitted()>
-                      			<input id="qualificationLevel" class="full" type="text" 
-			                    								value="${model.qualification.qualificationLevel!}"/>
+	                    		<select name="qualificationLevel" id="qualificationLevel" value="${model.qualification.qualificationLevel!}"
+	                    		 <#if model.applicationForm.isSubmitted()>
+                                                disabled="disabled"
+                                            </#if>>
+                        			 <option value="">Select...</option>
+                        			 <#list model.qualificationLevels as level>
+                             			 <option value="${level}"
+                             			 <#if model.qualification.qualificationLevel?? &&  model.qualification.qualificationLevel == level >
+                                        selected="selected"
+                                        </#if>
+                                >${level.displayValue}</option>               
+                        			</#list>
+                      			</select>
 								<#if model.hasError('qualificationLevel')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationLevel').code /></span>                    		
                     			</#if>
-                    		<#else>
-                    		      <input readonly="readonly" id="qualificationLevel" class="full" type="text" 
-                                                                value="${model.qualification.qualificationLevel!}"/>
-                    		</#if>  	
 	                    	</div>
 	                  	</div>
 
@@ -255,12 +268,23 @@
 		                <button class="blue" type="button" id="qualificationSaveCloseButton"  name="id="qualificationSaveCloseButton"" value="close">Save and Close</button>
 		                <button id="qualificationsSaveButton" class="blue" type="button" value="add">Save and Add</button>
 		                <#else>
-                            <a id="close-section-button"class="button blue">Close</a>   
+                            <a id="qualificationsCloseButton"class="button blue">Close</a>   
                     </#if>  
 	                </div>
 
 			  </form>
 		</div>
-		
+<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>		
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/qualifications.js'/>"></script>
  
+ 
+ 		<#if model.result?? && model.result.hasErrors()  >
+
+<#else >
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#qualifications-H2').trigger('click');
+	});
+</script>
+</#if>

@@ -4,13 +4,14 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
 public class QualificationBuilder {
 
 	private String q_name_of_programme;
 	private String q_institution;
 	private String q_language_of_study;
-	private String q_level;
+	private QualificationLevel q_level;
 	private String q_type;
 	private String q_grade;
 	private String q_score;
@@ -48,7 +49,7 @@ public class QualificationBuilder {
 	}
 
 	
-	public QualificationBuilder q_level(String q_level) {
+	public QualificationBuilder q_level(QualificationLevel q_level) {
 		this.q_level = q_level;
 		return this;
 	}

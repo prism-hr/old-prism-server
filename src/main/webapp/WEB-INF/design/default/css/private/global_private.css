@@ -11,7 +11,7 @@ a img { border: none; }
 body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 label input { vertical-align: middle; }
 
-.centre { text-align: center; }
+.centre { text-align: center !important; }
 .right { text-align: right; }
 .row { overflow: visible; }
 
@@ -186,7 +186,7 @@ table.multiples { border-spacing: 0 4px; width: 70%; margin-top: 1em; }
 table.multiples .align-left { text-align: left; }
 table.multiples input[type=text] { width: 100%; }
 
-table.data { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; width: 100%; }
+table.data { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; width: 100%; }
 table.data thead th {
   background: rgb(124,124,124); /* Old browsers */
   /* IE9 SVG, needs conditional override of 'filter' to 'none' */

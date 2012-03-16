@@ -1,4 +1,10 @@
 $(document).ready(function(){
+	
+	$('#qualificationsCloseButton').click(function(){
+		$('#qualifications-H2').trigger('click');
+		return false;
+	});
+	
 	$('#qualificationsSaveButton').click(function(){
 		$.post("/pgadmissions/update/editQualification", {  
 			qualificationProgramName: $("#qualificationProgramName").val(), 
@@ -60,6 +66,7 @@ $(document).ready(function(){
 		$("#qualificationInstitution").val("");
 		$("#qualificationLevel").val("");
 		$("#qualificationGrade").val("");
+		$("#qualificationType").val("");
 		$("#qualificationScore").val("");
 		$("#qualificationStartDate").val("");
 		$("#qualificationLanguage").val("");
@@ -67,4 +74,16 @@ $(document).ready(function(){
 		
 	});
 	
+	  bindDatePickers();
+
+		//open/close
+		var $header  =$('#qualifications-H2');
+		var $content = $header.next('div');
+		$header.bind('click', function()
+		{
+		  $content.toggle();
+		  $(this).toggleClass('open', $content.is(':visible'));
+		  return false;
+		});
+		
 });

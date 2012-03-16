@@ -24,7 +24,7 @@ $(document).ready(function()
   
   
   // Expandable content...
-  $('section.folding').each(function()
+ /* $('section.folding').each(function()
   {
     var $this    = $(this);
     var $header  = $this.children('h2').filter(':first');
@@ -36,7 +36,7 @@ $(document).ready(function()
       return false;
     });
 
-  });
+  });*/
 
   $('section.folding a.row-arrow').each(function()
   {
@@ -51,6 +51,7 @@ $(document).ready(function()
     $this.toggleClass('open', $form.is(':visible'));
     */
   });
+ 
   
   $('section.folding a.comment-open').each(function()
   {
@@ -96,18 +97,14 @@ $(document).ready(function()
     $('div.information', $parent).toggle();
   });
   
-  // Date pickers.
-  $('input.date').datepicker({
-	  				dateFormat: 'dd-M-yy',
-	 				changeMonth: true,
-	  				changeYear: true,
-	  				yearRange: '1900:defaultDate' });
+  bindDatePickers();
   
   // Sortable tables.
   $('table.data').tablesorter();
   $('table.data thead th').not(':first,:last').wrapInner('<span class="arrow" />');
   
 });
+
 
 
 function msg(message, type)
@@ -124,7 +121,7 @@ function msg(message, type)
   $msg.fadeIn(700).delay(3000).fadeOut(700);
 }
 
-// Back to top functionalirt, project manager style.
+// Back to top functionality, project manager style.
 function backToTop()
 {
 	$.scrollTo('#wrapper', 900);

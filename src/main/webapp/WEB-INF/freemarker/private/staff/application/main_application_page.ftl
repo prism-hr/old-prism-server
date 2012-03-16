@@ -38,6 +38,17 @@
 		
 		<!-- Styles for Application List Page -->
 		
+		<!-- Scripts -->
+		
+		<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
+    	<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
+		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
+			<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
+		
 	</head>
 
 	<!--[if IE 9]>
@@ -63,6 +74,14 @@
 			    <article id="content" role="main">
 			      
 			      <#include "/private/common/parts/tools.ftl"/>
+			      
+			      <!-- FLOATING TOOLBAR -->
+		          <ul id="view-toolbar">
+		          	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
+		          	<li class="pdf"><a href="#" title="Download as PDF">Download as PDF</a></li>
+		          	<li class="print"><a href="#" title="Print">Print</a></li>
+		          </ul>
+			      
 			      
 			      <!-- content box -->
 			      <div class="content-box">
@@ -92,7 +111,7 @@
 			          </section>
 			          
 			          <!-- Personal Details -->
-			          <section id="personalDetailsSection" class="folding purple">
+			           <section id="personalDetailsSection" class="folding purple">
 			          	<#include "/private/staff/application/components/personal_details.ftl"/>
 			          </section>
 			          
@@ -114,24 +133,17 @@
 			          </section>
 			          
 			           <section class="folding navy">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              References
-			            </h2>
-			            <div>
-			              Testing...
-			            </div>
+			             <#include "/private/staff/application/components/references_details.ftl"/>
 			          </section>
 			          
 			           <section class="folding blue">
-			            <h2 class="open">
-			              <span class="left"></span><span class="right"></span><span class="status"></span>
-			              Documents
-			            </h2>
-			            <div>
-			              Testing...
-			            </div>
+			             <#include "/private/staff/application/components/documents.ftl"/>
 			          </section>
+			          
+			          <section id="additionalInformationSection" class="folding lightblue">
+                           <#include "/private/staff/application/components/additional_information.ftl"/>
+                      </section>
+			          
 			          
 			          <hr />
 			          
@@ -154,17 +166,15 @@
 			<#include "/private/common/global_footer.ftl"/>
 		
 		</div>
-		
 		<!-- Scripts -->
-		
+			
 		<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
-    	<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
-		
+	    <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
+			
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
-		
-		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 	</body>
 </html>

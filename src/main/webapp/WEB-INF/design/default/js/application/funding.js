@@ -1,4 +1,10 @@
 $(document).ready(function(){
+	
+	$('#fundingCloseButton').click(function(){
+		$('#funding-H2').trigger('click');
+		return false;
+	});
+	
 	$('#fundingSaveCloseButton').click(function(){
 		$.post("/pgadmissions/update/addFunding", { 
 			fundingType: $("#fundingType").val(),
@@ -50,4 +56,16 @@ $(document).ready(function(){
 		
 	});
 	
+	  bindDatePickers();
+
+		//open/close
+		var $header  =$('#funding-H2');
+		var $content = $header.next('div');
+		$header.bind('click', function()
+		{
+		  $content.toggle();
+		  $(this).toggleClass('open', $content.is(':visible'));
+		  return false;
+		});
+		
 });

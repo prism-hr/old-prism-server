@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Service("userService")
@@ -60,6 +61,13 @@ public class UserService {
 	@Transactional
 	public void saveQualification(Qualification qual) {
 		userDAO.saveQualification(qual);
+		
+	}
+
+	
+	@Transactional
+	public Role getRoleById(int id) {
+		return userDAO.getRoleById(id);
 		
 	}
 	

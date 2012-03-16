@@ -54,4 +54,9 @@ public class UserDAO {
 		
 	}
 
+	public Role getRoleById(int id) {
+		return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("id", id))
+				.uniqueResult();
+	}
+
 }

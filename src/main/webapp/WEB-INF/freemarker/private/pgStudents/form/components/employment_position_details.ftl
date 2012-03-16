@@ -195,6 +195,7 @@
 			<div class="buttons">
 			<#if !model.applicationForm.isSubmitted()>
             	<a class="button" type="button" id="positionCancelButton" name="positionCancelButton">Cancel</a>
+            	<button class="blue" type="button" id="positionCloseButton" name="positionCloseButton">Close</button>
                 <button class="blue" type="button" value="close" id="positionSaveAndCloseButton" name="positionSaveButton">Save and Close</button>
                 <button class="blue" type="button" value="add" id="positionSaveAndAddButton" name="positionSaveAndAddButton">Save and Add</button>
             <#else>

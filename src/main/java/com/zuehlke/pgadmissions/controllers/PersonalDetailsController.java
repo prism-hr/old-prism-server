@@ -114,8 +114,7 @@ public class PersonalDetailsController {
 		applicationPageModel.setGenders(Gender.values());
 		applicationPageModel.setPhoneTypes(PhoneType.values());
 		applicationPageModel.setLanguageAptitudes(LanguageAptitude.values());
-		ModelAndView modelAndView = new ModelAndView("private/pgStudents/form/components/personal_details", "model", applicationPageModel);
-		modelAndView.addObject("formDisplayState", "open");
+		ModelAndView modelAndView = new ModelAndView("private/pgStudents/form/components/personal_details", "model", applicationPageModel);	
 		return modelAndView;
 
 	}

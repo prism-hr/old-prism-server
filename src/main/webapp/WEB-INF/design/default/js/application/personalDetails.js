@@ -1,6 +1,6 @@
 $(document).ready(function(){
 
-	$('#personalDetailsCloseButton').click(function(){
+	$('#personalDetailsCloseButton').click(function(){		
 		$('#personalDetails-H2').trigger('click');
 		return false;
 	});
@@ -331,16 +331,16 @@ $(document).ready(function(){
 		});	
 	}
 	
-	  bindDatePickers();
+	 bindDatePickers();
 
 		//open/close
-		var $header  =$('#personalDetails-H2');
-		var $content = $header.next('div');
-		$header.bind('click', function()
-		{
-		  $content.toggle();
-		  $(this).toggleClass('open', $content.is(':visible'));
-		  return false;
-		});
+	var $header  = $('#personalDetails-H2');
+	var $content = $header.next('div');
+	$header.bind('click', function()
+	{	
+	  $content.toggle();
+	  $(this).toggleClass('open', $content.is(':visible'));
+	  return false;
+	});
 		
 });

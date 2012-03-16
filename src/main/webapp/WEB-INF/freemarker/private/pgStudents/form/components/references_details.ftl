@@ -68,7 +68,7 @@
 			                  	  		<div class="row">
 			                  	  	 		<span class="label">Telephone</span>    
 			                  				<div class="field">
-			                  					<label class="full"> ${phoneNumber.telephoneType.displayValue}</label>
+			                  					<label class="half"> ${phoneNumber.telephoneType.displayValue}</label>
 			                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
 			                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
 			                  	  			</div>
@@ -85,7 +85,7 @@
 	                   		 			<div class="row">
 			                  	  	 		<span class="label">Skype</span>    
 			                  				<div class="field">
-			                  					<label class="full">${messenger.messengerAddress}</label> 
+			                  					<label class="half">${messenger.messengerAddress}</label> 
 			                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
 			                  	  			</div>                  	  			
 		                  	  			</div>   
@@ -286,7 +286,7 @@
 		                  	  		<div class="row">
 		                  	  	 		<span class="label">Telephone</span>    
 		                  				<div class="field">
-		                  					<label class="full"> ${phoneNumber.telephoneType.displayValue}</label>
+		                  					<label class="half"> ${phoneNumber.telephoneType.displayValue}</label>
 		                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
 		                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
 		                  	  			</div>
@@ -303,7 +303,7 @@
                     		
                     		<#if !model.applicationForm.isSubmitted()>
                     		<div class="field">
-                    		<select class="full" id="phoneTypeRef">
+                    		<select class="half" id="phoneTypeRef">
                     			 <#list model.phoneTypes as phoneType >
                       				<option value="${phoneType}">${phoneType.displayValue}</option>
                       			</#list>
@@ -327,7 +327,7 @@
 	                   			<div class="row">
 	                  	  	 		<span class="label">Skype</span>    
 	                  				<div class="field">
-	                  					<label class="full">${messenger.messengerAddress}</label> 
+	                  					<label class="half">${messenger.messengerAddress}</label> 
 	                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
 	                  	  			</div>                  	  			
 	                  	  		</div>   
@@ -342,7 +342,7 @@
 	                    	
 	                    	<#if !model.applicationForm.isSubmitted()>
 	                    	<div class="field">
-	                    	<input class="full" type="text" placeholder="Skype address" id="messengerAddressRef" />
+	                    	<input class="half" type="text" placeholder="Skype address" id="messengerAddressRef" />
 	                      		<a id="addMessengerRefButton" class="button blue" style="width: 110px;">Add Skype</a>
 	                      	</div>	
 	                      	</#if>	

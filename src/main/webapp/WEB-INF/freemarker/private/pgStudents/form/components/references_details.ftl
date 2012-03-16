@@ -357,7 +357,8 @@
             </div>
 
             <script type="text/javascript" src="<@spring.url '/design/default/js/application/referee.js'/>"></script>
-   <#if model.result?? && model.result.hasErrors()  >
+            
+ <#if (model.result?? && model.result.hasErrors() )  || add??>
 
 <#else >
 <script type="text/javascript">

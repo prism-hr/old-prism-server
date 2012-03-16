@@ -29,7 +29,8 @@ $(document).ready(function(){
 			fundingAwardDate: $("#fundingAwardDate").val(), 
 			id: $("#id").val(), 
 			appId: $("#appId").val(),
-			fundingId: $("#fundingId").val()
+			fundingId: $("#fundingId").val(),
+			add:"add"
 		},
 		
 		function(data) {

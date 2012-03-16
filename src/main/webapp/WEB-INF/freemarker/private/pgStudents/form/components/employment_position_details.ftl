@@ -207,3 +207,12 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>	
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/employmentPosition.js'/>"></script>
+	<#if model.result?? && model.result.hasErrors()  >
+
+<#else >
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#position-H2').trigger('click');
+	});
+</script>
+</#if>

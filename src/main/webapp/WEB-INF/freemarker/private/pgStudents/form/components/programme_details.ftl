@@ -71,6 +71,11 @@
                  
                  
                  <div id="supervisor_div">
+                 <#if model.hasError('supervisors')>
+                          <div class="row">                          
+                            <span class="invalid"><@spring.message  model.result.getFieldError('supervisors').code /></span>
+                          </div>                             
+                    </#if>
                    <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
                    <span name="supervisor_span">
                         ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
@@ -114,10 +119,6 @@
                     </#if>
 			</div>
 			
-			<div>
-				<#include "/private/common/parts/dynamic_data_table.ftl"/>
-			</div>
-
             <div>
             	<!-- Start date -->
                 <div class="row">

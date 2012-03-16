@@ -186,7 +186,7 @@
 	                      <#if model.hasError('maternalGuardianNationalities')>                         
                                 <span class="invalid"><@spring.message  model.result.getFieldError('maternalGuardianNationalities').code /></span>                           
                        	 </#if>
-	                      	 <label><input type="radio" id="primaryMaternalNationality"/> This is her primary nationality</label>              
+	                      	 <label><input type="radio" id="primaryMaternalNationality" name = "primaryMaternalNationality"/> This is her primary nationality</label>              
 	                   	 </div>
                 	</div>
                 	
@@ -227,7 +227,7 @@
 	                          <#if model.hasError('paternalGuardianNationalities')>                         
                                 <span class="invalid"><@spring.message  model.result.getFieldError('paternalGuardianNationalities').code /></span>                           
                        	 </#if>
-	                      	 <label><input type="radio" id="primaryPaternalNationality"/> This is his primary nationality</label>              
+	                      	 <label><input type="radio" id="primaryPaternalNationality" name="primaryPaternalNationality"/> This is his primary nationality</label>              
 	                   	 </div>
                 	</div>
                 	                     
@@ -357,7 +357,7 @@
 	                  	  		<div class="row">
 	                  	  	 		<span class="label">Telephone</span>    
 	                  				<div class="field">
-	                  					<label class="full"> ${phoneNumber.telephoneType.displayValue}</label>
+	                  					<label class="half"> ${phoneNumber.telephoneType.displayValue}</label>
 	                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
 	                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
 	                  	  			</div>
@@ -395,7 +395,7 @@
                   	  		<div class="row">
                   	  	 		<span class="label">Skype</span>    
                   				<div class="field">
-                  					<label class="full">${messenger.messengerAddress}</label> 
+                  					<label class="half">${messenger.messengerAddress}</label> 
                   	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
                   	  			</div>                  	  			
                   	  		</div>   

@@ -41,7 +41,12 @@
 		                  	<td>${funding.type.displayValue}</td>
 		                  	<td>${funding.description}</td>
 		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
-		                  	<td><a class="button-delete" href="#">delete</a></td>
+		                  	      <td>
+				                  	<form method="Post" action="<@spring.url '/deleteentity/funding'/>" style="padding:0">
+			                			<input type="hidden" name="id" value="${funding.id}"/>		                		
+			                			<a name="deleteButton" class="button-delete">delete</a>
+			                		</form>
+				        		</td>
 		                  	
 		                  	<!-- Non-rendering data -->
 							<input type="hidden" id="${funding.id}_fundingIdDP" value="${funding.id}"/>

@@ -279,8 +279,9 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/qualifications.js'/>"></script>
  
  
- 		<#if model.result?? && model.result.hasErrors()  >
-
+<#if (model.result?? && model.result.hasErrors() ) || add??>
+${add}
+${model.result}
 <#else >
 <script type="text/javascript">
 	$(document).ready(function(){

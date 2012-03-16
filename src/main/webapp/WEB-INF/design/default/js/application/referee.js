@@ -89,7 +89,8 @@ $('#refereeSaveAndAddButton').click(function(){
 			application: $("#appId").val(),
 			refereeId: $("#refereeId").val(),
 			phoneNumbers: "",
-			messengers: ""
+			messengers: "",
+			add:"add"
 	}
 	$.post( "/pgadmissions/update/refereeDetails" , $.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbers"]').serialize() + "&" + $('#messengersref input[name="messengers"]').serialize(),
 			

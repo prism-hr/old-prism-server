@@ -307,7 +307,7 @@ public class UpdateApplicationFormController {
 			address.setApplication(application);
 			address.setLocation(addr.getAddressLocation());
 			address.setPostCode(addr.getAddressPostCode());
-			address.setCountry(addr.getAddressCountry());
+			address.setCountry(countryService.getCountryById(addr.getAddressCountry()));
 			address.setPurpose(addr.getAddressPurpose());
 			address.setStartDate(addr.getAddressStartDate());
 			address.setEndDate(addr.getAddressEndDate());

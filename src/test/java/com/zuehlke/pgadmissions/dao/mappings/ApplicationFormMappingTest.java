@@ -17,6 +17,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
@@ -44,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.services.CountryService;
 
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
@@ -144,7 +146,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setProject(project);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		Address address = new AddressBuilder().application(application).country("Germany").location("1 Main Street").postCode("NW2 456").location("london")
+		CountryService countriesService = new CountryService(new CountriesDAO(sessionFactory));
+		
+		Address address = new AddressBuilder().application(application).country(countriesService.getCountryById(2)).location("1 Main Street").postCode("NW2 456").location("london")
 				.purpose(AddressPurpose.EDUCATION).startDate(new Date()).endDate(new Date()).contactAddress(AddressStatus.NO).toAddress();
 		application.setAddresses(Arrays.asList(address));
 

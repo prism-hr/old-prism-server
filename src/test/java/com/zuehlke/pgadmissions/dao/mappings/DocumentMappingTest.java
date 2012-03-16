@@ -23,7 +23,6 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 
 	
 	@Test
-	@Ignore
 	public void shouldSaveAndLoadDocument(){
 		Document document = new Document();
 		StringBuilder builder = new StringBuilder();

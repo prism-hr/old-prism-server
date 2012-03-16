@@ -128,16 +128,20 @@
 			          					<#include "/private/common/feedback.ftl"/>
 			          				</div>
 			          				
-			          				<a class="button" href="<@spring.url '/applications'/>">Close</a>
+			          				
+			          			
 			          				<#if !model.applicationForm.isSubmitted() && model.user.isInRole('APPLICANT')>
 			             			
-			             				<a id="submitButton" class="button">Submit</a>
+			             			
 			             			
 			             				<form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
 			          	      				<input type="hidden" id="applicationFormId" name="applicationFormId" 
 			          	      									value="${model.applicationForm.id?string("######")}"/>
+			          	      										<a class="button" href="<@spring.url '/applications'/>">Close</a>
+			          	      										<button id="submitButton" type="submit" class="button">Submit</button>
 										</form>
-									
+									<#else>
+										<a class="button" href="<@spring.url '/applications'/>">Close</a>
 									</#if>
 
 			          			</div>

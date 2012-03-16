@@ -21,7 +21,7 @@
 		<form>		
 				<input type="hidden" name="id" id="id" value="${(model.applicationForm.personalDetails.id?string("######"))!}"/>
 				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id?string("######")}"/>
-                <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
+                <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
               	<div>
 		        <#if model.hasError('personalDetails')>                           
 		        <div class="row">      	

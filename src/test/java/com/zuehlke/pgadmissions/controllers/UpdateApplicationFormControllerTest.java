@@ -245,12 +245,14 @@ public class UpdateApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
+		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
+		EasyMock.replay(applicationsServiceMock, languageServiceMock);
 
 		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
 		positionDto.setPosition_employer("Mark");
 		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_language("English");
+		positionDto.setPosition_language(2);
 		positionDto.setPosition_remit("cashier");
 		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		positionDto.setPosition_title("head of department");
@@ -270,12 +272,14 @@ public class UpdateApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
+		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
+		EasyMock.replay(applicationsServiceMock, languageServiceMock);
 
 		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
 		positionDto.setPosition_employer("Mark");
 		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_language("English");
+		positionDto.setPosition_language(2);
 		positionDto.setPosition_remit("cashier");
 		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		positionDto.setPosition_title("head of department");

@@ -259,7 +259,7 @@ public class UpdateApplicationFormController {
 			}
 			position.setPosition_employer(positionDto.getPosition_employer());
 			position.setPosition_endDate(positionDto.getPosition_endDate());
-			position.setPosition_language(positionDto.getPosition_language());
+			position.setPosition_language(languageService.getLanguageById(positionDto.getPosition_language()));
 			position.setPosition_remit(positionDto.getPosition_remit());
 			position.setPosition_startDate(positionDto.getPosition_startDate());
 			position.setPosition_title(positionDto.getPosition_title());

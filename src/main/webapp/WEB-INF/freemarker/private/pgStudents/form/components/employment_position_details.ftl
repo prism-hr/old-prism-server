@@ -52,7 +52,7 @@
 							<input type="hidden" id="${position.id}_positionId" value="${position.id}"/>
                             <input type="hidden" id="${position.id}_employer" value="${position.position_employer}"/>
                             <input type="hidden" id="${position.id}_remit" value="${position.position_remit}"/>
-                            <input type="hidden" id="${position.id}_language" value="${position.position_language}"/>
+                            <input type="hidden" id="${position.id}_language" value="${position.position_language.id}"/>
                             <input type="hidden" id="${position.id}_positionTitle" value="${position.position_title}"/>
                             <input type="hidden" id="${position.id}_positionStartDate" value="${position.position_startDate?string('dd-MMM-yyyy')}"/>
                             <input type="hidden" id="${position.id}_positionEndDate" value="${position.position_endDate?string('dd-MMM-yyyy')}"/>
@@ -173,7 +173,7 @@
                                             </#if>>
                         <option value="">Select...</option>
                          <#list model.languages as language>
-                         	<option value="${language.name}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.name> selected="selected"</#if>>${language.name}</option>
+                         	<option value="${language.id}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.id> selected="selected"</#if>>${language.name}</option>
                          </#list>
                       </select>
 						<#if model.hasError('position_language')>                           

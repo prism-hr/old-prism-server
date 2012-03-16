@@ -65,7 +65,7 @@
 				    	<div class="content-box">
 					        <div class="content-box-inner">
 			
-					            <p class="invalid">${model.message!}</p>
+					            <p style="color:red">${model.message!}</p>
 								<div id="programme-details">
 			          
 						          	<div class="row">

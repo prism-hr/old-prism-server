@@ -58,7 +58,9 @@
                 <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
               	<div>
         <#if model.hasError('personalDetails')>                           
-                <p class="invalid"><@spring.message  model.result.getFieldError('personalDetails').code /></p>                        
+        <div class="row">      	
+                <span class="invalid"><@spring.message  model.result.getFieldError('personalDetails').code /></span>
+        </div>                                
         </#if>
                 	<div class="row">
                   	<label class="label">First Name</label>

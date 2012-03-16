@@ -239,8 +239,8 @@
                 <div class="buttons">
                  <#if !model.applicationForm.isSubmitted()>
                 <a class="button" type="button" id="addressCancelButton" name="addressCancelButton">Cancel</a>
-                  	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save and Add</button>
                   	<button class="blue" type="button" id="addressSaveAndCloseButton" name="addressSaveAndCloseButton">Save and Close</button>
+                  	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save and Add</button>
                 <#else>
                     <a id="addressCloseButton" class="button blue">Close</a>  	
                 </#if>  	

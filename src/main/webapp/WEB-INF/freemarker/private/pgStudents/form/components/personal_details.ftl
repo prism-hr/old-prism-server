@@ -458,12 +458,12 @@
                  	  </div>
                 </div>-->
               	<div class="buttons">
-                  <a id="personalDetailsCloseButton"class="button blue">Close</a>
                   <#if !model.applicationForm.isSubmitted()>
 						<a class="button" type="button" id="" name="fundingCancelButton">Cancel</a>
+	                    <a id="personalDetailsCloseButton"class="button blue">Close</a>
 						<button class="blue" type="button" id="personalDetailsSaveButton" value="close">Save and Close</button>
                   <#else>
-                  		<a id="close-section-button"class="button blue">Close</a>			
+                  		<a id="personalDetailsCloseButton"class="button blue">Close</a>			
                   </#if>
                 </div>
            </form>

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -109,7 +110,7 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer appId, BindingResult result,
+	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer appId, @RequestParam(required=false) String add, BindingResult result,
 			ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
@@ -156,12 +157,14 @@ public class UpdateApplicationFormController {
 		}
 
 		modelMap.put("model", model);
-
+		if(StringUtils.isNotBlank(add)){
+			modelMap.put("add", "add");
+		}
 		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, modelMap);
 	}
 
 	@RequestMapping(value = "/addFunding", method = RequestMethod.POST)
-	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer appId, @RequestParam(required=false) String add,  BindingResult result, ModelMap modelMap) {
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
 		if (application.isSubmitted()) {
@@ -197,7 +200,9 @@ public class UpdateApplicationFormController {
 			model.setFunding(fund);
 		}
 		modelMap.put("model", model);
-
+		if(StringUtils.isNotBlank(add)){
+			modelMap.put("add", "add");
+		}
 		return new ModelAndView("private/pgStudents/form/components/funding_details", modelMap);
 	}
 	
@@ -227,7 +232,7 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/addEmploymentPosition", method = RequestMethod.POST)
-	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer appId, BindingResult result,
+	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer appId, @RequestParam(required=false) String add, BindingResult result,
 			ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
@@ -267,11 +272,14 @@ public class UpdateApplicationFormController {
 			model.setEmploymentPosition(positionDto);
 		}
 		modelMap.put("model", model);
-		return new ModelAndView(APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME, "model", model);
+		if(StringUtils.isNotBlank(add)){
+			modelMap.put("add", "add");
+		}
+		return new ModelAndView(APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME, modelMap);
 	}
 
 	@RequestMapping(value = "/editAddress", method = RequestMethod.POST)
-	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer appId, @RequestParam(required=false) String add, BindingResult result, ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
 		if (application.isSubmitted()) {
@@ -314,7 +322,9 @@ public class UpdateApplicationFormController {
 			model.setAddress(addr);
 		}
 		modelMap.put("model", model);
-
+		if(StringUtils.isNotBlank(add)){
+			modelMap.put("add", "add");
+		}
 		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, modelMap);
 	}
 
@@ -327,7 +337,7 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/refereeDetails", method = RequestMethod.POST)
-	public ModelAndView editReferee(@ModelAttribute("refereeDetails") Referee refereeDetails, BindingResult errors) {
+	public ModelAndView editReferee(@ModelAttribute("refereeDetails") Referee refereeDetails, @RequestParam(required=false) String add, BindingResult errors) {
 
 		if (refereeDetails.getApplication() != null && refereeDetails.getApplication().isSubmitted()) {
 			throw new CannotUpdateApplicationException();
@@ -355,6 +365,10 @@ public class UpdateApplicationFormController {
 		applicationPageModel.setLanguages(languageService.getAllLanguages());
 		ModelAndView modelAndView = new ModelAndView(APPLICATON_REFEREEE_VIEW_NAME, "model", applicationPageModel);
 		modelAndView.addObject("formDisplayState", "open");
+
+		if(StringUtils.isNotBlank(add)){
+			modelAndView.getModel().put("add", "add");
+		}
 		return modelAndView;
 	}
 

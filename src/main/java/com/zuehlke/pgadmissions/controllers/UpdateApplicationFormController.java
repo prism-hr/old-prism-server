@@ -140,7 +140,7 @@ public class UpdateApplicationFormController {
 			qualification.setQualificationAwardDate(qual.getQualificationAwardDate());
 			qualification.setQualificationGrade(qual.getQualificationGrade());
 			qualification.setQualificationInstitution(qual.getQualificationInstitution());
-			qualification.setQualificationLanguage(qual.getQualificationLanguage());
+			qualification.setQualificationLanguage(languageService.getLanguageById(qual.getQualificationLanguage()));
 			qualification.setQualificationLevel(qual.getQualificationLevel());
 			qualification.setQualificationProgramName(qual.getQualificationProgramName());
 			qualification.setQualificationScore(qual.getQualificationScore());

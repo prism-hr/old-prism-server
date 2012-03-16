@@ -17,6 +17,8 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.LanguageDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
@@ -44,6 +46,7 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.services.CountryService;
 
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
@@ -144,7 +147,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setProject(project);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		Address address = new AddressBuilder().application(application).country("Germany").location("1 Main Street").postCode("NW2 456").location("london")
+		CountryService countriesService = new CountryService(new CountriesDAO(sessionFactory));
+		
+		Address address = new AddressBuilder().application(application).country(countriesService.getCountryById(2)).location("1 Main Street").postCode("NW2 456").location("london")
 				.purpose(AddressPurpose.EDUCATION).startDate(new Date()).endDate(new Date()).contactAddress(AddressStatus.NO).toAddress();
 		application.setAddresses(Arrays.asList(address));
 
@@ -241,11 +246,13 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		// sessionFactory.getCurrentSession().save(application);
 		// Integer id = application.getId();
 		// flushAndClearSession();
+		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
+		
 		Qualification qualification1 = new QualificationBuilder().q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_grade("")
-				.q_institution("").q_language_of_study("").q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
+				.q_institution("").q_language_of_study(languageDAO.getLanguageById(1)).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
 				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
 		Qualification qualification2 = new QualificationBuilder().q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_grade("")
-				.q_institution("").q_language_of_study("").q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
+				.q_institution("").q_language_of_study(languageDAO.getLanguageById(2)).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
 				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
 
 		application.getQualifications().addAll(Arrays.asList(qualification1, qualification2));

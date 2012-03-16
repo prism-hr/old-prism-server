@@ -27,6 +27,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -84,12 +85,8 @@ public class UpdateApplicationFormControllerTest {
 	private RegisteredUser currentUser;
 	private Referee referee;
 	private RefereeValidator refereeValidator;
-	private LanguageService languageServiceMok;
+	private LanguageService languageServiceMock;
 	private LanguagePropertyEditor languagePropertyEditorMopck;
-
-
-	
-	
 
 
 	@SuppressWarnings("deprecation")
@@ -97,13 +94,17 @@ public class UpdateApplicationFormControllerTest {
 	public void shouldSaveNewAddress() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
+		Country country = new Country();
+		country.setName("UK");
+		EasyMock.expect(countriesServiceMock.getAllCountries()).andReturn(Arrays.asList(country));
+		EasyMock.expect(countriesServiceMock.getCountryById(6)).andReturn(country);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
+		EasyMock.replay(applicationsServiceMock, countriesServiceMock);
 		Address address = new Address();
 		address.setAddressLocation("1, Main Street, London");
 		address.setAddressPostCode("NW2345");
 		address.setAddressPurpose(AddressPurpose.RESIDENCE);
-		address.setAddressCountry("UK");
+		address.setAddressCountry(6);
 		address.setAddressStartDate(new Date(2011, 11, 11));
 		address.setAddressEndDate(new Date(2012, 11, 11));
 		address.setAddressContactAddress("YES");
@@ -115,7 +116,7 @@ public class UpdateApplicationFormControllerTest {
 		Assert.assertEquals("1, Main Street, London", addr.getLocation());
 		Assert.assertEquals("NW2345", addr.getPostCode());
 		Assert.assertEquals("Residence", addr.getPurpose().getDisplayValue());
-		Assert.assertEquals("UK", addr.getCountry());
+		Assert.assertEquals("UK", addr.getCountry().getName());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -124,12 +125,16 @@ public class UpdateApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
+		Country country = new Country();
+		country.setName("UK");
+		EasyMock.expect(countriesServiceMock.getAllCountries()).andReturn(Arrays.asList(country));
+		EasyMock.expect(countriesServiceMock.getCountryById(6)).andReturn(country);
+		EasyMock.replay(applicationsServiceMock, countriesServiceMock);
 		Address address = new Address();
 		address.setAddressLocation("1, Main Street, London");
 		address.setAddressPostCode("NW2345");
 		address.setAddressPurpose(AddressPurpose.RESIDENCE);
-		address.setAddressCountry("UK");
+		address.setAddressCountry(6);
 		address.setAddressStartDate(new Date(2011, 11, 11));
 		address.setAddressEndDate(new Date(2012, 11, 11));
 		address.setAddressContactAddress("YES");
@@ -236,12 +241,16 @@ public class UpdateApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
+		Language language = new Language();
+		language.setName("English");
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(language));
+		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(language);
+		EasyMock.replay(applicationsServiceMock, languageServiceMock);
 
 		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
 		positionDto.setPosition_employer("Mark");
 		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_language("English");
+		positionDto.setPosition_language(2);
 		positionDto.setPosition_remit("cashier");
 		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		positionDto.setPosition_title("head of department");
@@ -251,7 +260,7 @@ public class UpdateApplicationFormControllerTest {
 		Assert.assertEquals("private/pgStudents/form/components/employment_position_details",
 				modelAndView.getViewName());
 		Assert.assertEquals("English", ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
-				.getEmploymentPositions().get(0).getPosition_language());
+				.getEmploymentPositions().get(0).getPosition_language().getName());
 		Assert.assertNull(modelAndView.getModel().get("add"));
 	}
 
@@ -261,12 +270,14 @@ public class UpdateApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
+		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
+		EasyMock.replay(applicationsServiceMock, languageServiceMock);
 
 		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
 		positionDto.setPosition_employer("Mark");
 		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_language("English");
+		positionDto.setPosition_language(2);
 		positionDto.setPosition_remit("cashier");
 		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		positionDto.setPosition_title("head of department");
@@ -326,7 +337,7 @@ public class UpdateApplicationFormControllerTest {
 
 		applicationController = new UpdateApplicationFormController(applicationsServiceMock, userPropertyEditorMock,
 				datePropertyEditorMock, countriesServiceMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
-				languageServiceMok, languagePropertyEditorMopck){
+				languageServiceMock, languagePropertyEditorMopck){
 			Referee newReferee() {
 				return new Referee();
 			}
@@ -461,8 +472,10 @@ public class UpdateApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().qualification(qualification).id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
+		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
+		EasyMock.replay(applicationsServiceMock,languageServiceMock);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
 		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2,null, mappingResult,
 				new ModelMap());
@@ -477,7 +490,9 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
+		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
+		EasyMock.replay(applicationsServiceMock,languageServiceMock);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
 		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2,"add", mappingResult, new ModelMap());		
 		Assert.assertEquals("add", modelAndView.getModel().get("add"));
@@ -489,7 +504,9 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
+		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
+		EasyMock.replay(applicationsServiceMock, languageServiceMock);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
 
 		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2, null,mappingResult,
@@ -542,7 +559,9 @@ public class UpdateApplicationFormControllerTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock, qualificationValidator);
+		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
+		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
+		EasyMock.replay(applicationsServiceMock, qualificationValidator, languageServiceMock);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
 		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2, null,mappingResult,
 				new ModelMap());
@@ -570,7 +589,7 @@ public class UpdateApplicationFormControllerTest {
 
 	@Before
 	public void setUp() throws ParseException {
-		 languageServiceMok = EasyMock.createMock(LanguageService.class);
+		 languageServiceMock = EasyMock.createMock(LanguageService.class);
 		 languagePropertyEditorMopck = EasyMock.createMock(LanguagePropertyEditor.class);
 		
 		refereeValidator = EasyMock.createMock(RefereeValidator.class);
@@ -601,7 +620,7 @@ public class UpdateApplicationFormControllerTest {
 		
 		applicationController = new UpdateApplicationFormController(applicationsServiceMock, userPropertyEditorMock,
 				datePropertyEditorMock, countriesServiceMock,  refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
-				languageServiceMok, languagePropertyEditorMopck){
+				languageServiceMock, languagePropertyEditorMopck){
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}
@@ -623,7 +642,7 @@ public class UpdateApplicationFormControllerTest {
 		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
 		qualificationDto.setQualificationGrade("first");
 		qualificationDto.setQualificationInstitution("UCL");
-		qualificationDto.setQualificationLanguage("EN");
+		qualificationDto.setQualificationLanguage(2);
 		qualificationDto.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualificationDto.setQualificationProgramName("CS");
 		qualificationDto.setQualificationScore("100");
@@ -632,7 +651,7 @@ public class UpdateApplicationFormControllerTest {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		qualification = new QualificationBuilder().id(3)
 				.q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).q_grade("").q_institution("")
-				.q_language_of_study("").q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
+				.q_language_of_study(new Language()).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
 				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark")
 				.lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();

@@ -144,7 +144,9 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		qualification1.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
 		qualification1.setQualificationGrade("");
 		qualification1.setQualificationInstitution("");
-		qualification1.setQualificationLanguage("");
+		
+		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
+		qualification1.setQualificationLanguage(languageDAO.getLanguageById(1));
 		qualification1.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualification1.setQualificationProgramName("");
 		qualification1.setQualificationScore("");
@@ -157,7 +159,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		qualification2.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
 		qualification2.setQualificationGrade("");
 		qualification2.setQualificationInstitution("");
-		qualification2.setQualificationLanguage("");
+		qualification2.setQualificationLanguage(languageDAO.getLanguageById(1));
 		qualification2.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualification2.setQualificationProgramName("");
 		qualification2.setQualificationScore("");

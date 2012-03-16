@@ -140,7 +140,7 @@ public class UpdateApplicationFormController {
 			qualification.setQualificationAwardDate(qual.getQualificationAwardDate());
 			qualification.setQualificationGrade(qual.getQualificationGrade());
 			qualification.setQualificationInstitution(qual.getQualificationInstitution());
-			qualification.setQualificationLanguage(qual.getQualificationLanguage());
+			qualification.setQualificationLanguage(languageService.getLanguageById(qual.getQualificationLanguage()));
 			qualification.setQualificationLevel(qual.getQualificationLevel());
 			qualification.setQualificationProgramName(qual.getQualificationProgramName());
 			qualification.setQualificationScore(qual.getQualificationScore());
@@ -259,7 +259,7 @@ public class UpdateApplicationFormController {
 			}
 			position.setPosition_employer(positionDto.getPosition_employer());
 			position.setPosition_endDate(positionDto.getPosition_endDate());
-			position.setPosition_language(positionDto.getPosition_language());
+			position.setPosition_language(languageService.getLanguageById(positionDto.getPosition_language()));
 			position.setPosition_remit(positionDto.getPosition_remit());
 			position.setPosition_startDate(positionDto.getPosition_startDate());
 			position.setPosition_title(positionDto.getPosition_title());
@@ -307,7 +307,7 @@ public class UpdateApplicationFormController {
 			address.setApplication(application);
 			address.setLocation(addr.getAddressLocation());
 			address.setPostCode(addr.getAddressPostCode());
-			address.setCountry(addr.getAddressCountry());
+			address.setCountry(countryService.getCountryById(addr.getAddressCountry()));
 			address.setPurpose(addr.getAddressPurpose());
 			address.setStartDate(addr.getAddressStartDate());
 			address.setEndDate(addr.getAddressEndDate());

@@ -1,9 +1,9 @@
 $(document).ready(function()
 {
   
-  //$('body.old-ie button').wrap('<span />');
-	
-  // Form hint tooltips.
+  //------------------------------------------------
+	// Form hint tooltips.
+  //------------------------------------------------
   $('body span.hint').qtip({
     content: {
        text: function(api) {
@@ -12,8 +12,8 @@ $(document).ready(function()
       } 
     },
     position: {
-       my: 'bottom right', // Use the corner...
-       at: 'top center', // ...and opposite corner
+       my: 'bottom right', // where the tooltip's pointer appears
+       at: 'top center',   // where the tooltip is positioned
        viewport: $(window),
        adjust: {
           method: 'flip shift'
@@ -23,7 +23,9 @@ $(document).ready(function()
   });
   
   
-  // Expandable content...
+  //------------------------------------------------
+  // Expandable content boxes.
+  //------------------------------------------------
   $('section.folding').each(function()
   {
     var $this    = $(this);
@@ -38,6 +40,9 @@ $(document).ready(function()
 
   });
 
+  //------------------------------------------------
+	// Expanding a FORM from an existing row's arrow button.
+  //------------------------------------------------
   $('section.folding a.row-arrow').each(function()
   {
     var $this    = $(this);
@@ -52,6 +57,9 @@ $(document).ready(function()
     */
   });
   
+   //------------------------------------------------
+	 // old commenting functionality.
+	 //------------------------------------------------
   $('section.folding a.comment-open').each(function()
   {
     var $this = $(this);
@@ -89,23 +97,33 @@ $(document).ready(function()
     $target.hide();
   });
   
-  $('#progress span.more').bind('click', function()
+  //------------------------------------------------
+	// Expanding content on application progress page.
+  //------------------------------------------------
+	$('#progress span.more').bind('click', function()
   {
     var $this   = $(this);
     var $parent = $this.parent().parent();
     $('div.information', $parent).toggle();
   });
   
-  // Date pickers.
+  //------------------------------------------------
+	// Date pickers and setting their date format.
+  //------------------------------------------------
   $('input.date').datepicker({ dateFormat: 'yy/mm/dd' });
   
-  // Sortable tables.
+  //------------------------------------------------
+	// Sortable tables.
+  //------------------------------------------------
   $('table.data').tablesorter();
   $('table.data thead th').not(':first,:last').wrapInner('<span class="arrow" />');
   
 });
 
 
+//------------------------------------------------
+// Displays a GMail-style message.
+//------------------------------------------------
 function msg(message, type)
 {
   var $msg = $('#message-bar');
@@ -120,7 +138,9 @@ function msg(message, type)
   $msg.fadeIn(700).delay(3000).fadeOut(700);
 }
 
+//------------------------------------------------
 // Back to top functionality, project manager style.
+//------------------------------------------------
 function backToTop()
 {
 	$.scrollTo('#wrapper', 900);

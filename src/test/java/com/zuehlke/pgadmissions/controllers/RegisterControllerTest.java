@@ -46,7 +46,7 @@ public class RegisterControllerTest {
 		validatorMock = EasyMock.createMock(ApplicantRecordValidator.class);
 		applicantRecordServiveMock = EasyMock.createMock(ApplicantRecordService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		registerController = new RegisterController(applicantRecordServiveMock, validatorMock, userServiceMock);
+		registerController = new RegisterController(validatorMock, userServiceMock);
 	}
 	
 	@Test

@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicantRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.ApplicantRecordDTO;
+import com.zuehlke.pgadmissions.dto.RegisteredUserDTO;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicantRecordService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -58,8 +58,8 @@ public class RegisterControllerTest {
 	@Ignore
 	@Test
 	public void shouldSaveNewUser() throws NoSuchAlgorithmException{
-		RegisteredUser user = new RegisteredUserBuilder().email("meuston@gmail.com").firstName("Mark").lastName("Euston").password("1234").accountNonExpired(true).accountNonLocked(true).enabled(false).credentialsNonExpired(true).toUser();
-		ApplicantRecordDTO recordDTO = new ApplicantRecordDTO();
+		RegisteredUser user = new RegisteredUserBuilder().id(17).email("meuston@gmail.com").firstName("Mark").lastName("Euston").password("1234").accountNonExpired(true).accountNonLocked(true).enabled(false).credentialsNonExpired(true).toUser();
+		RegisteredUserDTO recordDTO = new RegisteredUserDTO();
 		recordDTO.setFirstname("Mark");
 		recordDTO.setLastname("Euston");
 		recordDTO.setEmail("meuston@gmail.com");
@@ -81,7 +81,7 @@ public class RegisterControllerTest {
 	@Test
 	public void shouldHashPassword() throws NoSuchAlgorithmException{
 		RegisteredUser user = new RegisteredUserBuilder().email("email@email.com").firstName("firstname").lastName("lastname").password("1234").toUser();
-		ApplicantRecordDTO recordDTO = new ApplicantRecordDTO();
+		RegisteredUserDTO recordDTO = new RegisteredUserDTO();
 		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
 		EasyMock.expect(userServiceMock.getRoleById(2)).andReturn(role);
 		recordDTO.setFirstname("Mark");

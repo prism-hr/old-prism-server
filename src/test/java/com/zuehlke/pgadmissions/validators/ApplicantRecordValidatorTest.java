@@ -15,24 +15,24 @@ import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.dto.ApplicantRecordDTO;
+import com.zuehlke.pgadmissions.dto.RegisteredUserDTO;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class ApplicantRecordValidatorTest {
 
-	private ApplicantRecordDTO record;
+	private RegisteredUserDTO record;
 	private ApplicantRecordValidator recordValidator;
 	private UserService userServiceMock;
 	private RegisteredUser user;
 	
 	@Test
 	public void shouldSupportApplicantRecordValidator() {
-		assertTrue(recordValidator.supports(ApplicantRecordDTO.class));
+		assertTrue(recordValidator.supports(RegisteredUserDTO.class));
 	}
 
 	@Before
 	public void setup(){
-		record = new ApplicantRecordDTO();
+		record = new RegisteredUserDTO();
 		record.setFirstname("Mark");
 		record.setLastname("Euston");
 		record.setEmail("meuston@gmail.com");

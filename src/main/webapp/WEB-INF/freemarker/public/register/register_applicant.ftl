@@ -90,7 +90,6 @@
 		            		<#if model.hasError('confirmPassword')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('confirmPassword').code /></span>                    		
                     			</#if>
-                            
 		          			</div>
 		        		</div>
 		        

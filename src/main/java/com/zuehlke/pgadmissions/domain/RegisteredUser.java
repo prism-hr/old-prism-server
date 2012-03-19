@@ -39,16 +39,37 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
-	
+
+	@Transient
+	private String rolesList;
+
+	public String getRolesList() {
+		return rolesList;
+	}
+
+	public void setRolesList() {
+		StringBuilder roles = new StringBuilder();
+		for (Role role: this.roles) {
+			roles.append(role.getAuthority());
+			roles.append(",");
+		}
+
+		String result = roles.toString();
+		if (!result.isEmpty()) {
+			result = result.substring(0, result.length()-1);
+		}
+		this.rolesList = result;
+	}
+
 	public List<Role> getRoles() {
 		return roles;
 	}
-	
+
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
+
 	@Override
 	@Id
 	@GeneratedValue
@@ -56,7 +77,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public Integer getId() {
 		return id;
 	}
-	
+
 	public String getFirstName() {
 		return firstName;
 	}
@@ -159,28 +180,28 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	}
 
 	public boolean canSee(ApplicationForm applicationForm) {
-		
+
 		if (applicationForm.getSubmissionStatus() == SubmissionStatus.UNSUBMITTED &&
 				!isInRole(Authority.APPLICANT)) {
 			return false;
 		}
-		
+
 		if(isInRole(Authority.SUPERADMINISTRATOR)){
 			return true;
 		}
-		
+
 		if (isInRole(Authority.ADMINISTRATOR)) {
 			return applicationForm.getProject().getProgram().getAdministrators().contains(this);
 		}
-		
+
 		if (isInRole(Authority.REVIEWER)) {
 			return applicationForm.getReviewers().contains(this);
 		}
-		
+
 		if (isInRole(Authority.APPROVER)) {
 			return applicationForm.getProject().getProgram().isApprover(this);
 		}
-		
+
 		if(this.equals(applicationForm.getApplicant())){
 			return true;
 		}
@@ -194,5 +215,4 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public void setActivationCode(String activationCode) {
 		this.activationCode = activationCode;
 	}
-
 }

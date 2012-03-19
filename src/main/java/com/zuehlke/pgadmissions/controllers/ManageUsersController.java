@@ -64,8 +64,13 @@ public class ManageUsersController {
 					visiblePrograms.add(program);
 					visibleUsers.addAll(program.getAdministrators());
 					visibleUsers.addAll(program.getApprovers());
+					visibleUsers.addAll(program.getReviewers());
 				}
 			}
+		}
+		
+		for (RegisteredUser visibleUser : visibleUsers) {
+			visibleUser.setRolesList();
 		}
 
 		pageModel.setPrograms(visiblePrograms);

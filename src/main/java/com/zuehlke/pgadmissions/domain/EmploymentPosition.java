@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -40,8 +41,9 @@ public class EmploymentPosition extends DomainObject<Integer>{
 	@Column(name="end_date")
 	private Date position_endDate;
 	
-	@Column(name="language")
-	private String position_language;
+	@OneToOne
+	@JoinColumn(name = "language_id")
+	private Language position_language;
 	
 	@ManyToOne
 	@JoinColumn(name="application_form_id")
@@ -97,10 +99,10 @@ public class EmploymentPosition extends DomainObject<Integer>{
 	public void setPosition_endDate(Date endDate) {
 		this.position_endDate = endDate;
 	}
-	public String getPosition_language() {
+	public Language getPosition_language() {
 		return position_language;
 	}
-	public void setPosition_language(String language) {
+	public void setPosition_language(Language language) {
 		this.position_language = language;
 	}
 

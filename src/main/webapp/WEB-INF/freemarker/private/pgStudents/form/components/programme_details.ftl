@@ -96,7 +96,7 @@
                     
                     <thead>
                     	<tr>
-	                        <th class="align-left">Supervisor</th>
+	                        <th class="align-left">Supervisor email</th>
 	                        <th>Primary</th>
 	                        <th>Aware</th>
                     	</tr>
@@ -161,6 +161,7 @@
 			</div>
 
             <div class="buttons">
+            	<button type="reset" value="cancel">Cancel</button>
             	<a class="button blue" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</a>
             	<#if !model.applicationForm.isSubmitted()>
                 <a class="button blue" id="programmeSaveButton">Save</a>

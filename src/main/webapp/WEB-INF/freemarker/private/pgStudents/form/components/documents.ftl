@@ -72,11 +72,14 @@
                     </div>  
 				</div>
 				<#if model.uploadErrorCode?? >
-					<span class="invalid"><@spring.message  model.uploadErrorCode /></span>         
+				    <div class="row">
+					   <span class="invalid"><@spring.message  model.uploadErrorCode /></span>
+					</div>            
 				</#if>				
 			</div>
 
 			<div class="buttons">
+				<button type="reset" value="cancel">Cancel</button>
                 <button class="blue" id="documentsCloseButton" value="close">Close</button>              
 			</div>
 
@@ -84,7 +87,7 @@
 	</div>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/application/documents.js'/>"></script>
 	
-	<#if model.result?? && model.result.hasErrors()  >
+<#if model.result?? && model.result.hasErrors()  >
 
 <#else >
 <script type="text/javascript">

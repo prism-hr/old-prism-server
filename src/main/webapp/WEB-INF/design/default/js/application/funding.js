@@ -5,6 +5,10 @@ $(document).ready(function(){
 		return false;
 	});
 	
+	$('a[name="deleteButton"]').click( function(){	
+		$(this).parent("form").submit();
+	});
+	
 	$('#fundingSaveCloseButton').click(function(){
 		$.post("/pgadmissions/update/addFunding", { 
 			fundingType: $("#fundingType").val(),

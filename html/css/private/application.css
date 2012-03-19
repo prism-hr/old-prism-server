@@ -20,7 +20,7 @@ section.folding footer { background: #DDD; border-top: 1px solid #999; padding: 
 
 section.folding table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%; }
 section.folding table.existing th { background: url(../../images/bg_table_head.png) repeat-x; text-align: left; }
-section.folding table.existing td { background: url(../../images/bg_table_row.jpg) repeat-x; text-align: left; }
+section.folding table.existing td { background: #EDECE8 url("../../images/bg_table_row.jpg") repeat-x 0 100%; text-align: left; }
 section.folding table.existing td, section.folding table.existing th { line-height: 25px; padding: 0 3px; vertical-align: middle; }
 
 section.folding form { background: #BBB; padding: 10px; }
@@ -60,3 +60,9 @@ section.folding div.comment .previous ul li span { display: block; }
 #view-toolbar li.top a { background-image: url(../../images/float_up.png) }
 #view-toolbar li.pdf a { background-image: url(../../images/float_download.png) }
 #view-toolbar li.print a { background-image: url(../../images/float_print.png) }
+
+/* Dynamic Data Table */
+table.data-table { border-collapse: collapse; border-spacing: 0; }
+table.data-table td, table.data-table th { padding: 3px; text-align:left; } 
+table.data-table .odd td { background-color: #FFF; } 
+table.data-table .even td { background-color: #DDD; }

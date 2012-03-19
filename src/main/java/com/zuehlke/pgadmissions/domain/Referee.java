@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 
 
@@ -65,8 +66,9 @@ public class Referee extends DomainObject<Integer>{
 	@Column(name="address_postcode")
 	private String addressPostcode;
 	
-	@Column(name="address_country")
-	private String addressCountry;
+	@OneToOne
+	@JoinColumn(name = "country_id")
+	private Country addressCountry;
 	
 	@Column(name="email")
 	private String email;
@@ -168,11 +170,11 @@ public class Referee extends DomainObject<Integer>{
 		this.addressPostcode = addressPostcode;
 	}
 
-	public String getAddressCountry() {
+	public Country getAddressCountry() {
 		return addressCountry;
 	}
 
-	public void setAddressCountry(String addressCountry) {
+	public void setAddressCountry(Country addressCountry) {
 		this.addressCountry = addressCountry;
 	}
 

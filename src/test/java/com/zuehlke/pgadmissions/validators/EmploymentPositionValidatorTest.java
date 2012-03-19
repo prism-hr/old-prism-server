@@ -24,6 +24,7 @@ public class EmploymentPositionValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("position.position_employer.notempty",mappingResult.getFieldError("position_employer").getCode());
 	}
+	
 	@Test
 	public void shouldRejectIfStartDateIsEmpty(){
 		positionDto.setPosition_startDate(null);
@@ -32,6 +33,7 @@ public class EmploymentPositionValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("position.position_startDate.notempty",mappingResult.getFieldError("position_startDate").getCode());
 	}
+	
 	@Test
 	public void shouldRejectIfLanguageIsEmpty(){
 		positionDto.setPosition_language(null);
@@ -40,6 +42,7 @@ public class EmploymentPositionValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("position.position_language.notempty",mappingResult.getFieldError("position_language").getCode());
 	}
+	
 	@Test
 	public void shouldRejectIfRemitIsEmpty(){
 		positionDto.setPosition_remit(null);
@@ -48,6 +51,7 @@ public class EmploymentPositionValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("position.position_remit.notempty",mappingResult.getFieldError("position_remit").getCode());
 	}
+	
 	@Test
 	public void shouldRejectIfTitleIsEmpty(){
 		positionDto.setPosition_title(null);
@@ -56,6 +60,7 @@ public class EmploymentPositionValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("position.position_title.notempty",mappingResult.getFieldError("position_title").getCode());
 	}
+	
 	@Test
 	public void shouldNotRejectIfEndIsEmpty(){
 		positionDto.setPosition_endDate(null);
@@ -63,6 +68,7 @@ public class EmploymentPositionValidatorTest {
 		positionValidator.validate(positionDto, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
+	
 	@Test
 	public void shouldRejectIfStartDateIsAfterEndDate() throws ParseException{
 		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
@@ -80,7 +86,7 @@ public class EmploymentPositionValidatorTest {
 		positionDto = new EmploymentPosition();
 		positionDto.setPosition_employer("Mark");
 		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_language("English");
+		positionDto.setPosition_language(3);
 		positionDto.setPosition_remit("cashier");
 		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		positionDto.setPosition_title("head of department");}

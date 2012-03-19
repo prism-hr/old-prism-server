@@ -11,6 +11,7 @@ import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -35,7 +36,8 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadReferee() throws Exception {
 
-		Referee referee = new RefereeBuilder().application(applicationForm).addressCountry("uk").addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").relationship("rel").toReferee();
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Referee referee = new RefereeBuilder().application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").relationship("rel").toReferee();
 		
 		sessionFactory.getCurrentSession().save(referee);
 		assertNotNull(referee.getId());
@@ -68,7 +70,8 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		Telephone telephone1 = new TelephoneBuilder().telephoneNumber("abc").telephoneType(PhoneType.MOBILE).toTelephone();
 		Telephone telephone2 = new TelephoneBuilder().telephoneNumber("abc").telephoneType(PhoneType.HOME).toTelephone();
 		Telephone telephone3 = new TelephoneBuilder().telephoneNumber("abc").telephoneType(PhoneType.WORK).toTelephone();
-		Referee referee = new RefereeBuilder().phoneNumbers(telephone1, telephone2).application(applicationForm).addressCountry("uk").addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").relationship("rel").toReferee();
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Referee referee = new RefereeBuilder().phoneNumbers(telephone1, telephone2).application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").relationship("rel").toReferee();
 		
 		sessionFactory.getCurrentSession().save(referee);
 		assertNotNull(telephone1.getId());
@@ -101,7 +104,8 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		Messenger messenger1 = new MessengerBuilder().messengerAddress("john17").toMessenger();
 		Messenger messenger2 = new MessengerBuilder().messengerAddress("john17").toMessenger();
 		Messenger messenger3 = new MessengerBuilder().messengerAddress("john17").toMessenger();
-		Referee referee = new RefereeBuilder().messengers(messenger1, messenger2).application(applicationForm).addressCountry("uk").addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").relationship("rel").toReferee();
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Referee referee = new RefereeBuilder().messengers(messenger1, messenger2).application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").relationship("rel").toReferee();
 		
 		sessionFactory.getCurrentSession().save(referee);
 		assertNotNull(messenger1.getId());

@@ -37,21 +37,25 @@
 	            	<#list model.applicationForm.employmentPositions as position>
 		            	<tr>
 		                    <td><a class="row-arrow" name="positionEditButton" id="position_${position.id}">-</a></td>
-		                    <td>${position.position_title}</td>
-		                    <td>${position.position_startDate?string('dd-MMM-yyyy')}</td>
-		                    <td>${position.position_endDate?string('dd-MMM-yyyy')}</td>
-		                    <td>
-		                    	<a class="button-delete" 
-		                    			type="submit">Delete</a>
-		                    </td>
+		                    <td>${position.position_title!}</td>
+		                    <td>${(position.position_startDate?string('dd-MMM-yyyy'))!}</td>
+		                    <td>${(position.position_endDate?string('dd-MMM-yyyy'))!}</td>
+		                     <td>
+		                     	 <#if !model.applicationForm.isSubmitted()>
+				                  	<form method="Post" action="<@spring.url '/deleteentity/employment'/>" style="padding:0">
+			                			<input type="hidden" name="id" value="${position.id}"/>		                		
+			                			<a name="deleteButton" class="button-delete">delete</a>
+			                		</form>
+			                		</#if>
+				        		</td>
 		                    
 							<input type="hidden" id="${position.id}_positionId" value="${position.id}"/>
-                            <input type="hidden" id="${position.id}_employer" value="${position.position_employer}"/>
-                            <input type="hidden" id="${position.id}_remit" value="${position.position_remit}"/>
-                            <input type="hidden" id="${position.id}_language" value="${position.position_language}"/>
-                            <input type="hidden" id="${position.id}_positionTitle" value="${position.position_title}"/>
-                            <input type="hidden" id="${position.id}_positionStartDate" value="${position.position_startDate?string('dd-MMM-yyyy')}"/>
-                            <input type="hidden" id="${position.id}_positionEndDate" value="${position.position_endDate?string('dd-MMM-yyyy')}"/>
+                            <input type="hidden" id="${position.id}_employer" value="${position.position_employer!}"/>
+                            <input type="hidden" id="${position.id}_remit" value="${position.position_remit!}"/>
+                            <input type="hidden" id="${position.id}_language" value="${position.position_language!}"/>
+                            <input type="hidden" id="${position.id}_positionTitle" value="${position.position_title!}"/>
+                            <input type="hidden" id="${position.id}_positionStartDate" value="${(position.position_startDate?string('dd-MMM-yyyy'))!}"/>
+                            <input type="hidden" id="${position.id}_positionEndDate" value="${(position.position_endDate?string('dd-MMM-yyyy'))!}"/>
 		                    
 		                </tr>
 		            </#list>
@@ -169,7 +173,7 @@
                                             </#if>>
                         <option value="">Select...</option>
                          <#list model.languages as language>
-                         	<option value="${language.name}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.name> selected="selected"</#if>>${language.name}</option>
+                         	<option value="${language.id}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.id> selected="selected"</#if>>${language.name}</option>
                          </#list>
                       </select>
 						<#if model.hasError('position_language')>                           
@@ -195,6 +199,7 @@
 			<div class="buttons">
 			<#if !model.applicationForm.isSubmitted()>
             	<a class="button" type="button" id="positionCancelButton" name="positionCancelButton">Cancel</a>
+            	<button class="blue" type="button" id="positionCloseButton" name="positionCloseButton">Close</button>
                 <button class="blue" type="button" value="close" id="positionSaveAndCloseButton" name="positionSaveButton">Save and Close</button>
                 <button class="blue" type="button" value="add" id="positionSaveAndAddButton" name="positionSaveAndAddButton">Save and Add</button>
             <#else>

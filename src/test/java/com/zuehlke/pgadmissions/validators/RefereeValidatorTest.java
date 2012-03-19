@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -167,7 +168,7 @@ public class RefereeValidatorTest {
 	@Before
 	public void setup(){
 		referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).email("email@test.com").firstname("bob")
-				.lastname("smith").addressCountry("uk").addressLocation("london").addressPostcode("postcode").jobEmployer("zuhlke").jobTitle("se")
+				.lastname("smith").addressCountry(new Country()).addressLocation("london").addressPostcode("postcode").jobEmployer("zuhlke").jobTitle("se")
 				.messenger(new Messenger()).phoneNumbers(new Telephone()).relationship("friend").toReferee();
 		
 		refereeValidator = new RefereeValidator();

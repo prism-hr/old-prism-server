@@ -101,7 +101,7 @@ public class QualificationValidatorTest {
 		qualificationDto.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
 		qualificationDto.setQualificationGrade("first");
 		qualificationDto.setQualificationInstitution("UCL");
-		qualificationDto.setQualificationLanguage("EN");
+		qualificationDto.setQualificationLanguage(2);
 		qualificationDto.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualificationDto.setQualificationProgramName("CS");
 		qualificationDto.setQualificationScore("100");

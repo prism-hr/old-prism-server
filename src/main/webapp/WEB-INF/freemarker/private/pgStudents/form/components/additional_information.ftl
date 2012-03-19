@@ -21,8 +21,8 @@
 
             <div class="buttons">
             	<a class="button" id="informationCancelButton" name="informationCancelButton">Cancel</a>
-                <button class="blue" type="button" id="informationSaveButton">Save</button>
-                <button class="blue" type="button" id="additionalCloseButton">Close</button>
+            	<button class="blue" type="button" id="additionalCloseButton">Close</button>
+                <button class="blue" type="button" id="informationSaveButton">Save</button>                
 			</div>
 
 		</form>

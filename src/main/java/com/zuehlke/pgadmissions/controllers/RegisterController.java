@@ -1,14 +1,21 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.math.BigInteger;
 import java.net.Authenticator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Properties;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.service.ServiceRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -16,6 +23,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -23,6 +31,7 @@ import com.zuehlke.pgadmissions.dto.ApplicantRecordDTO;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicantRecordService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utilities.MailMail;
 import com.zuehlke.pgadmissions.validators.ApplicantRecordValidator;
 
 @Controller
@@ -30,6 +39,7 @@ import com.zuehlke.pgadmissions.validators.ApplicantRecordValidator;
 public class RegisterController {
 
 	private static final String REGISTER_APPLICANT_VIEW_NAME = "public/register/register_applicant";
+	private static final String REGISTER_INFO_VIEW_NAME = "public/register/register_info";
 	private final UserService userService;
 	private final ApplicantRecordService applicantRecordService;
 	private final ApplicantRecordValidator validator;
@@ -73,6 +83,8 @@ public class RegisterController {
 		if (!errors.hasErrors()) {
 			if (record.getPassword() != null)
 				record.setPassword(createHash(record.getPassword()));
+			SecureRandom random = new SecureRandom();
+			String activationCode = new BigInteger(80, random).toString(32);
 			RegisteredUser user = new RegisteredUser();
 			user.setUsername(record.getEmail());
 			user.setFirstName(record.getFirstname());
@@ -81,18 +93,42 @@ public class RegisterController {
 			user.setAccountNonExpired(true);
 			user.setAccountNonLocked(true);
 			user.setPassword(record.getPassword());
-			user.setEnabled(true);
+			user.setEnabled(false);
+			user.setActivationCode(activationCode);
 			user.setCredentialsNonExpired(true);
 			user.getRoles().add(userService.getRoleById(2));
 			userService.save(user);
 			System.out.println("user id" + user.getId());
-
-			model.setMessage("You have been successfully registered. Please check your emails to activate your account");
+//			sendMail(user.getEmail());
+			model.setUrl("http://localhost:8080/pgadmissions/register/activateAccount?activationCode="+user.getActivationCode()+"&username="+user.getUsername());
+			model.setMessage("  You have been successfully registered. To activate your account please check your emails and click on the activation link :<a href=\""+model.getUrl()+"\"> ${"+model.getUrl()+"}</a>");
 			model.setRecord(new ApplicantRecordDTO());
-			return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
+			return new ModelAndView(REGISTER_INFO_VIEW_NAME, "model", model);
 		}
 		modelMap.put("record", record);
 		return new ModelAndView("redirect:/register", modelMap);
+	}
+
+
+	// @RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
+	// public ModelAndView activateAccountForm(){
+	// return new ModelAndView("public/login/activation_login_page");
+	// }
+
+	@RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
+	public ModelAndView activateAccountSubmit(@ModelAttribute RegisteredUser regUser,
+			@RequestParam String activationCode) {
+		RegisteredUser user = userService.getUserByUsername(regUser.getUsername());
+		RegisterPageModel model = new RegisterPageModel();
+		if (activationCode.equals(user.getActivationCode())) {
+			user.setEnabled(true);
+			userService.save(user);
+			model.setUser(user);
+			return new ModelAndView("public/login/login_page", "model", model);
+		}
+		model.setUser(user);
+		model.setMessage("The activation has failed.");
+		return new ModelAndView(REGISTER_INFO_VIEW_NAME, "model", model);
 	}
 
 	@ModelAttribute("record")

@@ -16,4 +16,9 @@ $(document).ready(function() {
 		}
 	});
 	
+	
+	$('#manageUsersButton').click(function(){
+		window.location.href = "/pgadmissions/manageUsers";
+	});
+	
 });

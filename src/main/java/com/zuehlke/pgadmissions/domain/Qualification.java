@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -36,8 +37,9 @@ public class Qualification extends DomainObject<Integer>{
 	@Column(name="institution")
 	private String qualificationInstitution;
 	
-	@Column(name="language_of_study")
-	private String qualificationLanguage;
+	@OneToOne
+	@JoinColumn(name = "language_id")
+	private Language qualificationLanguage;
 	
 	@Column(name="level")
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.QualificationLevelEnumUserType")
@@ -74,11 +76,11 @@ public class Qualification extends DomainObject<Integer>{
 		this.qualificationInstitution = q_institution;
 	}
 
-	public String getQualificationLanguage() {
+	public Language getQualificationLanguage() {
 		return qualificationLanguage;
 	}
 
-	public void setQualificationLanguage(String q_language_of_study) {
+	public void setQualificationLanguage(Language q_language_of_study) {
 		this.qualificationLanguage = q_language_of_study;
 	}
 	

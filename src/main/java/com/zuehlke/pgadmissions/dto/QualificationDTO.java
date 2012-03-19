@@ -10,7 +10,7 @@ public class QualificationDTO {
 	private Integer qualificationId;
 	private String qualificationProgramName;
 	private String qualificationInstitution;
-	private String qualificationLanguage;
+	private Integer qualificationLanguage;
 	private QualificationLevel qualificationLevel;
 	private String qualificationType;
 	private String qualificationGrade;
@@ -41,11 +41,11 @@ public class QualificationDTO {
 		this.qualificationInstitution = qualificationInstitution;
 	}
 	
-	public String getQualificationLanguage() {
+	public Integer getQualificationLanguage() {
 		return qualificationLanguage;
 	}
 	
-	public void setQualificationLanguage(String qualificationLanguage) {
+	public void setQualificationLanguage(Integer qualificationLanguage) {
 		this.qualificationLanguage = qualificationLanguage;
 	}
 	

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -34,7 +35,7 @@ public class RefereeBuilder {
 	
 	private String addressPostcode;
 	
-	private String addressCountry;
+	private Country addressCountry;
 	
 	private String email;
 	
@@ -74,7 +75,7 @@ public class RefereeBuilder {
 		this.addressPostcode = addressPostcode;
 		return this;
 	}
-	public RefereeBuilder addressCountry(String addressCountry){
+	public RefereeBuilder addressCountry(Country addressCountry){
 		this.addressCountry = addressCountry;
 		return this;
 	}

@@ -32,7 +32,8 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		application.setProject(project);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		Referee referee = new RefereeBuilder().application(application).addressCountry("dfssdf").addressLocation("sdfsdf").addressPostcode("fdsdf").email("errwe.fsd").firstname("sdsdf")
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf").addressPostcode("fdsdf").email("errwe.fsd").firstname("sdsdf")
 				.jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumbers(new TelephoneBuilder().telephoneNumber("3223").telephoneType(PhoneType.HOME).toTelephone())
 						.relationship("ERWERWER").toReferee();
 		save(application, referee);

@@ -50,6 +50,18 @@
 				    	<div class="content-box-inner">
 				        
 				        	<h1>Programme: LoLo EngD</h1>
+				        	
+				        <div class="row">
+                            <span class="label"><strong>Select Programme</strong></span>
+                                
+                            <select class="full" name="programsList" id="programsList">
+                                
+                            <option value="">Select...</option>
+                                <#list model.programs as program>
+                                    <option value="${program.id}">${program.title}</option>               
+                                </#list>
+                            </select>
+                    </div>
 				          		
 				          	<form class="roles">
 				          
@@ -93,16 +105,6 @@
 						                <td scope="col">crispy@quentin.com</td>
 						                <td scope="col">Quentin Crisp</td>
 						                <td scope="col">Interviewer, Reviewer</td>
-				              		</tr>
-				              		<tr>
-				                		<td scope="col">rich@kipling.com</td>
-				                		<td scope="col">-</td>
-				                		<td scope="col">Administrator</td>
-				              		</tr>
-				              		<tr>
-				                		<td scope="col">erol@erik.com</td>
-				                		<td scope="col">Errol Erickson</td>
-				                		<td scope="col">Approver, Interviewer</td>
 				              		</tr>
 				            	</tbody>
 				          	</table>

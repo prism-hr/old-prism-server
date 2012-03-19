@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.LanguageDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -30,9 +31,11 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldSaveAndLoadQualification() throws Exception {
 
+		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
+		
 		Qualification qualification = new QualificationBuilder().id(3)
 				.q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).q_grade("").q_institution("")
-				.q_language_of_study("").q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
+				.q_language_of_study(languageDAO.getLanguageById(1)).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
 				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
 
 		sessionFactory.getCurrentSession().save(qualification);

@@ -63,7 +63,7 @@ public class SubmitApplicationFormControllerTest {
 		form.setApplicant(student);
 		com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
 		address.setApplication(form);
-		address.setCountry("test");
+		address.setCountry(new Country());
 		address.setLocation("test");
 		address.setStartDate(new Date());
 		address.setEndDate(new Date());

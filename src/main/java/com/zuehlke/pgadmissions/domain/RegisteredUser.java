@@ -34,6 +34,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private boolean accountNonExpired;
 	private boolean accountNonLocked;
 	private boolean credentialsNonExpired;
+	private String activationCode;
 
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
@@ -164,8 +165,12 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return false;
 		}
 		
-		if(isInRole(Authority.ADMINISTRATOR)){
+		if(isInRole(Authority.SUPERADMINISTRATOR)){
 			return true;
+		}
+		
+		if (isInRole(Authority.ADMINISTRATOR)) {
+			return applicationForm.getProject().getProgram().getSuperadministrators().contains(this);
 		}
 		
 		if (isInRole(Authority.REVIEWER)) {
@@ -180,6 +185,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return true;
 		}
 		return false;
+	}
+
+	public String getActivationCode() {
+		return activationCode;
+	}
+
+	public void setActivationCode(String activationCode) {
+		this.activationCode = activationCode;
 	}
 
 }

@@ -64,7 +64,6 @@ public class RegisterController {
 			user.setAccountNonExpired(true);
 			user.setAccountNonLocked(true);
 			user.setPassword(createHash(record.getPassword()));
-			user.setPassword(record.getPassword());
 			user.setEnabled(false);
 			user.setCredentialsNonExpired(true);
 			user.getRoles().add(userService.getRoleById(2));

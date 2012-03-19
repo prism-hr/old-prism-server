@@ -165,8 +165,12 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return false;
 		}
 		
-		if(isInRole(Authority.ADMINISTRATOR)){
+		if(isInRole(Authority.SUPERADMINISTRATOR)){
 			return true;
+		}
+		
+		if (isInRole(Authority.ADMINISTRATOR)) {
+			return applicationForm.getProject().getProgram().getSuperadministrators().contains(this);
 		}
 		
 		if (isInRole(Authority.REVIEWER)) {

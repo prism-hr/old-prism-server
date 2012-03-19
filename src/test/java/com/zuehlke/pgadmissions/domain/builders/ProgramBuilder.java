@@ -14,6 +14,8 @@ public class ProgramBuilder {
 	private String description;
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
 	
+	private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
+	
 	public ProgramBuilder id(Integer id){
 		this.id = id;
 		return this;
@@ -25,6 +27,14 @@ public class ProgramBuilder {
 		}
 		return this;
 	}
+	
+	public ProgramBuilder administrator(RegisteredUser... administrators){
+		for (RegisteredUser administrator : administrators) {
+			this.administrators.add(administrator);
+		}
+		return this;
+	}
+	
 	public ProgramBuilder code(String code){
 		this.code = code;
 		return this;
@@ -46,6 +56,7 @@ public class ProgramBuilder {
 		program.setTitle(title);
 		program.setDescription(description);
 		program.getApprovers().addAll(approvers);
+		program.getSuperadministrators().addAll(administrators);
 		return program;
 	}
 }

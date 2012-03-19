@@ -29,4 +29,8 @@ public class ProgramDAO {
 		return sessionFactory.getCurrentSession().createCriteria(Program.class).list();
 	
 	}
+
+	public Program getProgramById(Integer programId) {
+		return (Program) sessionFactory.getCurrentSession().get(Program.class, programId);
+	}
 }

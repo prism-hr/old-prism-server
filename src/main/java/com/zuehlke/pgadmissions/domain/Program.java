@@ -25,7 +25,7 @@ public class Program extends DomainObject<Integer> {
 	private String description;
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
 	
-	private List<RegisteredUser> superadministrators = new ArrayList<RegisteredUser>();
+	private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
 
 	@Override
 	@Id
@@ -86,12 +86,12 @@ public class Program extends DomainObject<Integer> {
 	@ManyToMany
 	@JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "registered_user_id") })
 	@Access(AccessType.PROPERTY)
-	public List<RegisteredUser> getSuperadministrators() {
-		return superadministrators;
+	public List<RegisteredUser> getAdministrators() {
+		return administrators;
 	}
 	
-	public void setSuperadministrators(List<RegisteredUser> superadministrators) {
-		this.superadministrators = superadministrators;
+	public void setAdministrators(List<RegisteredUser> administrators) {
+		this.administrators = administrators;
 	}
 	
 	public boolean isApprover(RegisteredUser user) {

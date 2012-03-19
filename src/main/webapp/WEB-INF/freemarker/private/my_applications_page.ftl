@@ -114,7 +114,7 @@
 				          </table>
 				          
 				          <p class="right">
-				            <#if (!model.user.isInRole('APPLICANT'))>
+				            <#if (model.user.isInRole('SUPERADMINISTRATOR') || model.user.isInRole('ADMINISTRATOR'))>
                                 <a id="manageUsersButton" class="button">Manage Users</a>
                             </#if>
 				          	<a href="#" class="button">Download - coming soon</a>

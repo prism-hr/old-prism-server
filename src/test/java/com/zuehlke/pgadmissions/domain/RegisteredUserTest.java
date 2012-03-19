@@ -72,7 +72,7 @@ public class RegisteredUserTest {
 
 	@Test
 	public void shouldReturnTrueIfUserIsAdministrator(){
-		RegisteredUser administrator = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		RegisteredUser administrator = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		assertTrue(administrator.canSee(applicationForm));
 		

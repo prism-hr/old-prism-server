@@ -98,9 +98,9 @@
 				            	<label>Application Number</label>
 				              <input id="applicationNumber" disabled size="20" value="${model.applicationForm.id?string("######")}" />
 				            </div>
-				            
+				        <!--    
 				            <#include "/private/staff/application/parts/supervisor_info.ftl"/>
-				            
+				            -->
 			          	</div>
 			          
 			          <hr />

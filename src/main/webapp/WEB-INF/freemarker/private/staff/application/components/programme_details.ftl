@@ -59,10 +59,11 @@
 
             <div>
             	
-            	<h3>Supervision</h3>
+            
             	
             	  <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
             	  <div class="row">
+            	  	 <label class="label">Supervision</label>
             	   <div class="field">
             	       ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor}
             	       <br/>

@@ -47,7 +47,6 @@ public class ApplicantRecordValidator implements Validator {
 		}
 		List<RegisteredUser> allUsers = userService.getAllUsers();
 		for (RegisteredUser user : allUsers) {
-			System.out.println(user.getUsername());
 			if(user.getEmail().equals(record.getEmail()))
 				errors.rejectValue("email", "record.email.alreadyexists");
 		}

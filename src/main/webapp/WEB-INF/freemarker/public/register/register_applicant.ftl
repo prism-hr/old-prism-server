@@ -36,7 +36,6 @@
 			      	<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png'/>" alt="" /></div>
 			      	<div class="tagline">Your Gateway to<br />Research Opportunities</div>
 			    </header>
-	   			<p style="color: red;"> ${model.message!}</p>
 		    	<!-- New user form. -->
 		    	<form action= "/pgadmissions/register/submit" method="POST">
 		    		<input id="recordId" type="hidden" name="recordId" />
@@ -47,10 +46,9 @@
 		        			<label for="field_first_name">First name</label>
 		          			<div class="field">
 		            			<input id="firstname" type="text" name="firstname" value="${model.record.firstname!}" />
-		            		<#if model.firstnameErrorCode?? >
-		            			firs
-								<span class="invalid"><@spring.message  model.firstnameErrorCode /></span>         
-							</#if>
+		            			<#if model.hasError('firstname')>                    		
+                    				<span class="invalid"><@spring.message  model.result.getFieldError('firstname').code /></span>                    		
+                    			</#if>
 		          			
 		          			</div>
 		        		</div>
@@ -59,9 +57,9 @@
 		        			<label for="field_surname">Last name</label>
 		          			<div class="field">
 		            			<input id="lastname" type="text" name="lastname" value="${model.record.lastname!}" />
-		            		<#if model.lastnameErrorCode?? >
-								<span class="invalid"><@spring.message  model.lastnameErrorCode /></span>         
-							</#if>
+		            		<#if model.hasError('lastname')>                    		
+                    				<span class="invalid"><@spring.message  model.result.getFieldError('lastname').code /></span>                    		
+                    			</#if>
 		          			</div>
 		        		</div>
 		        
@@ -69,9 +67,9 @@
 		        			<label for="field_email">Email Address</label>
 		          			<div class="field">
 		            			<input id="email" type="text" name="email" value="${model.record.email!}" />
-		            		<#if model.emailErrorCode?? >
-								<span class="invalid"><@spring.message  model.emailErrorCode /></span>         
-							</#if>
+		            		<#if model.hasError('email')>                    		
+                    				<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                    		
+                    			</#if>
 		          			</div>
 		        		</div>
 		        
@@ -79,9 +77,9 @@
 		        			<label for="field_password">Password</label>
 		          			<div class="field">
 		            			<input id="password" type="password" name="password" />
-		            		<#if model.passwordErrorCode?? >
-								<span class="invalid"><@spring.message  model.passwordErrorCode /></span>         
-							</#if>
+		            	<#if model.hasError('password')>                    		
+                    				<span class="invalid"><@spring.message  model.result.getFieldError('password').code /></span>                    		
+                    			</#if>
 		          			</div>
 		        		</div>
 		        
@@ -89,9 +87,9 @@
 		        			<label for="field_password_confirm">Confirm Password</label>
 		          			<div class="field">
 		            			<input id="confirmPassword" type="password" name="confirmPassword" />
-		            		<#if model.confirmPasswordErrorCode?? >
-								<span class="invalid"><@spring.message  model.confirmPasswordErrorCode /></span>         
-							</#if>
+		            		<#if model.hasError('confirmPassword')>                    		
+                    				<span class="invalid"><@spring.message  model.result.getFieldError('confirmPassword').code /></span>                    		
+                    			</#if>
                             
 		          			</div>
 		        		</div>

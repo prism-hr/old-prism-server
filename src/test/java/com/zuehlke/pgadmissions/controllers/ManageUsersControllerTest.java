@@ -11,17 +11,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.services.ProgramsService;
 
 
 public class ManageUsersControllerTest {
 
 	
 	private RegisteredUser currentUser;
+	private ProgramsService programsServiceMock;
+	private ManageUsersController manageUsersController;
 
 	@Test
 	public void shouldReturnCorrectView() {
-		ManageUsersController userController = new ManageUsersController();
-		Assert.assertEquals("private/staff/superAdmin/assign_roles_page", userController.getUsersPage().getViewName());
+		Assert.assertEquals("private/staff/superAdmin/assign_roles_page", manageUsersController.getUsersPage().getViewName());
 	}
 	
 	@Before
@@ -29,6 +31,9 @@ public class ManageUsersControllerTest {
 
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		programsServiceMock = EasyMock.createMock(ProgramsService.class);
+		manageUsersController = new ManageUsersController(programsServiceMock);
+
 
 		authenticationToken.setDetails(currentUser);
 		SecurityContextImpl secContext = new SecurityContextImpl();
@@ -40,4 +45,5 @@ public class ManageUsersControllerTest {
 	public void tearDown() {
 		SecurityContextHolder.clearContext();
 	}
+	
 }

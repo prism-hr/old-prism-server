@@ -47,14 +47,14 @@ $(document).ready(function(){
 	});
 	
 	$('#addSupervisorButton').on('click', function(){
-		if($('#supervisorEmail').val() =="Email adderss" || $('#supervisorEmail').val().trim()== ''){
-			alert("Please enter an email address");
-			return;
+		if( $('#supervisorEmail').val() && $('#supervisorEmail').val() !="Email address" ){
+			
+		
+			$('#supervisor_div').append('<span name="supervisor_span">'+ 
+					$('#supervisorEmail').val()+ ", Primary:" + $('#primarySupervisor').val() +", Aware:" + $('#awareSupervisor').val() +'<a class="button-delete">delete</a>'+
+					'<input type="hidden" name="supervisors" value=' +"'" + '{"email":"' +  $('#supervisorEmail').val()+ '", "primarySupervisor":"' + $('#primarySupervisor').val() + '", "awareSupervisor":"' + $('#awareSupervisor').val()+ '"} ' + "'" + "/>"									
+					+'<br/></span>');
 		}
-		$('#supervisor_div').append('<span name="supervisor_span">'+ 
-				$('#supervisorEmail').val()+ ", Primary:" + $('#primarySupervisor').val() +", Aware:" + $('#awareSupervisor').val() +'<a class="button-delete">delete</a>'+
-				'<input type="hidden" name="supervisors" value=' +"'" + '{"email":"' +  $('#supervisorEmail').val()+ '", "primarySupervisor":"' + $('#primarySupervisor').val() + '", "awareSupervisor":"' + $('#awareSupervisor').val()+ '"} ' + "'" + "/>"									
-				+'<br/></span>');
 	})
 	
 	$('#programmeCloseButton').click(function(){

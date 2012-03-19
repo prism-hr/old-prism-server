@@ -44,14 +44,21 @@
 				                  	<td>${qualification.qualificationGrade!}</td>
 				                  	<td>${qualification.qualificationInstitution!}</td>
 				                  	<td>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
-				                  	<td><a class="button-delete" href="#">delete</a></td>
+				                  	  <td>
+				                  	  	   <#if !model.applicationForm.isSubmitted()>
+						                  	<form method="Post" action="<@spring.url '/deleteentity/qualification'/>" style="padding:0">
+					                			<input type="hidden" name="id" value="${qualification.id}"/>		                		
+					                			<a name="deleteButton" class="button-delete">delete</a>
+					                		</form>
+					                		</#if>
+						        		</td>
 			                  	</tr>
 			                  	
                              	<input type="hidden" id="${qualification.id!}_qualificationIdDP" value="${qualification.id!}"/>
                              	<input type="hidden" id="${qualification.id!}_qualificationInstitutionDP" value="${qualification.qualificationInstitution!}"/> 
                            		<input type="hidden" id="${qualification.id!}_qualificationProgramNameDP" value="${qualification.qualificationProgramName!}"/> 
                              	<input type="hidden"  id="${qualification.id!}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/> 
-                            	<input type="hidden"  id="${qualification.id!}_qualificationLanguageDP" value="${qualification.qualificationLanguage!}"/> 
+                            	<input type="hidden"  id="${qualification.id!}_qualificationLanguageDP" value="${qualification.qualificationLanguage.id!}"/> 
                             	<input type="hidden"  id="${qualification.id!}_qualificationLevelDP" value="${qualification.qualificationLevel!}"/> 
                              	<input type="hidden"  id="${qualification.id!}_qualificationTypeDP" value="${qualification.qualificationType!}"/> 
                              	<input type="hidden"  id="${qualification.id!}_qualificationGradeDP" value="${qualification.qualificationGrade!}"/> 
@@ -134,22 +141,17 @@
                     		<span class="label">Language of Study</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
-                      			<#if !model.applicationForm.isSubmitted()>
                       			<select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${model.qualification.qualificationLanguage!}"
                       			 <#if model.applicationForm.isSubmitted()>
                                                 disabled="disabled"
                                             </#if>>
                         		<option value="">Select...</option>
                          			<#list model.languages as language>
-                         				<option value="${language.name}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.name> selected="selected"</#if>>${language.name}</option>
+                         				<option value="${language.id}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.id> selected="selected"</#if>>${language.name}</option>
                          			</#list>
                       			</select>
 								<#if model.hasError('qualificationLanguage')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationLanguage').code /></span>                    		
-                    			</#if>
-                    			<#else>
-                    			 <input readonly="readonly" id="qualificationLanguage" class="full" type="text" 
-                                                                value="${model.qualification.qualificationLanguage!}"/>
                     			</#if>
 
                     		</div>
@@ -265,6 +267,7 @@
 		        	<div class="buttons">
 		        	<#if !model.applicationForm.isSubmitted()>
 		            	<a class="button" id="qualificationCancelButton" name="qualificationCancelButton">Cancel</a>
+		            	<button class="blue" type="button" id="qualificationsCloseButton" name="qualificationsCloseButton">Close</button>
 		                <button class="blue" type="button" id="qualificationSaveCloseButton"  name="id="qualificationSaveCloseButton"" value="close">Save and Close</button>
 		                <button id="qualificationsSaveButton" class="blue" type="button" value="add">Save and Add</button>
 		                <#else>
@@ -280,8 +283,7 @@
  
  
 <#if (model.result?? && model.result.hasErrors() ) || add??>
-${add}
-${model.result}
+
 <#else >
 <script type="text/javascript">
 	$(document).ready(function(){

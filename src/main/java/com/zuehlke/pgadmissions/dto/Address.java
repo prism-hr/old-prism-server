@@ -8,7 +8,7 @@ public class Address {
 
 	private String addressLocation;
 	private String addressPostCode;
-	private String addressCountry;
+	private Integer addressCountry;
 	private Date addressStartDate;
 	private Date addressEndDate;
 	private AddressPurpose addressPurpose;
@@ -32,11 +32,11 @@ public class Address {
 		this.addressPostCode = addressPostCode;
 	}
 	
-	public String getAddressCountry() {
+	public Integer getAddressCountry() {
 		return addressCountry;
 	}
 	
-	public void setAddressCountry(String addressCountry) {
+	public void setAddressCountry(Integer addressCountry) {
 		this.addressCountry = addressCountry;
 	}
 	

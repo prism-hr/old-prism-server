@@ -11,57 +11,23 @@
 <input type="hidden" id="submissionStatus" value="${model.applicationForm.submissionStatus}"/>
 <#-- Personal Details Rendering -->
 <!-- Personal details -->
-	<h2 id="personalDetails-H2" class="open">
+	<h2 id="personalDetails-H2">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 		Personal Details
 	</h2>
 	
-    <div id="personal-details-section" class="open">
-    
-    	<#--
-    	<#if hasPersonalDetails>
-			<table class="existing">
-	              	<colgroup>
-	                	<col style="width: 30px" />
-	                	<col style="width: 170px" />
-	                	<col style="width: 200px" />
-	                	<col />
-	                	<col style="width: 30px" />
-	                	<col style="width: 30px" />
-	                </colgroup>
-	              	<thead>
-	                	<tr>
-	                  	<th colspan="2">First name</th>
-	                    <th>Surname</th>
-	                    <th>Email</th>
-	                    <th colspan="2">&nbsp;</th>
-	                  </tr>
-	                </thead>
-				<tbody>
-					<#list model.applicationForm.personalDetails as personalDetails>
-					<tr>
-				    	<td><a class="row-arrow" href="#">-</a></td>
-				        <td>${model.applicationForm.personalDetails.firstName!}</td>
-				        <td>${model.applicationForm.personalDetails.lastName!}</td>
-				        <td>${model.applicationForm.personalDetails.email!}</td>
-	                  	<td><a class="button-edit" href="#">edit</a></td>
-	                  	<td><a class="button-close" href="#">close</a></td>
-				    </tr>
-				    </#list>
-				</tbody>
-			</table>
-		</#if>
-		-->
-		<form id ="UploadForm" enctype="multipart/form-data" method="post" action="">		
+    <div >    
+
+		<form>		
 				<input type="hidden" name="id" id="id" value="${(model.applicationForm.personalDetails.id?string("######"))!}"/>
 				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id?string("######")}"/>
-                <input type="hidden" id="form-display-state" value="${formDisplayState}"/>
+                <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
               	<div>
-        <#if model.hasError('personalDetails')>                           
-        <div class="row">      	
-                <span class="invalid"><@spring.message  model.result.getFieldError('personalDetails').code /></span>
-        </div>                                
-        </#if>
+		        <#if model.hasError('personalDetails')>                           
+		        <div class="row">      	
+		                <span class="invalid"><@spring.message  model.result.getFieldError('personalDetails').code /></span>
+		        </div>                                
+		        </#if>
                 	<div class="row">
                   	<label class="label">First Name</label>
                     <span class="hint"></span>
@@ -156,7 +122,7 @@
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
-                  	  				<#if nationality.primary><label>This is my primary nationality</label>"</#if>
+                  	  				<#if nationality.primary><label>This is my primary nationality</label></#if>
                   	  			<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
                   	  			</div>
                   	  		</div>
@@ -220,7 +186,7 @@
 	                      <#if model.hasError('maternalGuardianNationalities')>                         
                                 <span class="invalid"><@spring.message  model.result.getFieldError('maternalGuardianNationalities').code /></span>                           
                        	 </#if>
-	                      	 <label><input type="radio" id="primaryMaternalNationality"/> This is her primary nationality</label>              
+	                      	 <label><input type="radio" id="primaryMaternalNationality" name = "primaryMaternalNationality"/> This is her primary nationality</label>              
 	                   	 </div>
                 	</div>
                 	
@@ -261,7 +227,7 @@
 	                          <#if model.hasError('paternalGuardianNationalities')>                         
                                 <span class="invalid"><@spring.message  model.result.getFieldError('paternalGuardianNationalities').code /></span>                           
                        	 </#if>
-	                      	 <label><input type="radio" id="primaryPaternalNationality"/> This is his primary nationality</label>              
+	                      	 <label><input type="radio" id="primaryPaternalNationality" name="primaryPaternalNationality"/> This is his primary nationality</label>              
 	                   	 </div>
                 	</div>
                 	                     
@@ -391,7 +357,7 @@
 	                  	  		<div class="row">
 	                  	  	 		<span class="label">Telephone</span>    
 	                  				<div class="field">
-	                  					<label class="full"> ${phoneNumber.telephoneType.displayValue}</label>
+	                  					<label class="half"> ${phoneNumber.telephoneType.displayValue}</label>
 	                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
 	                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
 	                  	  			</div>
@@ -429,7 +395,7 @@
                   	  		<div class="row">
                   	  	 		<span class="label">Skype</span>    
                   				<div class="field">
-                  					<label class="full">${messenger.messengerAddress}</label> 
+                  					<label class="half">${messenger.messengerAddress}</label> 
                   	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
                   	  			</div>                  	  			
                   	  		</div>   
@@ -446,22 +412,13 @@
                     </div>
                   </div>
                 </div>
-                <!--
-                <div>
-					<div class="row">
-                  		<span class="label">Supporting Document</span>
-                   	 	<span class="hint"></span>
-                   		 <div class="field">
-                     	 	<input id ="primaryNationalityDocument" type="file" name="file"/>         
-                     		<a class="button" id="primaryNationalityUploadButton">Upload</a>                     		  
-                 	  	</div>
-                 	  </div>
-                </div>-->
+      
               	<div class="buttons">
                   <#if !model.applicationForm.isSubmitted()>
-						<a class="button" type="button" id="" name="fundingCancelButton">Cancel</a>
-	                    <a id="personalDetailsCloseButton"class="button blue">Close</a>
-						<button class="blue" type="button" id="personalDetailsSaveButton" value="close">Save and Close</button>
+                  		<button type="reset" value="cancel">Cancel</button>
+						<!--<a class="button" type="button" id="cancel" name="personalDetailsCancelButton">Cancel</a>-->						
+	                    <a id="personalDetailsCloseButton" class="button blue">Close</a>
+						<button class="blue" type="button" id="personalDetailsSaveButton" value="close">Save</button>
                   <#else>
                   		<a id="personalDetailsCloseButton"class="button blue">Close</a>			
                   </#if>
@@ -472,11 +429,11 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>
 
-		<#if model.result?? && model.result.hasErrors()  >
+<#if model.result?? && model.result.hasErrors()  >
 
 <#else >
 <script type="text/javascript">
-	$(document).ready(function(){
+	$(document).ready(function(){	
 		$('#personalDetails-H2').trigger('click');
 	});
 </script>

@@ -41,7 +41,14 @@
 		                  	<td>${funding.type.displayValue}</td>
 		                  	<td>${funding.description}</td>
 		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
-		                  	<td><a class="button-delete" href="#">delete</a></td>
+		                  	      <td>
+		                  	      	 <#if !model.applicationForm.isSubmitted()>
+				                  	<form method="Post" action="<@spring.url '/deleteentity/funding'/>" style="padding:0">
+			                			<input type="hidden" name="id" value="${funding.id}"/>		                		
+			                			<a name="deleteButton" class="button-delete">delete</a>
+			                		</form>
+			                		</#if>
+				        		</td>
 		                  	
 		                  	<!-- Non-rendering data -->
 							<input type="hidden" id="${funding.id}_fundingIdDP" value="${funding.id}"/>
@@ -94,9 +101,9 @@
 					<div class="field">
 				    <#if !model.applicationForm.isSubmitted()>
                     	<input id="fundingDescription" name="fundingDescription" class="full" type="text" value="${model.funding.fundingDescription!}" />
-                    <#if model.hasError('fundingDescription')>                           
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
-                    </#if>
+	                    <#if model.hasError('fundingDescription')>                           
+	                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
+	                    </#if>
                     <#else>
                         <input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${model.funding.fundingDescription!}" />
                     </#if>
@@ -155,6 +162,7 @@
         <#if !model.applicationForm.isSubmitted()>
             	
             	<a class="button" type="button" id="fundingCancelButton" name="fundingCancelButton">Cancel</a>
+            	<button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>
 				<button class="blue" type="button" id="fundingSaveCloseButton" name="fundingSaveCloseButton" value="close">Save and Close</button>
                 <button class="blue" type="button" id="fundingSaveAddButton" name="fundingSaveAddButton" value="add">Save and Add</button>
               <#else>

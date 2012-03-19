@@ -40,12 +40,19 @@
 				                <td>${address.location}, ${address.postCode}</td>
 				                <td>${address.startDate?string('dd-MMM-yyyy')}</td>
 				                <td>${(address.endDate?string('dd-MMM-yyyy'))!}</td>
-				                <td><a class="button-delete" type="submit">Delete</a></td>
+				                <td>
+				                 <#if !model.applicationForm.isSubmitted()>
+				                  	<form method="Post" action="<@spring.url '/deleteentity/address'/>" style="padding:0">
+			                			<input type="hidden" name="id" value="${address.id}"/>		                		
+			                			<a name="deleteButton" class="button-delete">delete</a>
+			                		</form>
+			                		</#if>
+				        </td>
 				                
 								<input type="hidden" id="${address.id}_addressIdDP" value="${address.id}"/>
 	                            <input type="hidden" id="${address.id}_locationDP" value="${address.location}"/>
 	                            <input type="hidden" id="${address.id}_postCodeDP" value="${address.postCode}"/>
-	                            <input type="hidden" id="${address.id}_countryDP" value="${address.country}"/>
+	                            <input type="hidden" id="${address.id}_countryDP" value="${address.country.id}"/>
 	                            <input type="hidden" id="${address.id}_startDateDP" value="${address.startDate?string('dd-MMM-yyyy')}"/>
 	                            <input type="hidden" id="${address.id}_endDateDP" value="${(address.endDate?string('dd-MMM-yyyy'))!}"/>
 	                            <input type="hidden" id="${address.id}_purposeDP" value="${address.purpose}"/>
@@ -121,7 +128,7 @@
                             </#if>>
                             <option value="">Select...</option>
                             	<#list model.countries as country>
-                                	<option value="${country.name}" <#if model.address.addressCountry?? && model.address.addressCountry == country.name> selected="selected"</#if>>${country.name}</option>               
+                                	<option value="${country.id}" <#if model.address.addressCountry?? && model.address.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
                             	</#list>
                             </select>
                             
@@ -238,7 +245,8 @@
 
                 <div class="buttons">
                  <#if !model.applicationForm.isSubmitted()>
-                <a class="button" type="button" id="addressCancelButton" name="addressCancelButton">Cancel</a>
+               		<a class="button" type="button" id="addressCancelButton" name="addressCancelButton">Cancel</a>
+               		<button class="blue" type="button" id="addressCloseButton" name="addressCloseButton">Close</button>
                   	<button class="blue" type="button" id="addressSaveAndCloseButton" name="addressSaveAndCloseButton">Save and Close</button>
                   	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save and Add</button>
                 <#else>
@@ -248,7 +256,7 @@
 
 			</form>
 	</div>
-	<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/address.js'/>"></script>
 

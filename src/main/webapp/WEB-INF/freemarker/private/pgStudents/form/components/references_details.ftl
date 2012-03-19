@@ -44,7 +44,15 @@
 				                    <td>${referee.lastname!}</td>
 				                    <td>${referee.jobTitle!}</td>
 				                    <td>${referee.email!}</td>
-				                    <td><a class="button-delete" type="submit">Delete</a></td>
+				                     	  <td>
+				                     	 <#if !model.applicationForm.isSubmitted()>
+						                  	<form method="Post" action="<@spring.url '/deleteentity/referee'/>" style="padding:0">
+					                			<input type="hidden" name="id" value="${referee.id}"/>		                		
+					                			<a name="deleteButton" class="button-delete">delete</a>
+					                		</form>
+					                		</#if>
+						        		</td
+				                    
                                     <input type="hidden" id="${referee.id!}_refereeId" value="${referee.id!}"/>
                                     <input type="hidden" id="${referee.id!}_firstname" value="${referee.firstname!}"/>
                                     <input type="hidden" id="${referee.id!}_lastname" value="${referee.lastname!}"/>
@@ -53,14 +61,14 @@
                                     <input type="hidden" id="${referee.id!}_jobTitle" value="${referee.jobTitle!}"/>
                                     <input type="hidden" id="${referee.id!}_addressLocation" value="${referee.addressLocation!}"/>
                                     <input type="hidden" id="${referee.id!}_addressPostcode" value="${referee.addressPostcode!}"/>
-                                    <input type="hidden" id="${referee.id!}_addressCountry" value="${referee.addressCountry!}"/>
+                                    <input type="hidden" id="${referee.id!}_addressCountry" <#if referee.addressCountry??> value="${referee.addressCountry.id!}" </#if>/>
                                     <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
 									<#list referee.phoneNumbers! as phoneNumber>
 										<span name="${referee.id!}_hiddenPhones" style="display:none" >
 			                  	  		<div class="row">
 			                  	  	 		<span class="label">Telephone</span>    
 			                  				<div class="field">
-			                  					<label class="full"> ${phoneNumber.telephoneType.displayValue}</label>
+			                  					<label class="half"> ${phoneNumber.telephoneType.displayValue}</label>
 			                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
 			                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
 			                  	  			</div>
@@ -77,7 +85,7 @@
 	                   		 			<div class="row">
 			                  	  	 		<span class="label">Skype</span>    
 			                  				<div class="field">
-			                  					<label class="full">${messenger.messengerAddress}</label> 
+			                  					<label class="half">${messenger.messengerAddress}</label> 
 			                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
 			                  	  			</div>                  	  			
 		                  	  			</div>   
@@ -236,13 +244,13 @@
                     		<span class="label">Country</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<select class="full" name="ref_address_country" id="ref_address_country" value="${model.referee.addressCountry!}"
+                    		<select class="full" name="ref_address_country" id="ref_address_country"
                             <#if model.applicationForm.isSubmitted()>
                                             disabled="disabled"
                             </#if>>
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.name}" <#if model.referee.addressCountry?? && model.referee.addressCountry == country.name> selected="selected"</#if>>${country.name}</option>               
+                                    <option value="${country.id}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
                                 </#list>
                             </select>
                     		</div>
@@ -278,7 +286,7 @@
 		                  	  		<div class="row">
 		                  	  	 		<span class="label">Telephone</span>    
 		                  				<div class="field">
-		                  					<label class="full"> ${phoneNumber.telephoneType.displayValue}</label>
+		                  					<label class="half"> ${phoneNumber.telephoneType.displayValue}</label>
 		                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
 		                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
 		                  	  			</div>
@@ -295,7 +303,7 @@
                     		
                     		<#if !model.applicationForm.isSubmitted()>
                     		<div class="field">
-                    		<select class="full" id="phoneTypeRef">
+                    		<select class="half" id="phoneTypeRef">
                     			 <#list model.phoneTypes as phoneType >
                       				<option value="${phoneType}">${phoneType.displayValue}</option>
                       			</#list>
@@ -319,7 +327,7 @@
 	                   			<div class="row">
 	                  	  	 		<span class="label">Skype</span>    
 	                  				<div class="field">
-	                  					<label class="full">${messenger.messengerAddress}</label> 
+	                  					<label class="half">${messenger.messengerAddress}</label> 
 	                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
 	                  	  			</div>                  	  			
 	                  	  		</div>   
@@ -334,7 +342,7 @@
 	                    	
 	                    	<#if !model.applicationForm.isSubmitted()>
 	                    	<div class="field">
-	                    	<input class="full" type="text" placeholder="Skype address" id="messengerAddressRef" />
+	                    	<input class="half" type="text" placeholder="Skype address" id="messengerAddressRef" />
 	                      		<a id="addMessengerRefButton" class="button blue" style="width: 110px;">Add Skype</a>
 	                      	</div>	
 	                      	</#if>	
@@ -345,6 +353,7 @@
                 	<div class="buttons">
                 	 <#if !model.applicationForm.isSubmitted()>
                   		 <a class="button" type="button" id="refereeCancelButton" name="refereeCancelButton">Cancel</a>
+                  		 <button class="blue" type="button" id="refereeCloseButton" name="refereeCloseButton">Close</button>
                   		<button class="blue" type="button" value="close" id="refereeSaveButton">Save and Close</button>
                   		<button class="blue" type="button" id="refereeSaveAndAddButton" value="add">Save and Add</button>
                   	 <#else>

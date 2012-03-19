@@ -22,10 +22,10 @@ public class RefereeValidator implements Validator {
 		if (!EmailValidator.getInstance().isValid(referee.getEmail())) {
 			errors.rejectValue("email", "referee.email.invalid");
 		}
-		if((referee.getAddressCountry()==null || referee.getAddressCountry().isEmpty()) && ( referee.getAddressLocation()!=null && !referee.getAddressLocation().isEmpty() || referee.getAddressPostcode()!=null && !referee.getAddressPostcode().isEmpty() )){
+		if((referee.getAddressCountry()==null) && ( referee.getAddressLocation()!=null && !referee.getAddressLocation().isEmpty() || referee.getAddressPostcode()!=null && !referee.getAddressPostcode().isEmpty() )){
 					errors.rejectValue("addressCountry", "referee.addressCountry.notempty");
 		}
-		if((referee.getAddressLocation() == null || referee.getAddressLocation().isEmpty() )  && (referee.getAddressCountry()!=null && !referee.getAddressCountry().isEmpty() || referee.getAddressPostcode()!=null && !referee.getAddressPostcode().isEmpty())){
+		if((referee.getAddressLocation() == null || referee.getAddressLocation().isEmpty() )  && (referee.getAddressCountry()!=null || referee.getAddressPostcode()!=null && !referee.getAddressPostcode().isEmpty())){
 			errors.rejectValue("addressLocation", "referee.addressLocation.notempty");
 		}
 		if((referee.getAddressPostcode() == null || referee.getAddressPostcode().isEmpty()) && (referee.getAddressLocation()!=null && !referee.getAddressLocation().isEmpty() || referee.getAddressLocation()!=null && !referee.getAddressLocation().isEmpty())){

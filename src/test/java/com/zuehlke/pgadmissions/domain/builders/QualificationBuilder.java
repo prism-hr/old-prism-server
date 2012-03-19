@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
@@ -10,7 +11,7 @@ public class QualificationBuilder {
 
 	private String q_name_of_programme;
 	private String q_institution;
-	private String q_language_of_study;
+	private Language q_language_of_study;
 	private QualificationLevel q_level;
 	private String q_type;
 	private String q_grade;
@@ -43,7 +44,7 @@ public class QualificationBuilder {
 	}
 
 
-	public QualificationBuilder q_language_of_study(String q_language_of_study) {
+	public QualificationBuilder q_language_of_study(Language q_language_of_study) {
 		this.q_language_of_study = q_language_of_study;
 		return this;
 	}

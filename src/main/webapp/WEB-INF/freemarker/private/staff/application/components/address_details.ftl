@@ -44,7 +44,7 @@
 				                <input type="hidden" id="${address.id}_addressIdDP" value="${address.id}"/>
                                 <input type="hidden" id="${address.id}_locationDP" value="${address.location}"/>
                                 <input type="hidden" id="${address.id}_postCodeDP" value="${address.postCode}"/>
-                                <input type="hidden" id="${address.id}_countryDP" value="${address.country}"/>
+                                <input type="hidden" id="${address.id}_countryDP" value="${address.country.id}"/>
                                 <input type="hidden" id="${address.id}_startDateDP" value="${address.startDate?string('dd-MMM-yyyy')}"/>
                                 <input type="hidden" id="${address.id}_endDateDP" value="${(address.endDate?string('dd-MMM-yyyy'))!}"/>
                                 <input type="hidden" id="${address.id}_purposeDP" value="${address.purpose}"/>
@@ -88,8 +88,9 @@
 	                    <div class="field">
 	                       <select class="full" name="addressCountry" id="addressCountry"
                                             disabled="disabled">
+                            <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.name}">${country.name}</option>               
+                                    <option value="${country.id}" <#if model.address.addressCountry?? && model.address.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
                                 </#list>
                             </select>
 						</div>

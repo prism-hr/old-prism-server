@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -32,7 +33,9 @@ public class Address extends DomainObject<Integer>{
 	@Column(name="post_code")
 	private String postCode;
 
-	private String country;
+	@OneToOne
+	@JoinColumn(name = "country_id")
+	private Country country;
 	
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AddressPurposeEnumUserType")
 	private AddressPurpose purpose;
@@ -80,11 +83,11 @@ public class Address extends DomainObject<Integer>{
 		this.postCode = postCode;
 	}
 
-	public String getCountry() {
+	public Country getCountry() {
 		return country;
 	}
 
-	public void setCountry(String country) {
+	public void setCountry(Country country) {
 		this.country = country;
 	}
 

@@ -60,12 +60,3 @@ section.folding div.comment .previous ul li span { display: block; }
 #view-toolbar li.top a { background-image: url(../../images/float_up.png) }
 #view-toolbar li.pdf a { background-image: url(../../images/float_download.png) }
 #view-toolbar li.print a { background-image: url(../../images/float_print.png) }
-
-/* Dynamic Data Table */
-table.data-table .odd td{
-	background-color: white;
-} 
-
-table.data-table .even td{
-	background-color: gray;
-}

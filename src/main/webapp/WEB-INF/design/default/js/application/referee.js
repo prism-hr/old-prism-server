@@ -114,6 +114,8 @@ $('a[name="refereeCancelButton"]').click(function(){
 	$("#ref_address_country").val("");
 	$("#ref_email").val("");
 	$("#ref_address_country").val("");
+	$('#phonenumbersref').html("");
+	$('#messengersref').html("");
 });
 
 $('a[name="refereeEditButton"]').click(function(){

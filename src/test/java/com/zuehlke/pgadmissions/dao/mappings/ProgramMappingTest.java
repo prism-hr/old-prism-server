@@ -84,4 +84,46 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		assertTrue(reloadedProgramTwo.getApprovers().containsAll(Arrays.asList(approverOne, approverTwo)));
 	
 	}
+	
+	@Test
+	public void shouldSaveAndLoadProgramsWithSuperAdministrators(){
+		RegisteredUser superAdminOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(false).toUser();
+		
+		RegisteredUser superAdminTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("usernameTwo").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(false).toUser();
+
+		save(superAdminOne, superAdminTwo);
+		flushAndClearSession();
+		
+		Program programOne = new Program();
+		programOne.setCode("abcD");
+		programOne.setDescription("I am a program :)");
+		programOne.setTitle("Program's title");
+		programOne.getSuperadministrators().add(superAdminOne);
+		programOne.getSuperadministrators().add(superAdminTwo);
+		
+		Program programTwo = new Program();
+		programTwo.setCode("DOES NOT EXIST");
+		programTwo.setDescription("I am a program :)");
+		programTwo.setTitle("Program's title");
+		programTwo.getSuperadministrators().add(superAdminOne);
+		programTwo.getSuperadministrators().add(superAdminTwo);
+		
+		save(programOne, programTwo);
+		flushAndClearSession();
+		
+		
+		Program reloadedProgramOne = (Program) sessionFactory.getCurrentSession().get(Program.class, programOne.getId());
+		assertEquals(2, reloadedProgramOne.getSuperadministrators().size());
+		assertTrue(reloadedProgramOne.getSuperadministrators().containsAll(Arrays.asList(superAdminOne, superAdminTwo)));
+		
+		
+		Program reloadedProgramTwo = (Program) sessionFactory.getCurrentSession().get(Program.class, programTwo.getId());
+		assertEquals(2, reloadedProgramTwo.getSuperadministrators().size());
+		assertTrue(reloadedProgramTwo.getApprovers().containsAll(Arrays.asList(superAdminOne, superAdminTwo)));
+	
+	}
+	
+	
 }

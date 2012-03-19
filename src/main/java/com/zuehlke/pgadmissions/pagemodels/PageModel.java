@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.validation.BindingResult;
@@ -7,6 +8,7 @@ import org.springframework.validation.ObjectError;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 
@@ -19,6 +21,7 @@ public class PageModel {
 	private String view;
 	private BindingResult result;
 	private String userRoles;
+	private List<Program> programs = new ArrayList<Program>();
 
 	public BindingResult getResult() {
 		return result;
@@ -90,6 +93,14 @@ public class PageModel {
 
 	public String getUserRoles() {
 		return userRoles;
+	}
+	
+	public List<Program> getPrograms() {
+		return programs;
+	}
+	
+	public void setPrograms(List<Program> programs) {
+		this.programs = programs;
 	}
 
 }

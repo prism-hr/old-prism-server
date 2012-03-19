@@ -21,8 +21,8 @@
 		<intercept-url pattern="/apply/**"	access="hasRole('APPLICANT')" />
 		<intercept-url pattern="/submit/**"    access="hasRole('APPLICANT')" />
 		<intercept-url pattern="/update/**"    access="hasRole('APPLICANT')" />
-		<intercept-url pattern="/reviewer/**"	access="hasAnyRole('ADMINISTRATOR','REVIEWER','APPROVER')" />
-		<intercept-url pattern="/**"		access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER')" />		
+		<intercept-url pattern="/reviewer/**"	access="hasAnyRole('ADMINISTRATOR','REVIEWER','APPROVER', 'SUPERADMINISTRATOR')" />
+		<intercept-url pattern="/**"		access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR')" />		
 		<intercept-url pattern="/dwr/**" 	access="permitAll" />
 
 	</http>

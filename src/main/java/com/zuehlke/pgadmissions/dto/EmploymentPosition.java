@@ -15,7 +15,7 @@ public class EmploymentPosition {
 	
 	private Date position_endDate;
 	
-	private String position_language;
+	private Integer position_language;
 	
 	private Integer positionId;
 	public String getPosition_employer() {
@@ -58,11 +58,11 @@ public class EmploymentPosition {
 		this.position_endDate = endDate;
 	}
 
-	public String getPosition_language() {
+	public Integer getPosition_language() {
 		return position_language;
 	}
 
-	public void setPosition_language(String language) {
+	public void setPosition_language(Integer language) {
 		this.position_language = language;
 	}
 

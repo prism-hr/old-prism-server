@@ -109,25 +109,6 @@ public class RegisterController {
 		return new ModelAndView("redirect:/register", modelMap);
 	}
 
-	private void sendMail(String email) {
-		//new FileSystemXmlApplicationContext("file:C:/myfolder/spring-context.xml");
-//		ApplicationContext context = new FileSystemXmlApplicationContext("file:C:/Users/iky/Desktop/pgadmissions/src/main/webapp/WEB-INF/spring/applicationContext.xml");
-
-		JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-		mailSender.setHost("smtp.gmail.com");
-		mailSender.setPort(465);
-		mailSender.setProtocol("smtp");
-		mailSender.setUsername("yiannakyp17@gmail.com");
-		mailSender.setPassword("nuluIS17");
-		Properties properties = new Properties();
-		properties.setProperty("mail.smtp.auth", "true");
-		properties.setProperty("mail.smtp.starttls.enable", "true");
-		properties.setProperty("mail.smtp.quitwait", "false");
-		mailSender.setJavaMailProperties(properties);
-		MailMail mm = new MailMail(mailSender);
-		mm.sendMail("from@no-spam.com", email, "Testing123", "Testing only \n\n Hello Spring Email Sender");
-
-	}
 
 	// @RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
 	// public ModelAndView activateAccountForm(){

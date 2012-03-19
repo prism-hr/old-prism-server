@@ -112,8 +112,11 @@
 					              	</#list>
 					            </tbody>
 				          </table>
-				
+				          
 				          <p class="right">
+				            <#if (!model.user.isInRole('APPLICANT'))>
+                                <a id="manageUsersButton" class="button">Manage Users</a>
+                            </#if>
 				          	<a href="#" class="button">Download - coming soon</a>
 				          	<#include "/private/common/feedback.ftl"/>
 				          </p>

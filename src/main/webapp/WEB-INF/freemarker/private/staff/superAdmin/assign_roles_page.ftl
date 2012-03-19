@@ -103,7 +103,7 @@
 				              		<tr>
 						                <td scope="col">${userInRole.email}</td>
 						                <td scope="col">${userInRole.firstName} ${userInRole.lastName}</td>
-						                <td scope="col"></td>
+						                <td scope="col">${userInRole.rolesList}</td>
 				              		</tr>
 				              	</#list>	
 				            	</tbody>

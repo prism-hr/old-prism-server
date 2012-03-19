@@ -67,6 +67,8 @@ public class ManageUsersControllerTest {
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+		currentUser.setRolesList();
+		currentUser.setRolesList();
 		EasyMock.replay(currentUser);
 		
 		RegisteredUser approverOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false)
@@ -98,6 +100,8 @@ public class ManageUsersControllerTest {
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
+		currentUser.setRolesList();
+		currentUser.setRolesList();
 		EasyMock.replay(currentUser);
 		
 		RegisteredUser approverOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false)

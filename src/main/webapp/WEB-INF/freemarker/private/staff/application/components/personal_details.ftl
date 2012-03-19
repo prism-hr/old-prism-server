@@ -96,7 +96,7 @@
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
-                  	  				<#if nationality.primary><label>Primary nationality</label>"</#if>                  	  		 
+                  	  				<#if nationality.primary><label>Primary nationality</label></#if>                  	  		 
                   	  			</div>
                   	  		</div>
                   	  	</span>                  		

@@ -58,12 +58,6 @@ public class UserService {
 		userDAO.save(user);
 	}
 
-	@Transactional
-	public void saveQualification(Qualification qual) {
-		userDAO.saveQualification(qual);
-		
-	}
-
 	
 	@Transactional
 	public Role getRoleById(int id) {
@@ -71,6 +65,10 @@ public class UserService {
 		
 	}
 
+	@Transactional
+	public List<RegisteredUser> getAllUsers(){
+		return userDAO.getAllUsers();
+	}
 	
 	@Transactional
 	public RegisteredUser getUserByUsername(String username) {

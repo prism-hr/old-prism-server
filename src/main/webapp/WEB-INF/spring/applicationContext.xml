@@ -67,4 +67,27 @@
 
 	<import resource="hibernateEntities.xml" />
 	
+	<!-- Mail configuration -->
+	<!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	  <property name="host"><value>smtp.gmail.com</value></property>
+      <property name="port"><value>587</value></property>
+      <property name="protocol"><value>smtp</value></property>
+      <property name="username"><value></value></property>
+      <property name="password"><value></value></property>
+      <property name="javaMailProperties">
+           <props>
+               <prop key="mail.smtp.auth">true</prop>
+               <prop key="mail.smtp.starttls.enable">true</prop>
+               <prop key="mail.smtp.quitwait">false</prop>
+           </props>
+      </property>
+	</bean>
+ 
+	<bean id="mailMail" class="com.zuehlke.pgadmissions.utilities.MailMail">
+		<property name="mailSender" ref="mailSender" />
+	</bean>-->
+ 
+	
+	
+	
 </beans>

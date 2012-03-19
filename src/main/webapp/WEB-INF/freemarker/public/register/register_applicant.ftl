@@ -36,7 +36,7 @@
 			      	<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png'/>" alt="" /></div>
 			      	<div class="tagline">Your Gateway to<br />Research Opportunities</div>
 			    </header>
-	   			<p style="color: red;" ${model.message!}>
+	   			<p style="color: red;"> ${model.message!}</p>
 		    	<!-- New user form. -->
 		    	<form action= "/pgadmissions/register/submit" method="POST">
 		    		<input id="recordId" type="hidden" name="recordId" />

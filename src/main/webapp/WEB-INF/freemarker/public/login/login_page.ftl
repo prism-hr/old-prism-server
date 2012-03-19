@@ -68,8 +68,8 @@
 		    </section>
 		
 		    <!-- Registration button. -->
-    		<!--<a id="big-button" href="/pgadmissions/register">Register Today...</a>-->
-    		<a id="big-button" href="#">Register Today...</a>
+    		<a id="big-button" href="/pgadmissions/register">Register Today...</a>
+  
 		    
 		  </div>
 		  

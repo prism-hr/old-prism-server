@@ -34,8 +34,7 @@ public class UserDAO {
 	}
 
 	public RegisteredUser getUserByUsername(String username) {
-		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("username", username))
-				.uniqueResult();
+		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("username", username)).uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")

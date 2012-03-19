@@ -170,7 +170,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		
 		if (isInRole(Authority.ADMINISTRATOR)) {
-			return applicationForm.getProject().getProgram().getSuperadministrators().contains(this);
+			return applicationForm.getProject().getProgram().getAdministrators().contains(this);
 		}
 		
 		if (isInRole(Authority.REVIEWER)) {

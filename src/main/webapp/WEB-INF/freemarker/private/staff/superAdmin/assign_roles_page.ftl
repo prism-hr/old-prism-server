@@ -49,12 +49,10 @@
 					<div class="content-box">
 				    	<div class="content-box-inner">
 				        
-				        	<h1>Programme: LoLo EngD</h1>
-				        	
 				        <div class="row">
                             <span class="label"><strong>Select Programme</strong></span>
                                 
-                            <select class="full" name="programsList" id="programsList">
+                            <select class="actionType" name="programSelect" id="programSelect">
                                 
                             <option value="">Select...</option>
                                 <#list model.programs as program>
@@ -101,11 +99,13 @@
 				            	</thead>
 				            
 				            	<tbody>
+				            	<#list model.usersInRoles as userInRole>
 				              		<tr>
-						                <td scope="col">crispy@quentin.com</td>
-						                <td scope="col">Quentin Crisp</td>
-						                <td scope="col">Interviewer, Reviewer</td>
+						                <td scope="col">${userInRole.email}</td>
+						                <td scope="col">${userInRole.firstName} ${userInRole.lastName}</td>
+						                <td scope="col"></td>
 				              		</tr>
+				              	</#list>	
 				            	</tbody>
 				          	</table>
 				

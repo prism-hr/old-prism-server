@@ -18,7 +18,7 @@ $(document).ready(function() {
 	
 	
 	$('#manageUsersButton').click(function(){
-		window.location.href = "/pgadmissions/manageUsers";
+		window.location.href = "/pgadmissions/manageUsers/showPage";
 	});
 	
 });

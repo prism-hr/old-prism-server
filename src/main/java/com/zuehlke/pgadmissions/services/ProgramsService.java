@@ -26,4 +26,8 @@ public class ProgramsService {
 	public List<Program> getAllPrograms() {
 		return programDAO.getAllPrograms();
 	}
+
+	public Program getProgramById(Integer programId) {
+		return programDAO.getProgramById(programId);
+	}
 }

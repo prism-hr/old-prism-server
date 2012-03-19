@@ -56,7 +56,7 @@ public class ProgramBuilder {
 		program.setTitle(title);
 		program.setDescription(description);
 		program.getApprovers().addAll(approvers);
-		program.getSuperadministrators().addAll(administrators);
+		program.getAdministrators().addAll(administrators);
 		return program;
 	}
 }

@@ -32,6 +32,8 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -375,7 +377,9 @@ public class ViewApplicationFormControllerTest {
 				.toUser();
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		reviewers.add(reviewer);
-		submittedNonApprovedApplication = new ApplicationFormBuilder().id(2).reviewers(reviewers).submissionStatus(SubmissionStatus.SUBMITTED)
+		ProgramBuilder programBuilder = new ProgramBuilder();
+		programBuilder.administrator(admin, adminAndReviewer);
+		submittedNonApprovedApplication = new ApplicationFormBuilder().id(2).reviewers(reviewers).project(new ProjectBuilder().program(programBuilder.toProgram()).toProject()).submissionStatus(SubmissionStatus.SUBMITTED)
 				.toApplicationForm();
 		unsubmittedApplication = new ApplicationFormBuilder().id(3).toApplicationForm();
 		applicationReviewForSubmittedNonApproved1 = new ApplicationReviewBuilder().id(1).application(submittedNonApprovedApplication)

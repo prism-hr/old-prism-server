@@ -8,6 +8,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -30,7 +31,7 @@ public class RefereeValidatorTest {
 		referee.setFirstname(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "firstname");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.firstname.notempty", mappingResult.getFieldError("firstname").getCode());
 	}
 
@@ -39,7 +40,7 @@ public class RefereeValidatorTest {
 		referee.setLastname(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "lastname");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.lastname.notempty", mappingResult.getFieldError("lastname").getCode());
 	}
 
@@ -58,7 +59,7 @@ public class RefereeValidatorTest {
 		referee.setRelationship(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "relationship");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.relationship.notempty", mappingResult.getFieldError("relationship").getCode());
 	}
 	
@@ -67,7 +68,7 @@ public class RefereeValidatorTest {
 		referee.setAddressLocation(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressLocation");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.addressLocation.notempty", mappingResult.getFieldError("addressLocation").getCode());
 	}
 	
@@ -76,7 +77,7 @@ public class RefereeValidatorTest {
 		referee.setAddressPostcode(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressPostcode");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.addressPostcode.notempty", mappingResult.getFieldError("addressPostcode").getCode());
 	}
 	
@@ -104,7 +105,7 @@ public class RefereeValidatorTest {
 		referee.setJobEmployer(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobEmployer");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.jobEmployer.notempty", mappingResult.getFieldError("jobEmployer").getCode());
 	}
 	@Test
@@ -112,7 +113,7 @@ public class RefereeValidatorTest {
 		referee.setJobTitle(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobTitle");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.jobTitle.notempty", mappingResult.getFieldError("jobTitle").getCode());
 	}
 	@Test
@@ -121,14 +122,14 @@ public class RefereeValidatorTest {
 		referee.setJobEmployer(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobTitle");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 	
 	@Test
 	public void shouldNotRejectIfJobFieldsareBothSet() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobTitle");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 	
 	@Test
@@ -144,7 +145,7 @@ public class RefereeValidatorTest {
 	public void shouldNotRejectIfAllAddressFieldsAreSet() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressCountry");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 
 	@Test
@@ -152,7 +153,7 @@ public class RefereeValidatorTest {
 		referee.setEmail("nonvalidemail");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "email");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.email.invalid", mappingResult.getFieldError("email").getCode());
 	}
 	@Test
@@ -160,14 +161,14 @@ public class RefereeValidatorTest {
 		referee.setPhoneNumbers(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumbers");
 		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.phoneNumbers.notempty", mappingResult.getFieldError("phoneNumbers").getCode());
 	}
 	
 	@Before
 	public void setup(){
 		referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).email("email@test.com").firstname("bob")
-				.lastname("smith").addressCountry(null).addressLocation("london").addressPostcode("postcode").jobEmployer("zuhlke").jobTitle("se")
+				.lastname("smith").addressCountry(new Country()).addressLocation("london").addressPostcode("postcode").jobEmployer("zuhlke").jobTitle("se")
 				.messenger(new Messenger()).phoneNumbers(new Telephone()).relationship("friend").toReferee();
 		
 		refereeValidator = new RefereeValidator();

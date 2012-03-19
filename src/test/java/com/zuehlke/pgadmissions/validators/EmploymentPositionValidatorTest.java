@@ -21,7 +21,7 @@ public class EmploymentPositionValidatorTest {
 		positionDto.setPosition_employer(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
 		positionValidator.validate(positionDto, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("position.position_employer.notempty",mappingResult.getFieldError("position_employer").getCode());
 	}
 	
@@ -30,7 +30,7 @@ public class EmploymentPositionValidatorTest {
 		positionDto.setPosition_startDate(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
 		positionValidator.validate(positionDto, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("position.position_startDate.notempty",mappingResult.getFieldError("position_startDate").getCode());
 	}
 	
@@ -48,7 +48,7 @@ public class EmploymentPositionValidatorTest {
 		positionDto.setPosition_remit(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
 		positionValidator.validate(positionDto, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("position.position_remit.notempty",mappingResult.getFieldError("position_remit").getCode());
 	}
 	
@@ -57,7 +57,7 @@ public class EmploymentPositionValidatorTest {
 		positionDto.setPosition_title(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
 		positionValidator.validate(positionDto, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("position.position_title.notempty",mappingResult.getFieldError("position_title").getCode());
 	}
 	
@@ -66,7 +66,7 @@ public class EmploymentPositionValidatorTest {
 		positionDto.setPosition_endDate(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
 		positionValidator.validate(positionDto, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
 	
 	@Test
@@ -75,7 +75,7 @@ public class EmploymentPositionValidatorTest {
 		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
 		positionValidator.validate(positionDto, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("position.position_startDate.notvalid",mappingResult.getFieldError("position_startDate").getCode());
 	}
 	
@@ -86,7 +86,7 @@ public class EmploymentPositionValidatorTest {
 		positionDto = new EmploymentPosition();
 		positionDto.setPosition_employer("Mark");
 		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_language(null);
+		positionDto.setPosition_language(3);
 		positionDto.setPosition_remit("cashier");
 		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		positionDto.setPosition_title("head of department");}

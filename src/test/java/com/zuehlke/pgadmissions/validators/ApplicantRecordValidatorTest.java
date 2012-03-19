@@ -22,7 +22,6 @@ public class ApplicantRecordValidatorTest {
 
 	@Before
 	public void setup(){
-//		record = new ApplicantRecordBuilder().email("test@gmail.com").firstname("firstname").lastname("lastname").password("1234").confirmPassword("1234").toApplicantRecord();
 		record = new ApplicantRecordDTO();
 		record.setFirstname("Mark");
 		record.setLastname("Euston");

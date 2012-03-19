@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.dto.ApplicantRecordDTO;
+import com.zuehlke.pgadmissions.dto.RegisteredUserDTO;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApplicantRecordValidator;
@@ -43,42 +43,45 @@ public class RegisterController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getRegisterPage() throws NoSuchAlgorithmException {
 		RegisterPageModel model = new RegisterPageModel();
-		model.setRecord(new ApplicantRecordDTO());
+		model.setRecord(new RegisteredUserDTO());
 		return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
-	public ModelAndView getRegisterSubmitPage(@ModelAttribute("record") ApplicantRecordDTO record, BindingResult errors)
+	public ModelAndView getRegisterSubmitPage(@ModelAttribute("record") RegisteredUserDTO record, BindingResult errors)
 			throws NoSuchAlgorithmException {
 		validator.validate(record, errors);
 
 		RegisterPageModel model = new RegisterPageModel();
 		model.setResult(errors);
 		if (!errors.hasErrors()) {
-			if (record.getPassword() != null)
-				record.setPassword(createHash(record.getPassword()));
-			SecureRandom random = new SecureRandom();
-			String activationCode = new BigInteger(80, random).toString(32);
 			RegisteredUser user = new RegisteredUser();
+			user.setActivationCode(generateRandomActivationCode());
 			user.setUsername(record.getEmail());
 			user.setFirstName(record.getFirstname());
 			user.setLastName(record.getLastname());
 			user.setEmail(record.getEmail());
 			user.setAccountNonExpired(true);
 			user.setAccountNonLocked(true);
+			user.setPassword(createHash(record.getPassword()));
 			user.setPassword(record.getPassword());
 			user.setEnabled(false);
-			user.setActivationCode(activationCode);
 			user.setCredentialsNonExpired(true);
 			user.getRoles().add(userService.getRoleById(2));
 			userService.save(user);
 			model.setUrl("http://localhost:8080/pgadmissions/register/activateAccount?activationCode="+user.getActivationCode()+"&username="+user.getUsername());
 			model.setMessage("  You have been successfully registered. To activate your account please check your emails and click on the activation link :<a href=\""+model.getUrl()+"\"> ${"+model.getUrl()+"}</a>");
-			model.setRecord(new ApplicantRecordDTO());
+			model.setRecord(new RegisteredUserDTO());
 			return new ModelAndView(REGISTER_INFO_VIEW_NAME, "model", model);
 		}
 		model.setRecord(record);
 		return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
+	}
+
+	private String generateRandomActivationCode() {
+		SecureRandom random = new SecureRandom();
+		String activationCode = new BigInteger(80, random).toString(32);
+		return activationCode;
 	}
 
 
@@ -99,8 +102,8 @@ public class RegisterController {
 	}
 
 	@ModelAttribute("record")
-	public ApplicantRecordDTO getApplicantRecord(Integer id) {
-		return new ApplicantRecordDTO();
+	public RegisteredUserDTO getApplicantRecord(Integer id) {
+		return new RegisteredUserDTO();
 	}
 
 	public String createHash(String password) throws NoSuchAlgorithmException {

@@ -38,8 +38,7 @@
 			    </header>
 		    	<!-- New user form. -->
 	  		<h1>
-	   			   You have been successfully registered. To activate your account please check your emails and click on the activation link
-	   			   :<a href="${model.url}"> ${model.url}</a>
+	  			${model.message}
 	  		</h1>
 	  		</div>
 	  

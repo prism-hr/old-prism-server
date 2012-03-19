@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.dto;
 
-public class ApplicantRecordDTO {
+public class RegisteredUserDTO {
 	
 	private String password;
 	

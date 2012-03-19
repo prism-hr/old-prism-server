@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.security;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 import junit.framework.Assert;
@@ -28,16 +30,27 @@ public class PgAdmissionAuthenticationProviderTest {
 	private PgAdmissionAuthenticationProvider authenticationProvider;
 	private UserDetailsService userDetailsServiceMock;
 
+	public String createHash(String password) throws NoSuchAlgorithmException {
+		MessageDigest md5 = MessageDigest.getInstance("MD5");
+		md5.update(password.getBytes());
+		byte byteData[] = md5.digest();
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < byteData.length; i++) {
+			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+		}
+		return sb.toString();
+	}
+	
 	@Test
 	public void shouldSupportUsernamePasswordAuthenticationToken() {
 		Assert.assertTrue(authenticationProvider.supports(UsernamePasswordAuthenticationToken.class));
 	}
 
 	@Test
-	public void shouldReturnPopulatedAuthenticationForValidCredentials() {
+	public void shouldReturnPopulatedAuthenticationForValidCredentials() throws NoSuchAlgorithmException {
 		Role roleOne = new RoleBuilder().id(1).authorityEnum(Authority.APPLICANT).toRole();
 		Role roleTwo = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).toRole();
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").roles(roleOne, roleTwo).id(1).toUser();
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password(createHash("secret")).roles(roleOne, roleTwo).id(1).toUser();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.replay(userDetailsServiceMock);
 
@@ -56,8 +69,8 @@ public class PgAdmissionAuthenticationProviderTest {
 	}
 
 	@Test(expected = BadCredentialsException.class)
-	public void shouldThrowBadCredentialsExceptionForMismatchingPassword() {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").id(1).toUser();
+	public void shouldThrowBadCredentialsExceptionForMismatchingPassword() throws NoSuchAlgorithmException {
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password(createHash("secret")).id(1).toUser();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.replay(userDetailsServiceMock);
 
@@ -104,8 +117,8 @@ public class PgAdmissionAuthenticationProviderTest {
 	}
 
 	@Test(expected = CredentialsExpiredException.class)
-	public void shouldThrowCredentialsExpiredExceptionForExpiredCredentials() {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").credentialsNonExpired(false).id(1).toUser();
+	public void shouldThrowCredentialsExpiredExceptionForExpiredCredentials() throws NoSuchAlgorithmException {
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password(createHash("secret")).credentialsNonExpired(false).id(1).toUser();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.replay(userDetailsServiceMock);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("bob", "secret");
@@ -113,8 +126,8 @@ public class PgAdmissionAuthenticationProviderTest {
 	}
 
 	@Test(expected = LockedException.class)
-	public void shouldThrowLockedExceptionForLockedAccount() {
-		RegisteredUser user = new RegisteredUserBuilder().username("bob").password("secret").accountNonLocked(false).id(1).toUser();
+	public void shouldThrowLockedExceptionForLockedAccount() throws NoSuchAlgorithmException {
+		RegisteredUser user = new RegisteredUserBuilder().username("bob").password(createHash("secret")).accountNonLocked(false).id(1).toUser();
 		EasyMock.expect(userDetailsServiceMock.loadUserByUsername("bob")).andReturn(user).anyTimes();
 		EasyMock.replay(userDetailsServiceMock);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("bob", "secret");

@@ -104,17 +104,23 @@ public class RegisterControllerTest {
 	
 	@Test
 	public void shouldActivateAccount(){
-		RegisteredUser user = new RegisteredUserBuilder().activationCode("ul5oaij68186jbcg").enabled(false).email("email@email.com").password("1234").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).activationCode("ul5oaij68186jbcg").enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
+		EasyMock.expect(userServiceMock.getUserByUsername(user.getUsername())).andReturn(user);
 		String activationCode = "ul5oaij68186jbcg";
-		ModelAndView modelAndView = registerController.activateAccount(user, activationCode);
+		userServiceMock.save(user);
+		EasyMock.replay(userServiceMock);
+		ModelAndView modelAndView = registerController.activateAccountSubmit(user, activationCode);
+		EasyMock.verify(userServiceMock);
 		assertTrue(((RegisterPageModel)modelAndView.getModel().get("model")).getUser().isEnabled());
 	}
 	
 	@Test
 	public void shouldNotActivateAccount(){
-		RegisteredUser user = new RegisteredUserBuilder().activationCode("ul5oaij68186jbcg").enabled(false).email("email@email.com").password("1234").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).activationCode("ul5oaij68186jbcg").enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
+		EasyMock.expect(userServiceMock.getUserByUsername(user.getUsername())).andReturn(user);
 		String activationCode = "differentactivationcode";
-		ModelAndView modelAndView = registerController.activateAccount(user, activationCode);
+		EasyMock.replay(userServiceMock);
+		ModelAndView modelAndView = registerController.activateAccountSubmit(user, activationCode);
 		assertFalse(((RegisterPageModel)modelAndView.getModel().get("model")).getUser().isEnabled());
 	}
 	

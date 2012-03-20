@@ -51,16 +51,15 @@
 				        
 				        <div class="row">
                             <span class="label"><strong>Select Programme</strong></span>
-                                
-                            <select class="actionType" name="programSelect" id="programSelect">
-                                
+                            <form name="programmeForm"> 
+                            <select class="actionType" name="programSelect" id="programSelect" onChange="top.location.href=this.form.programSelect.options[this.form.programSelect.selectedIndex].value;return false;">
                             <option value="">Select...</option>
                                 <#list model.programs as program>
-                                    <option value="${program.id}">${program.title}</option>               
+                                    <option value="/pgadmissions/manageUsers/showPage?programId=${program.id}">${program.title}</option>               
                                 </#list>
                             </select>
                     </div>
-				          		
+				          	</form>	
 				          	<form class="roles">
 				          
 								<div class="row">
@@ -117,7 +116,6 @@
 			<!-- Middle Ends -->
 			
 			<#include "/private/common/global_footer.ftl"/>
-			
 		</div>
 		<!-- Wrapper Ends -->
 		   

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao.mappings;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
@@ -121,7 +122,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		
 		Program reloadedProgramTwo = (Program) sessionFactory.getCurrentSession().get(Program.class, programTwo.getId());
 		assertEquals(2, reloadedProgramTwo.getAdministrators().size());
-		assertTrue(reloadedProgramTwo.getApprovers().containsAll(Arrays.asList(superAdminOne, superAdminTwo)));
+		assertFalse(reloadedProgramTwo.getApprovers().containsAll(Arrays.asList(superAdminOne, superAdminTwo)));
 	
 	}
 	

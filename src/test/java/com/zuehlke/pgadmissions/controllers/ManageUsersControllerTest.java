@@ -103,7 +103,6 @@ public class ManageUsersControllerTest {
 		currentUser.setRolesList();
 		currentUser.setRolesList();
 		EasyMock.replay(currentUser);
-		
 		RegisteredUser approverOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false)
 		.credentialsNonExpired(false).enabled(false).toUser();
 		RegisteredUser approverTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("usernameTwo").password("password").accountNonExpired(false).accountNonLocked(false)

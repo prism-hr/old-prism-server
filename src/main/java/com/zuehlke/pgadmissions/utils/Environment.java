@@ -10,7 +10,7 @@ public class Environment {
 
 	private static Environment instance;
 	private String applicationHost;
-
+	private String emailFromAddress;
 	private Environment() {
 		InputStream in = null;
 		try {
@@ -18,7 +18,7 @@ public class Environment {
 			in = this.getClass().getResourceAsStream("/environment.properties");
 			environmentProperties.load(in);
 			applicationHost = environmentProperties.getProperty("application.host");
-
+			emailFromAddress = environmentProperties.getProperty("email.address.from");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -42,5 +42,9 @@ public class Environment {
 
 	public String getApplicationHostName() {		
 		return applicationHost;
+	}
+
+	public String getEmailFromAddress() {
+		return emailFromAddress;
 	}
 }

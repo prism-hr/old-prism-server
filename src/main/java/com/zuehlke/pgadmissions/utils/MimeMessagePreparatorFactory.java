@@ -24,7 +24,7 @@ public class MimeMessagePreparatorFactory {
 		this.test  = test;
 	}
 
-	public MimeMessagePreparator getMimeMessagePreparator(final String toAddress, final String fromAddress, final String templatename,
+	public MimeMessagePreparator getMimeMessagePreparator(final String toAddress, final String subject, final String templatename,
 			final Map<String, Object> model) {
 		return new MimeMessagePreparator() {
 
@@ -36,7 +36,8 @@ public class MimeMessagePreparatorFactory {
 				}else{
 					message.setTo(toAddress);
 				}
-				message.setFrom(fromAddress); // could be
+				message.setSubject(subject);
+				message.setFrom(Environment.getInstance().getEmailFromAddress()); // could be
 				String text = FreeMarkerTemplateUtils.processTemplateIntoString(config.getConfiguration().getTemplate(templatename), model);
 
 				message.setText(text, true);

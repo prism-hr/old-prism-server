@@ -4,8 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+
+import javax.mail.internet.InternetAddress;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -65,10 +68,10 @@ public class RegistrationServiceTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void shouldSaveNewUserAndSendEmail() {
+	public void shouldSaveNewUserAndSendEmail() throws UnsupportedEncodingException {
 		final RegistrationDTO recordDTO = new RegistrationDTO();
-		recordDTO.setEmail("email@test.com");
-		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).toUser();
+		
+		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
 			@Override
@@ -84,8 +87,9 @@ public class RegistrationServiceTest {
 		userDAOMock.save(newUser);
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
+		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq("email@test.com"),  EasyMock.eq("Registration confirmation"),
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress),  EasyMock.eq("Registration confirmation"),
 						EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
@@ -129,10 +133,11 @@ public class RegistrationServiceTest {
 	}
 
 	@Test
-	public void shouldNotThrowExceptionIfEmailSendingFails() {
+	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
 		final RegistrationDTO recordDTO = new RegistrationDTO();
-		recordDTO.setEmail("email@test.com");
-		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).toUser();
+		
+		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
+		
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
 			@Override
@@ -148,8 +153,9 @@ public class RegistrationServiceTest {
 		userDAOMock.save(newUser);
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
+		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq("email@test.com"), EasyMock.eq("Registration confirmation"),EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Registration confirmation"),EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));

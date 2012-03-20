@@ -7,14 +7,14 @@ import org.junit.Test;
 public class EnvironmentTest {
 
 	@Test
-	public void shouldGetHostNameFromPropertiesFile(){
-		assertNotNull( Environment.getInstance().getApplicationHostName());
+	public void shouldGetHostNameFromPropertiesFile() {
+		assertNotNull(Environment.getInstance().getApplicationHostName());
 	}
-	
-	@Test
-	public void shouldGetEmailFromAddressFromPropertiesFile(){
-		assertNotNull( Environment.getInstance().getEmailFromAddress());
-	}
-	
 
+	@Test
+	public void shouldGetEmailFromAddressFromPropertiesFile() {
+		assertNotNull(Environment.getInstance().getEmailFromAddress());
 	}
+
+
+}

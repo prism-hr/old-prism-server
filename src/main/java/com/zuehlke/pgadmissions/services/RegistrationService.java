@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.RegistrationDTO;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
 @Service
@@ -59,10 +63,14 @@ public class RegistrationService {
 	@Transactional
 	public void generateAndSaveNewUser(RegistrationDTO recordDTO) {
 
-		userDAO.save(createNewUser(recordDTO));
+		RegisteredUser newUser = createNewUser(recordDTO);
+		userDAO.save(newUser);
 	
 		try {
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(recordDTO.getEmail(), "pgadmissions", "private/pgStudents/mail/registration_confirmation.ftl", null));
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("user", newUser);			
+			model.put("host", Environment.getInstance().getApplicationHostName());
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(recordDTO.getEmail(), "pgadmissions", "private/pgStudents/mail/registration_confirmation.ftl", model));
 		} catch (Throwable e) {
 			log.warn("error while sending email",e);
 		}

@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -354,6 +356,7 @@ public class UpdateApplicationFormController {
 		ApplicationPageModel applicationPageModel = new ApplicationPageModel();
 		refereeValidator.validate(refereeDetails, errors);
 		if (!errors.hasErrors()) {
+			refereeDetails.setActivationCode(generateRandomActivationCode());
 			refereeService.save(refereeDetails);
 			applicationPageModel.setReferee(new Referee());
 		} else {
@@ -375,6 +378,12 @@ public class UpdateApplicationFormController {
 			modelAndView.getModel().put("add", "add");
 		}
 		return modelAndView;
+	}
+	
+	private String generateRandomActivationCode() {
+		SecureRandom random = new SecureRandom();
+		String activationCode = new BigInteger(80, random).toString(32);
+		return activationCode;
 	}
 
 	private RegisteredUser getCurrentUser() {

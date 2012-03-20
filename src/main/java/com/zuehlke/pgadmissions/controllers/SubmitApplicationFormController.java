@@ -120,11 +120,20 @@ public class SubmitApplicationFormController {
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,"model", viewApplicationModel);
 			
 		}
-
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationService.save(applicationForm);
+		generateRefereesURLs(applicationForm);
 		return new ModelAndView("redirect:/applications?submissionSuccess=true");
 
+	}
+
+	private void generateRefereesURLs(ApplicationForm applicationForm) {
+		List<Referee> referees = applicationForm.getReferees();
+		for (Referee referee : referees) {
+			String url = "http://localhost:8080/pgadmissions/addReferences?&refereeId="+referee.getId()+"&activationCode="+referee.getActivationCode()+"&appId="+referee.getApplication().getId();
+			//send email to that referee with that url in it
+		}
+		
 	}
 
 	@InitBinder

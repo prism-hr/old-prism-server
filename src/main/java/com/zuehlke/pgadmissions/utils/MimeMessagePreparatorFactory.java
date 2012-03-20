@@ -18,8 +18,6 @@ public class MimeMessagePreparatorFactory {
 	MimeMessagePreparatorFactory() {
 		this(null, true);
 	}
-
-
 	
 	public MimeMessagePreparatorFactory(FreeMarkerConfig config, boolean test) {
 		this.config = config;

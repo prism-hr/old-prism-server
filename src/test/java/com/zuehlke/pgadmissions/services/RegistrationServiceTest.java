@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -63,8 +64,9 @@ public class RegistrationServiceTest {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
-	public void shouldSaveNewUserAndSenddEmail()  {
+	public void shouldSaveNewUserAndSendEmail() {
 		final RegistrationDTO recordDTO = new RegistrationDTO();
 		recordDTO.setEmail("email@test.com");
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).toUser();
@@ -76,27 +78,28 @@ public class RegistrationServiceTest {
 					return newUser;
 				}
 				return null;
-			}	
-			
+			}		
+
 		};
-		
+
 		userDAOMock.save(newUser);
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator("email@test.com", "pgadmissions", "private/pgStudents/mail/registration_confirmation.ftl",null)).andReturn(preparatorMock);
-		
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator("email@test.com", "pgadmissions",
+						"private/pgStudents/mail/registration_confirmation.ftl", EasyMock.isA(Map.class))).andReturn(preparatorMock);
+
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
-		registrationService.generateAndSaveNewUser(recordDTO);
 		
+		registrationService.generateAndSaveNewUser(recordDTO);
+
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
 	}
 
-	
-
 	@Test
-	public void shouldNotSendEmailIdSaveFails()  {
+	public void shouldNotSendEmailIdSaveFails() {
 		final RegistrationDTO recordDTO = new RegistrationDTO();
 		recordDTO.setEmail("email@test.com");
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).toUser();
@@ -108,27 +111,26 @@ public class RegistrationServiceTest {
 					return newUser;
 				}
 				return null;
-			}	
-			
+			}
+
 		};
-		
+
 		userDAOMock.save(newUser);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("aaaaaaaaaaargh"));
-		
-		
+
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		try {
 			registrationService.generateAndSaveNewUser(recordDTO);
 		} catch (RuntimeException e) {
-			//expected...ignore
+			// expected...ignore
 		}
-		
+
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
 	}
 
 	@Test
-	public void shouldNotThrowExceptionIfEmailSendingFails()  {
+	public void shouldNotThrowExceptionIfEmailSendingFails() {
 		final RegistrationDTO recordDTO = new RegistrationDTO();
 		recordDTO.setEmail("email@test.com");
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).toUser();
@@ -140,25 +142,26 @@ public class RegistrationServiceTest {
 					return newUser;
 				}
 				return null;
-			}	
-			
+			}
+
 		};
-		
+
 		userDAOMock.save(newUser);
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator("email@test.com", "pgadmissions", "private/pgStudents/mail/registration_confirmation.ftl",null)).andReturn(preparatorMock);
-		
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator("email@test.com", "pgadmissions",
+						"private/pgStudents/mail/registration_confirmation.ftl", null)).andReturn(preparatorMock);
+
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		registrationService.generateAndSaveNewUser(recordDTO);
-		
+
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
 	}
 
-	
 	@Before
 	public void setup() {
 		userDAOMock = EasyMock.createMock(UserDAO.class);

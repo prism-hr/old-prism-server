@@ -36,8 +36,8 @@ public class ApplicationFormController {
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 	}
+	
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
-
 	public ModelAndView createNewApplicationForm(@RequestParam Integer project) {
 
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();

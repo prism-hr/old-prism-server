@@ -60,6 +60,12 @@
 	</bean>
 
 
+
+	<bean id="mimeMessagePreparatorFactory" class="com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory">
+	<constructor-arg index="0"><ref bean="freemarkerConfig"/></constructor-arg>
+	<constructor-arg index="1" value="true"/>
+	</bean>
+
 	<bean id="themeResolver"
 		class="org.springframework.web.servlet.theme.FixedThemeResolver">
 		<property name="defaultThemeName" value="default" />
@@ -68,12 +74,12 @@
 	<import resource="hibernateEntities.xml" />
 	
 	<!-- Mail configuration -->
-	<!--<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+	<bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
 	  <property name="host"><value>smtp.gmail.com</value></property>
       <property name="port"><value>587</value></property>
       <property name="protocol"><value>smtp</value></property>
-      <property name="username"><value></value></property>
-      <property name="password"><value></value></property>
+      <property name="username"><value>uclpgadmissions@gmail.com</value></property>
+      <property name="password"><value>pg@m1ss1on</value></property>
       <property name="javaMailProperties">
            <props>
                <prop key="mail.smtp.auth">true</prop>
@@ -82,10 +88,6 @@
            </props>
       </property>
 	</bean>
- 
-	<bean id="mailMail" class="com.zuehlke.pgadmissions.utilities.MailMail">
-		<property name="mailSender" ref="mailSender" />
-	</bean>-->
  
 	
 	

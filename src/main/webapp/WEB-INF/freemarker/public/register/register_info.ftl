@@ -38,7 +38,7 @@
 			    </header>
 		    	<!-- New user form. -->
 	  		<h1>
-	  			${model.message}
+	  			${model.message!}
 	  		</h1>
 	  		</div>
 	  

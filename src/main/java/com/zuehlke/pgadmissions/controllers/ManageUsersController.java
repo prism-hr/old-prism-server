@@ -27,7 +27,6 @@ public class ManageUsersController {
 	private final ProgramsService programsService;
 	private final UserService userService;
 
-
 	ManageUsersController() {
 		this(null, null);
 	}
@@ -40,60 +39,31 @@ public class ManageUsersController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/showPage")
 	public ModelAndView getUsersPage(@RequestParam(required = false) Integer programId) {
-		System.out.println("programId" + programId);
 		ManageUsersModel pageModel = new ManageUsersModel();
 		RegisteredUser user = getCurrentUser();
 		pageModel.setUser(user);
-		List<Program> allPrograms = new ArrayList<Program>();
 		List<RegisteredUser> allUsers = new ArrayList<RegisteredUser>();
-		if (! (user.isInRole(Authority.ADMINISTRATOR) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
+		if (!(user.isInRole(Authority.ADMINISTRATOR) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
 			throw new AccessDeniedException();
 		}
-		if(programId!=null) {
+		if (programId != null) {
 			Program selectedProgram = programsService.getProgramById(programId);
-			allPrograms.add(selectedProgram);
 			allUsers.addAll(selectedProgram.getAdministrators());
 			allUsers.addAll(selectedProgram.getApprovers());
 			allUsers.addAll(selectedProgram.getReviewers());
-		}
-		else{
-			allPrograms = programsService.getAllPrograms();
-			allUsers = userService.getAllUsers();
-		}
-		List<Program> visiblePrograms = new ArrayList<Program>();
-
-		List<RegisteredUser> visibleUsers = new ArrayList<RegisteredUser>();
-
-		if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-			if (allPrograms != null) {
-				visiblePrograms.addAll(allPrograms);
+			for (RegisteredUser visibleUser : allUsers) {
+				visibleUser.setRolesList();
 			}
-			if (allUsers != null) {
-				visibleUsers.addAll(allUsers);
-			}
-		} else {
-			for (Program program : allPrograms) {
-				if (program.getAdministrators().contains(user)) {
-					visiblePrograms.add(program);
-					visibleUsers.addAll(program.getAdministrators());
-					visibleUsers.addAll(program.getApprovers());
-					visibleUsers.addAll(program.getReviewers());
-				}
-			}
-		}
-		
-		for (RegisteredUser visibleUser : visibleUsers) {
-			visibleUser.setRolesList();
+			pageModel.setUsersInRoles(allUsers);
 		}
 
 		pageModel.setPrograms(getVisiblePrograms(user));
-		pageModel.setUsersInRoles(visibleUsers);
 
-		ModelAndView modelAndView = new ModelAndView(ROLES_PAGE_VIEW_NAME, "model", pageModel);	
+		ModelAndView modelAndView = new ModelAndView(ROLES_PAGE_VIEW_NAME, "model", pageModel);
 		return modelAndView;
 	}
-	
-	private List<Program> getVisiblePrograms(RegisteredUser user){
+
+	private List<Program> getVisiblePrograms(RegisteredUser user) {
 		List<Program> allPrograms = programsService.getAllPrograms();
 		List<Program> visiblePrograms = new ArrayList<Program>();
 		if (user.isInRole(Authority.SUPERADMINISTRATOR)) {

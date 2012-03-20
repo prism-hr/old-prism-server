@@ -55,9 +55,6 @@ public class PgAdmissionAuthenticationProvider implements AuthenticationProvider
 		if (!userDetails.isAccountNonExpired()) {
 			throw new AccountExpiredException("account \"" + username + "\" expired");
 		}
-//		if (!userDetails.getPassword().equals(preProcessToken.getCredentials())) {
-//			throw new BadCredentialsException("invalid username/password combination");
-//		}
 		if (!userDetails.getPassword().equals(createHash((String) preProcessToken.getCredentials()))) {
 			throw new BadCredentialsException("invalid username/password combination");
 		}

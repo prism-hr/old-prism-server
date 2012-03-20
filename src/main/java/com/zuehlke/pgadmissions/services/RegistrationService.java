@@ -72,7 +72,10 @@ public class RegistrationService {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("user", newUser);			
 			model.put("host", Environment.getInstance().getApplicationHostName());
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " "+ newUser.getLastName()), "Registration confirmation", "private/pgStudents/mail/registration_confirmation.ftl", model));
+			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " "+ newUser.getLastName());
+			
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Registration confirmation", "private/pgStudents/mail/registration_confirmation.ftl", model));
+			
 		} catch (Throwable e) {
 			log.warn("error while sending email",e);
 		}

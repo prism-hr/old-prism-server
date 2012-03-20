@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -375,6 +376,23 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.verify(refereeServiceMock);
 	}
 	
+	@Ignore
+	@Test
+	public void shouldGenerateAndSaveActivationCodeToReferee() {
+		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+		
+		Referee referee = new RefereeBuilder().refereeId(1).toReferee();
+		refereeValidator.validate(referee, errorsMock);
+		refereeServiceMock.save(EasyMock.same(referee));
+		
+		EasyMock.replay(errorsMock, refereeServiceMock, refereeValidator);
+		
+		ModelAndView modelAndView = applicationController.editReferee(referee,  null, errorsMock);
+		EasyMock.verify(refereeServiceMock);
+		assertNotNull(((ApplicationPageModel) modelAndView.getModel().get("model")).getApplicationForm().getReferees());
+	}
+	
 	@Test
 	public void shouldNotSaveRefereeIfNewAndNotValid() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
@@ -389,23 +407,23 @@ public class UpdateApplicationFormControllerTest {
 
 	}
 	
-	@Test
 	@Ignore
+	@Test
 	public void shouldSetRefereeDetailsOnApplicationForm() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
 		Referee referee = new RefereeBuilder().application(applicationForm).refereeId(1).toReferee();
 		refereeValidator.validate(referee, errorsMock);
-		refereeServiceMock.save(EasyMock.same(referee));
+		refereeServiceMock.save(referee);
 		
-		referee.setApplication(applicationForm);
-		EasyMock.replay(errorsMock, refereeValidator);
+		EasyMock.replay(errorsMock, refereeValidator, refereeServiceMock);
 
-		applicationController.editReferee(referee, null,  errorsMock);
-		assertTrue(applicationForm.getReferees().contains(referee));
+		ModelAndView modelAndView = applicationController.editReferee(referee, null,  errorsMock);
+		System.out.println(((ApplicationPageModel) modelAndView.getModel().get("model")).getApplicationForm());
+		assertTrue(((ApplicationPageModel) modelAndView.getModel().get("model")).getApplicationForm().getReferees().contains(referee));
 	}
-
+	
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowCannotUpdateApplicationExceptionIfApplicationFormNotInUnsubmmitedState() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();

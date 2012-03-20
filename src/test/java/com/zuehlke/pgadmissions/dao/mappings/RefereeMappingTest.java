@@ -8,8 +8,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -27,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
+import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 
 
 public class RefereeMappingTest extends AutomaticRollbackTestCase {

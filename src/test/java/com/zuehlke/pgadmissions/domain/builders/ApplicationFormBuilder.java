@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -35,6 +36,8 @@ public class ApplicationFormBuilder {
 	private Date appDate;
 	
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
+	
+	private List<Referee> referees = new ArrayList<Referee>();
 
 	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 	
@@ -64,6 +67,13 @@ public class ApplicationFormBuilder {
 	public ApplicationFormBuilder qualifications(Qualification... qualifications) {
 		for (Qualification qualification : qualifications) {
 			this.qualifications.add(qualification);
+		}
+		return this;
+	}
+	
+	public ApplicationFormBuilder referees(Referee... referees) {
+		for (Referee referee : referees) {
+			this.referees.add(referee);
 		}
 		return this;
 	}
@@ -129,6 +139,7 @@ public class ApplicationFormBuilder {
 		}
 		application.setApprovalStatus(approved);
 		application.setApprover(approver);
+		application.setReferees(referees);
 		application.setProject(project);
 		application.setSubmissionStatus(submissionStatus);
 		application.setApplicationTimestamp(appDate);

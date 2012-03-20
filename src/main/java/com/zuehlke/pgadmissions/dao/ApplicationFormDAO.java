@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Messenger;
@@ -98,6 +99,10 @@ public class ApplicationFormDAO {
 
 	public void saveReferee(Referee referee) {
 		sessionFactory.getCurrentSession().saveOrUpdate(referee);
+	}
+
+	public void saveDocument(Document document) {
+		sessionFactory.getCurrentSession().saveOrUpdate(document);
 	}
 
 }

@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.dao.QualificationDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Messenger;
@@ -88,6 +89,7 @@ public class ApplicationsService {
 		return applicationFormDAO.getQualification(id);
 	}
 
+	@Transactional
 	public Referee getRefereeById(Integer id) {
 		return applicationFormDAO.getRefereeById(id);
 	}
@@ -160,6 +162,12 @@ public class ApplicationsService {
 	@Transactional
 	public void deleteReferee(Referee referee) {
 		refereeDAO.delete(referee);		
+	}
+
+	@Transactional
+	public void saveDocument(Document document) {
+		applicationFormDAO.saveDocument(document);
+		
 	}
 
 }

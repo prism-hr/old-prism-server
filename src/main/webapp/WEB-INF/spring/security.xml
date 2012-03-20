@@ -17,6 +17,7 @@
 		<intercept-url pattern="/design/**" access="permitAll" />
 		<intercept-url pattern="/projects" 	access="permitAll" />
 		<intercept-url pattern="/register/**" 	access="permitAll" />
+		<intercept-url pattern="/addReferences/**" 	access="permitAll" />
 		<intercept-url pattern="*/j_spring_security_check"	access="permitAll" />
 		<intercept-url pattern="/apply/**"	access="hasRole('APPLICANT')" />
 		<intercept-url pattern="/submit/**"    access="hasRole('APPLICANT')" />

@@ -31,7 +31,6 @@ public class Referee extends DomainObject<Integer>{
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
 	
-
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "referee_id")
@@ -44,9 +43,14 @@ public class Referee extends DomainObject<Integer>{
 	@JoinColumn(name = "referee_id")
 	private List<Messenger> messengers = new ArrayList<Messenger>();
 	
+	@Column(name="comment")
+	private String comment;
 	
 	@Column(name="firstname")
 	private String firstname;
+
+	@Column(name="activationCode")
+	private String activationCode;
 	
 	@Column(name="lastname")
 	private String lastname;
@@ -69,6 +73,9 @@ public class Referee extends DomainObject<Integer>{
 	@OneToOne
 	@JoinColumn(name = "country_id")
 	private Country addressCountry;
+	
+	@OneToOne(mappedBy="referee")
+	private Document document;
 	
 	@Column(name="email")
 	private String email;
@@ -200,6 +207,29 @@ public class Referee extends DomainObject<Integer>{
 	public Integer getId() {
 		return id;
 	}
-	
+
+	public String getActivationCode() {
+		return activationCode;
+	}
+
+	public void setActivationCode(String activationCode) {
+		this.activationCode = activationCode;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	public Document getDocument() {
+		return document;
+	}
+
+	public void setDocument(Document document) {
+		this.document = document;
+	}
 
 }

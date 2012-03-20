@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -39,8 +40,12 @@ public class Document extends DomainObject<Integer> {
 	private DocumentType type;
 
 	@Column(name = "content_type")
-	
 	private String contentType;
+	
+	@OneToOne
+	@JoinColumn(name = "referee_id")
+	private Referee referee = null;
+
 
 	@Column(name = "file_name")
 	private String fileName;
@@ -104,6 +109,14 @@ public class Document extends DomainObject<Integer> {
 
 	public void setApplicationForm(ApplicationForm applicationForm) {
 		this.applicationForm = applicationForm;
+	}
+
+	public Referee getReferee() {
+		return referee;
+	}
+
+	public void setReferee(Referee referee) {
+		this.referee = referee;
 	}
 
 	

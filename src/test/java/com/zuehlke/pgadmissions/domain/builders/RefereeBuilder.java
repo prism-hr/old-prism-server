@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -35,7 +36,13 @@ public class RefereeBuilder {
 	
 	private String addressPostcode;
 	
+	private String activationCode;
+	
 	private Country addressCountry;
+	
+	private String comment;
+	
+	private Document document;
 	
 	private String email;
 	
@@ -45,6 +52,18 @@ public class RefereeBuilder {
 	}
 	public RefereeBuilder application(ApplicationForm application){
 		this.application = application;
+		return this;
+	}
+	public RefereeBuilder comment(String comment){
+		this.comment = comment;
+		return this;
+	}
+	public RefereeBuilder document(Document document){
+		this.document = document;
+		return this;
+	}
+	public RefereeBuilder activationCode(String activationCode){
+		this.activationCode = activationCode;
 		return this;
 	}
 	public RefereeBuilder firstname(String firstname){
@@ -114,7 +133,10 @@ public class RefereeBuilder {
 		referee.setLastname(lastname);
 		referee.setMessengers(messengers);
 		referee.setPhoneNumbers(phoneNumbers);
+		referee.setActivationCode(activationCode);
 		referee.setRelationship(relationship);
+		referee.setDocument(document);
+		referee.setComment(comment);
 		return referee;
 	}
 }

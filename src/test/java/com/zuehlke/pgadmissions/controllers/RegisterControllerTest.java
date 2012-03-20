@@ -1,32 +1,23 @@
 
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.RegistrationDTO;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.RegistrationService;
@@ -93,11 +84,8 @@ public class RegisterControllerTest {
 		EasyMock.replay(validatorMock, errorsMock, registrationServiceMock);
 		
 		ModelAndView modelAndView = registerController.submitRegistration(recordDTO, errorsMock);
-		assertEquals("public/register/register_info", modelAndView.getViewName());
-		RegistrationDTO record = ((RegisterPageModel) modelAndView.getModel().get("model")).getRecord();
-		assertNotNull(record);
-		assertNull(record.getFirstname());
-		assertEquals("You have been successfully registered. To activate your account please check your emails and click on the activation link.", ((RegisterPageModel) modelAndView.getModel().get("model")).getMessage());
+		assertEquals("redirect:/register/complete", modelAndView.getViewName());
+		
 		EasyMock.verify(registrationServiceMock);
 	}
 	

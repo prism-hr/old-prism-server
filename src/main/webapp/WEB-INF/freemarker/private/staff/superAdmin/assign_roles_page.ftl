@@ -43,12 +43,12 @@
 			
 			 <!-- Middle Starts -->
 			<div id="middle">
-			
 				<!-- Main content area. -->
 				<article id="content" role="main">
 					<div class="content-box">
 				    	<div class="content-box-inner">
 				        
+					<a href="/pgadmissions/"> back to applications list </a>
 				        <div class="row">
                             <span class="label"><strong>Select Programme</strong></span>
                             <form name="programmeForm"> 

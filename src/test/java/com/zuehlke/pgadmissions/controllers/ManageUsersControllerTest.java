@@ -91,12 +91,13 @@ public class ManageUsersControllerTest {
 				.email("email@test.com").username("usernameTwo").password("password").accountNonExpired(false)
 				.accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
-		Program program1 = new ProgramBuilder().approver(approverOne, approverTwo).toProgram();
+		Program program1 = new ProgramBuilder().id(1).approver(approverOne, approverTwo).toProgram();
 		Program program2 = new ProgramBuilder().approver(approverOne, approverTwo).toProgram();
 		EasyMock.expect(programsServiceMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
 		EasyMock.expect(programsServiceMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
 		EasyMock.expect(programsServiceMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
 		EasyMock.expect(programsServiceMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
+		EasyMock.expect(programsServiceMock.getProgramById(1)).andReturn(program1);
 
 		EasyMock.expect(userDAOMock.getAllUsers()).andReturn(Arrays.asList(currentUser, approverOne, approverTwo));
 		EasyMock.expect(userDAOMock.getAllUsers()).andReturn(Arrays.asList(currentUser, approverOne, approverTwo));
@@ -105,9 +106,9 @@ public class ManageUsersControllerTest {
 		EasyMock.replay(programsServiceMock, userDAOMock);
 		Assert.assertEquals("private/staff/superAdmin/assign_roles_page", manageUsersController.getUsersPage(null)
 				.getViewName());
-		ManageUsersModel model = (ManageUsersModel) manageUsersController.getUsersPage(null).getModel().get("model");
+		ManageUsersModel model = (ManageUsersModel) manageUsersController.getUsersPage(1).getModel().get("model");
 		Assert.assertEquals(2, model.getPrograms().size());
-		Assert.assertEquals(3, model.getUsersInRoles().size());
+		Assert.assertEquals(2, model.getUsersInRoles().size());
 	}
 
 	@Test
@@ -133,20 +134,19 @@ public class ManageUsersControllerTest {
 				.email("email@test.com").username("usernameTwo").password("password").accountNonExpired(false)
 				.accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
-		Program program1 = new ProgramBuilder().approver(approverOne, approverTwo).toProgram();
+		Program program1 = new ProgramBuilder().id(1).approver(approverOne, approverTwo).toProgram();
 		Program program2 = new ProgramBuilder().approver(approverOne).administrator(currentUser).toProgram();
-		EasyMock.expect(programsServiceMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
-		EasyMock.expect(programsServiceMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
 		EasyMock.expect(programsServiceMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
 		EasyMock.expect(programsServiceMock.getAllPrograms()).andReturn(Arrays.asList(program1, program2));
 
 		EasyMock.expect(userDAOMock.getAllUsers()).andReturn(Arrays.asList(currentUser, approverOne, approverTwo));
 		EasyMock.expect(userDAOMock.getAllUsers()).andReturn(Arrays.asList(currentUser, approverOne, approverTwo));
+		EasyMock.expect(programsServiceMock.getProgramById(1)).andReturn(program1);
 
 		EasyMock.replay(programsServiceMock, userDAOMock);
 		Assert.assertEquals("private/staff/superAdmin/assign_roles_page", manageUsersController.getUsersPage(null)
 				.getViewName());
-		ManageUsersModel model = (ManageUsersModel) manageUsersController.getUsersPage(null).getModel().get("model");
+		ManageUsersModel model = (ManageUsersModel) manageUsersController.getUsersPage(1).getModel().get("model");
 		Assert.assertEquals(1, model.getPrograms().size());
 		Assert.assertEquals(2, model.getUsersInRoles().size());
 	}

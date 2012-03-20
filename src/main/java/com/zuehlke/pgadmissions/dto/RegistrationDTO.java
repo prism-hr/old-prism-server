@@ -1,27 +1,16 @@
 package com.zuehlke.pgadmissions.dto;
 
-public class RegisteredUserDTO {
+import org.apache.commons.lang.builder.EqualsBuilder;
+
+public class RegistrationDTO {
 	
-	private String password;
-	
+	private String password;	
 	private String confirmPassword;
 
-	private Integer id;
-	
-	private String firstname;
-	
-	private String lastname;
-	
+	private String firstname;	
+	private String lastname;	
 	private String email;
 	
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
 	public String getFirstname() {
 		return firstname;
 	}
@@ -60,6 +49,11 @@ public class RegisteredUserDTO {
 
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj);
 	}
 
 	

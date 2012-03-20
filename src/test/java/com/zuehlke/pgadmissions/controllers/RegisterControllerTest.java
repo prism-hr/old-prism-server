@@ -4,12 +4,12 @@ package com.zuehlke.pgadmissions.controllers;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-
-import javax.validation.constraints.AssertTrue;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -17,36 +17,36 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.domain.ApplicantRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.builders.ApplicantRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.RegisteredUserDTO;
+import com.zuehlke.pgadmissions.dto.RegistrationDTO;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
-import com.zuehlke.pgadmissions.services.ApplicantRecordService;
+import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApplicantRecordValidator;
 
 public class RegisterControllerTest {
 
-	private RegisterController registerController;
-	private ApplicantRecordService applicantRecordServiveMock;
+	private RegisterController registerController;	
 	private UserService userServiceMock;
 	private ApplicantRecordValidator validatorMock;
+	private RegistrationService registrationServiceMock;
 	
 	
 	@Before
 	public void setUp() {
-		validatorMock = EasyMock.createMock(ApplicantRecordValidator.class);
-		applicantRecordServiveMock = EasyMock.createMock(ApplicantRecordService.class);
+		validatorMock = EasyMock.createMock(ApplicantRecordValidator.class);		
 		userServiceMock = EasyMock.createMock(UserService.class);
-		registerController = new RegisterController(validatorMock, userServiceMock);
+		registrationServiceMock = EasyMock.createMock(RegistrationService.class);
+		registerController = new RegisterController(validatorMock, userServiceMock, registrationServiceMock);
 	}
 	
 	@Test
@@ -55,52 +55,54 @@ public class RegisterControllerTest {
 		assertEquals("public/register/register_applicant", modelAndView.getViewName());
 	}
 	
-	@Ignore
 	@Test
-	public void shouldSaveNewUser() throws NoSuchAlgorithmException{
-		RegisteredUser user = new RegisteredUserBuilder().id(17).email("meuston@gmail.com").firstName("Mark").lastName("Euston").password("1234").accountNonExpired(true).accountNonLocked(true).enabled(false).credentialsNonExpired(true).toUser();
-		RegisteredUserDTO recordDTO = new RegisteredUserDTO();
+	public void shouldReturnToRegistrationPageIfErrors(){
+		RegistrationDTO recordDTO = new RegistrationDTO();
 		recordDTO.setFirstname("Mark");
 		recordDTO.setLastname("Euston");
 		recordDTO.setEmail("meuston@gmail.com");
 		recordDTO.setPassword("1234");
 		recordDTO.setConfirmPassword("1234");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(recordDTO, "record");
-		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
-		EasyMock.expect(userServiceMock.getRoleById(2)).andReturn(role);
-		userServiceMock.save(user);
-		EasyMock.replay(userServiceMock);
-		ModelAndView modelAndView = registerController.getRegisterSubmitPage(recordDTO, mappingResult);
-		EasyMock.verify(userServiceMock);
+		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+		validatorMock.validate(recordDTO, errorsMock);
+		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
+		
+		
+		EasyMock.replay(validatorMock, errorsMock, registrationServiceMock);
+		
+		ModelAndView modelAndView = registerController.submitRegistration(recordDTO, errorsMock);
 		assertEquals("public/register/register_applicant", modelAndView.getViewName());
-		assertEquals("email@email.com", ((RegisterPageModel)modelAndView.getModel().get("model")).getUser().getEmail());
-		System.out.println(((RegisterPageModel)modelAndView.getModel().get("model")).getRecord().getPassword());
-	}
-
-	@Ignore
-	@Test
-	public void shouldHashPassword() throws NoSuchAlgorithmException{
-		RegisteredUser user = new RegisteredUserBuilder().email("email@email.com").firstName("firstname").lastName("lastname").password("1234").toUser();
-		RegisteredUserDTO recordDTO = new RegisteredUserDTO();
-		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
-		EasyMock.expect(userServiceMock.getRoleById(2)).andReturn(role);
-		recordDTO.setFirstname("Mark");
-		recordDTO.setLastname("Euston");
-		recordDTO.setEmail("meuston@gmail.com");
-		recordDTO.setPassword("1234");
-		recordDTO.setConfirmPassword("1234");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(recordDTO, "record");
-		userServiceMock.save(user);
-		ModelAndView modelAndView = registerController.getRegisterSubmitPage(recordDTO, mappingResult);
-		assertEquals("public/register/register_applicant", modelAndView.getViewName());
-		assertFalse(((RegisterPageModel)modelAndView.getModel().get("model")).getUser().getPassword().equals("1234"));
+		assertSame(recordDTO, ((RegisterPageModel) modelAndView.getModel().get("model")).getRecord());
+		assertSame(errorsMock, ((RegisterPageModel) modelAndView.getModel().get("model")).getResult());
+		EasyMock.verify(registrationServiceMock);
 	}
 	
 	@Test
-	public void shouldGenereteRandomCode(){
-		SecureRandom random = new SecureRandom();
-		System.out.println(new BigInteger(80, random).toString(32));
+	public void shouldCreateAndSaveNewUserIfNoErrors(){
+		RegistrationDTO recordDTO = new RegistrationDTO();
+		recordDTO.setFirstname("Mark");
+		recordDTO.setLastname("Euston");
+		recordDTO.setEmail("meuston@gmail.com");
+		recordDTO.setPassword("1234");
+		recordDTO.setConfirmPassword("1234");
+		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+		validatorMock.validate(recordDTO, errorsMock);
+		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+		registrationServiceMock.generateAndSaveNewUser(recordDTO);
+		
+		EasyMock.replay(validatorMock, errorsMock, registrationServiceMock);
+		
+		ModelAndView modelAndView = registerController.submitRegistration(recordDTO, errorsMock);
+		assertEquals("public/register/register_info", modelAndView.getViewName());
+		RegistrationDTO record = ((RegisterPageModel) modelAndView.getModel().get("model")).getRecord();
+		assertNotNull(record);
+		assertNull(record.getFirstname());
+		assertEquals("You have been successfully registered. To activate your account please check your emails and click on the activation link.", ((RegisterPageModel) modelAndView.getModel().get("model")).getMessage());
+		EasyMock.verify(registrationServiceMock);
 	}
+	
+
+	
 	
 	@Test
 	public void shouldActivateAccount(){

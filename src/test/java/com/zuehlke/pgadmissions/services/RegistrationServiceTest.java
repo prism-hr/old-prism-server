@@ -31,8 +31,7 @@ public class RegistrationServiceTest {
 	private EncryptionUtils encryptionUtilsMock;
 	private RoleDAO roleDAOMock;
 	private UserDAO userDAOMock;
-	private JavaMailSender javaMailSenderMock;
-	private FreeMarkerConfig freeMarkerConfigMock;
+	private JavaMailSender javaMailSenderMock;	
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 
 	@Test
@@ -86,7 +85,7 @@ public class RegistrationServiceTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq("email@test.com"), EasyMock.eq("pgadmissions"),
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq("email@test.com"),  EasyMock.eq("Registration confirmation"),
 						EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
@@ -150,8 +149,7 @@ public class RegistrationServiceTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq("email@test.com"), EasyMock.eq("pgadmissions"),
-						EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq("email@test.com"), EasyMock.eq("Registration confirmation"),EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));

@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.pagemodels.ManageUsersModel;
@@ -48,11 +49,24 @@ public class ManageUsersController {
 		}
 		if (programId != null) {
 			Program selectedProgram = programsService.getProgramById(programId);
-			allUsers.addAll(selectedProgram.getAdministrators());
-			allUsers.addAll(selectedProgram.getApprovers());
-			allUsers.addAll(selectedProgram.getReviewers());
-			for (RegisteredUser visibleUser : allUsers) {
-				visibleUser.setRolesList();
+			List<RegisteredUser> administrators = selectedProgram.getAdministrators();
+			for (RegisteredUser registeredUser : administrators) {
+				registeredUser.setRolesList(registeredUser.getRolesList()+" ADMINISTRATOR ");
+				if(!allUsers.contains(registeredUser))
+					allUsers.add(registeredUser);
+			}
+			List<RegisteredUser> approvers = selectedProgram.getApprovers();
+			for (RegisteredUser registeredUser : approvers) {
+				registeredUser.setRolesList(registeredUser.getRolesList()+" APPROVER ");
+				if(!allUsers.contains(registeredUser))
+					allUsers.add(registeredUser);
+			}
+			
+			List<RegisteredUser> reviewers = selectedProgram.getReviewers();
+			for (RegisteredUser registeredUser : reviewers) {
+				registeredUser.setRolesList(registeredUser.getRolesList()+" REVIEWER ");
+				if(!allUsers.contains(registeredUser))
+					allUsers.add(registeredUser);
 			}
 			pageModel.setUsersInRoles(allUsers);
 		}
@@ -63,6 +77,8 @@ public class ManageUsersController {
 		return modelAndView;
 	}
 
+	
+	
 	private List<Program> getVisiblePrograms(RegisteredUser user) {
 		List<Program> allPrograms = programsService.getAllPrograms();
 		List<Program> visiblePrograms = new ArrayList<Program>();

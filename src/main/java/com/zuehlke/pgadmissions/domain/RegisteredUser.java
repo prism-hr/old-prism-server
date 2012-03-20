@@ -41,7 +41,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private List<Role> roles = new ArrayList<Role>();
 
 	@Transient
-	private String rolesList;
+	private String rolesList = "";
 
 	public String getRolesList() {
 		return rolesList;
@@ -214,5 +214,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public void setActivationCode(String activationCode) {
 		this.activationCode = activationCode;
+	}
+
+	public void setRolesList(String rolesList) {
+		this.rolesList = rolesList;
 	}
 }

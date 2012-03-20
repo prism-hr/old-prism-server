@@ -116,7 +116,7 @@ $(document).ready(function()
 	// Sortable tables.
   //------------------------------------------------
   $('table.data').tablesorter();
-  $('table.data thead th').not(':first,:last').wrapInner('<span class="arrow" />');
+  $('table.data thead th').wrapInner('<span class="arrow" />');
   
 });
 

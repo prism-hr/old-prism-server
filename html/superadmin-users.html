@@ -57,26 +57,103 @@
       <div class="content-box">
       	<div class="content-box-inner">
         
-        	<h1>Programme: LoLo EngD</h1>
-          <form class="roles">
+          <form>
           
-          	<div class="row">
-            	<label>Email address</label>
-              <input type="text" name="email" />
-            </div>
-
-          	<div class="row">
-            	<label>Role(s) in application process</label>
-              <select multiple size="4">
-              	<option>Administrator</option>
-              	<option>Approver</option>
-              	<option>Interviewer</option>
-              	<option>Reviewer</option>
+          	<h1>Add Existing programme users and assign roles</h1>
+            <p>Please add users to the programme, using their email addresses.<br>You can select one or more roles for the user.</p>
+            
+            <br>
+            
+            <div class="row programme">
+              <label>Select programme</label>
+              <select>
+                <option>LoLo EngD</option>
               </select>
             </div>
+            
+						<!-- // NEW USERS -->
 
-            <button class="plus"><span></span> Add another</button>
+            <hr>
+            
+          	<!-- Left side -->
+          	<div class="left-column">
+            
+              <div class="row">
+                <label>First name</label>
+                <input type="text" name="firstname" />
+              </div>
+              
+              <div class="row">
+                <label>Surname</label>
+                <input type="text" name="surname" />
+              </div>
+              
+              <div class="row">
+                <label>Email address</label>
+                <input type="text" name="email" />
+              </div>
+              
+            </div>
 
+						<!-- Right side -->
+						<div class="right-column">
+            
+              <div class="row">
+                <label>Role(s) in application process</label>
+                <select multiple size="4">
+                  <option>Administrator</option>
+                  <option>Approver</option>
+                  <option>Interviewer</option>
+                  <option>Reviewer</option>
+                </select>
+              </div>
+            
+              <div class="buttons">
+	              <button class="red">Remove user</button>
+	              <button>Create user</button>
+              </div>
+              
+            </div>
+
+
+						<!-- // EXISTING USERS -->
+							
+            <hr>
+            
+          	<!-- Left side -->
+          	<div class="left-column">
+            
+              <div class="row">
+                <label>Please choose a user</label>
+                <select>
+                	<option>Please choose a user</option>
+                </select>
+              </div>
+              
+              <div class="row">
+                or <a href="#">add a new user</a>
+              </div>
+              
+            </div>
+
+						<!-- Right side -->
+						<div class="right-column">
+            
+              <div class="row">
+                <label>Role(s) in application process</label>
+                <select multiple size="4">
+                  <option>Administrator</option>
+                  <option>Approver</option>
+                  <option>Interviewer</option>
+                  <option>Reviewer</option>
+                </select>
+              </div>
+            
+              <div class="buttons">
+              	<button>Add user</button>
+              </div>
+              
+            </div>
           </form>
           
           <hr>
@@ -86,12 +163,14 @@
               <col style="width: 220px;" />
               <col style="width: auto;" />
               <col style="width: 200px;" />
+              <col style="width: 100px;" />
             </colgroup>
             <thead>
               <tr>
                 <th scope="col">Email address</th>
                 <th scope="col">Name</th>
                 <th scope="col">Role(s)</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -99,16 +178,19 @@
                 <td scope="col">crispy@quentin.com</td>
                 <td scope="col">Quentin Crisp</td>
                 <td scope="col">Interviewer, Reviewer</td>
+                <td scope="col"><a href="#">Edit</a> / <a href="#">Remove</a></td>
               </tr>
               <tr>
                 <td scope="col">rich@kipling.com</td>
                 <td scope="col">-</td>
                 <td scope="col">Administrator</td>
+                <td scope="col"><a href="#">Edit</a> / <a href="#">Remove</a></td>
               </tr>
               <tr>
                 <td scope="col">erol@erik.com</td>
                 <td scope="col">Errol Erickson</td>
                 <td scope="col">Approver, Interviewer</td>
+                <td scope="col"><a href="#">Edit</a> / <a href="#">Remove</a></td>
               </tr>
             </tbody>
           </table>

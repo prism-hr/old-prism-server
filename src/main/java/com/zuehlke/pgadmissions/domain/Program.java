@@ -67,7 +67,7 @@ public class Program extends DomainObject<Integer> {
 	}
 	
 	@ManyToMany
-	@JoinTable(name = "PROGRAM_USER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "registered_user_id") })
+	@JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "registered_user_id") })
 	@Access(AccessType.PROPERTY)
 	public List<RegisteredUser> getApprovers() {
 		return approvers;
@@ -84,7 +84,7 @@ public class Program extends DomainObject<Integer> {
 	}
 	
 	@ManyToMany
-	@JoinTable(name = "PROGRAM_USER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "registered_user_id") })
+	@JoinTable(name = "PROGRAM_ADMINISTRATOR_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "administrator_id") })
 	@Access(AccessType.PROPERTY)
 	public List<RegisteredUser> getAdministrators() {
 		return administrators;
@@ -95,7 +95,7 @@ public class Program extends DomainObject<Integer> {
 	}
 	
 	@ManyToMany
-	@JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "registered_user_id") })
+	@JoinTable(name = "PROGRAM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
 	@Access(AccessType.PROPERTY)
 	public List<RegisteredUser> getReviewers() {
 		return reviewers;

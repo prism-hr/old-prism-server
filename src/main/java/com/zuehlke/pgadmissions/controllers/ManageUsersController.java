@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.Program;
@@ -38,17 +39,29 @@ public class ManageUsersController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/showPage")
-	public ModelAndView getUsersPage() {
+	public ModelAndView getUsersPage(@RequestParam(required = false) Integer programId) {
+		System.out.println("programId" + programId);
 		ManageUsersModel pageModel = new ManageUsersModel();
 		RegisteredUser user = getCurrentUser();
 		pageModel.setUser(user);
+		List<Program> allPrograms = new ArrayList<Program>();
+		List<RegisteredUser> allUsers = new ArrayList<RegisteredUser>();
 		if (! (user.isInRole(Authority.ADMINISTRATOR) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
 			throw new AccessDeniedException();
 		}
-		List<Program> allPrograms = programsService.getAllPrograms();
+		if(programId!=null) {
+			Program selectedProgram = programsService.getProgramById(programId);
+			allPrograms.add(selectedProgram);
+			allUsers.addAll(selectedProgram.getAdministrators());
+			allUsers.addAll(selectedProgram.getApprovers());
+			allUsers.addAll(selectedProgram.getReviewers());
+		}
+		else{
+			allPrograms = programsService.getAllPrograms();
+			allUsers = userService.getAllUsers();
+		}
 		List<Program> visiblePrograms = new ArrayList<Program>();
 
-		List<RegisteredUser> allUsers = userService.getAllUsers();
 		List<RegisteredUser> visibleUsers = new ArrayList<RegisteredUser>();
 
 		if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
@@ -73,11 +86,28 @@ public class ManageUsersController {
 			visibleUser.setRolesList();
 		}
 
-		pageModel.setPrograms(visiblePrograms);
+		pageModel.setPrograms(getVisiblePrograms(user));
 		pageModel.setUsersInRoles(visibleUsers);
 
 		ModelAndView modelAndView = new ModelAndView(ROLES_PAGE_VIEW_NAME, "model", pageModel);	
 		return modelAndView;
+	}
+	
+	private List<Program> getVisiblePrograms(RegisteredUser user){
+		List<Program> allPrograms = programsService.getAllPrograms();
+		List<Program> visiblePrograms = new ArrayList<Program>();
+		if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
+			if (allPrograms != null) {
+				visiblePrograms.addAll(allPrograms);
+			}
+		} else {
+			for (Program program : allPrograms) {
+				if (program.getAdministrators().contains(user)) {
+					visiblePrograms.add(program);
+				}
+			}
+		}
+		return visiblePrograms;
 	}
 
 	private RegisteredUser getCurrentUser() {

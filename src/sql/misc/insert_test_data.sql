@@ -42,10 +42,7 @@ Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((sele
 Insert into REGISTERED_USER(username, password,firstName, lastName,email, accountNonExpired,  accountNonLocked,  credentialsNonExpired,  enabled) values ('john@test.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'John', 'Smith', 'john@test.com', 1, 1, 1, 1);
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((select id from REGISTERED_USER where username='john@test.com'), (select id from APPLICATION_ROLE where authority='SUPERADMINISTRATOR'));
 
-Insert into PROGRAM_REVIEWER_LINK(program_id, reviewer_id) values ((select id from PROGRAM where code='TEST-PROG-ABC'), (select id from REGISTERED_USER where username='alice@test.com'));
-
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((select id from REGISTERED_USER where username='alice@test.com'), (select id from APPLICATION_ROLE where authority='ADMINISTRATOR'));
-Insert into PROGRAM_ADMINISTRATOR_LINK(program_id, administrator_id) values ((select id from PROGRAM where code='TEST-PROG-ABC'), (select id from REGISTERED_USER where username='alice@test.com'));
 
 Insert into PROGRAM_APPROVER_LINK(program_id, registered_user_id) values ((select id from PROGRAM where code='TEST-PROG-ABC'), (select id from REGISTERED_USER where username='fabian@test.com'));
 

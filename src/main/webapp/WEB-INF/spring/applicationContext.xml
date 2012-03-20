@@ -89,7 +89,6 @@
       </property>
 	</bean>
  
-	
-	
+	<mvc:view-controller path="/register/complete" view-name="public/register/registration_complete"/>
 	
 </beans>

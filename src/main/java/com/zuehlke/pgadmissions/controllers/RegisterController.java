@@ -24,6 +24,7 @@ public class RegisterController {
 
 	private static final String REGISTER_APPLICANT_VIEW_NAME = "public/register/register_applicant";
 	private static final String REGISTER_INFO_VIEW_NAME = "public/register/register_info";
+	private static final String REGISTER_COMPLETE_VIEW_NAME = "/register/complete";
 	private final UserService userService;
 	private final ApplicantRecordValidator validator;
 	private final RegistrationService registrationService;
@@ -57,11 +58,8 @@ public class RegisterController {
 			model.setResult(errors);
 			return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
 		}
-		registrationService.generateAndSaveNewUser(record);
-		RegisterPageModel model = new RegisterPageModel();		
-		model.setRecord(new RegistrationDTO());
-		model.setMessage("You have been successfully registered. To activate your account please check your emails and click on the activation link.");
-		return new ModelAndView(REGISTER_INFO_VIEW_NAME, "model", model);
+		registrationService.generateAndSaveNewUser(record);		
+		return new ModelAndView("redirect:" + REGISTER_COMPLETE_VIEW_NAME);
 	
 	}
 

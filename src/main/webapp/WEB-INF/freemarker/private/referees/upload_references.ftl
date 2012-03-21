@@ -27,12 +27,12 @@
 		</table>
         ${model.message!}
 		<form id="documentUploadForm" method="POST" action="<@spring.url '/addReferences/submit'/>" enctype="multipart/form-data">
-             <input type="hidden" name="id" value="${model.referee.id}"/>
+             <input type="hidden" name="refereeId" value="${model.referee.id}"/>
              <div>
-              <textarea id="comment" name="comment" class="max" rows="5" cols="90" ></textarea>
+             Comment <textarea id="comment" name="comment" class="max" rows="5" cols="90" ></textarea>
             
                 <!-- Document upload -->
-                		<input class="full" type="file" name="file" value="" />                      	
+                <input class="full" type="file" name="file" value="" />                      	
 				<#if model.uploadErrorCode?? >
 					   <span class="invalid"><@spring.message  model.uploadErrorCode /></span>
 				</#if>				

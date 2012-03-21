@@ -17,8 +17,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
+import com.zuehlke.pgadmissions.exceptions.RefereeAlreadyUploadedReference;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -45,48 +47,53 @@ public class UploadReferencesController {
 	
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getReferencesPage(@RequestParam Integer refereeId, @RequestParam String activationCode, @RequestParam Integer applicationId) {
-		System.out.println(applicationService);
-		Referee referee = applicationService.getRefereeById(refereeId);
-		System.out.println(referee.getId());
-		ApplicationForm applicationForm = applicationService.getApplicationById(applicationId);
+	public ModelAndView getReferencesPage(@ModelAttribute("referee") Referee referee, @RequestParam String activationCode) {
 		ApplicationPageModel model = new ApplicationPageModel();
-		if(applicationForm==null || referee==null || !referee.getActivationCode().equals(activationCode)){
+		ApplicationForm applicationForm = referee.getApplication();
+		if(referee.getApplication()==null || !referee.getActivationCode().equals(activationCode)){
 			model.setMessage("The link you provided is incorrect please try again");
 		}
 		else{
-			System.out.println(applicationForm.getId());
 			model.setApplicationForm(applicationForm);
 			model.setReferee(referee);
 		}
 		return new ModelAndView(ADD_REFERENCES_VIEW_NAME, "model", model);
 	}
 	
+	
+	@ModelAttribute("referee")
+	public Referee getReferee(Integer refereeId) {
+		Referee referee = applicationService.getRefereeById(refereeId);
+		if (referee == null) {
+			throw new ResourceNotFoundException();
+		}
+		return referee;
+	}
+	
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
 	public ModelAndView submitReference(@ModelAttribute("referee") Referee referee, @RequestParam("file") MultipartFile multipartFile) throws IOException {
-		Referee ref = applicationService.getRefereeById(referee.getId());
-		if (ref == null ) {
-			throw new ResourceNotFoundException();
+		if(referee.getDocument()!=null){
+			throw new RefereeAlreadyUploadedReference();
 		}
 		Document document = newDocument();
 		document.setFileName(multipartFile.getOriginalFilename());
 		document.setContentType(multipartFile.getContentType());
 		document.setContent(multipartFile.getBytes());
-		document.setReferee(ref);
+		document.setReferee(referee);
 		BindingResult errors = newErrors(document);
 		documentValidator.validate(document, errors);
 		ModelMap modelMap = new ModelMap();		
 		if(errors.hasFieldErrors("fileName")){
 			modelMap.put("uploadErrorCode", errors.getFieldError("fileName").getCode());
 		}else{
-			ref.setComment(referee.getComment());
-			document.getReferee().setDocument(document);
-			applicationService.saveDocument(document);
-			applicationService.saveReferee(ref);
+			referee.setDocument(document);
+			applicationService.saveReferee(referee);
 			return new ModelAndView("private/referees/upload_success", modelMap);
 		}
-		modelMap.put("id", ref.getId());
-		return new ModelAndView(ADD_REFERENCES_VIEW_NAME, modelMap);
+		modelMap.put("id", referee.getId());
+		modelMap.put("message", "There was a problem with the details you provided.");
+		modelMap.put("referee", referee);
+		return new ModelAndView(ADD_REFERENCES_VIEW_NAME,"model", modelMap);
 	}
 	
 	BindingResult newErrors(Document document) {

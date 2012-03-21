@@ -63,9 +63,6 @@ public class RegisterController {
 	
 	}
 
-
-
-
 	@RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
 	public ModelAndView activateAccountSubmit(@ModelAttribute RegisteredUser regUser,
 			@RequestParam String activationCode) {

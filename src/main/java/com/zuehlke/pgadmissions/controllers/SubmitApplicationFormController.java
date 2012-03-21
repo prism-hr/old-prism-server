@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
-import com.zuehlke.pgadmissions.services.ReferencesService;
+import com.zuehlke.pgadmissions.services.SubmitApplicationService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
 @Controller
@@ -53,14 +53,14 @@ public class SubmitApplicationFormController {
 	private final CountryService countryService;
 	private final LanguageService languageService;
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/main_application_page";
-	private final ReferencesService referencesService;
+	private final SubmitApplicationService referencesService;
 
 	SubmitApplicationFormController() {
 		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public SubmitApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor, CountryService countryService, LanguageService languageService, ReferencesService referencesService) {
+	public SubmitApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor, CountryService countryService, LanguageService languageService, SubmitApplicationService referencesService) {
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.countryService = countryService;

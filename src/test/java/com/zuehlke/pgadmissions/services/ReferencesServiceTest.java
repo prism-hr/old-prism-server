@@ -14,7 +14,9 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -22,10 +24,11 @@ import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.dto.RegistrationDTO;
 import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
 
@@ -48,34 +51,46 @@ public class ReferencesServiceTest {
 
 	@Test
 	public void shouldSaveApplicationFormAndSendEmailsToRefereesAdminsAndApplicant() throws UnsupportedEncodingException{
-		Address address1 = new AddressBuilder().id(1).toAddress();
-		Address address2 = new AddressBuilder().id(2).toAddress();
-		EmploymentPosition position = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
-		Referee referee1 = new RefereeBuilder().refereeId(1).toReferee();
-		Referee referee2 = new RefereeBuilder().refereeId(2).toReferee();
-		Qualification qualification = new QualificationBuilder().id(1).toQualification();
-		com.zuehlke.pgadmissions.domain.Funding funding = new FundingBuilder().toFunding();
-		
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).toUser();
-		ApplicationForm form = new ApplicationFormBuilder().referees(referee1, referee2).qualification(qualification).id(2).employmentPosition(position).fundings(funding).
-				applicant(currentUser).addresses(address1, address2).toApplicationForm();
-		ProgrammeDetail programmeDetails = new ProgrammeDetail();
+	
+		Referee referee1 = new RefereeBuilder().refereeId(1).firstname("bob").lastname("bobson").email("email@test.com").toReferee();
+		Referee referee2 = new RefereeBuilder().refereeId(2).firstname("anna").lastname("allen").email("email2@test.com").toReferee();
+		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		Program program = new ProgramBuilder().administrator(administrator).toProgram();
+		Project project = new ProjectBuilder().program(program).toProject();
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).referees(referee1, referee2).id(2).project(project).toApplicationForm();
+		ProgrammeDetail programmeDetails = new ProgrammeDetail();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		applicationsServiceMock.save(form);
 		
-		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
+		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
+		MimeMessagePreparator preparatorMock3 = EasyMock.createMock(MimeMessagePreparator.class);
+		MimeMessagePreparator preparatorMock4 = EasyMock.createMock(MimeMessagePreparator.class);
+		InternetAddress toAddress1 = new InternetAddress("email@test.com", "bob bobson");
+		InternetAddress toAddress2 = new InternetAddress("email2@test.com", "anna allen");
+		InternetAddress toAddress3 = new InternetAddress("hh@test.com", "harry hen");
+		InternetAddress toAddress4 = new InternetAddress("bb@test.com", "benny brack");
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Referee Notification"),EasyMock.eq("private/referees/mail/referee_notification_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
-
-		javaMailSenderMock.send(preparatorMock);
-		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Referee Notification"),EasyMock.eq("private/referees/mail/referee_notification_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), EasyMock.eq("Referee Notification"),EasyMock.eq("private/referees/mail/referee_notification_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock2);
+		
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress3), EasyMock.eq("Application Submitted"),EasyMock.eq("private/pgStudents/mail/application_submit_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock3);
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress4), EasyMock.eq("Application Submitted"),EasyMock.eq("private/staff/admin/mail/application_submit_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock4);
+		javaMailSenderMock.send(preparatorMock1);
+		javaMailSenderMock.send(preparatorMock2);
+		javaMailSenderMock.send(preparatorMock3);
+		javaMailSenderMock.send(preparatorMock4);
+	
 		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 	
 		
 		referencesService.saveApplicationFormAndSendMailNotifications(form);
-		EasyMock.verify(applicationsServiceMock);
+		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 	}
 	
 	@Test
@@ -129,3 +144,4 @@ public class ReferencesServiceTest {
 	
 
 }
+

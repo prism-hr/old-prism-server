@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.dto.RegistrationDTO;
+import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
@@ -135,8 +136,8 @@ public class RegisterControllerTest {
 		EasyMock.replay(registrationServiceMock);
 		ModelAndView modelAndView = registerController.activateAccountSubmit( activationCode);
 		assertEquals("public/register/register_info", modelAndView.getViewName());
-		
-		assertEquals("Sorry, the system was unable to process the activation request.", modelAndView.getModel().get("message"));
+		RegisterPageModel model = (RegisterPageModel) modelAndView.getModel().get("model");
+		assertEquals("Sorry, the system was unable to process the activation request.", model.getMessage());
 	}
 	
 	@After

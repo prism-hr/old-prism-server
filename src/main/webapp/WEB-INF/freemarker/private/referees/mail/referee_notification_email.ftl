@@ -1,12 +1,74 @@
-<p>
-Dear ${referee.firstname},
-</p>
-<p>
-You have just been assigned as a Referee for the applicant ${applicant.firstName} ${applicant.lastName}
-who has applied for entering UCL for the programme ${programme.programmeName}.
-To add a reference for that applicant please click on the link below.
-</p>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 
-<p><a href="${host}/pgadmissions/addReferences?refereeId=${referee.id}&activationCode=${referee.activationCode}&applicationId=${referee.application.id}">Add Reference</a></p>
-<p>Best Regards,</p>
-<p>UCL Portal</p>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>Untitled Document</title>
+	</head>
+
+	<body>
+		<table width="600" border="0" cellspacing="0" cellpadding="0">
+			<tr>
+		    	<td colspan="3">
+		    		<img src="${host}/pgadmissions/design/default/images/email/header.jpg" width="600" height="80" alt="Portal: Your Gateway to Research Opportunities" />
+		    	</td>
+		  	</tr>
+		  	<tr>
+			    <td width="50" bgcolor="#141215" style="background-color: #141215;">
+			    	<img src="images/shim.gif" width="50" height="30" alt="" />
+			    </td>
+			    <td width="500" bgcolor="#141215" style="background-color: #141215;">
+			    	<font face="Arial, Helvetica, sans-serif" color="#FFFFFF" size="2">
+			    		<strong>Firm Offer</strong>
+			    	</font>
+			    </td>
+			    <td width="50" bgcolor="#141215" style="background-color: #141215;">
+			    	<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" />
+			    </td>
+		  	</tr>
+		  	<tr>
+		    	<td colspan="3"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" /></td>
+		  	</tr>
+		  	<tr>
+		    	<td width="50">
+		    		<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" />
+		    	</td>
+		    	<td width="500">
+		      		<h1 style="font-size: 12pt;">
+		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${referee.firstname},</font>
+		      		</h1>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated as a referee by ${applicant.firstName} ${applicant.lastName} who is currently applying to the UCL Faculty to join the Postgraduate research Programme in ${programme.programmeName}.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We would be most grateful for your comments on this candidate. To submit your reference, please visit the website via the link below:</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      			<a href="${host}/pgadmissions/addReferences?refereeId=${referee.id}&activationCode=${referee.activationCode}&applicationId=${referee.application.id}">Add Reference</a>
+			      		</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Welcome to UCL!<br />UCL Portal</font>
+			      	</p>
+		    	</td>
+		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>
+		  	</tr>
+		  	<tr>
+		    	<td colspan="3"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" /></td>
+		  	</tr>
+		  	<tr>
+		    	<td width="50" bgcolor="#141215" style="background-color: #141215;">
+		    		<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" />
+		    	</td>
+		    	<td width="500" bgcolor="#A2A3A5" style="background-color: #A2A3A5;">
+		    		<img src="${host}/pgadmissions/design/default/images/email/logo_ucl.gif" width="80" height="30" alt="UCL" />
+		    	</td>
+		    	<td width="50" bgcolor="#A2A3A5" style="background-color: #A2A3A5;">
+		    		<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" />
+		    	</td>
+		  	</tr>
+		</table>
+	
+	</body>
+</html>

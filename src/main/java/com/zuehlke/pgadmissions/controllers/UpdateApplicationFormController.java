@@ -52,6 +52,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
@@ -79,9 +80,10 @@ public class UpdateApplicationFormController {
 	private final LanguageService languageService;
 	private final LanguagePropertyEditor languagePropertyEditor;
 	private final CountryPropertyEditor countryPropertyEditor;
+	private final EncryptionUtils encryptionUtils;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
@@ -89,7 +91,7 @@ public class UpdateApplicationFormController {
 			DatePropertyEditor datePropertyEditor, CountryService countryService, RefereeService refereeService,
 			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, MessengerJSONPropertyEditor messengerJSONPropertyEditor,
 			ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator,
-			LanguageService languageService, LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor) {
+			LanguageService languageService, LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, EncryptionUtils encryptionUtils) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
@@ -103,6 +105,7 @@ public class UpdateApplicationFormController {
 		this.refereeValidator = refereeValidator;
 		this.languageService = languageService;
 		this.countryPropertyEditor = countryPropertyEditor;
+		this.encryptionUtils = encryptionUtils;
 	}
 
 	@InitBinder
@@ -356,7 +359,7 @@ public class UpdateApplicationFormController {
 		ApplicationPageModel applicationPageModel = new ApplicationPageModel();
 		refereeValidator.validate(refereeDetails, errors);
 		if (!errors.hasErrors()) {
-			refereeDetails.setActivationCode(generateRandomActivationCode());
+			refereeDetails.setActivationCode(encryptionUtils.generateUUID());
 			refereeService.save(refereeDetails);
 			applicationPageModel.setReferee(new Referee());
 		} else {

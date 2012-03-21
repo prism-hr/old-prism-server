@@ -64,6 +64,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
@@ -90,7 +91,7 @@ public class UpdateApplicationFormControllerTest {
 	private LanguageService languageServiceMock;
 	private LanguagePropertyEditor languagePropertyEditorMock;
 	private CountryPropertyEditor countryPropertyEditor;
-
+	private EncryptionUtils encryptionUtilsMock;
 
 	@SuppressWarnings("deprecation")
 	@Test
@@ -340,7 +341,7 @@ public class UpdateApplicationFormControllerTest {
 
 		applicationController = new UpdateApplicationFormController(applicationsServiceMock, userPropertyEditorMock,
 				datePropertyEditorMock, countriesServiceMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
-				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor){
+				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, encryptionUtilsMock){
 			Referee newReferee() {
 				return new Referee();
 			}
@@ -637,12 +638,13 @@ public class UpdateApplicationFormControllerTest {
 
 		qualificationValidator = EasyMock.createMock(QualificationValidator.class);
 		countriesServiceMock = EasyMock.createMock(CountryService.class);
+		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
 
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		
 		applicationController = new UpdateApplicationFormController(applicationsServiceMock, userPropertyEditorMock,
 				datePropertyEditorMock, countriesServiceMock,  refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
-				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor){
+				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, encryptionUtilsMock){
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

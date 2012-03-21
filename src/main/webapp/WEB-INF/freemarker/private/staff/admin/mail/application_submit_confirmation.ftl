@@ -42,8 +42,7 @@
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      		http://localhost:8080/pgadmissions/application?view=view&id=1200
-			      			<a href="/pgadmissions/application?view=view&id=${application.id}">View your application</a>
+			      			<a href="${host}/pgadmissions/application?view=view&id=${application.id}">View your application</a>
 			      		</font>
 			      	</p>
 			      	<p>

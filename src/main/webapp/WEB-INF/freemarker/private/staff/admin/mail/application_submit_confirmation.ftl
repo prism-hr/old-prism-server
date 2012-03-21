@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-
+	
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Untitled Document</title>
@@ -35,21 +35,19 @@
 		    	</td>
 		    	<td width="500">
 		      		<h1 style="font-size: 12pt;">
-		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${referee.firstname},</font>
+		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated as a referee by ${applicant.firstName} ${applicant.lastName} who is currently applying to the UCL Faculty to join the Postgraduate research Programme in ${programme.programmeName}.</font>
-			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We would be most grateful for your comments on this candidate. To submit your reference, please visit the website via the link below:</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Applicant ${application.applicant.firstName} ${application.applicant.lastName} has just submitted an application form to the programme ${application.programmeDetails.programmeName}. To view your application, click the link below: </font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/addReferences?refereeId=${referee.id}&activationCode=${referee.activationCode}&applicationId=${referee.application.id}">Add Reference</a>
+			      		http://localhost:8080/pgadmissions/application?view=view&id=1200
+			      			<a href="/pgadmissions/application?view=view&id=${application.id}">View your application</a>
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Many Thanks, <br />UCL Portal</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards, <br />UCL Portal</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

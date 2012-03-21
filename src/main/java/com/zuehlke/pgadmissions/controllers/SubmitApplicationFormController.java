@@ -124,7 +124,7 @@ public class SubmitApplicationFormController {
 			
 		}
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		referencesService.saveApplicationFormAndSendMailToReferees(applicationForm);
+		referencesService.saveApplicationFormAndSendMailNotifications(applicationForm);
 		
 		return new ModelAndView("redirect:/applications?submissionSuccess=true");
 

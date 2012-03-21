@@ -74,7 +74,7 @@ public class Referee extends DomainObject<Integer>{
 	@JoinColumn(name = "country_id")
 	private Country addressCountry;
 	
-	@OneToOne(mappedBy="referee")
+	@OneToOne(cascade = javax.persistence.CascadeType.ALL, mappedBy="referee")
 	private Document document;
 	
 	@Column(name="email")

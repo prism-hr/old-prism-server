@@ -377,23 +377,6 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.verify(refereeServiceMock);
 	}
 	
-	@Ignore
-	@Test
-	public void shouldGenerateAndSaveActivationCodeToReferee() {
-		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-		
-		Referee referee = new RefereeBuilder().refereeId(1).toReferee();
-		refereeValidator.validate(referee, errorsMock);
-		refereeServiceMock.save(EasyMock.same(referee));
-		
-		EasyMock.replay(errorsMock, refereeServiceMock, refereeValidator);
-		
-		ModelAndView modelAndView = applicationController.editReferee(referee,  null, errorsMock);
-		EasyMock.verify(refereeServiceMock);
-		assertNotNull(((ApplicationPageModel) modelAndView.getModel().get("model")).getApplicationForm().getReferees());
-	}
-	
 	@Test
 	public void shouldNotSaveRefereeIfNewAndNotValid() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);

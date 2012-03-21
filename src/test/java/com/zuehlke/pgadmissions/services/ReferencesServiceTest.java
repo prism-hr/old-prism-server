@@ -47,7 +47,7 @@ public class ReferencesServiceTest {
 	}
 
 	@Test
-	public void shouldSaveApplicationFormAndSendEmailToReferees() throws UnsupportedEncodingException{
+	public void shouldSaveApplicationFormAndSendEmailsToRefereesAdminsAndApplicant() throws UnsupportedEncodingException{
 		Address address1 = new AddressBuilder().id(1).toAddress();
 		Address address2 = new AddressBuilder().id(2).toAddress();
 		EmploymentPosition position = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
@@ -74,7 +74,7 @@ public class ReferencesServiceTest {
 		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 	
 		
-		referencesService.saveApplicationFormAndSendMailToReferees(form);
+		referencesService.saveApplicationFormAndSendMailNotifications(form);
 		EasyMock.verify(applicationsServiceMock);
 	}
 	
@@ -85,7 +85,7 @@ public class ReferencesServiceTest {
 
 		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		try {
-			referencesService.saveApplicationFormAndSendMailToReferees(null);
+			referencesService.saveApplicationFormAndSendMailNotifications(null);
 		} catch (RuntimeException e) {
 			// expected...ignore
 		}
@@ -119,7 +119,7 @@ public class ReferencesServiceTest {
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
 		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
-		referencesService.saveApplicationFormAndSendMailToReferees(form);
+		referencesService.saveApplicationFormAndSendMailNotifications(form);
 
 		EasyMock.verify(applicationsServiceMock, mimeMessagePreparatorFactoryMock);
 

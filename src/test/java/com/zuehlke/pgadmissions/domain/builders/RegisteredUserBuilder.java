@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 
@@ -19,11 +20,14 @@ public class RegisteredUserBuilder {
 	private boolean accountNonLocked = true;
 	private boolean credentialsNonExpired = true;
 	private String activationCode;
-	
+	private Project projectOriginallyAppliedTo;
 
 	private List<Role> roles = new ArrayList<Role>();
 	
-
+	public RegisteredUserBuilder projectOriginallyAppliedTo(Project projectOriginallyAppliedTo) {
+		this.projectOriginallyAppliedTo = projectOriginallyAppliedTo;
+		return this;
+	}
 	public RegisteredUserBuilder role(Role role) {
 		this.roles.add(role);
 		return this;
@@ -106,6 +110,7 @@ public class RegisteredUserBuilder {
 		user.setCredentialsNonExpired(credentialsNonExpired);
 		user.setActivationCode(activationCode);
 		user.getRoles().addAll(roles);
+		user.setProjectOriginallyAppliedTo(projectOriginallyAppliedTo);
 		return user;
 	}
 

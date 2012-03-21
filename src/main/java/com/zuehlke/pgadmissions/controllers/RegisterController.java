@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.security.NoSuchAlgorithmException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -11,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.RegistrationDTO;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApplicantRecordValidator;
@@ -28,21 +28,23 @@ public class RegisterController {
 	private final UserService userService;
 	private final ApplicantRecordValidator validator;
 	private final RegistrationService registrationService;
+	private final ApplicationsService applicationsService;
 
 	RegisterController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
 	public RegisterController(ApplicantRecordValidator validator,
-			UserService userService, RegistrationService registrationService) {
+			UserService userService, RegistrationService registrationService, ApplicationsService applicationsService) {
 		this.validator = validator;
 		this.userService = userService;
 		this.registrationService = registrationService;
+		this.applicationsService = applicationsService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getRegisterPage() throws NoSuchAlgorithmException {
+	public ModelAndView getRegisterPage()  {
 		RegisterPageModel model = new RegisterPageModel();
 		model.setRecord(new RegistrationDTO());
 		return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
@@ -64,19 +66,23 @@ public class RegisterController {
 	}
 
 	@RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
-	public ModelAndView activateAccountSubmit(@ModelAttribute RegisteredUser regUser,
-			@RequestParam String activationCode) {
-		RegisteredUser user = userService.getUserByUsername(regUser.getUsername());
-		RegisterPageModel model = new RegisterPageModel();
-		if (activationCode.equals(user.getActivationCode())) {
-			user.setEnabled(true);
-			userService.save(user);
-			model.setUser(user);
-			return new ModelAndView("public/login/login_page", "model", model);
+	public ModelAndView activateAccountSubmit(@RequestParam String activationCode) {
+		RegisteredUser user = registrationService.findUserForActivationCode(activationCode);		
+		if(user == null){
+			return new ModelAndView(REGISTER_INFO_VIEW_NAME, "message", "Sorry, the system was unable to process the activation request.");	
 		}
-		model.setUser(user);
-		model.setMessage("The activation has failed.");
-		return new ModelAndView(REGISTER_INFO_VIEW_NAME, "model", model);
+		user.setEnabled(true);		
+		userService.save(user);
+		String redirectView ="redirect:";
+		if(user.getProjectOriginallyAppliedTo() != null){		
+			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProjectOriginallyAppliedTo());
+			redirectView = redirectView + "/application?id=" +  newApplicationForm.getId();
+		}else{
+			redirectView = redirectView + "/applications";
+		}
+		
+		return new ModelAndView(redirectView);
+	
 	}
 
 	@ModelAttribute("record")

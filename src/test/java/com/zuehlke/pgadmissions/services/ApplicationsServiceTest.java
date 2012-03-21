@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.junit.Assert.*;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -28,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -195,6 +198,28 @@ public class ApplicationsServiceTest{
 		EasyMock.replay(refereeDAOMock);
 		applicationsService.deleteReferee(referee);
 		EasyMock.verify(refereeDAOMock);
+		
+		
+	}
+	@Test
+	public void shouldCreateAndSaveNewApplicationForm(){
+		Project project = new ProjectBuilder().id(1).toProject();
+		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
+		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock, qualificationDAOMock, fundingDAOMock, employmentDAOMock, refereeDAOMock){
+			
+			@Override
+			ApplicationForm newApplicationForm(){
+				return newApplicationForm;
+			}
+		};
+		applicationFormDAOMock.save(newApplicationForm);
+		EasyMock.replay(applicationFormDAOMock);
+		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, project);
+		EasyMock.verify(applicationFormDAOMock);
+		assertSame(newApplicationForm, returnedForm);
+		assertEquals(registeredUser, returnedForm.getApplicant());
+		assertEquals(project, returnedForm.getProject());
 		
 	}
 	

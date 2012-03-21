@@ -13,8 +13,12 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -53,6 +57,30 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
 	}
 
+	@Test
+	public void shouldSaveAndLoadUserWithProjectOriginallyAppliedTo() throws Exception {
+
+		Program program = new ProgramBuilder().code("halloo").description("hallooo").title("halllooo").toProgram();
+		Project project = new ProjectBuilder().program(program).code("halloo").description("hallo").title("hallo").toProject();
+		save(program, project);
+		
+		flushAndClearSession();
+		
+		RegisteredUser user = new RegisteredUserBuilder().projectOriginallyAppliedTo(project).firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(false).toUser();
+
+
+
+		sessionFactory.getCurrentSession().save(user);
+		Integer id = user.getId();
+		
+		flushAndClearSession();
+		
+		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
+		assertEquals(project, reloadedUser.getProjectOriginallyAppliedTo());
+
+	}
+	
 	@Test
 	public void shouldSaveAndLoadUserWithRoles() throws Exception {
 

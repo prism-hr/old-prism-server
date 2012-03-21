@@ -28,26 +28,21 @@ public class ApplicationFormController {
 	ApplicationFormController() {
 		this(null, null, null);
 	}
-	
+
 	@Autowired
-	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService,
-			UserPropertyEditor userPropertyEditor) {
+	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService, UserPropertyEditor userPropertyEditor) {
 		this.projectDAO = projectDAO;
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 	}
-	
+
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	public ModelAndView createNewApplicationForm(@RequestParam Integer project) {
 
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
 		Project proj = projectDAO.getProjectById(project);
-
-		ApplicationForm applicationForm = newApplicationForm();
-		applicationForm.setApplicant(user);
-		applicationForm.setProject(proj);
-		applicationService.save(applicationForm);
+		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, proj);
 
 		return new ModelAndView("redirect:/application", "id", applicationForm.getId());
 

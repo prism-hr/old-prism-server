@@ -33,40 +33,32 @@ public class ApplicationFormControllerTest {
 	private RegisteredUser student;
 
 	@Test
-	public void shouldLoadProjectByIdAndSetOnApplicationForm() {
+	public void shouldCreateNewApplicationFormWithProjectAndUserFromSecurityContext() {
 
 		Project project = new ProjectBuilder().id(12).toProject();
-		EasyMock.expect(projectDAOMock.getProjectById(12)).andReturn(project);
-		EasyMock.replay(projectDAOMock);
+		EasyMock.expect(projectDAOMock.getProjectById(12)).andReturn(project);		
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, project)).andReturn(applicationForm);
+		EasyMock.replay(projectDAOMock, applicationsServiceMock);
+		
 		applicationController.createNewApplicationForm(12);
-		assertEquals(project, applicationForm.getProject());
-
-	}
-
-	@Test
-	public void shouldGetUserFromSecurityContextAndSetOnApplicationForm() {
-
-		applicationController.createNewApplicationForm(12);
-		assertEquals(student, applicationForm.getApplicant());
+		EasyMock.verify(applicationsServiceMock);
+		
 	}
 
 	@Test
 	public void shouldRedirectToApplicationFormView() {
-
+		Project project = new ProjectBuilder().id(12).toProject();
+		EasyMock.expect(projectDAOMock.getProjectById(12)).andReturn(project);		
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, project)).andReturn(applicationForm);
+		EasyMock.replay(projectDAOMock, applicationsServiceMock);
+		
+		
 		ModelAndView modelAndView = applicationController.createNewApplicationForm(12);
 		assertEquals(applicationForm.getId(), modelAndView.getModel().get("id"));
 		assertEquals("redirect:/application", modelAndView.getViewName());
 
 	}
 
-	@Test
-	public void shouldSaveApplicationForm() {
-		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		applicationController.createNewApplicationForm(null);
-		EasyMock.verify(applicationsServiceMock);
-
-	}
 
 	@Before
 	public void setUp() {

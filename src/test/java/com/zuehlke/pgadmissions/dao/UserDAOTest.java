@@ -65,6 +65,23 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
 	}
 
+	@Test
+	public void shouldFindUsersByActivationCode() throws Exception {
+
+		RegisteredUser userOne = 	new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password").accountNonExpired(false).accountNonLocked(false)
+		.credentialsNonExpired(false).enabled(false).activationCode("abc").toUser();
+		RegisteredUser userTwo =	new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername").password("password").accountNonExpired(false).accountNonLocked(false)
+		.credentialsNonExpired(false).enabled(false).activationCode("def").toUser();
+
+		save(userOne, userTwo);
+
+		flushAndClearSession();		
+
+		RegisteredUser foundUser = userDAO.getUserByActivationCode("abc");		
+		assertEquals(userOne, foundUser);
+
+	}
+
 	
 	@Test
 	public void shouldGetUsersByRole(){

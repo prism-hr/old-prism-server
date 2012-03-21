@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Messenger;
+import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -168,6 +169,20 @@ public class ApplicationsService {
 	public void saveDocument(Document document) {
 		applicationFormDAO.saveDocument(document);
 		
+	}
+	
+	@Transactional
+	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Project project) {
+
+		ApplicationForm applicationForm = newApplicationForm();
+		applicationForm.setApplicant(user);
+		applicationForm.setProject(project);
+		applicationFormDAO.save(applicationForm);
+		return applicationForm;
+	}
+
+	ApplicationForm newApplicationForm() {
+		return new ApplicationForm();
 	}
 
 }

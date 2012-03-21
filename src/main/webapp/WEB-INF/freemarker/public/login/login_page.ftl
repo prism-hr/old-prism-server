@@ -61,14 +61,16 @@
 		        	
 		        	<input type="text" id ="username_or_email" name="j_username" placeholder="Email address" />
 		        	<input type="password" id ="password" name="j_password" placeholder="Password" />
-		        	
+		        	<#if RequestParameters.login_error??>
+		        	<span class="invalid">Invalid username/password combination.</span>
+		            </#if>
 		        	<button name ="commit" type="submit" value="Sign In" class="blue">Go</button>
 		      	</form>
 		      	
 		    </section>
 		
 		    <!-- Registration button. -->
-    		<a id="big-button" href="/pgadmissions/register">Register Today...</a>
+    		<a id="big-button" href="/pgadmissions/register?project=${project!}">Register Today...</a>
   
 		    
 		  </div>

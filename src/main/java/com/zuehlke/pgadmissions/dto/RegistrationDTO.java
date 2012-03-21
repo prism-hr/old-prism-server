@@ -4,6 +4,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 
 public class RegistrationDTO {
 	
+	private Integer projectId;
 	private String password;	
 	private String confirmPassword;
 
@@ -55,6 +56,15 @@ public class RegistrationDTO {
 	public boolean equals(Object obj) {
 		return EqualsBuilder.reflectionEquals(this, obj);
 	}
+
+	public Integer getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
+	}
+
 
 	
 }

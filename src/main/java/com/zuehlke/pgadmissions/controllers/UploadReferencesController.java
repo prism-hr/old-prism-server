@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.controllers;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -17,9 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.RefereeAlreadyUploadedReference;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;

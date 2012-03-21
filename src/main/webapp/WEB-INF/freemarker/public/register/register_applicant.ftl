@@ -94,7 +94,7 @@
 		        		</div>
 		        
 		      		</section>
-		  
+		  			<input type="hidden" name="projectId" value="${RequestParameters.project!}"/>
 		      		<!-- Registration button. -->
 		      		<input id="big-button" type="submit" value="Submit"/>
 		    	</form>

@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -30,16 +31,18 @@ public class RegistrationService {
 	private final JavaMailSender mailsender;
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final Logger log = Logger.getLogger(RegistrationService.class);
+	private final ProjectDAO projectDAO;
 
 	RegistrationService() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public RegistrationService(EncryptionUtils encryptionUtils, RoleDAO roleDAO, UserDAO userDAO, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
+	public RegistrationService(EncryptionUtils encryptionUtils, RoleDAO roleDAO, UserDAO userDAO, ProjectDAO projectDAO, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
 		this.encryptionUtils = encryptionUtils;
 		this.roleDAO = roleDAO;
 		this.userDAO = userDAO;
+		this.projectDAO = projectDAO;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 	
 		this.mailsender = mailsender;
@@ -58,6 +61,9 @@ public class RegistrationService {
 		user.setPassword(encryptionUtils.getMD5Hash(record.getPassword()));
 		user.setEnabled(false);
 		user.setCredentialsNonExpired(true);
+		if(record.getProjectId() != null){
+			user.setProjectOriginallyAppliedTo(projectDAO.getProjectById(record.getProjectId()));
+		}
 		user.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
 		return user;
 	}
@@ -79,6 +85,10 @@ public class RegistrationService {
 		} catch (Throwable e) {
 			log.warn("error while sending email",e);
 		}
+	}
+
+	public RegisteredUser findUserForActivationCode(String activationCode) {
+		return userDAO.getUserByActivationCode(activationCode);
 	}
 
 

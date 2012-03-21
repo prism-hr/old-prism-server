@@ -45,8 +45,11 @@
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/activateAccount/${user.activationCode}">Continue to Application</a>
+			      			<a href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}">Continue to Application</a>
 			      		</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You will be asked to enter your email and chosen password.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Welcome to UCL!<br />UCL Portal</font>

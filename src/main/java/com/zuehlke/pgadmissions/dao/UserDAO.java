@@ -58,4 +58,8 @@ public class UserDAO {
 				.uniqueResult();
 	}
 
+	public RegisteredUser getUserByActivationCode(String activationCode) {
+		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("activationCode", activationCode)).uniqueResult();
+	}
+
 }

@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
@@ -35,6 +36,11 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private boolean accountNonLocked;
 	private boolean credentialsNonExpired;
 	private String activationCode;
+	
+	
+	@ManyToOne
+	@JoinColumn(name = "originally_project_id")
+	private Project projectOriginallyAppliedTo;
 
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
@@ -218,5 +224,13 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public void setRolesList(String rolesList) {
 		this.rolesList = rolesList;
+	}
+
+	public Project getProjectOriginallyAppliedTo() {
+		return projectOriginallyAppliedTo;
+	}
+
+	public void setProjectOriginallyAppliedTo(Project projectOriginallyAppliedTo) {
+		this.projectOriginallyAppliedTo = projectOriginallyAppliedTo;
 	}
 }

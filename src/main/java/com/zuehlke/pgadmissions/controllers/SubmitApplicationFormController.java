@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.ReferencesService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
 @Controller
@@ -52,17 +53,19 @@ public class SubmitApplicationFormController {
 	private final CountryService countryService;
 	private final LanguageService languageService;
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/main_application_page";
+	private final ReferencesService referencesService;
 
 	SubmitApplicationFormController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public SubmitApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor, CountryService countryService, LanguageService languageService) {
+	public SubmitApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor, CountryService countryService, LanguageService languageService, ReferencesService referencesService) {
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.countryService = countryService;
 		this.languageService = languageService;
+		this.referencesService = referencesService;
 	}
 
 
@@ -121,20 +124,12 @@ public class SubmitApplicationFormController {
 			
 		}
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		applicationService.save(applicationForm);
-		generateRefereesURLs(applicationForm);
+		referencesService.saveApplicationFormAndSendMailToReferees(applicationForm);
+		
 		return new ModelAndView("redirect:/applications?submissionSuccess=true");
 
 	}
 
-	private void generateRefereesURLs(ApplicationForm applicationForm) {
-		List<Referee> referees = applicationForm.getReferees();
-		for (Referee referee : referees) {
-			String url = "http://localhost:8080/pgadmissions/addReferences?&refereeId="+referee.getId()+"&activationCode="+referee.getActivationCode()+"&appId="+referee.getApplication().getId();
-			//send email to that referee with that url in it
-		}
-		
-	}
 
 	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {

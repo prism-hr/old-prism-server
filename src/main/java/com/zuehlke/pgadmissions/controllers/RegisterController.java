@@ -35,8 +35,8 @@ public class RegisterController {
 	}
 
 	@Autowired
-	public RegisterController(ApplicantRecordValidator validator,
-			UserService userService, RegistrationService registrationService, ApplicationsService applicationsService) {
+	public RegisterController(ApplicantRecordValidator validator, UserService userService, RegistrationService registrationService,
+			ApplicationsService applicationsService) {
 		this.validator = validator;
 		this.userService = userService;
 		this.registrationService = registrationService;
@@ -44,45 +44,46 @@ public class RegisterController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getRegisterPage()  {
+	public ModelAndView getRegisterPage() {
 		RegisterPageModel model = new RegisterPageModel();
 		model.setRecord(new RegistrationDTO());
 		return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
-	public ModelAndView submitRegistration(@ModelAttribute("record") RegistrationDTO record, BindingResult errors)
-			 {
+	public ModelAndView submitRegistration(@ModelAttribute("record") RegistrationDTO record, BindingResult errors) {
 		validator.validate(record, errors);
-		if(errors.hasErrors()){
-			RegisterPageModel model = new RegisterPageModel();		
+		if (errors.hasErrors()) {
+			RegisterPageModel model = new RegisterPageModel();
 			model.setRecord(record);
 			model.setResult(errors);
 			return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
 		}
-		registrationService.generateAndSaveNewUser(record);		
+		registrationService.generateAndSaveNewUser(record);
 		return new ModelAndView("redirect:" + REGISTER_COMPLETE_VIEW_NAME);
-	
+
 	}
 
 	@RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
 	public ModelAndView activateAccountSubmit(@RequestParam String activationCode) {
-		RegisteredUser user = registrationService.findUserForActivationCode(activationCode);		
-		if(user == null){
-			return new ModelAndView(REGISTER_INFO_VIEW_NAME, "message", "Sorry, the system was unable to process the activation request.");	
+		RegisteredUser user = registrationService.findUserForActivationCode(activationCode);
+		if (user == null) {
+			RegisterPageModel pageModel = new RegisterPageModel();
+			pageModel.setMessage("Sorry, the system was unable to process the activation request.");
+			return new ModelAndView(REGISTER_INFO_VIEW_NAME, "model", pageModel);
 		}
-		user.setEnabled(true);		
+		user.setEnabled(true);
 		userService.save(user);
-		String redirectView ="redirect:";
-		if(user.getProjectOriginallyAppliedTo() != null){		
+		String redirectView = "redirect:";
+		if (user.getProjectOriginallyAppliedTo() != null) {
 			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProjectOriginallyAppliedTo());
-			redirectView = redirectView + "/application?id=" +  newApplicationForm.getId();
-		}else{
+			redirectView = redirectView + "/application?id=" + newApplicationForm.getId();
+		} else {
 			redirectView = redirectView + "/applications";
 		}
-		
+
 		return new ModelAndView(redirectView);
-	
+
 	}
 
 	@ModelAttribute("record")

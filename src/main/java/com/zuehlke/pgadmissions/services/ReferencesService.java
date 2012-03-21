@@ -96,9 +96,12 @@ public class ReferencesService {
 
 	public void sendMailToReferees(ApplicationForm form) throws UnsupportedEncodingException{
 		List<Referee> referees = form.getReferees();
+		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 		for (Referee referee : referees) {
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("referee", referee);
+			model.put("adminsEmails", adminsEmails);
 			model.put("applicant", form.getApplicant());
 			model.put("programme", form.getProgrammeDetails());
 			model.put("host", Environment.getInstance().getApplicationHostName());

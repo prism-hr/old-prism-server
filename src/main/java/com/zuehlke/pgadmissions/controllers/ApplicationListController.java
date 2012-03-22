@@ -39,7 +39,7 @@ public class ApplicationListController {
 		model.setUser(user);
 		model.setApplications(applicationsService.getVisibleApplications(user));
 		if(submissionSuccess){
-		        model.setMessage("Your application is submitted successfully. <b>Coming soon: </b> email confirmation.");
+		        model.setMessage("Your application is submitted successfully.");
 		}
 		if(decision != null){
 		    model.setMessage("The application was successfully " + decision +".");

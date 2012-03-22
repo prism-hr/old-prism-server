@@ -69,6 +69,7 @@ public class ManageUsersController {
 			}
 			pageModel.setUsersInRoles(allUsers);
 			pageModel.setSelectedProgram(selectedProgram);
+			pageModel.setRoles(Authority.values());
 		}
 
 		pageModel.setPrograms(getVisiblePrograms(user));
@@ -76,8 +77,6 @@ public class ManageUsersController {
 		ModelAndView modelAndView = new ModelAndView(ROLES_PAGE_VIEW_NAME, "model", pageModel);
 		return modelAndView;
 	}
-
-	
 	
 	private List<Program> getVisiblePrograms(RegisteredUser user) {
 		List<Program> allPrograms = programsService.getAllPrograms();

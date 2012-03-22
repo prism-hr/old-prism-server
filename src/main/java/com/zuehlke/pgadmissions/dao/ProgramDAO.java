@@ -33,4 +33,8 @@ public class ProgramDAO {
 	public Program getProgramById(Integer programId) {
 		return (Program) sessionFactory.getCurrentSession().get(Program.class, programId);
 	}
+
+	public void save(Program program) {
+		sessionFactory.getCurrentSession().saveOrUpdate(program);
+	}
 }

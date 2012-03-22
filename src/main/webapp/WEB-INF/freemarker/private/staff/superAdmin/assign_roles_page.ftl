@@ -31,15 +31,14 @@
 		  
 		  	<!-- Middle. -->
 		  	<div id="middle">
-		  	
-		  	 <#include "/private/common/parts/nav_with_user_info.ftl"/>		  		
+		  		<a href="/pgadmissions/"> back to applications list </a>
 		    	<!-- Main content area. -->
 		    	<article id="content" role="main">
 		      
 		      		<div class="content-box">
 		      			<div class="content-box-inner">
 		        
-			          		<form>
+			          		<form name="programmeForm" action="/pgadmissions/assignUser/submit" method="POST">
 			          
 			          			<h1>Add Existing programme users and assign roles</h1>
 			            		<p>Please add users to the programme, using their email addresses.<br>You can select one or more roles for the user.</p>
@@ -47,66 +46,62 @@
 			            		<br>
 			            
 			            		<div class="row programme">
-			            			<form name="programmeForm">
-				              			<label>Select programme</label>
-				              			<select name="programSelect" id="programSelect" onChange="top.location.href=this.form.programSelect.options[this.form.programSelect.selectedIndex].value;return false;">
-											<#if model.selectedProgram??>
-											<option value="">${model.selectedProgram.title}</option>
-											<#else>
+				              		<label>Select programme</label>
+				              		<select name="programSelect" id="programSelect" onChange="top.location.href=this.form.programSelect.options[this.form.programSelect.selectedIndex].value;return false;">
 											<option value="">Please select a program</option>
-											</#if>
 	                                		<#list model.programs as program>
-	                                    		<option value="/pgadmissions/manageUsers/showPage?programId=${program.id}">${program.title}</option>               
+	                                    		<option value="/pgadmissions/manageUsers/showPage?programId=${program.id}" 
+	                                    			<#if model.selectedProgram?? && model.selectedProgram.id == program.id >
+													 selected = "selected"
+													</#if>>${program.title}</option>               
 	                                		</#list>
-				              			</select>
-			              			</form>
+				              		</select>
 			            		</div>
-			            
+			            		<#if model.selectedProgram??>
+			            		${model.selectedProgram.id}
+			            		<input type="hidden" id="programId" value="${model.selectedProgram.id}"/>
+								</#if>
 								<!-- // EXISTING USERS -->
 											
 				            	<hr>
-				            	<form class="roles" action="/pgadmissions/assignRole">
-					          		<!-- Left side -->
-					          		<div class="left-column">
+					          	<!-- Left side -->
+					          	<div class="left-column">
 					            
-					              		<div class="row">
-					                		<label>Please choose a user</label>
-					                		<select id="userSelect">
+					              	<div class="row">
+					                	<label>Please choose a user</label>
+					                	<select id="userId">
 					                			<option value="">Please choose a user</option>
 					                			<#list model.usersInRoles as userInRole>
-						                			<option value="">${userInRole.firstName} ${userInRole.lastName}</option>      
+						                			<option value="${userInRole.id}">${userInRole.firstName} ${userInRole.lastName}</option>      
 												</#list>
 					                		</select>
-					              		</div>
+					              	</div>
 					              
-					              		<div class="row">
-					                		or <a href="#">add a new user</a>
-					              		</div>
+					              	<div class="row">
+					                	or <a href="#">add a new user</a>
+					              	</div>
 					              
-					            	</div>
+					            </div>
 					
-									<!-- Right side -->
-									<div class="right-column">
+								<!-- Right side -->
+								<div class="right-column">
 					            
-					              		<div class="row">
-					                		<label>Role(s) in application process</label>
-					                		<select multiple size="4">
-						                  		<option>Administrator</option>
-						                  		<option>Approver</option>
-						                  		<option>Interviewer</option>
-						                  		<option>Reviewer</option>
-					                		</select>
-					              		</div>
+					            	<div class="row">
+					                	<label>Role(s) in application process</label>
+					                	<select multiple size="4" id="roles" name="roles" >
+                        				<#list model.roles as role>
+                      						<option value="${role}">${role.displayValue}</option>
+                      					</#list>
+                      					</select>
+					              	</div>
 					            
-					              		<div class="buttons">
-					              			<button>Add user</button>
-					            		</div>
+					              	<div class="buttons">
+					              		<input type="submit" value="Submit"/>
+					              		<button class="blue" type="submit" value="adduser" >Add user</button>
+					            	</div>
 					              
-									</div>
-									
+								</div>
 								
-								</form>
-						
 							</form>
 		          
 		          			<hr>

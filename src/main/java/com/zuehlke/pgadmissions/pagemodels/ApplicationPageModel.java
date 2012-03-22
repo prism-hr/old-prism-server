@@ -25,14 +25,17 @@ import com.zuehlke.pgadmissions.dto.QualificationDTO;
 
 public class ApplicationPageModel extends PageModel {
 
-	private Address address;
-	private Funding funding;
+	private Address address = new Address();
+	private Funding funding = new Funding();
+	private QualificationDTO qualification = new QualificationDTO();
+	private EmploymentPosition employmentPosition =new EmploymentPosition();
+	private Referee referee= new Referee();
 	private String message;
 	private ApplicationForm applicationForm;
-	private QualificationDTO qualification;
+
 	private List<Country> countries;
 	private List<Language> languages;
-	private EmploymentPosition employmentPosition;
+	
 	private List<ResidenceStatus> residenceStatuses = new LinkedList<ResidenceStatus>();
 	private List<Gender> genders = new LinkedList<Gender>();
 	private List<PhoneType> phoneTypes = new LinkedList<PhoneType>();
@@ -42,7 +45,7 @@ public class ApplicationPageModel extends PageModel {
 
 	private List<StudyOption> studyOptions = new LinkedList<StudyOption>();
 	private List<Referrer> referrers = new LinkedList<Referrer>();
-	private Referee referee;
+	
 	private String uploadErrorCode;
 	private List<FundingType> fundingTypes = new LinkedList<FundingType>();
 	private List<AddressPurpose> addressPurposes = new LinkedList<AddressPurpose>();

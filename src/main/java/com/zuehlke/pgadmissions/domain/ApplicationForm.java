@@ -229,7 +229,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public boolean hasComments() {
-		return applicationComments!=null;
+		return applicationComments!=null && !applicationComments.isEmpty();
 	}
 
 	public List<Address> getAddresses() {

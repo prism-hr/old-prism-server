@@ -31,7 +31,8 @@
 		  
 		  	<!-- Middle. -->
 		  	<div id="middle">
-		  		<a href="/pgadmissions/"> back to applications list </a>
+		  	
+		  	 <#include "/private/common/parts/nav_with_user_info.ftl"/>		  		
 		    	<!-- Main content area. -->
 		    	<article id="content" role="main">
 		      

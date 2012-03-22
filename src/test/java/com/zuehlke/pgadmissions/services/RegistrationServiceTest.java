@@ -102,7 +102,6 @@ public class RegistrationServiceTest {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldSaveNewUserAndSendEmail() throws UnsupportedEncodingException {
 		final RegistrationDTO recordDTO = new RegistrationDTO();

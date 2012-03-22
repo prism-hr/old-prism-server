@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.io.IOException;
+import java.util.Arrays;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,13 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.exceptions.RefereeAlreadyUploadedReference;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
 
@@ -29,7 +28,7 @@ import com.zuehlke.pgadmissions.validators.DocumentValidator;
 public class UploadReferencesController {
 
 	private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
-	
+
 	private RefereeService refereeService;
 	private DocumentValidator documentValidator;
 
@@ -51,37 +50,48 @@ public class UploadReferencesController {
 		}
 		return referee;
 	}
-	
+
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
 	public ModelAndView submitReference(@ModelAttribute("referee") Referee referee, @RequestParam("file") MultipartFile multipartFile) throws IOException {
-		if(referee.getDocument()!=null){
-			throw new RefereeAlreadyUploadedReference();
+
+		String originalFilename = multipartFile.getOriginalFilename();
+		if (StringUtils.isBlank(originalFilename)) {
+			if (StringUtils.isBlank(referee.getComment())) {
+				referee.setComment(null);
+				ApplicationPageModel model = new ApplicationPageModel();
+				model.setGlobalErrorCodes(Arrays.asList("reference.missing"));
+				model.setReferee(referee);
+				return new ModelAndView(ADD_REFERENCES_VIEW_NAME, "model", model);
+			}
+			refereeService.save(referee);
+			return new ModelAndView("redirect:/addReferences/referenceuploaded");
 		}
+
 		Document document = newDocument();
-		document.setFileName(multipartFile.getOriginalFilename());
+		document.setFileName(originalFilename);
 		document.setContentType(multipartFile.getContentType());
 		document.setContent(multipartFile.getBytes());
 		document.setReferee(referee);
+		referee.setDocument(document);
 		BindingResult errors = newErrors(document);
 		documentValidator.validate(document, errors);
-		ModelMap modelMap = new ModelMap();		
-		if(errors.hasFieldErrors("fileName")){
-			modelMap.put("uploadErrorCode", errors.getFieldError("fileName").getCode());
-		}else{
-			referee.setDocument(document);
-			refereeService.save(referee);
-			return new ModelAndView("private/referees/upload_success", modelMap);
+
+		if (errors.hasFieldErrors("fileName")) {
+			ApplicationPageModel model = new ApplicationPageModel();
+			model.setUploadErrorCode(errors.getFieldError("fileName").getCode());
+			model.setReferee(referee);
+			return new ModelAndView(ADD_REFERENCES_VIEW_NAME, "model", model);
 		}
-		modelMap.put("id", referee.getId());
-		modelMap.put("message", "There was a problem with the details you provided.");
-		modelMap.put("referee", referee);
-		return new ModelAndView(ADD_REFERENCES_VIEW_NAME,"model", modelMap);
+		referee.setDocument(document);
+		refereeService.save(referee);
+		return new ModelAndView("redirect:/addReferences/referenceuploaded");
+
 	}
-	
+
 	BindingResult newErrors(Document document) {
 		return new DirectFieldBindingResult(document, "document");
 	}
-	
+
 	Document newDocument() {
 		return new Document();
 	}

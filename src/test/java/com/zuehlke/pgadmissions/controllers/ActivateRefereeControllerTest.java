@@ -44,9 +44,7 @@ public class ActivateRefereeControllerTest {
 	}
 	
 	@Test(expected = ResourceNotFoundException.class)
-	public void shouldNotReturnReferencesPageIfAvtivationCodeIsWrong(){
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().refereeId(1).application(form).activationCode("1234").toReferee();
+	public void shouldNotReturnReferencesPageIfActivationCodeIsWrong(){				
 		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("467")).andReturn(null);
 		EasyMock.replay(refereeServiceMock);
 		ModelAndView modelAndView = controller.getReferencesPage("467");
@@ -57,7 +55,7 @@ public class ActivateRefereeControllerTest {
 	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldNotReturnReferencesPageIfApplicationIdIsWrong(){
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
+		
 		Referee referee = new RefereeBuilder().refereeId(1).application(null).activationCode("1234").toReferee();
 		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode(referee.getActivationCode())).andReturn(referee);
 		EasyMock.replay(refereeServiceMock);

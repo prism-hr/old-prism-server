@@ -232,4 +232,8 @@ public class Referee extends DomainObject<Integer>{
 		this.document = document;
 	}
 
+	public boolean hasProvidedReference() {
+		return comment != null || document != null;
+	}
+
 }

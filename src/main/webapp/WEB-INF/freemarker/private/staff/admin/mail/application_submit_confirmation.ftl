@@ -15,12 +15,9 @@
 		  	</tr>
 		  	<tr>
 			    <td width="50" bgcolor="#141215" style="background-color: #141215;">
-			    	<img src="images/shim.gif" width="50" height="30" alt="" />
+			    	<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" />
 			    </td>
-			    <td width="500" bgcolor="#141215" style="background-color: #141215;">
-			    	<font face="Arial, Helvetica, sans-serif" color="#FFFFFF" size="2">
-			    		<strong>Firm Offer</strong>
-			    	</font>
+			    <td width="500" bgcolor="#141215" style="background-color: #141215;">			    	
 			    </td>
 			    <td width="50" bgcolor="#141215" style="background-color: #141215;">
 			    	<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" />
@@ -38,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Applicant ${application.applicant.firstName} ${application.applicant.lastName} has just submitted an application form to the programme ${application.programmeDetails.programmeName}. To view your application, click the link below: </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">A new application has bee submitted to ${application.project.program.title}. Login to to view and validate the application </font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

@@ -30,8 +30,7 @@ public class SubmitApplicationService {
 	}
 
 	@Autowired
-	public SubmitApplicationService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender,
-			ApplicationsService applicationService) {
+	public SubmitApplicationService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, ApplicationsService applicationService) {
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
 		this.applicationService = applicationService;
@@ -40,27 +39,27 @@ public class SubmitApplicationService {
 	@Transactional
 	public void saveApplicationFormAndSendMailNotifications(ApplicationForm form) {
 		applicationService.save(form);
-			sendMailToReferees(form);
-			sendMailToApplicant(form);
-			sendMailToAdmins(form);
+		sendMailToReferees(form);
+		sendMailToApplicant(form);
+		sendMailToAdmins(form);
 	}
 
 	private void sendMailToAdmins(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
-		try {
-			for (RegisteredUser admin : administrators) {
+
+		for (RegisteredUser admin : administrators) {
+			try {
 				Map<String, Object> model = new HashMap<String, Object>();
 				model.put("admin", admin);
 				model.put("application", form);
 				model.put("host", Environment.getInstance().getApplicationHostName());
-				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " "
-						+ admin.getLastName());
-				mailsender
-						.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted",
-								"private/staff/admin/mail/application_submit_confirmation.ftl", model));
+				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
+
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted",
+						"private/staff/admin/mail/application_submit_confirmation.ftl", model));
+			} catch (Throwable e) {
+				log.warn("error while sending email", e);
 			}
-		} catch (Throwable e) {
-			log.warn("error while sending email", e);
 		}
 
 	}
@@ -74,8 +73,7 @@ public class SubmitApplicationService {
 			model.put("adminsEmails", adminsEmails);
 			model.put("application", form);
 			model.put("host", Environment.getInstance().getApplicationHostName());
-			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " "
-					+ applicant.getLastName());
+			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted",
 					"private/pgStudents/mail/application_submit_confirmation.ftl", model));
 		} catch (Throwable e) {
@@ -98,25 +96,25 @@ public class SubmitApplicationService {
 	}
 
 	public void sendMailToReferees(ApplicationForm form) {
-		try {
-			List<Referee> referees = form.getReferees();
-			List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
-			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
-			for (Referee referee : referees) {
+
+		List<Referee> referees = form.getReferees();
+		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
+		for (Referee referee : referees) {
+			try {
 				Map<String, Object> model = new HashMap<String, Object>();
 				model.put("referee", referee);
 				model.put("adminsEmails", adminsEmails);
 				model.put("applicant", form.getApplicant());
 				model.put("programme", form.getProgrammeDetails());
 				model.put("host", Environment.getInstance().getApplicationHostName());
-				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " "
-						+ referee.getLastname());
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress,
-						"Referee Notification", "private/referees/mail/referee_notification_email.ftl", model));
+				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+						"private/referees/mail/referee_notification_email.ftl", model));
+			} catch (Throwable e) {
+				log.warn("error while sending email", e);
 			}
-
-		} catch (Throwable e) {
-			log.warn("error while sending email", e);
 		}
+
 	}
 }

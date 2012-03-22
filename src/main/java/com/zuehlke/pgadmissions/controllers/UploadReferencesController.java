@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.exceptions.RefereeAlreadyUploadedReference;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
 
 @Controller
@@ -29,7 +30,7 @@ public class UploadReferencesController {
 
 	private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
 	
-	private ApplicationsService applicationService;
+	private RefereeService refereeService;
 	private DocumentValidator documentValidator;
 
 	UploadReferencesController() {
@@ -37,30 +38,14 @@ public class UploadReferencesController {
 	}
 
 	@Autowired
-	public UploadReferencesController(ApplicationsService applicationService, DocumentValidator documentValidator) {
-		this.applicationService = applicationService;
+	public UploadReferencesController(RefereeService refereeService, DocumentValidator documentValidator) {
+		this.refereeService = refereeService;
 		this.documentValidator = documentValidator;
 	}
-	
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getReferencesPage(@ModelAttribute("referee") Referee referee, @RequestParam String activationCode) {
-		ApplicationPageModel model = new ApplicationPageModel();
-		ApplicationForm applicationForm = referee.getApplication();
-		if(referee.getApplication()==null || !referee.getActivationCode().equals(activationCode)){
-			model.setMessage("The link you provided is incorrect please try again");
-		}
-		else{
-			model.setApplicationForm(applicationForm);
-			model.setReferee(referee);
-		}
-		return new ModelAndView(ADD_REFERENCES_VIEW_NAME, "model", model);
-	}
-	
-	
 	@ModelAttribute("referee")
 	public Referee getReferee(Integer refereeId) {
-		Referee referee = applicationService.getRefereeById(refereeId);
+		Referee referee = refereeService.getRefereeById(refereeId);
 		if (referee == null) {
 			throw new ResourceNotFoundException();
 		}
@@ -84,7 +69,7 @@ public class UploadReferencesController {
 			modelMap.put("uploadErrorCode", errors.getFieldError("fileName").getCode());
 		}else{
 			referee.setDocument(document);
-			applicationService.saveReferee(referee);
+			refereeService.save(referee);
 			return new ModelAndView("private/referees/upload_success", modelMap);
 		}
 		modelMap.put("id", referee.getId());

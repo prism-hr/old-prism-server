@@ -32,52 +32,18 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.RefereeAlreadyUploadedReference;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
 
 public class UploadReferencesControllerTest {
 
 	UploadReferencesController controller;
-	private ApplicationsService applicationsServiceMock;
+	private RefereeService refereeServiceMock;
 	private RegisteredUser currentUser;
 	private DocumentValidator documentValidatorMock;
 	private BindingResult errors;
 	private Document document;
 	
-	@Test
-	public void shouldReturnReferencesPageIfLinkIsCorrect(){
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().refereeId(1).application(form).activationCode("1234").toReferee();
-		EasyMock.replay(applicationsServiceMock);
-		ModelAndView modelAndView = controller.getReferencesPage(referee, "1234");
-		EasyMock.verify(applicationsServiceMock);
-		assertNull(((ApplicationPageModel) modelAndView.getModel().get("model")).getMessage());
-		assertEquals(form, ((ApplicationPageModel) modelAndView.getModel().get("model")).getApplicationForm());
-		assertEquals(referee, ((ApplicationPageModel) modelAndView.getModel().get("model")).getReferee());
-		assertEquals("private/referees/upload_references", modelAndView.getViewName());
-	}
-	
-	@Test
-	public void shouldNotReturnReferencesPageIfAvtivationCodeIsWrong(){
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().refereeId(1).application(form).activationCode("1234").toReferee();
-		EasyMock.replay(applicationsServiceMock);
-		ModelAndView modelAndView = controller.getReferencesPage(referee, "467");
-		EasyMock.verify(applicationsServiceMock);
-		assertEquals("The link you provided is incorrect please try again", ((ApplicationPageModel) modelAndView.getModel().get("model")).getMessage());
-		assertEquals("private/referees/upload_references", modelAndView.getViewName());
-	}
-	
-	@Test
-	public void shouldNotReturnReferencesPageIfApplicationIdIsWrong(){
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().refereeId(1).application(null).activationCode("1234").toReferee();
-		EasyMock.replay(applicationsServiceMock);
-		ModelAndView modelAndView = controller.getReferencesPage(referee, "1234");
-		EasyMock.verify(applicationsServiceMock);
-		assertEquals("The link you provided is incorrect please try again", ((ApplicationPageModel) modelAndView.getModel().get("model")).getMessage());
-		assertEquals("private/referees/upload_references", modelAndView.getViewName());
-	}
 	
 	@Test
 	public void shouldCreateDocumentFromFile() throws IOException {
@@ -88,11 +54,12 @@ public class UploadReferencesControllerTest {
 		EasyMock.expect(multipartFileMock.getContentType()).andReturn("ContentType");
 		EasyMock.expect(multipartFileMock.getBytes()).andReturn("lala".getBytes());
 		EasyMock.replay(multipartFileMock);
-		applicationsServiceMock.saveReferee(referee);
-		EasyMock.replay(applicationsServiceMock);
+//		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+		refereeServiceMock.save(referee);
+		EasyMock.replay(refereeServiceMock);
 		controller.submitReference(referee,  multipartFileMock);
 
-		EasyMock.verify(applicationsServiceMock);
+		EasyMock.verify(refereeServiceMock);
 		assertNotNull(referee.getDocument());
 		Document document = referee.getDocument();
 		assertEquals("filename", document.getFileName());
@@ -105,6 +72,8 @@ public class UploadReferencesControllerTest {
 	public void shouldThrowExceptionWhenRefereealreadyUploadedAReference() throws IOException{
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
 		Referee referee = new RefereeBuilder().refereeId(1).comment("i recommend the applicant").document(new Document()).application(form).activationCode("1234").toReferee();
+		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+		EasyMock.replay(refereeServiceMock);
 		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
 		controller.submitReference(referee,  multipartFileMock);
 	}
@@ -113,10 +82,10 @@ public class UploadReferencesControllerTest {
 	@Before
 	public void setup() {
 		errors = EasyMock.createMock(BindingResult.class);
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		documentValidatorMock = EasyMock.createMock(DocumentValidator.class);
 		document = new DocumentBuilder().id(1).toDocument();
-		controller = new UploadReferencesController(applicationsServiceMock, documentValidatorMock);
+		controller = new UploadReferencesController(refereeServiceMock, documentValidatorMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);

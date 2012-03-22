@@ -1,4 +1,4 @@
-<#if model.model.usersInRoles?has_content>
+<#if model.usersInRoles?has_content>
 	<#assign hasUsers = true>
 <#else>
 	<#assign hasUsers = false>
@@ -31,7 +31,7 @@
 		  
 		  	<!-- Middle. -->
 		  	<div id="middle">
-		  
+		  		<a href="/pgadmissions/"> back to applications list </a>
 		    	<!-- Main content area. -->
 		    	<article id="content" role="main">
 		      
@@ -120,9 +120,9 @@
 		            			<tbody>
 		            				<#list model.usersInRoles as userInRole>
 			              				<tr>
-			                				<td scope="col">crispy@quentin.com</td>
-			                				<td scope="col">Quentin Crisp</td>
-			                				<td scope="col">Interviewer, Reviewer</td>
+			                				 <td scope="col">${userInRole.email}</td>
+						                	<td scope="col">${userInRole.firstName} ${userInRole.lastName}</td>
+						                	<td scope="col">${userInRole.rolesList}</td>
 			                				<td scope="col"><a href="#">Edit</a> / <a href="#">Remove</a></td>
 			              				</tr>
 									</#list>			              			

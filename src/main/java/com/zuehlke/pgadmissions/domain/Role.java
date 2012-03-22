@@ -17,13 +17,11 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 @Access(AccessType.FIELD)
 public class Role extends DomainObject<Integer> implements GrantedAuthority {
 
-
 	private static final long serialVersionUID = 4265990408553249748L;
-	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AuthorityEnumUserType")	
-	@Column(name="authority")
-	private Authority authorityEnum;
 
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AuthorityEnumUserType")
+	@Column(name = "authority")
+	private Authority authorityEnum;
 
 	public Authority getAuthorityEnum() {
 		return authorityEnum;
@@ -36,13 +34,15 @@ public class Role extends DomainObject<Integer> implements GrantedAuthority {
 	@Override
 	@Transient
 	public String getAuthority() {
-		return getAuthorityEnum().toString();
+		if (authorityEnum != null) {
+			return getAuthorityEnum().toString();
+		}
+		return null;
 	}
 
-	
 	@Override
 	public void setId(Integer id) {
-		this.id = id;		
+		this.id = id;
 	}
 
 	@Override
@@ -52,6 +52,5 @@ public class Role extends DomainObject<Integer> implements GrantedAuthority {
 	public Integer getId() {
 		return id;
 	}
-		
 
 }

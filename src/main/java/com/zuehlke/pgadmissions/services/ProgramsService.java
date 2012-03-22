@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -22,12 +23,18 @@ public class ProgramsService {
 		this.programDAO = programDAO;		
 	}
 	
-
+	@Transactional
 	public List<Program> getAllPrograms() {
 		return programDAO.getAllPrograms();
 	}
 
+	@Transactional
 	public Program getProgramById(Integer programId) {
 		return programDAO.getProgramById(programId);
+	}
+
+	@Transactional
+	public void save(Program program) {
+		programDAO.save(program);
 	}
 }

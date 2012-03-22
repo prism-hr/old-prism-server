@@ -42,24 +42,7 @@ public class UploadReferencesController {
 		this.refereeService = refereeService;
 		this.documentValidator = documentValidator;
 	}
-	
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getReferencesPage(@ModelAttribute("referee") Referee referee, @RequestParam String activationCode) {
-		Referee ref = refereeService.getRefereeByActivationCode(activationCode);
-		ApplicationPageModel model = new ApplicationPageModel();
-		if(ref == null || ref.getApplication()==null){
-			model.setMessage("Sorry, the system was unable to find you in the system.");
-		}
-		else{
-			ApplicationForm applicationForm = referee.getApplication();
-			model.setApplicationForm(applicationForm);
-			model.setReferee(ref);
-		}
-		return new ModelAndView(ADD_REFERENCES_VIEW_NAME, "model", model);
-	}
-	
-	
 	@ModelAttribute("referee")
 	public Referee getReferee(Integer refereeId) {
 		Referee referee = refereeService.getRefereeById(refereeId);

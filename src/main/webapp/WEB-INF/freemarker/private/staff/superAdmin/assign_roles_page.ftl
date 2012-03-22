@@ -1,123 +1,158 @@
-<!DOCTYPE HTML>
-<#import "/spring.ftl" as spring />
-<html>
+<#if model.model.usersInRoles?has_content>
+	<#assign hasUsers = true>
+<#else>
+	<#assign hasUsers = false>
+</#if> 
 
+<!DOCTYPE HTML>
+
+<#import "/spring.ftl" as spring />
+
+<html>
 	<head>
-	
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Shell template</title>
-
+		
 		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		
-		<!-- Styles for Application List Page -->
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/superadmin.css' />"/>
-		<!-- Styles for Application List Page -->
-
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-	
-		<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
-	    <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
-	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	    <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
-	    
 	</head>
 	
-	<!--[if IE 9]>
-	<body class="ie9">
-	<![endif]-->
-	<!--[if lt IE 9]>
-	<body class="old-ie">
-	<![endif]-->
-	<!--[if (gte IE 9)|!(IE)]><!-->
 	<body>
-	<!--<![endif]-->
 	
-		<!-- Wrapper Starts -->
 		<div id="wrapper">
-
+		
 			<#include "/private/common/global_header.ftl"/>
-			
-			 <!-- Middle Starts -->
-			<div id="middle">
-				<!-- Main content area. -->
-				<article id="content" role="main">
-					<div class="content-box">
-				    	<div class="content-box-inner">
-				        
-					<a href="/pgadmissions/"> back to applications list </a>
-				        <div class="row">
-                            <span class="label"><strong>Select Programme</strong></span>
-                            <form name="programmeForm"> 
-                            <select class="actionType" name="programSelect" id="programSelect" onChange="top.location.href=this.form.programSelect.options[this.form.programSelect.selectedIndex].value;return false;">
-                            <option value="">Select...</option>
-                                <#list model.programs as program>
-                                    <option value="/pgadmissions/manageUsers/showPage?programId=${program.id}">${program.title}</option>               
-                                </#list>
-                            </select>
-                    </div>
-				          	</form>	
-				          	<form class="roles">
-				          
-								<div class="row">
-				            		<label>Email address</label>
-				              		<input type="text" name="email" />
-				            	</div>
-				
-					          	<div class="row">
-					            	<label>Role(s) in application process</label>
-					              	<select multiple size="4">
-							        	<option>Administrator</option>
-							            <option>Approver</option>
-							            <option>Interviewer</option>
-							            <option>Reviewer</option>
-					              	</select>
-					            </div>
-				
-				            	<button class="plus"><span></span> Add another</button>
-				
-				          	</form>
-				          
-				          	<hr>
-				          
-				          	<table class="data" border="0">
-				            	<colgroup>
-				              		<col style="width: 220px;" />
-				              		<col style="width: auto;" />
-				              		<col style="width: 200px;" />
-				            	</colgroup>
-				            	<thead>
-				              		<tr>
-						                <th scope="col">Email address</th>
-						                <th scope="col">Name</th>
-						                <th scope="col">Role(s)</th>
-						            </tr>
-				            	</thead>
-				            
-				            	<tbody>
-				            	<#list model.usersInRoles as userInRole>
-				              		<tr>
-						                <td scope="col">${userInRole.email}</td>
-						                <td scope="col">${userInRole.firstName} ${userInRole.lastName}</td>
-						                <td scope="col">${userInRole.rolesList}</td>
-				              		</tr>
-				              	</#list>	
-				            	</tbody>
-				          	</table>
-				
-				        </div><!-- .content-box-inner -->
-					</div><!-- .content-box -->
+		  
+		  	<!-- Middle. -->
+		  	<div id="middle">
+		  
+		    	<!-- Main content area. -->
+		    	<article id="content" role="main">
+		      
+		      		<div class="content-box">
+		      			<div class="content-box-inner">
+		        
+			          		<form>
+			          
+			          			<h1>Add Existing programme users and assign roles</h1>
+			            		<p>Please add users to the programme, using their email addresses.<br>You can select one or more roles for the user.</p>
+			            
+			            		<br>
+			            
+			            		<div class="row programme">
+			            			<form name="programmeForm">
+				              			<label>Select programme</label>
+				              			<select name="programSelect" id="programSelect" onChange="top.location.href=this.form.programSelect.options[this.form.programSelect.selectedIndex].value;return false;">
+											<option value="">Select...</option>
+	                                		<#list model.programs as program>
+	                                    		<option value="/pgadmissions/manageUsers/showPage?programId=${program.id}">${program.title}</option>               
+	                                		</#list>
+				              			</select>
+			              			</form>
+			            		</div>
+			            
+								<!-- // EXISTING USERS -->
+											
+				            	<hr>
+				            	<form class="roles">
+					          		<!-- Left side -->
+					          		<div class="left-column">
+					            
+					              		<div class="row">
+					                		<label>Please choose a user</label>
+					                		<select>
+					                			<option>Please choose a user</option>
+					                		</select>
+					              		</div>
+					              
+					              		<div class="row">
+					                		or <a href="#">add a new user</a>
+					              		</div>
+					              
+					            	</div>
 					
-				</article>
-			</div>
-			<!-- Middle Ends -->
-			
-			<#include "/private/common/global_footer.ftl"/>
+									<!-- Right side -->
+									<div class="right-column">
+					            
+					              		<div class="row">
+					                		<label>Role(s) in application process</label>
+					                		<select multiple size="4">
+						                  		<option>Administrator</option>
+						                  		<option>Approver</option>
+						                  		<option>Interviewer</option>
+						                  		<option>Reviewer</option>
+					                		</select>
+					              		</div>
+					            
+					              		<div class="buttons">
+					              			<button>Add user</button>
+					            		</div>
+					              
+									</div>
+								
+								</form>
+						
+							</form>
+		          
+		          			<hr>
+		          			
+		          			<table class="data" border="0">
+		            			<colgroup>
+		              				<col style="width: 220px;" />
+		              				<col style="width: auto;" />
+		              				<col style="width: 200px;" />
+		              				<col style="width: 100px;" />
+		            			</colgroup>
+		            			<thead>
+		              				<tr>
+		                				<th scope="col">Email address</th>
+		                				<th scope="col">Name</th>
+		                				<th scope="col">Role(s)</th>
+		                				<th scope="col">Action</th>
+		              				</tr>
+		            			</thead>
+		            			<tbody>
+		            				<#list model.usersInRoles as userInRole>
+			              				<tr>
+			                				<td scope="col">crispy@quentin.com</td>
+			                				<td scope="col">Quentin Crisp</td>
+			                				<td scope="col">Interviewer, Reviewer</td>
+			                				<td scope="col"><a href="#">Edit</a> / <a href="#">Remove</a></td>
+			              				</tr>
+									</#list>			              			
+		            			</tbody>
+		          			</table>
+		
+		        		</div><!-- .content-box-inner -->
+		      		</div><!-- .content-box -->
+		      
+		    	</article>
+		    
+		  	</div>
+		  
+		  	<!-- Footer. -->
+		  	<div id="footer">
+		    	<ul>
+		      		<li><a href="#">Privacy</a></li>
+		      		<li><a href="#">Terms &amp; conditions</a></li>
+		      		<li><a href="#">Contact us</a></li>
+		      		<li><a href="#">Glossary</a></li>
+		    	</ul>
+		  	</div>
+		
 		</div>
-		<!-- Wrapper Ends -->
-		   
+		
+		<!-- Scripts -->
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/help.js' />"></script>
+		
 	</body>
 </html>

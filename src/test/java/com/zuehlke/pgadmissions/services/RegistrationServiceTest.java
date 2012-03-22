@@ -1,12 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
@@ -20,15 +21,18 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.RegistrationDTO;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
 public class RegistrationServiceTest {
@@ -102,8 +106,14 @@ public class RegistrationServiceTest {
 	@Test
 	public void shouldSaveNewUserAndSendEmail() throws UnsupportedEncodingException {
 		final RegistrationDTO recordDTO = new RegistrationDTO();
+		final Map<String, Object> modelMap = new HashMap<String, Object>();
 
-		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
+		Program program = new ProgramBuilder()
+				.id(1)
+				.administrator(new RegisteredUserBuilder().id(1).email("email1@test.com").toUser(),
+						new RegisteredUserBuilder().id(1).email("email2@test.com").toUser()).toProgram();
+		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson")
+				.projectOriginallyAppliedTo(new ProjectBuilder().program(program).toProject()).toUser();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, projectDAOMock, mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock) {
 
@@ -115,6 +125,11 @@ public class RegistrationServiceTest {
 				return null;
 			}
 
+			@Override
+			public Map<String, Object> modelMap() {
+				return modelMap;
+			}
+
 		};
 
 		userDAOMock.save(newUser);
@@ -122,8 +137,8 @@ public class RegistrationServiceTest {
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Registration confirmation"),
-						EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Registration confirmation",
+						"private/pgStudents/mail/registration_confirmation.ftl", modelMap)).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
@@ -131,7 +146,9 @@ public class RegistrationServiceTest {
 		registrationService.generateAndSaveNewUser(recordDTO);
 
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
-
+		assertEquals(newUser, modelMap.get("user"));
+		assertEquals(Environment.getInstance().getApplicationHostName(), modelMap.get("host"));
+		assertEquals("email1@test.com, email2@test.com", modelMap.get("adminsEmails"));
 	}
 
 	@Test

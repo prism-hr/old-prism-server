@@ -57,7 +57,7 @@ public class ApplicationListControllerTest {
 		
 		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
 		
-		assertEquals("Your application is submitted successfully. <b>Coming soon: </b> email confirmation.", model.getMessage());
+		assertEquals("Your application is submitted successfully.", model.getMessage());
 	}
 	
 	@Test

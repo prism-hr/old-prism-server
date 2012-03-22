@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -22,10 +21,6 @@ import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
-import com.zuehlke.pgadmissions.dto.Address;
-import com.zuehlke.pgadmissions.dto.EmploymentPosition;
-import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
@@ -64,53 +59,53 @@ public class ViewApplicationFormController {
 		if (applicationForm == null || !currentuser.canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
-		ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
+			
+		if(applicationForm.getApplicant().equals(currentuser)){
+			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME, "model", createAndPopulatePageModel(applicationForm, uploadErrorCode, view));	
+		}
+		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", createAndPopulatePageModel(applicationForm, uploadErrorCode, view));
+	
 
-		viewApplicationModel.setApplicationForm(applicationForm);
-		viewApplicationModel.setAddress(new Address());
-		viewApplicationModel.setFunding(new Funding());
-		viewApplicationModel.setQualification(new QualificationDTO());
-		viewApplicationModel.setReferee(new Referee());
-		viewApplicationModel.setEmploymentPosition(new EmploymentPosition());
+	}
+
+	ApplicationPageModel createAndPopulatePageModel(ApplicationForm applicationForm, String uploadErrorCode, String view) {
+		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		
+		ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
+		viewApplicationModel.setApplicationForm(applicationForm);		
+		viewApplicationModel.setUser(currentUser);
+		viewApplicationModel.setUploadErrorCode(uploadErrorCode);
 		viewApplicationModel.setCountries(countryService.getAllCountries());
 		viewApplicationModel.setLanguages(languageService.getAllLanguages());
 		viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());
 		viewApplicationModel.setStudyOptions(StudyOption.values());
 		viewApplicationModel.setReferrers(Referrer.values());
+		viewApplicationModel.setGenders(Gender.values());
 		viewApplicationModel.setPhoneTypes(PhoneType.values());
+		viewApplicationModel.setLanguageAptitudes(LanguageAptitude.values());
 		viewApplicationModel.setQualificationLevels(QualificationLevel.values());
 		viewApplicationModel.setFundingTypes(FundingType.values());
 		viewApplicationModel.setAddressPurposes(AddressPurpose.values());
-
-		viewApplicationModel.setLanguageAptitudes(LanguageAptitude.values());
-		viewApplicationModel.setGenders(Gender.values());
-		viewApplicationModel.setDocumentTypes(DocumentType.values());
-		if(applicationForm.isCVUploaded()){
+		viewApplicationModel.setDocumentTypes(DocumentType.values());		
+		if(applicationForm != null && applicationForm.isCVUploaded()){
 			viewApplicationModel.getDocumentTypes().remove(DocumentType.CV);
 		}
-		if(applicationForm.isPersonalStatementUploaded()){
+		if(applicationForm != null && applicationForm.isPersonalStatementUploaded()){
 			viewApplicationModel.getDocumentTypes().remove(DocumentType.PERSONAL_STATEMENT);
 		}
+		viewApplicationModel.setView(view);
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}
-		viewApplicationModel.setUploadErrorCode(uploadErrorCode);
-		viewApplicationModel.setUser(currentuser);
-		if (applicationForm.hasComments()) {
-			if (currentuser.isInRole(Authority.ADMINISTRATOR) || currentuser.isInRole(Authority.APPROVER)) {
-				viewApplicationModel.setApplicationComments(applicationReviewService.getApplicationReviewsByApplication(applicationForm));
-			} else if (currentuser.isInRole(Authority.REVIEWER)) {
-				viewApplicationModel.setApplicationComments((applicationReviewService.getVisibleComments(applicationForm, currentuser)));
+		
+		if (applicationForm != null && applicationForm.hasComments() && !applicationForm.getApplicant().equals(currentUser)) {			
+			if (currentUser.isInRole(Authority.SUPERADMINISTRATOR) || currentUser.isInRole(Authority.ADMINISTRATOR) || currentUser.isInRole(Authority.APPROVER)) {
+				viewApplicationModel.setApplicationComments(applicationForm.getApplicationComments());
+			} else if (currentUser.isInRole(Authority.REVIEWER)) {
+				viewApplicationModel.setApplicationComments((applicationReviewService.getVisibleComments(applicationForm, currentUser)));
 			}
 		}
-
-		if (currentuser.isInRole(Authority.APPLICANT)) {
-			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME, "model", viewApplicationModel);
-		}
-		if (view != null)
-			viewApplicationModel.setView(view);
-
-		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", viewApplicationModel);
+		return viewApplicationModel;
 	}
 
 }

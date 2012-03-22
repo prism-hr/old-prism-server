@@ -62,7 +62,7 @@ public class ApplicationReviewDAO {
 				.createCriteria(ApplicationReview.class)
 				.add(Restrictions.eq("application", application)).list();
 	}
-
+	
 	public void saveUser(RegisteredUser currentuser) {
 		sessionFactory.getCurrentSession().saveOrUpdate(currentuser);
 		

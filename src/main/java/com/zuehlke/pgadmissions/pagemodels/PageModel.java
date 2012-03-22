@@ -17,7 +17,7 @@ public class PageModel {
 	private List<ObjectError> errorObjs;
 	private ApplicationForm applicationForm;
 	private RegisteredUser user;
-	private List<ApplicationReview> applicationComments;
+	private List<ApplicationReview> applicationComments = new ArrayList<ApplicationReview>();
 	private String view;
 	private BindingResult result;
 	private String userRoles;

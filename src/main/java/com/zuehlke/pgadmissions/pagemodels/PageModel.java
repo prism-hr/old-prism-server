@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class PageModel {
 	private String view;
 	private BindingResult result;
 	private String userRoles;
+	private List<String> globalErrorCodes = new ArrayList<String>();
 
 	public BindingResult getResult() {
 		return result;
@@ -92,5 +94,13 @@ public class PageModel {
 
 	public String getUserRoles() {
 		return userRoles;
+	}
+
+	public List<String> getGlobalErrorCodes() {
+		return globalErrorCodes;
+	}
+
+	public void setGlobalErrorCodes(List<String> globalErrorCodes) {
+		this.globalErrorCodes = globalErrorCodes;
 	}
 }

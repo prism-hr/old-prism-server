@@ -22,7 +22,7 @@ public class RefereeService {
 
 	}
 
-
+	@Transactional
 	public Referee getRefereeById(Integer id) {
 		return refereeDAO.getRefereeById(id);
 	}
@@ -30,6 +30,11 @@ public class RefereeService {
 	@Transactional
 	public void save(Referee referee) {
 		refereeDAO.save(referee);
+	}
+	
+	@Transactional
+	public Referee getRefereeByActivationCode(String activationCode) {
+		return refereeDAO.getRefereeByActivationCode(activationCode);
 	}
 
 }

@@ -45,7 +45,7 @@
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/addReferences?refereeId=${referee.id}&activationCode=${referee.activationCode}&applicationId=${referee.application.id}">Add Reference</a>
+			      			<a href="${host}/pgadmissions/addReferences?refereeId=${referee.id}&activationCode=${referee.activationCode}">Add Reference</a>
 			      		</font>
 			      	</p>
 			      	<p>

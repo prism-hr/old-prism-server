@@ -10,6 +10,7 @@ public class ManageUsersModel extends PageModel{
 
 	private List<Program> programs = new ArrayList<Program>();
 	private List<RegisteredUser> usersInRoles = new ArrayList<RegisteredUser>();
+	private Program selectedProgram;
 	
 	public List<Program> getPrograms() {
 		return programs;
@@ -25,5 +26,13 @@ public class ManageUsersModel extends PageModel{
 	
 	public void setUsersInRoles(List<RegisteredUser> usersInRoles) {
 		this.usersInRoles = usersInRoles;
+	}
+
+	public void setSelectedProgram(Program selectedProgram) {
+		this.selectedProgram = selectedProgram;
+	}
+	
+	public Program getSelectedProgram() {
+		return selectedProgram;
 	}
 }

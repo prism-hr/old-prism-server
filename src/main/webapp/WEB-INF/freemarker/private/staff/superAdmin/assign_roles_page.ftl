@@ -49,7 +49,11 @@
 			            			<form name="programmeForm">
 				              			<label>Select programme</label>
 				              			<select name="programSelect" id="programSelect" onChange="top.location.href=this.form.programSelect.options[this.form.programSelect.selectedIndex].value;return false;">
-											<option value="">Select...</option>
+											<#if model.selectedProgram??>
+											<option value="">${model.selectedProgram.title}</option>
+											<#else>
+											<option value="">Please select a program</option>
+											</#if>
 	                                		<#list model.programs as program>
 	                                    		<option value="/pgadmissions/manageUsers/showPage?programId=${program.id}">${program.title}</option>               
 	                                		</#list>
@@ -60,14 +64,17 @@
 								<!-- // EXISTING USERS -->
 											
 				            	<hr>
-				            	<form class="roles">
+				            	<form class="roles" action="/pgadmissions/assignRole">
 					          		<!-- Left side -->
 					          		<div class="left-column">
 					            
 					              		<div class="row">
 					                		<label>Please choose a user</label>
-					                		<select>
-					                			<option>Please choose a user</option>
+					                		<select id="userSelect">
+					                			<option value="">Please choose a user</option>
+					                			<#list model.usersInRoles as userInRole>
+						                			<option value="">${userInRole.firstName} ${userInRole.lastName}</option>      
+												</#list>
 					                		</select>
 					              		</div>
 					              
@@ -95,6 +102,7 @@
 					            		</div>
 					              
 									</div>
+									
 								
 								</form>
 						

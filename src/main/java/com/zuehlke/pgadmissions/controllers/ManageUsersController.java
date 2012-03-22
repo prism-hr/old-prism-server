@@ -69,6 +69,7 @@ public class ManageUsersController {
 					allUsers.add(registeredUser);
 			}
 			pageModel.setUsersInRoles(allUsers);
+			pageModel.setSelectedProgram(selectedProgram);
 		}
 
 		pageModel.setPrograms(getVisiblePrograms(user));

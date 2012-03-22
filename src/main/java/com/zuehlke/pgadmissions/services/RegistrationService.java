@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
@@ -38,13 +39,14 @@ public class RegistrationService {
 	}
 
 	@Autowired
-	public RegistrationService(EncryptionUtils encryptionUtils, RoleDAO roleDAO, UserDAO userDAO, ProjectDAO projectDAO, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
+	public RegistrationService(EncryptionUtils encryptionUtils, RoleDAO roleDAO, UserDAO userDAO, ProjectDAO projectDAO,
+			MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
 		this.encryptionUtils = encryptionUtils;
 		this.roleDAO = roleDAO;
 		this.userDAO = userDAO;
 		this.projectDAO = projectDAO;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
-	
+
 		this.mailsender = mailsender;
 
 	}
@@ -61,7 +63,7 @@ public class RegistrationService {
 		user.setPassword(encryptionUtils.getMD5Hash(record.getPassword()));
 		user.setEnabled(false);
 		user.setCredentialsNonExpired(true);
-		if(record.getProjectId() != null){
+		if (record.getProjectId() != null) {
 			user.setProjectOriginallyAppliedTo(projectDAO.getProjectById(record.getProjectId()));
 		}
 		user.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
@@ -75,9 +77,12 @@ public class RegistrationService {
 		userDAO.save(newUser);
 	
 		try {
-			Map<String, Object> model = new HashMap<String, Object>();
+			Map<String, Object> model = modelMap();
 			model.put("user", newUser);			
 			model.put("host", Environment.getInstance().getApplicationHostName());
+			if(newUser.getProjectOriginallyAppliedTo() != null){
+				model.put("adminsEmails", getAdminsEmailsCommaSeparatedAsString(newUser.getProjectOriginallyAppliedTo().getProgram().getAdministrators()));
+			}
 			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " "+ newUser.getLastName());
 			
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Registration confirmation", "private/pgStudents/mail/registration_confirmation.ftl", model));
@@ -91,6 +96,21 @@ public class RegistrationService {
 		return userDAO.getUserByActivationCode(activationCode);
 	}
 
+	Map<String, Object> modelMap() {
+		return new HashMap<String, Object>();
+	}
+
+	private String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
+		StringBuilder adminsMails = new StringBuilder();
+		for(int i = 0 ; i < administrators.size(); i++){
+			if(i > 0){
+				adminsMails.append(", ");
+			}	
+			
+			adminsMails.append(administrators.get(i).getEmail());
+		}
+		return adminsMails.toString();
+	}
 
 
 }

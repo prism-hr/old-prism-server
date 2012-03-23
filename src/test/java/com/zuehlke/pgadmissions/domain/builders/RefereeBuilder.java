@@ -14,7 +14,7 @@ import com.zuehlke.pgadmissions.domain.Telephone;
 public class RefereeBuilder {
 
 
-	private Integer refereeId;
+	private Integer id;
 	
 	private ApplicationForm application;
 	
@@ -46,8 +46,8 @@ public class RefereeBuilder {
 	
 	private String email;
 	
-	public RefereeBuilder refereeId(Integer id){
-		this.refereeId = id;
+	public RefereeBuilder id(Integer id){
+		this.id = id;
 		return this;
 	}
 	public RefereeBuilder application(ApplicationForm application){
@@ -127,7 +127,7 @@ public class RefereeBuilder {
 		referee.setApplication(application);
 		referee.setEmail(email);
 		referee.setFirstname(firstname);
-		referee.setId(refereeId);
+		referee.setId(id);
 		referee.setJobEmployer(jobEmployer);
 		referee.setJobTitle(jobTitle);
 		referee.setLastname(lastname);

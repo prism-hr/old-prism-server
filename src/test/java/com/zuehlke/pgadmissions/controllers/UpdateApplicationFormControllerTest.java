@@ -317,7 +317,7 @@ public class UpdateApplicationFormControllerTest {
 	
 	@Test
 	public void shouldGetRefereeDetailsFromService() {
-		Referee referee = new RefereeBuilder().refereeId(1).toReferee();
+		Referee referee = new RefereeBuilder().id(1).toReferee();
 		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
 		EasyMock.replay(refereeServiceMock);
 
@@ -337,7 +337,7 @@ public class UpdateApplicationFormControllerTest {
 	@Ignore
 	@Test
 	public void shouldGetNewRefereeDetailsFromServiceIfIdIsNull() {
-		final Referee refereeDetails = new RefereeBuilder().refereeId(1).toReferee();
+		final Referee refereeDetails = new RefereeBuilder().id(1).toReferee();
 
 		applicationController = new UpdateApplicationFormController(applicationsServiceMock, userPropertyEditorMock,
 				datePropertyEditorMock, countriesServiceMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
@@ -355,7 +355,7 @@ public class UpdateApplicationFormControllerTest {
 	@Test
 	public void validateRefereeDetails() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		Referee referee = new RefereeBuilder().refereeId(1).toReferee();
+		Referee referee = new RefereeBuilder().id(1).toReferee();
 		refereeValidator.validate(referee, errorsMock);
 		EasyMock.replay(refereeValidator);
 		applicationController.editReferee(referee, null, errorsMock);
@@ -367,7 +367,7 @@ public class UpdateApplicationFormControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		
-		Referee referee = new RefereeBuilder().refereeId(1).toReferee();
+		Referee referee = new RefereeBuilder().id(1).toReferee();
 		refereeValidator.validate(referee, errorsMock);
 		refereeServiceMock.save(EasyMock.same(referee));
 		
@@ -397,7 +397,7 @@ public class UpdateApplicationFormControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
-		Referee referee = new RefereeBuilder().application(applicationForm).refereeId(1).toReferee();
+		Referee referee = new RefereeBuilder().application(applicationForm).id(1).toReferee();
 		refereeValidator.validate(referee, errorsMock);
 		refereeServiceMock.save(referee);
 		
@@ -411,7 +411,7 @@ public class UpdateApplicationFormControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowCannotUpdateApplicationExceptionIfApplicationFormNotInUnsubmmitedState() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
-		Referee referee = new RefereeBuilder().application(form).refereeId(1).toReferee();
+		Referee referee = new RefereeBuilder().application(form).id(1).toReferee();
 		applicationController.editReferee(referee, null, null);
 
 	}
@@ -421,7 +421,7 @@ public class UpdateApplicationFormControllerTest {
 	public void shouldThrowResourenotFoundExceptionIfCurrentUserNotApplicant() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(6).toUser();
 		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(applicant).toApplicationForm();
-		Referee referee = new RefereeBuilder().application(form).refereeId(1).toReferee();
+		Referee referee = new RefereeBuilder().application(form).id(1).toReferee();
 		applicationController.editReferee(referee,  null, null);
 	}
 	

@@ -26,7 +26,7 @@
 		  
 		  	<!-- Middle. -->
 		  	<div id="middle">
-		  	  		
+		  	  	<#include "/private/common/parts/nav_without_user_info.ftl"/>
 		    	<!-- Main content area. -->
 		    	<article id="content" role="main">
 		      
@@ -47,6 +47,7 @@
 			        		<#else>
 			        			<p>Please enter you reference in the field below, or upload a file containing your reference.</p>		              				          		
 			        		</#if>
+			        		<p>You can view ${model.referee.application.applicant.firstName}'s application <a href="<@spring.url '/references/application?activationCode=${model.referee.activationCode}'/>">here</a></p>
 							<form id="documentUploadForm" method="POST" action="<@spring.url '/addReferences/submit'/>" enctype="multipart/form-data">
 					             <input type="hidden" name="refereeId" value="${model.referee.id?string("######")}"/>
 					             <div>

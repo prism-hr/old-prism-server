@@ -15,8 +15,14 @@ public class UserDTO {
 		return roles;
 	}
 
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
+	public void setRoles(List<Role> roles) {		
+		this.roles.clear();
+		for (Role role : roles) {
+			if(role!=null){
+				this.roles.add(role);
+			}
+		}
+		
 	}
 
 	public Integer getUserId() {

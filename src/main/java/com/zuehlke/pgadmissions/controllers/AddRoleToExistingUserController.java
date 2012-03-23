@@ -51,7 +51,7 @@ public class AddRoleToExistingUserController {
 
 	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {
-		binder.registerCustomEditor(RolePropertyEditor.class, rolePropertyEditor);
+		binder.registerCustomEditor(Role.class, rolePropertyEditor);
 	}
 	
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
@@ -70,7 +70,7 @@ public class AddRoleToExistingUserController {
 		List<Role> userDTORoles = userDTO.getRoles();
 		for (Role role : userDTORoles) {
 			if(!containsRole(userRoles, role)){
-				System.out.println(role.getAuthority());
+				System.out.println(role.getAuthorityEnum());
 				user.getRoles().add(role);
 				userService.save(user);
 			}
@@ -82,9 +82,9 @@ public class AddRoleToExistingUserController {
 		return new  ModelAndView("redirect:/manageUsers/showPage","programId", program.getId());
 	}
 	
-	private boolean containsRole(List<Role> roles, Role userRole){
-		for (Role role : roles) {
-			if(userRole.getAuthority().equals(role.getAuthority())){
+	private boolean containsRole(List<Role> userRoles, Role roleToBeAdded){
+		for (Role role : userRoles) {
+			if(roleToBeAdded.getAuthorityEnum().equals(role.getAuthorityEnum())){
 				return true;
 			}
 		}

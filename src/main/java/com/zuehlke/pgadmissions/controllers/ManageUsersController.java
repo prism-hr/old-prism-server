@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,13 +70,30 @@ public class ManageUsersController {
 			}
 			pageModel.setUsersInRoles(allUsers);
 			pageModel.setSelectedProgram(selectedProgram);
-			pageModel.setRoles(Authority.values());
 		}
 
+		List<Authority> roles = removeSuperAdminAndApplicantFromAuthority(user);
+		pageModel.setRoles(roles);
 		pageModel.setPrograms(getVisiblePrograms(user));
 
 		ModelAndView modelAndView = new ModelAndView(ROLES_PAGE_VIEW_NAME, "model", pageModel);
 		return modelAndView;
+	}
+
+	private List<Authority> removeSuperAdminAndApplicantFromAuthority(RegisteredUser user) {
+		List<Authority> values = Arrays.asList(Authority.values());
+		List<Authority> removedList = new ArrayList<Authority>();
+		
+		for (Authority authority : values) {
+			if(authority.equals(Authority.APPLICANT)){
+				continue;
+			}
+			if(authority.equals(Authority.SUPERADMINISTRATOR) && user.isInRole(Authority.ADMINISTRATOR)){
+				continue;
+			}
+			removedList.add(authority);
+		}
+		return removedList;
 	}
 	
 	private List<Program> getVisiblePrograms(RegisteredUser user) {

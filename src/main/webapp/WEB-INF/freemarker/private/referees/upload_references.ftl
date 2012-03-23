@@ -51,7 +51,7 @@
 							<form id="documentUploadForm" method="POST" action="<@spring.url '/addReferences/submit'/>" enctype="multipart/form-data">
 					             <input type="hidden" name="refereeId" value="${model.referee.id?string("######")}"/>
 					             <div>
-					              <textarea id="comment" name="comment" class="max" rows="35" cols="90" placeholder="Reference">${model.referee.comment!}</textarea>
+					              <textarea id="comment" name="reference.comment" class="max" rows="35" cols="90" placeholder="Reference"><#if  model.referee.hasProvidedReference()>${model.referee.reference.comment!}</#if></textarea>
 					            </div>
 					            <br/>	
 					            <div>
@@ -63,8 +63,8 @@
 									</#if>	
 									<br/>
 									<br/>
-									<#if model.referee.document?? >
-										Previous file: ${model.referee.document.fileName}
+									<#if model.referee.hasProvidedReference() && model.referee.reference.document?? >
+										Previous file: ${model.referee.reference.document.fileName}
 		                			</#if>			
 								</div>
 								

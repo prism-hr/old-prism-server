@@ -24,7 +24,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 
 	private ApplicationForm applicationForm;
 
-	@Ignore
+
 	@Test
 	public void shouldSaveAndLoadDocument(){
 		Document document = new Document();
@@ -56,7 +56,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test	
-	public void shouldLoadDocumentWithApplicaionForm(){
+	public void shouldLoadDocumentWithApplicationForm(){
 		Document document = new Document();
 		document.setContent("s".getBytes());
 		document.setFileName("name.txt");

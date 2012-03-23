@@ -1,19 +1,17 @@
 package com.zuehlke.pgadmissions.domain;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 public class RefereeTest {
 
 	@Test
-	public void shouldReturnTrueIfCommentOrDocumentProvided(){
+	public void shouldReturnTrueIfRefernnceProvided(){
 		Referee referee = new Referee();
 		assertFalse(referee.hasProvidedReference());
-		referee.setComment("aha");
-		assertTrue(referee.hasProvidedReference());
-		referee.setComment(null);
-		referee.setDocument(new Document());
+		referee.setReference(new Reference());		
 		assertTrue(referee.hasProvidedReference());
 	}
 }

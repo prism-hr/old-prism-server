@@ -14,7 +14,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
@@ -43,10 +42,6 @@ public class Document extends DomainObject<Integer> {
 	@Column(name = "content_type")
 	private String contentType;
 	
-	@OneToOne(cascade = javax.persistence.CascadeType.ALL)  
-	@JoinColumn(name = "referee_id")
-	private Referee referee;
-
 
 	@Column(name = "file_name")
 	private String fileName;
@@ -112,14 +107,5 @@ public class Document extends DomainObject<Integer> {
 		this.applicationForm = applicationForm;
 	}
 
-	public Referee getReferee() {
-		return referee;
-	}
-
-	public void setReferee(Referee referee) {
-		this.referee = referee;
-	}
-
 	
-
 }

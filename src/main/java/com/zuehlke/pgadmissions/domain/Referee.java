@@ -21,11 +21,13 @@ import javax.persistence.OneToOne;
 public class Referee extends DomainObject<Integer>{
 
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4591043630090924738L;
-
+	
+	@OneToOne(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "reference_id")
+	private Reference reference;
+	
 	
 	@ManyToOne
 	@JoinColumn(name="application_form_id")
@@ -43,8 +45,7 @@ public class Referee extends DomainObject<Integer>{
 	@JoinColumn(name = "referee_id")
 	private List<Messenger> messengers = new ArrayList<Messenger>();
 	
-	@Column(name="comment")
-	private String comment;
+
 	
 	@Column(name="firstname")
 	private String firstname;
@@ -73,9 +74,6 @@ public class Referee extends DomainObject<Integer>{
 	@OneToOne
 	@JoinColumn(name = "country_id")
 	private Country addressCountry;
-	
-	@OneToOne(cascade = javax.persistence.CascadeType.ALL, mappedBy="referee")
-	private Document document;
 	
 	@Column(name="email")
 	private String email;
@@ -216,24 +214,18 @@ public class Referee extends DomainObject<Integer>{
 		this.activationCode = activationCode;
 	}
 
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
-	public Document getDocument() {
-		return document;
-	}
-
-	public void setDocument(Document document) {
-		this.document = document;
-	}
-
+	
 	public boolean hasProvidedReference() {
-		return comment != null || document != null;
+		return reference != null;
+	}
+
+	
+	public Reference getReference() {
+		return reference;
+	}
+
+	public void setReference(Reference reference) {
+		this.reference = reference;
 	}
 
 }

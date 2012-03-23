@@ -70,7 +70,6 @@ public class AddRoleToExistingUserController {
 		List<Role> userDTORoles = userDTO.getRoles();
 		for (Role role : userDTORoles) {
 			if(!containsRole(userRoles, role)){
-				System.out.println(role.getAuthorityEnum());
 				user.getRoles().add(role);
 				userService.save(user);
 			}

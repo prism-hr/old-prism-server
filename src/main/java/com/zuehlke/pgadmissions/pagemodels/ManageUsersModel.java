@@ -39,8 +39,8 @@ public class ManageUsersModel extends PageModel{
 		return selectedProgram;
 	}
 
-	public void setRoles(Authority[] roles) {
-		this.roles.addAll(Arrays.asList(roles));
+	public void setRoles(List<Authority> roles) {
+		this.roles.addAll(roles);
 	}
 	
 	public List<Authority> getRoles() {

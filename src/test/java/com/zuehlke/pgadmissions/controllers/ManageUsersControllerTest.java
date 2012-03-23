@@ -40,10 +40,8 @@ public class ManageUsersControllerTest {
 	public void shouldReturnCorrectView() {
 		EasyMock.expect(currentUser.getAuthorities()).andReturn(
 				Arrays.asList(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()));
-		EasyMock.expect(currentUser.getAuthorities()).andReturn(
-				Arrays.asList(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()));
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(programsServiceMock.getAllPrograms()).andReturn(new ArrayList<Program>());
@@ -74,14 +72,12 @@ public class ManageUsersControllerTest {
 				Arrays.asList(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()));
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
-		currentUser.setRolesList();
-		currentUser.setRolesList();
 		EasyMock.replay(currentUser);
 
 		RegisteredUser approverOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
@@ -109,6 +105,7 @@ public class ManageUsersControllerTest {
 		ManageUsersModel model = (ManageUsersModel) manageUsersController.getUsersPage(1).getModel().get("model");
 		Assert.assertEquals(2, model.getPrograms().size());
 		Assert.assertEquals(2, model.getUsersInRoles().size());
+		Assert.assertTrue(model.getRoles().contains(Authority.SUPERADMINISTRATOR));
 	}
 
 	@Test
@@ -120,12 +117,10 @@ public class ManageUsersControllerTest {
 				Arrays.asList(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()));
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
+		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
+		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-		currentUser.setRolesList();
-		currentUser.setRolesList();
 		EasyMock.replay(currentUser);
 		RegisteredUser approverOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")
 				.email("email@test.com").username("usernameOne").password("password").accountNonExpired(false)
@@ -160,8 +155,8 @@ public class ManageUsersControllerTest {
 				Arrays.asList(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()));
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
+		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
 		EasyMock.replay(currentUser);
@@ -189,6 +184,7 @@ public class ManageUsersControllerTest {
 		ManageUsersModel model = (ManageUsersModel) manageUsersController.getUsersPage(null).getModel().get("model");
 		Assert.assertEquals(0, model.getPrograms().size());
 		Assert.assertEquals(0, model.getUsersInRoles().size());
+		Assert.assertTrue(!model.getRoles().contains(Authority.SUPERADMINISTRATOR));
 	}
 
 	@Test
@@ -199,14 +195,12 @@ public class ManageUsersControllerTest {
 				Arrays.asList(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()));
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
-		currentUser.setRolesList();
-		currentUser.setRolesList();
 		EasyMock.replay(currentUser);
 
 		RegisteredUser approverOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe")

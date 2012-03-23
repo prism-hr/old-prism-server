@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +75,19 @@ public class UserService {
 	public RegisteredUser getUserByUsername(String username) {
 		return userDAO.getUserByUsername(username);
 	}
-	
+
+	@Transactional
+	public List<RegisteredUser> getSuperAdmins() {
+		List<RegisteredUser> allUsers = userDAO.getAllUsers();
+		List<RegisteredUser> superAdmins = new ArrayList<RegisteredUser>();
+		for (RegisteredUser registeredUser : allUsers) {
+			List<Role> roles = registeredUser.getRoles();
+			for (Role role : roles) {
+				if(role.getAuthorityEnum().equals((Authority.SUPERADMINISTRATOR))){
+					superAdmins.add(registeredUser);
+				}
+			}
+		}
+		return superAdmins;
+	}
 }

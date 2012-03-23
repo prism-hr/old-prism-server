@@ -86,6 +86,23 @@ public class UserServiceTest {
 		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
 	}
 
+	@Test
+	public void shouldGetSuperAdministrators(){
+		Role super1 = new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).id(1).toRole();
+		Role reviewer = new RoleBuilder().authorityEnum(Authority.REVIEWER).id(2).toRole();
+		Role super2 = new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).id(3).toRole();
+		Role applicant = new RoleBuilder().authorityEnum(Authority.APPLICANT).id(4).toRole();
+		RegisteredUser userOne = new RegisteredUserBuilder().id(1).role(applicant).toUser();
+		RegisteredUser superAdmin1 = new RegisteredUserBuilder().id(2).role(super2).toUser();
+		RegisteredUser superAdmin2 = new RegisteredUserBuilder().id(3).roles(super1, reviewer).toUser();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(4).role(reviewer).toUser();
+		EasyMock.expect(userDAOMock.getAllUsers()).andReturn(Arrays.asList(userOne, userTwo, superAdmin1, superAdmin2));
+		EasyMock.replay(userDAOMock);
+		List<RegisteredUser> superAdmins = userService.getSuperAdmins();
+		assertEquals(2, superAdmins.size());
+		assertTrue(superAdmins.containsAll(Arrays.asList(superAdmin1, superAdmin2)));
+	}
+	
 	@Before
 	public void setUp() {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);

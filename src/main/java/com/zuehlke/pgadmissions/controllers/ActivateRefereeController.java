@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
 public class ActivateRefereeController {
 
 	private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
+	private static final String EXPIRED_VIEW_NAME = "private/referees/upload_references_expired";
 	private static final String VIEW_APPLICATION_INTERNAL_VIEW_NAME = "private/referees/application/main_application_page";
 
 	private final RefereeService refereeService;
@@ -42,6 +43,9 @@ public class ActivateRefereeController {
 			throw new ResourceNotFoundException();
 		} else {
 			ApplicationForm applicationForm = referee.getApplication();
+			if (applicationForm.isDecided()) {
+				return new ModelAndView(EXPIRED_VIEW_NAME);
+			}
 			model.setApplicationForm(applicationForm);
 			model.setReferee(referee);
 		}
@@ -51,7 +55,10 @@ public class ActivateRefereeController {
 	@RequestMapping(value = "/application", method = RequestMethod.GET)
 	public ModelAndView getViewApplicationPageForReferee(@RequestParam String activationCode) {
 		Referee referee = refereeService.getRefereeByActivationCode(activationCode);
-		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(referee.getApplication(),
-				null, null));
+		ApplicationForm application = referee.getApplication();
+		if (application.isDecided()) {
+			return new ModelAndView(EXPIRED_VIEW_NAME);
+		}
+		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(application, null, null));
 	}
 }

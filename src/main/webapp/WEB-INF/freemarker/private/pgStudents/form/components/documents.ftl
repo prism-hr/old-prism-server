@@ -46,7 +46,7 @@
 		</table>
         
 		<form id="documentUploadForm" method="POST" action="<@spring.url '/documents'/>" enctype="multipart/form-data">
-             <input type="hidden" name="id" value="${model.applicationForm.id}"/>
+             <input type="hidden" name="id" value="${model.applicationForm.id?string('#######')}"/>
              <div>
                 
              	<!-- Document type -->

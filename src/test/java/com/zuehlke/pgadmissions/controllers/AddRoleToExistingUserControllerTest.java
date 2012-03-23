@@ -48,7 +48,7 @@ public class AddRoleToExistingUserControllerTest {
 	@Test
 	public void shouldBindPropertyEditors() {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-		binderMock.registerCustomEditor(RolePropertyEditor.class, rolePropertyEditorMock);
+		binderMock.registerCustomEditor(Role.class, rolePropertyEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
@@ -87,6 +87,25 @@ public class AddRoleToExistingUserControllerTest {
 		EasyMock.replay(userServiceMock, programsServiceMock);
 		ModelAndView modelAndView = controller.addRoleToExistingUser(program.getId(), userDTO);
 		EasyMock.verify(programsServiceMock);
+	}
+	
+	@Test
+	public void shouldSaveReviewerRoleToAnAdminOfTheProgram(){
+		Program program = new ProgramBuilder().id(1).toProgram();
+		Role adminToProgram = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole();
+		RegisteredUser user = new RegisteredUserBuilder().role(adminToProgram).id(1).toUser();
+		program.setAdministrators(Arrays.asList(user));
+		Role reviewer = new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole();
+		UserDTO userDTO = new UserDTO();
+		userDTO.setUserId(1);
+		userDTO.setRoles(Arrays.asList(reviewer));
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.expect(programsServiceMock.getProgramById(1)).andReturn(program);
+		userServiceMock.save(user);
+		programsServiceMock.save(program);
+		EasyMock.replay(userServiceMock, programsServiceMock);
+		controller.addRoleToExistingUser(program.getId(), userDTO);
+		EasyMock.verify(programsServiceMock,userServiceMock);
 	}
 	
 	@Test

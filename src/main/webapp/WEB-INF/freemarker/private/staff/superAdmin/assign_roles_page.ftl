@@ -21,6 +21,14 @@
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
+		
+		<script language="javascript" type="text/javascript">
+		function programChange()
+		{
+  			 var program = document.getElementById('programId').value;
+   			window.location.href="/pgadmissions/manageUsers/showPage?programId=" + program;
+		}
+		</script>
 	</head>
 	
 	<body>
@@ -47,20 +55,16 @@
 			            
 			            		<div class="row programme">
 				              		<label>Select programme</label>
-				              		<select name="programSelect" id="programSelect" onChange="top.location.href=this.form.programSelect.options[this.form.programSelect.selectedIndex].value;return false;">
+				              		<select name="programId" id="programId" onChange="programChange()">
 											<option value="">Please select a program</option>
 	                                		<#list model.programs as program>
-	                                    		<option value="/pgadmissions/manageUsers/showPage?programId=${program.id}" 
+	                                    		<option value="${program.id?string("######")}" 
 	                                    			<#if model.selectedProgram?? && model.selectedProgram.id == program.id >
 													 selected = "selected"
 													</#if>>${program.title}</option>               
 	                                		</#list>
 				              		</select>
 			            		</div>
-			            		<#if model.selectedProgram??>
-			            		${model.selectedProgram.id}
-			            		<input type="hidden" id="programId" value="${model.selectedProgram.id}"/>
-								</#if>
 								<!-- // EXISTING USERS -->
 											
 				            	<hr>
@@ -69,10 +73,10 @@
 					            
 					              	<div class="row">
 					                	<label>Please choose a user</label>
-					                	<select id="userId">
+					                	<select id="userId" name="userId">
 					                			<option value="">Please choose a user</option>
 					                			<#list model.usersInRoles as userInRole>
-						                			<option value="${userInRole.id}">${userInRole.firstName} ${userInRole.lastName}</option>      
+						                			<option value="${userInRole.id?string("######")}">${userInRole.firstName} ${userInRole.lastName}</option>      
 												</#list>
 					                		</select>
 					              	</div>
@@ -90,13 +94,12 @@
 					                	<label>Role(s) in application process</label>
 					                	<select multiple size="4" id="roles" name="roles" >
                         				<#list model.roles as role>
-                      						<option value="${role}">${role.displayValue}</option>
+                      						<option value="${role}">${role}</option>
                       					</#list>
                       					</select>
 					              	</div>
 					            
 					              	<div class="buttons">
-					              		<input type="submit" value="Submit"/>
 					              		<button class="blue" type="submit" value="adduser" >Add user</button>
 					            	</div>
 					              

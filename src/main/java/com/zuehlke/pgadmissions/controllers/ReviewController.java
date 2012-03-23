@@ -37,7 +37,6 @@ public class ReviewController {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.userPropertyEditor = userPropertyEditor;
-
 	}
 
 	@RequestMapping(value = "/assign", method = RequestMethod.GET)

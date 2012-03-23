@@ -22,21 +22,10 @@ public class RolePropertyEditorTest {
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(role);
 		EasyMock.replay(roleDAOMock);
 		
-		editor.setAsText("Administrator");
+		editor.setAsText("ADMINISTRATOR");
 		assertSame(role, editor.getValue());
 	}
 	
-	@Test	
-	public void shouldReturNullIfAuthorityIsNull(){			
-		editor.setAsText(null);
-		assertNull(editor.getValue());		
-	}
-	
-	@Test	
-	public void shouldReturNullIfIdIsEmptyString(){			
-		editor.setAsText(" ");
-		assertNull(editor.getValue());		
-	}
 	@Test	
 	public void shouldReturnNullIfValueIsNull(){			
 		editor.setValue(null);

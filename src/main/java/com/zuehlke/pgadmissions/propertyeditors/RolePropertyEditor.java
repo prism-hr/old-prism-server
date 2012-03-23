@@ -2,12 +2,10 @@ package com.zuehlke.pgadmissions.propertyeditors;
 
 import java.beans.PropertyEditorSupport;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.dao.RoleDAO;
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -27,12 +25,13 @@ public class RolePropertyEditor extends PropertyEditorSupport{
 		
 		@Override
 		public void setAsText(String authority) throws IllegalArgumentException{
-			Authority authorityEnum = Authority.getValueAsAuthority(authority);
+			Authority authorityEnum = Authority.valueOf(authority);
 			if(authorityEnum == null ){
 				setValue(null);
 				return;
 			}
-			setValue(roleDAO.getRoleByAuthority(authorityEnum));
+			Role role = roleDAO.getRoleByAuthority(authorityEnum);
+			setValue(role);
 			
 		}
 		

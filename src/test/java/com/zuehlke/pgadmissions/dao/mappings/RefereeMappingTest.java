@@ -3,16 +3,14 @@ package com.zuehlke.pgadmissions.dao.mappings;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -20,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.Reference;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -27,11 +26,10 @@ import com.zuehlke.pgadmissions.domain.builders.MessengerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-
 
 public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
@@ -41,8 +39,10 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadReferee() throws Exception {
 
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").relationship("rel").toReferee();
-		
+		Referee referee = new RefereeBuilder().application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).addressLocation("loc")
+				.addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").relationship("rel")
+				.toReferee();
+
 		sessionFactory.getCurrentSession().save(referee);
 		assertNotNull(referee.getId());
 		Integer id = referee.getId();
@@ -67,21 +67,24 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(referee.getLastname(), reloadedReferee.getLastname());
 		assertEquals(referee.getRelationship(), reloadedReferee.getRelationship());
 
+
 	}
-	
+
 	@Test
 	public void shouldSaveAndLoadRefereeWithPhoneNumbers() throws Exception {
 		Telephone telephone1 = new TelephoneBuilder().telephoneNumber("abc").telephoneType(PhoneType.MOBILE).toTelephone();
 		Telephone telephone2 = new TelephoneBuilder().telephoneNumber("abc").telephoneType(PhoneType.HOME).toTelephone();
 		Telephone telephone3 = new TelephoneBuilder().telephoneNumber("abc").telephoneType(PhoneType.WORK).toTelephone();
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().phoneNumbers(telephone1, telephone2).application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").relationship("rel").toReferee();
-		
+		Referee referee = new RefereeBuilder().phoneNumbers(telephone1, telephone2).application(applicationForm).addressCountry(countriesDAO.getCountryById(1))
+				.addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname")
+				.relationship("rel").toReferee();
+
 		sessionFactory.getCurrentSession().save(referee);
 		assertNotNull(telephone1.getId());
 		assertNotNull(telephone2.getId());
 		flushAndClearSession();
-		Referee  reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
+		Referee reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
 		assertEquals(2, reloadedReferee.getPhoneNumbers().size());
 		assertTrue(reloadedReferee.getPhoneNumbers().containsAll(Arrays.asList(telephone1, telephone2)));
 
@@ -96,47 +99,91 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		reloadedReferee.getPhoneNumbers().add(telephone3);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
 		flushAndClearSession();
-		
+
 		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
 		assertEquals(2, reloadedReferee.getPhoneNumbers().size());
 		assertTrue(reloadedReferee.getPhoneNumbers().containsAll(Arrays.asList(telephone1, telephone3)));
 
 	}
-	
+
 	@Test
 	public void shouldSaveAndLoadRefereeWithMessengers() throws Exception {
 		Messenger messenger1 = new MessengerBuilder().messengerAddress("john17").toMessenger();
 		Messenger messenger2 = new MessengerBuilder().messengerAddress("john17").toMessenger();
 		Messenger messenger3 = new MessengerBuilder().messengerAddress("john17").toMessenger();
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().messengers(messenger1, messenger2).application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").relationship("rel").toReferee();
-		
+		Referee referee = new RefereeBuilder().messengers(messenger1, messenger2).application(applicationForm).addressCountry(countriesDAO.getCountryById(1))
+				.addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname")
+				.relationship("rel").toReferee();
+
 		sessionFactory.getCurrentSession().save(referee);
 		assertNotNull(messenger1.getId());
 		assertNotNull(messenger2.getId());
 		flushAndClearSession();
-		Referee  reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
+		Referee reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
 		assertEquals(2, reloadedReferee.getMessengers().size());
 		assertTrue(reloadedReferee.getMessengers().containsAll(Arrays.asList(messenger1, messenger2)));
-		
+
 		reloadedReferee.getMessengers().remove(1);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
-		
+
 		flushAndClearSession();
 		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
 		assertEquals(1, reloadedReferee.getMessengers().size());
 		assertTrue(reloadedReferee.getMessengers().containsAll(Arrays.asList(messenger1)));
-		
+
 		reloadedReferee.getMessengers().add(messenger3);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
 		flushAndClearSession();
-		
+
 		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
 		assertEquals(2, reloadedReferee.getMessengers().size());
 		assertTrue(reloadedReferee.getMessengers().containsAll(Arrays.asList(messenger1, messenger3)));
-		
+
 	}
-	
+
+	@Test
+	public void shouldSaveAndLoadRefereeWithReference() throws Exception {
+		Reference reference = new ReferenceBuilder().toReference();
+
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Referee referee = new RefereeBuilder().reference(reference).application(applicationForm).addressCountry(countriesDAO.getCountryById(1))
+				.addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname")
+				.relationship("rel").toReferee();
+
+		sessionFactory.getCurrentSession().save(referee);
+		assertNotNull(reference.getId());
+		Integer referenceId = reference.getId();
+		flushAndClearSession();
+
+		Referee reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
+		assertEquals(reference, reloadedReferee.getReference());
+		Reference reloadedReference = (Reference) sessionFactory.getCurrentSession().get(Reference.class,referenceId);
+		assertEquals(reloadedReferee, reloadedReference.getReferee());
+
+		reloadedReferee.setReference(null);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
+		flushAndClearSession();
+
+		assertNull(sessionFactory.getCurrentSession().get(Reference.class, referenceId));
+
+		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
+		Reference reference2 = new ReferenceBuilder().toReference();
+		reloadedReferee.setReference(reference2);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
+		flushAndClearSession();		
+		
+		assertNotNull(reference2.getId());		
+		Integer reference2Id = reference2.getId();
+		
+		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
+		sessionFactory.getCurrentSession().delete(reloadedReferee);
+		flushAndClearSession();		
+		assertNull(sessionFactory.getCurrentSession().get(Reference.class, reference2Id));
+		
+
+	}
+
 	@Before
 	public void setUp() {
 		super.setUp();

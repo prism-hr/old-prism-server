@@ -30,7 +30,7 @@
 			                    <th>Surname</th>
 			                    <th>Job Title</th>
 			                    <th>Email</th>
-			                    <th>&nbsp;</th>
+			                    <th>Responded</th>
 		                  	</tr>
 	                	</thead>
 	                	
@@ -42,6 +42,9 @@
 				                    <td>${referee.lastname!}</td>
 				                    <td>${referee.jobTitle!}</td>
 				                    <td>${referee.email!}</td>
+				                    <td>
+					                    <#if referee.hasProvidedReference() >Yes<#else>No</#if>
+					                 </td>
                                     <input type="hidden" id="${referee.id!}_refereeId" value="${referee.id!}"/>
                                     <input type="hidden" id="${referee.id!}_firstname" value="${referee.firstname!}"/>
                                     <input type="hidden" id="${referee.id!}_lastname" value="${referee.lastname!}"/>

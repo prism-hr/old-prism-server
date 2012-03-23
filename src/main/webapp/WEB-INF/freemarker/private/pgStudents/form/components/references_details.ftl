@@ -23,7 +23,12 @@
 		                  	<col style="width: 160px" />
 		                  	<col style="width: 260px" />
 		                  	<col />
-		                  	<col style="width: 30px" />
+		                  	<#if model.applicationForm.isSubmitted()>
+		                  		<col />
+		                  	<#else>
+		                  		<col style="width: 30px" />
+		                  	</#if>
+		                  	
 	                	</colgroup>
 	                
 	                	<thead>
@@ -32,7 +37,12 @@
 			                    <th>Surname</th>
 			                    <th>Job Title</th>
 			                    <th>Email</th>
-			                    <th>&nbsp;</th>
+			                    <#if model.applicationForm.isSubmitted()>
+			                    	<th>Responded</th>
+			                    <#else>
+			                    	<th>&nbsp;</th>
+			                    </#if>
+			                    
 		                  	</tr>
 	                	</thead>
 	                	
@@ -44,15 +54,20 @@
 				                    <td>${referee.lastname!}</td>
 				                    <td>${referee.jobTitle!}</td>
 				                    <td>${referee.email!}</td>
-				                     	  <td>
-				                     	 <#if !model.applicationForm.isSubmitted()>
+				                     <#if model.applicationForm.isSubmitted()>
+					                    <td>
+					                    	<#if referee.hasProvidedReference() >Yes<#else>No</#if>
+					                    </td>
+				                    <#else>
+					                    <td>
+					                    
 						                  	<form method="Post" action="<@spring.url '/deleteentity/referee'/>" style="padding:0">
 					                			<input type="hidden" name="id" value="${referee.id}"/>		                		
 					                			<a name="deleteButton" class="button-delete">delete</a>
 					                		</form>
-					                		</#if>
-						        		</td
-				                    
+						                
+							        	</td>
+				                     </#if>
                                     <input type="hidden" id="${referee.id!}_refereeId" value="${referee.id!}"/>
                                     <input type="hidden" id="${referee.id!}_firstname" value="${referee.firstname!}"/>
                                     <input type="hidden" id="${referee.id!}_lastname" value="${referee.lastname!}"/>
@@ -60,8 +75,14 @@
                                     <input type="hidden" id="${referee.id!}_jobEmployer" value="${referee.jobEmployer!}"/>
                                     <input type="hidden" id="${referee.id!}_jobTitle" value="${referee.jobTitle!}"/>
                                     <input type="hidden" id="${referee.id!}_addressLocation" value="${referee.addressLocation!}"/>
-                                    <input type="hidden" id="${referee.id!}_addressPostcode" value="${referee.addressPostcode!}"/>
+                                    <input type="hidden" id="${referee.id!}_addressPostcode" value="${referee.addressPostcode!}"/>                                    
                                     <input type="hidden" id="${referee.id!}_addressCountry" <#if referee.addressCountry??> value="${referee.addressCountry.id!}" </#if>/>
+                                    <input type="hidden" id="${referee.id!}_lastUpdated" value="<#if referee.hasProvidedReference() > 
+			                    		Provided ${(referee.lastUpdated?string('dd-MMM-yyyy'))!}
+			                    	<#else>
+			                    		Not provided
+			                    	</#if>"/>
+			                    	
                                     <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
 									<#list referee.phoneNumbers! as phoneNumber>
 										<span name="${referee.id!}_hiddenPhones" style="display:none" >
@@ -349,6 +370,18 @@
 	                  	</div>
                   	
                 	</div>
+					<#if model.applicationForm.isSubmitted()>
+						<div>
+	                  	            
+	                  		<div class="row">
+			                  	<label class="label">Reference</label>
+			                    <span class="hint"></span>
+			                    <div class="field" id="referenceUpdated">
+			                    	
+			                    </div>
+		                    </div>
+	                	</div>
+					</#if>
 
                 	<div class="buttons">
                 	 <#if !model.applicationForm.isSubmitted()>

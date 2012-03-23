@@ -141,6 +141,9 @@ $('a[name="refereeEditButton"]').click(function(){
 		$('#messengersref').append('<span name="messenger_ref">'+ $(this).html() + '</span>');
 		  
 	});
+	if($("#referenceUpdated")){
+		$("#referenceUpdated").html($('#'+id+"_lastUpdated").val());
+	}
 });
 
 

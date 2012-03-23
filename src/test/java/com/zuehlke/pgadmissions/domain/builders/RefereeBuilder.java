@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.Reference;
 import com.zuehlke.pgadmissions.domain.Telephone;
 
 public class RefereeBuilder {
@@ -39,10 +40,8 @@ public class RefereeBuilder {
 	private String activationCode;
 	
 	private Country addressCountry;
-	
-	private String comment;
-	
-	private Document document;
+		
+	private Reference reference;
 	
 	private String email;
 	
@@ -50,28 +49,32 @@ public class RefereeBuilder {
 		this.id = id;
 		return this;
 	}
+	
 	public RefereeBuilder application(ApplicationForm application){
 		this.application = application;
 		return this;
 	}
-	public RefereeBuilder comment(String comment){
-		this.comment = comment;
+	
+	public RefereeBuilder reference(Reference reference){
+		this.reference = reference;
 		return this;
 	}
-	public RefereeBuilder document(Document document){
-		this.document = document;
-		return this;
-	}
+
+	
+	
 	public RefereeBuilder activationCode(String activationCode){
 		this.activationCode = activationCode;
 		return this;
 	}
+	
 	public RefereeBuilder firstname(String firstname){
 		this.firstname = firstname;
 		return this;
 	}
+	
 	public RefereeBuilder lastname(String lastname){
 		this.lastname = lastname;
+		
 		return this;
 	}
 	public RefereeBuilder relationship(String relationship){
@@ -135,8 +138,7 @@ public class RefereeBuilder {
 		referee.setPhoneNumbers(phoneNumbers);
 		referee.setActivationCode(activationCode);
 		referee.setRelationship(relationship);
-		referee.setDocument(document);
-		referee.setComment(comment);
+		referee.setReference(reference);
 		return referee;
 	}
 }

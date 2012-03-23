@@ -1,3 +1,4 @@
+<#if model.user ??>
 <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/feedback.js' />"></script>
 
@@ -7,4 +8,5 @@
 <input type="hidden" id="userEmailDP" name="userEmailDP" value="${model.user.email}"/>
 
 <a class="blue button" type="button" id="feedbackButton" name="feedbackButton">Send Feedback</a>
+</#if>
                                            

@@ -29,19 +29,20 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
 
-public class UploadReferencesControllerTest {
+public class ReferencesControllerTest {
 
-	UploadReferencesController controller;
+	ReferencesController controller;
 	private RefereeService refereeServiceMock;
 	private RegisteredUser currentUser;
 	private DocumentValidator documentValidatorMock;
 	private BindingResult errors;
 	private Document document;
 
+
 	@Test
 	public void shouldRedirectToSuccessViewAfterSuccesfultSubmit() throws IOException {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().refereeId(1).comment("i recommend the applicant").application(form).activationCode("1234").toReferee();
+		Referee referee = new RefereeBuilder().id(1).comment("i recommend the applicant").application(form).activationCode("1234").toReferee();
 		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
 		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("");
 		EasyMock.replay(multipartFileMock);
@@ -59,7 +60,7 @@ public class UploadReferencesControllerTest {
 	@Test
 	public void shouldCreateDocumentFromFileAndValidate() throws IOException {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().refereeId(1).application(form).activationCode("1234").toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(form).activationCode("1234").toReferee();
 		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
 		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("filename");
 		EasyMock.expect(multipartFileMock.getContentType()).andReturn("ContentType");
@@ -86,7 +87,7 @@ public class UploadReferencesControllerTest {
 	@Test
 	public void shouldNotReturnToViewWithErrorsIfDocumentValidationFails() throws IOException {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().refereeId(1).application(form).activationCode("1234").toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(form).activationCode("1234").toReferee();
 		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
 		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("filename");
 		EasyMock.expect(multipartFileMock.getContentType()).andReturn("ContentType");
@@ -114,7 +115,7 @@ public class UploadReferencesControllerTest {
 	@Test
 	public void shouldAddErrorMessageAndNotSaveIfNeitherDocumentOrCommentProvided() throws IOException {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().refereeId(1).application(form).activationCode("1234").toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(form).activationCode("1234").toReferee();
 		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
 		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("");
 		EasyMock.replay(multipartFileMock, refereeServiceMock);
@@ -129,7 +130,7 @@ public class UploadReferencesControllerTest {
 	@Test
 	public void shouldSetCommentToNullIfEmptyString() throws IOException {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().refereeId(1).application(form).comment(" ").activationCode("1234").toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(form).comment(" ").activationCode("1234").toReferee();
 		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
 		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("");
 		EasyMock.replay(multipartFileMock, refereeServiceMock);
@@ -140,6 +141,9 @@ public class UploadReferencesControllerTest {
 		EasyMock.verify(refereeServiceMock);
 
 	}
+	
+
+
 
 	@Before
 	public void setup() {
@@ -147,7 +151,9 @@ public class UploadReferencesControllerTest {
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		documentValidatorMock = EasyMock.createMock(DocumentValidator.class);
 		document = new DocumentBuilder().id(1).toDocument();
-		controller = new UploadReferencesController(refereeServiceMock, documentValidatorMock) {
+		
+
+		controller = new ReferencesController(refereeServiceMock,  documentValidatorMock) {
 
 			@Override
 			BindingResult newErrors(Document document) {

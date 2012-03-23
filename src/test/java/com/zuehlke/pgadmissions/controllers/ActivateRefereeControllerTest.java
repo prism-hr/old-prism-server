@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -18,21 +17,22 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.exceptions.RefereeAlreadyUploadedReference;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
 
 public class ActivateRefereeControllerTest {
 
 	private RefereeService refereeServiceMock;
 	private ActivateRefereeController controller;
 	private RegisteredUser currentUser;
+	private ApplicationPageModelBuilder applicationPageModelBuilderMock;
 
 	@Test
 	public void shouldReturnReferencesPageIfLinkIsCorrect(){
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().refereeId(1).application(form).activationCode("1234").toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(form).activationCode("1234").toReferee();
 		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode(referee.getActivationCode())).andReturn(referee);
 		EasyMock.replay(refereeServiceMock);
 		ModelAndView modelAndView = controller.getReferencesPage("1234");
@@ -56,7 +56,7 @@ public class ActivateRefereeControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldNotReturnReferencesPageIfApplicationIdIsWrong(){
 		
-		Referee referee = new RefereeBuilder().refereeId(1).application(null).activationCode("1234").toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(null).activationCode("1234").toReferee();
 		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode(referee.getActivationCode())).andReturn(referee);
 		EasyMock.replay(refereeServiceMock);
 		ModelAndView modelAndView = controller.getReferencesPage("1234");
@@ -65,10 +65,29 @@ public class ActivateRefereeControllerTest {
 		assertEquals("private/referees/upload_references", modelAndView.getViewName());
 	}
 	
+	@Test
+	public void shouldGetRefereeFromActicationCodeAndReturnApplitactionView() {
+		String activationCode = "abc";
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
+		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
+		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode(activationCode)).andReturn(referee);
+	
+
+		ApplicationPageModel model = new ApplicationPageModel();
+		EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, null, null)).andReturn(model);
+		
+		EasyMock.replay(refereeServiceMock, applicationPageModelBuilderMock);
+		
+		ModelAndView modelAndView = controller.getViewApplicationPageForReferee(activationCode);
+		assertEquals("private/referees/application/main_application_page", modelAndView.getViewName());
+		assertEquals(model, modelAndView.getModel().get("model"));
+	}
+	
 	@Before
 	public void setup() {
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
-		controller = new ActivateRefereeController(refereeServiceMock);
+		applicationPageModelBuilderMock = EasyMock.createMock(ApplicationPageModelBuilder.class);
+		controller = new ActivateRefereeController(refereeServiceMock, applicationPageModelBuilderMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);

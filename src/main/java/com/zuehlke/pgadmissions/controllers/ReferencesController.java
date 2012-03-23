@@ -20,23 +20,25 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
 
 @Controller
 @RequestMapping("/addReferences")
-public class UploadReferencesController {
+public class ReferencesController {
 
 	private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
+	
+	
+	private final RefereeService refereeService;
+	private final DocumentValidator documentValidator;
 
-	private RefereeService refereeService;
-	private DocumentValidator documentValidator;
-
-	UploadReferencesController() {
-		this(null, null);
+	ReferencesController() {
+		this(null,null);
 	}
 
 	@Autowired
-	public UploadReferencesController(RefereeService refereeService, DocumentValidator documentValidator) {
+	public ReferencesController(RefereeService refereeService, DocumentValidator documentValidator) {
 		this.refereeService = refereeService;
 		this.documentValidator = documentValidator;
 	}
@@ -94,5 +96,8 @@ public class UploadReferencesController {
 	Document newDocument() {
 		return new Document();
 	}
+
+	
+	
 
 }

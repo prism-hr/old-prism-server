@@ -57,19 +57,25 @@
 			
 			</div>
 
-            <div>
-            	
-            
-            	
-            	  <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
-            	  <div class="row">
-            	  	 <label class="label">Supervision</label>
-            	   <div class="field">
-            	       ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor}
-            	       <br/>
-            	   </div>
-            	 </div>
-            	  </#list>
+            <div>	
+            		<#if model.applicationForm.programmeDetails.supervisors?? && (model.applicationForm.programmeDetails.supervisors?size > 0) > 
+	            	  <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
+		            	  <div class="row">
+		            	  	 <label class="label">Supervision</label>
+		            	  	 <span class="hint" data-desc="Tooltip demonstration."></span>
+		            	   <div class="field">
+		            	       ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor}
+		            	       <br/>
+		            	   </div>
+		            	 </div>
+	            	  </#list>
+            	  	<#else>
+            	  	  	<div class="row">
+		            	  	<label class="label">Supervision</label>
+		            	  	<span class="hint" data-desc="Tooltip demonstration."></span>
+		            	   <div class="field"> - </div>
+		             	</div>
+            	  	</#if>
                   
 			</div>
 

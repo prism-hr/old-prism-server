@@ -45,8 +45,8 @@ public class SubmitApplicationServiceTest {
 	@Test
 	public void shouldSaveApplicationFormAndSendEmailsToRefereesAdminsAndApplicant() throws UnsupportedEncodingException{
 	
-		Referee referee1 = new RefereeBuilder().refereeId(1).firstname("bob").lastname("bobson").email("email@test.com").toReferee();
-		Referee referee2 = new RefereeBuilder().refereeId(2).firstname("anna").lastname("allen").email("email2@test.com").toReferee();
+		Referee referee1 = new RefereeBuilder().id(1).firstname("bob").lastname("bobson").email("email@test.com").toReferee();
+		Referee referee2 = new RefereeBuilder().id(2).firstname("anna").lastname("allen").email("email2@test.com").toReferee();
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		Program program = new ProgramBuilder().administrator(administrator).toProgram();
 		Project project = new ProjectBuilder().program(program).toProject();
@@ -103,8 +103,8 @@ public class SubmitApplicationServiceTest {
 	
 	@Test
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
-		Referee referee1 = new RefereeBuilder().refereeId(1).firstname("bob").lastname("bobson").email("email@test.com").toReferee();
-		Referee referee2 = new RefereeBuilder().refereeId(2).firstname("anna").lastname("allen").email("email2@test.com").toReferee();
+		Referee referee1 = new RefereeBuilder().id(1).firstname("bob").lastname("bobson").email("email@test.com").toReferee();
+		Referee referee2 = new RefereeBuilder().id(2).firstname("anna").lastname("allen").email("email2@test.com").toReferee();
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		Program program = new ProgramBuilder().administrator(administrator).toProgram();
 		Project project = new ProjectBuilder().program(program).toProject();

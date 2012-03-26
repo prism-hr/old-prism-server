@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.sql.Timestamp;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -124,6 +125,8 @@ public class SubmitApplicationFormController {
 			
 		}
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		java.util.Date date= new java.util.Date();
+		applicationForm.setSubmittedDate(new Timestamp(date.getTime()));
 		referencesService.saveApplicationFormAndSendMailNotifications(applicationForm);
 		
 		return new ModelAndView("redirect:/applications?submissionSuccess=true");

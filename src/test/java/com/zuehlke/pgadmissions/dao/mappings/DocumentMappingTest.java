@@ -25,6 +25,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 	private ApplicationForm applicationForm;
 
 
+	@Ignore
 	@Test
 	public void shouldSaveAndLoadDocument(){
 		Document document = new Document();

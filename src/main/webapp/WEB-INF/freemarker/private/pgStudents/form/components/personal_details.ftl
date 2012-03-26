@@ -33,12 +33,12 @@
                     <span class="hint"></span>
                     <div class="field">                    	
                     <#if !model.applicationForm.isSubmitted()>
-                    	<input class="full" type="text" value="${model.applicationForm.personalDetails.firstName!}" name="firstName" id="firstName"/>
+                    	<input class="full" type="text" value="${model.user.firstName!}" name="firstName" id="firstName"/>
                     	<#if model.hasError('firstName')>                    		
                     			<span class="invalid"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
                     	</#if>
                     	<#else>
-                    		<input class="full" readonly="readonly" type="text" value="${model.applicationForm.personalDetails.firstName!}" name="firstName" id="firstName" />	          
+                    		<input class="full" readonly="readonly" type="text" value="${model.user.firstName!}" name="firstName" id="firstName" />	          
                     	</#if>
                     </div>
                   </div>
@@ -47,12 +47,12 @@
                     <span class="hint"></span>
                     <div class="field">
                      <#if !model.applicationForm.isSubmitted()>
-                    	<input class="full" type="text" value="${model.applicationForm.personalDetails.lastName!}" name="lastName" id="lastName"/>
+                    	<input class="full" type="text" value="${model.user.lastName!}" name="lastName" id="lastName"/>
                     	<#if model.hasError('lastName')>                    		
                     			<span class="invalid"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
                     	</#if>
                     <#else>
-                    		<input class="full" readonly="readonly" type="text" value="${model.applicationForm.personalDetails.lastName!}" name="lastName" id="lastName" />	          
+                    		<input class="full" readonly="readonly" type="text" value="${model.user.lastName!}" name="lastName" id="lastName" />	          
                     </#if>
                     </div>
                   </div>
@@ -339,12 +339,12 @@
                     <span class="hint"></span>
                     <div class="field">
                         <#if !model.applicationForm.isSubmitted()>
-	                    	<input class="full" type="email" value="${model.applicationForm.personalDetails.email!}" name="email" id="email" />	                    
+	                    	<input class="full" type="email" value="${model.user.email!}" name="email" id="email" />	                    
 	                     	<#if model.hasError('email')>                    		
                     			<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                    		
                     		</#if>
                     	<#else>
-                    		<input class="full" readonly="readonly" type="email" value="${model.applicationForm.personalDetails.email!}" name="email" id="email" />	          
+                    		<input class="full" readonly="readonly" type="email" value="${model.user.email!}" name="email" id="email" />	          
                     	</#if>
                     </div>
                   </div>

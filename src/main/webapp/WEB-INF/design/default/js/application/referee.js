@@ -147,6 +147,16 @@ $('a[name="refereeEditButton"]').click(function(){
 	if($("#referenceUpdated")){
 		$("#referenceUpdated").html($('#'+id+"_lastUpdated").val());
 	}
+	if($("#referenceComment")){
+		$("#referenceComment").html($('#'+id+"_reference_comment").val());
+	}
+	if($("#referenceDocument")){
+		if($('#'+id+"_reference_document_url").val()){
+			$("#referenceDocument").html("<a href='" + $('#'+id+"_reference_document_url").val() + "'>" + $('#'+id+"_reference_document_name").val() +  "</a>");
+		}else{
+			$("#referenceDocument").html( $('#'+id+"_reference_document_name").val());
+		}
+	}
 });
 
 

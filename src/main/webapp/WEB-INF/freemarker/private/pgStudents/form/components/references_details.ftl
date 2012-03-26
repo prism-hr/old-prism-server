@@ -78,7 +78,7 @@
                                     <input type="hidden" id="${referee.id!}_addressPostcode" value="${referee.addressPostcode!}"/>                                    
                                     <input type="hidden" id="${referee.id!}_addressCountry" <#if referee.addressCountry??> value="${referee.addressCountry.id!}" </#if>/>
                                     <input type="hidden" id="${referee.id!}_lastUpdated" value="<#if referee.hasProvidedReference() > 
-			                    		Provided ${(referee.lastUpdated?string('dd-MMM-yyyy'))!}
+			                    		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
 			                    	<#else>
 			                    		Not provided
 			                    	</#if>"/>

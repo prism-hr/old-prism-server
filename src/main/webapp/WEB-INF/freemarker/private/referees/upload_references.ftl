@@ -64,7 +64,7 @@
 									<br/>
 									<br/>
 									<#if model.referee.hasProvidedReference() && model.referee.reference.document?? >
-										Previous file: ${model.referee.reference.document.fileName}
+										Previous file: <a href="<@spring.url '/download/referee?activationCode=${model.referee.activationCode}'/>">${model.referee.reference.document.fileName}</a>
 		                			</#if>			
 								</div>
 								

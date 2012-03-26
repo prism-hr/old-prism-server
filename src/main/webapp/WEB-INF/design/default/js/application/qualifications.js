@@ -77,7 +77,9 @@ $(document).ready(function(){
 		$("#qualificationStartDate").val("");
 		$("#qualificationLanguage").val("");
 		$("#qualificationAwardDate").val("");
-		
+		$("span[class='invalid']").each(function(){
+			$(this).html("");
+		});
 	});
 	
 	  bindDatePickers();

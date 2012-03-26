@@ -64,6 +64,9 @@ $('a[name="positionCancelButton"]').click(function(){
 	$("#position_title").val("");
 	$("#position_startDate").val("");
 	$("#position_endDate").val("");
+	$("span[class='invalid']").each(function(){
+		$(this).html("");
+	});
 	
 });
 

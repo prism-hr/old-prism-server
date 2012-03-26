@@ -61,6 +61,9 @@ $(document).ready(function(){
 		$("#addressPurpose").val("");
 		$("#addressContactAddress").val("");
 		$("#isCA").attr('checked', false);
+		$("span[class='invalid']").each(function(){
+			$(this).html("");
+		});
 	});
 	
 	

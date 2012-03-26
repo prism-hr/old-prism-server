@@ -47,7 +47,7 @@
 				                  	  <td>
 				                  	  	   <#if !model.applicationForm.isSubmitted()>
 						                  	<form method="Post" action="<@spring.url '/deleteentity/qualification'/>" style="padding:0">
-					                			<input type="hidden" name="id" value="${qualification.id}"/>		                		
+					                			<input type="hidden" name="id" value="${qualification.id?string('#######')}"/>		                		
 					                			<a name="deleteButton" class="button-delete">delete</a>
 					                		</form>
 					                		</#if>
@@ -147,7 +147,7 @@
                                             </#if>>
                         		<option value="">Select...</option>
                          			<#list model.languages as language>
-                         				<option value="${language.id}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.id> selected="selected"</#if>>${language.name}</option>
+                         				<option value="${language.id?string('#######')}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.id> selected="selected"</#if>>${language.name}</option>
                          			</#list>
                       			</select>
 								<#if model.hasError('qualificationLanguage')>                    		

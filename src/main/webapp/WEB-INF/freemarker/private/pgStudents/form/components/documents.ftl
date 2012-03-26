@@ -29,13 +29,13 @@
 					<tr>
 						<td>-</td>
 		                <td  nowrap>${document.type.displayValue}</td>
-		                <td ><a href="<@spring.url '/download'/>?documentId=${document.id}">
+		                <td ><a href="<@spring.url '/download'/>?documentId=${document.id?string('#######')}">
 		                	<#if document.fileName?length <40 >${document.fileName}<#else>${document.fileName?substring(0,37)}...</#if></a></td>
 		                <td>${(document.dateUploaded?string('dd-MMM-yyyy'))!}</td>
 		                <td>
 		                	<#if !model.applicationForm.submitted>
 			                	<form method="Post" action="<@spring.url '/delete'/>" style="padding:0">
-			                		<input type="hidden" name="documentId" value="${document.id}"/>		                		
+			                		<input type="hidden" name="documentId" value="${document.id?string('#######')}"/>		                		
 			                		<a name="deleteButton" class="button-delete">delete</a>
 			                	</form>
 		                	</#if>

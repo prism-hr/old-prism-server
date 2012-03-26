@@ -61,7 +61,7 @@
 			                    	</#if>"/>
 			                    	 <input type="hidden" id="${referee.id!}_reference_comment" value="<#if referee.hasProvidedReference() >${referee.reference.comment!}</#if>"/>
 			                    	 <input type="hidden" id="${referee.id!}_reference_document_url" value="<#if referee.hasProvidedReference() && referee.reference.document?? >
-			                    	 	<@spring.url '/download/reference?referenceId=${referee.reference.id}'/></#if>"
+			                    	 	<@spring.url '/download/reference?referenceId=${referee.reference.id?string('#######')}'/></#if>"
 			                    	 />
 			                    	 <input type="hidden" id="${referee.id!}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName}<#else>No document uploaded</#if></#if>" />
                                     <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
@@ -180,7 +180,7 @@
                                             disabled="disabled">
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
+                                    <option value="${country.id?string('#######')}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
                                 </#list>
                             </select>
                     		</div>

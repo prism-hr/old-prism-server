@@ -18,6 +18,7 @@ import javax.persistence.Transient;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "REGISTERED_USER")
@@ -233,4 +234,5 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public void setProjectOriginallyAppliedTo(Project projectOriginallyAppliedTo) {
 		this.projectOriginallyAppliedTo = projectOriginallyAppliedTo;
 	}
+
 }

@@ -6,7 +6,7 @@ public enum DocumentType {
 			"Supporting documentation for maternal guardian's nationality"), SUPPORTING_PATERNAL_NATIONALITY(
 			"Supporting documentation for paternal guardian's nationality"), SUPPORTING_ADDRESS("Supporting documentation for address / residency period"), SUPPORTING_EMPLOYMENT(
 			"Supporting documentation for employment"), SUPPORTING_FUNDING("Supporting documentation for funding"), SUPPORTING_QUALIFICATION(
-			"Supporting documentation for qualification");
+			"Supporting documentation for qualification"), REFERENCE("Reference");
 	private String displayValue;
 
 	public String getDisplayValue() {

@@ -13,6 +13,8 @@ $(document).ready(function() {
 			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
 		}else if($(this).val() == 'comment') {
 			window.location.href = "/pgadmissions/comments/showAll?id=" + id;
+		}else if($(this).val() == 'print') {
+			window.location.href = "/pgadmissions/print?applicationFormId=" + id;
 		}
 	});
 	

@@ -148,6 +148,7 @@
 			          <hr />
 			          
 			          <a class="button" href="<@spring.url '/applications'/>">Close</a>
+			          <a class="button" href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print</a>
 			          <#if !model.applicationForm.isSubmitted() && model.user.isInRole('APPLICANT')>
 			             <a id="submitButton" class="button">Submit</a>
 			             <form id="submitApplicationForm" action="<@spring.url "/apply/submit"/>" method="POST">

@@ -92,6 +92,7 @@
 							                	<select class="actionType" name="app_[${application.id?string("######")}]">
 							                		<option>Select...</option>
 							                		<option value="view">View</option>
+							                		<option value="print">Print</option>
 							                	    <#if (model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')) && application.isReviewable()>
       													<option value="assignReviewer">Assign Reviewer</option>
         		  									</#if>

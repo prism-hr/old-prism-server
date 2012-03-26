@@ -138,13 +138,14 @@
 			          	      				<input type="hidden" id="applicationFormId" name="applicationFormId" 
 			          	      									value="${model.applicationForm.id?string("######")}"/>
 			          	      										<a class="button" href="<@spring.url '/applications'/>">Close</a>
+										<a class="button" href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print</a>
 			          	      										<button id="submitButton" type="submit" class="button">Submit</button>
 										</form>
 									<#else>
 										<a class="button" href="<@spring.url '/applications'/>">Close</a>
+										<a class="button" href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print</a>
 									</#if>
 
-										<a class="button" href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print</a>
 			          			</div>
 			        
 			        		</div><!-- .content-box-inner -->

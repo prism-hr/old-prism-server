@@ -12,13 +12,13 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfWriter;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.utils.PdfDocumentBuilder;
 
 @Controller
 @RequestMapping("/print")
@@ -43,6 +43,7 @@ public class PrintController {
 			if (application == null) {
 				throw new ResourceNotFoundException();
 			}
+			PdfDocumentBuilder builder = new PdfDocumentBuilder();
 
 			Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -50,9 +51,7 @@ public class PrintController {
 			PdfWriter writer = PdfWriter.getInstance(document, baos);
 
 			document.open();
-			document.add(new Paragraph("Application id: " + application.getId()));
-			document.add(new Paragraph("Program name: " + application.getProject().getProgram().getTitle()));
-			document.add(new Paragraph("Project name: " + application.getProject().getTitle()));
+			builder.buildDocument(application, document);
 			document.close();
 
 			response.setHeader("Expires", "0");

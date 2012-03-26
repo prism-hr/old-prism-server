@@ -6,11 +6,11 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.List;
-import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Messenger;
@@ -195,10 +195,10 @@ public class PdfDocumentBuilder {
 		document.add(table);
 
 		document.add(new Paragraph("Skype", smallBoldFont));
-		List list = new List(true, false, application.getPersonalDetails().getMessengers().size());
 		for (Messenger messenger : application.getPersonalDetails().getMessengers()) {
-			list.add(new ListItem(messenger.getMessengerAddress()));
+			document.add(new Paragraph("-"+messenger.getMessengerAddress()));
 		}
+		
 	}
 
 	private void addGivenNationality(ApplicationForm application, Document document, String header, java.util.List<Nationality> nationalities) throws DocumentException {
@@ -233,6 +233,15 @@ public class PdfDocumentBuilder {
 
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Address", redFont));
+		
+		List list = new List(true, false, application.getAddresses().size());
+		int counter = 1;
+		for (Address address : application.getAddresses()) {
+			document.add(new Paragraph("Address number "+ counter, smallBoldFont));
+			counter++;
+		}
+		
+		document.add(list);
 	}
 	
 	private String createMessage(String fieldName) {

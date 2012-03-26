@@ -32,14 +32,6 @@ $(document).ready(function(){
 			
 		}
 		
-		//messenger
-		if($('#messengerAddressRef').val() !="Skype Address" && $('#messengerAddressRef').val()!= ''){
-			var html ='<input type="hidden" name="messengers" value=' +"'" + '{"address":"' + $('#messengerAddressRef').val()+ '"} ' + "'" + "/>" ;
-			
-			$('#messengersref').append(html);			
-	
-		}
-		
 		
 		var postData ={ 
 				firstname: $("#ref_firstname").val(),
@@ -47,14 +39,14 @@ $(document).ready(function(){
 				relationship: $("#ref_relationship").val(), 
 				jobEmployer: $("#ref_employer").val(), 
 				jobTitle: $("#ref_position").val(), 
+				messenger: $("#ref_messenger").val(), 
 				addressLocation: $("#ref_address_location").val(), 
 				addressPostcode: $("#ref_address_postcode").val(), 
 				addressCountry: $("#ref_address_country").val(), 
 				email: $("#ref_email").val(), 
 				application: $("#appId").val(),
 				refereeId: $("#refereeId").val(),
-				phoneNumbers: "",
-				messengers: ""
+				phoneNumbers: ""
 			}
 		
 		$.post( "/pgadmissions/update/refereeDetails" ,
@@ -72,14 +64,6 @@ $('#refereeSaveAndAddButton').click(function(){
 		
 	}
 	
-	//messenger
-	if($('#messengerAddressRef').val() !="Skype Address" && $('#messengerAddressRef').val()!= ''){
-		var html ='<input type="hidden" name="messengers" value=' +"'" + '{"address":"' + $('#messengerAddressRef').val()+ '"} ' + "'" + "/>" ;
-		
-		$('#messengersref').append(html);			
-
-	}
-	
 	var postData ={ 
 			firstname: $("#ref_firstname").val(),
 			lastname: $("#ref_lastname").val(), 
@@ -88,12 +72,12 @@ $('#refereeSaveAndAddButton').click(function(){
 			jobTitle: $("#ref_position").val(), 
 			addressLocation: $("#ref_address_location").val(), 
 			addressPostcode: $("#ref_address_postcode").val(), 
+			messenger: $("#ref_messenger").val(), 
 			addressCountry: $("#ref_address_country").val(), 
 			email: $("#ref_email").val(), 
 			application: $("#appId").val(),
 			refereeId: $("#refereeId").val(),
 			phoneNumbers: "",
-			messengers: "",
 			add:"add"
 	}
 	$.post( "/pgadmissions/update/refereeDetails" , $.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbers"]').serialize() + "&" + $('#messengersref input[name="messengers"]').serialize(),
@@ -114,8 +98,8 @@ $('a[name="refereeCancelButton"]').click(function(){
 	$("#ref_address_country").val("");
 	$("#ref_email").val("");
 	$("#ref_address_country").val("");
+	$("#ref_messenger").val("");
 	$('#phonenumbersref').html("");
-	$('#messengersref').html("");
 	$("span[class='invalid']").each(function(){
 		$(this).html("");
 	});
@@ -130,6 +114,7 @@ $('a[name="refereeEditButton"]').click(function(){
 	$("#ref_relationship").val($('#'+id+"_relationship").val());
 	$("#ref_employer").val($('#'+id+"_jobEmployer").val());
 	$("#ref_position").val($('#'+id+"_jobTitle").val());
+	$("#ref_messenger").val($('#'+id+"_messenger").val());
 	$("#ref_address_location").val($('#'+id+"_addressLocation").val());
 	$("#ref_address_postcode").val($('#'+id+"_addressPostcode").val());
 	$("#ref_address_country").val($('#'+id+"_addressCountry").val());
@@ -138,11 +123,6 @@ $('a[name="refereeEditButton"]').click(function(){
 	$('#phonenumbersref').html("");
 	$("span[name='"+id+"_hiddenPhones']").each(function(){
 		$('#phonenumbersref').append('<span name="phone_number_ref">'+ $(this).html() + '</span>');
-	});
-	$('#messengersref').html("");
-	$("span[name='"+id+"_hiddenMessengers']").each(function(){
-		$('#messengersref').append('<span name="messenger_ref">'+ $(this).html() + '</span>');
-		  
 	});
 	if($("#referenceUpdated")){
 		$("#referenceUpdated").html($('#'+id+"_lastUpdated").val());

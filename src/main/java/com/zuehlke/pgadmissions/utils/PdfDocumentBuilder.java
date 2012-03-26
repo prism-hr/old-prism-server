@@ -13,7 +13,6 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
-import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -195,11 +194,9 @@ public class PdfDocumentBuilder {
 		document.add(table);
 
 		document.add(new Paragraph("Skype", smallBoldFont));
-		for (Messenger messenger : application.getPersonalDetails().getMessengers()) {
-			document.add(new Paragraph("-"+messenger.getMessengerAddress()));
+		document.add(new Paragraph(application.getPersonalDetails().getMessenger()));
 		}
 		
-	}
 
 	private void addGivenNationality(ApplicationForm application, Document document, String header, java.util.List<Nationality> nationalities) throws DocumentException {
 		document.add(new Paragraph(header, smallBoldFont));

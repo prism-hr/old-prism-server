@@ -389,28 +389,16 @@
                 
               	<div>
               	           
-                    <div class="row" id="existingMessengers">
-                  	  <#list model.applicationForm.personalDetails.messengers as messenger >
-                  	  	<span>
-                  	  		<div class="row">
-                  	  	 		<span class="label">Skype</span>    
-                  				<div class="field">
-                  					<label class="half">${messenger.messengerAddress}</label> 
-                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
-                  	  			</div>                  	  			
-                  	  		</div>   
-                            <input type="hidden" name="messengers" value='${messenger.asJson}'/>   
-                  	  	</span>
-                  	  </#list>
-                  </div>
-                	<div class="row">
-                		<span class="label">Skype</span>
+               <div class="row">
+                  	<label class="label">Skype</label>
                     <span class="hint"></span>
-                    <div class="field">                    
-	                    <input type="text" placeholder="Address"  id="messenger" class="half" <#if model.applicationForm.isSubmitted()>readonly="readonly"</#if>/>
-                      <a id="addMessengerButton" class="button blue" style="width: 110px;">Add Skype</a>
+                    <div class="field">                    	
+                    <#if !model.applicationForm.isSubmitted()>
+                    	<input class="full" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="messenger" id="messenger"/>
+                    	<#else>
+                    		<input class="full" readonly="readonly" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="messenger" id="messenger" />	          
+                    	</#if>
                     </div>
-                  </div>
                 </div>
       
               	<div class="buttons">

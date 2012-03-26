@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -79,21 +78,12 @@ public class ApplicationFormDAO {
 		return (Referee) sessionFactory.getCurrentSession().get(Referee.class, id);
 	}
 
-	public Messenger getMessengerById(Integer id) {
-		return (Messenger) sessionFactory.getCurrentSession().get(Messenger.class, id);
-	}
-
 	public Telephone getTelephoneById(Integer id) {
 		return (Telephone) sessionFactory.getCurrentSession().get(Telephone.class, id);
 	}
 
 	public void saveTelephone(Telephone telephone) {
 		sessionFactory.getCurrentSession().saveOrUpdate(telephone);
-
-	}
-
-	public void saveMessenger(Messenger messenger) {
-		sessionFactory.getCurrentSession().saveOrUpdate(messenger);
 
 	}
 

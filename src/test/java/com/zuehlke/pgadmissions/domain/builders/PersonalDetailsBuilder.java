@@ -8,7 +8,6 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
-import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -28,7 +27,7 @@ public class PersonalDetailsBuilder {
 	private ResidenceStatus residenceStatus;
 	private ApplicationForm applicationForm;
 	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();
-	private List<Messenger> messengers = new ArrayList<Messenger>();
+	private String messenger;
 	private List<Nationality> candiateNationalities = new ArrayList<Nationality>();
 	private List<Nationality> maternalGuardianNationalities= new ArrayList<Nationality>();
 	private List<Nationality> paternalGuardianNationalities= new ArrayList<Nationality>();
@@ -65,8 +64,8 @@ public class PersonalDetailsBuilder {
 		return this;
 	}
 	
-	public PersonalDetailsBuilder messengers(Messenger... messengers) {
-		this.messengers.addAll(Arrays.asList(messengers));
+	public PersonalDetailsBuilder messengers(String messenger) {
+		this.messenger = messenger;
 		return this;
 	}
 	public PersonalDetailsBuilder firstName(String firstName) {
@@ -131,7 +130,7 @@ public class PersonalDetailsBuilder {
 		personalDetails.setPaternalGuardianNationalities(paternalGuardianNationalities);
 		personalDetails.setCandidateNationalities(candiateNationalities);
 		personalDetails.setLanguageProficiencies(languageProficiencies);
-		personalDetails.setMessengers(messengers);
+		personalDetails.setMessenger(messenger);
 		return personalDetails;
 	}
 }

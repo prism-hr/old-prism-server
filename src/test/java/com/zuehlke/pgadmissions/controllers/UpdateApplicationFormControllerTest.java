@@ -30,7 +30,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -57,7 +56,6 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.MessengerJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -84,7 +82,6 @@ public class UpdateApplicationFormControllerTest {
 	private RefereeService refereeServiceMock;
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
 	private PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditorMock;
-	private MessengerJSONPropertyEditor messengerJSONPropertyEditorMock;
 	private RegisteredUser currentUser;
 	private Referee referee;
 	private RefereeValidator refereeValidator;
@@ -340,7 +337,7 @@ public class UpdateApplicationFormControllerTest {
 		final Referee refereeDetails = new RefereeBuilder().id(1).toReferee();
 
 		applicationController = new UpdateApplicationFormController(applicationsServiceMock, userPropertyEditorMock,
-				datePropertyEditorMock, countriesServiceMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
+				datePropertyEditorMock, countriesServiceMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
 				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, encryptionUtilsMock){
 			Referee newReferee() {
 				return new Referee();
@@ -584,7 +581,6 @@ public class UpdateApplicationFormControllerTest {
 		binderMock.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditorMock);
 		binderMock.registerCustomEditor(RegisteredUser.class, userPropertyEditorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
-		binderMock.registerCustomEditor(Messenger.class, messengerJSONPropertyEditorMock);
 		binderMock.registerCustomEditor(Language.class, languagePropertyEditorMock);
 		binderMock.registerCustomEditor(Country.class, countryPropertyEditor);
 		EasyMock.replay(binderMock);
@@ -601,7 +597,7 @@ public class UpdateApplicationFormControllerTest {
 		
 		referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(1).toApplicationForm()).email("email@test.com").firstname("bob")
 				.lastname("smith").addressCountry(null).addressLocation("london").addressPostcode("postcode").jobEmployer("zuhlke").jobTitle("se")
-				.messenger(new Messenger()).phoneNumbers(new Telephone()).relationship("friend").toReferee();
+				.messenger("skypeAddress").phoneNumbers(new Telephone()).relationship("friend").toReferee();
 		
 		
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
@@ -613,7 +609,6 @@ public class UpdateApplicationFormControllerTest {
 
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
 		phoneNumberJSONPropertyEditorMock = EasyMock.createMock(PhoneNumberJSONPropertyEditor.class);
-		messengerJSONPropertyEditorMock = EasyMock.createMock(MessengerJSONPropertyEditor.class);
 		countryPropertyEditor = EasyMock.createMock(CountryPropertyEditor.class);
 		
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
@@ -626,7 +621,7 @@ public class UpdateApplicationFormControllerTest {
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		
 		applicationController = new UpdateApplicationFormController(applicationsServiceMock, userPropertyEditorMock,
-				datePropertyEditorMock, countriesServiceMock,  refereeServiceMock, phoneNumberJSONPropertyEditorMock, messengerJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
+				datePropertyEditorMock, countriesServiceMock,  refereeServiceMock, phoneNumberJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
 				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, encryptionUtilsMock){
 			ApplicationForm newApplicationForm() {
 				return applicationForm;

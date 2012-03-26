@@ -23,7 +23,6 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Referee</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Reference</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Telephone</value>
-	     		<value>com.zuehlke.pgadmissions.domain.Messenger</value>	    
 	     		<value>com.zuehlke.pgadmissions.domain.PersonalDetail</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ProgrammeDetail</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Supervisor</value>

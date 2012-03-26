@@ -14,7 +14,6 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -22,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.Reference;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.MessengerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -106,41 +104,6 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
 	}
 
-	@Test
-	public void shouldSaveAndLoadRefereeWithMessengers() throws Exception {
-		Messenger messenger1 = new MessengerBuilder().messengerAddress("john17").toMessenger();
-		Messenger messenger2 = new MessengerBuilder().messengerAddress("john17").toMessenger();
-		Messenger messenger3 = new MessengerBuilder().messengerAddress("john17").toMessenger();
-		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee referee = new RefereeBuilder().messengers(messenger1, messenger2).application(applicationForm).addressCountry(countriesDAO.getCountryById(1))
-				.addressLocation("loc").addressPostcode("pos").email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname")
-				.relationship("rel").toReferee();
-
-		sessionFactory.getCurrentSession().save(referee);
-		assertNotNull(messenger1.getId());
-		assertNotNull(messenger2.getId());
-		flushAndClearSession();
-		Referee reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
-		assertEquals(2, reloadedReferee.getMessengers().size());
-		assertTrue(reloadedReferee.getMessengers().containsAll(Arrays.asList(messenger1, messenger2)));
-
-		reloadedReferee.getMessengers().remove(1);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
-
-		flushAndClearSession();
-		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
-		assertEquals(1, reloadedReferee.getMessengers().size());
-		assertTrue(reloadedReferee.getMessengers().containsAll(Arrays.asList(messenger1)));
-
-		reloadedReferee.getMessengers().add(messenger3);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
-		flushAndClearSession();
-
-		reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
-		assertEquals(2, reloadedReferee.getMessengers().size());
-		assertTrue(reloadedReferee.getMessengers().containsAll(Arrays.asList(messenger1, messenger3)));
-
-	}
 
 	@Test
 	public void shouldSaveAndLoadRefereeWithReference() throws Exception {

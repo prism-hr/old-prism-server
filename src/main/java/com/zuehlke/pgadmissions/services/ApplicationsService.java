@@ -19,7 +19,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -111,9 +110,6 @@ public class ApplicationsService {
 		return applicationFormDAO.getAdddressById(addressId);
 	}
 
-	public Messenger getMessengerById(Integer id) {
-		return applicationFormDAO.getMessengerById(id);
-	}
 
 	public Telephone getTelephoneById(Integer id) {
 		return applicationFormDAO.getTelephoneById(id);
@@ -122,12 +118,6 @@ public class ApplicationsService {
 	@Transactional
 	public void saveTelephone(Telephone telephone) {
 		applicationFormDAO.saveTelephone(telephone);
-
-	}
-
-	@Transactional
-	public void saveMessenger(Messenger messenger) {
-		applicationFormDAO.saveMessenger(messenger);
 
 	}
 

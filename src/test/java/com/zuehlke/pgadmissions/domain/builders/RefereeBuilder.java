@@ -7,7 +7,6 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Reference;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -20,8 +19,6 @@ public class RefereeBuilder {
 	private ApplicationForm application;
 	
 	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();
-	
-	private List<Messenger> messengers = new ArrayList<Messenger>();
 	
 	private String firstname;
 	
@@ -44,6 +41,8 @@ public class RefereeBuilder {
 	private Reference reference;
 	
 	private String email;
+
+	private String messenger;
 	
 	public RefereeBuilder id(Integer id){
 		this.id = id;
@@ -112,13 +111,8 @@ public class RefereeBuilder {
 		return this;
 	}
 	
-	public RefereeBuilder messenger(Messenger messenger) {
-		this.messengers.add(messenger);
-		return this;
-	}
-	
-	public RefereeBuilder messengers(Messenger... messengers) {
-		this.messengers.addAll(Arrays.asList(messengers));
+	public RefereeBuilder messenger(String messenger) {
+		this.messenger = messenger;
 		return this;
 	}
 	
@@ -134,7 +128,7 @@ public class RefereeBuilder {
 		referee.setJobEmployer(jobEmployer);
 		referee.setJobTitle(jobTitle);
 		referee.setLastname(lastname);
-		referee.setMessengers(messengers);
+		referee.setMessenger(messenger);
 		referee.setPhoneNumbers(phoneNumbers);
 		referee.setActivationCode(activationCode);
 		referee.setRelationship(relationship);

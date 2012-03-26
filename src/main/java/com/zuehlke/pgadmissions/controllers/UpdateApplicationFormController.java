@@ -21,7 +21,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -45,7 +44,6 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.MessengerJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -75,7 +73,6 @@ public class UpdateApplicationFormController {
 	private final RefereeService refereeService;
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor;
-	private final MessengerJSONPropertyEditor messengerJSONPropertyEditor;
 	private final RefereeValidator refereeValidator;
 	private final LanguageService languageService;
 	private final LanguagePropertyEditor languagePropertyEditor;
@@ -83,13 +80,13 @@ public class UpdateApplicationFormController {
 	private final EncryptionUtils encryptionUtils;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null,  null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor,
 			DatePropertyEditor datePropertyEditor, CountryService countryService, RefereeService refereeService,
-			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, MessengerJSONPropertyEditor messengerJSONPropertyEditor,
+			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, 
 			ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator,
 			LanguageService languageService, LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, EncryptionUtils encryptionUtils) {
 
@@ -100,7 +97,6 @@ public class UpdateApplicationFormController {
 		this.refereeService = refereeService;
 		this.languagePropertyEditor = languagePropertyEditor;
 		this.phoneNumberJSONPropertyEditor = phoneNumberJSONPropertyEditor;
-		this.messengerJSONPropertyEditor = messengerJSONPropertyEditor;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.refereeValidator = refereeValidator;
 		this.languageService = languageService;
@@ -114,7 +110,6 @@ public class UpdateApplicationFormController {
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
 		binder.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditor);
-		binder.registerCustomEditor(Messenger.class, messengerJSONPropertyEditor);
 		binder.registerCustomEditor(Language.class, languagePropertyEditor);
 		binder.registerCustomEditor(Country.class, countryPropertyEditor);
 	}

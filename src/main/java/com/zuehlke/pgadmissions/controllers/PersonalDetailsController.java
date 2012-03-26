@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
-import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -34,7 +33,6 @@ import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguageProficiencyJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.MessengerJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.NationalityJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.CountryService;
@@ -57,10 +55,9 @@ public class PersonalDetailsController {
 	private final LanguagePropertyEditor languagePropertyEditor;
 	private final NationalityJSONPropertyEditor nationalityJSONPropertyEditor;
 	private final LanguageProficiencyJSONPropertyEditor languageProficiencyJSONPropertyEditor;
-	private final MessengerJSONPropertyEditor messengerJSONPropertyEditor;
 
 	PersonalDetailsController() {
-		this(null, null, null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
@@ -68,7 +65,7 @@ public class PersonalDetailsController {
 			ApplicationFormPropertyEditor applicationFormPropertyEditor, CountryPropertyEditor countryPropertyEditor,
 			LanguagePropertyEditor languagePropertyEditor, DatePropertyEditor datePropertyEditor, PersonalDetailValidator personalDetailValidator,
 			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, NationalityJSONPropertyEditor nationalityJSONPropertyEditor,
-			LanguageProficiencyJSONPropertyEditor languageProficiencyJSONPropertyEditor, MessengerJSONPropertyEditor messengerJSONPropertyEditor) {
+			LanguageProficiencyJSONPropertyEditor languageProficiencyJSONPropertyEditor) {
 		this.personalDetailsService = personalDetailsService;
 		this.countryService = countryService;
 		this.languageService = languageService;
@@ -80,7 +77,6 @@ public class PersonalDetailsController {
 		this.phoneNumberJSONPropertyEditor = phoneNumberJSONPropertyEditor;
 		this.nationalityJSONPropertyEditor = nationalityJSONPropertyEditor;
 		this.languageProficiencyJSONPropertyEditor = languageProficiencyJSONPropertyEditor;
-		this.messengerJSONPropertyEditor = messengerJSONPropertyEditor;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -148,7 +144,6 @@ public class PersonalDetailsController {
 		binder.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditor);
 		binder.registerCustomEditor(Nationality.class, nationalityJSONPropertyEditor);
 		binder.registerCustomEditor(LanguageProficiency.class, languageProficiencyJSONPropertyEditor);
-		binder.registerCustomEditor(Messenger.class, messengerJSONPropertyEditor);
 	}
 
 }

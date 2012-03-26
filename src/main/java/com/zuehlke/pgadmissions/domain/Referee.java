@@ -39,13 +39,8 @@ public class Referee extends DomainObject<Integer>{
 	private List<Telephone> phoneNumbers ;
 	
 	
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@Access(AccessType.PROPERTY)
-	@JoinColumn(name = "referee_id")
-	private List<Messenger> messengers = new ArrayList<Messenger>();
-	
-
+	@Column(name = "skype")
+	private String messenger ;
 	
 	@Column(name="firstname")
 	private String firstname;
@@ -95,22 +90,6 @@ public class Referee extends DomainObject<Integer>{
 		}
 	}
 	
-	public List<Messenger> getMessengers() {
-		return messengers;
-	}
-	
-	public void setMessengers(List<Messenger> messengers) {
-		this.messengers = messengers;
-		if(messengers != null && !messengers.isEmpty()){
-			int size = messengers.size();
-			for (int i = size -1; i >= 0 ;i--){
-				Messenger messenger = messengers.get(i);
-				if(messenger == null){
-					messengers.remove(i);
-				}
-			}
-		}
-	}
 	public ApplicationForm getApplication() {
 		return application;
 	}
@@ -226,6 +205,14 @@ public class Referee extends DomainObject<Integer>{
 
 	public void setReference(Reference reference) {
 		this.reference = reference;
+	}
+
+	public String getMessenger() {
+		return messenger;
+	}
+
+	public void setMessenger(String messenger) {
+		this.messenger = messenger;
 	}
 
 }

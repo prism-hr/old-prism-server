@@ -101,18 +101,7 @@
 									
 								
 									
-									<#list referee.messengers! as messenger>
-									<span name="${referee.id!}_hiddenMessengers" style="display:none" >
-	                   		 			<div class="row">
-			                  	  	 		<span class="label">Skype</span>    
-			                  				<div class="field">
-			                  					<label class="half">${messenger.messengerAddress}</label> 
-			                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
-			                  	  			</div>                  	  			
-		                  	  			</div>   
-		                           	 	<input type="hidden" name="messengers" value='${messenger.asJson}'/>   										
-									</span>
-                   				 	</#list>
+									 <input type="hidden" id="${referee.id!}_messenger" value="${referee.messenger!}"/>   
 
 			                  	</tr>
 		                  	</#list>
@@ -342,33 +331,20 @@
                   		</div>
 
 	                  	<!-- Skype address -->
-	                  	<div class="row" id="messengersref">
-	                    <#list model.referee.messengers! as messenger>
-		                    <span name="messenger_ref">
-	                   			<div class="row">
-	                  	  	 		<span class="label">Skype</span>    
-	                  				<div class="field">
-	                  					<label class="half">${messenger.messengerAddress}</label> 
-	                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>      
-	                  	  			</div>                  	  			
-	                  	  		</div>   
-	                            <input type="hidden" name="messengers" value='${messenger.asJson}'/>   						
-							</span>
-	                     </#list>
-	                      		
-	                    </div>
-	                  	<div class="row">
-	                  	    <span class="label">Skype</span>
-                            <span class="hint"></span>
-	                    	
-	                    	<#if !model.applicationForm.isSubmitted()>
-	                    	<div class="field">
-	                    	<input class="half" type="text" placeholder="Skype address" id="messengerAddressRef" />
-	                      		<a id="addMessengerRefButton" class="button blue" style="width: 110px;">Add Skype</a>
-	                      	</div>	
-	                      	</#if>	
-	                  	</div>
-                  	
+	                  
+	                    <div class="row">
+                    		<span class="label">Skype</span>
+                    		<span class="hint"></span>
+                    		<div class="field">
+                    			<#if !model.applicationForm.isSubmitted()>
+                    			<input class="full" id="ref_messenger" name="ref_messenger" value="${model.referee.messenger!}"/> 
+                                 
+                            	<#else>
+                            	   <input readonly="readonly" class="full" id="ref_messenger" name="ref_messenger" value="${model.referee.messenger!}"/>
+                            	</#if>
+                      			
+                    		</div>
+                  		</div>
                 	</div>
 					<#if model.applicationForm.isSubmitted()>
 						<div>

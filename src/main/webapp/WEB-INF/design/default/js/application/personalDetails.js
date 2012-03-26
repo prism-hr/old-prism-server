@@ -32,26 +32,6 @@ $(document).ready(function(){
 		}
 	});
 	
-	$('#addMessengerButton').on('click', function(){
-		if($('#messenger').val() != "Address" && $('#messenger').val() != ''){
-			var html = '<span>'+
-      	  	'	<div class="row">'+
-  	  	 	'	<span class="label">Skype</span>'+    
-  			'	<div class="field">'+
-  			'		<label class="half">'+ $('#messenger').val()  + '</label> '+
-  	  		'		<a class="button-delete">Delete</a> '+          
-  	  		'	</div> '+                 	  			
-  	  		'</div>'+   
-	        "    <input type='hidden' name='messengers' value='{" + '"address": "' + $('#messenger').val()  + '"' + "}'/>";   
-	  	  	'</span>';	
-	  	  	
-	  	  	 
-	  	  	
-	  	  	$('#existingMessengers').append(html);
-	  	  	$('#messenger').val('');
-		}
-	});
-	
 	
 	
 	$('#addLanguageButton').on("click", function(){
@@ -180,13 +160,6 @@ $(document).ready(function(){
 	
 	$('#personalDetailsSaveButton').on("click", function(){		
 		
-		//messengers
-		if($('#messenger').val() != "Address" && $('#messenger').val() != ''){
-			var html =   "<input type='hidden' name='messengers' value='{" + '"address": "' + $('#messenger').val()  + '"' + "}'/>";   	
-	  	  	$('#existingMessengers').append(html);
-			
-		}
-		
 		//phonenumbers
 		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val()!= ''){	
 			var html ="<input type='hidden' name='phoneNumbers' value='{" + '"type": "'+ $('#phoneType option:selected').val() + '", "number": "' +  $('#phoneNumber').val() + '"}' + "'/>" ;
@@ -267,13 +240,13 @@ $(document).ready(function(){
 				dateOfBirth: $("#dateOfBirth").val(),
 				residenceCountry: $("#residenceCountry").val(),
 				residenceStatus: $("#residenceStatus").val(),
+				messenger: $("#messenger").val(),
 				personalDetailsId: $("#id").val(), 
 				application: $("#appId").val(),		
 				languageProficiencies:"",
 				candidateNationalities:"",
 				maternalGuardianNationalities:"",
 				paternalGuardianNationalities:"",
-				messengers:"",
 				phoneNumbers:""
 				
 			}
@@ -291,7 +264,6 @@ $(document).ready(function(){
 				"&" + $('[input[name="maternalGuardianNationalities"]').serialize()+
 				"&" + $('[input[name="paternalGuardianNationalities"]').serialize()+
 				"&" + $('[input[name="phoneNumbers"]').serialize()+
-				"&" + $('[input[name="messengers"]').serialize(),
 				 function(data) {
 				    $('#personalDetailsSection').html(data);
 				  }
@@ -331,10 +303,6 @@ $(document).ready(function(){
 			
 		});
 		
-		$("#existingMessengers").on("click", "a", function(){	
-			$(this).parent("div").parent("div").parent("span").remove();
-			
-		});	
 	}
 	
 	 bindDatePickers();

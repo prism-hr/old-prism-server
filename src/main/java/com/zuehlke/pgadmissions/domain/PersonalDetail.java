@@ -30,10 +30,8 @@ public class PersonalDetail extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = 6549850558507667533L;
 	
-	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "personal_details_id")
-	private List<Messenger> messengers = new ArrayList<Messenger>();
+	@Column(name = "skype")
+	private String messenger;
 	
 	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -251,19 +249,14 @@ public class PersonalDetail extends DomainObject<Integer> {
 		}
 	}
 
-	public List<Messenger> getMessengers() {
-		return messengers;
+	public String getMessenger() {
+		return messenger;
 	}
 
-	public void setMessengers(List<Messenger> messengers) {
-		this.messengers.clear();
-		for (Messenger messenger : messengers) {
-			if(messenger != null){
-				this.messengers.add(messenger);
-			}
-		}
-		
+	public void setMessenger(String messenger) {
+		this.messenger = messenger;
 	}
+
 
 	
 }

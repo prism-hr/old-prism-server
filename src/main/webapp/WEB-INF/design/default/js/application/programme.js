@@ -10,6 +10,12 @@ $(document).ready(function(){
 		
 	});
 	
+	$('#programmeCancelButton').click(function(){
+		$("span[class='invalid']").each(function(){
+			$(this).html("");
+		});
+	});
+	
 	$("input[name*='awareSupervisorCB']").click(function() {
 		if ($("#awareSupervisor").val() =='YES'){
 			$("#awareSupervisor").val("NO");

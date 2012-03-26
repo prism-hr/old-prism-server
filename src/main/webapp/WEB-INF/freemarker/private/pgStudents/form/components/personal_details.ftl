@@ -415,7 +415,7 @@
       
               	<div class="buttons">
                   <#if !model.applicationForm.isSubmitted()>
-                  		<button type="reset" value="cancel">Cancel</button>
+                  		<button type="reset" name="personalDetailsCancelButton" id="personalDetailsCancelButton" value="cancel">Cancel</button>
 						<!--<a class="button" type="button" id="cancel" name="personalDetailsCancelButton">Cancel</a>-->						
 	                    <a id="personalDetailsCloseButton" class="button blue">Close</a>
 						<button class="blue" type="button" id="personalDetailsSaveButton" value="close">Save</button>

@@ -5,6 +5,12 @@ $(document).ready(function(){
 		return false;
 	});
 	
+	$('#documentsCancelButton').click(function(){
+		$("span[class='invalid']").each(function(){
+			$(this).html("");
+		});
+	});
+	
 	$('a[name="deleteButton"]').click( function(){	
 		$(this).parent("form").submit();
 	});

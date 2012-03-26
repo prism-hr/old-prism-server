@@ -62,7 +62,7 @@
 					                    <td>
 					                    
 						                  	<form method="Post" action="<@spring.url '/deleteentity/referee'/>" style="padding:0">
-					                			<input type="hidden" name="id" value="${referee.id}"/>		                		
+					                			<input type="hidden" name="id" value="${referee.id?string('#######')}"/>		                		
 					                			<a name="deleteButton" class="button-delete">delete</a>
 					                		</form>
 						                
@@ -78,7 +78,7 @@
                                     <input type="hidden" id="${referee.id!}_addressPostcode" value="${referee.addressPostcode!}"/>                                    
                                     <input type="hidden" id="${referee.id!}_addressCountry" <#if referee.addressCountry??> value="${referee.addressCountry.id!}" </#if>/>
                                     <input type="hidden" id="${referee.id!}_lastUpdated" value="<#if referee.hasProvidedReference() > 
-			                    		Provided ${(referee.lastUpdated?string('dd-MMM-yyyy'))!}
+			                    		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
 			                    	<#else>
 			                    		Not provided
 			                    	</#if>"/>
@@ -271,7 +271,7 @@
                             </#if>>
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
+                                    <option value="${country.id?string('#######')}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
                                 </#list>
                             </select>
                     		</div>

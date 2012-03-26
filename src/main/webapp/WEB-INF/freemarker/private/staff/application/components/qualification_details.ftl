@@ -39,7 +39,7 @@
 		                
 		                	<#list model.applicationForm.qualifications as qualification>
 			                	<tr>
-				                  	<td><a class="row-arrow" id="qualification_${qualification.id}" name ="editQualificationLink">-</a></td>
+				                  	<td><a class="row-arrow" id="qualification_${qualification.id?string('#######')}" name ="editQualificationLink">-</a></td>
 				                  	<td>${qualification.qualificationType}</td>
 				                  	<td>${qualification.qualificationGrade}</td>
 				                  	<td>${qualification.qualificationInstitution}</td>
@@ -111,7 +111,7 @@
                                                 disabled="disabled">
                                 <option value="">Select...</option>
                                     <#list model.languages as language>
-                                        <option value="${language.id}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.id> selected="selected"</#if>>${language.name}</option>
+                                        <option value="${language.id?string('#######')}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.id> selected="selected"</#if>>${language.name}</option>
                                     </#list>
                                 </select>
                     		</div>

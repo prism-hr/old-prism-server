@@ -77,6 +77,12 @@
 						            	<label>Application Number</label>
 						              <input id="applicationNumber" disabled size="20" value="${model.applicationForm.id?string("######")}" />
 						            </div>
+						            <#if model.applicationForm.isSubmitted()>
+						          	<div class="row">
+						            	<label>Date Submitted</label>
+						              <input id="applicationNumber" disabled size="20" value="${(model.applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}" />
+						            </div>
+						            </#if>
 				            
 					          	</div>
 			          

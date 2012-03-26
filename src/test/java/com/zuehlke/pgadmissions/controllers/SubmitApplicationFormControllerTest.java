@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -60,7 +61,7 @@ public class SubmitApplicationFormControllerTest {
 
 	@Test
 	@Ignore
-	public void shouldLoadApplicationFormByIdAndChangeSubmissionStatusToSubmitted() {
+	public void shouldLoadApplicationFormByIdAndChangeSubmissionStatusToSubmittedAndSetTheCurrentTimeStampToSubmitDate() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		form.setApplicant(student);
 		com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
@@ -96,6 +97,8 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 		assertEquals("redirect:/applications?submissionSuccess=true", applicationController.submitApplication(applDetails, 2, mappingResult).getViewName());
 		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
+		java.util.Date date= new java.util.Date();
+		assertEquals(new Timestamp(date.getTime()), form.getSubmittedDate());
 		EasyMock.verify(applicationsServiceMock);
 	}
 	

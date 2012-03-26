@@ -64,8 +64,8 @@ public class PrintController {
 			out.flush();
 			out.close();
 			
-		} catch (Exception e2) {
-			System.out.println("Error in " + getClass().getName() + "\n" + e2);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

@@ -116,6 +116,9 @@ $('a[name="refereeCancelButton"]').click(function(){
 	$("#ref_address_country").val("");
 	$('#phonenumbersref').html("");
 	$('#messengersref').html("");
+	$("span[class='invalid']").each(function(){
+		$(this).html("");
+	});
 });
 
 $('a[name="refereeEditButton"]').click(function(){

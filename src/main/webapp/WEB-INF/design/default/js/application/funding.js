@@ -58,6 +58,9 @@ $(document).ready(function(){
 		$("#fundingValue").val("");
 		$("#fundingDescription").val("");
 		$("#fundingAwardDate").val("");
+		$("span[class='invalid']").each(function(){
+			$(this).html("");
+		});
 		
 	});
 	

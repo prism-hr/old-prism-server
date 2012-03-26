@@ -79,7 +79,7 @@
 			</div>
 
 			<div class="buttons">
-				<button type="reset" value="cancel">Cancel</button>
+				<button type="reset" id="documentsCancelButton" value="cancel">Cancel</button>
                 <button class="blue" id="documentsCloseButton" value="close">Close</button>              
 			</div>
 

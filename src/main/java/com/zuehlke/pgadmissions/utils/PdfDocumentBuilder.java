@@ -39,6 +39,8 @@ public class PdfDocumentBuilder {
 
 		addPersonalDetailsSection(application, document);
 		
+		addSectionSeparators(document);
+		
 		addAddressSection(application, document);
 	}
 
@@ -121,89 +123,12 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Country of Birth: "+ application.getPersonalDetails().getCountry().getName()));
 		}
 
-		document.add(new Paragraph("Nationality", smallBoldFont));
-		if (application.getPersonalDetails().getCandidateNationalities().size() > 0) {
-			document.add(new Paragraph(" "));
-		}
+		PdfPTable table;
+		PdfPCell c1;
 
-		PdfPTable table = new PdfPTable(2);
-		table.setWidthPercentage (100.0f);
-
-		PdfPCell c1 = new PdfPCell(new Phrase("Nationality"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-
-		c1 = new PdfPCell(new Phrase("Is primary nationality?"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-		table.setHeaderRows(1);
-
-		for (Nationality nationality : application.getPersonalDetails().getCandidateNationalities()) {
-			table.addCell(nationality.getCountry().getName());
-			if (nationality.isPrimary()) {
-				table.addCell("Yes");
-			} else {
-				table.addCell("No");
-			}
-		}
-
-		document.add(table);
-
-		document.add(new Paragraph("Maternal Guardian Nationality", smallBoldFont));
-		if (application.getPersonalDetails().getMaternalGuardianNationalities().size() > 0) {
-			document.add(new Paragraph(" "));
-		}
-
-		table = new PdfPTable(2);
-		table.setWidthPercentage (100.0f);
-
-		c1 = new PdfPCell(new Phrase("Nationality"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-
-		c1 = new PdfPCell(new Phrase("Is primary nationality?"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-		table.setHeaderRows(1);
-
-		for (Nationality nationality : application.getPersonalDetails().getMaternalGuardianNationalities()) {
-			table.addCell(nationality.getCountry().getName());
-			if (nationality.isPrimary()) {
-				table.addCell("Yes");
-			} else {
-				table.addCell("No");
-			}
-		}
-
-		document.add(table);
-
-		document.add(new Paragraph("Paternal Guardian Nationality", smallBoldFont));
-		if (application.getPersonalDetails().getPaternalGuardianNationalities().size() > 0) {
-			document.add(new Paragraph(" "));
-		}
-
-		table = new PdfPTable(2);
-		table.setWidthPercentage (100.0f);
-
-		c1 = new PdfPCell(new Phrase("Nationality"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-
-		c1 = new PdfPCell(new Phrase("Is primary nationality?"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-		table.setHeaderRows(1);
-
-		for (Nationality nationality : application.getPersonalDetails().getPaternalGuardianNationalities()) {
-			table.addCell(nationality.getCountry().getName());
-			if (nationality.isPrimary()) {
-				table.addCell("Yes");
-			} else {
-				table.addCell("No");
-			}
-		}
-
-		document.add(table);
+		addGivenNationality(application, document, "Nationality", application.getPersonalDetails().getCandidateNationalities());
+		addGivenNationality(application, document, "Maternal Guardian Nationality", application.getPersonalDetails().getMaternalGuardianNationalities());
+		addGivenNationality(application, document, "Paternal Guardian Nationality", application.getPersonalDetails().getPaternalGuardianNationalities());
 
 		document.add(new Paragraph("Language", smallBoldFont));
 		if (application.getPersonalDetails().getLanguageProficiencies().size() > 0) {
@@ -274,6 +199,36 @@ public class PdfDocumentBuilder {
 		for (Messenger messenger : application.getPersonalDetails().getMessengers()) {
 			list.add(new ListItem(messenger.getMessengerAddress()));
 		}
+	}
+
+	private void addGivenNationality(ApplicationForm application, Document document, String header, java.util.List<Nationality> nationalities) throws DocumentException {
+		document.add(new Paragraph(header, smallBoldFont));
+		if (application.getPersonalDetails().getCandidateNationalities().size() > 0) {
+			document.add(new Paragraph(" "));
+		}
+
+		PdfPTable table = new PdfPTable(2);
+		table.setWidthPercentage (100.0f);
+
+		PdfPCell c1 = new PdfPCell(new Phrase("Nationality"));
+		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+		table.addCell(c1);
+
+		c1 = new PdfPCell(new Phrase("Is primary nationality?"));
+		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+		table.addCell(c1);
+		table.setHeaderRows(1);
+
+		for (Nationality nationality : nationalities) {
+			table.addCell(nationality.getCountry().getName());
+			if (nationality.isPrimary()) {
+				table.addCell("Yes");
+			} else {
+				table.addCell("No");
+			}
+		}
+
+		document.add(table);
 	}
 
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {

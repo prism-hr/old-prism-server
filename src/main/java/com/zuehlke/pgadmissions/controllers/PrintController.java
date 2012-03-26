@@ -43,6 +43,7 @@ public class PrintController {
 			if (application == null) {
 				throw new ResourceNotFoundException();
 			}
+			
 			PdfDocumentBuilder builder = new PdfDocumentBuilder();
 
 			Document document = new Document(PageSize.A4, 50, 50, 50, 50);
@@ -51,6 +52,12 @@ public class PrintController {
 			PdfWriter writer = PdfWriter.getInstance(document, baos);
 
 			document.open();
+			
+			//Un-comment this to try the html to pdf conversion
+			
+			//HTMLWorker htmlWorker = new HTMLWorker(document);
+			//String htmlSource = buildHtml();
+			//htmlWorker.parse(new StringReader(htmlSource));
 			builder.buildDocument(application, document);
 			document.close();
 
@@ -65,9 +72,9 @@ public class PrintController {
 			out.flush();
 			out.close();
 			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 }

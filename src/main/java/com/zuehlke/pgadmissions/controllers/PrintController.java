@@ -1,21 +1,18 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.awt.Color;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.ByteArrayOutputStream;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Font;
-import com.lowagie.text.FontFactory;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
@@ -26,38 +23,51 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 @Controller
 @RequestMapping("/print")
 public class PrintController {
-	
+
 	private final ApplicationsService applicationSevice;
 
 	public PrintController(){
 		this(null);
 	}
-	
+
 	@Autowired
 	public PrintController(ApplicationsService applicationSevice){
 		this.applicationSevice = applicationSevice;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView printPage(@ModelAttribute("applicationFormId") ApplicationForm application) throws IOException, DocumentException {
-		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
-		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(""+application.getId()+".pdf"));
-		document.open();
-		document.add(new Paragraph("Application id: " + application.getId()));
-		document.add(new Paragraph("Program name: " + application.getProject().getProgram().getTitle()));
-		document.add(new Paragraph("Project name: " + application.getProject().getTitle()));
+	public void printPage(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			Integer applicationFormId = ServletRequestUtils.getIntParameter(request, "applicationFormId");
+			ApplicationForm application = applicationSevice.getApplicationById(applicationFormId);
+			if (application == null) {
+				throw new ResourceNotFoundException();
+			}
 
-		document.close();
-		return null;
-	}
-	
-	@ModelAttribute("applicationFormId")
-	public ApplicationForm getApplication(Integer applicationFormId) {
-		ApplicationForm applicationForm = applicationSevice.getApplicationById(applicationFormId);
-		if (applicationForm == null) {
-			throw new ResourceNotFoundException();
+			Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+			PdfWriter writer = PdfWriter.getInstance(document, baos);
+
+			document.open();
+			document.add(new Paragraph("Application id: " + application.getId()));
+			document.add(new Paragraph("Program name: " + application.getProject().getProgram().getTitle()));
+			document.add(new Paragraph("Project name: " + application.getProject().getTitle()));
+			document.close();
+
+			response.setHeader("Expires", "0");
+			response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+			response.setHeader("Pragma", "public");
+			response.setContentType("application/pdf");
+			response.setContentLength(baos.size());
+			ServletOutputStream out = response. getOutputStream();
+			baos.writeTo(out); 
+			out.flush();
+			out.close();
+			
+		} catch (Exception e2) {
+			System.out.println("Error in " + getClass().getName() + "\n" + e2);
 		}
-		return applicationForm;
 	}
 
 }

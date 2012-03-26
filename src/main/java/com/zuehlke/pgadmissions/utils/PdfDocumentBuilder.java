@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.Messenger;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.Telephone;
+import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 
 public class PdfDocumentBuilder {
 
@@ -38,9 +39,9 @@ public class PdfDocumentBuilder {
 		addSectionSeparators(document);
 
 		addPersonalDetailsSection(application, document);
-		
+
 		addSectionSeparators(document);
-		
+
 		addAddressSection(application, document);
 	}
 
@@ -196,9 +197,9 @@ public class PdfDocumentBuilder {
 
 		document.add(new Paragraph("Skype", smallBoldFont));
 		for (Messenger messenger : application.getPersonalDetails().getMessengers()) {
-			document.add(new Paragraph("-"+messenger.getMessengerAddress()));
+			document.add(new Paragraph("- "+messenger.getMessengerAddress()));
 		}
-		
+
 	}
 
 	private void addGivenNationality(ApplicationForm application, Document document, String header, java.util.List<Nationality> nationalities) throws DocumentException {
@@ -233,17 +234,29 @@ public class PdfDocumentBuilder {
 
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Address", redFont));
-		
+
 		List list = new List(true, false, application.getAddresses().size());
-		int counter = 1;
 		for (Address address : application.getAddresses()) {
-			document.add(new Paragraph("Address number "+ counter, smallBoldFont));
-			counter++;
+			document.add(new Paragraph("Location: "+address.getLocation()));
+			document.add(new Paragraph("Postal Code: "+address.getPostCode()));
+			document.add(new Paragraph("Country: "+address.getCountry().getName()));
+
+			document.add(new Paragraph("Residency Period", smallBoldFont));
+			document.add(new Paragraph("From: "+address.getStartDate().toString()));
+			if (address.getEndDate() != null) {
+				document.add(new Paragraph("To: "+address.getEndDate().toString()));
+			}
+
+			document.add(new Paragraph("Purpose: "+address.getPurpose().getDisplayValue()));
+			if (address.getContactAddress() == AddressStatus.YES) {
+				document.add(new Paragraph("This is my contact address."));
+			}
+			document.add(new Paragraph(" "));
 		}
-		
+
 		document.add(list);
 	}
-	
+
 	private String createMessage(String fieldName) {
 		return "No " + fieldName + " has been specified.";
 	}

@@ -57,6 +57,7 @@ public class PrintController {
 			response.setHeader("Expires", "0");
 			response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
 			response.setHeader("Pragma", "public");
+			response.setHeader("Content-Disposition", "inline; filename=\"application"+applicationFormId+".pdf\"");
 			response.setContentType("application/pdf");
 			response.setContentLength(baos.size());
 			ServletOutputStream out = response. getOutputStream();

@@ -39,6 +39,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date applicationTimestamp;
 
+	@Column(name="submitted_on_timestamp")
+	private Date submittedDate;
+	
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApprovalStatusEnumUserType")
 	@Column(name = "approval_status")
 	private ApprovalStatus approvalStatus;
@@ -323,6 +326,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	
 	public void setAdditionalInformation(String additionalInformation) {
 		this.additionalInformation = additionalInformation;
+	}
+
+	public Date getSubmittedDate() {
+		return submittedDate;
+	}
+
+	public void setSubmittedDate(Date submittedOn) {
+		this.submittedDate = submittedOn;
 	}
 }
 

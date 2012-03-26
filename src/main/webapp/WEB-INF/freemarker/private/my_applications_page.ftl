@@ -70,6 +70,7 @@
 					                <th scope="col">Programme</th>					
 					            	<th scope="col" class="centre">Status</th>
 					                <th scope="col">Actions</th>
+					                <th class="centre" scope="col">Date Submitted</th>
 					                <th class="centre" scope="col">Select</th>
 					              </tr>
 					            </thead>
@@ -108,6 +109,10 @@
 								      				</#if>      												
 							                  	</select>
 							                </td>
+							                <td> <#if application.isSubmitted()>
+							                	${(application.submittedDate?string("dd-MMM-yyyy hh:mm a"))!} 
+							               		 </#if>
+							               	</td>
 							                <td class="centre"><input type="checkbox" name="select" disabled="disabled" /></td>
 						              	</tr>
 					              	</#list>

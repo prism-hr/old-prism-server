@@ -36,19 +36,19 @@
 			        <tbody>
 			        	<#list model.applicationForm.addresses as address>
 				        	<tr>
-				            	<td><a class="row-arrow"  name="addressEditButton" id="address_${address.id}">-</a></td>
+				            	<td><a class="row-arrow"  name="addressEditButton" id="address_${address.id?string('#######')}">-</a></td>
 				                <td>${address.location}, ${address.postCode}</td>
 				                <td>${address.startDate?string('dd-MMM-yyyy')}</td>
 				                <td>${(address.endDate?string('dd-MMM-yyyy'))!}</td>
 				                
-				                <input type="hidden" id="${address.id}_addressIdDP" value="${address.id}"/>
-                                <input type="hidden" id="${address.id}_locationDP" value="${address.location}"/>
-                                <input type="hidden" id="${address.id}_postCodeDP" value="${address.postCode}"/>
-                                <input type="hidden" id="${address.id}_countryDP" value="${address.country.id}"/>
-                                <input type="hidden" id="${address.id}_startDateDP" value="${address.startDate?string('dd-MMM-yyyy')}"/>
-                                <input type="hidden" id="${address.id}_endDateDP" value="${(address.endDate?string('dd-MMM-yyyy'))!}"/>
-                                <input type="hidden" id="${address.id}_purposeDP" value="${address.purpose}"/>
-                                <input type="hidden" id="${address.id}_contactAddressDP" value="${address.contactAddress}"/>
+				                <input type="hidden" id="${address.id?string('#######')}_addressIdDP" value="${address.id?string('#######')}"/>
+                                <input type="hidden" id="${address.id?string('#######')}_locationDP" value="${address.location}"/>
+                                <input type="hidden" id="${address.id?string('#######')}_postCodeDP" value="${address.postCode}"/>
+                                <input type="hidden" id="${address.id?string('#######')}_countryDP" value="${address.country.id?string('#######')}"/>
+                                <input type="hidden" id="${address.id?string('#######')}_startDateDP" value="${address.startDate?string('dd-MMM-yyyy')}"/>
+                                <input type="hidden" id="${address.id?string('#######')}_endDateDP" value="${(address.endDate?string('dd-MMM-yyyy'))!}"/>
+                                <input type="hidden" id="${address.id?string('#######')}_purposeDP" value="${address.purpose}"/>
+                                <input type="hidden" id="${address.id?string('#######')}_contactAddressDP" value="${address.contactAddress}"/>
                                 
 							</tr>
 						</#list>
@@ -90,7 +90,7 @@
                                             disabled="disabled">
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id}" <#if model.address.addressCountry?? && model.address.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
+                                    <option value="${country.id?string('#######')}" <#if model.address.addressCountry?? && model.address.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
                                 </#list>
                             </select>
 						</div>

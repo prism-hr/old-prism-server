@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -25,7 +24,6 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 	private ApplicationForm applicationForm;
 
 
-	@Ignore
 	@Test
 	public void shouldSaveAndLoadDocument(){
 		Document document = new Document();

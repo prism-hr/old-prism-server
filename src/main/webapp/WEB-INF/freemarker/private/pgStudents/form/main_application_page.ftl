@@ -144,6 +144,7 @@
 										<a class="button" href="<@spring.url '/applications'/>">Close</a>
 									</#if>
 
+										<a class="button" href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print</a>
 			          			</div>
 			        
 			        		</div><!-- .content-box-inner -->

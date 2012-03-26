@@ -5,6 +5,12 @@ $(document).ready(function(){
 		return false;
 	});
 	
+	$('#personalDetailsCancelButton').click(function(){
+		$("span[class='invalid']").each(function(){
+			$(this).html("");
+		});
+	});
+	
 	$('#addPhoneButton').on('click', function(){
 		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val()!= ''){	
 		var html = ''+	

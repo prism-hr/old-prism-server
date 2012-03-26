@@ -19,71 +19,249 @@ import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.Reference;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.DocumentService;
+import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.ReferenceService;
 
 public class FileDownloadControllerTest {
 	private DocumentService documentServiceMock;
 	private FileDownloadController controller;
 	private RegisteredUser currentUser;
+	private ReferenceService referenceServiceMock;
+	private RefereeService refereeServiceMock;
 
 	@Test
-	public void shouldGetDocumentFromServiceAndWriteContentToResponse() throws IOException{
-		
+	public void shouldGetApplicationFormDocumentFromServiceAndWriteContentToResponse() throws IOException {
+
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).toApplicationForm();
 		Document document = new DocumentBuilder().applicationForm(applicationForm).content("aaaa".getBytes()).id(1).toDocument();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
 		EasyMock.replay(documentServiceMock);
-		
+
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser);
-		
-		
+
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		ServletOutputStream servletOutputStream = new ServletOutputStream() {			
-			
+		ServletOutputStream servletOutputStream = new ServletOutputStream() {
+
 			@Override
 			public void write(int b) throws IOException {
-				byteArrayOutputStream.write(b);			
+				byteArrayOutputStream.write(b);
 			}
 		};
-		
-		
+
 		EasyMock.expect(responseMock.getOutputStream()).andReturn(servletOutputStream);
 		EasyMock.replay(responseMock);
-		controller.download(1, responseMock);
-		
+		controller.downloadApplicationDocument(1, responseMock);
+
 		EasyMock.verify(documentServiceMock);
+
+		byte[] byteArray = byteArrayOutputStream.toByteArray();
+		assertEquals("aaaa", new String(byteArray));
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplicationForm() throws IOException {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).toApplicationForm();
+		Document document = new DocumentBuilder().applicationForm(applicationForm).content("aaaa".getBytes()).id(1).toDocument();
+		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
+		EasyMock.replay(documentServiceMock);
+
+		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
+		EasyMock.replay(currentUser);
+
+		controller.downloadApplicationDocument(1, new MockHttpServletResponse());
+
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfDocumentTypeIsReference() throws IOException {
+		Document document = new DocumentBuilder().type(DocumentType.REFERENCE).content("aaaa".getBytes()).id(1).toDocument();
+		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
+		EasyMock.replay(documentServiceMock);
+
+		controller.downloadApplicationDocument(1, new MockHttpServletResponse());
+	}
+
+	@Test
+	public void shouldGetReferenceDocumentFromServiceAndWriteContentToResponse() throws IOException {
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).toApplicationForm();
+		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).toDocument();
+		Reference reference = new ReferenceBuilder().id(1).referee(new RefereeBuilder().application(applicationForm).toReferee()).document(document).toReference();
+		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
+	
+		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
+		EasyMock.replay(referenceServiceMock);
 		
+		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
+		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+		
+		EasyMock.replay(currentUser);
+		
+		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		ServletOutputStream servletOutputStream = new ServletOutputStream() {
+
+			@Override
+			public void write(int b) throws IOException {
+				byteArrayOutputStream.write(b);
+			}
+		};
+
+		EasyMock.expect(responseMock.getOutputStream()).andReturn(servletOutputStream);
+		EasyMock.replay(responseMock);
+		controller.downloadReferenceDocument(1, responseMock);
+
+		EasyMock.verify(referenceServiceMock);
+
+		byte[] byteArray = byteArrayOutputStream.toByteArray();
+		assertEquals("aaaa", new String(byteArray));
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfReferenceDoesNotHaveDocument() throws IOException {
+
+		Reference reference = new ReferenceBuilder().id(1).toReference();
+		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
+		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
+		EasyMock.replay(referenceServiceMock);
+		controller.downloadReferenceDocument(1, responseMock);
+
+		EasyMock.verify(referenceServiceMock);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfReferenceDoesNotExistt() throws IOException {
+
+		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
+		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(null);
+		EasyMock.replay(referenceServiceMock);
+		controller.downloadReferenceDocument(1, responseMock);
+
+		EasyMock.verify(referenceServiceMock);
+	}
+	
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionUserCannotSeeApplicationToWhichReferenceApplies() throws IOException {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).toApplicationForm();
+		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).toDocument();
+		Reference reference = new ReferenceBuilder().id(1).referee(new RefereeBuilder().application(applicationForm).toReferee()).document(document).toReference();
+		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
+		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
+		EasyMock.replay(referenceServiceMock);
+		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
+		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
+		EasyMock.replay(currentUser);
+		
+		controller.downloadReferenceDocument(1, responseMock);
+
+		EasyMock.verify(referenceServiceMock);
+	}
+	
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionUseIsApplicant() throws IOException {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).toApplicationForm();
+		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).toDocument();
+		Reference reference = new ReferenceBuilder().id(1).referee(new RefereeBuilder().application(applicationForm).toReferee()).document(document).toReference();
+		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
+		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
+		EasyMock.replay(referenceServiceMock);
+		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);		
+		EasyMock.replay(currentUser);
+		
+		controller.downloadReferenceDocument(1, responseMock);
+
+		EasyMock.verify(referenceServiceMock);
+	}
+		
+	@Test
+	public void shouldGetReferenceDocumentFromServiceByActivationCodeAndWriteContentToResponse() throws IOException {
+		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).toDocument();		
+		Reference reference = new ReferenceBuilder().id(1).document(document).toReference();
+		Referee referee = new RefereeBuilder().id(6).reference(reference).toReferee();
+	
+	
+		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("abc")).andReturn(referee);
+		EasyMock.replay(refereeServiceMock);
+		
+		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+		ServletOutputStream servletOutputStream = new ServletOutputStream() {
+
+			@Override
+			public void write(int b) throws IOException {
+				byteArrayOutputStream.write(b);
+			}
+		};
+
+		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
+		EasyMock.expect(responseMock.getOutputStream()).andReturn(servletOutputStream);
+		EasyMock.replay(responseMock);
+		
+		controller.downloadReferenceDocumentForReferee("abc", responseMock);
+
+		EasyMock.verify(refereeServiceMock);
+
 		byte[] byteArray = byteArrayOutputStream.toByteArray();
 		assertEquals("aaaa", new String(byteArray));
 	}
 	
-	
 	@Test(expected=ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplicationForm() throws IOException{
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).toApplicationForm();
-		Document document = new DocumentBuilder().applicationForm(applicationForm).content("aaaa".getBytes()).id(1).toDocument();
-		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
-		EasyMock.replay(documentServiceMock);
-		
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-		EasyMock.replay(currentUser);
-	
+	public void shouldThrowResourceNotFoundExceptionIfNoRefereForActivationCode() throws IOException {
 
-		controller.download(1, new MockHttpServletResponse());
+		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("abc")).andReturn(null);
+		EasyMock.replay(refereeServiceMock);
+		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
+		controller.downloadReferenceDocumentForReferee("abc", responseMock);
 
 	}
+	
+	@Test(expected=ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfReferessReferenceDoesNotHaveDocument() throws IOException {				
+		Reference reference = new ReferenceBuilder().id(1).toReference();
+		Referee referee = new RefereeBuilder().id(6).reference(reference).toReferee();	
+	
+		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("abc")).andReturn(referee);
+		EasyMock.replay(refereeServiceMock);
+		
+		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
+		
+		controller.downloadReferenceDocumentForReferee("abc", responseMock);
+
+	}
+	
+	@Test(expected=ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfRefereeDoesNotHaveReference() throws IOException {				
+		
+		Referee referee = new RefereeBuilder().id(6).toReferee();	
+	
+		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("abc")).andReturn(referee);
+		EasyMock.replay(refereeServiceMock);
+		
+		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
+		
+		controller.downloadReferenceDocumentForReferee("abc", responseMock);
+
+	}
+	
 	
 	@Before
 	public void setup() {
 
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
-		controller = new FileDownloadController( documentServiceMock);
+		referenceServiceMock = EasyMock.createMock(ReferenceService.class);
+		refereeServiceMock = EasyMock.createMock(RefereeService.class);
+		controller = new FileDownloadController(documentServiceMock, referenceServiceMock, refereeServiceMock);
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 

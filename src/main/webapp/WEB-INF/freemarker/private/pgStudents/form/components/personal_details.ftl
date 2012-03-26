@@ -98,7 +98,7 @@
                       <select class="full" name="country" id="country" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if> >
                       		<option value="">Select...</option>
                         <#list model.countries as country>
-                              <option value="${country.id}"
+                              <option value="${country.id?string('#######')}"
 								<#if model.applicationForm.personalDetails.country?? &&  model.applicationForm.personalDetails.country.id == country.id >
 								selected="selected"
 								</#if>   
@@ -136,7 +136,7 @@
 	                     	 <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
 	                      		<option value="">Select...</option>
 	                        	<#list model.countries as country>
-	                              <option value="${country.id}">${country.name}</option>               
+	                              <option value="${country.id?string('#######')}">${country.name}</option>               
 	                       	 </#list>
 	                     	 </select>             	 
 	                       <#if model.hasError('candidateNationalities')>                         
@@ -180,7 +180,7 @@
 	                     	 <select class="full" name="maternalNationalityCountry" id="maternalNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
 	                      		<option value="">Select...</option>
 	                        	<#list model.countries as country>
-	                              <option value="${country.id}">${country.name}</option>               
+	                              <option value="${country.id?string('#######')}">${country.name}</option>               
 	                       	 </#list>
 	                     	 </select>             	 
 	                      <#if model.hasError('maternalGuardianNationalities')>                         
@@ -221,7 +221,7 @@
 	                     	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
 	                      		<option value="">Select...</option>
 	                        	<#list model.countries as country>
-	                              <option value="${country.id}">${country.name}</option>               
+	                              <option value="${country.id?string('#######')}">${country.name}</option>               
 	                       	 </#list>
 	                     	 </select>             	 
 	                          <#if model.hasError('paternalGuardianNationalities')>                         
@@ -268,7 +268,7 @@
                       <select class="full" id="languageSelect" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
                         <option value="">Select...</option>
                          <#list model.languages as language>
-                         	<option value="${language.id}">${language.name}</option>
+                         	<option value="${language.id?string('#######')}">${language.name}</option>
                          </#list>
                       </select>
                       
@@ -304,7 +304,7 @@
                       <select class="full" name="residenceCountry" id="residenceCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
                       	<option value="">Select...</option>
                         <#list model.countries as country>
-                              <option value="${country.id}"
+                              <option value="${country.id?string('#######')}"
                               <#if model.applicationForm.personalDetails.residenceCountry?? &&  model.applicationForm.personalDetails.residenceCountry.id == country.id >
 								selected="selected"
 								</#if>  

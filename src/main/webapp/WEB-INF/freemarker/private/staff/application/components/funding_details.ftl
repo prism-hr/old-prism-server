@@ -37,15 +37,15 @@
 				
 					<#list model.applicationForm.fundings as funding>		
 						<tr>
-		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id}">-</a></td>
+		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id?string('#######')}">-</a></td>
 		                  	<td>${funding.type.displayValue}</td>
 		                  	<td>${funding.description}</td>
 		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
-		                  	<input type="hidden" id="${funding.id}_fundingIdDP" value="${funding.id}"/>
-                            <input type="hidden" id="${funding.id}_fundingTypeDP" value="${funding.type}"/>
-                            <input type="hidden" id="${funding.id}_fundingValueDP" value="${funding.value}"/>
-                            <input type="hidden" id="${funding.id}_fundingDescriptionDP" value="${funding.description}"/>
-                            <input type="hidden" id="${funding.id}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
+		                  	<input type="hidden" id="${funding.id?string('#######')}_fundingIdDP" value="${funding.id?string('#######')}"/>
+                            <input type="hidden" id="${funding.id?string('#######')}_fundingTypeDP" value="${funding.type}"/>
+                            <input type="hidden" id="${funding.id?string('#######')}_fundingValueDP" value="${funding.value}"/>
+                            <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description}"/>
+                            <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
 		                </tr>
 					</#list>				               
 				</tbody>

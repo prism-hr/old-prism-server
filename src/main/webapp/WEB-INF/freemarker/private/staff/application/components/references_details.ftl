@@ -54,6 +54,16 @@
                                     <input type="hidden" id="${referee.id!}_addressLocation" value="${referee.addressLocation!}"/>
                                     <input type="hidden" id="${referee.id!}_addressPostcode" value="${referee.addressPostcode!}"/>
                                     <input type="hidden" id="${referee.id!}_addressCountry" <#if referee.addressCountry??> value="${referee.addressCountry.id!}" </#if>/>
+                                     <input type="hidden" id="${referee.id!}_lastUpdated" value="<#if referee.hasProvidedReference() > 
+			                    		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
+			                    	<#else>
+			                    		Not provided
+			                    	</#if>"/>
+			                    	 <input type="hidden" id="${referee.id!}_reference_comment" value="<#if referee.hasProvidedReference() >${referee.reference.comment!}</#if>"/>
+			                    	 <input type="hidden" id="${referee.id!}_reference_document_url" value="<#if referee.hasProvidedReference() && referee.reference.document?? >
+			                    	 	<@spring.url '/download/reference?referenceId=${referee.reference.id?string('#######')}'/></#if>"
+			                    	 />
+			                    	 <input type="hidden" id="${referee.id!}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName}<#else>No document uploaded</#if></#if>" />
                                     <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
 									
 									<#list referee.phoneNumbers! as phoneNumber>
@@ -170,7 +180,7 @@
                                             disabled="disabled">
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
+                                    <option value="${country.id?string('#######')}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
                                 </#list>
                             </select>
                     		</div>
@@ -219,7 +229,28 @@
 	                  	</div>
                   	
                 	</div>
-
+						<div>
+	                  	            
+	                  		<div class="row">
+			                  	<label class="label">Reference</label>
+			                    <span class="hint"></span>
+			                    <div class="field" id="referenceDocument">			                    	
+			                    </div>     
+		                    </div>
+		                     <div class="row">			 
+		                    	<span class="label"></span>
+			                    <div class="field" >
+			                    	<textarea id="referenceComment" class="max" rows="35" cols="70" value=""></textarea>   	
+			                    </div>
+		                    </div>
+		                    <div class="row">			        
+		                    	<span class="label"></span>	                   		          
+			                   <div class="field" id="referenceUpdated">
+			                    	
+			                    </div>
+		                    </div>
+		               
+	                	</div>
                 	<div class="buttons">
                   		<button class="blue" type="button" value="close" id="refereeCloseButton">Close</button>
                 	</div>

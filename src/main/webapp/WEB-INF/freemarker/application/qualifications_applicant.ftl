@@ -22,7 +22,7 @@
                             	<td>${qualification.grade}</td>
                             	<td>${qualification.institution}</td>
                             	<td>${qualification.award_date}</td>
-                             	<input type="hidden" name="qualId" id="qualId" value="${qualification.id}"/></tr>
+                             	<input type="hidden" name="qualId" id="qualId" value="${qualification.id?string('#######')}"/></tr>
                              </table>	
                             </#list>
                            	Provider <input type="text" id="q_provider" value=""/> <br/>

@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -113,6 +114,7 @@ public class ReferencesControllerTest {
 		assertEquals("filename", document.getFileName());
 		assertEquals("ContentType", document.getContentType());
 		assertEquals("lala", new String(document.getContent()));
+		assertEquals(DocumentType.REFERENCE, document.getType());
 
 	}
 

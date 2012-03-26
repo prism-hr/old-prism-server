@@ -39,7 +39,7 @@
 		  
 		  	<!-- Middle. -->
 		  	<div id="middle">
-		  		<a href="/pgadmissions/"> back to applications list </a>
+		  		    <#include "/private/common/parts/nav_with_user_info.ftl"/>
 		    	<!-- Main content area. -->
 		    	<article id="content" role="main">
 		      
@@ -49,7 +49,7 @@
 			          		<form name="programmeForm" action="/pgadmissions/assignUser/submit" method="POST">
 			          
 			          			<h1>Add Existing programme users and assign roles</h1>
-			            		<p>Please add users to the programme, using their email addresses.<br>You can select one or more roles for the user.</p>
+			            		<p>Please add users to the programme.<br>You can select one or more roles for the user.</p>
 			            
 			            		<br>
 			            
@@ -80,11 +80,11 @@
 												</#list>
 					                		</select>
 					              	</div>
-					              
+					              <!--
 					              	<div class="row">
 					                	or <a href="#">add a new user</a>
 					              	</div>
-					              
+					              -->
 					            </div>
 					
 								<!-- Right side -->

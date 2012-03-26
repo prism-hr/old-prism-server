@@ -36,26 +36,26 @@
 	            
 	            	<#list model.applicationForm.employmentPositions as position>
 		            	<tr>
-		                    <td><a class="row-arrow" name="positionEditButton" id="position_${position.id}">-</a></td>
+		                    <td><a class="row-arrow" name="positionEditButton" id="position_${position.id?string('#######')}">-</a></td>
 		                    <td>${position.position_title!}</td>
 		                    <td>${(position.position_startDate?string('dd-MMM-yyyy'))!}</td>
 		                    <td>${(position.position_endDate?string('dd-MMM-yyyy'))!}</td>
 		                     <td>
 		                     	 <#if !model.applicationForm.isSubmitted()>
 				                  	<form method="Post" action="<@spring.url '/deleteentity/employment'/>" style="padding:0">
-			                			<input type="hidden" name="id" value="${position.id}"/>		                		
+			                			<input type="hidden" name="id" value="${position.id?string('#######')}"/>		                		
 			                			<a name="deleteButton" class="button-delete">delete</a>
 			                		</form>
 			                		</#if>
 				        		</td>
 		                    
-							<input type="hidden" id="${position.id}_positionId" value="${position.id}"/>
-                            <input type="hidden" id="${position.id}_employer" value="${position.position_employer!}"/>
-                            <input type="hidden" id="${position.id}_remit" value="${position.position_remit!}"/>
-                            <input type="hidden" id="${position.id}_language" value="${position.position_language!}"/>
-                            <input type="hidden" id="${position.id}_positionTitle" value="${position.position_title!}"/>
-                            <input type="hidden" id="${position.id}_positionStartDate" value="${(position.position_startDate?string('dd-MMM-yyyy'))!}"/>
-                            <input type="hidden" id="${position.id}_positionEndDate" value="${(position.position_endDate?string('dd-MMM-yyyy'))!}"/>
+							<input type="hidden" id="${position.id?string('#######')}_positionId" value="${position.id?string('#######')}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_employer" value="${position.position_employer!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_remit" value="${position.position_remit!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_language" value="${position.position_language!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_positionTitle" value="${position.position_title!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_positionStartDate" value="${(position.position_startDate?string('dd-MMM-yyyy'))!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_positionEndDate" value="${(position.position_endDate?string('dd-MMM-yyyy'))!}"/>
 		                    
 		                </tr>
 		            </#list>
@@ -173,7 +173,7 @@
                                             </#if>>
                         <option value="">Select...</option>
                          <#list model.languages as language>
-                         	<option value="${language.id}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.id> selected="selected"</#if>>${language.name}</option>
+                         	<option value="${language.id?string('#######')}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.id> selected="selected"</#if>>${language.name}</option>
                          </#list>
                       </select>
 						<#if model.hasError('position_language')>                           

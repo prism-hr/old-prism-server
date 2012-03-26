@@ -35,6 +35,8 @@ public class ApplicationFormBuilder {
 	
 	private Date appDate;
 	
+	private Date submittedDate;
+	
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
 	
 	private List<Referee> referees = new ArrayList<Referee>();
@@ -129,6 +131,11 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
+	public ApplicationFormBuilder submittedDate(Date date) {
+		this.submittedDate = date;
+		return this;
+	}
+	
 	
 	public ApplicationForm toApplicationForm() {
 		ApplicationForm application = new ApplicationForm();	
@@ -137,6 +144,7 @@ public class ApplicationFormBuilder {
 		if (reviewers != null) {
 			application.getReviewers().addAll(reviewers);
 		}
+		application.setSubmittedDate(submittedDate);
 		application.setApprovalStatus(approved);
 		application.setApprover(approver);
 		application.setReferees(referees);

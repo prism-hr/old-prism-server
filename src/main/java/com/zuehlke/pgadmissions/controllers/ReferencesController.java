@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Reference;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -77,7 +78,7 @@ public class ReferencesController {
 		document.setFileName(originalFilename);
 		document.setContentType(multipartFile.getContentType());
 		document.setContent(multipartFile.getBytes());
-
+		document.setType(DocumentType.REFERENCE);
 		BindingResult errors = newErrors(document);
 		documentValidator.validate(document, errors);
 		

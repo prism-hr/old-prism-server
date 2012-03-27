@@ -32,14 +32,14 @@
                   	<label class="label">First Name</label>
                     <span class="hint"></span>
                     <div class="field">                    	
-                    		<input class="full" readonly="readonly" type="text" value="${model.user.firstName!}" />	          
+                    		<input class="full" readonly="readonly" type="text" value="${model.user.firstName!}"  name="firstName" id="firstName"/>	          
                     </div>
                   </div>
                 	<div class="row">
                   	<label class="label">Last Name</label>
                     <span class="hint"></span>
                     <div class="field">
-                    		<input class="full" readonly="readonly" type="text" value="${model.user.lastName!}"  />	          
+                    		<input class="full" readonly="readonly" type="text" value="${model.user.lastName!}"   name="lastName" id="lastName"/>	          
                     </div>
                   </div>
                 	<div class="row">
@@ -324,7 +324,7 @@
                 		<span class="label">Email</span>
                     <span class="hint"></span>
                     <div class="field">
-                    		<input class="full" readonly="readonly" type="email" value="${model.user.email!}"  />	          
+                    		<input class="full" readonly="readonly" type="email" value="${model.user.email!}"  name="email" id="email" />	          
                     </div>
                   </div>
                 </div>
@@ -368,13 +368,18 @@
                 
               	<div>
               	           
-              <div class="row">
-                		<span class="label">Skype</span>
+               <div class="row">
+                  	<label class="label">Skype</label>
                     <span class="hint"></span>
-                    <div class="field">
-                    		<input class="full" readonly="readonly" type="email" value="${model.applicationForm.personalDetails.messenger!}"  />	          
+                    <div class="field">                    	
+                    <#if !model.applicationForm.isSubmitted()>
+                    	<input class="full" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="pd_messenger" id="pd_messenger"/>
+                    	<#else>
+                    		<input class="full" readonly="readonly" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="pd_messenger" id="pd_messenger" />	          
+                    	</#if>
                     </div>
-                  </div>
+                </div>
+                </div>
       
               	<div class="buttons">
                   <#if !model.applicationForm.isSubmitted()>

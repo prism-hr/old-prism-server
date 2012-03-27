@@ -233,6 +233,9 @@ $(document).ready(function(){
 		
 		//general post data
 		var postData ={ 
+				firstName: $("#firstName").val(), 
+				lastName: $("#lastName").val(), 
+				email: $("#email").val(),
 				country: $("#country").val(), 
 				dateOfBirth: $("#dateOfBirth").val(),
 				residenceCountry: $("#residenceCountry").val(),
@@ -260,7 +263,7 @@ $(document).ready(function(){
 				"&" + $('[input[name="candidateNationalities"]').serialize()+
 				"&" + $('[input[name="maternalGuardianNationalities"]').serialize()+
 				"&" + $('[input[name="paternalGuardianNationalities"]').serialize()+
-				"&" + $('[input[name="phoneNumbers"]').serialize()+
+				"&" + $('[input[name="phoneNumbers"]').serialize(),
 				 function(data) {
 				    $('#personalDetailsSection').html(data);
 				  }

@@ -64,7 +64,7 @@
 		            	  	 <label class="label">Supervision</label>
 		            	  	 <span class="hint" data-desc="Tooltip demonstration."></span>
 		            	   <div class="field">
-		            	       ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor}
+		            	       ${supervisor.firstname},${supervisor.lastname},${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor}
 		            	       <br/>
 		            	   </div>
 		            	 </div>

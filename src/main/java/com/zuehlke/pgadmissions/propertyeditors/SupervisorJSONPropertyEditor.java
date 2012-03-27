@@ -26,6 +26,8 @@ public class SupervisorJSONPropertyEditor extends PropertyEditorSupport {
 
 			Map<String, Object> properties = objectMapper.readValue(jsonStirng, Map.class);
 			Supervisor supervisor = new Supervisor();
+			supervisor.setFirstname((String) properties.get("firstname"));
+			supervisor.setLastname((String) properties.get("lastname"));
 			supervisor.setEmail((String) properties.get("email"));
 			supervisor.setPrimarySupervisor(PrimaryStatus.valueOf((String) properties.get("primarySupervisor")));
 			supervisor.setAwareSupervisor(AwareStatus.valueOf((String) properties.get("awareSupervisor")));
@@ -42,6 +44,6 @@ public class SupervisorJSONPropertyEditor extends PropertyEditorSupport {
 			return null;
 		}
 			Supervisor supervisor = (Supervisor) getValue();
-			return "{\"email\": \"" + supervisor.getEmail() + "\", \"primarySupervisor\": \"" + supervisor.getPrimarySupervisor() + "\", \"awareSupervisor\": \"" + supervisor.getAwareSupervisor() + "\"}";
+			return "{\"firstname\": \"" + supervisor.getFirstname() + "\",\"lastname\": \"" + supervisor.getLastname() + "\",\"email\": \"" + supervisor.getEmail() + "\", \"primarySupervisor\": \"" + supervisor.getPrimarySupervisor() + "\", \"awareSupervisor\": \"" + supervisor.getAwareSupervisor() + "\"}";
 	}
 }

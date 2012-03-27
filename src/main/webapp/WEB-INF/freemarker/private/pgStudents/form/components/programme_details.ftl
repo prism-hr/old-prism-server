@@ -78,8 +78,8 @@
                     </#if>
                    <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
                    <span name="supervisor_span">
-                        ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
-                       <input type="hidden" name="supervisors" value='{"email" :"${supervisor.email}", "primarySupervisor":"${supervisor.primarySupervisor}", "awareSupervisor":"${supervisor.awareSupervisor}"}' />                             
+                         ${supervisor.firstname}, ${supervisor.lastname}, ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
+                       <input type="hidden" name="supervisors" value='{"firstname" :"${supervisor.firstname}","lastname" :"${supervisor.lastname}","email" :"${supervisor.email}", "primarySupervisor":"${supervisor.primarySupervisor}", "awareSupervisor":"${supervisor.awareSupervisor}"}' />                             
                        <p></p>
                   </span>
                   </#list>
@@ -96,6 +96,8 @@
                     
                     <thead>
                     	<tr>
+	                        <th class="align-left">Supervisor firstname</th>
+	                        <th class="align-left">Supervisor lastname</th>
 	                        <th class="align-left">Supervisor email</th>
 	                        <th>Primary</th>
 	                        <th>Aware</th>
@@ -105,6 +107,8 @@
                     <tbody>
 						<!-- repeat these rows for every existing supervisor. -->
                       	<tr>
+	                        <th class="align-left"><input class="full" type="text" placeholder="Firstname" id="supervisorFirstname" name="supervisorFirstname"/></th>
+	                        <th class="align-left"><input class="full" type="text" placeholder="Lastname" id="supervisorLastname" name="supervisorLastname"/></th>
 	                        <th class="align-left"><input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/></th>
 	                        <th><input type="checkbox" name="primarySupervisorCB" id="primarySupervisorCB"/></th>
 	                        <input type="hidden" name="primarySupervisor" id="primarySupervisor"/>

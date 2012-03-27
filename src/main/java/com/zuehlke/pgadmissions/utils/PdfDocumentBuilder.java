@@ -59,9 +59,9 @@ public class PdfDocumentBuilder {
 		addFundingSection(application, document);
 
 		addSectionSeparators(document);
-		
+
 		addReferencesSection(application, document);
-		
+
 		addSectionSeparators(document);
 
 		addAdditionalInformationSection(application, document);
@@ -70,7 +70,7 @@ public class PdfDocumentBuilder {
 	private void addSectionSeparators(Document document) throws DocumentException {
 		document.add(new Paragraph(" "));
 	}
-	
+
 	private void addCorrectOutputDependingOnNull(Document document, String fieldValue, String fieldLabel) throws DocumentException {
 		if (fieldValue == null) {
 			document.add(new Paragraph(createMessage(fieldLabel.toLowerCase())));
@@ -138,8 +138,8 @@ public class PdfDocumentBuilder {
 
 	private void addPersonalDetailsSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Personal Details", greyFont));
-		document.add(new Paragraph("First Name: " + application.getPersonalDetails().getFirstName()));
-		document.add(new Paragraph("Last Name: " + application.getPersonalDetails().getLastName()));
+		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getFirstName(), "First Name");
+		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getLastName(), "Last Name");
 
 		if (application.getPersonalDetails().getGender() == null) {
 			document.add(new Paragraph(createMessage("gender")));
@@ -169,26 +169,28 @@ public class PdfDocumentBuilder {
 		document.add(new Paragraph("Language", smallBoldFont));
 		if (application.getPersonalDetails().getLanguageProficiencies().size() > 0) {
 			document.add(new Paragraph(" "));
+
+			table = new PdfPTable(2);
+			table.setWidthPercentage (100.0f);
+
+			c1 = new PdfPCell(new Phrase("Language"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
+
+			c1 = new PdfPCell(new Phrase("Aptitude"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
+			table.setHeaderRows(1);
+
+			for (LanguageProficiency language : application.getPersonalDetails().getLanguageProficiencies()) {
+				table.addCell(language.getLanguage().getName());
+				table.addCell(language.getAptitude().getDisplayValue());
+			}
+
+			document.add(table);
+		} else {
+			document.add(new Paragraph(createMessage("language")));
 		}
-
-		table = new PdfPTable(2);
-		table.setWidthPercentage (100.0f);
-
-		c1 = new PdfPCell(new Phrase("Language"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-
-		c1 = new PdfPCell(new Phrase("Aptitude"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-		table.setHeaderRows(1);
-
-		for (LanguageProficiency language : application.getPersonalDetails().getLanguageProficiencies()) {
-			table.addCell(language.getLanguage().getName());
-			table.addCell(language.getAptitude().getDisplayValue());
-		}
-
-		document.add(table);
 
 		document.add(new Paragraph("Residence", smallBoldFont));
 
@@ -205,11 +207,11 @@ public class PdfDocumentBuilder {
 		}
 
 		document.add(new Paragraph("Contact Details", smallBoldFont));
-		document.add(new Paragraph("Email: " + application.getPersonalDetails().getEmail()));
+		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getEmail(), "Email");
 
 		addTelephones(application, document, application.getPersonalDetails().getPhoneNumbers());
 
-		document.add(new Paragraph("Skype: " + application.getPersonalDetails().getMessenger()));
+		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getMessenger(), "Skype");
 	}
 
 	private void addTelephones(ApplicationForm application, Document document, List<Telephone> phoneNumbers) throws DocumentException {
@@ -218,25 +220,28 @@ public class PdfDocumentBuilder {
 		document.add(new Paragraph("Telephone", smallBoldFont));
 		if (application.getPersonalDetails().getPhoneNumbers().size() > 0) {
 			document.add(new Paragraph(" "));
+
+			table = new PdfPTable(2);
+			table.setWidthPercentage (100.0f);
+
+			c1 = new PdfPCell(new Phrase("Type"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
+
+			c1 = new PdfPCell(new Phrase("Number"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
+			table.setHeaderRows(1);
+
+			for (Telephone telephone : phoneNumbers) {
+				table.addCell(telephone.getTelephoneType().getDisplayValue());
+				table.addCell(telephone.getTelephoneNumber());
+			}
+
+			document.add(table);
+		} else {
+			document.add(new Paragraph(createMessage("telephone")));
 		}
-		table = new PdfPTable(2);
-		table.setWidthPercentage (100.0f);
-
-		c1 = new PdfPCell(new Phrase("Type"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-
-		c1 = new PdfPCell(new Phrase("Number"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-		table.setHeaderRows(1);
-
-		for (Telephone telephone : phoneNumbers) {
-			table.addCell(telephone.getTelephoneType().getDisplayValue());
-			table.addCell(telephone.getTelephoneNumber());
-		}
-
-		document.add(table);
 	}
 
 
@@ -244,30 +249,33 @@ public class PdfDocumentBuilder {
 		document.add(new Paragraph(header, smallBoldFont));
 		if (application.getPersonalDetails().getCandidateNationalities().size() > 0) {
 			document.add(new Paragraph(" "));
-		}
 
-		PdfPTable table = new PdfPTable(2);
-		table.setWidthPercentage (100.0f);
+			PdfPTable table = new PdfPTable(2);
+			table.setWidthPercentage (100.0f);
 
-		PdfPCell c1 = new PdfPCell(new Phrase("Nationality"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
+			PdfPCell c1 = new PdfPCell(new Phrase("Nationality"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
 
-		c1 = new PdfPCell(new Phrase("Is primary nationality?"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-		table.setHeaderRows(1);
+			c1 = new PdfPCell(new Phrase("Is primary nationality?"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
+			table.setHeaderRows(1);
 
-		for (Nationality nationality : nationalities) {
-			table.addCell(nationality.getCountry().getName());
-			if (nationality.isPrimary()) {
-				table.addCell("Yes");
-			} else {
-				table.addCell("No");
+			for (Nationality nationality : nationalities) {
+				table.addCell(nationality.getCountry().getName());
+				if (nationality.isPrimary()) {
+					table.addCell("Yes");
+				} else {
+					table.addCell("No");
+				}
 			}
+
+			document.add(table);
+		} else {
+			document.add(new Paragraph(createMessage("nationality")));
 		}
 
-		document.add(table);
 	}
 
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
@@ -331,7 +339,7 @@ public class PdfDocumentBuilder {
 			} else {
 				document.add(new Paragraph("End Date: " + employment.getPosition_endDate().toString()));
 			}
-			
+
 			document.add(new Paragraph("Language of Work: " + employment.getPosition_language().getName()));
 
 			document.add(new Paragraph(" "));
@@ -357,36 +365,36 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph(createMessage("funding information")));
 		}
 	}
-	
+
 	private void addReferencesSection(ApplicationForm application, Document document) throws DocumentException {
-		
+
 		document.add(new Paragraph("References", greyFont));
 		for (Referee reference : application.getReferees()) {
 			document.add(new Paragraph("First Name: " + reference.getFirstname()));
 			document.add(new Paragraph("Last Name: " + reference.getLastname()));
 			document.add(new Paragraph("Relationship: " + reference.getRelationship()));
 			document.add(new Paragraph("Position", smallBoldFont));
-			
+
 			document.add(new Paragraph("Employer: " + reference.getJobEmployer()));
 			document.add(new Paragraph("Title: " + reference.getJobTitle()));
-			
+
 			document.add(new Paragraph("Address", smallBoldFont));
 			document.add(new Paragraph("Location: " + reference.getAddressLocation()));
 			document.add(new Paragraph("Postal Code: " + reference.getAddressPostcode()));
 			if (reference.getAddressCountry() != null) {
-			document.add(new Paragraph("Country: " + reference.getAddressCountry().getName()));
+				document.add(new Paragraph("Country: " + reference.getAddressCountry().getName()));
 			} else {
 				document.add(new Paragraph(createMessage("country")));
 			}
-			
+
 			document.add(new Paragraph("Contact Details", smallBoldFont));
 			document.add(new Paragraph("Email: " + reference.getEmail()));
 			addTelephones(application, document, reference.getPhoneNumbers());
 			document.add(new Paragraph("Skype: " + reference.getMessenger()));
-			
+
 			document.add(new Paragraph(" "));
 		}
-		
+
 		if (application.getReferees().isEmpty()) {
 			document.add(new Paragraph(createMessage("references information")));
 		}

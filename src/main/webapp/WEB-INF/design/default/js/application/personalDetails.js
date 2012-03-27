@@ -260,7 +260,7 @@ $(document).ready(function(){
 				"&" + $('[input[name="candidateNationalities"]').serialize()+
 				"&" + $('[input[name="maternalGuardianNationalities"]').serialize()+
 				"&" + $('[input[name="paternalGuardianNationalities"]').serialize()+
-				"&" + $('[input[name="phoneNumbers"]').serialize()+
+				"&" + $('[input[name="phoneNumbers"]').serialize(),
 				 function(data) {
 				    $('#personalDetailsSection').html(data);
 				  }

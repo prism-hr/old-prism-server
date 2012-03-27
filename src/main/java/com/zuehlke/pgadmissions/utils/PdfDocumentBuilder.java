@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.utils;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,6 +11,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -31,7 +34,7 @@ public class PdfDocumentBuilder {
 	private static Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
 	private static Font smallBoldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
 
-	public void buildDocument(ApplicationForm application, Document document) throws DocumentException {
+	public void buildDocument(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
 
 		document.add(new Paragraph("Application id: "+application.getId(), boldFont));
 		document.add(new Paragraph("Applicant: "+application.getApplicant().getFirstName()+ " " + application.getApplicant().getLastName(), boldFont));
@@ -67,6 +70,10 @@ public class PdfDocumentBuilder {
 		addSectionSeparators(document);
 
 		addAdditionalInformationSection(application, document);
+		
+		addSectionSeparators(document);
+		
+		addSupportingDocuments(application, document);
 	}
 
 	private void addSectionSeparators(Document document) throws DocumentException {
@@ -418,6 +425,15 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph(application.getAdditionalInformation()));
 		} else {
 			document.add(new Paragraph(createMessage("additional information")));
+		}
+	}
+	
+	private void addSupportingDocuments(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
+		for (com.zuehlke.pgadmissions.domain.Document doc : application.getSupportingDocuments()) {
+			if (doc.getFileName().endsWith(".jpg")) {
+				Image image = Image.getInstance(doc.getContent());
+				document.add(image);
+			}
 		}
 	}
 

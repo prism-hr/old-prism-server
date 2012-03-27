@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.validation.BindingResult;
@@ -9,6 +10,7 @@ import org.springframework.validation.ObjectError;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 
 public class PageModel {
 
@@ -19,9 +21,26 @@ public class PageModel {
 	private String view;
 	private BindingResult result;
 	private List<String> globalErrorCodes = new ArrayList<String>();
+	private String userRoles;
 
 	public BindingResult getResult() {
 		return result;
+	}
+
+	private void setUserRoles(RegisteredUser user) {
+		StringBuilder userRoles = new StringBuilder();
+		Collection<Role> authorities = user.getAuthorities();
+		if (user != null && authorities != null) {
+			for (Role role : authorities) {
+				userRoles.append(role.getAuthority());
+				userRoles.append(";");
+			}
+		}
+		this.userRoles = userRoles.toString();
+	}
+
+	public String getUserRoles() {
+		return userRoles;
 	}
 
 	public void setResult(BindingResult result) {
@@ -54,7 +73,7 @@ public class PageModel {
 
 	public void setUser(RegisteredUser user) {
 		this.user = user;
-		//setUserRoles(user);
+		setUserRoles(user);
 	}
 
 	public List<ApplicationReview> getApplicationComments() {
@@ -70,13 +89,12 @@ public class PageModel {
 
 	}
 
-	public boolean hasError(String fieldname){
-		if(result != null && result.getFieldError(fieldname) != null){
+	public boolean hasError(String fieldname) {
+		if (result != null && result.getFieldError(fieldname) != null) {
 			return true;
 		}
 		return false;
 	}
-
 
 	public List<String> getGlobalErrorCodes() {
 		return globalErrorCodes;

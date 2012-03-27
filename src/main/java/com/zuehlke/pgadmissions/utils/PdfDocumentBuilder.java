@@ -354,18 +354,21 @@ public class PdfDocumentBuilder {
 
 	private void addFundingSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Funding", greyFont));
-		for (Funding funding : application.getFundings()) {
-			document.add(new Paragraph("Type: " + funding.getType().getDisplayValue()));
-			document.add(new Paragraph("Description:" + funding.getDescription()));
-			document.add(new Paragraph("Value: " + funding.getValue()));
-			document.add(new Paragraph("Award Date: " + funding.getAwardDate().toString()));
-
-			document.add(new Paragraph(" "));
-		}
 
 		if (application.getFundings().isEmpty()) {
 			document.add(new Paragraph(createMessage("funding information")));
+		} else {
+			
+			for (Funding funding : application.getFundings()) {
+				document.add(new Paragraph("Type: " + funding.getType().getDisplayValue()));
+				document.add(new Paragraph("Description:" + funding.getDescription()));
+				document.add(new Paragraph("Value: " + funding.getValue()));
+				document.add(new Paragraph("Award Date: " + funding.getAwardDate().toString()));
+
+				document.add(new Paragraph(" "));
+			}
 		}
+
 	}
 
 	private void addReferencesSection(ApplicationForm application, Document document) throws DocumentException {

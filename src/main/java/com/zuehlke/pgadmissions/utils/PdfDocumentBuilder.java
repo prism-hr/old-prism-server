@@ -5,24 +5,22 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.List;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Nationality;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 
 public class PdfDocumentBuilder {
 
-	private static Font redFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.RED);
-	private static Font greenFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.GREEN);
-	private static Font purpleFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.MAGENTA);
 	private Font greyFont  = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.DARK_GRAY);
 	private static Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
 	private static Font smallBoldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
@@ -43,15 +41,21 @@ public class PdfDocumentBuilder {
 		addSectionSeparators(document);
 
 		addAddressSection(application, document);
-		
+
 		addSectionSeparators(document);
-		
+
+		addQualificationSection(application, document);
+
+		addSectionSeparators(document);
+
 		addFundingSection(application, document);
+
+		addSectionSeparators(document);
+
+		addAdditionalInformationSection(application, document);
 	}
 
-
 	private void addSectionSeparators(Document document) throws DocumentException {
-		document.add(new Paragraph(" "));
 		document.add(new Paragraph(" "));
 	}
 
@@ -81,29 +85,34 @@ public class PdfDocumentBuilder {
 
 		document.add(new Paragraph(" "));
 
-		PdfPTable table = new PdfPTable(3);
-		table.setWidthPercentage (100.0f);
+		if (application.getProgrammeDetails().getSupervisors().isEmpty()) {
+			document.add(new Paragraph(createMessage("supervisors information")));
+		} else {
 
-		PdfPCell c1 = new PdfPCell(new Phrase("Supervisor Email"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
+			PdfPTable table = new PdfPTable(3);
+			table.setWidthPercentage (100.0f);
 
-		c1 = new PdfPCell(new Phrase("Is primary supervisor?"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
+			PdfPCell c1 = new PdfPCell(new Phrase("Supervisor Email"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
 
-		c1 = new PdfPCell(new Phrase("Is supervisor aware of your application?"));
-		c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-		table.addCell(c1);
-		table.setHeaderRows(1);
+			c1 = new PdfPCell(new Phrase("Is primary supervisor?"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
 
-		for (Supervisor supervisor : application.getProgrammeDetails().getSupervisors()) {
-			table.addCell(supervisor.getEmail());
-			table.addCell(supervisor.getPrimarySupervisor().displayValue());
-			table.addCell(supervisor.getAwareSupervisor().displayValue());
+			c1 = new PdfPCell(new Phrase("Is supervisor aware of your application?"));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			table.addCell(c1);
+			table.setHeaderRows(1);
+
+			for (Supervisor supervisor : application.getProgrammeDetails().getSupervisors()) {
+				table.addCell(supervisor.getEmail());
+				table.addCell(supervisor.getPrimarySupervisor().displayValue());
+				table.addCell(supervisor.getAwareSupervisor().displayValue());
+			}
+
+			document.add(table);
 		}
-
-		document.add(table);
 	}
 
 	private void addPersonalDetailsSection(ApplicationForm application, Document document) throws DocumentException {
@@ -239,7 +248,6 @@ public class PdfDocumentBuilder {
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Address", greyFont));
 
-		List list = new List(true, false, application.getAddresses().size());
 		int counter = 1;
 		for (Address address : application.getAddresses()) {
 			document.add(new Paragraph("Location: "+address.getLocation()));
@@ -259,13 +267,58 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph(" "));
 		}
 
-		document.add(list);
+		if (application.getAddresses().isEmpty()) {
+			document.add(new Paragraph(createMessage("address information")));
+		}
+
+	}
+
+	private void addQualificationSection(ApplicationForm application, Document document) throws DocumentException {
+		document.add(new Paragraph("Qualification", greyFont));
+		for (Qualification qualification : application.getQualifications()) {
+			document.add(new Paragraph("Provider: " + qualification.getQualificationInstitution()));
+			document.add(new Paragraph("Programme: "+ qualification.getQualificationProgramName()));
+			document.add(new Paragraph("Start Date: " + qualification.getQualificationStartDate().toString()));
+			document.add(new Paragraph("Language: "+ qualification.getQualificationLanguage().getName()));
+			document.add(new Paragraph("Level: " + qualification.getQualificationLevel().getDisplayValue()));
+			document.add(new Paragraph("Type: " + qualification.getQualificationType()));
+			document.add(new Paragraph("Grade: " + qualification.getQualificationGrade()));
+			document.add(new Paragraph("Score: " + qualification.getQualificationScore()));
+			document.add(new Paragraph("Award Date: " + qualification.getQualificationAwardDate().toString()));
+
+			document.add(new Paragraph(" "));
+		}
+
+		if (application.getQualifications().isEmpty()) {
+			document.add(new Paragraph(createMessage("qualification information")));
+		}
 	}
 
 	private void addFundingSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Funding", greyFont));
+		for (Funding funding : application.getFundings()) {
+			document.add(new Paragraph("Type: " + funding.getType().getDisplayValue()));
+			document.add(new Paragraph("Description:" + funding.getDescription()));
+			document.add(new Paragraph("Value: " + funding.getValue()));
+			document.add(new Paragraph("Award Date: " + funding.getAwardDate().toString()));
+
+			document.add(new Paragraph(" "));
+		}
+
+		if (application.getFundings().isEmpty()) {
+			document.add(new Paragraph(createMessage("funding information")));
+		}
 	}
-	
+
+	private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {
+		document.add(new Paragraph("Additional Information", greyFont));
+		if (application.getAdditionalInformation() != null) {
+			document.add(new Paragraph(application.getAdditionalInformation()));
+		} else {
+			document.add(new Paragraph(createMessage("addtional information")));
+		}
+	}
+
 	private String createMessage(String fieldName) {
 		return "No " + fieldName + " has been specified.";
 	}

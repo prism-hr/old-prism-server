@@ -406,7 +406,7 @@ public class PdfDocumentBuilder {
 		if (application.getAdditionalInformation() != null) {
 			document.add(new Paragraph(application.getAdditionalInformation()));
 		} else {
-			document.add(new Paragraph(createMessage("addtional information")));
+			document.add(new Paragraph(createMessage("additional information")));
 		}
 	}
 

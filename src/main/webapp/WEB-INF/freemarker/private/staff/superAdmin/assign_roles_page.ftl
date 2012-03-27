@@ -100,7 +100,7 @@
 					              	</div>
 					            
 					              	<div class="buttons">
-					              		<button class="blue" type="submit" value="adduser" >Add user</button>
+					              		<button type="submit" value="adduser" >Add user</button>
 					            	</div>
 					              
 								</div>

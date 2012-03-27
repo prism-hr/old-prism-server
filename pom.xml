@@ -208,6 +208,13 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>-Xms1024m -Xmx1024m</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>com.dbdeploy</groupId>
 				<artifactId>maven-dbdeploy-plugin</artifactId>
 				<version>3.0M3</version>

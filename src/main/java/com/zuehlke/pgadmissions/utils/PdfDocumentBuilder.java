@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 public class PdfDocumentBuilder {
 
 	private static Font redFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.RED);
+	private static Font greenFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.GREEN);
 	private static Font purpleFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.MAGENTA);
 	private Font greyFont  = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.DARK_GRAY);
 	private static Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
@@ -43,7 +44,12 @@ public class PdfDocumentBuilder {
 		addSectionSeparators(document);
 
 		addAddressSection(application, document);
+		
+		addSectionSeparators(document);
+		
+		addFundingSection(application, document);
 	}
+
 
 	private void addSectionSeparators(Document document) throws DocumentException {
 		document.add(new Paragraph(" "));
@@ -257,6 +263,10 @@ public class PdfDocumentBuilder {
 		document.add(list);
 	}
 
+	private void addFundingSection(ApplicationForm application, Document document) throws DocumentException {
+		document.add(new Paragraph("Funding", greenFont));
+	}
+	
 	private String createMessage(String fieldName) {
 		return "No " + fieldName + " has been specified.";
 	}

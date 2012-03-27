@@ -11,14 +11,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "REGISTERED_USER")
@@ -46,27 +47,15 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
-
-	@Transient
-	private String rolesList = "";
-
-	public String getRolesList() {
-		return rolesList;
-	}
-
-	public void setRolesList() {
-		StringBuilder roles = new StringBuilder();
-		for (Role role: this.roles) {
-			roles.append(role.getAuthority());
-			roles.append(",");
-		}
-
-		String result = roles.toString();
-		if (!result.isEmpty()) {
-			result = result.substring(0, result.length()-1);
-		}
-		this.rolesList = result;
-	}
+	
+	@ManyToMany(mappedBy="administrators")	
+	private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
+	
+	@ManyToMany(mappedBy="approvers")	
+	private List<Program> programsOfWhichApprover = new ArrayList<Program>();
+	
+	@ManyToMany(mappedBy="reviewers")	
+	private List<Program> programsOfWhichReviewer = new ArrayList<Program>();
 
 	public List<Role> getRoles() {
 		return roles;
@@ -223,9 +212,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.activationCode = activationCode;
 	}
 
-	public void setRolesList(String rolesList) {
-		this.rolesList = rolesList;
-	}
 
 	public Project getProjectOriginallyAppliedTo() {
 		return projectOriginallyAppliedTo;
@@ -234,5 +220,61 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public void setProjectOriginallyAppliedTo(Project projectOriginallyAppliedTo) {
 		this.projectOriginallyAppliedTo = projectOriginallyAppliedTo;
 	}
+
+	public List<Program> getProgramsOfWhichAdministrator() {
+		return programsOfWhichAdministrator;
+	}
+
+	public void setProgramsOfWhichAdministrator(List<Program> programsOfWhichAdministrator) {
+		this.programsOfWhichAdministrator = programsOfWhichAdministrator;
+	}
+
+	public List<Program> getProgramsOfWhichApprover() {
+		return programsOfWhichApprover;
+	}
+
+	public void setProgramsOfWhichApprover(List<Program> programsOfWhichApprover) {
+		this.programsOfWhichApprover = programsOfWhichApprover;
+	}
+
+	public List<Program> getProgramsOfWhichReviewer() {
+		return programsOfWhichReviewer;
+	}
+
+	public void setProgramsOfWhichReviewer(List<Program> programsOfWhichReviewer) {
+		this.programsOfWhichReviewer = programsOfWhichReviewer;
+	}
+
+	public List<Authority> getAuthoritiesForProgram(Program program) {
+		List<Authority> authorities = new ArrayList<Authority>();
+		if(programsOfWhichAdministrator.contains(program)){
+			authorities.add(Authority.ADMINISTRATOR);
+		}
+		if(getProgramsOfWhichReviewer().contains(program)){
+			authorities.add(Authority.REVIEWER);
+		}
+		if(getProgramsOfWhichApprover().contains(program)){
+			authorities.add(Authority.APPROVER);
+		}
+		return authorities;
+		
+	}
+
+	public String getAuthoritiesForProgramAsString(Program program) {
+		List<Authority> authoritiesForProgram = getAuthoritiesForProgram(program);		
+		StringBuffer stringBuffer = new StringBuffer();		
+		if(isInRole(Authority.SUPERADMINISTRATOR)){
+			stringBuffer.append("Superadministrator");
+		}
+		for (Authority authority : authoritiesForProgram) {
+			if(stringBuffer.length() > 0){
+				stringBuffer.append(", ");
+			}
+			stringBuffer.append(StringUtils.capitalize(authority.toString().toLowerCase()));
+		}
+		
+		return stringBuffer.toString();
+	}
+
 
 }

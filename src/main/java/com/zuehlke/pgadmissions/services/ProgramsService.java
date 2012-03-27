@@ -23,12 +23,12 @@ public class ProgramsService {
 		this.programDAO = programDAO;		
 	}
 	
-	@Transactional
+
 	public List<Program> getAllPrograms() {
 		return programDAO.getAllPrograms();
 	}
 
-	@Transactional
+
 	public Program getProgramById(Integer programId) {
 		return programDAO.getProgramById(programId);
 	}

@@ -75,8 +75,8 @@
 					                	<label>Please choose a user</label>
 					                	<select id="userId" name="userId">
 					                			<option value="">Please choose a user</option>
-					                			<#list model.usersInRoles as userInRole>
-						                			<option value="${userInRole.id?string("######")}">${userInRole.firstName} ${userInRole.lastName}</option>      
+					                			<#list model.availableUsers as user>
+						                			<option value="${user.id?string("######")}">${user.firstName} ${user.lastName}</option>      
 												</#list>
 					                		</select>
 					              	</div>
@@ -127,9 +127,9 @@
 		            			<tbody>
 		            				<#list model.usersInRoles as userInRole>
 			              				<tr>
-			                				 <td scope="col">${userInRole.email}</td>
+			                				<td scope="col">${userInRole.email}</td>
 						                	<td scope="col">${userInRole.firstName} ${userInRole.lastName}</td>
-						                	<td scope="col">${userInRole.rolesList}</td>
+						                	<td scope="col">${userInRole.getAuthoritiesForProgramAsString(model.selectedProgram)}</td>
 			                				<td scope="col"><a href="#">Edit</a> / <a href="#">Remove</a></td>
 			              				</tr>
 									</#list>			              			

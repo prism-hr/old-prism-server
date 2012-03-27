@@ -39,113 +39,37 @@ public class ManageUsersController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/showPage")
-	public ModelAndView getUsersPage(@RequestParam(required = false) Integer programId) {
+	public ModelAndView getUsersPage(@RequestParam(required = false) Integer programId,@RequestParam(required = false) Integer userId) {
 		ManageUsersModel pageModel = new ManageUsersModel();
 		RegisteredUser user = getCurrentUser();
-		pageModel.setUser(user);
-		List<RegisteredUser> allUsers = new ArrayList<RegisteredUser>();
-		if (!(user.isInRole(Authority.ADMINISTRATOR) || user.isInRole(Authority.SUPERADMINISTRATOR))) {
+	
+		if (!(user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMINISTRATOR))) {
 			throw new AccessDeniedException();
 		}
+		pageModel.setUser(user);
+		pageModel.setAvailableUsers(userService.getAllInternalUsers());
 		if (programId != null) {
-			Program selectedProgram = programsService.getProgramById(programId);
-			
-			allUsers.addAll(processAdministratorsForProgram(allUsers, selectedProgram));
-			
-			allUsers.addAll(processApproversForProgram(allUsers, selectedProgram));
-			
-			allUsers.addAll(processReviewersForProgram(allUsers, selectedProgram));
-			
-			pageModel.setUsersInRoles(allUsers);
-			pageModel.setSelectedProgram(selectedProgram);
+			Program program = programsService.getProgramById(programId);
+			pageModel.setSelectedProgram(program);
+			pageModel.setUsersInRoles(userService.getAllUsersForProgram(program));
 		}
-		
-		allUsers.addAll(processSuperAdmins(allUsers));
-
-		List<Authority> roles = removeSuperAdminAndApplicantFromAuthority(user);
-		pageModel.setRoles(roles);
-		pageModel.setPrograms(getVisiblePrograms(user));
-
-		ModelAndView modelAndView = new ModelAndView(ROLES_PAGE_VIEW_NAME, "model", pageModel);
-		return modelAndView;
-	}
-
-	List<RegisteredUser> processSuperAdmins(List<RegisteredUser> allUsers) {
-		List<RegisteredUser> programSuperAdmins = new ArrayList<RegisteredUser>();
-		List<RegisteredUser> superAdmins = userService.getSuperAdmins();
-		for (RegisteredUser registeredUser : superAdmins) {
-			registeredUser.setRolesList(registeredUser.getRolesList()+" SUPERADMINISTRATOR ");
-			if(!allUsers.contains(registeredUser))
-				programSuperAdmins.add(registeredUser);
+		if(userId != null){
+			pageModel.setSelectedUser(userService.getUser(userId));
 		}
-		return programSuperAdmins;
-	}
-
-	List<RegisteredUser> processReviewersForProgram(List<RegisteredUser> allUsers, Program selectedProgram) {
-		List<RegisteredUser> programReviewers = new ArrayList<RegisteredUser>();
-		List<RegisteredUser> reviewers = selectedProgram.getReviewers();
-		for (RegisteredUser registeredUser : reviewers) {
-			registeredUser.setRolesList(registeredUser.getRolesList()+" REVIEWER ");
-			if(!allUsers.contains(registeredUser))
-				programReviewers.add(registeredUser);
-		}
-		return programReviewers;
-	}
-
-	List<RegisteredUser> processApproversForProgram(List<RegisteredUser> allUsers, Program selectedProgram) {
-		List<RegisteredUser> programApprovers = new ArrayList<RegisteredUser>();
-		List<RegisteredUser> approvers = selectedProgram.getApprovers();
-		for (RegisteredUser registeredUser : approvers) {
-			registeredUser.setRolesList(registeredUser.getRolesList()+" APPROVER ");
-			if(!allUsers.contains(registeredUser))
-				programApprovers.add(registeredUser);
-		}
-		return programApprovers;
-	}
-
-	List<RegisteredUser> processAdministratorsForProgram(List<RegisteredUser> allUsers, Program selectedProgram) {
-		List<RegisteredUser> adminUsers = new ArrayList<RegisteredUser>();
-		List<RegisteredUser> administrators = selectedProgram.getAdministrators();
-		for (RegisteredUser registeredUser : administrators) {
-			registeredUser.setRolesList(registeredUser.getRolesList()+" ADMINISTRATOR ");
-			if(!allUsers.contains(registeredUser))
-				adminUsers.add(registeredUser);
-		}
-		return adminUsers;
-	}
-
-	private List<Authority> removeSuperAdminAndApplicantFromAuthority(RegisteredUser user) {
-		List<Authority> values = Arrays.asList(Authority.values());
-		List<Authority> removedList = new ArrayList<Authority>();
-		
-		for (Authority authority : values) {
-			if(authority.equals(Authority.APPLICANT)){
-				continue;
-			}
-			if(authority.equals(Authority.SUPERADMINISTRATOR) && user.isInRole(Authority.ADMINISTRATOR)){
-				continue;
-			}
-			removedList.add(authority);
-		}
-		return removedList;
-	}
+		if (user.isInRole(Authority.SUPERADMINISTRATOR)){ 
+			pageModel.setRoles(Arrays.asList( Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER));
+			pageModel.setPrograms(programsService.getAllPrograms());
 	
-	private List<Program> getVisiblePrograms(RegisteredUser user) {
-		List<Program> allPrograms = programsService.getAllPrograms();
-		List<Program> visiblePrograms = new ArrayList<Program>();
-		if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-			if (allPrograms != null) {
-				visiblePrograms.addAll(allPrograms);
-			}
-		} else {
-			for (Program program : allPrograms) {
-				if (program.getAdministrators().contains(user)) {
-					visiblePrograms.add(program);
-				}
-			}
+		}else{
+			pageModel.setRoles(Arrays.asList( Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER));
+			pageModel.setPrograms(user.getProgramsOfWhichAdministrator());
 		}
-		return visiblePrograms;
+		
+		return new ModelAndView(ROLES_PAGE_VIEW_NAME, "model", pageModel);
+	
 	}
+
+
 
 	private RegisteredUser getCurrentUser() {
 		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();

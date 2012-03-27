@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -22,12 +24,32 @@ public class RegisteredUserBuilder {
 	private String activationCode;
 	private Project projectOriginallyAppliedTo;
 
-	private List<Role> roles = new ArrayList<Role>();
+	private List<Role> roles = new ArrayList<Role>();	
+	private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
+	private List<Program> programsOfWhichApprover = new ArrayList<Program>();		
+	private List<Program> programsOfWhichReviewer = new ArrayList<Program>();
+	
+	
+	public RegisteredUserBuilder programsOfWhichAdministrator(Program...programs) {
+		this.programsOfWhichAdministrator.addAll(Arrays.asList(programs));
+		return this;
+	} 
+	
+	public RegisteredUserBuilder programsOfWhichApprover(Program...programs) {
+		this.programsOfWhichApprover.addAll(Arrays.asList(programs));
+		return this;
+	} 
+	
+	public RegisteredUserBuilder programsOfWhichReviewer(Program...programs) {
+		this.programsOfWhichReviewer.addAll(Arrays.asList(programs));
+		return this;
+	} 
 	
 	public RegisteredUserBuilder projectOriginallyAppliedTo(Project projectOriginallyAppliedTo) {
 		this.projectOriginallyAppliedTo = projectOriginallyAppliedTo;
 		return this;
 	}
+	
 	public RegisteredUserBuilder role(Role role) {
 		this.roles.add(role);
 		return this;
@@ -111,6 +133,9 @@ public class RegisteredUserBuilder {
 		user.setActivationCode(activationCode);
 		user.getRoles().addAll(roles);
 		user.setProjectOriginallyAppliedTo(projectOriginallyAppliedTo);
+		user.setProgramsOfWhichAdministrator(programsOfWhichAdministrator);
+		user.setProgramsOfWhichApprover(programsOfWhichApprover);
+		user.setProgramsOfWhichReviewer(programsOfWhichReviewer);
 		return user;
 	}
 

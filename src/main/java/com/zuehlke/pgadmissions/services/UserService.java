@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -60,34 +59,55 @@ public class UserService {
 	}
 
 	
-	@Transactional
+
 	public Role getRoleById(int id) {
 		return userDAO.getRoleById(id);
 		
 	}
 
-	@Transactional
+
 	public List<RegisteredUser> getAllUsers(){
 		return userDAO.getAllUsers();
 	}
 	
-	@Transactional
+	
 	public RegisteredUser getUserByUsername(String username) {
 		return userDAO.getUserByUsername(username);
 	}
 
-	@Transactional
+
 	public List<RegisteredUser> getSuperAdmins() {
-		List<RegisteredUser> allUsers = userDAO.getAllUsers();
-		List<RegisteredUser> superAdmins = new ArrayList<RegisteredUser>();
-		for (RegisteredUser registeredUser : allUsers) {
-			List<Role> roles = registeredUser.getRoles();
-			for (Role role : roles) {
-				if(role.getAuthorityEnum().equals((Authority.SUPERADMINISTRATOR))){
-					superAdmins.add(registeredUser);
-				}
+		return getUsersInRole(Authority.SUPERADMINISTRATOR);
+	}
+
+	public List<RegisteredUser> getAllUsersForProgram(Program program) {
+		return userDAO.getUsersForProgram(program);
+	}
+
+	
+	public List<RegisteredUser> getAllInternalUsers() {
+		List<RegisteredUser> availableUsers = new ArrayList<RegisteredUser>();
+		availableUsers.addAll(getUsersInRole(Authority.ADMINISTRATOR));
+		List<RegisteredUser> approvers = getUsersInRole(Authority.APPROVER);
+		for (RegisteredUser approver : approvers) {
+			if(!availableUsers.contains(approver)){
+				availableUsers.add(approver);
 			}
 		}
-		return superAdmins;
+		List<RegisteredUser> reviewers = getUsersInRole(Authority.REVIEWER);
+		for (RegisteredUser reviewer : reviewers) {
+			if(!availableUsers.contains(reviewer)){
+				availableUsers.add(reviewer);
+			}
+		}
+		List<RegisteredUser> superadmins = getUsersInRole(Authority.SUPERADMINISTRATOR);
+		for (RegisteredUser superadmin : superadmins) {
+			if(!availableUsers.contains(superadmin)){
+				availableUsers.add(superadmin);
+			}
+		}
+		return availableUsers;
 	}
+
+
 }

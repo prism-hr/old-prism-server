@@ -23,8 +23,17 @@ public class Program extends DomainObject<Integer> {
 	private String code;
 	private String title;
 	private String description;
+	
+	@ManyToMany
+	@JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "registered_user_id") })
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
+	
+	@ManyToMany
+	@JoinTable(name = "PROGRAM_ADMINISTRATOR_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "administrator_id") })
 	private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
+	
+	@ManyToMany
+	@JoinTable(name = "PROGRAM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
 	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
 
 	@Override
@@ -66,43 +75,38 @@ public class Program extends DomainObject<Integer> {
 		this.title = title;
 	}
 	
-	@ManyToMany
-	@JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "registered_user_id") })
-	@Access(AccessType.PROPERTY)
+	
+
 	public List<RegisteredUser> getApprovers() {
 		return approvers;
 	}
 	
 
 	public void setApprovers(List<RegisteredUser> approvers) {
-		//THIS IS A HACK. To be changed.
-		if(this.approvers.size() == approvers.size() && this.approvers.containsAll(approvers)){
-			return;
-		}
 		this.approvers.clear();
 		this.approvers.addAll(approvers);
 	}
 	
-	@ManyToMany
-	@JoinTable(name = "PROGRAM_ADMINISTRATOR_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "administrator_id") })
-	@Access(AccessType.PROPERTY)
+
 	public List<RegisteredUser> getAdministrators() {
 		return administrators;
 	}
 	
 	public void setAdministrators(List<RegisteredUser> administrators) {
-		this.administrators = administrators;
+		this.administrators.clear() ;
+		this.administrators.addAll(administrators);
+		
 	}
 	
-	@ManyToMany
-	@JoinTable(name = "PROGRAM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "program_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
-	@Access(AccessType.PROPERTY)
+
+
 	public List<RegisteredUser> getReviewers() {
 		return reviewers;
 	}
 	
 	public void setReviewers(List<RegisteredUser> reviewers) {
-		this.reviewers = reviewers;
+		this.reviewers.clear();
+		this.reviewers.addAll(reviewers);
 	}
 	
 	public boolean isApprover(RegisteredUser user) {

@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,16 +18,20 @@ import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.pagemodels.ManageUsersModel;
 
 public class UserServiceTest {
 
@@ -88,19 +93,69 @@ public class UserServiceTest {
 
 	@Test
 	public void shouldGetSuperAdministrators(){
-		Role super1 = new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).id(1).toRole();
-		Role reviewer = new RoleBuilder().authorityEnum(Authority.REVIEWER).id(2).toRole();
-		Role super2 = new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).id(3).toRole();
-		Role applicant = new RoleBuilder().authorityEnum(Authority.APPLICANT).id(4).toRole();
-		RegisteredUser userOne = new RegisteredUserBuilder().id(1).role(applicant).toUser();
-		RegisteredUser superAdmin1 = new RegisteredUserBuilder().id(2).role(super2).toUser();
-		RegisteredUser superAdmin2 = new RegisteredUserBuilder().id(3).roles(super1, reviewer).toUser();
-		RegisteredUser userTwo = new RegisteredUserBuilder().id(4).role(reviewer).toUser();
-		EasyMock.expect(userDAOMock.getAllUsers()).andReturn(Arrays.asList(userOne, userTwo, superAdmin1, superAdmin2));
+		Role superAdminRole = new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).id(1).toRole();		
+		
+		RegisteredUser superAdmin1 = new RegisteredUserBuilder().id(2).role(superAdminRole).toUser();
+		RegisteredUser superAdmin2 = new RegisteredUserBuilder().id(3).roles(superAdminRole).toUser();
+		
+		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.SUPERADMINISTRATOR)).andReturn(superAdminRole);
+		EasyMock.replay(roleDAOMock);
+		EasyMock.expect(userDAOMock.getUsersInRole(superAdminRole)).andReturn(Arrays.asList(superAdmin1, superAdmin2));
 		EasyMock.replay(userDAOMock);
 		List<RegisteredUser> superAdmins = userService.getSuperAdmins();
 		assertEquals(2, superAdmins.size());
 		assertTrue(superAdmins.containsAll(Arrays.asList(superAdmin1, superAdmin2)));
+	}
+	
+	@Test
+	public void shouldGetAllUsersForProgram(){
+		RegisteredUser userOne = new RegisteredUserBuilder().id(2).toUser();
+		RegisteredUser userTow = new RegisteredUserBuilder().id(3).toUser();
+		Program program = new ProgramBuilder().id(7).toProgram();
+		EasyMock.expect(userDAOMock.getUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTow));
+		EasyMock.replay(userDAOMock);
+		List<RegisteredUser> users = userService.getAllUsersForProgram(program);
+		assertEquals(2, users.size());
+		assertTrue(users.containsAll(Arrays.asList(userOne, userTow)));
+	}
+	
+	@Test
+	public void shouldGetAllInternalUsers(){
+		final RegisteredUser userOne = new RegisteredUserBuilder().id(1).toUser();
+		final RegisteredUser userTwo = new RegisteredUserBuilder().id(2).toUser();
+		final RegisteredUser userThree = new RegisteredUserBuilder().id(3).toUser();
+		final RegisteredUser userFour = new RegisteredUserBuilder().id(4).toUser();
+		final RegisteredUser userFive = new RegisteredUserBuilder().id(5).toUser();
+		userService = new UserService(userDAOMock, roleDAOMock){
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public List<RegisteredUser> getUsersInRole(Authority auth) {
+				if(auth == Authority.ADMINISTRATOR){
+					return Arrays.asList(userOne, userTwo);
+				}
+				if(auth == Authority.APPROVER){
+					 return Arrays.asList(userTwo, userThree);
+				}
+				if(auth == Authority.REVIEWER){
+					 return Arrays.asList(userThree, userFour);
+				}
+				if(auth == Authority.SUPERADMINISTRATOR){
+					 return Arrays.asList(userFour, userOne);
+				}
+				if(auth == Authority.APPLICANT){
+					 return Arrays.asList(userFour, userFive);
+				}
+				return Collections.EMPTY_LIST;
+			}
+			
+		};
+		
+
+		List<RegisteredUser> internalUsers= userService.getAllInternalUsers();
+	
+		assertEquals(4, internalUsers.size());
+		assertTrue(internalUsers.containsAll(Arrays.asList(userOne, userTwo, userThree, userFour)));
 	}
 	
 	@Before

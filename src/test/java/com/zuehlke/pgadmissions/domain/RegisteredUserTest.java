@@ -1,23 +1,21 @@
 package com.zuehlke.pgadmissions.domain;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class RegisteredUserTest {
@@ -140,5 +138,31 @@ public class RegisteredUserTest {
 	}
 	
 	
+	@Test
+	public void shouldReturnListOfAuthoritiesForProgram(){
+		Program program = new ProgramBuilder().id(1).toProgram();
+		RegisteredUser user = new RegisteredUserBuilder().programsOfWhichAdministrator(program).programsOfWhichApprover(program).programsOfWhichReviewer(program).toUser();
+		List<Authority> authorities = user.getAuthoritiesForProgram(program);
+		assertEquals(3, authorities.size());
+		assertEquals(Authority.ADMINISTRATOR, authorities.get(0));
+		assertEquals(Authority.REVIEWER, authorities.get(1));
+		assertEquals(Authority.APPROVER, authorities.get(2));
+	}
+	
+	@Test
+	public void shouldReturnCommaSeparatedListOfAuthoritiesForProgram(){
+		Program program = new ProgramBuilder().id(1).toProgram();
+		RegisteredUser user = new RegisteredUserBuilder().programsOfWhichAdministrator(program).programsOfWhichApprover(program).programsOfWhichReviewer(program).toUser();
+		assertEquals("Administrator, Reviewer, Approver", user.getAuthoritiesForProgramAsString(program));
+	
+	}
+	
+	@Test
+	public void shouldAddSuperAdminToReturnCommaSeparatedListIfSuperadmin(){
+		Program program = new ProgramBuilder().id(1).toProgram();
+		RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).programsOfWhichAdministrator(program).programsOfWhichApprover(program).programsOfWhichReviewer(program).toUser();
+		assertEquals("Superadministrator, Administrator, Reviewer, Approver", user.getAuthoritiesForProgramAsString(program));
+	
+	}
 	
 }

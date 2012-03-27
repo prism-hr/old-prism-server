@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.springframework.validation.BindingResult;
@@ -10,7 +9,6 @@ import org.springframework.validation.ObjectError;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
 
 public class PageModel {
 
@@ -20,7 +18,6 @@ public class PageModel {
 	private List<ApplicationReview> applicationComments = new ArrayList<ApplicationReview>();
 	private String view;
 	private BindingResult result;
-	private String userRoles;
 	private List<String> globalErrorCodes = new ArrayList<String>();
 
 	public BindingResult getResult() {
@@ -57,7 +54,7 @@ public class PageModel {
 
 	public void setUser(RegisteredUser user) {
 		this.user = user;
-		setUserRoles(user);
+		//setUserRoles(user);
 	}
 
 	public List<ApplicationReview> getApplicationComments() {
@@ -80,21 +77,6 @@ public class PageModel {
 		return false;
 	}
 
-	private void setUserRoles(RegisteredUser user) {
-		StringBuilder userRoles = new StringBuilder();
-		Collection<Role> authorities = user.getAuthorities();
-		if (user != null && authorities!= null) {
-			for (Role role : authorities) {
-				userRoles.append(role.getAuthority());
-				userRoles.append(";");
-			}
-		}
-		this.userRoles = userRoles.toString();
-	}
-
-	public String getUserRoles() {
-		return userRoles;
-	}
 
 	public List<String> getGlobalErrorCodes() {
 		return globalErrorCodes;

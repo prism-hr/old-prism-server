@@ -10,6 +10,8 @@ public class SupervisorBuilder {
 	private AwareStatus awareSupervisor;
 	private PrimaryStatus primarySupervisor;
 	private String email;
+	private String firstname;
+	private String lastname;
 
 	public SupervisorBuilder id(Integer id) {
 		this.id = id;
@@ -31,10 +33,22 @@ public class SupervisorBuilder {
 		return this;
 	}
 
+	public SupervisorBuilder firstname(String firstname) {
+		this.firstname = firstname;
+		return this;
+	}
+	
+	public SupervisorBuilder lastname(String lastname) {
+		this.lastname = lastname;
+		return this;
+	}
+	
 	public Supervisor toSupervisor() {
 		Supervisor supervisor = new Supervisor();
 		supervisor.setId(id);
 		supervisor.setEmail(email);
+		supervisor.setFirstname(firstname);
+		supervisor.setLastname(lastname);
 		supervisor.setAwareSupervisor(awareSupervisor);
 		supervisor.setPrimarySupervisor(primarySupervisor);
 		return supervisor;

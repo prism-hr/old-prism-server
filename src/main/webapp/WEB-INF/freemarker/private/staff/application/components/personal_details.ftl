@@ -214,27 +214,12 @@
                 </div>
                 
               	<div>
-              		<#if (model.applicationForm.personalDetails.messengers?size > 0)>
-                	 	<#list model.applicationForm.personalDetails.messengers as messenger >
-	                  	  	<span>
-	                  	  		<div class="row">
-	                  	  	 		<span class="label">Skype</span>    
-	                  				<div class="field">
-	                  					<label class="full">${messenger.messengerAddress}</label>                   	  				
-	                  	  			</div>                  	  			
-	                  	  		</div>  
-	   
-	                  	  	</span>
-                  	 	</#list>
-              	  <#else>
-                	<span>
-              	  		<div class="row">
-              	  	 		<span class="label">Skype</span>    
-              				<div class="field">-</div>                  	  			
-              	  		</div>                                
-              	  	</span>
-            	</#if>
-                </div>
+              	<div class="row">
+                		<span class="label">Skype</span>
+                    	<div class="field">
+	                    	${model.applicationForm.personalDetails.messenger!}
+                    	</div>
+                  	</div>
 
               	<div class="buttons" id="show-comment-button-div">
               		<#if model.user??>

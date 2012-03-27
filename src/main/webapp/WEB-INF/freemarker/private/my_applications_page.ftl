@@ -53,6 +53,7 @@
 				      </#if>
 				      
 				      <!-- content box -->
+				      <input type="hidden" id="appList" name="appList" />
 				      <div class="content-box">
 				        <div class="content-box-inner">
 							<!-- confirmation message if application just submitted with email coming soon confirmation -->
@@ -113,7 +114,7 @@
 							                	${(application.submittedDate?string("dd-MMM-yyyy hh:mm a"))!} 
 							               		 </#if>
 							               	</td>
-							                <td class="centre"><input type="checkbox" name="select" disabled="disabled" /></td>
+							                <td class="centre"><input type="checkbox" name="appDownload" id="appDownload_${application.id?string("######")}"/></td>
 						              	</tr>
 					              	</#list>
 					            </tbody>
@@ -123,7 +124,7 @@
 				            <#if (model.user.isInRole('SUPERADMINISTRATOR') || model.user.isInRole('ADMINISTRATOR'))>
                                 <a id="manageUsersButton" class="button">Manage Users</a>
                             </#if>
-				          	<a href="#" class="button">Download - coming soon</a>
+				          	<a class="button" name="downloadAll" id="downloadAll">Download</a>
 				          	<#include "/private/common/feedback.ftl"/>
 				          </p>
                     	  

@@ -70,6 +70,14 @@ public class PdfDocumentBuilder {
 	private void addSectionSeparators(Document document) throws DocumentException {
 		document.add(new Paragraph(" "));
 	}
+	
+	private void addCorrectOutputDependingOnNull(Document document, String fieldValue, String fieldLabel) throws DocumentException {
+		if (fieldValue == null) {
+			document.add(new Paragraph(createMessage(fieldLabel.toLowerCase())));
+		} else {
+			document.add(new Paragraph(fieldLabel+": "+fieldValue));
+		}
+	}
 
 	private void addProgrammeSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Programme", greyFont));
@@ -81,7 +89,7 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Study Option: "+application.getProgrammeDetails().getStudyOption().displayValue()));
 		}
 
-		document.add(new Paragraph("Project: "+application.getProject().getTitle()));
+		addCorrectOutputDependingOnNull(document, application.getProject().getTitle(), "Project");
 
 		if (application.getProgrammeDetails().getStartDate() == null) {
 			document.add(new Paragraph(createMessage("start date")));
@@ -95,11 +103,12 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Referrer: "+application.getProgrammeDetails().getReferrer().displayValue()));
 		}
 
-		document.add(new Paragraph(" "));
 
 		if (application.getProgrammeDetails().getSupervisors().isEmpty()) {
 			document.add(new Paragraph(createMessage("supervisors information")));
 		} else {
+			document.add(new Paragraph("Supervisor", smallBoldFont));
+			document.add(new Paragraph(" "));
 
 			PdfPTable table = new PdfPTable(3);
 			table.setWidthPercentage (100.0f);

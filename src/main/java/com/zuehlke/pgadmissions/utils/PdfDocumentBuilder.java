@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.utils;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -72,7 +74,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addCorrectOutputDependingOnNull(Document document, String fieldValue, String fieldLabel) throws DocumentException {
-		if (fieldValue == null) {
+		if (StringUtils.isBlank(fieldValue)) {
 			document.add(new Paragraph(createMessage(fieldLabel.toLowerCase())));
 		} else {
 			document.add(new Paragraph(fieldLabel+": "+fieldValue));
@@ -312,7 +314,7 @@ public class PdfDocumentBuilder {
 		if (application.getQualifications().isEmpty()) {
 			document.add(new Paragraph(createMessage("qualification information")));
 		} else {
-			
+
 			for (Qualification qualification : application.getQualifications()) {
 				document.add(new Paragraph("Provider: " + qualification.getQualificationInstitution()));
 				document.add(new Paragraph("Programme: "+ qualification.getQualificationProgramName()));
@@ -376,35 +378,38 @@ public class PdfDocumentBuilder {
 	private void addReferencesSection(ApplicationForm application, Document document) throws DocumentException {
 
 		document.add(new Paragraph("References", greyFont));
-		for (Referee reference : application.getReferees()) {
-			document.add(new Paragraph("First Name: " + reference.getFirstname()));
-			document.add(new Paragraph("Last Name: " + reference.getLastname()));
-			document.add(new Paragraph("Relationship: " + reference.getRelationship()));
-			document.add(new Paragraph("Position", smallBoldFont));
-
-			document.add(new Paragraph("Employer: " + reference.getJobEmployer()));
-			document.add(new Paragraph("Title: " + reference.getJobTitle()));
-
-			document.add(new Paragraph("Address", smallBoldFont));
-			document.add(new Paragraph("Location: " + reference.getAddressLocation()));
-			document.add(new Paragraph("Postal Code: " + reference.getAddressPostcode()));
-			if (reference.getAddressCountry() != null) {
-				document.add(new Paragraph("Country: " + reference.getAddressCountry().getName()));
-			} else {
-				document.add(new Paragraph(createMessage("country")));
-			}
-
-			document.add(new Paragraph("Contact Details", smallBoldFont));
-			document.add(new Paragraph("Email: " + reference.getEmail()));
-			addTelephones(application, document, reference.getPhoneNumbers());
-			document.add(new Paragraph("Skype: " + reference.getMessenger()));
-
-			document.add(new Paragraph(" "));
-		}
 
 		if (application.getReferees().isEmpty()) {
 			document.add(new Paragraph(createMessage("references information")));
+		} else {
+			
+			for (Referee reference : application.getReferees()) {
+				document.add(new Paragraph("First Name: " + reference.getFirstname()));
+				document.add(new Paragraph("Last Name: " + reference.getLastname()));
+				document.add(new Paragraph("Relationship: " + reference.getRelationship()));
+				
+				document.add(new Paragraph("Position", smallBoldFont));
+				addCorrectOutputDependingOnNull(document, reference.getJobEmployer(), "Employer");
+				addCorrectOutputDependingOnNull(document, reference.getJobTitle(), "Title");
+
+				document.add(new Paragraph("Address", smallBoldFont));
+				addCorrectOutputDependingOnNull(document, reference.getAddressLocation(), "Location");
+				addCorrectOutputDependingOnNull(document, reference.getAddressPostcode(), "Postal Code");
+				if (reference.getAddressCountry() != null) {
+					document.add(new Paragraph("Country: " + reference.getAddressCountry().getName()));
+				} else {
+					document.add(new Paragraph(createMessage("country")));
+				}
+
+				document.add(new Paragraph("Contact Details", smallBoldFont));
+				document.add(new Paragraph("Email: " + reference.getEmail()));
+				addTelephones(application, document, reference.getPhoneNumbers());
+				addCorrectOutputDependingOnNull(document, reference.getMessenger(), "Skype");
+
+				document.add(new Paragraph(" "));
+			}
 		}
+
 	}
 
 	private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {

@@ -209,9 +209,7 @@ public class PdfDocumentBuilder {
 
 		document.add(table);
 
-		document.add(new Paragraph("Skype", smallBoldFont));
-		document.add(new Paragraph(application.getPersonalDetails().getMessenger()));
-			document.add(new Paragraph("- "+application.getPersonalDetails().getMessenger()));
+		document.add(new Paragraph("Skype: " + application.getPersonalDetails().getMessenger()));
 		}
 
 

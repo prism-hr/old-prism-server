@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.utils;
 
+import java.util.List;
+
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -16,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
@@ -55,6 +58,10 @@ public class PdfDocumentBuilder {
 
 		addFundingSection(application, document);
 
+		addSectionSeparators(document);
+		
+		addReferencesSection(application, document);
+		
 		addSectionSeparators(document);
 
 		addAdditionalInformationSection(application, document);
@@ -191,6 +198,14 @@ public class PdfDocumentBuilder {
 		document.add(new Paragraph("Contact Details", smallBoldFont));
 		document.add(new Paragraph("Email: " + application.getPersonalDetails().getEmail()));
 
+		addTelephones(application, document, application.getPersonalDetails().getPhoneNumbers());
+
+		document.add(new Paragraph("Skype: " + application.getPersonalDetails().getMessenger()));
+	}
+
+	private void addTelephones(ApplicationForm application, Document document, List<Telephone> phoneNumbers) throws DocumentException {
+		PdfPTable table;
+		PdfPCell c1;
 		document.add(new Paragraph("Telephone", smallBoldFont));
 		if (application.getPersonalDetails().getPhoneNumbers().size() > 0) {
 			document.add(new Paragraph(" "));
@@ -207,14 +222,12 @@ public class PdfDocumentBuilder {
 		table.addCell(c1);
 		table.setHeaderRows(1);
 
-		for (Telephone telephone : application.getPersonalDetails().getPhoneNumbers()) {
+		for (Telephone telephone : phoneNumbers) {
 			table.addCell(telephone.getTelephoneType().getDisplayValue());
 			table.addCell(telephone.getTelephoneNumber());
 		}
 
 		document.add(table);
-
-		document.add(new Paragraph("Skype: " + application.getPersonalDetails().getMessenger()));
 	}
 
 
@@ -333,6 +346,40 @@ public class PdfDocumentBuilder {
 
 		if (application.getFundings().isEmpty()) {
 			document.add(new Paragraph(createMessage("funding information")));
+		}
+	}
+	
+	private void addReferencesSection(ApplicationForm application, Document document) throws DocumentException {
+		
+		document.add(new Paragraph("References", greyFont));
+		for (Referee reference : application.getReferees()) {
+			document.add(new Paragraph("First Name: " + reference.getFirstname()));
+			document.add(new Paragraph("Last Name: " + reference.getLastname()));
+			document.add(new Paragraph("Relationship: " + reference.getRelationship()));
+			document.add(new Paragraph("Position", smallBoldFont));
+			
+			document.add(new Paragraph("Employer: " + reference.getJobEmployer()));
+			document.add(new Paragraph("Title: " + reference.getJobTitle()));
+			
+			document.add(new Paragraph("Address", smallBoldFont));
+			document.add(new Paragraph("Location: " + reference.getAddressLocation()));
+			document.add(new Paragraph("Postal Code: " + reference.getAddressPostcode()));
+			if (reference.getAddressCountry() != null) {
+			document.add(new Paragraph("Country: " + reference.getAddressCountry().getName()));
+			} else {
+				document.add(new Paragraph(createMessage("country")));
+			}
+			
+			document.add(new Paragraph("Contact Details", smallBoldFont));
+			document.add(new Paragraph("Email: " + reference.getEmail()));
+			addTelephones(application, document, reference.getPhoneNumbers());
+			document.add(new Paragraph("Skype: " + reference.getMessenger()));
+			
+			document.add(new Paragraph(" "));
+		}
+		
+		if (application.getReferees().isEmpty()) {
+			document.add(new Paragraph(createMessage("references information")));
 		}
 	}
 

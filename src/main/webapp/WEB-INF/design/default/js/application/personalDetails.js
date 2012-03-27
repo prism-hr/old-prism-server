@@ -240,7 +240,7 @@ $(document).ready(function(){
 				dateOfBirth: $("#dateOfBirth").val(),
 				residenceCountry: $("#residenceCountry").val(),
 				residenceStatus: $("#residenceStatus").val(),
-				messenger: $("#messenger").val(),
+				messenger: $("#pd_messenger").val(),
 				personalDetailsId: $("#id").val(), 
 				application: $("#appId").val(),		
 				languageProficiencies:"",

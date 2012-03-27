@@ -57,10 +57,13 @@ $(document).ready(function(){
 			
 		
 			$('#supervisor_div').append('<span name="supervisor_span">'+ 
-					$('#supervisorFirstname').val()+", "+ $('#supervisorLastname').val()+", "+
+					"Name: " + $('#supervisorFirstname').val()+" "+ $('#supervisorLastname').val()+", Email: "+
 					$('#supervisorEmail').val()+ ", Primary:" + $('#primarySupervisor').val() +", Aware:" + $('#awareSupervisor').val() +'<a class="button-delete">delete</a>'+
 					'<input type="hidden" name="supervisors" value=' +"'" + '{"firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val()+ '", "primarySupervisor":"' + $('#primarySupervisor').val() + '", "awareSupervisor":"' + $('#awareSupervisor').val()+ '"} ' + "'" + "/>"									
 					+'<br/></span>');
+			$('#supervisorFirstname').val('')
+			$('#supervisorLastname').val('')
+			$('#supervisorEmail').val('')
 		}
 	})
 	

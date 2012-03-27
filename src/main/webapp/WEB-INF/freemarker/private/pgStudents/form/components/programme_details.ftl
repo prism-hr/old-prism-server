@@ -78,8 +78,8 @@
                     </#if>
                    <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
                    <span name="supervisor_span">
-                         ${supervisor.firstname}, ${supervisor.lastname}, ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
-                       <input type="hidden" name="supervisors" value='{"firstname" :"${supervisor.firstname}","lastname" :"${supervisor.lastname}","email" :"${supervisor.email}", "primarySupervisor":"${supervisor.primarySupervisor}", "awareSupervisor":"${supervisor.awareSupervisor}"}' />                             
+                         ${supervisor.firstname!}, ${supervisor.lastname!}, ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
+                       <input type="hidden" name="supervisors" value='{"firstname" :"${supervisor.firstname!}","lastname" :"${supervisor.lastname!}","email" :"${supervisor.email}", "primarySupervisor":"${supervisor.primarySupervisor}", "awareSupervisor":"${supervisor.awareSupervisor}"}' />                             
                        <p></p>
                   </span>
                   </#list>

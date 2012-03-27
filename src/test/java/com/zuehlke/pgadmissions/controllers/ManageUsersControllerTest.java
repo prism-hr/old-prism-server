@@ -18,8 +18,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.pagemodels.ManageUsersModel;
@@ -45,6 +47,8 @@ public class ManageUsersControllerTest {
 	@Test
 	public void shouldReturnCorrectView() {
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();		
+		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
+		EasyMock.expect(currentUser.getAuthorities()).andReturn(Arrays.asList(role)).anyTimes();		
 		EasyMock.replay(currentUser);
 		 ModelAndView modelAndView = manageUsersController.getUsersPage(null, null);
 		 ManageUsersModel model = (ManageUsersModel) modelAndView.getModel().get("model");
@@ -55,7 +59,9 @@ public class ManageUsersControllerTest {
 	
 	@Test
 	public void shouldGetCurrentUserFromSecurityContextAndSetOnModel() {
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();		
+		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();	
+		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
+		EasyMock.expect(currentUser.getAuthorities()).andReturn(Arrays.asList(role)).anyTimes();	
 		EasyMock.replay(currentUser);
 		 ModelAndView modelAndView = manageUsersController.getUsersPage(null, null);
 		 ManageUsersModel model = (ManageUsersModel) modelAndView.getModel().get("model");
@@ -65,7 +71,9 @@ public class ManageUsersControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldAddProgramAndUsesInProgramToModelIfProvided(){
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();		
+		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();	
+		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
+		EasyMock.expect(currentUser.getAuthorities()).andReturn(Arrays.asList(role)).anyTimes();	
 		EasyMock.replay(currentUser);
 		Program program = new ProgramBuilder().id(5).toProgram();
 		EasyMock.expect(programsServiceMock.getProgramById(5)).andReturn(program);
@@ -87,7 +95,9 @@ public class ManageUsersControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldAddUserToModelIfProvided(){
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();		
+		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();	
+		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
+		EasyMock.expect(currentUser.getAuthorities()).andReturn(Arrays.asList(role)).anyTimes();	
 		EasyMock.replay(currentUser);
 		RegisteredUser user = new RegisteredUserBuilder().id(5).toUser();
 		EasyMock.expect(userServiceMock.getUser(5)).andReturn(user);
@@ -101,7 +111,9 @@ public class ManageUsersControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldReturnCorrectPossibleRolesForSuperadmin(){
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();			
+		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();	
+		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
+		EasyMock.expect(currentUser.getAuthorities()).andReturn(Arrays.asList(role)).anyTimes();	
 		EasyMock.replay(currentUser);	
 		
 		EasyMock.expect(programsServiceMock.getAllPrograms()).andReturn(Collections.EMPTY_LIST);
@@ -116,6 +128,8 @@ public class ManageUsersControllerTest {
 	@Test
 	public void shouldReturnCorrectPossibleRolesForAdmin(){
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
+		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
+		EasyMock.expect(currentUser.getAuthorities()).andReturn(Arrays.asList(role)).anyTimes();	
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true).anyTimes();
 		EasyMock.expect(currentUser.getProgramsOfWhichAdministrator()).andReturn(Collections.EMPTY_LIST);
 		EasyMock.replay(currentUser);	
@@ -128,6 +142,8 @@ public class ManageUsersControllerTest {
 	@Test
 	public void shouldReturnAllProgramsForSuperAdmin(){
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();			
+		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
+		EasyMock.expect(currentUser.getAuthorities()).andReturn(Arrays.asList(role)).anyTimes();	
 		EasyMock.replay(currentUser);	
 		
 		Program programOne = new ProgramBuilder().id(1).toProgram();
@@ -145,7 +161,9 @@ public class ManageUsersControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldReturnAllInternalUsers(){
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();			
+		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();		
+		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
+		EasyMock.expect(currentUser.getAuthorities()).andReturn(Arrays.asList(role)).anyTimes();	
 		EasyMock.replay(currentUser);	
 		EasyMock.expect(programsServiceMock.getAllPrograms()).andReturn(Collections.EMPTY_LIST);
 		EasyMock.replay(programsServiceMock);
@@ -171,6 +189,8 @@ public class ManageUsersControllerTest {
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true).anyTimes();	
 		EasyMock.expect(currentUser.getProgramsOfWhichAdministrator()).andReturn(Arrays.asList(programOne, programTwo));
+		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
+		EasyMock.expect(currentUser.getAuthorities()).andReturn(Arrays.asList(role)).anyTimes();	
 		EasyMock.replay(currentUser);	
 		
 		

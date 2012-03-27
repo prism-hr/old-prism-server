@@ -162,9 +162,9 @@ public class PdfDocumentBuilder {
 		PdfPTable table;
 		PdfPCell c1;
 
-		addGivenNationality(application, document, "Nationality", application.getPersonalDetails().getCandidateNationalities());
-		addGivenNationality(application, document, "Maternal Guardian Nationality", application.getPersonalDetails().getMaternalGuardianNationalities());
-		addGivenNationality(application, document, "Paternal Guardian Nationality", application.getPersonalDetails().getPaternalGuardianNationalities());
+		addGivenNationality(document, "Nationality", application.getPersonalDetails().getCandidateNationalities());
+		addGivenNationality(document, "Maternal Guardian Nationality", application.getPersonalDetails().getMaternalGuardianNationalities());
+		addGivenNationality(document, "Paternal Guardian Nationality", application.getPersonalDetails().getPaternalGuardianNationalities());
 
 		document.add(new Paragraph("Language", smallBoldFont));
 		if (application.getPersonalDetails().getLanguageProficiencies().size() > 0) {
@@ -245,9 +245,9 @@ public class PdfDocumentBuilder {
 	}
 
 
-	private void addGivenNationality(ApplicationForm application, Document document, String header, java.util.List<Nationality> nationalities) throws DocumentException {
+	private void addGivenNationality(Document document, String header, java.util.List<Nationality> nationalities) throws DocumentException {
 		document.add(new Paragraph(header, smallBoldFont));
-		if (application.getPersonalDetails().getCandidateNationalities().size() > 0) {
+		if (!nationalities.isEmpty()) {
 			document.add(new Paragraph(" "));
 
 			PdfPTable table = new PdfPTable(2);
@@ -281,7 +281,6 @@ public class PdfDocumentBuilder {
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Address", greyFont));
 
-		int counter = 1;
 		for (Address address : application.getAddresses()) {
 			document.add(new Paragraph("Location: "+address.getLocation()));
 			document.add(new Paragraph("Postal Code: "+address.getPostCode()));
@@ -291,6 +290,8 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("From: "+address.getStartDate().toString()));
 			if (address.getEndDate() != null) {
 				document.add(new Paragraph("To: "+address.getEndDate().toString()));
+			} else {
+				document.add(new Paragraph(createMessage("end date")));
 			}
 
 			document.add(new Paragraph("Purpose: "+address.getPurpose().getDisplayValue()));

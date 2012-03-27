@@ -217,17 +217,13 @@
 
 	                  	<!-- Skype address -->
 	                  	<div class="row">
-	                    	<span class="label">Skype</span>
-	                    	<span class="hint"></span>
-	                    	<div class="field" id="messengersref">
-	                    		<#list model.referee.messengers! as messenger>
-	                    			<span name="messenger_ref">
-                   		 				${messenger.messengerAddress}
-									</span>
-	                      		</#list>
-	                    	</div>
-	                  	</div>
-                  	
+                    		<span class="label">Skype</span>
+                    		<span class="hint"></span>
+                    		<div class="field">
+                    		<input readonly="readonly" class="full" type="email" id="ref_email" name="ref_email" value="${model.referee.messenger!}"/>
+                    		</div>
+                  		</div>
+                  		
                 	</div>
 						<div>
 	                  	            

@@ -75,12 +75,7 @@
 		                      				</span>
 									</#list>
 									
-									<#list referee.messengers! as messenger>
-									<span name="${referee.id!}_hiddenMessengers" style="display:none" >
-                   		 				${messenger.messengerAddress!}
-										<input type="hidden" name="messengers" value='{"address":"${messenger.messengerAddress!}"}' />								
-									</span>
-                   				 	</#list>
+									<input type="hidden" id="${referee.id!}_messenger" value="${referee.messenger!}"/>   
 
 			                  	</tr>
 		                  	</#list>
@@ -220,7 +215,7 @@
                     		<span class="label">Skype</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<input readonly="readonly" class="full" type="email" id="ref_email" name="ref_email" value="${model.referee.messenger!}"/>
+                    		<input readonly="readonly" class="full" type="email" id="ref_messenger" name="ref_messenger" value="${model.referee.messenger!}"/>
                     		</div>
                   		</div>
                   		

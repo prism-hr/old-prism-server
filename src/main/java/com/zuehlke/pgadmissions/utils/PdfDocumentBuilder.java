@@ -57,7 +57,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addProgrammeSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Programme", purpleFont));
+		document.add(new Paragraph("Programme", greyFont));
 		document.add(new Paragraph("Programme: "+application.getProject().getProgram().getTitle()));
 
 		if (application.getProgrammeDetails().getStudyOption() == null) {
@@ -239,7 +239,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Address", redFont));
+		document.add(new Paragraph("Address", greyFont));
 
 		List list = new List(true, false, application.getAddresses().size());
 		for (Address address : application.getAddresses()) {
@@ -264,7 +264,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addFundingSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Funding", greenFont));
+		document.add(new Paragraph("Funding", greyFont));
 	}
 	
 	private String createMessage(String fieldName) {

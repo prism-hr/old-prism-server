@@ -58,6 +58,7 @@ public class PrintController {
 			//HTMLWorker htmlWorker = new HTMLWorker(document);
 			//String htmlSource = buildHtml();
 			//htmlWorker.parse(new StringReader(htmlSource));
+			
 			builder.buildDocument(application, document);
 			document.close();
 

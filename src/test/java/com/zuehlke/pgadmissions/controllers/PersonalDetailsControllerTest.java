@@ -224,7 +224,7 @@ public class PersonalDetailsControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(currentUser).toApplicationForm();
-		PersonalDetail personalDetail = new PersonalDetailsBuilder().id(5).applicationForm(form).toPersonalDetails();
+		PersonalDetail personalDetail = new PersonalDetailsBuilder().id(5).applicationForm(form).messengers("skypeAddress").toPersonalDetails();
 		personalDetailsServiceMock.save(personalDetail);
 		Country country1 = new CountryBuilder().id(1).toCountry();
 		Country country2 = new CountryBuilder().id(2).toCountry();
@@ -240,7 +240,8 @@ public class PersonalDetailsControllerTest {
 		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
 		assertNotNull(model);
 		assertEquals(form, model.getApplicationForm());
-		assertEquals(currentUser, model.getUser());
+		assertEquals(form, model.getApplicationForm());
+		assertEquals("skypeAddress", model.getApplicationForm().getPersonalDetails().getMessenger());
 		assertEquals(errorsMock, model.getResult());
 		assertSame(countryList, model.getCountries());
 		assertSame(languages, model.getLanguages());

@@ -394,9 +394,9 @@
                     <span class="hint"></span>
                     <div class="field">                    	
                     <#if !model.applicationForm.isSubmitted()>
-                    	<input class="full" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="messenger" id="messenger"/>
+                    	<input class="full" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="pd_messenger" id="pd_messenger"/>
                     	<#else>
-                    		<input class="full" readonly="readonly" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="messenger" id="messenger" />	          
+                    		<input class="full" readonly="readonly" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="pd_messenger" id="pd_messenger" />	          
                     	</#if>
                     </div>
                 </div>

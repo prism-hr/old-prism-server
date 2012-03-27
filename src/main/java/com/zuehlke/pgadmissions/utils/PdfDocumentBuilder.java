@@ -11,6 +11,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Nationality;
@@ -45,6 +46,10 @@ public class PdfDocumentBuilder {
 		addSectionSeparators(document);
 
 		addQualificationSection(application, document);
+
+		addSectionSeparators(document);
+
+		addEmploymentSection(application, document);
 
 		addSectionSeparators(document);
 
@@ -210,7 +215,7 @@ public class PdfDocumentBuilder {
 		document.add(table);
 
 		document.add(new Paragraph("Skype: " + application.getPersonalDetails().getMessenger()));
-		}
+	}
 
 
 	private void addGivenNationality(ApplicationForm application, Document document, String header, java.util.List<Nationality> nationalities) throws DocumentException {
@@ -289,6 +294,29 @@ public class PdfDocumentBuilder {
 
 		if (application.getQualifications().isEmpty()) {
 			document.add(new Paragraph(createMessage("qualification information")));
+		}
+	}
+
+	private void addEmploymentSection(ApplicationForm application, Document document) throws DocumentException {
+		document.add(new Paragraph("Employment", greyFont));
+		for (EmploymentPosition employment : application.getEmploymentPositions()) {
+			document.add(new Paragraph("Employer: " + employment.getPosition_employer()));
+			document.add(new Paragraph("Position: " + employment.getPosition_title()));
+			document.add(new Paragraph("Remit: " +  employment.getPosition_remit()));
+			document.add(new Paragraph("Start Date: " + employment.getPosition_startDate().toString()));
+			if (employment.getPosition_endDate() == null) {
+				document.add(new Paragraph(createMessage("end date")));
+			} else {
+				document.add(new Paragraph("End Date: " + employment.getPosition_endDate().toString()));
+			}
+			
+			document.add(new Paragraph("Language of Work: " + employment.getPosition_language().getName()));
+
+			document.add(new Paragraph(" "));
+		}
+
+		if (application.getEmploymentPositions().isEmpty()) {
+			document.add(new Paragraph(createMessage("employment information")));
 		}
 	}
 

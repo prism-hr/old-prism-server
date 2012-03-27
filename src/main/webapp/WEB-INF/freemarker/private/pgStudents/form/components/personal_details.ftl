@@ -32,28 +32,14 @@
                   	<label class="label">First Name</label>
                     <span class="hint"></span>
                     <div class="field">                    	
-                    <#if !model.applicationForm.isSubmitted()>
-                    	<input class="full" type="text" value="${model.user.firstName!}" name="firstName" id="firstName"/>
-                    	<#if model.hasError('firstName')>                    		
-                    			<span class="invalid"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
-                    	</#if>
-                    	<#else>
-                    		<input class="full" readonly="readonly" type="text" value="${model.user.firstName!}" name="firstName" id="firstName" />	          
-                    	</#if>
+                    		<input class="full" readonly="readonly" type="text" value="${model.user.firstName!}" />	          
                     </div>
                   </div>
                 	<div class="row">
                   	<label class="label">Last Name</label>
                     <span class="hint"></span>
                     <div class="field">
-                     <#if !model.applicationForm.isSubmitted()>
-                    	<input class="full" type="text" value="${model.user.lastName!}" name="lastName" id="lastName"/>
-                    	<#if model.hasError('lastName')>                    		
-                    			<span class="invalid"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
-                    	</#if>
-                    <#else>
-                    		<input class="full" readonly="readonly" type="text" value="${model.user.lastName!}" name="lastName" id="lastName" />	          
-                    </#if>
+                    		<input class="full" readonly="readonly" type="text" value="${model.user.lastName!}"  />	          
                     </div>
                   </div>
                 	<div class="row">
@@ -338,14 +324,7 @@
                 		<span class="label">Email</span>
                     <span class="hint"></span>
                     <div class="field">
-                        <#if !model.applicationForm.isSubmitted()>
-	                    	<input class="full" type="email" value="${model.user.email!}" name="email" id="email" />	                    
-	                     	<#if model.hasError('email')>                    		
-                    			<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                    		
-                    		</#if>
-                    	<#else>
-                    		<input class="full" readonly="readonly" type="email" value="${model.user.email!}" name="email" id="email" />	          
-                    	</#if>
+                    		<input class="full" readonly="readonly" type="email" value="${model.user.email!}"  />	          
                     </div>
                   </div>
                 </div>
@@ -389,18 +368,13 @@
                 
               	<div>
               	           
-               <div class="row">
-                  	<label class="label">Skype</label>
+              <div class="row">
+                		<span class="label">Skype</span>
                     <span class="hint"></span>
-                    <div class="field">                    	
-                    <#if !model.applicationForm.isSubmitted()>
-                    	<input class="full" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="pd_messenger" id="pd_messenger"/>
-                    	<#else>
-                    		<input class="full" readonly="readonly" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="pd_messenger" id="pd_messenger" />	          
-                    	</#if>
+                    <div class="field">
+                    		<input class="full" readonly="readonly" type="email" value="${model.applicationForm.personalDetails.messenger!}"  />	          
                     </div>
-                </div>
-                </div>
+                  </div>
       
               	<div class="buttons">
                   <#if !model.applicationForm.isSubmitted()>

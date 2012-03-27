@@ -220,6 +220,7 @@
 	                    	${model.applicationForm.personalDetails.messenger!}
                     	</div>
                   	</div>
+                  	</div>
 
               	<div class="buttons" id="show-comment-button-div">
               		<#if model.user??>

@@ -61,7 +61,7 @@
 			                    	</#if>"/>
 			                    	 <input type="hidden" id="${referee.id!}_reference_comment" value="<#if referee.hasProvidedReference() >${referee.reference.comment!}</#if>"/>
 			                    	 <input type="hidden" id="${referee.id!}_reference_document_url" value="<#if referee.hasProvidedReference() && referee.reference.document?? >
-			                    	 	<@spring.url '/download/reference?referenceId=${referee.reference.id?string('#######')}'/></#if>"
+			                    	 	<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/></#if>"
 			                    	 />
 			                    	 <input type="hidden" id="${referee.id!}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName}<#else>No document uploaded</#if></#if>" />
                                     <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
@@ -258,5 +258,4 @@
 				</form>
             
             </div>
-
             <script type="text/javascript" src="<@spring.url '/design/default/js/application/referee.js'/>"></script>

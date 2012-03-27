@@ -72,14 +72,24 @@
 			    
 			    <!-- Main content area. -->
 			    <article id="content" role="main">
+			    
+			    <!-- "Tools" -->
+                <div id="tools">
+                    <ul class="left">
+                        <li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print Page</a></li>
+                    </ul>
+    
+                <ul class="right">
+                    <li class="icon-progress"><a href="#">Progress</a></li>
+                    <li class="current icon-application"><a href="#">View Application</a></li>
+                </ul>
+                </div>
 			      
-			      <#include "/private/common/parts/tools.ftl"/>
 			      
 			      <!-- FLOATING TOOLBAR -->
 		          <ul id="view-toolbar">
 		          	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-		          	<li class="pdf"><a href="#" title="Download as PDF">Download as PDF</a></li>
-		          	<li class="print"><a href="#" title="Print">Print</a></li>
+		          	<li class="print"><a href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
 		          </ul>
 			      
 			      
@@ -155,7 +165,6 @@
 			          <hr />
 			          
 			          <a class="button" href="<@spring.url '/applications'/>">Close</a>
-			          <a class="button" href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print</a>
 			          <#if !model.applicationForm.isSubmitted() && model.user.isInRole('APPLICANT')>
 			             <a id="submitButton" class="button">Submit</a>
 			             <form id="submitApplicationForm" action="<@spring.url "/apply/submit"/>" method="POST">

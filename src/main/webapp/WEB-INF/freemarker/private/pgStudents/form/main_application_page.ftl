@@ -60,6 +60,18 @@
 			    
 			  		<!-- Main content area. -->
 			    	<article id="content" role="main">
+			    	
+			    	<div id="tools">
+                        <ul class="left">
+                            <li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print Page</a></li>
+                        </ul>
+                    </div>
+			    	
+			    	<!-- FLOATING TOOLBAR -->
+                  <ul id="view-toolbar">
+                    <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
+                    <li class="print"><a href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
+                  </ul>
 			      
 			      		<!-- content box -->
 				    	<div class="content-box">
@@ -144,12 +156,10 @@
 			          	      				<input type="hidden" id="applicationFormId" name="applicationFormId" 
 			          	      									value="${model.applicationForm.id?string("######")}"/>
 			          	      										<a class="button" href="<@spring.url '/applications'/>">Close</a>
-										<a class="button" href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print</a>
 			          	      										<button id="submitButton" type="submit" class="button">Submit</button>
 										</form>
 									<#else>
 										<a class="button" href="<@spring.url '/applications'/>">Close</a>
-										<a class="button" href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print</a>
 									</#if>
 
 			          			</div>

@@ -69,8 +69,19 @@
   
 			    <!-- Main content area. -->
 			    <article id="content" role="main">
+			    
+			    <!-- "Tools" -->
+                <div id="tools">
+                    <ul class="left">
+                        <li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print Page</a></li>
+                    </ul>
+    
+                <ul class="right">
+                    <li class="icon-progress"><a href="#">Progress</a></li>
+                    <li class="current icon-application"><a href="#">View Application</a></li>
+                </ul>
+                </div>
 			      
-			      <#include "/private/common/parts/tools.ftl"/>
 			      
 			      <!-- FLOATING TOOLBAR -->
 		          <ul id="view-toolbar">

@@ -32,9 +32,7 @@
                   
 				<!-- Study option -->
                 <div class="row">
-                    <label class="label">Study Option
-                    	<em>*</em> 
-                    </label>
+                    <label class="label">Study Option<em>*</em></label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
                 		<select class="full" id="studyOption" name="studyOption" 
@@ -128,9 +126,7 @@
             <div>
             	<!-- Start date -->
                 <div class="row">
-                	<label class="label">Start Date
-                		<em>*</em> 
-                	</label>
+                	<label class="label">Start Date<em>*</em></label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <input class="full date" type="text" id="startDate" name="startDate" value="${(model.applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}"
                     <#if model.applicationForm.isSubmitted()>
@@ -144,9 +140,7 @@
 
                 <!-- Referrer -->
                 <div class="row">
-                	<label class="label">Referrer
-                		<em>*</em>
-                	</label>
+                	<label class="label">Referrer<em>*</em></label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
                     	<select class="full" id="referrer" name="referrer"

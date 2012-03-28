@@ -147,7 +147,7 @@
                 
                 <!-- End date -->
                 <div class="row">
-                    <span class="label">End date</span>
+                    <span class="label">End Date</span>
                     <span class="hint"></span>
                     <div class="field">
                       	<input class="half date" type="text" id="position_endDate" name="position_endDate" 

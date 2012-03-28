@@ -15,8 +15,12 @@ import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfImportedPage;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -34,6 +38,11 @@ public class PdfDocumentBuilder {
 	private Font greyFont  = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.DARK_GRAY);
 	private static Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
 	private static Font smallBoldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
+	private final PdfWriter writer;
+
+	public PdfDocumentBuilder(PdfWriter writer) {
+		this.writer = writer;
+	}
 
 	public void buildDocument(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
 
@@ -71,9 +80,9 @@ public class PdfDocumentBuilder {
 		addSectionSeparators(document);
 
 		addAdditionalInformationSection(application, document);
-		
+
 		addSectionSeparators(document);
-		
+
 		addSupportingDocuments(application, document);
 	}
 
@@ -390,12 +399,12 @@ public class PdfDocumentBuilder {
 		if (application.getReferees().isEmpty()) {
 			document.add(new Paragraph(createMessage("references information")));
 		} else {
-			
+
 			for (Referee reference : application.getReferees()) {
 				document.add(new Paragraph("First Name: " + reference.getFirstname()));
 				document.add(new Paragraph("Last Name: " + reference.getLastname()));
 				document.add(new Paragraph("Relationship: " + reference.getRelationship()));
-				
+
 				document.add(new Paragraph("Position", smallBoldFont));
 				addCorrectOutputDependingOnNull(document, reference.getJobEmployer(), "Employer");
 				addCorrectOutputDependingOnNull(document, reference.getJobTitle(), "Title");
@@ -428,7 +437,7 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph(createMessage("additional information")));
 		}
 	}
-	
+
 	private void addSupportingDocuments(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
 		for (com.zuehlke.pgadmissions.domain.Document doc : application.getSupportingDocuments()) {
 			document.add(new Paragraph(doc.getType().getDisplayValue(), smallBoldFont));
@@ -439,6 +448,14 @@ public class PdfDocumentBuilder {
 			} else if (doc.getFileName().endsWith(".txt")) {
 				String content = new String(doc.getContent());
 				document.add(new Chunk(content));
+			} else if (doc.getFileName().endsWith(".pdf")) {
+				PdfReader pdfReader = new PdfReader(doc.getContent());
+				PdfContentByte cb = writer.getDirectContent();
+				for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
+					document.newPage();
+					PdfImportedPage page = writer.getImportedPage(pdfReader, i);
+					cb.addTemplate(page, 0, 0);
+				}
 			}
 		}
 	}

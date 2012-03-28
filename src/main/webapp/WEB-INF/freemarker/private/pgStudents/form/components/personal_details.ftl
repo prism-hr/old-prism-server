@@ -166,9 +166,6 @@
 	                              <option value="${country.id?string('#######')}">${country.name}</option>               
 	                       	 </#list>
 	                     	 </select>             	 
-	                      <#if model.hasError('maternalGuardianNationalities')>                         
-                                <span class="invalid"><@spring.message  model.result.getFieldError('maternalGuardianNationalities').code /></span>                           
-                       	 </#if>
 	                   	 </div>
                 	</div>
                 	
@@ -205,9 +202,6 @@
 	                              <option value="${country.id?string('#######')}">${country.name}</option>               
 	                       	 </#list>
 	                     	 </select>             	 
-	                          <#if model.hasError('paternalGuardianNationalities')>                         
-                                <span class="invalid"><@spring.message  model.result.getFieldError('paternalGuardianNationalities').code /></span>                           
-                       	 </#if>
 	                   	 </div>
                 	</div>
                 	                     

@@ -76,7 +76,7 @@ $(document).ready(function(){
 	  	 	'	<label class="label">Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val() + '"}' + "'/>" +
+	  		"		<input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val() + '}' + "'/>" +
 	  		'		<a class="button-delete">Delete</a><br/>'+
 	  		'	</div>'+
 	  		'</div>'+
@@ -99,7 +99,7 @@ $(document).ready(function(){
 	  	 	'	<label class="label">Maternal Guardian Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val() + '"}' + "'/>" +
+	  		"		<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val() + '}' + "'/>" +
 	  		'		<a class="button-delete">Delete</a><br/>'+
 	  		'	</div>'+
 	  		'</div>'+
@@ -121,7 +121,7 @@ $(document).ready(function(){
 	  	 	'	<label class="label">Paternal Guardian Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()   + '"}' + "'/>" +
+	  		"		<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()   + '}' + "'/>" +
 	  		'		<a class="button-delete">Delete</a> <br/>'+
 	  		'	</div>'+
 	  		'</div>'+
@@ -163,7 +163,6 @@ $(document).ready(function(){
 		//candidate nationalities
 		if( $('#candidateNationalityCountry option:selected').val()!= ''){
 			var html = 	"<span><input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  +
-			'}' + "'/></span>";
 			
 			$('#existingCandidateNationalities').append(html);
 		}
@@ -181,7 +180,7 @@ $(document).ready(function(){
 		if( $('#paternalNationalityCountry option:selected').val()!= ''){
 			
 			var html = 	"<span><input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()  +
-			'"}' + "'/></span>";
+			'}' + "'/></span>";
 			
 			$('#existingPaternalNationalities').append(html);
 		}

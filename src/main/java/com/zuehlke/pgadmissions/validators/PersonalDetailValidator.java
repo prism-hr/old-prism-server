@@ -7,7 +7,6 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
-import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 
 @Component

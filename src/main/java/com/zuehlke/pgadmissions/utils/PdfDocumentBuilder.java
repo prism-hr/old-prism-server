@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -430,10 +431,14 @@ public class PdfDocumentBuilder {
 	
 	private void addSupportingDocuments(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
 		for (com.zuehlke.pgadmissions.domain.Document doc : application.getSupportingDocuments()) {
+			document.add(new Paragraph(doc.getType().getDisplayValue(), smallBoldFont));
 			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg") || doc.getFileName().endsWith("png")
 					|| doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
 				Image image = Image.getInstance(doc.getContent());
 				document.add(image);
+			} else if (doc.getFileName().endsWith(".txt")) {
+				String content = new String(doc.getContent());
+				document.add(new Chunk(content));
 			}
 		}
 	}

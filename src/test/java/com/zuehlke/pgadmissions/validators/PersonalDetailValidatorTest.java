@@ -128,116 +128,6 @@ public class PersonalDetailValidatorTest {
 	}
 	
 	@Test
-	public void shouldRejectIfMoreThanOneCandidateNationalityPrimary() {
-		Nationality nationality = new Nationality();
-		nationality.setPrimary(true);
-		personalDetails.getCandidateNationalities().add(nationality);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "candidateNationalities");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.candidateNationalities.unique", mappingResult.getFieldError("candidateNationalities").getCode());
-	}
-	
-	@Test
-	public void shouldRejectIfNMoreThanOneCandidateNationalityAndNoPrimary() {
-		Nationality nationality1 = new Nationality();
-		nationality1.setPrimary(false);
-		Nationality nationality2 = new Nationality();
-		nationality2.setPrimary(false);
-		personalDetails.setCandidateNationalities(Arrays.asList(nationality1, nationality2));
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "candidateNationalities");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.candidateNationalities.noprimary", mappingResult.getFieldError("candidateNationalities").getCode());
-	}
-	
-	
-	@Test
-	public void shouldNotRejectOnlyOneCandidateNationalityAndNoPrimary() {
-		Nationality nationality1 = new Nationality();
-		nationality1.setPrimary(false);
-		personalDetails.setCandidateNationalities(Arrays.asList(nationality1));
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "candidateNationalities");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-	}
-	
-	
-	
-	@Test
-	public void shouldRejectIfMoreThanOneMaternalNationalityPrimary() {
-		Nationality nationality = new Nationality();
-		nationality.setPrimary(true);
-		personalDetails.getMaternalGuardianNationalities().add(nationality);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "maternalGuardianNationalities");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.maternalGuardianNationalities.unique", mappingResult.getFieldError("maternalGuardianNationalities").getCode());
-	}
-	
-	@Test
-	public void shouldRejectIfNMoreThanOnematernalNationalityAndNoPrimary() {
-		Nationality nationality1 = new Nationality();
-		nationality1.setPrimary(false);
-		Nationality nationality2 = new Nationality();
-		nationality2.setPrimary(false);
-		personalDetails.setMaternalGuardianNationalities(Arrays.asList(nationality1, nationality2));
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "maternalGuardianNationalities");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.maternalGuardianNationalities.noprimary", mappingResult.getFieldError("maternalGuardianNationalities").getCode());
-	}
-	
-	
-	@Test
-	public void shouldNotRejectOnlyOneCmaternalNationalityAndNoPrimary() {
-		Nationality nationality1 = new Nationality();
-		nationality1.setPrimary(false);
-		personalDetails.setMaternalGuardianNationalities(Arrays.asList(nationality1));
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "maternalGuardianNationalities");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-	}
-	
-	
-	@Test
-	public void shouldRejectIfMoreThanOnePaternalNationalityPrimary() {
-		Nationality nationality = new Nationality();
-		nationality.setPrimary(true);
-		personalDetails.getPaternalGuardianNationalities().add(nationality);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "paternalGuardianNationalities");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.paternalGuardianNationalities.unique", mappingResult.getFieldError("paternalGuardianNationalities").getCode());
-	}
-	
-	@Test
-	public void shouldRejectIfNMoreThanOnePaternalNationalityAndNoPrimary() {
-		Nationality nationality1 = new Nationality();
-		nationality1.setPrimary(false);
-		Nationality nationality2 = new Nationality();
-		nationality2.setPrimary(false);
-		personalDetails.setPaternalGuardianNationalities(Arrays.asList(nationality1, nationality2));
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "paternalGuardianNationalities");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.paternalGuardianNationalities.noprimary", mappingResult.getFieldError("paternalGuardianNationalities").getCode());
-	}
-	
-	
-	@Test
-	public void shouldNotRejectOnlyOnePaternalNationalityAndNoPrimary() {
-		Nationality nationality1 = new Nationality();
-		nationality1.setPrimary(false);
-		personalDetails.setPaternalGuardianNationalities(Arrays.asList(nationality1));
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "paternalGuardianNationalities");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-	}
-	@Test
 	public void shouldRejectIfNolanguageProficiency() {
 		personalDetails.getLanguageProficiencies().clear();
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "languageProficiencies");
@@ -282,7 +172,6 @@ public class PersonalDetailValidatorTest {
 	@Before
 	public void setup(){
 		Nationality nationality = new Nationality();
-		nationality.setPrimary(true);
 		LanguageProficiency languageProficiency = new LanguageProficiencyBuilder().id(1).primary(true).toLanguageProficiency();
 		personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality).languageProficiencies(languageProficiency).maternalGuardianNationalities(nationality).paternalGuardianNationalities(nationality).applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm()).country(new CountryBuilder().toCountry()).dateOfBirth(new Date()).email("email@test.com").firstName("bob")
 		.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith").residenceCountry(new CountryBuilder().toCountry()).residenceStatus(ResidenceStatus.EXCEPTIONAL_LEAVE_TO_REMAIN).toPersonalDetails();

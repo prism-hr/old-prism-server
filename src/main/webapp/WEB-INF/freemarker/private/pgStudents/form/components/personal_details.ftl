@@ -108,7 +108,6 @@
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
-                  	  				<#if nationality.primary><label>This is my primary nationality</label></#if>
                   	  			<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
                   	  			</div>
                   	  		</div>
@@ -128,7 +127,6 @@
 	                       <#if model.hasError('candidateNationalities')>                         
                                 <span class="invalid"><@spring.message  model.result.getFieldError('candidateNationalities').code /></span>                           
                        	 </#if>
-	                      	 <label><input type="radio" id="primaryCandidateNationality" name="primaryCandidateNationality"/> This is my primary nationality</label>              
 	                   	 </div>
                 	</div>
                 	
@@ -152,7 +150,6 @@
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
-                  	  				<#if nationality.primary><label>This is her primary nationality</label></#if>
                   	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
                   	  			</div>
                   	  		</div>            
@@ -172,7 +169,6 @@
 	                      <#if model.hasError('maternalGuardianNationalities')>                         
                                 <span class="invalid"><@spring.message  model.result.getFieldError('maternalGuardianNationalities').code /></span>                           
                        	 </#if>
-	                      	 <label><input type="radio" id="primaryMaternalNationality" name = "primaryMaternalNationality"/> This is her primary nationality</label>              
 	                   	 </div>
                 	</div>
                 	
@@ -194,7 +190,6 @@
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
-                  	  				<#if nationality.primary><label>This is his primary nationality</label></#if>
                   	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
                   	  			</div>
                   	  		</div>            
@@ -213,7 +208,6 @@
 	                          <#if model.hasError('paternalGuardianNationalities')>                         
                                 <span class="invalid"><@spring.message  model.result.getFieldError('paternalGuardianNationalities').code /></span>                           
                        	 </#if>
-	                      	 <label><input type="radio" id="primaryPaternalNationality" name="primaryPaternalNationality"/> This is his primary nationality</label>              
 	                   	 </div>
                 	</div>
                 	                     

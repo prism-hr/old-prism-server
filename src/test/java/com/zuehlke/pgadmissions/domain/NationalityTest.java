@@ -21,8 +21,7 @@ public class NationalityTest {
 		Nationality nationality = new Nationality();
 		nationality.setType(NationalityType.CANDIDATE);
 		nationality.setCountry(country);
-		nationality.setPrimary(true);
 		nationality.setSupportingDocuments(Arrays.asList(document1, document2));
-		assertEquals("{\"type\": \"CANDIDATE\", \"country\": 1, \"supportingDocuments\": [1,2], \"primary\": \"true\"}", nationality.getAsJson());
+		assertEquals("{\"type\": \"CANDIDATE\", \"country\": 1, \"supportingDocuments\": [1,2]}", nationality.getAsJson());
 	}
 }

@@ -32,7 +32,6 @@ public class NationalityMappingTest extends AutomaticRollbackTestCase {
 
 		Nationality nationality = new Nationality();
 		nationality.setCountry(country);
-		nationality.setPrimary(true);
 		nationality.setSupportingDocuments(Arrays.asList(document1, document2));
 		nationality.setType(NationalityType.CANDIDATE);
 		sessionFactory.getCurrentSession().save(nationality);
@@ -51,6 +50,5 @@ public class NationalityMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(2, reloadedNationality.getSupportingDocuments().size());
 		assertTrue(reloadedNationality.getSupportingDocuments().containsAll(Arrays.asList(document1, document2)));
 		assertEquals(NationalityType.CANDIDATE, reloadedNationality.getType());
-		assertTrue(nationality.isPrimary());
 	}
 }

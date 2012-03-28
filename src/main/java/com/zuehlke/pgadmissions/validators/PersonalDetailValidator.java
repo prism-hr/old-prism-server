@@ -25,6 +25,8 @@ public class PersonalDetailValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", "personalDetails.gender.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "personalDetails.email.notempty");
 		
+		validateCandidateNationalities(target, errors);
+		
 		if (!errors.hasFieldErrors("email") && !EmailValidator.getInstance().isValid(((PersonalDetail)target).getEmail())) {
 			errors.rejectValue("email", "personalDetails.email.invalid");
 		}
@@ -33,12 +35,8 @@ public class PersonalDetailValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceStatus", "personalDetails.residenceStatus.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", "personalDetails.dateOfBirth.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", "personalDetails.application.notempty");
-		validateCandidateNationalities(target, errors);
 		
-		validateMaternalGuardianNationalities(target, errors);
 	
-		validatePaternalGuardianNationalities(target, errors);		
-		
 		validateLanguageProficiencies(target, errors);
 	}
 
@@ -61,57 +59,13 @@ public class PersonalDetailValidator implements Validator {
 			errors.rejectValue("languageProficiencies", "personalDetails.languageProficiencies.noprimary");
 		}
 	}
-
-	private void validatePaternalGuardianNationalities(Object target, Errors errors) {
-		int numberOfPrimaries;
-		numberOfPrimaries = 0;
-		for (Nationality nationality : ((PersonalDetail)target).getPaternalGuardianNationalities()) {
-			if(nationality.isPrimary()){
-				numberOfPrimaries++;
-			}
-		}
-		if(numberOfPrimaries > 1){
-			errors.rejectValue("paternalGuardianNationalities", "personalDetails.paternalGuardianNationalities.unique");
-		}
-		if( ((PersonalDetail)target).getPaternalGuardianNationalities().size() > 1 && numberOfPrimaries ==0){
-			errors.rejectValue("paternalGuardianNationalities", "personalDetails.paternalGuardianNationalities.noprimary");
-		}
-	}
-
-	private void validateMaternalGuardianNationalities(Object target, Errors errors) {
-		int numberOfPrimaries;
-		
-		
-		numberOfPrimaries = 0;
-		for (Nationality nationality : ((PersonalDetail)target).getMaternalGuardianNationalities()) {
-			if(nationality.isPrimary()){
-				numberOfPrimaries++;
-			}
-		}
-		if(numberOfPrimaries > 1){
-			errors.rejectValue("maternalGuardianNationalities", "personalDetails.maternalGuardianNationalities.unique");
-		}
-		if( ((PersonalDetail)target).getMaternalGuardianNationalities().size() > 1 && numberOfPrimaries ==0){
-			errors.rejectValue("maternalGuardianNationalities", "personalDetails.maternalGuardianNationalities.noprimary");
-		}
-	}
-
+	
 	private void validateCandidateNationalities(Object target, Errors errors) {
 		if(((PersonalDetail)target).getCandidateNationalities().isEmpty()){
 			errors.rejectValue("candidateNationalities", "personalDetails.candidateNationalities.notempty");
 		}
-		int numberOfPrimaries = 0;
-		for (Nationality nationality : ((PersonalDetail)target).getCandidateNationalities()) {
-			if(nationality.isPrimary()){
-				numberOfPrimaries++;
-			}
-		}
-		if(numberOfPrimaries > 1){
-			errors.rejectValue("candidateNationalities", "personalDetails.candidateNationalities.unique");
-		}
-		if( ((PersonalDetail)target).getCandidateNationalities().size() > 1 && numberOfPrimaries ==0){
-			errors.rejectValue("candidateNationalities", "personalDetails.candidateNationalities.noprimary");
-		}
 	}
+
+
 
 }

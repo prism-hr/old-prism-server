@@ -49,12 +49,12 @@ public class PrintController {
 				throw new ResourceNotFoundException();
 			}
 
-			PdfDocumentBuilder builder = new PdfDocumentBuilder();
 
 			Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 			PdfWriter writer = PdfWriter.getInstance(document, baos);
+			PdfDocumentBuilder builder = new PdfDocumentBuilder(writer);
 
 			document.open();
 
@@ -90,12 +90,12 @@ public class PrintController {
 		String[] applications = appListToPrint.split(";");
 
 
-		PdfDocumentBuilder builder = new PdfDocumentBuilder();
 
 		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		PdfWriter writer = PdfWriter.getInstance(document, baos);
+		PdfDocumentBuilder builder = new PdfDocumentBuilder(writer);
 
 		document.open();
 		if (StringUtils.isNotBlank(appListToPrint)) {

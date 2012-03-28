@@ -440,6 +440,7 @@ public class PdfDocumentBuilder {
 
 	private void addSupportingDocuments(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
 		for (com.zuehlke.pgadmissions.domain.Document doc : application.getSupportingDocuments()) {
+			document.newPage();
 			document.add(new Paragraph(doc.getType().getDisplayValue(), smallBoldFont));
 			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg") || doc.getFileName().endsWith("png")
 					|| doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {

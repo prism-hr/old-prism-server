@@ -44,9 +44,6 @@ public class NationalityJSONPropertyEditor extends PropertyEditorSupport {
 			Nationality nationality = new Nationality();
 			nationality.setType(NationalityType.valueOf((String) properties.get("type")));
 			nationality.setCountry(countryService.getCountryById((Integer) properties.get("country")));
-			if("true".equals(properties.get("primary"))){
-				nationality.setPrimary(true);
-			}
 			if (properties.get("supportingDocuments") != null) {
 				for (Integer id : (Iterable<Integer>) properties.get("supportingDocuments")) {
 					nationality.getSupportingDocuments().add(documentService.getDocumentById(id));

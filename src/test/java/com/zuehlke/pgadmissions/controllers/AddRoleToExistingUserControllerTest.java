@@ -30,8 +30,7 @@ public class AddRoleToExistingUserControllerTest {
 	private AddRoleToExistingUserController controller;
 	private UserService userServiceMock;
 	private RegisteredUser currentUser;
-	private ProgramsService programsServiceMock;
-	private UserDAO userDAOMock;
+	private ProgramsService programsServiceMock;	
 	private RolePropertyEditor rolePropertyEditorMock;
 	
 	@Test

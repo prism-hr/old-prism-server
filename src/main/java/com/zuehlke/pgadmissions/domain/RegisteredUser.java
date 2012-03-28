@@ -276,5 +276,10 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return stringBuffer.toString();
 	}
 
+	public boolean isInRoleInProgram(Authority authority, Program program) {
+		return getAuthoritiesForProgram(program).contains(authority);
+		
+	}
+
 
 }

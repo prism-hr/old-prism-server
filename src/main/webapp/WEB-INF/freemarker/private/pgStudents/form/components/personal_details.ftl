@@ -29,14 +29,14 @@
 		        </div>                                
 		        </#if>
                 	<div class="row">
-                  	<label class="label">First Name</label>
+                  	<label class="label">First Name<em>*</em></label>
                     <span class="hint"></span>
                     <div class="field">                    	
                     		<input class="full" readonly="readonly" type="text" value="${model.user.firstName!}"  name="firstName" id="firstName"/>	          
                     </div>
                   </div>
                 	<div class="row">
-                  	<label class="label">Last Name</label>
+                  	<label class="label">Last Name<em>*</em></label>
                     <span class="hint"></span>
                     <div class="field">
                     		<input class="full" readonly="readonly" type="text" value="${model.user.lastName!}"   name="lastName" id="lastName"/>	          
@@ -291,7 +291,7 @@
                     </div>
                   </div>
                   <div class="row">
-                    <span class="label">Status</span>
+                    <span class="label">Status<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
                       <select class="full"  name="residenceStatus" id="residenceStatus" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
@@ -309,7 +309,7 @@
               	<div>
                 	<strong>Contact Details</strong>
                 	<div class="row">
-                		<span class="label">Email</span>
+                		<span class="label">Email<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
                     		<input class="full" readonly="readonly" type="email" value="${model.user.email!}"  name="email" id="email" />	          
@@ -338,7 +338,7 @@
               	
               	
                 	<div class="row">
-                		<span class="label">Telephone</span>
+                		<span class="label">Telephone<em>*</em></span>
                     <span class="hint"></span>
                    
                     <div class="field">

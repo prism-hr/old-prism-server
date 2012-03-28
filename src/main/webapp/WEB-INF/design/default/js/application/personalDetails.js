@@ -162,7 +162,8 @@ $(document).ready(function(){
 		
 		//candidate nationalities
 		if( $('#candidateNationalityCountry option:selected').val()!= ''){
-			var html = 	"<span><input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  +
+			var html = 	"<span><input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  + '"}' + "'/>" + '</span>';
+				
 			
 			$('#existingCandidateNationalities').append(html);
 		}
@@ -170,7 +171,7 @@ $(document).ready(function(){
 
 		//maternal nationalities
 		if( $('#maternalNationalityCountry option:selected').val()!= ''){
-			var html = 	"<span><input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  +
+			var html = 	"<span><input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  + 
 			'}' + "'/></span>";
 			
 			$('#existingMaternalNationalities').append(html);

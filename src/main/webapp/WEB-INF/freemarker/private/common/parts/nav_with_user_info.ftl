@@ -15,7 +15,11 @@
 		</ul>
 			        
 		<div class="user">
+			<#if model??>
 			${model.user.firstName!} ${' '} ${model.user.lastName!}
+			<#elseif user??>
+			${user.firstName!} ${' '} ${user.lastName!}
+			</#if>
 			<a class="button user-logout" href="<@spring.url '/j_spring_security_logout'/>">Logout</a>
 		</div>
 	</nav>

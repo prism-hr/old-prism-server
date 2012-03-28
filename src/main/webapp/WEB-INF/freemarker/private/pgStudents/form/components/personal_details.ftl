@@ -13,7 +13,7 @@
 <!-- Personal details -->
 	<h2 id="personalDetails-H2">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
-		Personal Details
+		Personal Details<em>*</em>
 	</h2>
 	
     <div >    

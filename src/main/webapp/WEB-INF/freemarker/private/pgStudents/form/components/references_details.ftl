@@ -8,7 +8,7 @@
 
 			<h2 id="referee-H2" class="empty">
 				<span class="left"></span><span class="right"></span><span class="status"></span>
-        		References
+        		References<em>*</em>
        		</h2>
        		
 			<div class="open">
@@ -123,7 +123,7 @@
 	       		</#if>
                   		<!-- First name -->
                   		<div class="row">
-                    		<span class="label">First Name</span>
+                    		<span class="label">First Name<em>*</em></span>
                     		<span class="hint"></span>
                     		<div class="field">
                     			<#if !model.applicationForm.isSubmitted()>
@@ -141,7 +141,7 @@
                 
                   		<!-- Last name -->
                   		<div class="row">
-                    		<span class="label">Last Name</span>
+                    		<span class="label">Last Name<em>*</em></span>
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
@@ -157,7 +157,7 @@
                 
                   		<!-- Relationship name -->
                   		<div class="row">
-                    		<span class="label">Relationship</span>
+                    		<span class="label">Relationship<em>*</em></span>
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
@@ -274,7 +274,7 @@
                 
                   		<!-- Email address -->
                   		<div class="row">
-                    		<span class="label">Email</span>
+                    		<span class="label">Email<em>*</em></span>
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
@@ -308,7 +308,7 @@
                     		</div>
                   		
                   		<div class="row">
-                  		<span class="label">Telephone</span>
+                  		<span class="label">Telephone<em>*</em></span>
                         <span class="hint"></span>
                     		
                     		<#if !model.applicationForm.isSubmitted()>

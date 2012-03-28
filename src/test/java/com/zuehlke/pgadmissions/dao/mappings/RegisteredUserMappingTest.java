@@ -137,82 +137,68 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 				sessionFactory.getCurrentSession().createSQLQuery("select count(*) from USER_ROLE_LINK where application_role_id = " + roleId).uniqueResult());
 
 	}
-
+	
 	@Test
-	public void shouldLoadProgramsOfWhichAdministrator() throws Exception {
-		RegisteredUser administratorOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username10")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		RegisteredUser administratorTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username11")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+	public void shouldSaveAndLoadProgramsOfWhichAdministrator() throws Exception {
 
-		save(administratorOne, administratorTwo);
+		Program program = new ProgramBuilder().code("111111").description("hello").title("hello").toProgram();
+		save(program);
+		flushAndClearSession();
+
+		RegisteredUser admin = new RegisteredUserBuilder().programsOfWhichAdministrator(program).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(false).toUser();
+
+		save(admin);
 
 		flushAndClearSession();
 
-		Program programOne = new ProgramBuilder().administrator(administratorOne).code("111111").description("hello").title("hello").toProgram();
-		Program programTwo = new ProgramBuilder().administrator(administratorOne, administratorTwo).code("222222").description("hello").title("hello")
-				.toProgram();
-
-		save(programOne, programTwo);
-		flushAndClearSession();
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, administratorOne.getId());
-		assertEquals(2, reloadedUser.getProgramsOfWhichAdministrator().size());
-		assertTrue(reloadedUser.getProgramsOfWhichAdministrator().containsAll(Arrays.asList(programOne, programTwo)));
-
-		reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, administratorTwo.getId());
+		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, admin.getId());
 		assertEquals(1, reloadedUser.getProgramsOfWhichAdministrator().size());
-		assertTrue(reloadedUser.getProgramsOfWhichAdministrator().containsAll(Arrays.asList(programTwo)));
+		assertTrue(reloadedUser.getProgramsOfWhichAdministrator().containsAll(Arrays.asList(program)));
+
 	}
-	
+
 	@Test
-	public void shouldLoadProgramsOfWhichApprover() throws Exception {
-		RegisteredUser approverOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username10")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		RegisteredUser approverTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username11")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+	public void shouldSaveAndLoadProgramsOfWhichApprover() throws Exception {
 
-		save(approverOne, approverTwo);
+		Program program = new ProgramBuilder().code("111111").description("hello").title("hello").toProgram();
+		save(program);
+		flushAndClearSession();
+
+		RegisteredUser approver = new RegisteredUserBuilder().programsOfWhichApprover(program).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(false).toUser();
+
+		save(approver);
 
 		flushAndClearSession();
 
-		Program programOne = new ProgramBuilder().approver(approverOne).code("111111").description("hello").title("hello").toProgram();
-		Program programTwo = new ProgramBuilder().approver(approverOne, approverTwo).code("222222").description("hello").title("hello")
-				.toProgram();
-
-		save(programOne, programTwo);
-		flushAndClearSession();
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, approverOne.getId());
-		assertEquals(2, reloadedUser.getProgramsOfWhichApprover().size());
-		assertTrue(reloadedUser.getProgramsOfWhichApprover().containsAll(Arrays.asList(programOne, programTwo)));
-
-		reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, approverTwo.getId());
+		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, approver.getId());
 		assertEquals(1, reloadedUser.getProgramsOfWhichApprover().size());
-		assertTrue(reloadedUser.getProgramsOfWhichApprover().containsAll(Arrays.asList(programTwo)));
+		assertTrue(reloadedUser.getProgramsOfWhichApprover().containsAll(Arrays.asList(program)));
+
 	}
-	
+
 	@Test
-	public void shouldLoadProgramsOfWhichReviewer() throws Exception {
-		RegisteredUser reviewerOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username10")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		RegisteredUser reviewerTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username11")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+	public void shouldSaveAndLoadProgramsOfWhichReviewer() throws Exception {
 
-		save(reviewerOne, reviewerTwo);
+		Program program = new ProgramBuilder().code("111111").description("hello").title("hello").toProgram();
+		save(program);
+		flushAndClearSession();
+
+		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(false).toUser();
+
+		save(reviewer);
 
 		flushAndClearSession();
 
-		Program programOne = new ProgramBuilder().reviewers(reviewerOne).code("111111").description("hello").title("hello").toProgram();
-		Program programTwo = new ProgramBuilder().reviewers(reviewerOne, reviewerTwo).code("222222").description("hello").title("hello")
-				.toProgram();
-
-		save(programOne, programTwo);
-		flushAndClearSession();
-		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, reviewerOne.getId());
-		assertEquals(2, reloadedUser.getProgramsOfWhichReviewer().size());
-		assertTrue(reloadedUser.getProgramsOfWhichReviewer().containsAll(Arrays.asList(programOne, programTwo)));
-
-		reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, reviewerTwo.getId());
+		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, reviewer.getId());
 		assertEquals(1, reloadedUser.getProgramsOfWhichReviewer().size());
-		assertTrue(reloadedUser.getProgramsOfWhichReviewer().containsAll(Arrays.asList(programTwo)));
+		assertTrue(reloadedUser.getProgramsOfWhichReviewer().containsAll(Arrays.asList(program)));
+
 	}
+
 }

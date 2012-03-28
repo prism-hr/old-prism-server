@@ -9,7 +9,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestBindingException;
@@ -92,37 +91,34 @@ public class PrintController {
 		response.setHeader("Pragma", "public");
 		response.setHeader("Content-Disposition", "attachment; filename=\"applications.zip\"");
 		response.setContentType("application/zip");
+
 		ServletOutputStream out = response.getOutputStream();
-		 ZipOutputStream zip = new ZipOutputStream(out);
-		
+		ZipOutputStream zip = new ZipOutputStream(out);
+
 		String appListToPrint = ServletRequestUtils.getStringParameter(request, "appList");
 		String[] applications = appListToPrint.split(";");
 
 
-		if (StringUtils.isNotBlank(appListToPrint)) {
-			for (String applicationId : applications) {
-				ApplicationForm application = applicationSevice.getApplicationById(new Integer(applicationId));
-				
-				Document document = new Document(PageSize.A4, 50, 50, 50, 50);
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				
-				PdfWriter writer = PdfWriter.getInstance(document, baos);
-				PdfDocumentBuilder builder = new PdfDocumentBuilder(writer);
-				document.open();
-				builder.buildDocument(application, document);
-				document.close();
-				
-				zip.putNextEntry(new ZipEntry("application"+applicationId+".pdf"));
-				zip.write(baos.toByteArray());
-				zip.closeEntry();
-			}
-		} 
+		for (String applicationId : applications) {
+			ApplicationForm application = applicationSevice.getApplicationById(new Integer(applicationId));
 
-		
+			Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+			PdfWriter writer = PdfWriter.getInstance(document, baos);
+			PdfDocumentBuilder builder = new PdfDocumentBuilder(writer);
+			document.open();
+			builder.buildDocument(application, document);
+			document.close();
+
+			zip.putNextEntry(new ZipEntry("application"+applicationId+".pdf"));
+			zip.write(baos.toByteArray());
+			zip.closeEntry();
+		}
 
 		zip.flush();        
 		zip.close();
-		
+
 		out.flush();
 		out.close();
 

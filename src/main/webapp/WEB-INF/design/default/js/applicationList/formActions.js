@@ -17,12 +17,12 @@ $(document).ready(function() {
 			window.location.href = "/pgadmissions/print?applicationFormId=" + id;
 		}
 	});
-	
-	
+
+
 	$('#manageUsersButton').click(function(){
 		window.location.href = "/pgadmissions/manageUsers/showPage";
 	});
-	
+
 	$("input[name*='appDownload']").click(function(){
 		var id = this.id;
 		id = id.replace('appDownload_', '');
@@ -34,9 +34,14 @@ $(document).ready(function() {
 		}
 		var appListValue = $('#appList').val();
 	});
-	
+
 	$('#downloadAll').click(function(){
-		window.location.href = "/pgadmissions/print/all?appList="+$('#appList').val();
+		var appListValue = $('#appList').val();
+		if (appListValue==''){
+			alert("At least one application must be selected for download!");
+		} else {
+			window.location.href = "/pgadmissions/print/all?appList="+$('#appList').val();
+		}
 	});
-	
+
 });

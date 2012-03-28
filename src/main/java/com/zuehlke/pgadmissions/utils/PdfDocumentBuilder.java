@@ -12,6 +12,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -35,10 +36,10 @@ import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 
 public class PdfDocumentBuilder {
 
-	private Font grayFont  = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD, BaseColor.DARK_GRAY);
-	private static Font boldFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
-	private static Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
-	private static Font smallerBoldFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
+	private Font grayFont  = new Font(FontFamily.HELVETICA, 16, Font.BOLD | Font.UNDERLINE, BaseColor.DARK_GRAY);
+	private static Font boldFont = new Font(FontFamily.HELVETICA, 16, Font.BOLD);
+	private static Font smallBoldFont = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
+	private static Font smallerBoldFont = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
 	private final PdfWriter writer;
 	private final BaseColor grayColor = new BaseColor(220, 220, 220);
 
@@ -101,7 +102,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addProgrammeSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Programme", grayFont));
+		document.add(new Paragraph("Programme                                                                                          ", grayFont));
 		document.add(new Paragraph("Programme: "+application.getProject().getProgram().getTitle()));
 
 		if (application.getProgrammeDetails().getStudyOption() == null) {
@@ -161,7 +162,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addPersonalDetailsSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Personal Details", grayFont));
+		document.add(new Paragraph("Personal Details                                                                                   ", grayFont));
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getFirstName(), "First Name");
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getLastName(), "Last Name");
 
@@ -304,7 +305,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Address", grayFont));
+		document.add(new Paragraph("Address                                                                                                ", grayFont));
 
 		for (Address address : application.getAddresses()) {
 			document.add(new Paragraph("Location: "+address.getLocation()));
@@ -333,7 +334,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addQualificationSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Qualification", grayFont));
+		document.add(new Paragraph("Qualification                                                                                         ", grayFont));
 		if (application.getQualifications().isEmpty()) {
 			document.add(new Paragraph(createMessage("qualification information")));
 		} else {
@@ -356,7 +357,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addEmploymentSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Employment", grayFont));
+		document.add(new Paragraph("Employment                                                                                         ", grayFont));
 		if (application.getEmploymentPositions().isEmpty()) {
 			document.add(new Paragraph(createMessage("employment information")));
 		} else {
@@ -380,7 +381,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addFundingSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Funding", grayFont));
+		document.add(new Paragraph("Funding                                                                                                ", grayFont));
 
 		if (application.getFundings().isEmpty()) {
 			document.add(new Paragraph(createMessage("funding information")));
@@ -400,7 +401,7 @@ public class PdfDocumentBuilder {
 
 	private void addReferencesSection(ApplicationForm application, Document document) throws DocumentException {
 
-		document.add(new Paragraph("References", grayFont));
+		document.add(new Paragraph("References                                                                                           ", grayFont));
 
 		if (application.getReferees().isEmpty()) {
 			document.add(new Paragraph(createMessage("references information")));
@@ -436,7 +437,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Additional Information", grayFont));
+		document.add(new Paragraph("Additional Information                                                                        ", grayFont));
 		if (application.getAdditionalInformation() != null) {
 			document.add(new Paragraph(application.getAdditionalInformation()));
 		} else {

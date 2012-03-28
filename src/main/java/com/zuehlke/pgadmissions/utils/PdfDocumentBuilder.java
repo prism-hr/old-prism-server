@@ -35,10 +35,12 @@ import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 
 public class PdfDocumentBuilder {
 
-	private Font greyFont  = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD, BaseColor.DARK_GRAY);
-	private static Font boldFont = new Font(Font.FontFamily.TIMES_ROMAN, 16, Font.BOLD);
-	private static Font smallBoldFont = new Font(Font.FontFamily.TIMES_ROMAN, 12, Font.BOLD);
+	private Font grayFont  = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD, BaseColor.DARK_GRAY);
+	private static Font boldFont = new Font(Font.FontFamily.HELVETICA, 16, Font.BOLD);
+	private static Font smallBoldFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
+	private static Font smallerBoldFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
 	private final PdfWriter writer;
+	private final BaseColor grayColor = new BaseColor(220, 220, 220);
 
 	public PdfDocumentBuilder(PdfWriter writer) {
 		this.writer = writer;
@@ -99,7 +101,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addProgrammeSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Programme", greyFont));
+		document.add(new Paragraph("Programme", grayFont));
 		document.add(new Paragraph("Programme: "+application.getProject().getProgram().getTitle()));
 
 		if (application.getProgrammeDetails().getStudyOption() == null) {
@@ -132,16 +134,19 @@ public class PdfDocumentBuilder {
 			PdfPTable table = new PdfPTable(3);
 			table.setWidthPercentage (100.0f);
 
-			PdfPCell c1 = new PdfPCell(new Phrase("Supervisor Email"));
+			PdfPCell c1 = new PdfPCell(new Phrase("Supervisor Email", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
 
-			c1 = new PdfPCell(new Phrase("Is primary supervisor?"));
+			c1 = new PdfPCell(new Phrase("Is primary supervisor?", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
 
-			c1 = new PdfPCell(new Phrase("Is supervisor aware of your application?"));
+			c1 = new PdfPCell(new Phrase("Is supervisor aware of your application?", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
 			table.setHeaderRows(1);
 
@@ -156,7 +161,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addPersonalDetailsSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Personal Details", greyFont));
+		document.add(new Paragraph("Personal Details", grayFont));
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getFirstName(), "First Name");
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getLastName(), "Last Name");
 
@@ -192,12 +197,14 @@ public class PdfDocumentBuilder {
 			table = new PdfPTable(2);
 			table.setWidthPercentage (100.0f);
 
-			c1 = new PdfPCell(new Phrase("Language"));
+			c1 = new PdfPCell(new Phrase("Language", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
 
-			c1 = new PdfPCell(new Phrase("Aptitude"));
+			c1 = new PdfPCell(new Phrase("Aptitude", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
 			table.setHeaderRows(1);
 
@@ -243,12 +250,14 @@ public class PdfDocumentBuilder {
 			table = new PdfPTable(2);
 			table.setWidthPercentage (100.0f);
 
-			c1 = new PdfPCell(new Phrase("Type"));
+			c1 = new PdfPCell(new Phrase("Type", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
 
-			c1 = new PdfPCell(new Phrase("Number"));
+			c1 = new PdfPCell(new Phrase("Number", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
 			table.setHeaderRows(1);
 
@@ -272,12 +281,14 @@ public class PdfDocumentBuilder {
 			PdfPTable table = new PdfPTable(2);
 			table.setWidthPercentage (100.0f);
 
-			PdfPCell c1 = new PdfPCell(new Phrase("Nationality"));
+			PdfPCell c1 = new PdfPCell(new Phrase("Nationality", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
 
-			c1 = new PdfPCell(new Phrase("Is primary nationality?"));
+			c1 = new PdfPCell(new Phrase("Is primary nationality?", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
 			table.setHeaderRows(1);
 
@@ -293,7 +304,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Address", greyFont));
+		document.add(new Paragraph("Address", grayFont));
 
 		for (Address address : application.getAddresses()) {
 			document.add(new Paragraph("Location: "+address.getLocation()));
@@ -322,7 +333,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addQualificationSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Qualification", greyFont));
+		document.add(new Paragraph("Qualification", grayFont));
 		if (application.getQualifications().isEmpty()) {
 			document.add(new Paragraph(createMessage("qualification information")));
 		} else {
@@ -345,7 +356,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addEmploymentSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Employment", greyFont));
+		document.add(new Paragraph("Employment", grayFont));
 		if (application.getEmploymentPositions().isEmpty()) {
 			document.add(new Paragraph(createMessage("employment information")));
 		} else {
@@ -369,7 +380,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addFundingSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Funding", greyFont));
+		document.add(new Paragraph("Funding", grayFont));
 
 		if (application.getFundings().isEmpty()) {
 			document.add(new Paragraph(createMessage("funding information")));
@@ -389,7 +400,7 @@ public class PdfDocumentBuilder {
 
 	private void addReferencesSection(ApplicationForm application, Document document) throws DocumentException {
 
-		document.add(new Paragraph("References", greyFont));
+		document.add(new Paragraph("References", grayFont));
 
 		if (application.getReferees().isEmpty()) {
 			document.add(new Paragraph(createMessage("references information")));
@@ -425,7 +436,7 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {
-		document.add(new Paragraph("Additional Information", greyFont));
+		document.add(new Paragraph("Additional Information", grayFont));
 		if (application.getAdditionalInformation() != null) {
 			document.add(new Paragraph(application.getAdditionalInformation()));
 		} else {

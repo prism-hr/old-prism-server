@@ -81,14 +81,6 @@ public class AddRoleToExistingUserController {
 		return false;
 	}
 	
-	
-//	@ModelAttribute("selectedProgram")
-//	public Program getProgram(Integer programId) {
-//		Program program = programsService.getProgramById(programId);
-//		if (program == null) {
-//			throw new ResourceNotFoundException();
-//		}
-//		return program;
-//	}
+
 
 }

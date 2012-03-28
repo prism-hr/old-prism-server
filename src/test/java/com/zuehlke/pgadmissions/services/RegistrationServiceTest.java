@@ -109,7 +109,7 @@ public class RegistrationServiceTest {
 
 		Program program = new ProgramBuilder()
 				.id(1)
-				.administrator(new RegisteredUserBuilder().id(1).email("email1@test.com").toUser(),
+				.administrators(new RegisteredUserBuilder().id(1).email("email1@test.com").toUser(),
 						new RegisteredUserBuilder().id(1).email("email2@test.com").toUser()).toProgram();
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson")
 				.projectOriginallyAppliedTo(new ProjectBuilder().program(program).toProject()).toUser();

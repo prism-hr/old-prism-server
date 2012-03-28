@@ -1,4 +1,4 @@
-<#if model.usersInRoles?has_content>
+<#if usersInRoles?has_content>
 	<#assign hasUsers = true>
 <#else>
 	<#assign hasUsers = false>
@@ -27,6 +27,13 @@
 		{
   			 var program = document.getElementById('programId').value;
    			window.location.href="/pgadmissions/manageUsers/showPage?programId=" + program;
+		}
+		
+		function userChange()
+		{
+  			 var program = document.getElementById('programId').value;
+  			 var user = document.getElementById('userId').value;
+   			window.location.href="/pgadmissions/manageUsers/showPage?programId=" + program + "&userId=" + user;
 		}
 		</script>
 	</head>
@@ -57,9 +64,9 @@
 				              		<label>Select programme</label>
 				              		<select name="programId" id="programId" onChange="programChange()">
 											<option value="">Please select a program</option>
-	                                		<#list model.programs as program>
+	                                		<#list programs as program>"
 	                                    		<option value="${program.id?string("######")}" 
-	                                    			<#if model.selectedProgram?? && model.selectedProgram.id == program.id >
+	                                    			<#if selectedProgram?? && selectedProgram.id == program.id >
 													 selected = "selected"
 													</#if>>${program.title}</option>               
 	                                		</#list>
@@ -73,10 +80,14 @@
 					            
 					              	<div class="row">
 					                	<label>Please choose a user</label>
-					                	<select id="userId" name="userId">
+					                	<select id="userId" name="userId" onChange="userChange()">
 					                			<option value="">Please choose a user</option>
-					                			<#list model.availableUsers as user>
-						                			<option value="${user.id?string("######")}">${user.firstName} ${user.lastName}</option>      
+					                			<#list availableUsers as user>						                			
+						                			<option value="${user.id?string("######")}"
+						                			<#if selectedUser?? && selectedUser.id == user.id >
+													 selected = "selected"
+													</#if>
+						                			>${user.firstName} ${user.lastName}</option>      
 												</#list>
 					                		</select>
 					              	</div>
@@ -93,8 +104,8 @@
 					            	<div class="row">
 					                	<label>Role(s) in application process</label>
 					                	<select multiple size="4" id="roles" name="roles" >
-                        				<#list model.roles as role>
-                      						<option value="${role}">${role}</option>
+                        				<#list authorities as authority>
+                      						<option value="${authority}" <#if selectedUser?? && selectedUser.isInRoleInProgram(authority, selectedProgram)>selected="selected" </#if>>${authority}</option>
                       					</#list>
                       					</select>
 					              	</div>
@@ -125,11 +136,11 @@
 		              				</tr>
 		            			</thead>
 		            			<tbody>
-		            				<#list model.usersInRoles as userInRole>
+		            				<#list usersInRoles as userInRole>
 			              				<tr>
 			                				<td scope="col">${userInRole.email}</td>
 						                	<td scope="col">${userInRole.firstName} ${userInRole.lastName}</td>
-						                	<td scope="col">${userInRole.getAuthoritiesForProgramAsString(model.selectedProgram)}</td>
+						                	<td scope="col">${userInRole.getAuthoritiesForProgramAsString(selectedProgram)}</td>
 			                				<td scope="col"><a href="#">Edit</a> / <a href="#">Remove</a></td>
 			              				</tr>
 									</#list>			              			

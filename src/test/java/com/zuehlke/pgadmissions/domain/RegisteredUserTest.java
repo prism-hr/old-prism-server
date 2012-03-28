@@ -165,4 +165,12 @@ public class RegisteredUserTest {
 	
 	}
 	
+	@Test
+	public void shouldReturnTrueIfUserHasRoleForProgram(){	
+		Program program = new ProgramBuilder().id(1).toProgram();
+		RegisteredUser user1 = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).programsOfWhichApprover(program).toUser();
+		assertFalse(user1.isInRoleInProgram(Authority.ADMINISTRATOR, program));
+		RegisteredUser user2 = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).programsOfWhichAdministrator(program).toUser();
+		assertTrue(user2.isInRoleInProgram(Authority.ADMINISTRATOR, program));
+	}
 }

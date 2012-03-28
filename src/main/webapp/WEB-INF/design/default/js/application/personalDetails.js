@@ -26,7 +26,7 @@ $(document).ready(function(){
 	        "<input type='hidden' name='phoneNumbers' value='{" + '"type": "'+ $('#phoneType option:selected').val() + '", "number": "' +  $('#phoneNumber').val() + '"}' + "'/>" +
 		  	'</span>';
 		  	  	
-			$('#phonenumbers').append(html);
+			$('#personal_details_phonenumbers').append(html);
 			
 			$('#phoneNumber').val('');
 		}
@@ -136,11 +136,12 @@ $(document).ready(function(){
 	
 	$('#personalDetailsSaveButton').on("click", function(){		
 		
+		alert($('#phoneNumber').val());
 		//phonenumbers
-		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val()!= ''){	
+		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val() != ''){	
 			var html ="<input type='hidden' name='phoneNumbers' value='{" + '"type": "'+ $('#phoneType option:selected').val() + '", "number": "' +  $('#phoneNumber').val() + '"}' + "'/>" ;
 			  	  	
-			$('#phonenumbers').append(html);		
+			$('#personal_details_phonenumbers').append(html);		
 			
 		}
 		
@@ -162,7 +163,7 @@ $(document).ready(function(){
 		
 		//candidate nationalities
 		if( $('#candidateNationalityCountry option:selected').val()!= ''){
-			var html = 	"<span><input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  + '"}' + "'/>" + '</span>';
+			var html = 	"<span><input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  + '}' + "'/>" + '</span>';
 				
 			
 			$('#existingCandidateNationalities').append(html);
@@ -215,11 +216,11 @@ $(document).ready(function(){
 		//do the post!
 		$.post( "/pgadmissions/personalDetails" ,
 				$.param(postData) + 
-				"&" + $('[input[name="languageProficiencies"]').serialize()+ 
-				"&" + $('[input[name="candidateNationalities"]').serialize()+
-				"&" + $('[input[name="maternalGuardianNationalities"]').serialize()+
-				"&" + $('[input[name="paternalGuardianNationalities"]').serialize()+
-				"&" + $('[input[name="phoneNumbers"]').serialize(),
+				"&" + $('input[name="languageProficiencies"]').serialize()+ 
+				"&" + $('input[name="candidateNationalities"]').serialize()+
+				"&" + $('input[name="maternalGuardianNationalities"]').serialize()+
+				"&" + $('input[name="paternalGuardianNationalities"]').serialize()+
+				"&" + $('#personal_details_phonenumbers input[name="phoneNumbers"]').serialize(),
 				 function(data) {
 				    $('#personalDetailsSection').html(data);
 				  }
@@ -234,7 +235,7 @@ $(document).ready(function(){
 	
 	/// delete collection items
 	if($('#submissionStatus').val()=="UNSUBMITTED"){
-		$("#phonenumbers").on("click", "a", function(){	
+		$("#personal_details_phonenumbers").on("click", "a", function(){	
 			$(this).parent("div").parent("div").parent("span").remove();
 			
 		});

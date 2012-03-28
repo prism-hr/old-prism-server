@@ -102,7 +102,7 @@
 	                        <th class="align-left">Supervisor lastname</th>
 	                        <th class="align-left">Supervisor email</th>
 	                        <th>Primary</th>
-	                        <th>Aware</th>
+	                        <th> Is supervisor aware of your application?</th>
                     	</tr>
                     </thead>
                     

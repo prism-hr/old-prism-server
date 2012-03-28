@@ -430,7 +430,8 @@ public class PdfDocumentBuilder {
 	
 	private void addSupportingDocuments(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
 		for (com.zuehlke.pgadmissions.domain.Document doc : application.getSupportingDocuments()) {
-			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg") || doc.getFileName().endsWith("png")) {
+			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg") || doc.getFileName().endsWith("png")
+					|| doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
 				Image image = Image.getInstance(doc.getContent());
 				document.add(image);
 			}

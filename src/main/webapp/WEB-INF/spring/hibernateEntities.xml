@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	 xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd		
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+
+	<bean id="entities" class="java.util.ArrayList">
+		<constructor-arg>
+	     	<list>
+	     		<value>com.zuehlke.pgadmissions.domain.RegisteredUser</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Role</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ApplicationForm</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ApplicationReview</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Program</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Project</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Qualification</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Address</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Funding</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Country</value>
+	     		<value>com.zuehlke.pgadmissions.domain.EmploymentPosition</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Referee</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Reference</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Telephone</value>
+	     		<value>com.zuehlke.pgadmissions.domain.PersonalDetail</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ProgrammeDetail</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Supervisor</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Document</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Language</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Nationality</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ApplicantRecord</value>
+	     		<value>com.zuehlke.pgadmissions.domain.LanguageProficiency</value>
+	     	</list>    	        	
+	    </constructor-arg>			
+	</bean>
+
+</beans>

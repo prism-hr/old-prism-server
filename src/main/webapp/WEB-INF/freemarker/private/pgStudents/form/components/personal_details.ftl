@@ -318,7 +318,7 @@
                 </div>
                 
               	<div>
-	              	 <div id="phonenumbers"  class="row">
+	              	 <div id="personal_details_phonenumbers"  class="row">
 	                    <#list model.applicationForm.personalDetails.phoneNumbers! as phoneNumber>          
 							<span>
 	                  	  		<div class="row">

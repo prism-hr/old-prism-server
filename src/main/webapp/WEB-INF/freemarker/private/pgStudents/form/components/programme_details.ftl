@@ -78,7 +78,7 @@
                     </#if>
                    <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
                    <span name="supervisor_span">
-                         Name: ${supervisor.firstname!} ${supervisor.lastname!}, Email: ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Aware:${supervisor.awareSupervisor} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
+                         Name: ${supervisor.firstname!} ${supervisor.lastname!}, Email: ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Is supervisor aware of your application:${supervisor.awareSupervisor} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
                        <input type="hidden" name="supervisors" value='{"firstname" :"${supervisor.firstname!}","lastname" :"${supervisor.lastname!}","email" :"${supervisor.email}", "primarySupervisor":"${supervisor.primarySupervisor}", "awareSupervisor":"${supervisor.awareSupervisor}"}' />                             
                        <p></p>
                   </span>
@@ -87,38 +87,39 @@
                 
                 <#if !model.applicationForm.isSubmitted()>  
                 <!-- supervisor rows -->
-                <table class="multiples">
-                	<colgroup>
-                    	<col />
-                      	<col style="width: 80px;" />
-                      	<col style="width: 80px;" />
-                    </colgroup>
-                    
-                    <thead>
-                    	<tr>
-	                        <th class="align-left">Supervisor firstname</th>
-	                        <th class="align-left">Supervisor lastname</th>
-	                        <th class="align-left">Supervisor email</th>
-	                        <th>Primary</th>
-	                        <th> Is supervisor aware of your application?</th>
-                    	</tr>
-                    </thead>
-                    
-                    <tbody>
-						<!-- repeat these rows for every existing supervisor. -->
-                      	<tr>
-	                        <th class="align-left"><input class="full" type="text" placeholder="Firstname" id="supervisorFirstname" name="supervisorFirstname"/></th>
-	                        <th class="align-left"><input class="full" type="text" placeholder="Lastname" id="supervisorLastname" name="supervisorLastname"/></th>
-	                        <th class="align-left"><input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/></th>
-	                        <th><input type="checkbox" name="primarySupervisorCB" id="primarySupervisorCB"/></th>
-	                        <input type="hidden" name="primarySupervisor" id="primarySupervisor"/>
-	                        <th><input type="checkbox" name="awareSupervisorCB" id="awareSupervisorCB"/></th>
-	                        <input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
-                      	</tr>
-                      	<!-- end repeat -->
-                    </tbody>
-                    
-				</table>
+                <div class="row">
+                <label class="label">Supervisor First Name<em>*</em></label>
+                    <div class="field">
+                        <input class="full" type="text" placeholder="First Name" id="supervisorFirstname" name="supervisorFirstname"/>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <label class="label">Supervisor Last Name<em>*</em></label>
+                    <div class="field"> 
+                        <input class="full" type="text" placeholder="Last Name" id="supervisorLastname" name="supervisorLastname"/>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <label class="label">Supervisor Email<em>*</em></label>
+                    <div class="field">
+                        <input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
+                    </div>
+                </div>
+                
+                <div class="row">
+                       <label class="label">Primary</label>
+                       <input type="checkbox" name="primarySupervisorCB" id="primarySupervisorCB"/>
+                       <input type="hidden" name="primarySupervisor" id="primarySupervisor"/>
+                </div>
+                
+                <div class="row">
+                    <label class="label">Is supervisor aware of your application?</label>
+                    <input type="checkbox" name="awareSupervisorCB" id="awareSupervisorCB"/>
+                    <input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
+                </div>      
+                
                     <a id="addSupervisorButton" class="button" style="width: 110px;">Add Supervisor</a>
                     </#if>
 			</div>

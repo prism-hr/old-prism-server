@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -86,38 +87,42 @@ public class PrintController {
 
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
 	public void printAll(HttpServletRequest request, HttpServletResponse response) throws ServletRequestBindingException, DocumentException, IOException {
+		response.setHeader("Expires", "0");
+		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+		response.setHeader("Pragma", "public");
+		response.setHeader("Content-Disposition", "attachment; filename=\"applications.zip\"");
+		response.setContentType("application/zip");
+		ServletOutputStream out = response.getOutputStream();
+		 ZipOutputStream zip = new ZipOutputStream(out);
+		
 		String appListToPrint = ServletRequestUtils.getStringParameter(request, "appList");
 		String[] applications = appListToPrint.split(";");
 
 
-
-		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		PdfWriter writer = PdfWriter.getInstance(document, baos);
-		PdfDocumentBuilder builder = new PdfDocumentBuilder(writer);
-
-		document.open();
 		if (StringUtils.isNotBlank(appListToPrint)) {
 			for (String applicationId : applications) {
 				ApplicationForm application = applicationSevice.getApplicationById(new Integer(applicationId));
+				
+				Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				
+				PdfWriter writer = PdfWriter.getInstance(document, baos);
+				PdfDocumentBuilder builder = new PdfDocumentBuilder(writer);
+				document.open();
 				builder.buildDocument(application, document);
-				document.newPage();
+				document.close();
+				
+				zip.putNextEntry(new ZipEntry("application"+applicationId+".pdf"));
+				zip.write(baos.toByteArray());
+				zip.closeEntry();
 			}
-		} else {
-			document.add(new Paragraph("No applications selected to be downloaded. Please try again."));
-		}
+		} 
 
-		document.close();
+		
 
-		response.setHeader("Expires", "0");
-		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
-		response.setHeader("Pragma", "public");
-		response.setHeader("Content-Disposition", "attachment; filename=\"applications.pdf\"");
-		response.setContentType("application/pdf");
-		response.setContentLength(baos.size());
-		ServletOutputStream out = response.getOutputStream();
-		baos.writeTo(out); 
+		zip.flush();        
+		zip.close();
+		
 		out.flush();
 		out.close();
 

@@ -118,6 +118,15 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldGetUsersByProgramme() {
+		
+
+		Program programOne = new ProgramBuilder().code("111111").description("hello").title("hello").toProgram();
+		Program programTwo = new ProgramBuilder().code("222222").description("hello").title("hello").toProgram();
+		
+		save(programOne, programTwo);
+		
+		flushAndClearSession();
+
 		RoleDAO roleDAO = new RoleDAO(sessionFactory);
 		Role superAdminRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
 		
@@ -133,43 +142,35 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).roles(superAdminRole)
 				.toUser();
 		
-		RegisteredUser approverOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username4")
+		RegisteredUser approverOne = new RegisteredUserBuilder().programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username4")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		RegisteredUser approverTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username5")
+		RegisteredUser approverTwo = new RegisteredUserBuilder().programsOfWhichApprover(programTwo).firstName("Jane").lastName("Doe").email("email@test.com").username("username5")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		RegisteredUser approverThree = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username6")				
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		
-		
-		
-		RegisteredUser reviewerOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username7")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		RegisteredUser reviewerTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username8")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		RegisteredUser reviewerThree = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username9")				
+		RegisteredUser approverThree = new RegisteredUserBuilder().programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username6")				
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		
 		
-		RegisteredUser administratorOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username10")
+		
+		RegisteredUser reviewerOne = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username7")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		RegisteredUser administratorTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username11")
+		RegisteredUser reviewerTwo = new RegisteredUserBuilder().programsOfWhichReviewer(programTwo).firstName("Jane").lastName("Doe").email("email@test.com").username("username8")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		RegisteredUser administratorThree = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username12")				
+		RegisteredUser reviewerThree = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username9")				
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		
+		
+		RegisteredUser administratorOne = new RegisteredUserBuilder().programsOfWhichAdministrator(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username10")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		RegisteredUser administratorTwo = new RegisteredUserBuilder().programsOfWhichAdministrator(programTwo).firstName("Jane").lastName("Doe").email("email@test.com").username("username11")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		RegisteredUser administratorThree = new RegisteredUserBuilder().programsOfWhichAdministrator(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username12")				
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
-		RegisteredUser reviewerAndApprover = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username13")				
+		RegisteredUser reviewerAndApprover = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username13")				
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
-		
 		
 		save(superAdminOne, superAdminTwo, superAdminThree, administratorOne, administratorThree,administratorTwo, approverOne, approverThree,approverTwo, reviewerOne, reviewerThree, reviewerTwo, reviewerAndApprover);
-		
-		flushAndClearSession();
-
-		Program programOne = new ProgramBuilder().administrator(administratorOne, administratorThree).approver(approverOne, approverThree, reviewerAndApprover).reviewers(reviewerOne, reviewerThree, reviewerAndApprover).code("111111").description("hello").title("hello").toProgram();
-		Program programTwo = new ProgramBuilder().administrator(administratorTwo).approver(approverTwo).reviewers(reviewerTwo).code("222222").description("hello").title("hello").toProgram();
-		
-		save(programOne, programTwo);
 		
 		flushAndClearSession();
 		

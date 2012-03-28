@@ -70,20 +70,14 @@ $(document).ready(function(){
 	//candidate nationalities
 	$('#addCandidateNationalityButton').on("click", function(){
 		if( $('#candidateNationalityCountry option:selected').val()!= ''){
-			var primary = "";
-			var jsonPrimary = "false";
-			if($('#primaryCandidateNationality').is(':checked') ){
-				primary = "This is my primary nationality";
-				jsonPrimary = "true"
-			}
 					
 			var html = '<span>' +
 	  	 	'<div class="row">'+
 	  	 	'	<label class="label">Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  +	', "primary": "' + jsonPrimary + '"}' + "'/>" +
-	  		'		<a class="button-delete">Delete</a>'+ primary +' <br/>'+
+	  		"		<input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val() + '"}' + "'/>" +
+	  		'		<a class="button-delete">Delete</a><br/>'+
 	  		'	</div>'+
 	  		'</div>'+
 	  	'</span> ';
@@ -91,7 +85,6 @@ $(document).ready(function(){
 			$('#existingCandidateNationalities').append(html);
 			
 			$('#candidateNationalityCountry').val("");
-			$('#primaryCandidateNationality').prop('checked', false);
 		}
 		
 	});
@@ -100,21 +93,14 @@ $(document).ready(function(){
 	//maternal guardian nationalities
 	$('#addMaternalNationalityButton').on("click", function(){
 		if( $('#maternalNationalityCountry option:selected').val()!= ''){
-			var primary = "";
-			var jsonPrimary = "false";
-			if($('#primaryMaternalNationality').is(':checked') ){
-				primary = "This is her primary nationality";
-				jsonPrimary = "true"
-			}
-				
 			
 			var html = '<span>' +
 	  	 	'<div class="row">'+
 	  	 	'	<label class="label">Maternal Guardian Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  +	', "primary": "' + jsonPrimary + '"}' + "'/>" +
-	  		'		<a class="button-delete">Delete</a>'+ primary +' <br/>'+
+	  		"		<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val() + '"}' + "'/>" +
+	  		'		<a class="button-delete">Delete</a><br/>'+
 	  		'	</div>'+
 	  		'</div>'+
 	  	'</span> ';
@@ -123,7 +109,6 @@ $(document).ready(function(){
 			$('#existingMaternalNationalities').append(html);
 			
 			$('#maternalNationalityCountry').val("");
-			$('#primaryMaternalNationality').prop('checked', false);
 		}
 		
 	});
@@ -131,29 +116,20 @@ $(document).ready(function(){
 	//paternal guardian nationalities
 	$('#addPaternalNationalityButton').on("click", function(){
 		if( $('#paternalNationalityCountry option:selected').val()!= ''){
-			var primary = "";
-			var jsonPrimary = "false";
-			if($('#primaryPaternalNationality').is(':checked') ){
-				primary = "This is his primary nationality";
-				jsonPrimary = "true"
-			}
-			
 			var html = '<span>' +
 	  	 	'<div class="row">'+
 	  	 	'	<label class="label">Paternal Guardian Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()  +	', "primary": "' + jsonPrimary + '"}' + "'/>" +
-	  		'		<a class="button-delete">Delete</a>'+ primary +' <br/>'+
+	  		"		<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()   + '"}' + "'/>" +
+	  		'		<a class="button-delete">Delete</a> <br/>'+
 	  		'	</div>'+
 	  		'</div>'+
 	  	'</span> ';
 			
 			
 			$('#existingPaternalNationalities').append(html);
-			
 			$('#paternalNationalityCountry').val("");
-			$('#primaryPaternalNationality').prop('checked', false);
 		}
 	});
 	
@@ -186,15 +162,8 @@ $(document).ready(function(){
 		
 		//candidate nationalities
 		if( $('#candidateNationalityCountry option:selected').val()!= ''){
-			var primary = "";
-			var jsonPrimary = "false";
-			if($('#primaryCandidateNationality').is(':checked') ){
-				primary = "Primary";
-				jsonPrimary = "true"
-			}
-			
 			var html = 	"<span><input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  +
-			', "primary": "' + jsonPrimary + '"}' + "'/></span>";
+			'}' + "'/></span>";
 			
 			$('#existingCandidateNationalities').append(html);
 		}
@@ -202,30 +171,17 @@ $(document).ready(function(){
 
 		//maternal nationalities
 		if( $('#maternalNationalityCountry option:selected').val()!= ''){
-			var primary = "";
-			var jsonPrimary = "false";
-			if($('#primaryMaternalNationality').is(':checked') ){
-				primary = "Primary";
-				jsonPrimary = "true"
-			}
-			
 			var html = 	"<span><input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  +
-			', "primary": "' + jsonPrimary + '"}' + "'/></span>";
+			'}' + "'/></span>";
 			
 			$('#existingMaternalNationalities').append(html);
 		}
 		
 		//paternal nationalities
 		if( $('#paternalNationalityCountry option:selected').val()!= ''){
-			var primary = "";
-			var jsonPrimary = "false";
-			if($('#primaryPaternalNationality').is(':checked') ){
-				primary = "Primary";
-				jsonPrimary = "true"
-			}
 			
 			var html = 	"<span><input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()  +
-			', "primary": "' + jsonPrimary + '"}' + "'/></span>";
+			'"}' + "'/></span>";
 			
 			$('#existingPaternalNationalities').append(html);
 		}

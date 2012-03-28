@@ -83,7 +83,6 @@ public class UserService {
 	public List<RegisteredUser> getAllUsersForProgram(Program program) {
 		return userDAO.getUsersForProgram(program);
 	}
-
 	
 	public List<RegisteredUser> getAllInternalUsers() {
 		List<RegisteredUser> availableUsers = new ArrayList<RegisteredUser>();

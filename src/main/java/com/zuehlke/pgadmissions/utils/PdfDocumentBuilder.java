@@ -283,11 +283,6 @@ public class PdfDocumentBuilder {
 
 			for (Nationality nationality : nationalities) {
 				table.addCell(nationality.getCountry().getName());
-				if (nationality.isPrimary()) {
-					table.addCell("Yes");
-				} else {
-					table.addCell("No");
-				}
 			}
 
 			document.add(table);

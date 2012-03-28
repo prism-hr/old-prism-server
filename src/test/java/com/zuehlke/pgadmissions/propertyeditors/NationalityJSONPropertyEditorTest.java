@@ -42,7 +42,6 @@ public class NationalityJSONPropertyEditorTest {
 		assertEquals(2, nationality.getSupportingDocuments().size());
 		assertTrue(nationality.getSupportingDocuments().containsAll(Arrays.asList(document1, document2)));
 		assertEquals(NationalityType.CANDIDATE, nationality.getType());
-		assertTrue(nationality.isPrimary());
 
 	}
 
@@ -52,13 +51,12 @@ public class NationalityJSONPropertyEditorTest {
 		EasyMock.expect(countryServiceMock.getCountryById(1)).andReturn(country);
 		EasyMock.replay(documentServiceMock, countryServiceMock);
 
-		editor.setAsText("{\"type\": \"CANDIDATE\", \"country\": 1, \"primary\": \"true\"}");
+		editor.setAsText("{\"type\": \"CANDIDATE\", \"country\": 1}");
 
 		Nationality nationality = (Nationality) editor.getValue();
 		assertEquals(country, nationality.getCountry());
 		assertTrue(nationality.getSupportingDocuments().isEmpty());
 		assertEquals(NationalityType.CANDIDATE, nationality.getType());
-		assertTrue(nationality.isPrimary());
 
 	}
 	@Test(expected = IllegalArgumentException.class)
@@ -104,7 +102,7 @@ public class NationalityJSONPropertyEditorTest {
 		nationality.setSupportingDocuments(Arrays.asList(document1, document2));
 
 		editor.setValue(nationality);
-		assertEquals("{\"type\": \"CANDIDATE\", \"country\": 1, \"supportingDocuments\": [1,2], \"primary\": \"false\"}", editor.getAsText());
+		assertEquals("{\"type\": \"CANDIDATE\", \"country\": 1, \"supportingDocuments\": [1,2]}", editor.getAsText());
 	}
 
 	@Before

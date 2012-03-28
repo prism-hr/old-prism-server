@@ -27,10 +27,6 @@ public class Nationality extends DomainObject<Integer> {
 	@JoinColumn(name = "country_id")
 	private Country country;
 	
-	@Column(name = "primary_nationality")
-	private boolean primary;
-	
-	
 	@OneToMany	
 	@JoinColumn(name = "nationality_id")
 	private List<Document> supportingDocuments= new ArrayList<Document>();
@@ -91,16 +87,8 @@ public class Nationality extends DomainObject<Integer> {
 				stringBuilder.append(",");
 			}
 		}
-		stringBuilder.append("], \"primary\": \"" +  this.isPrimary() + "\"}");
+		stringBuilder.append("]}");
 		return stringBuilder.toString();
-	}
-
-	public boolean isPrimary() {
-		return primary;
-	}
-
-	public void setPrimary(boolean primary) {
-		this.primary = primary;
 	}
 
 	

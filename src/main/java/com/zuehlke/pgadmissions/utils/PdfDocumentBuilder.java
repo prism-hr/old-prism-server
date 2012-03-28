@@ -276,22 +276,16 @@ public class PdfDocumentBuilder {
 
 	private void addGivenNationality(Document document, String header, java.util.List<Nationality> nationalities) throws DocumentException {
 		document.add(new Paragraph(header, smallBoldFont));
-		if (!nationalities.isEmpty()) {
+		if (nationalities.size() > 0) {
 			document.add(new Paragraph(" "));
 
-			PdfPTable table = new PdfPTable(2);
+			PdfPTable table = new PdfPTable(1);
 			table.setWidthPercentage (100.0f);
 
 			PdfPCell c1 = new PdfPCell(new Phrase("Nationality", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
-
-			c1 = new PdfPCell(new Phrase("Is primary nationality?", smallerBoldFont));
-			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			c1.setBackgroundColor(grayColor);
-			table.addCell(c1);
-			table.setHeaderRows(1);
 
 			for (Nationality nationality : nationalities) {
 				table.addCell(nationality.getCountry().getName());

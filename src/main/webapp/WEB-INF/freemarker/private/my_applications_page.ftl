@@ -57,7 +57,7 @@
 				      <div class="content-box">
 				        <div class="content-box-inner">
 							<!-- confirmation message if application just submitted with email coming soon confirmation -->
-							<p class="invalid">${model.message}</p>
+							<p style="color:red;">${model.message}</p>
 							<table class="data" border="0" >
 					          	<colgroup>
 					            	<col style="width: 30px" />

@@ -173,4 +173,12 @@ public class RegisteredUserTest {
 		RegisteredUser user2 = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).programsOfWhichAdministrator(program).toUser();
 		assertTrue(user2.isInRoleInProgram(Authority.ADMINISTRATOR, program));
 	}
+	
+
+	@Test
+	public void shouldReturnTrueForSuperadmins(){	
+		Program program = new ProgramBuilder().id(1).toProgram();
+		RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
+		assertTrue(user.isInRoleInProgram(Authority.SUPERADMINISTRATOR, program));
+	}
 }

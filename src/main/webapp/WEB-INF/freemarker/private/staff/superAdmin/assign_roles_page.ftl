@@ -22,20 +22,7 @@
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 		
-		<script language="javascript" type="text/javascript">
-		function programChange()
-		{
-  			 var program = document.getElementById('programId').value;
-   			window.location.href="/pgadmissions/manageUsers/showPage?programId=" + program;
-		}
-		
-		function userChange()
-		{
-  			 var program = document.getElementById('programId').value;
-  			 var user = document.getElementById('userId').value;
-   			window.location.href="/pgadmissions/manageUsers/showPage?programId=" + program + "&userId=" + user;
-		}
-		</script>
+
 	</head>
 	
 	<body>
@@ -53,7 +40,7 @@
 		      		<div class="content-box">
 		      			<div class="content-box-inner">
 		        
-			          		<form name="programmeForm" action="/pgadmissions/assignUser/submit" method="POST">
+			          		<form id ="programmeForm" name="programmeForm" action="/pgadmissions/manageUsers/updateRoles" method="POST">
 			          
 			          			<h1>Add Existing programme users and assign roles</h1>
 			            		<p>Please add users to the programme.<br>You can select one or more roles for the user.</p>
@@ -62,13 +49,14 @@
 			            
 			            		<div class="row programme">
 				              		<label>Select programme</label>
-				              		<select name="programId" id="programId" onChange="programChange()">
+				              		<select name="programId" id="programId">
 											<option value="">Please select a program</option>
 	                                		<#list programs as program>"
-	                                    		<option value="${program.id?string("######")}" 
+	                                    		<option value='${program.id?string("######")}' 
 	                                    			<#if selectedProgram?? && selectedProgram.id == program.id >
 													 selected = "selected"
-													</#if>>${program.title}</option>               
+													</#if>
+												>${program.title}</option>               
 	                                		</#list>
 				              		</select>
 			            		</div>
@@ -80,7 +68,7 @@
 					            
 					              	<div class="row">
 					                	<label>Please choose a user</label>
-					                	<select id="userId" name="userId" onChange="userChange()">
+					                	<select id="userId" name="userId">
 					                			<option value="">Please choose a user</option>
 					                			<#list availableUsers as user>						                			
 						                			<option value="${user.id?string("######")}"
@@ -103,7 +91,7 @@
 					            
 					            	<div class="row">
 					                	<label>Role(s) in application process</label>
-					                	<select multiple size="4" id="roles" name="roles" >
+					                	<select multiple size="4" id="roles" name="newRoles" >
                         				<#list authorities as authority>
                       						<option value="${authority}" <#if selectedUser?? && selectedUser.isInRoleInProgram(authority, selectedProgram)>selected="selected" </#if>>${authority}</option>
                       					</#list>
@@ -111,7 +99,7 @@
 					              	</div>
 					            
 					              	<div class="buttons">
-					              		<button type="submit" value="adduser" >Add user</button>
+					              		<button type="submit" value="adduser" >Add / update user</button>
 					            	</div>
 					              
 								</div>
@@ -141,7 +129,7 @@
 			                				<td scope="col">${userInRole.email}</td>
 						                	<td scope="col">${userInRole.firstName} ${userInRole.lastName}</td>
 						                	<td scope="col">${userInRole.getAuthoritiesForProgramAsString(selectedProgram)}</td>
-			                				<td scope="col"><a href="#">Edit</a> / <a href="#">Remove</a></td>
+			                				<td scope="col"><a href="<@spring.url '/manageUsers/showPage?programId=${selectedProgram.id?string("#######")}&userId=${userInRole.id?string("#######")}'/>">Edit</a> / <a href="#" name="removeuser" id="remove_${userInRole.id?string("#######")}">Remove</a></td>
 			              				</tr>
 									</#list>			              			
 		            			</tbody>
@@ -168,9 +156,11 @@
 		
 		<!-- Scripts -->
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/admin/manageusers.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/help.js' />"></script>
+		
 		
 	</body>
 </html>

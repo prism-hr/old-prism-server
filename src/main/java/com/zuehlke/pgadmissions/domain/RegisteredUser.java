@@ -48,13 +48,16 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
 	
-	@ManyToMany(mappedBy="administrators")	
+	@ManyToMany
+	@JoinTable(name = "PROGRAM_ADMINISTRATOR_LINK", joinColumns = { @JoinColumn(name = "administrator_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
 	
-	@ManyToMany(mappedBy="approvers")	
+	@ManyToMany	
+	@JoinTable(name = "PROGRAM_APPROVER_LINK", joinColumns = { @JoinColumn(name = "registered_user_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	private List<Program> programsOfWhichApprover = new ArrayList<Program>();
 	
-	@ManyToMany(mappedBy="reviewers")	
+	@ManyToMany
+	@JoinTable(name = "PROGRAM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "reviewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	private List<Program> programsOfWhichReviewer = new ArrayList<Program>();
 
 	public List<Role> getRoles() {
@@ -277,9 +280,20 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	}
 
 	public boolean isInRoleInProgram(Authority authority, Program program) {
+		if(Authority.SUPERADMINISTRATOR == authority && isInRole(Authority.SUPERADMINISTRATOR)){
+			return true;
+		}
 		return getAuthoritiesForProgram(program).contains(authority);
 		
 	}
 
+	public Role getRoleByAuthority(Authority authority){
+		for (Role role : roles) {
+			if(role.getAuthorityEnum() == authority){
+				return role;
+			}
+		}
+		return null;
+	}
 
 }

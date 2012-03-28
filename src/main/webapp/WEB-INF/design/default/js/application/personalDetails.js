@@ -136,7 +136,7 @@ $(document).ready(function(){
 	
 	$('#personalDetailsSaveButton').on("click", function(){		
 		
-		alert($('#phoneNumber').val());
+
 		//phonenumbers
 		if($('#phoneNumber').val() !="Number" && $('#phoneNumber').val() != ''){	
 			var html ="<input type='hidden' name='phoneNumbers' value='{" + '"type": "'+ $('#phoneType option:selected').val() + '", "number": "' +  $('#phoneNumber').val() + '"}' + "'/>" ;

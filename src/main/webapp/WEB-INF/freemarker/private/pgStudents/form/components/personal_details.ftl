@@ -43,7 +43,7 @@
                     </div>
                   </div>
                 	<div class="row">
-                  	<label class="label">Gender</label>
+                  	<label class="label">Gender<em>*</em></label>
                     <div class="field">
                           <#list model.genders as gender>
                           		<label><input type="radio" name="genderRadio" value="${gender}"
@@ -61,7 +61,7 @@
                     </div>
                   </div>
                 	<div class="row">
-                  	<label class="label">Date of Birth</label>
+                  	<label class="label">Date of Birth<em>*</em> </label>
                     <span class="hint"></span>
                     <div class="field">
                     <#if !model.applicationForm.isSubmitted()>
@@ -78,7 +78,7 @@
 
               	<div>
                 	<div class="row">
-                  	<label class="label">Country of Birth</label>
+                  	<label class="label">Country of Birth<em>*</em></label>
                     <span class="hint"></span>
                     <div class="field">
                       <select class="full" name="country" id="country" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if> >
@@ -116,7 +116,7 @@
                   </div>
             	    
                 	<div class="row">                    	
-                  		 <label class="label">Nationality</label>       
+                  		 <label class="label">Nationality<em>*</em></label>       
 	                  	 <div class="field">
 	                     	 <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
 	                      		<option value="">Select...</option>
@@ -250,7 +250,7 @@
                     </div>
                   </div>
                 <div class="row">
-                  	<span class="label">Aptitude</span>
+                  	<span class="label">Aptitude<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
                       <select class="full" id="aptitude" name="aptitude" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>                      	
@@ -272,7 +272,7 @@
               	<div>
                 	<strong>Residence</strong>
                 	<div class="row">
-                  	<span class="label">Country</span>
+                  	<span class="label">Country<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
                       <select class="full" name="residenceCountry" id="residenceCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>

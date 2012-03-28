@@ -11,6 +11,10 @@ a img { border: none; }
 body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 label input { vertical-align: middle; }
 
+/* Compulsory Field Indications */
+label em { color: red; font-size: 14px; padding: 0 2px; position: absolute; }
+span em { color: red; font-size: 14px; padding: 0 2px; position: absolute; }
+
 .centre { text-align: center !important; }
 .right { text-align: right; }
 .row { overflow: visible; }
@@ -159,6 +163,7 @@ div.search-box button {
 /* Validation errors. */
 span.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; color: red; display: inline-block; margin-left: 10px; padding-left: 24px; }
 input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin: -1px; }
+p.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; color: red; clear: left; display: inline-block; padding-bottom: 10px; padding-left: 24px; line-height: 24px;}
 
 div.buttons { text-align: right; }
 

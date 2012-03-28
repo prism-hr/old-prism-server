@@ -48,7 +48,7 @@ public class SubmitApplicationServiceTest {
 		Referee referee1 = new RefereeBuilder().id(1).firstname("bob").lastname("bobson").email("email@test.com").toReferee();
 		Referee referee2 = new RefereeBuilder().id(2).firstname("anna").lastname("allen").email("email2@test.com").toReferee();
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		Program program = new ProgramBuilder().administrator(administrator).toProgram();
+		Program program = new ProgramBuilder().administrators(administrator).toProgram();
 		Project project = new ProjectBuilder().program(program).toProject();
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).referees(referee1, referee2).id(2).project(project).toApplicationForm();
@@ -106,7 +106,7 @@ public class SubmitApplicationServiceTest {
 		Referee referee1 = new RefereeBuilder().id(1).firstname("bob").lastname("bobson").email("email@test.com").toReferee();
 		Referee referee2 = new RefereeBuilder().id(2).firstname("anna").lastname("allen").email("email2@test.com").toReferee();
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		Program program = new ProgramBuilder().administrator(administrator).toProgram();
+		Program program = new ProgramBuilder().administrators(administrator).toProgram();
 		Project project = new ProjectBuilder().program(program).toProject();
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).referees(referee1, referee2).id(2).project(project).toApplicationForm();

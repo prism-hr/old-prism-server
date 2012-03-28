@@ -29,7 +29,7 @@ public class ProgramBuilder {
 		return this;
 	}
 	
-	public ProgramBuilder administrator(RegisteredUser... administrators){
+	public ProgramBuilder administrators(RegisteredUser... administrators){
 		for (RegisteredUser administrator : administrators) {
 			this.administrators.add(administrator);
 		}

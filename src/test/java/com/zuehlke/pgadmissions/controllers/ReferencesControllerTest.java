@@ -99,7 +99,7 @@ public class ReferencesControllerTest {
 		EasyMock.expect(multipartFileMock.getBytes()).andReturn("lala".getBytes());
 		EasyMock.replay(multipartFileMock);
 
-		refereeServiceMock.save(referee);
+		refereeServiceMock.saveReferenceAndSendMailNotifications(referee);
 		documentValidatorMock.validate(document, errors);
 		EasyMock.expect(errors.hasFieldErrors("fileName")).andReturn(false);
 		EasyMock.replay(refereeServiceMock, documentValidatorMock, errors);

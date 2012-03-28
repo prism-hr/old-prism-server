@@ -188,7 +188,7 @@
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
                       			<input id="qualificationType" class="full" type="text" 
-			                    					<em>*</em><em>*</em>			value="${model.qualification.qualificationType!}"/>
+			             										value="${model.qualification.qualificationType!}"/>
 								<#if model.hasError('qualificationType')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationType').code /></span>                    		
                     			</#if>
@@ -201,7 +201,7 @@
 
                   		<!-- Qualification grade -->
                   		<div class="row">
-                    		<span class="label">Grade</span>
+                    		<span class="label">Grade<em>*</em></span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
@@ -219,7 +219,7 @@
 
                   		<!-- Qualification score -->
                   		<div class="row">
-                    		<span class="label">Score</span>
+                    		<span class="label">Score<em>*</em></span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>

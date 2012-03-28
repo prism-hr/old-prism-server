@@ -48,43 +48,8 @@ public class DocumentValidatorTest {
 	}
 	
 	@Test
-	public void shouldAlloWhileListedExtensios() {
+	public void shouldAllowPDFonly() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(document, "document");
-		document.setFileName("bob.txt");			
-		documentValidator.validate(document, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-		document.setFileName("bob.jpg");			
-		documentValidator.validate(document, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-		document.setFileName("bob.jpeg");			
-		documentValidator.validate(document, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-		document.setFileName("bob.png");			
-		documentValidator.validate(document, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-		
-		document.setFileName("bob.bmp");			
-		documentValidator.validate(document, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-		document.setFileName("bob.tif");			
-		documentValidator.validate(document, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-		document.setFileName("bob.tiff");			
-		documentValidator.validate(document, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		document.setFileName("bob.doc");			
-		documentValidator.validate(document, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-		document.setFileName("bob.docx");			
-		documentValidator.validate(document, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
 		
 		document.setFileName("bob.pdf");			
 		documentValidator.validate(document, mappingResult);

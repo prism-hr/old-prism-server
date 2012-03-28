@@ -62,10 +62,16 @@ public class FileDownloadControllerTest {
 		};
 
 		EasyMock.expect(responseMock.getOutputStream()).andReturn(servletOutputStream);
+		responseMock.setHeader("Expires", "0");
+		responseMock.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+		responseMock.setHeader("Pragma", "public");
+		responseMock.setHeader("Content-Disposition", "inline; filename=\"" + document.getFileName() + "\"");
+		responseMock.setContentType("application/pdf");
+		responseMock.setContentLength(document.getContent().length);
 		EasyMock.replay(responseMock);
 		controller.downloadApplicationDocument(1, responseMock);
 
-		EasyMock.verify(documentServiceMock);
+		EasyMock.verify(documentServiceMock, responseMock);
 
 		byte[] byteArray = byteArrayOutputStream.toByteArray();
 		assertEquals("aaaa", new String(byteArray));
@@ -120,10 +126,16 @@ public class FileDownloadControllerTest {
 		};
 
 		EasyMock.expect(responseMock.getOutputStream()).andReturn(servletOutputStream);
+		responseMock.setHeader("Expires", "0");
+		responseMock.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+		responseMock.setHeader("Pragma", "public");
+		responseMock.setHeader("Content-Disposition", "inline; filename=\"" + document.getFileName() + "\"");
+		responseMock.setContentType("application/pdf");
+		responseMock.setContentLength(document.getContent().length);
 		EasyMock.replay(responseMock);
 		controller.downloadReferenceDocument(1, responseMock);
 
-		EasyMock.verify(referenceServiceMock);
+		EasyMock.verify(referenceServiceMock, responseMock);
 
 		byte[] byteArray = byteArrayOutputStream.toByteArray();
 		assertEquals("aaaa", new String(byteArray));
@@ -206,11 +218,18 @@ public class FileDownloadControllerTest {
 
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 		EasyMock.expect(responseMock.getOutputStream()).andReturn(servletOutputStream);
+		
+		responseMock.setHeader("Expires", "0");
+		responseMock.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+		responseMock.setHeader("Pragma", "public");
+		responseMock.setHeader("Content-Disposition", "inline; filename=\"" + document.getFileName() + "\"");
+		responseMock.setContentType("application/pdf");
+		responseMock.setContentLength(document.getContent().length);
 		EasyMock.replay(responseMock);
 		
 		controller.downloadReferenceDocumentForReferee("abc", responseMock);
 
-		EasyMock.verify(refereeServiceMock);
+		EasyMock.verify(refereeServiceMock, responseMock);
 
 		byte[] byteArray = byteArrayOutputStream.toByteArray();
 		assertEquals("aaaa", new String(byteArray));

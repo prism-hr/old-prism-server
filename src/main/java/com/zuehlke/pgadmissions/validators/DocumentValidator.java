@@ -12,7 +12,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 @Component
 public class DocumentValidator implements Validator {
 
-	private static final String[] EXTENSION_WHITE_LIST = { "pdf", "txt", "doc", "docx", "bmp", "jpg", "jpeg", "png", "tif", "tiff" };
+	private static final String[] EXTENSION_WHITE_LIST = { "pdf"};
 
 	@Override
 	public boolean supports(Class<?> clazz) {

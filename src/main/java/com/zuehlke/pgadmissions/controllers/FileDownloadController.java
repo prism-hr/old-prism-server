@@ -78,6 +78,12 @@ public class FileDownloadController {
 	}
 	
 	private void sendDocument(HttpServletResponse response, Document document) throws IOException {
+		response.setHeader("Expires", "0");
+		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+		response.setHeader("Pragma", "public");
+		response.setHeader("Content-Disposition", "inline; filename=\"" + document.getFileName() + "\"");
+		response.setContentType("application/pdf");
+		response.setContentLength(document.getContent().length);
 		OutputStream out = response.getOutputStream();
 		try {
 			out.write(document.getContent());

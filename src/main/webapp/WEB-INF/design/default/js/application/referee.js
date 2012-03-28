@@ -50,7 +50,7 @@ $(document).ready(function(){
 			}
 		
 		$.post( "/pgadmissions/update/refereeDetails" ,
-				$.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbers"]').serialize() + "&" + $('#messengersref input[name="messengers"]').serialize(),
+				$.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbers"]').serialize(),
 				function(data) {   $('#referencesSection').html(data);  }
 			);
 	});
@@ -80,7 +80,7 @@ $('#refereeSaveAndAddButton').click(function(){
 			phoneNumbers: "",
 			add:"add"
 	}
-	$.post( "/pgadmissions/update/refereeDetails" , $.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbers"]').serialize() + "&" + $('#messengersref input[name="messengers"]').serialize(),
+	$.post( "/pgadmissions/update/refereeDetails" , $.param(postData) + "&" + $('#phonenumbersref input[name="phoneNumbers"]').serialize(),
 			
 			function(data) {
 		$('#referencesSection').html(data);
@@ -158,26 +158,6 @@ $('#addPhoneRefButton').on('click', function(){
 		$('#phonenumbersref').append(html);
 		
 		$('#phoneNumberRef').val('');
-	}
-})
-
-$('#addMessengerRefButton').on('click', function(){
-	if($('#messengerAddressRef').val() !="Skype address" && $('#messengerAddressRef').val()!= ''){
-		var html =''+ 
-			'<span name="messenger_ref">'+
-			'<div class="row">'+
-	  	 	'	<span class="label">Skype</span>'+    
-			'	<div class="field">'+
-			'		<label class="half">'+  $('#messengerAddressRef').val() + '</label>'+ 
-	  		'		<a class="button-delete">Delete</a>'+      
-	  		'	</div>'+                  	  			
-	  		'</div>'+   
-	  		'<input type="hidden" name="messengers" value=' +"'" + '{"address":"' + $('#messengerAddressRef').val()+ '"} ' + "'" + "/>" +						
-	  		'</span>';
-		
-		$('#messengersref').append(html);
-		
-		$('#messengerAddressRef').val('');
 	}
 })
 

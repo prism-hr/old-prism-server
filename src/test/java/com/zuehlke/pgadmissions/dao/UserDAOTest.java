@@ -170,7 +170,9 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
 		
+		
 		save(superAdminOne, superAdminTwo, superAdminThree, administratorOne, administratorThree,administratorTwo, approverOne, approverThree,approverTwo, reviewerOne, reviewerThree, reviewerTwo, reviewerAndApprover);
+		
 		
 		flushAndClearSession();
 		

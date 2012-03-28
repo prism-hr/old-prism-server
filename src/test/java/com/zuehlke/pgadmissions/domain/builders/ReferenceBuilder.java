@@ -7,7 +7,7 @@ import com.zuehlke.pgadmissions.domain.Reference;
 public class ReferenceBuilder {
 
 	private Integer id;
-	private String comment;
+	
 	private Document document;
 	private Referee referee;
 	
@@ -20,11 +20,7 @@ public class ReferenceBuilder {
 		this.referee = referee;
 		return this;
 	}
-	
-	public ReferenceBuilder comment(String comment){
-		this.comment = comment;
-		return this;
-	}
+
 	
 	public ReferenceBuilder document(Document document){
 		this.document = document;
@@ -34,7 +30,6 @@ public class ReferenceBuilder {
 	public Reference toReference(){
 		Reference reference = new Reference();
 		reference.setId(id);
-		reference.setComment(comment);
 		reference.setDocument(document);
 		reference.setReferee(referee);
 		return reference;

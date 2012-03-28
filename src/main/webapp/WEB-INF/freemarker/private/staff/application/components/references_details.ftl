@@ -30,7 +30,7 @@
 			                    <th>Surname</th>
 			                    <th>Job Title</th>
 			                    <th>Email</th>
-			                    <th>Responded</th>
+			                    <th>Reference</th>
 		                  	</tr>
 	                	</thead>
 	                	
@@ -43,7 +43,7 @@
 				                    <td>${referee.jobTitle!}</td>
 				                    <td>${referee.email!}</td>
 				                    <td>
-					                    <#if referee.hasProvidedReference() >Yes<#else>No</#if>
+					                    <#if referee.hasProvidedReference() ><a href="<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/>">${referee.reference.document.fileName}</a><#else> - </#if>
 					                 </td>
                                     <input type="hidden" id="${referee.id!}_refereeId" value="${referee.id!}"/>
                                     <input type="hidden" id="${referee.id!}_firstname" value="${referee.firstname!}"/>
@@ -59,7 +59,7 @@
 			                    	<#else>
 			                    		Not provided
 			                    	</#if>"/>
-			                    	 <input type="hidden" id="${referee.id!}_reference_comment" value="<#if referee.hasProvidedReference() >${referee.reference.comment!}</#if>"/>
+			                    	 
 			                    	 <input type="hidden" id="${referee.id!}_reference_document_url" value="<#if referee.hasProvidedReference() && referee.reference.document?? >
 			                    	 	<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/></#if>"
 			                    	 />
@@ -227,13 +227,7 @@
 			                    <span class="hint"></span>
 			                    <div class="field" id="referenceDocument">			                    	
 			                    </div>     
-		                    </div>
-		                     <div class="row">			 
-		                    	<span class="label"></span>
-			                    <div class="field" >
-			                    	<textarea id="referenceComment" class="max" rows="35" cols="70" value=""></textarea>   	
-			                    </div>
-		                    </div>
+		                    </div>		              
 		                    <div class="row">			        
 		                    	<span class="label"></span>	                   		          
 			                   <div class="field" id="referenceUpdated">

@@ -117,7 +117,7 @@ public class ApplicationsServiceTest{
 	public void shouldGetListOfApplicationsForAssignedAdministrator(){
 		RegisteredUser administrator = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		ProgramBuilder programBuilder = new ProgramBuilder();
-		programBuilder.administrator(administrator);
+		programBuilder.administrators(administrator);
 		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).project(new ProjectBuilder().program(programBuilder.toProgram()).toProject()).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);

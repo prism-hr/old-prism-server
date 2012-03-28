@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.io.IOException;
-import java.util.Arrays;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -29,13 +27,12 @@ import com.zuehlke.pgadmissions.validators.DocumentValidator;
 public class ReferencesController {
 
 	private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
-	
-	
+
 	private final RefereeService refereeService;
 	private final DocumentValidator documentValidator;
 
 	ReferencesController() {
-		this(null,null);
+		this(null, null);
 	}
 
 	@Autowired
@@ -50,38 +47,25 @@ public class ReferencesController {
 
 		if (referee == null) {
 			throw new ResourceNotFoundException();
-		}		
-		if(referee.getReference() == null){
+		}
+		if (referee.getReference() == null) {
 			referee.setReference(new Reference());
 		}
 		return referee;
-		
+
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
 	public ModelAndView submitReference(@ModelAttribute("referee") Referee referee, @RequestParam("file") MultipartFile multipartFile) throws IOException {
 
-		String originalFilename = multipartFile.getOriginalFilename();
-		if (StringUtils.isBlank(originalFilename)) {
-			if (StringUtils.isBlank(referee.getReference().getComment())) {
-				referee.getReference().setComment(null);
-				ApplicationPageModel model = new ApplicationPageModel();
-				model.setGlobalErrorCodes(Arrays.asList("reference.missing"));
-				model.setReferee(referee);
-				return new ModelAndView(ADD_REFERENCES_VIEW_NAME, "model", model);
-			}
-			refereeService.save(referee);
-			return new ModelAndView("redirect:/addReferences/referenceuploaded");
-		}
-
 		Document document = newDocument();
-		document.setFileName(originalFilename);
+		document.setFileName(multipartFile.getOriginalFilename());
 		document.setContentType(multipartFile.getContentType());
 		document.setContent(multipartFile.getBytes());
 		document.setType(DocumentType.REFERENCE);
 		BindingResult errors = newErrors(document);
 		documentValidator.validate(document, errors);
-		
+
 		if (errors.hasFieldErrors("fileName")) {
 			ApplicationPageModel model = new ApplicationPageModel();
 			model.setUploadErrorCode(errors.getFieldError("fileName").getCode());
@@ -92,7 +76,6 @@ public class ReferencesController {
 		refereeService.saveReferenceAndSendMailNotifications(referee);
 		return new ModelAndView("redirect:/addReferences/referenceuploaded");
 
-
 	}
 
 	BindingResult newErrors(Document document) {
@@ -102,8 +85,5 @@ public class ReferencesController {
 	Document newDocument() {
 		return new Document();
 	}
-
-	
-	
 
 }

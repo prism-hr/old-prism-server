@@ -75,12 +75,14 @@ public class ReferencesControllerTest {
 	@Test
 	public void shouldRedirectToSuccessViewAfterSuccesfultSubmit() throws IOException {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().id(1).application(form).reference(new ReferenceBuilder().comment("hi").toReference()).activationCode("1234").toReferee();
+		Referee referee = new RefereeBuilder().id(1).application(form).reference(new ReferenceBuilder().toReference()).activationCode("1234").toReferee();
 		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
-		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("");
+		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("bob");
+		EasyMock.expect(multipartFileMock.getContentType()).andReturn("bob");
+		EasyMock.expect(multipartFileMock.getBytes()).andReturn("bob".getBytes());
 		EasyMock.replay(multipartFileMock);
 
-		refereeServiceMock.save(referee);
+		refereeServiceMock.saveReferenceAndSendMailNotifications(referee);
 		EasyMock.replay(refereeServiceMock);
 
 		ModelAndView modelAndView = controller.submitReference(referee, multipartFileMock);
@@ -146,35 +148,7 @@ public class ReferencesControllerTest {
 
 	}
 
-	@Test
-	public void shouldAddErrorMessageAndNotSaveIfNeitherDocumentOrCommentProvided() throws IOException {
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().id(1).application(form).reference(new Reference()).activationCode("1234").toReferee();
-		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
-		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("");
-		EasyMock.replay(multipartFileMock, refereeServiceMock);
-		ModelAndView modelAndView = controller.submitReference(referee, multipartFileMock);
-		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
-		assertEquals("reference.missing", model.getGlobalErrorCodes().get(0));
-
-		EasyMock.verify(refereeServiceMock);
-
-	}
 	
-	@Test
-	public void shouldSetCommentToNullIfEmptyString() throws IOException {
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().id(1).application(form).reference(new Reference()).activationCode("1234").toReferee();
-		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
-		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("");
-		EasyMock.replay(multipartFileMock, refereeServiceMock);
-		ModelAndView modelAndView = controller.submitReference(referee, multipartFileMock);
-		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
-		assertEquals("reference.missing", model.getGlobalErrorCodes().get(0));
-		assertNull(referee.getReference().getComment());
-		EasyMock.verify(refereeServiceMock);
-
-	}
 	
 
 

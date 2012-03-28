@@ -11,7 +11,6 @@ import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.RegistrationDTO;
-import com.zuehlke.pgadmissions.services.ApplicantRecordService;
 import com.zuehlke.pgadmissions.services.UserService;
 @Service
 public class ApplicantRecordValidator implements Validator {

@@ -71,7 +71,7 @@
 			<div>
 				<!-- Award type -->
                 <div class="row">
-                  	<span class="label">Funding Type</span>
+                  	<span class="label">Funding Type<em>*</em></span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                 	
                 	<div class="field">
@@ -96,7 +96,7 @@
 
                 <!-- Award description -->
                 <div class="row">
-                	<span class="label">Description</span>
+                	<span class="label">Description<em>*</em></span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
 					<div class="field">
 				    <#if !model.applicationForm.isSubmitted()>
@@ -113,7 +113,7 @@
                   
                 <!-- Value of award -->
                 <div class="row">
-                  	<span class="label">Value of Award</span>
+                  	<span class="label">Value of Award<em>*</em></span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
                     <#if !model.applicationForm.isSubmitted()>
@@ -129,7 +129,7 @@
                   
                 <!-- Award date -->
                 <div class="row">
-                  	<span class="label" data-desc="Tooltip demonstration.">Award Date</span>
+                  	<span class="label" data-desc="Tooltip demonstration.">Award Date<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
 	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}"

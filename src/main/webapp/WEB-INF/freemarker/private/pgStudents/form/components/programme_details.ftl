@@ -6,7 +6,7 @@
 
 	<h2 id="programme-H2" class="tick">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
-		Programme
+		Programme<em>*</em>
 	</h2>
 	
 	<div>

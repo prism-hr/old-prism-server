@@ -8,7 +8,7 @@
 
 	<h2 id="address-H2" class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
-	    Address
+	    Address<em>*</em>
 	</h2>
 	    
 	<div>

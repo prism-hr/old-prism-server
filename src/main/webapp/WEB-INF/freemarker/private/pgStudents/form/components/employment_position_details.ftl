@@ -72,7 +72,7 @@
                 
             	<!-- Employer (company name) -->
                 <div class="row">
-                	<span class="label">Employer</span>
+                	<span class="label">Employer<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
                     <#if !model.applicationForm.isSubmitted()>
@@ -90,7 +90,7 @@
                 
                 <!-- Position -->
                 <div class="row">
-                	<span class="label">Position</span>
+                	<span class="label">Position<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
                         <#if !model.applicationForm.isSubmitted()>
@@ -108,7 +108,7 @@
                 
                 <!-- Remit (job description) -->
                 <div class="row">
-                    <span class="label">Remit</span>
+                    <span class="label">Remit<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
                         <#if !model.applicationForm.isSubmitted()>
@@ -130,7 +130,7 @@
                 
                 <!-- Start date -->
                 <div class="row">
-                    <span class="label">Start Date</span>
+                    <span class="label">Start Date<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
                       	<input class="half date" type="text" id="position_startDate" name="position_startDate" 
@@ -164,7 +164,7 @@
                 
                 <!-- Language -->
                 <div class="row">
-                    <span class="label">Language of work</span>
+                    <span class="label">Language of work<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
                       <select class="full" id="position_language" name="position_language" value="${model.employmentPosition.position_language!}"

@@ -17,11 +17,10 @@ public class ReferenceMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadReferenceWithCommentAndDocument(){
-		String comment = "hello";
-		Document document = new DocumentBuilder().content("aa".getBytes()).fileName(comment).type(DocumentType.CV).toDocument();
+		Document document = new DocumentBuilder().content("aa".getBytes()).fileName("gekko").type(DocumentType.CV).toDocument();
 
 
-		Reference reference = new ReferenceBuilder().comment(comment).document(document).toReference();
+		Reference reference = new ReferenceBuilder().document(document).toReference();
 		
 		sessionFactory.getCurrentSession().save(reference);
 		assertNotNull(reference.getId());
@@ -37,7 +36,7 @@ public class ReferenceMappingTest extends AutomaticRollbackTestCase {
 		assertNotSame(reference, reloadedReference);
 		assertEquals(reference, reloadedReference);
 		assertEquals(document,reloadedReference.getDocument());
-		assertEquals(comment, reloadedReference.getComment());
+
 		
 		assertNotNull(reloadedReference.getLastUpdated());
 	}

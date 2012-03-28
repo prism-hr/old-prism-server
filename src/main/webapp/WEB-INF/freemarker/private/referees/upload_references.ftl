@@ -43,17 +43,13 @@
 		              		 </#list>
 		              		<br/>
 		              		<#if  model.referee.hasProvidedReference() >
-		              			<p>You have already provided a reference. You may use the fields below to modify your reference or upload a different file.</p>							
+		              			<p>You have already provided a reference. You may use the fields below to upload a different file if you wish.</p>							
 			        		<#else>
-			        			<p>Please enter you reference in the field below, or upload a file containing your reference.</p>		              				          		
+			        			<p>Please upload your reference as a PDF document using the field below.</p>		              				          		
 			        		</#if>
 			        		<p>You can view ${model.referee.application.applicant.firstName}'s application <a href="<@spring.url '/references/application?activationCode=${model.referee.activationCode}' />" target="_blank">here</a></p>
 							<form id="documentUploadForm" method="POST" action="<@spring.url '/addReferences/submit'/>" enctype="multipart/form-data">
 					             <input type="hidden" name="refereeId" value="${model.referee.id?string("######")}"/>
-					             <div>
-					              <textarea id="comment" name="reference.comment" class="max" rows="35" cols="90" placeholder="Reference"><#if  model.referee.hasProvidedReference()>${model.referee.reference.comment!}</#if></textarea>
-					            </div>
-					            <br/>	
 					            <div>
 					                <!-- Document upload -->
 					                <label for="file">Upload file</label>

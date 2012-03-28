@@ -160,7 +160,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldSaveAndLoadProgramsOfWhichApprover() throws Exception {
+	public void shouldLoadProgramsOfWhichApprover() throws Exception {
 
 		Program program = new ProgramBuilder().code("111111").description("hello").title("hello").toProgram();
 		save(program);

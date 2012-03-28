@@ -53,7 +53,8 @@ public class RefereeService {
 	public Referee getRefereeByActivationCode(String activationCode) {
 		return refereeDAO.getRefereeByActivationCode(activationCode);
 	}
-
+	
+	@Transactional
 	public void saveReferenceAndSendMailNotifications(Referee referee) {
 		save(referee);
 		sendMailToApplicant(referee);

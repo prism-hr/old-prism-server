@@ -13,7 +13,7 @@ public class ReferenceDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldGetReferenceById(){
 		
-		Reference reference = new ReferenceBuilder().comment("hello").toReference();
+		Reference reference = new ReferenceBuilder().toReference();
 		sessionFactory.getCurrentSession().save(reference);
 		flushAndClearSession();
 		

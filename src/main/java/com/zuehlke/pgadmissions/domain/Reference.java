@@ -22,9 +22,6 @@ public class Reference extends DomainObject<Integer> {
 
 
 	private static final long serialVersionUID = 5269362387094590530L;
-
-	private String comment;
-	
 	@OneToOne(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "document_id")
@@ -51,15 +48,6 @@ public class Reference extends DomainObject<Integer> {
 	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
-	}
-
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
 	}
 
 	public Document getDocument() {

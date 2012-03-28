@@ -19,10 +19,11 @@
 	background: -ms-linear-gradient(top, #e6e6e7 0%,#828386 100%); /* IE10+ */
 	background: linear-gradient(top, #e6e6e7 0%,#828386 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6e6e7', endColorstr='#828386',GradientType=0 ); /* IE6-9 */
-	border-radius: 10px; color: #58585a; font-size: 8.5pt; font-weight: bold; height: 165px; position: absolute; right: 35px; top: 35px; width: 240px;
+	border-radius: 10px; color: #58585a; font-size: 8.5pt; font-weight: bold; height: 173px; position: absolute; right: 35px; top: 35px; width: 240px;
 }
 
 #registration-box form { padding: 10px; }
 #registration-box p { line-height: 24px; }
 #registration-box form button { position: absolute; top: 10px; right: 10px; width: 50px; }
 #registration-box form input { font-size: 8.5pt; margin-top: 3px; width: 208px; }
+#registration-box a {  color: white; font-size: 8.5pt; margin: 10px;}

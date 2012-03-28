@@ -83,7 +83,7 @@
                   
                   	<!-- Address body -->
                   	<div class="row">
-                    	<span class="label">Location</span>
+                    	<span class="label">Location<em>*</em></span>
                     	<span class="hint"></span>
                     	<div class="field">
                     	   <#if !model.applicationForm.isSubmitted()>
@@ -101,7 +101,7 @@
 
                   	<!-- Postcode -->
                   	<div class="row">
-                    	<span class="label">Postal Code</span>
+                    	<span class="label">Postal Code<em>*</em></span>
                     	<span class="hint"></span>
                     	<div class="field">
                     	<#if !model.applicationForm.isSubmitted()>
@@ -119,7 +119,7 @@
 
                   	<!-- Country -->
                   	<div class="row">
-                    	<span class="label">Country</span>
+                    	<span class="label">Country<em>*</em></span>
 	                    <div class="field">
 	                      	
 	                      	<select class="full" name="addressCountry" id="addressCountry"
@@ -147,7 +147,7 @@
                   
                   	<!-- Residency period -->
                   	<div class="row">
-                    	<span class="label">Dates</span>
+                    	<span class="label">Dates<em>*</em></span>
                     	<span class="hint"></span>
                     	<div class="field">
                       		<label>from 
@@ -186,7 +186,7 @@
 
                   	<!-- Purpose -->
                   	<div class="row">
-                    	<span class="label">Purpose</span>
+                    	<span class="label">Purpose<em>*</em></span>
                     	<span class="hint"></span>
                     	<div class="field">
                       	  	<select id="addressPurpose" name="addressPurpose" class="full" value="${model.address.addressPurpose!}"

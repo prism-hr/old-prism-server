@@ -6,6 +6,12 @@
 	<#assign formDisplayState = "open"/>
 </#if>
 
+<#if model.message?has_content>
+	<#assign globalMsg = true/>
+<#else>
+	<#assign globalMsg = false/>
+</#if>
+
 <#-- Personal Details Rendering -->
 
 <!DOCTYPE HTML>
@@ -76,8 +82,9 @@
 			      		<!-- content box -->
 				    	<div class="content-box">
 					        <div class="content-box-inner">
-			
-					            <p style="color:red">${model.message!}</p>
+								<#if globalMsg>
+					            	<p class="invalid">${model.message!}</p>
+					            </#if>
 								<div id="programme-details">
 			          
 						          	<div class="row">

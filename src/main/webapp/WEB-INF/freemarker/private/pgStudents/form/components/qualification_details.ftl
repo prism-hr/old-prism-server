@@ -80,7 +80,7 @@
 	                  
 	                  	<!-- Provider -->
 	                	<div class="row">
-		                  	<span class="label">Provider</span>
+		                  	<span class="label">Provider<em>*</em></span>
 		                    <span class="hint" data-desc="Tooltip demonstration."></span>
 		                    <div class="field">
 		                    	<#if !model.applicationForm.isSubmitted()>
@@ -99,7 +99,7 @@
 	                  
 	                  	<!-- Name (of programme) -->
 	                	<div class="row">
-		                  	<span class="label">Programme</span>
+		                  	<span class="label">Programme<em>*</em></span>
 		                    <span class="hint" data-desc="Tooltip demonstration."></span>
 		                    <div class="field">
 		                    	<#if !model.applicationForm.isSubmitted()>
@@ -118,7 +118,7 @@
 	                  
 	                  	<!-- Start date -->
 	                	<div class="row">
-		                  	<span class="label">Start Date</span>
+		                  	<span class="label">Start Date<em>*</em></span>
 		                    <span class="hint" data-desc="Tooltip demonstration."></span>
 		                    <div class="field">
 			                    
@@ -138,7 +138,7 @@
 	                
                   		<!-- Language (in which programme was undertaken) -->
                   		<div class="row">
-                    		<span class="label">Language of Study</span>
+                    		<span class="label">Language of Study<em>*</em></span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                       			<select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${model.qualification.qualificationLanguage!}"
@@ -159,7 +159,7 @@
                   
                   		<!-- Qualification level -->
 	                  	<div class="row">
-	                    	<span class="label">Level</span>
+	                    	<span class="label">Level<em>*</em></span>
 	                    	<span class="hint" data-desc="Tooltip demonstration."></span>
 	                    	<div class="field">
 	                    		<select name="qualificationLevel" id="qualificationLevel" value="${model.qualification.qualificationLevel!}"
@@ -183,12 +183,12 @@
 
                   		<!-- Qualification type -->
                   		<div class="row">
-                    		<span class="label">Type</span>
+                    		<span class="label">Type<em>*</em></span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
                       			<input id="qualificationType" class="full" type="text" 
-			                    								value="${model.qualification.qualificationType!}"/>
+			                    					<em>*</em><em>*</em>			value="${model.qualification.qualificationType!}"/>
 								<#if model.hasError('qualificationType')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationType').code /></span>                    		
                     			</#if>

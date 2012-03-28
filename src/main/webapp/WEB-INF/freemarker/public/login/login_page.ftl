@@ -67,12 +67,10 @@
 		        	<button name ="commit" type="submit" value="Sign In" class="blue">Go</button>
 		      	</form>
 		      	
+		      	<a href="/pgadmissions/register?project=${project!}">&gt; Register Today...</a>
+		      	
 		    </section>
 		
-		    <!-- Registration button. -->
-    		<a id="big-button" href="/pgadmissions/register?project=${project!}">Register Today...</a>
-  
-		    
 		  </div>
 		  
 			<#include "/public/common/global_footer.ftl"/>

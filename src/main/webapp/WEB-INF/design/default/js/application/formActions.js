@@ -21,8 +21,8 @@ $(document).ready(function(){
 		
 		if($("input#form-display-state").val() == "close"){
 			// close everything
-			$('section.folding > div').removeClass("open").hide();
-			$('section.folding > h2').removeClass("open");
+			$('section.folding:not(.error) > div').removeClass("open").hide();
+			$('section.folding:not(.error) > h2').removeClass("open");
 		}
 		
 		// To make uncompleted functionalities disable.

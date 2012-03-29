@@ -6,11 +6,12 @@
  
 <#import "/spring.ftl" as spring />
 
+  	
 	<h2 id="address-H2" class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
-	    Address<em>*</em>
+	    Address<em>*</em>	    
 	</h2>
-	    
+	
 	<div>
 	
 			<#if hasAddresses>
@@ -68,7 +69,7 @@
 				
 				<input type="hidden" id="addressId" name="addressId"/>
             	<div>
-            	           <#if model.hasError('numberOfAddresses')>
+            	           <#if model.hasError('numberOfAddresses')>            
             	           <div class="row">
                                 <span class="invalid"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>
                            </div>                             
@@ -260,12 +261,14 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/address.js'/>"></script>
 
-<#if (model.result?? && model.result.hasErrors() ) || add??>
+<#if (model.result?? && model.result.hasErrors() ) ||  add?? >
 
-<#else >
+<#else>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#address-H2').trigger('click');
 	});
 </script>
+
 </#if>
+

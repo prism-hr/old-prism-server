@@ -107,17 +107,16 @@
 			          
 					            <hr/>
 								
-					          	<section id="programmeDetailsSection" class="folding violet">
-					          	
+					          	<section id="programmeDetailsSection" class="folding violet <#if model.hasError('programmeDetails')>error</#if>">					          	
 					          		<#include "/private/pgStudents/form/components/programme_details.ftl"/>
 					          	</section>
 			          
-			          			<section id="personalDetailsSection" class="folding purple">
+			          			<section id="personalDetailsSection" class="folding purple <#if model.hasError('personalDetails')>error</#if>">
 			             			<#include "/private/pgStudents/form/components/personal_details.ftl"/>
 			          			</section>
 			          
-			          			<!-- Address -->
-			          			<section id="addressSection" class="folding red">
+			          			<!-- Address -->			          			
+			          			<section id="addressSection" class="folding red <#if model.hasError('numberOfContactAddresses') || model.hasError('numberOfAddresses')>error</#if>">
 			             			<#include "/private/pgStudents/form/components/address_details.ftl"/>
 			          			</section>
 			          
@@ -133,11 +132,11 @@
 			             			<#include "/private/pgStudents/form/components/funding_details.ftl"/>
 			          			</section>
 			          
-			           			<section id="referencesSection" class="folding navy">
+			           			<section id="referencesSection" class="folding navy <#if model.hasError('numberOfReferees')>error</#if>">
 			           				<#include "/private/pgStudents/form/components/references_details.ftl"/>
 			          			</section>
 			          
-			          			<section class="folding blue">
+			          			<section class="folding blue <#if model.uploadErrorCode?? >error</#if>">
 									<#include "/private/pgStudents/form/components/documents.ftl"/>
 			          			</section>
 			          

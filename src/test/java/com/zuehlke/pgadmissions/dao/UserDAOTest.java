@@ -117,35 +117,6 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
-	public void shouldGetAllUsers(){
-		// clear out whatever test data is in there -remember, it will all be
-				// rolled back!
-
-				sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
-				sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
-			
-				Role roleTwo = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole();
-				save(roleTwo);
-				flushAndClearSession();
-
-				RegisteredUser userOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-						.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleTwo).toUser();
-				RegisteredUser userTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername")
-						.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).roles(roleTwo)
-						.toUser();
-
-				save(userOne, userTwo);
-
-				flushAndClearSession();
-
-				List<RegisteredUser> allUsers = userDAO.getAllUsers();
-				assertEquals(18, allUsers.size());
-				assertTrue(allUsers.containsAll(Arrays.asList(userOne, userTwo)));
-
-	}
-
-
-	@Test
 	public void shouldGetUsersByProgramme() {
 		
 

@@ -88,6 +88,7 @@ $('#refereeSaveAndAddButton').click(function(){
 });
 
 $('a[name="refereeCancelButton"]').click(function(){
+	$("#refereeId").val("");
 	$("#ref_firstname").val("");
 	$("#ref_lastname").val("");
 	$("#ref_relationship").val("");

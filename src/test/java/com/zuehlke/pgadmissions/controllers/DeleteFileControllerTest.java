@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -32,7 +30,7 @@ public class DeleteFileControllerTest {
 	private RegisteredUser currentUser;
 	
 	@Test(expected=ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentUserNotApplicant() throws IOException{
+	public void shouldThrowResourceNotFoundExceptionIfCurrentUserNotApplicant(){
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().id(1).toUser()).id(3).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
 		Document document = new DocumentBuilder().applicationForm(applicationForm).content("aaaa".getBytes()).id(1).toDocument();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
@@ -43,7 +41,7 @@ public class DeleteFileControllerTest {
 	}
 	
 	@Test(expected=ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIDocumentDoesNotExist() throws IOException{	
+	public void shouldThrowResourceNotFoundExceptionIDocumentDoesNotExist(){	
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(null);
 		EasyMock.replay(documentServiceMock);
 		controller.delete(1);
@@ -52,7 +50,7 @@ public class DeleteFileControllerTest {
 	
 	
 	@Test(expected=CannotUpdateApplicationException.class)
-	public void shouldCannotUpdateApplicationExceptionIfApplicationFormSubmitted() throws IOException{	
+	public void shouldCannotUpdateApplicationExceptionIfApplicationFormSubmitted(){	
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(3).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		Document document = new DocumentBuilder().applicationForm(applicationForm).content("aaaa".getBytes()).id(1).toDocument();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);

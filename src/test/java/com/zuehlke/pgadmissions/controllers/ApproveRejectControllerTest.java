@@ -101,6 +101,19 @@ public class ApproveRejectControllerTest {
 		
 	}
 	
+	@Test(expected=ResourceNotFoundException.class)
+	public void shouldThrowExceptionIfAdminTriesToApproveApplication() {
+		ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
+		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(false);
+		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
+		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
+		EasyMock.expect(approverMock.canSee(applicationFormMock)).andReturn(true);
+		EasyMock.replay(approverMock, applicationFormMock);
+		
+		controller.applyDecision(applicationFormMock, ApprovalStatus.APPROVED);	
+		
+	}
+	
 	@Test
 	public void shouldRedirectToApplicationListOnApproval(){
 		

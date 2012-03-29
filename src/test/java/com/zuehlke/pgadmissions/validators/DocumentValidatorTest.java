@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -17,11 +17,9 @@ public class DocumentValidatorTest {
 	private DocumentValidator documentValidator;
 
 	@Test
-	public void shouldSuppoertDocument() {
+	public void shouldSupportDocument() {
 		assertTrue(documentValidator.supports(Document.class));
 	}
-	
-	
 
 	@Test
 	public void shouldRejectIfFileNameisMissing() {

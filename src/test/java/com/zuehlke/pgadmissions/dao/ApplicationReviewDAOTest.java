@@ -89,8 +89,7 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase{
 
 		
 		ApplicationForm applicationOne = new ApplicationFormBuilder().id(4).project(project).applicant(user).toApplicationForm();
-		ApplicationForm applicationTwo  = new ApplicationFormBuilder().id(5).project(project).applicant(user).toApplicationForm();
-		save(applicationOne, applicationTwo);
+		save(applicationOne);
 		flushAndClearSession();
 		
 		ApplicationReview reviewOne = new ApplicationReview();
@@ -98,19 +97,13 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase{
 		reviewOne.setComment("Excellent Application!!!");
 		reviewOne.setUser(user);
 
-		ApplicationReview reviewTwo = new ApplicationReview();
-		reviewTwo.setApplication(applicationTwo);
-		reviewTwo.setComment("Excellent Application!!!");
-		reviewTwo.setUser(user);
-		
-		
 		ApplicationReview reviewThree = new ApplicationReview();
 		reviewThree.setApplication(applicationOne);
 		reviewThree.setComment("Excellent Application!!!");
 		reviewThree.setUser(user);
 		
 		
-		save(reviewOne, reviewTwo, reviewThree);
+		save(reviewOne, reviewThree);
 		
 		flushAndClearSession();
 		

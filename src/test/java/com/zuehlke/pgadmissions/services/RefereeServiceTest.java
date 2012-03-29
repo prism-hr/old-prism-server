@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+import junit.framework.Assert;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -128,7 +130,16 @@ public class RefereeServiceTest {
 		EasyMock.replay(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		refereeService.saveReferenceAndSendMailNotifications(referee);
 		EasyMock.verify(refereeDAOMock, mimeMessagePreparatorFactoryMock);
-
+	}
+	
+	@Test
+	public void shouldReturnRefereeWithActivationCode() {
+		Referee referee = EasyMock.createMock(Referee.class);
+		referee.setActivationCode("2345");
+		EasyMock.expect(refereeDAOMock.getRefereeByActivationCode("2345")).andReturn(referee);
+		EasyMock.replay(referee, refereeDAOMock);
+		
+		Assert.assertEquals(referee, refereeService.getRefereeByActivationCode("2345"));
 	}
 
 	

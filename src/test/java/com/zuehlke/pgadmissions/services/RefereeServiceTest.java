@@ -141,6 +141,15 @@ public class RefereeServiceTest {
 		
 		Assert.assertEquals(referee, refereeService.getRefereeByActivationCode("2345"));
 	}
+	
+	@Test
+	public void shouldReturnRefereeById() {
+		Referee referee = EasyMock.createMock(Referee.class);
+		EasyMock.expect(refereeDAOMock.getRefereeById(23)).andReturn(referee);
+		EasyMock.replay(referee, refereeDAOMock);
+		
+		Assert.assertEquals(referee, refereeService.getRefereeById(23));
+	}
 
 	
 }

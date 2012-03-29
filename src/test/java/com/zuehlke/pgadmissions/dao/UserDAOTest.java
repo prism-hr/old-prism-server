@@ -120,17 +120,18 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 	public void shouldGetAllUsers(){
 		// clear out whatever test data is in there -remember, it will all be
 				// rolled back!
-				deleteTestData();
 
-				Role roleOne = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
+				sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
+				sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
+			
 				Role roleTwo = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole();
-				save(roleOne, roleTwo);
+				save(roleTwo);
 				flushAndClearSession();
 
 				RegisteredUser userOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
-						.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleOne).toUser();
+						.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleTwo).toUser();
 				RegisteredUser userTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("otherusername")
-						.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).roles(roleOne, roleTwo)
+						.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).roles(roleTwo)
 						.toUser();
 
 				save(userOne, userTwo);
@@ -138,29 +139,11 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 				flushAndClearSession();
 
 				List<RegisteredUser> allUsers = userDAO.getAllUsers();
-				assertEquals(2, allUsers.size());
+				assertEquals(18, allUsers.size());
 				assertTrue(allUsers.containsAll(Arrays.asList(userOne, userTwo)));
 
 	}
 
-	private void deleteTestData() {
-		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from NATIONALITY").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from LANGUAGE_PROFICIENCY").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from TELEPHONE").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from SUPERVISOR").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from PROGRAM_APPROVER_LINK").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from PROGRAM_REVIEWER_LINK").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from PROGRAM_ADMINISTRATOR_LINK").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_REVIEW").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_PROGRAMME_DETAIL").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_ADDRESS").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_REFEREE").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM_PERSONAL_DETAIL").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_FORM").executeUpdate();
-		sessionFactory.getCurrentSession().createSQLQuery("delete from REGISTERED_USER").executeUpdate();
-	}
 
 	@Test
 	public void shouldGetUsersByProgramme() {

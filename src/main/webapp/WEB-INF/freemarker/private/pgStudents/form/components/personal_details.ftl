@@ -33,91 +33,93 @@
 		Personal Details<em>*</em>
 	</h2>
 	
-    <div >    
+    <div>    
 
 		<form>		
 				<input type="hidden" name="id" id="id" value="${(model.applicationForm.personalDetails.id?string("######"))!}"/>
 				<input type="hidden" id="appId" name="appId" value="${model.applicationForm.id?string("######")}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
               	<div>
-		        <#if model.hasError('personalDetails')>                           
-		        <div class="row">      	
-		                <span class="invalid"><@spring.message  model.result.getFieldError('personalDetails').code /></span>
-		        </div>                                
-		        </#if>
-                	<div class="row">
-                  	<label class="label">First Name<em>*</em></label>
-                    <span class="hint"></span>
-                    <div class="field">                    	
-                    		<input class="full" readonly="readonly" type="text" value="${model.user.firstName!}"  name="firstName" id="firstName"/>	          
-                    </div>
-                  </div>
-                	<div class="row">
-                  	<label class="label">Last Name<em>*</em></label>
-                    <span class="hint"></span>
-                    <div class="field">
-                    		<input class="full" readonly="readonly" type="text" value="${model.user.lastName!}"   name="lastName" id="lastName"/>	          
-                    </div>
-                  </div>
-                	<div class="row">
-                  	<label class="label">Gender<em>*</em></label>
-                    <div class="field">
-                          <#list model.genders as gender>
-                          		<label><input type="radio" name="genderRadio" value="${gender}"
-                          			<#if model.applicationForm.personalDetails.gender?? &&  model.applicationForm.personalDetails.gender == gender >
-										checked="checked"
-									</#if> 
-									 <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>									   
-                          		/> ${gender.displayValue}</label>
-                                             
-                        </#list>                  		
-            
-                      <#if model.hasError('gender')>                         
-                                <span class="invalid"><@spring.message  model.result.getFieldError('gender').code /></span>                           
-                      </#if>
-                    </div>
-                  </div>
-                	<div class="row">
-                  	<label class="label">Date of Birth<em>*</em> </label>
-                    <span class="hint"></span>
-                    <div class="field">
-                    <#if !model.applicationForm.isSubmitted()>
-                        <input class="half date" value="${(model.applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>
-                        <#if model.hasError('dateOfBirth')>                           
-                                <span class="invalid"><@spring.message  model.result.getFieldError('dateOfBirth').code /></span>                           
-                        </#if>
-                    <#else>
-                        <input class="full" readonly="readonly" type="text" value="${(model.applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
-                    </#if>    
-                    </div>
-                  </div>
-                </div>
-
+			        <#if model.hasError('personalDetails')>                           
+			        <div class="row">      	
+			                <span class="invalid"><@spring.message  model.result.getFieldError('personalDetails').code /></span>
+			        </div>                                
+			        </#if>
+					<div class="row">
+						<label class="label">First Name<em>*</em></label>
+						<span class="hint"></span>
+						<div class="field">                    	
+								<input class="full" readonly="readonly" type="text" value="${model.user.firstName!}"  name="firstName" id="firstName"/>	          
+						</div>
+					 </div>
+                 
+					<div class="row">
+						<label class="label">Last Name<em>*</em></label>
+						<span class="hint"></span>
+						<div class="field">
+								<input class="full" readonly="readonly" type="text" value="${model.user.lastName!}"   name="lastName" id="lastName"/>	          
+						</div>
+					 </div>
+                 
+					<div class="row">
+						<label class="label">Gender<em>*</em></label>
+						<div class="field">
+							  <#list model.genders as gender>
+									<label><input type="radio" name="genderRadio" value="${gender}"
+										<#if model.applicationForm.personalDetails.gender?? &&  model.applicationForm.personalDetails.gender == gender >
+											checked="checked"
+										</#if> 
+										 <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>									   
+									/> ${gender.displayValue}</label>
+												 
+							</#list>                  		
+				
+						  <#if model.hasError('gender')>                         
+									<span class="invalid"><@spring.message  model.result.getFieldError('gender').code /></span>                           
+						  </#if>
+						</div>
+					</div>
+                
+					<div class="row">
+						<label class="label">Date of Birth<em>*</em> </label>
+						<span class="hint"></span>
+						<div class="field">
+						<#if !model.applicationForm.isSubmitted()>
+							<input class="half date" value="${(model.applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>
+							<#if model.hasError('dateOfBirth')>                           
+									<span class="invalid"><@spring.message  model.result.getFieldError('dateOfBirth').code /></span>                           
+							</#if>
+						<#else>
+							<input class="full" readonly="readonly" type="text" value="${(model.applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
+						</#if>    
+						</div>                
+					</div>
+				</div>
+			
               	<div>
                 	<div class="row">
-                  	<label class="label">Country of Birth<em>*</em></label>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full" name="country" id="country" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if> >
-                      		<option value="">Select...</option>
-                        <#list model.countries as country>
-                              <option value="${country.id?string('#######')}"
+                  		<label class="label">Country of Birth<em>*</em></label>
+                    	<span class="hint"></span>
+                    	<div class="field">
+                      		<select class="full" name="country" id="country" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if> >
+                      			<option value="">Select...</option>
+                        		<#list model.countries as country>
+                              	<option value="${country.id?string('#######')}"
 								<#if model.applicationForm.personalDetails.country?? &&  model.applicationForm.personalDetails.country.id == country.id >
 								selected="selected"
 								</#if>   
                               >${country.name}</option>               
-                        </#list>
-                      </select>
-                      <#if model.hasError('country')>                         
+                        	</#list>
+                     	 	</select>
+							<#if model.hasError('country')>                         
                                 <span class="invalid"><@spring.message  model.result.getFieldError('country').code /></span>                           
-                        </#if>
-                    </div>
-                  </div>
+                        	</#if>
+                   	 	</div>
+                  	</div>
                 </div>
 
               	<div>    
-
-                 	 <div class="row" id="existingCandidateNationalities">
+					<div class="row" id="existingCandidateNationalities">
                   	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
                   	  	<span name="existingCandidateNationality">
                   	  	 	<div class="row">
@@ -125,57 +127,54 @@
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
-                  	  			<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
+									<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
                   	  			</div>
                   	  		</div>
                   	  	</span>                  		
                   	  </#list>
-                  </div>
+                  	</div>
             	    
                 	<div class="row">                    	
                   		 <label class="label">Nationality
-                  		 	<#if !nationalityExist>
-                  		 		<em id="nationality-em">*</em></label>
-                  		 	</#if>      
-	                  	 <div class="field">
-	                     	 <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
-	                      		<option value="">Select...</option>
-	                        	<#list model.countries as country>
-	                              <option value="${country.id?string('#######')}">${country.name}</option>               
-	                       	 </#list>
-	                     	 </select>             	 
-	                       <#if model.hasError('candidateNationalities')>                         
-                                <span class="invalid"><@spring.message  model.result.getFieldError('candidateNationalities').code /></span>                           
-                       	 </#if>
-	                   	 </div>
-                	</div>
-                	
-                      
+						<#if !nationalityExist>
+							<em id="nationality-em">*</em>
+						</#if>
+						</label>      
+						<div class="field">
+							 <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
+								<option value="">Select...</option>
+								<#list model.countries as country>
+								  <option value="${country.id?string('#######')}">${country.name}</option>               
+							 </#list>
+							 </select>             	 
+						   <#if model.hasError('candidateNationalities')>                         
+								<span class="invalid"><@spring.message  model.result.getFieldError('candidateNationalities').code /></span>                           
+							</#if>
+						 </div>
+                	</div>    
                   
-                	<div class="row">
-                  		<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add nationality</a></div>
-                  	</div>
+					<div class="row">
+						<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add nationality</a></div>
+					</div>
         
                 </div>
 
 
 				<div>   	
-				
-
             	    <div class="row" id="existingMaternalNationalities">
-                  	  <#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
-                  	  	<span>
-                  	  		<div class="row">
-                  	  	 		<label class="label">Maternal Guardian Nationality</label>    
-                  				<div class="field">
-                  					<label class="full">${nationality.country.name}</label>  
-                  	  				<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
-                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
-                  	  			</div>
-                  	  		</div>            
-                  	  	</span>
-                  	  </#list>
-                  </div>
+						 <#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
+							<span>
+								<div class="row">
+									<label class="label">Maternal Guardian Nationality</label>    
+									<div class="field">
+										<label class="full">${nationality.country.name}</label>  
+										<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
+										<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
+									</div>
+								</div>            
+							</span>
+						 </#list>
+					</div>
                   
                 	<div class="row">                     	
                   		<label class="label">Maternal Guardian Nationality</label>        
@@ -188,8 +187,6 @@
 	                     	 </select>             	 
 	                   	 </div>
                 	</div>
-                	
-                      
                   
                 	<div class="row">
                   		<div class="field"><a class="button blue" id="addMaternalNationalityButton">Add nationality</a></div>
@@ -200,21 +197,21 @@
               	
               	<div>       
             	     <div class="row" id="existingPaternalNationalities">
-                  	  <#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
-                  	  	<span>
-                  	  		<div class="row">
-                  	  	 		<label class="label">Paternal Guardian Nationality</label>    
-                  				<div class="field">
-                  					<label class="full">${nationality.country.name}</label>  
-                  	  				<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
-                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
-                  	  			</div>
-                  	  		</div>            
-                  	  	</span>
-                  	  </#list>
-                  </div>
-                <div class="row">                      	
-                 <label class="label">Paternal Guardian Nationality</label> 
+						<#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
+							<span>
+								<div class="row">
+									<label class="label">Paternal Guardian Nationality</label>    
+									<div class="field">
+										<label class="full">${nationality.country.name}</label>  
+										<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
+										<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
+									</div>
+								</div>            
+							</span>
+						</#list>
+					</div>
+					<div class="row">                      	
+						<label class="label">Paternal Guardian Nationality</label> 
 	                  	 <div class="field">
 	                     	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
 	                      		<option value="">Select...</option>
@@ -232,99 +229,98 @@
                   	 
                 </div>
               	
-              	<div>
-                              
+              	<div>                              
                     <div class="row" id="existingProficiencies">
-                  	  <#list model.applicationForm.personalDetails.languageProficiencies as prof >
-                  	  	<span>
-                  	  		<div class="row">
-                  	  	 		<label class="label">Language</label>    
-                  				<div class="field">
-                  					<label class="full"> ${prof.language.name}</label> 
-                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if> 
-                  	  			</div>
-                  	  			<span class="label">Aptitude</span>    
-                  				<div class="field">
-                  					<label class="full"> ${prof.aptitude.displayValue}</label>                   	  				
-                  	  				
-                  	  			</div>
-                  	  		</div>   
-                            <input type="hidden" name="languageProficiencies" value='${prof.asJson}'/>   
-                  	  	</span>
+						<#list model.applicationForm.personalDetails.languageProficiencies as prof >
+							<span>
+								<div class="row">
+									<label class="label">Language</label>    
+									<div class="field">
+										<label class="full"> ${prof.language.name}</label> 
+										<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if> 
+									</div>
+									<span class="label">Aptitude</span>    
+									<div class="field">
+										<label class="full"> ${prof.aptitude.displayValue}</label>                   	  				
+										
+									</div>
+								</div>   
+								<input type="hidden" name="languageProficiencies" value='${prof.asJson}'/>   
+							</span>
                   	  </#list>
-                  </div>
+					</div>
                   
                 	<div class="row">
-                  	<label class="label">Language</label>
-                    <span class="hint"></span>                    
-                    <div class="field">
-                      <select class="full" id="languageSelect" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
-                        <option value="">Select...</option>
-                         <#list model.languages as language>
-                         	<option value="${language.id?string('#######')}">${language.name}</option>
-                         </#list>
-                      </select>
-                      
-                    </div>
-                  </div>
-                <div class="row">
-                  	<span class="label">Aptitude
-                  	<#if !proficiencyExist>
-                  		<em id="aptitude-em">*</em></span>
-                  	</#if>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full" id="aptitude" name="aptitude" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>                      	
-                       <#list model.languageAptitudes as aptitude >
-                      		<option value="${aptitude}">${aptitude.displayValue}</option>
-                      	</#list>
-                      </select>
-                        <#if model.hasError('languageProficiencies')>                         
+						<label class="label">Language</label>
+						<span class="hint"></span>                    
+						<div class="field">
+							<select class="full" id="languageSelect" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
+								<option value="">Select...</option>
+								<#list model.languages as language>
+									<option value="${language.id?string('#######')}">${language.name}</option>
+								</#list>
+							</select>
+						</div>
+					</div>
+					<div class="row">
+						<span class="label">Aptitude
+						<#if !proficiencyExist>
+							<em id="aptitude-em">*</em>
+						</#if>
+						</span>
+						<span class="hint"></span>
+						<div class="field">
+							<select class="full" id="aptitude" name="aptitude" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>                      	
+							   <#list model.languageAptitudes as aptitude >
+									<option value="${aptitude}">${aptitude.displayValue}</option>
+								</#list>
+							</select>
+							<#if model.hasError('languageProficiencies')>                         
                                 <span class="invalid"><@spring.message  model.result.getFieldError('languageProficiencies').code /></span>                           
-                       	 </#if>
-                    </div>
-                  </div>
+							</#if>
+						</div>
+					</div>
                 	<div class="row">
                   		<div class="field"><a class="button blue" id="addLanguageButton">Add language</a></div>
-                  </div>
+					</div>
                 
                 </div>
 
               	<div>
                 	<strong>Residence</strong>
                 	<div class="row">
-                  	<span class="label">Country<em>*</em></span>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full" name="residenceCountry" id="residenceCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
-                      	<option value="">Select...</option>
-                        <#list model.countries as country>
-                              <option value="${country.id?string('#######')}"
-                              <#if model.applicationForm.personalDetails.residenceCountry?? &&  model.applicationForm.personalDetails.residenceCountry.id == country.id >
-								selected="selected"
-								</#if>  
-                              >${country.name}</option>               
-                        </#list>
-                      </select>
-                      <#if model.hasError('residenceCountry')>                         
-                                <span class="invalid"><@spring.message  model.result.getFieldError('residenceCountry').code /></span>                           
-                        </#if>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <span class="label">Status<em>*</em></span>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full"  name="residenceStatus" id="residenceStatus" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
-                         <#list model.residenceStatuses as residenceStatus>
-                              <option value="${residenceStatus}">${residenceStatus.displayValue}</option>               
-                        </#list>
-                      </select>
-                      <#if model.hasError('residenceStatus')>                         
-                                <span class="invalid"><@spring.message  model.result.getFieldError('residenceStatus').code /></span>                           
-                        </#if>
-                    </div>
-                  </div>
+						<span class="label">Country<em>*</em></span>
+						<span class="hint"></span>
+						<div class="field">
+							<select class="full" name="residenceCountry" id="residenceCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
+								<option value="">Select...</option>
+								<#list model.countries as country>
+									  <option value="${country.id?string('#######')}"
+									  <#if model.applicationForm.personalDetails.residenceCountry?? &&  model.applicationForm.personalDetails.residenceCountry.id == country.id >
+										selected="selected"
+										</#if>  
+									  >${country.name}</option>               
+								</#list>
+							 </select>
+							<#if model.hasError('residenceCountry')>                         
+									<span class="invalid"><@spring.message  model.result.getFieldError('residenceCountry').code /></span>                           
+							</#if>
+						</div>
+					</div>
+					<div class="row">
+						<span class="label">Status<em>*</em></span>
+						<span class="hint"></span>
+						<div class="field">
+							 <select class="full"  name="residenceStatus" id="residenceStatus" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
+								 <#list model.residenceStatuses as residenceStatus>
+									  <option value="${residenceStatus}">${residenceStatus.displayValue}</option>               
+								</#list>
+							 </select>
+							  <#if model.hasError('residenceStatus')>                         
+									<span class="invalid"><@spring.message  model.result.getFieldError('residenceStatus').code /></span>                           
+							</#if>
+						</div>
+					</div>
                 </div>
 
               	<div>

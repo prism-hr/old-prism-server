@@ -148,10 +148,10 @@
                   
                   	<!-- Residency period -->
                   	<div class="row">
-                    	<span class="label">Dates</span>
+                    	<span class="label">Dates<em>*</em></span>
                     	<span class="hint"></span>
                     	<div class="field">
-                      		<label>from<em>*</em> 
+                      		<label>from 
                       				<input class="half date" type="text" id="addressStartDate" name="addressStartDate" 
                       						value="${(model.address.addressStartDate?string('dd-MMM-yyyy'))!}"
                       						<#if model.applicationForm.isSubmitted()>

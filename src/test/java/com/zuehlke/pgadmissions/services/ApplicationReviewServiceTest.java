@@ -51,14 +51,6 @@ public class ApplicationReviewServiceTest {
 		EasyMock.verify(applicationReviewDAOMock);
 	}
 	
-	@Test
-	public void shouldDelegateUserSaveToDAO() {
-		RegisteredUser user = EasyMock.createMock(RegisteredUser.class);
-		applicationReviewDAOMock.saveUser(user);
-		EasyMock.replay(user, applicationReviewDAOMock);
-		service.saveUser(user);
-		EasyMock.verify(applicationReviewDAOMock);
-	}
 	
 	@Test
 	public void shouldGetVisibleComments() {

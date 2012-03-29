@@ -14,6 +14,7 @@ public class FundingBuilder {
 	private String description;
 	private String value;
 	private Date awardDate;
+	private Integer id;
 	
 	public FundingBuilder application(ApplicationForm application) {
 		this.application = application;
@@ -22,6 +23,11 @@ public class FundingBuilder {
 	
 	public FundingBuilder type(FundingType type) {
 		this.type = type;
+		return this;
+	}
+	
+	public FundingBuilder id(Integer id) {
+		this.id = id;
 		return this;
 	}
 	
@@ -43,6 +49,7 @@ public class FundingBuilder {
 	public Funding toFunding() {
 		Funding funding = new Funding();
 		funding.setApplication(application);
+		funding.setId(id);
 		funding.setType(type);
 		funding.setValue(value);
 		funding.setDescription(description);

@@ -53,9 +53,4 @@ public class ApplicationReviewService {
 		return visibleComments;
 	}
 
-	@Transactional
-	public void saveUser(RegisteredUser currentuser) {
-		applicationReviewDAO.saveUser(currentuser);
-	}
-
 }

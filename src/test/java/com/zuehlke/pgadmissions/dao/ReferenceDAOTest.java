@@ -10,6 +10,12 @@ import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 
 public class ReferenceDAOTest extends AutomaticRollbackTestCase {
 
+	@Test(expected = NullPointerException.class)
+	public void shouldThrowNullPointerException() {
+		ReferenceDAO referenceDAO = new ReferenceDAO();
+		referenceDAO.getReferenceById(1);
+	}
+	
 	@Test
 	public void shouldGetReferenceById(){
 		

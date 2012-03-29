@@ -97,7 +97,11 @@ $(document).ready(function()
     $('div.information', $parent).toggle();
   });
   
-  bindDatePickers();
+  fn = window['bindDatePickers'];
+  if(typeof bindDatePickers == 'function'){
+	  bindDatePickers();
+  }
+  
   
   // Sortable tables.
   $('table.data').tablesorter();

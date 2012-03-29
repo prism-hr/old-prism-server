@@ -222,7 +222,6 @@
                   				<div class="field">
                   					<label class="full"> ${prof.language.name}</label> 
                   	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if> 
-                  	  				<#if prof.primary>This is my primary language</#if>              
                   	  			</div>
                   	  			<span class="label">Aptitude</span>    
                   				<div class="field">
@@ -246,7 +245,6 @@
                          </#list>
                       </select>
                       
-                      <label><input type="radio" name="primaryLanguage" id="primaryLanguage"/> This is my primary language</label>
                     </div>
                   </div>
                 <div class="row">

@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -136,43 +135,11 @@ public class PersonalDetailValidatorTest {
 		Assert.assertEquals("personalDetails.languageProficiencies.notempty", mappingResult.getFieldError("languageProficiencies").getCode());
 	}
 	
-	@Test
-	public void shouldRejectIfMoreThanOnelanguageProficiencyPrimary() {
-		LanguageProficiency languageProficiency = new LanguageProficiencyBuilder().id(1).primary(true).toLanguageProficiency();
-		personalDetails.getLanguageProficiencies().add(languageProficiency);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "languageProficiencies");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.languageProficiencies.unique", mappingResult.getFieldError("languageProficiencies").getCode());
-	}
-	
-	@Test
-	public void shouldRejectIfNMoreThanOnelanguageProficiencyAndNoPrimary() {
-		LanguageProficiency languageProficiency1 = new LanguageProficiencyBuilder().id(1).primary(false).toLanguageProficiency();
-		LanguageProficiency languageProficiency2 = new LanguageProficiencyBuilder().id(2).primary(false).toLanguageProficiency();
-		personalDetails.setLanguageProficiencies(Arrays.asList(languageProficiency1, languageProficiency2));
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "languageProficiencies");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("personalDetails.languageProficiencies.noprimary", mappingResult.getFieldError("languageProficiencies").getCode());
-	}
-	
-	
-	@Test
-	public void shouldNotRejectOnlyOnlanguageProficiencyAndNoPrimary() {
-		LanguageProficiency languageProficiency1 = new LanguageProficiencyBuilder().id(1).primary(false).toLanguageProficiency();
-		personalDetails.setLanguageProficiencies(Arrays.asList(languageProficiency1));
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "languageProficiencies");
-		personalDetailValidator.validate(personalDetails, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-		
-	}
-	
 	
 	@Before
 	public void setup(){
 		Nationality nationality = new Nationality();
-		LanguageProficiency languageProficiency = new LanguageProficiencyBuilder().id(1).primary(true).toLanguageProficiency();
+		LanguageProficiency languageProficiency = new LanguageProficiencyBuilder().id(1).toLanguageProficiency();
 		personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality).languageProficiencies(languageProficiency).maternalGuardianNationalities(nationality).paternalGuardianNationalities(nationality).applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm()).country(new CountryBuilder().toCountry()).dateOfBirth(new Date()).email("email@test.com").firstName("bob")
 		.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith").residenceCountry(new CountryBuilder().toCountry()).residenceStatus(ResidenceStatus.EXCEPTIONAL_LEAVE_TO_REMAIN).toPersonalDetails();
 		

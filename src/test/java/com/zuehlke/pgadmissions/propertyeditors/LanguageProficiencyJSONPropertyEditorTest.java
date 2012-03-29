@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.propertyeditors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -25,12 +24,11 @@ public class LanguageProficiencyJSONPropertyEditorTest {
 		EasyMock.expect(languageServiceMock.getLanguageById(1)).andReturn(language);
 		EasyMock.replay( languageServiceMock);
 
-		editor.setAsText("{\"aptitude\": \"ELEMENTARY\", \"language\": 1, \"primary\": \"true\"}");
+		editor.setAsText("{\"aptitude\": \"ELEMENTARY\", \"language\": 1}");
 
 		LanguageProficiency languageProficiency = (LanguageProficiency) editor.getValue();
 		assertEquals(language, languageProficiency.getLanguage());	
 		assertEquals(LanguageAptitude.ELEMENTARY, languageProficiency.getAptitude());
-		assertTrue(languageProficiency.isPrimary());
 
 	}
 
@@ -69,7 +67,7 @@ public class LanguageProficiencyJSONPropertyEditorTest {
 		languageProficiency.setLanguage(language);
 
 		editor.setValue(languageProficiency);
-		assertEquals("{\"aptitude\": \"ELEMENTARY\", \"language\": 1, \"primary\": \"false\"}", editor.getAsText());
+		assertEquals("{\"aptitude\": \"ELEMENTARY\", \"language\": 1}", editor.getAsText());
 	}
 
 	@Before

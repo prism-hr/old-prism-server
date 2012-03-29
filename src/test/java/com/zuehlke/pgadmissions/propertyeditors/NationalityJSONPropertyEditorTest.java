@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
 import java.util.Arrays;
 
 import org.easymock.EasyMock;
@@ -91,7 +90,7 @@ public class NationalityJSONPropertyEditorTest {
 	}
 
 	@Test
-	public void shouldReturnCorrectjsonString() throws ParseException {
+	public void shouldReturnCorrectjsonString() {
 
 		Document document1 = new DocumentBuilder().id(1).toDocument();
 		Document document2 = new DocumentBuilder().id(2).toDocument();

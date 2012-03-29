@@ -9,13 +9,7 @@ public class LanguageProficiencyBuilder {
 	private Integer id;
 	private Language language;
 	private LanguageAptitude aptitude;
-	private boolean primary;
 	
-	
-	public LanguageProficiencyBuilder primary(boolean primary){
-		this.primary = primary;
-		return this;
-	}
 	
 	public LanguageProficiencyBuilder id(Integer id){
 		this.id = id;
@@ -35,7 +29,6 @@ public class LanguageProficiencyBuilder {
 	
 	public LanguageProficiency toLanguageProficiency(){
 		LanguageProficiency languageProficiency = new LanguageProficiency();
-		languageProficiency.setPrimary(primary);
 		languageProficiency.setId(id);
 		languageProficiency.setLanguage(language);
 		languageProficiency.setAptitude(aptitude);

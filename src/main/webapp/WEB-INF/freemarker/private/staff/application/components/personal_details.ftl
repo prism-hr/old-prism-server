@@ -164,7 +164,6 @@
                   	  	 		<label class="label">Language</label>    
                   				<div class="field">
                   					<label class="full"> ${prof.language.name}</label>                  	  		
-                  	  				<#if prof.primary>Primary language</#if>              
                   	  			</div>
                   	  			<span class="label">Aptitude</span>    
                   				<div class="field">

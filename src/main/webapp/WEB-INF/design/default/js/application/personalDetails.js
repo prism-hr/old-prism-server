@@ -36,33 +36,25 @@ $(document).ready(function(){
 	
 	$('#addLanguageButton').on("click", function(){
 		if( $('#languageSelect option:selected').val()!= ''){
-			var primary = "";
-			var jsonPrimary = "false";
-			if($('#primaryLanguage').is(':checked') ){
-				primary = "This is my primary language";
-				jsonPrimary = "true";
-			}			
-			            
 			
 			var html =  '<span>'+
 	  	  	'	<div class="row">'+
 		  	'		<label class="label">Language</label>'+    
 			'		<div class="field">'+
 			'			<label class="full">'+ $('#languageSelect option:selected').text()  +'</label>'+ 
-		  	'			<a class="button-delete">Delete</a> ' + primary +             
+		  	'			<a class="button-delete">Delete</a> ' +             
 		  	'		</div>'+
 		  	'		<span class="label">Aptitude</span>    '+
 			'		<div class="field">'+
 			'			<label class="full">' +  $('#aptitude option:selected').text() + '</label>'+
 		  	'		</div>'+
 		  	'	</div>   '+
-	        "<input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + '", "language":' + $('#languageSelect option:selected').val()  +', "primary": "' + jsonPrimary + '"}' + "'/>" + 
+	        "<input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + '", "language":' + $('#languageSelect option:selected').val()  + '}' + "'/>" + 
 		  	'</span>';
 	        
 		  	
 			$('#existingProficiencies').append(html);
 			$('#languageSelect').val("");
-			$('#primaryLanguage').prop('checked', false);
 		}
 	});
 	
@@ -147,14 +139,8 @@ $(document).ready(function(){
 		
 		//language proficiencies
 		if( $('#languageSelect option:selected').val()!= ''){
-			var primary = "";
-			var jsonPrimary = "false";
-			if($('#primaryLanguage').is(':checked') ){
-				primary = "This is my primary language";
-				jsonPrimary = "true"
-			}
 			var html =  '<span>'+
-	        "<input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + '", "language":' + $('#languageSelect option:selected').val()  +', "primary": "' + jsonPrimary + '"}' + "'/>" + 
+	        "<input type='hidden' name='languageProficiencies' value='{" +'"aptitude":"' + $('#aptitude option:selected').val() + '", "language":' + $('#languageSelect option:selected').val()  + '}' + "'/>" + 
 		  	'</span>';
 			
 

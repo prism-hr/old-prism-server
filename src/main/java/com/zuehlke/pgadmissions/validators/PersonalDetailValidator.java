@@ -6,7 +6,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 
 @Component
@@ -40,22 +39,8 @@ public class PersonalDetailValidator implements Validator {
 	}
 
 	private void validateLanguageProficiencies(Object target, Errors errors) {
-		int numberOfPrimaries;
 		if(((PersonalDetail)target).getLanguageProficiencies().isEmpty()){
 			errors.rejectValue("languageProficiencies", "personalDetails.languageProficiencies.notempty");
-		}
-		
-		numberOfPrimaries = 0;
-		for (LanguageProficiency proficiency : ((PersonalDetail)target).getLanguageProficiencies()) {
-			if(proficiency.isPrimary()){
-				numberOfPrimaries++;
-			}
-		}
-		if(numberOfPrimaries > 1){
-			errors.rejectValue("languageProficiencies", "personalDetails.languageProficiencies.unique");
-		}
-		if( ((PersonalDetail)target).getLanguageProficiencies().size() > 1 && numberOfPrimaries ==0){
-			errors.rejectValue("languageProficiencies", "personalDetails.languageProficiencies.noprimary");
 		}
 	}
 	

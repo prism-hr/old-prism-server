@@ -1,0 +1,92 @@
+package com.zuehlke.pgadmissions.dao;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+
+@Repository
+public class UserDAO {
+
+	private final SessionFactory sessionFactory;
+
+	UserDAO() {
+		this(null);
+	}
+
+	@Autowired
+	public UserDAO(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	public void save(RegisteredUser user) {
+		sessionFactory.getCurrentSession().saveOrUpdate(user);
+	}
+
+	public RegisteredUser get(Integer id) {
+		return (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
+	}
+
+	public RegisteredUser getUserByUsername(String username) {
+		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("username", username))
+				.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<RegisteredUser> getAllUsers() {
+		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<RegisteredUser> getUsersInRole(Role role) {
+		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles").add(Restrictions.eq("id", role.getId())).list();
+
+	}
+
+	public Role getRoleById(int id) {
+		return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("id", id)).uniqueResult();
+	}
+
+	public RegisteredUser getUserByActivationCode(String activationCode) {
+		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("activationCode", activationCode))
+				.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<RegisteredUser> getUsersForProgram(Program program) {
+		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
+		users.addAll(getUsersInRole((Role) sessionFactory.getCurrentSession().createCriteria(Role.class)
+				.add(Restrictions.eq("authorityEnum", Authority.SUPERADMINISTRATOR)).uniqueResult()));
+		List<RegisteredUser> administrators = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+				.createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId())).list();
+		for (RegisteredUser admin : administrators) {
+			if (!users.contains(admin)) {
+				users.add(admin);
+			}
+		}
+		List<RegisteredUser> approvers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichApprover")
+				.add(Restrictions.eq("id", program.getId())).list();
+		for (RegisteredUser approver : approvers) {
+			if (!users.contains(approver)) {
+				users.add(approver);
+			}
+		}
+		List<RegisteredUser> reviewers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichReviewer")
+				.add(Restrictions.eq("id", program.getId())).list();
+		for (RegisteredUser reviewer : reviewers) {
+			if (!users.contains(reviewer)) {
+				users.add(reviewer);
+			}
+		}
+		return users;
+	}
+
+}

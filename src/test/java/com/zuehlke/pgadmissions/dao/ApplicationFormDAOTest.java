@@ -118,12 +118,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	}
 	
 	@Test
-	public void shouldGetAllApplications() {
-		List<ApplicationForm> allApplications = applicationDAO.getAllApplications();
-		assertEquals(26, allApplications.size());
-	}
-	
-	@Test
 	public void shouldGetQualificationById() throws ParseException{
 		Language language = new Language();
 		language.setId(90);

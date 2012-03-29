@@ -91,7 +91,7 @@
 	</div>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/application/documents.js'/>"></script>
 	
-<#if model.result?? && model.result.hasErrors()  >
+<#if model.uploadErrorCode??  >
 
 <#else >
 <script type="text/javascript">

@@ -5,6 +5,6 @@ function bindDatePickers(){
 	  				dateFormat: 'dd-M-yy',
 	 				changeMonth: true,
 	  				changeYear: true,
-	  				yearRange: '1900:defaultDate' });
+	  				yearRange: '1900:c+20' });
 }
 

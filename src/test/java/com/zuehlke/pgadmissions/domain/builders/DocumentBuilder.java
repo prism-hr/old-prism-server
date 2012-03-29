@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+
+import java.util.Date;
+
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
@@ -16,6 +19,7 @@ public class DocumentBuilder {
 	
 	private String contentType;
 	private DocumentType type;
+	private Date dateUploaded;
 	
 	
 	public DocumentBuilder applicationForm(ApplicationForm applicationForm){
@@ -44,6 +48,11 @@ public class DocumentBuilder {
 		return this;
 	}
 	
+	public DocumentBuilder dateUploaded(java.util.Date date){
+		this.dateUploaded = date;
+		return this;
+	}
+	
 	public DocumentBuilder content(byte[] content){
 		this.content = content;
 		return this;
@@ -56,6 +65,7 @@ public class DocumentBuilder {
 		document.setContent(content);
 		document.setType(type);
 		document.setContentType(contentType);
+		document.setDateUploaded(dateUploaded);
 		document.setApplicationForm(applicationForm);
 		return document;
 	}

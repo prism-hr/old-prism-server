@@ -108,36 +108,4 @@ public class Program extends DomainObject<Integer> {
 		}
 		return false;
 	}
-
-	public void addUserToRightRoleList(RegisteredUser user, Role role) {
-		if (role.getAuthorityEnum().equals(Authority.ADMINISTRATOR)) {
-			administrators.add(user);
-		}
-		if (role.getAuthorityEnum().equals(Authority.REVIEWER)) {
-			reviewers.add(user);
-		}
-		if (role.getAuthorityEnum().equals(Authority.APPROVER)) {
-			approvers.add(user);
-		}
-	}
-
-	public boolean isUserWithRoleInProgram(RegisteredUser user, Role role) {
-		if (role.getAuthorityEnum().equals(Authority.ADMINISTRATOR)) {
-			if (administrators.contains(user)) {
-				return true;
-			}
-		}
-		if (role.getAuthorityEnum().equals(Authority.REVIEWER)) {
-			if (reviewers.contains(user)) {
-				return true;
-			}
-		}
-		if (role.getAuthorityEnum().equals(Authority.APPROVER)) {
-			if (approvers.contains(user)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 }

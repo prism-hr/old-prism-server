@@ -14,6 +14,13 @@ import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 
 public class CountriesDAOTest extends AutomaticRollbackTestCase{
 
+	@Test(expected=NullPointerException.class)
+	public void shouldThrowNullPointerException(){
+		CountriesDAO countriesDAO = new CountriesDAO();
+		Country country = new CountryBuilder().id(1).code("zz").name("ZZZZZZ").toCountry();
+		countriesDAO.getCountryById(country.getId());
+	}
+	
 	@Test
 	public void shouldGetAllCountriesInAlhphabeticalOrder() {
 		BigInteger numberOfCoutnries = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from COUNTRIES").uniqueResult();

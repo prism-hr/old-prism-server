@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -75,7 +76,12 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase{
 		assertEquals(review.getComment(), reloadedReview.getComment());
 	}
 	
-	
+	@Test(expected=NullPointerException.class)
+	public void shouldThrowNullPointerException(){
+		ApplicationReviewDAO reviewDAO = new ApplicationReviewDAO();
+		ApplicationReview review = new ApplicationReviewBuilder().id(1).toApplicationReview();
+		reviewDAO.save(review);
+	}
 
 	@Test
 	public void shouldGetReviewByApplicationForm(){

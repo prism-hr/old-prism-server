@@ -24,9 +24,16 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase{
 	private Program program;
 	private Project project;
 
+	@Test(expected=NullPointerException.class)
+	public void shouldThrowNullPointerException(){
+		EmploymentPositionDAO positionDAO = new EmploymentPositionDAO();
+		EmploymentPosition position = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
+		positionDAO.delete(position);
+	}
+	
 	
 	@Test
-	public void shouldDeleteFunding(){
+	public void shouldDeleteEmploymentPosition(){
 		ApplicationForm application = new ApplicationForm();
 		application.setProject(project);
 		application.setApplicant(user);

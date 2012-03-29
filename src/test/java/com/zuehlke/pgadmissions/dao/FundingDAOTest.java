@@ -27,6 +27,13 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 	private Program program;
 	private Project project;
 
+	@Test(expected=NullPointerException.class)
+	public void shouldThrowNullPointerException(){
+		FundingDAO fundingDAO = new FundingDAO();
+		Funding funding = new FundingBuilder().id(1).toFunding();
+		fundingDAO.delete(funding);
+	}
+	
 	@Test
 	public void shouldDeleteFunding(){
 		ApplicationForm application = new ApplicationForm();

@@ -51,10 +51,6 @@ public class UserDAO {
 
 	}
 
-	public Role getRoleById(int id) {
-		return (Role) sessionFactory.getCurrentSession().createCriteria(Role.class).add(Restrictions.eq("id", id)).uniqueResult();
-	}
-
 	public RegisteredUser getUserByActivationCode(String activationCode) {
 		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("activationCode", activationCode))
 				.uniqueResult();

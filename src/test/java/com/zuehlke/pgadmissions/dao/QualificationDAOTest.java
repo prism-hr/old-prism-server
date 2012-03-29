@@ -28,6 +28,14 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	private Program program;
 	private Project project;
 
+	
+	@Test(expected=NullPointerException.class)
+	public void shouldThrowNullPointerException(){
+		QualificationDAO qualificationDAO = new QualificationDAO();
+		Qualification qualification =new QualificationBuilder().toQualification();
+		qualificationDAO.delete(qualification);
+	}
+	
 	@Test
 	public void shouldDeleteQualification() throws ParseException{
 		ApplicationForm application = new ApplicationForm();

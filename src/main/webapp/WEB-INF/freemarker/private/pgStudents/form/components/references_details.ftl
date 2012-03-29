@@ -49,7 +49,7 @@
 	                	<tbody>
 	                		<#list model.applicationForm.referees as referee>
 			                  	<tr>
-				                    <td><a class="row-arrow" name="refereeEditButton" id="referee_${referee.id!}">-</a></td>
+				                    <td><a class="row-arrow" name="refereeEditButton" id="referee_${(referee.id?string('#######'))!}">-</a></td>
 				                    <td>${referee.firstname!}</td>
 				                    <td>${referee.lastname!}</td>
 				                    <td>${referee.jobTitle!}</td>
@@ -68,24 +68,24 @@
 						                
 							        	</td>
 				                     </#if>
-                                    <input type="hidden" id="${referee.id!}_refereeId" value="${referee.id!}"/>
-                                    <input type="hidden" id="${referee.id!}_firstname" value="${referee.firstname!}"/>
-                                    <input type="hidden" id="${referee.id!}_lastname" value="${referee.lastname!}"/>
-                                    <input type="hidden" id="${referee.id!}_relationship" value="${referee.relationship!}"/>
-                                    <input type="hidden" id="${referee.id!}_jobEmployer" value="${referee.jobEmployer!}"/>
-                                    <input type="hidden" id="${referee.id!}_jobTitle" value="${referee.jobTitle!}"/>
-                                    <input type="hidden" id="${referee.id!}_addressLocation" value="${referee.addressLocation!}"/>
-                                    <input type="hidden" id="${referee.id!}_addressPostcode" value="${referee.addressPostcode!}"/>                                    
-                                    <input type="hidden" id="${referee.id!}_addressCountry" <#if referee.addressCountry??> value="${referee.addressCountry.id!}" </#if>/>
-                                    <input type="hidden" id="${referee.id!}_lastUpdated" value="<#if referee.hasProvidedReference() > 
+                                    <input type="hidden" id="${referee.id?string('#######')}_refereeId" value="${referee.id?string('#######')}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_firstname" value="${referee.firstname!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_lastname" value="${referee.lastname!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_relationship" value="${referee.relationship!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_jobEmployer" value="${referee.jobEmployer!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_jobTitle" value="${referee.jobTitle!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_addressLocation" value="${referee.addressLocation!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_addressPostcode" value="${referee.addressPostcode!}"/>                                    
+                                    <input type="hidden" id="${referee.id?string('#######')}_addressCountry" <#if referee.addressCountry??> value="${referee.addressCountry.id?string('#######')}" </#if>/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_lastUpdated" value="<#if referee.hasProvidedReference() > 
 			                    		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
 			                    	<#else>
 			                    		Not provided
 			                    	</#if>"/>
 			                    	
-                                    <input type="hidden" id="${referee.id!}_email" value="${referee.email!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_email" value="${referee.email!}"/>
 									<#list referee.phoneNumbers! as phoneNumber>
-										<span name="${referee.id!}_hiddenPhones" style="display:none" >
+										<span name="${referee.id?string('#######')}_hiddenPhones" style="display:none" >
 			                  	  		<div class="row">
 			                  	  	 		<span class="label">Telephone</span>    
 			                  				<div class="field">
@@ -101,7 +101,7 @@
 									
 								
 									
-									 <input type="hidden" id="${referee.id!}_messenger" value="${referee.messenger!}"/>   
+									 <input type="hidden" id="${referee.id?string('#######')}_messenger" value="${referee.messenger!}"/>   
 
 			                  	</tr>
 		                  	</#list>

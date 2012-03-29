@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
+import static org.junit.Assert.assertTrue;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -17,6 +19,11 @@ public class QualificationValidatorTest {
 	private QualificationDTO qualificationDto;
 	private QualificationValidator qualificationValidator;
 
+	@Test
+	public void shouldSupportQualification() {
+		assertTrue(qualificationValidator.supports(QualificationDTO.class));
+	}
+	
 	@Test
 	public void shouldRejectIfProviderIsEmpty(){
 		qualificationDto.setQualificationInstitution(null);

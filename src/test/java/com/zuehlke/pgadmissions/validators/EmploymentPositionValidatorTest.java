@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
+import static org.junit.Assert.assertTrue;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -15,6 +17,11 @@ public class EmploymentPositionValidatorTest {
 
 	private EmploymentPosition positionDto;
 	private EmploymentPositionValidator positionValidator;
+	
+	@Test
+	public void shouldSupportEmploymentPosition() {
+		assertTrue(positionValidator.supports(EmploymentPosition.class));
+	}
 	
 	@Test
 	public void shouldRejectIfEmployerIsEmpty(){

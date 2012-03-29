@@ -92,7 +92,7 @@ public class ManageUsersController {
 
 	@ModelAttribute("user")
 	public RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userService.getUser(((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).getId());
 	}
 
 	@ModelAttribute("availableUsers")

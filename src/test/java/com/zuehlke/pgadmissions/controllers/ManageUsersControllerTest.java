@@ -141,8 +141,13 @@ public class ManageUsersControllerTest {
 	}
 
 	@Test
-	public void shouldGetCurrentUserFromSecurityContext() {
-		assertEquals(currentUser, manageUsersController.getCurrentUser());
+	public void shouldReloadCurrentUserToAttachToHibernateSession() {
+		RegisteredUser user = new RegisteredUserBuilder().id(5).toUser();
+		EasyMock.expect(currentUser.getId()).andReturn(5);
+		EasyMock.expect(userServiceMock.getUser(5)).andReturn(user);
+		EasyMock.replay(currentUser, userServiceMock);
+		assertEquals(user, manageUsersController.getCurrentUser());
+		EasyMock.verify(userServiceMock);
 	}
 
 	@Test

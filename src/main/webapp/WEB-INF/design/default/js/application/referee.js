@@ -136,6 +136,14 @@ $('a[name="refereeEditButton"]').click(function(){
 			$("#referenceDocument").html( $('#'+id+"_reference_document_name").val());
 		}
 	}
+
+	var $multiPhone = $('#multi-phone').text();
+	//alert("The value is "+ $multiPhone);
+	
+	if($multiPhone != ""){
+		$('#telephone-em').remove();
+	}
+	
 });
 
 
@@ -157,6 +165,8 @@ $('#addPhoneRefButton').on('click', function(){
 		$('#phonenumbersref').append(html);
 		
 		$('#phoneNumberRef').val('');
+		
+		$('#telephone-em').remove();
 	}
 })
 
@@ -174,4 +184,3 @@ $header.bind('click', function()
 });
 
 });
-

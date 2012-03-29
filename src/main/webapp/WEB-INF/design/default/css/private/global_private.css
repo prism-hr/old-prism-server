@@ -253,7 +253,6 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 #pagination ul.pages li a { padding: 0 5px; }
 #pagination ul.pages li.current { font-weight: bold; }
 
-
 /* JQUERY UI --------------------------------------------------------------------------------------------- */
 /* Layout helpers */
 .ui-helper-hidden { display: none; }

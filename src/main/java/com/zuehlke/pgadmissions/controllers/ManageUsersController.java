@@ -92,7 +92,7 @@ public class ManageUsersController {
 
 	@ModelAttribute("user")
 	public RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userService.getUser(((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).getId());
 	}
 
 	@ModelAttribute("availableUsers")
@@ -129,7 +129,9 @@ public class ManageUsersController {
 	public String updateUserWithNewRoles(@ModelAttribute("selectedUser") RegisteredUser selectedUser,
 			@ModelAttribute("selectedProgram") Program selectedProgram, @ModelAttribute NewRolesDTO newRolesDTO) {
 
-		removeFromSuperadminRoleIfRequired(selectedUser, newRolesDTO);
+		if(getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)){
+			removeFromSuperadminRoleIfRequired(selectedUser, newRolesDTO);
+		}
 		for (Authority authority : Authority.values()) {
 			addToRoleIfRequired(selectedUser, newRolesDTO, authority);
 		}

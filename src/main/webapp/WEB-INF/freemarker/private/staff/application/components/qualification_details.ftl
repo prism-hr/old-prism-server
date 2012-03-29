@@ -46,16 +46,16 @@
 				                  	<td>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
 				                  	
 				                  	     
-                                <input type="hidden" id="${qualification.id!}_qualificationIdDP" value="${qualification.id!}"/>
-                                <input type="hidden" id="${qualification.id!}_qualificationInstitutionDP" value="${qualification.qualificationInstitution!}"/> 
-                                <input type="hidden" id="${qualification.id!}_qualificationProgramNameDP" value="${qualification.qualificationProgramName!}"/> 
-                                <input type="hidden"  id="${qualification.id!}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/> 
-                                <input type="hidden"  id="${qualification.id!}_qualificationLanguageDP" value="${qualification.qualificationLanguage.id!}"/> 
-                                <input type="hidden"  id="${qualification.id!}_qualificationLevelDP" value="${qualification.qualificationLevel!}"/> 
-                                <input type="hidden"  id="${qualification.id!}_qualificationTypeDP" value="${qualification.qualificationType!}"/> 
-                                <input type="hidden"  id="${qualification.id!}_qualificationGradeDP" value="${qualification.qualificationGrade!}"/> 
-                                <input type="hidden"  id="${qualification.id!}_qualificationScoreDP" value="${qualification.qualificationScore!}"/> 
-                                <input type="hidden"  id="${qualification.id!}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
+                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationIdDP" value="${qualification.id?string('#######')}"/>
+                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionDP" value="${qualification.qualificationInstitution!}"/> 
+                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationProgramNameDP" value="${qualification.qualificationProgramName!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationLanguageDP" value="${qualification.qualificationLanguage.id!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationLevelDP" value="${qualification.qualificationLevel!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationTypeDP" value="${qualification.qualificationType!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${qualification.qualificationGrade!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationScoreDP" value="${qualification.qualificationScore!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
 			                  	</tr>
 							</#list>
 										

@@ -3,7 +3,7 @@
 <#else>
 	<#assign hasReferees = false>
 </#if> 
- 
+  
 <#import "/spring.ftl" as spring />
 
 			<h2 id="referee-H2" class="empty">
@@ -90,7 +90,7 @@
 			                  	  	 		<span class="label">Telephone</span>    
 			                  				<div class="field">
 			                  					<label class="half"> ${phoneNumber.telephoneType.displayValue}</label>
-			                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
+			                  					<label id="multi-phone" class="half"> ${phoneNumber.telephoneNumber}</label> 
 			                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
 			                  	  			</div>
 			                  	  			
@@ -308,7 +308,7 @@
                     		</div>
                   		
                   		<div class="row">
-                  		<span class="label">Telephone<em>*</em></span>
+                  		<span class="label">Telephone<em id="telephone-em">*</em></span>
                         <span class="hint"></span>
                     		
                     		<#if !model.applicationForm.isSubmitted()>

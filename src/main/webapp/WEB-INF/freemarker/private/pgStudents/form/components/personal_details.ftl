@@ -6,6 +6,23 @@
 	<#assign hasPersonalDetails = false>
 </#if>
 
+<#if model.applicationForm.personalDetails.candidateNationalities?has_content>
+	<#assign nationalityExist = true/>
+<#else>
+	<#assign nationalityExist = false>
+</#if>
+
+<#if model.applicationForm.personalDetails.languageProficiencies?has_content>
+	<#assign proficiencyExist = true/>
+<#else>
+	<#assign proficiencyExist = false>
+</#if>
+
+<#if model.applicationForm.personalDetails.phoneNumbers?has_content>
+	<#assign telephoneExist = true/>
+<#else>
+	<#assign telephoneExist = false>
+</#if>
 
 <#import "/spring.ftl" as spring />
 <input type="hidden" id="submissionStatus" value="${model.applicationForm.submissionStatus}"/>
@@ -116,7 +133,10 @@
                   </div>
             	    
                 	<div class="row">                    	
-                  		 <label class="label">Nationality<em>*</em></label>       
+                  		 <label class="label">Nationality
+                  		 	<#if !nationalityExist>
+                  		 		<em id="nationality-em">*</em></label>
+                  		 	</#if>      
 	                  	 <div class="field">
 	                     	 <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
 	                      		<option value="">Select...</option>
@@ -248,7 +268,10 @@
                     </div>
                   </div>
                 <div class="row">
-                  	<span class="label">Aptitude<em>*</em></span>
+                  	<span class="label">Aptitude
+                  	<#if !proficiencyExist>
+                  		<em id="aptitude-em">*</em></span>
+                  	</#if>
                     <span class="hint"></span>
                     <div class="field">
                       <select class="full" id="aptitude" name="aptitude" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>                      	
@@ -336,7 +359,11 @@
               	
               	
                 	<div class="row">
-                		<span class="label">Telephone<em>*</em></span>
+                		<span class="label">Telephone
+	                		<#if !telephoneExist>
+	                			<em id="telephone-em">*</em>
+	                		</#if>
+                		</span>
                     <span class="hint"></span>
                    
                     <div class="field">

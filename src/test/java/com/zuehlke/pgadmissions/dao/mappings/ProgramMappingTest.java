@@ -9,15 +9,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
@@ -73,32 +69,6 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		assertTrue(reloadedProgramOne.getApprovers().containsAll(Arrays.asList(approverOne, approverTwo)));
 
 	}
-
-	@Test
-	@Ignore
-	public void shouldLoadProgramsWithSuperAdministrators() {
-		Program program = new Program();
-		program.setCode("abcD");
-		program.setDescription("I am a program :)");
-		program.setTitle("Program's title");
-		save(program);
-
-		Role superAdmin = new RoleDAO(sessionFactory).getRoleByAuthority(Authority.SUPERADMINISTRATOR);
-		RegisteredUser superAdminOne = new RegisteredUserBuilder().roles(superAdmin).firstName("Jane").lastName("Doe").email("email@test.com")
-				.username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
-
-		RegisteredUser superAdminTwo = new RegisteredUserBuilder().roles(superAdmin).firstName("Jane").lastName("Doe").email("email@test.com")
-				.username("usernameTwo").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
-				.toUser();
-
-		save(superAdminOne, superAdminTwo);
-		flushAndClearSession();
-
-		Program reloadedProgramOne = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
-		assertTrue(reloadedProgramOne.getAdministrators().containsAll(Arrays.asList(superAdminOne, superAdminTwo)));		
-	}
-	
 	
 	@Test
 	public void shouldLoadProgramsWithAdministrators() {

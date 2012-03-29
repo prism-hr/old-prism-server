@@ -37,7 +37,7 @@
 	            	<#list model.applicationForm.employmentPositions as position>
 		            	<tr>
 		                    <td><a class="row-arrow" name="positionEditButton" id="position_${position.id?string('#######')}">-</a></td>
-		                    <td>${position.position_title!}</td>
+		                    <td>${(position.position_title?html)!}</td>
 		                    <td>${(position.position_startDate?string('dd-MMM-yyyy'))!}</td>
 		                    <td>${(position.position_endDate?string('dd-MMM-yyyy'))!}</td>
 		                     <td>
@@ -50,10 +50,10 @@
 				        		</td>
 		                    
 							<input type="hidden" id="${position.id?string('#######')}_positionId" value="${position.id?string('#######')}"/>
-                            <input type="hidden" id="${position.id?string('#######')}_employer" value="${position.position_employer!}"/>
-                            <input type="hidden" id="${position.id?string('#######')}_remit" value="${position.position_remit!}"/>
-                            <input type="hidden" id="${position.id?string('#######')}_language" value="${position.position_language!}"/>
-                            <input type="hidden" id="${position.id?string('#######')}_positionTitle" value="${position.position_title!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_employer" value="${(position.position_employer?html)!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_remit" value="${(position.position_remit?html)!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_language" value="${(position.position_language.id?string('#######'))!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_positionTitle" value="${(position.position_title?html)!}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionStartDate" value="${(position.position_startDate?string('dd-MMM-yyyy'))!}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionEndDate" value="${(position.position_endDate?string('dd-MMM-yyyy'))!}"/>
 		                    
@@ -77,13 +77,13 @@
                     <div class="field">
                     <#if !model.applicationForm.isSubmitted()>
                     	<input class="full" type="text" id="position_employer" name="position_employer" 
-                    					value="${model.employmentPosition.position_employer!}" placeholder="Provider of employment" />
+                    					value="${(model.employmentPosition.position_employer?html)!}" placeholder="Provider of employment" />
                         <#if model.hasError('position_employer')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_employer').code /></span>                           
                         </#if>
                     <#else>
                         <input readonly="readonly" class="full" type="text" id="position_employer" name="position_employer" 
-                                        value="${model.employmentPosition.position_employer!}" placeholder="Provider of employment" />
+                                        value="${(model.employmentPosition.position_employer?html)!}" placeholder="Provider of employment" />
                     </#if>    
                    	</div>
                 </div>
@@ -95,13 +95,13 @@
                     <div class="field">
                         <#if !model.applicationForm.isSubmitted()>
                     	<input class="full" type="text" id="position_title" name="position_title" 
-                    					value="${model.employmentPosition.position_title!}" placeholder="Title of position" />
+                    					value="${(model.employmentPosition.position_title?html)!}" placeholder="Title of position" />
                         <#if model.hasError('position_title')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_title').code /></span>                           
                         </#if>
                         <#else>
                             <input readonly="readonly" class="full" type="text" id="position_title" name="position_title" 
-                                        value="${model.employmentPosition.position_title!}" placeholder="Title of position" />
+                                        value="${(model.employmentPosition.position_title?html)!}" placeholder="Title of position" />
                         </#if> 
                     </div>
                 </div>
@@ -114,14 +114,14 @@
                         <#if !model.applicationForm.isSubmitted()>
                       	<textarea cols="70" rows="3" class="max" id="position_remit" 
                       		name="position_remit" 
-                      		placeholder="Summary of responsibilities">${model.employmentPosition.position_remit!}</textarea>
+                      		placeholder="Summary of responsibilities">${(model.employmentPosition.position_remit?html)!}</textarea>
 							
 						<#if model.hasError('position_remit')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_remit').code /></span>                           
 						</#if>
 						 <#else>
 						    <textarea readonly="readonly" cols="70" rows="3" class="max" id="position_remit" 
-                            name="position_remit" value="${model.employmentPosition.position_remit!}" 
+                            name="position_remit" value="${(model.employmentPosition.position_remit?html)!}" 
                             placeholder="Summary of responsibilities"></textarea>  
 						 </#if> 
 						 
@@ -167,7 +167,7 @@
                     <span class="label">Language of work<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
-                      <select class="full" id="position_language" name="position_language" value="${model.employmentPosition.position_language!}"
+                      <select class="full" id="position_language" name="position_language"
                        <#if model.applicationForm.isSubmitted()>
                                                 disabled="disabled"
                                             </#if>>

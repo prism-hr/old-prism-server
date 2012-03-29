@@ -88,7 +88,7 @@
 								<div id="programme-details">
 			          
 						          	<div class="row">
-						            	<label>Programme Name</label>
+						            	<label>Programme</label>
 						              <input disabled size="109" value="${model.applicationForm.project.program.code} - ${model.applicationForm.project.program.title}" />
 						            </div>
 						            

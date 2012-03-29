@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -198,9 +199,71 @@ public class ApplicationsServiceTest{
 		EasyMock.replay(refereeDAOMock);
 		applicationsService.deleteReferee(referee);
 		EasyMock.verify(refereeDAOMock);
-		
-		
 	}
+	
+	@Test 
+	public void shouldDelegateApplicationSaveToDAO() {
+		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
+		applicationFormDAOMock.save(application);
+		EasyMock.replay(application, applicationFormDAOMock);
+		applicationsService.save(application);
+		EasyMock.verify(applicationFormDAOMock);
+	}
+	
+	@Test
+	public void shouldGetApplicationById() {
+		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
+		EasyMock.expect(applicationFormDAOMock.get(234)).andReturn(application);
+		
+		EasyMock.replay(application, applicationFormDAOMock);
+		Assert.assertEquals(application, applicationsService.getApplicationById(234));
+	}
+	
+	@Test
+	public void shouldGetQualificationById() {
+		Qualification qualification = EasyMock.createMock(Qualification.class);
+		EasyMock.expect(applicationFormDAOMock.getQualification(23)).andReturn(qualification);
+		
+		EasyMock.replay(qualification, applicationFormDAOMock);
+		Assert.assertEquals(qualification, applicationsService.getQualificationById(23));
+	}
+	
+	@Test 
+	public void shouldGetRefereeById() {
+		Referee referee = EasyMock.createMock(Referee.class);
+		EasyMock.expect(applicationFormDAOMock.getRefereeById(23)).andReturn(referee);
+		
+		EasyMock.replay(referee, applicationFormDAOMock);
+		Assert.assertEquals(referee, applicationsService.getRefereeById(23));
+	}
+	
+	@Test
+	public void shouldGetFundingById() {
+		Funding funding = EasyMock.createMock(Funding.class);
+		EasyMock.expect(applicationFormDAOMock.getFundingById(23)).andReturn(funding);
+		
+		EasyMock.replay(funding, applicationFormDAOMock);
+		Assert.assertEquals(funding, applicationsService.getFundingById(23));
+	}
+	
+	@Test
+	public void shouldGetAddressById() {
+		Address address = EasyMock.createMock(Address.class);
+		EasyMock.expect(applicationFormDAOMock.getAdddressById(23)).andReturn(address);
+		
+		EasyMock.replay(address, applicationFormDAOMock);
+		Assert.assertEquals(address, applicationFormDAOMock.getAdddressById(23));
+	}
+	
+	@Test
+	public void shouldGetEmploymentPositionById() {
+		EmploymentPosition employment = EasyMock.createMock(EmploymentPosition.class);
+		EasyMock.expect(applicationFormDAOMock.getEmploymentById(23)).andReturn(employment);
+		
+		EasyMock.replay(employment, applicationFormDAOMock);
+		Assert.assertEquals(employment, applicationsService.getEmploymentPositionById(23));
+	}
+	
 	@Test
 	public void shouldCreateAndSaveNewApplicationForm(){
 		Project project = new ProjectBuilder().id(1).toProject();

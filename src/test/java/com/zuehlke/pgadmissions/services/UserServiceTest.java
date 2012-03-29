@@ -156,6 +156,47 @@ public class UserServiceTest {
 		assertTrue(internalUsers.containsAll(Arrays.asList(userOne, userTwo, userThree, userFour)));
 	}
 	
+	@Test
+	public void shouldDelegateSaveToDAO() {
+		RegisteredUser user = EasyMock.createMock(RegisteredUser.class);
+		userDAOMock.save(user);
+		EasyMock.replay(userDAOMock);
+		userService.save(user);
+		EasyMock.verify(userDAOMock);
+	}
+	
+	@Test
+	public void shouldGetRoleById() {
+		Role role = EasyMock.createMock(Role.class);
+		EasyMock.expect(userDAOMock.getRoleById(23)).andReturn(role);
+		
+		EasyMock.replay(role, userDAOMock);
+		Assert.assertEquals(role, userDAOMock.getRoleById(23));
+	}
+	
+	@Test
+	public void shouldGetAllUsers() {
+		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
+		RegisteredUser userTwo = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userDAOMock.getAllUsers()).andReturn(Arrays.asList(userOne, userTwo));
+		
+		EasyMock.replay(userOne, userTwo, userDAOMock);
+		List<RegisteredUser> allUsers = userService.getAllUsers();
+		
+		Assert.assertEquals(2, allUsers.size());
+		Assert.assertTrue(allUsers.contains(userOne));
+		Assert.assertTrue(allUsers.contains(userTwo));
+	}
+	
+	@Test
+	public void shouldGetUserByUsername() {
+		RegisteredUser user = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userDAOMock.getUserByUsername("mike")).andReturn(user);
+		
+		EasyMock.replay(user, userDAOMock);
+		Assert.assertEquals(user, userService.getUserByUsername("mike"));
+	}
+	
 	@Before
 	public void setUp() {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);

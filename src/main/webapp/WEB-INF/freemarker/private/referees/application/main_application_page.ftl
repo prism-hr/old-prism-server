@@ -37,15 +37,12 @@
 		<!-- Styles for Application List Page -->
 		
 		<!-- Scripts -->
-		
-		<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
-    	<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
-		
+	
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
-			<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 		
 	</head>
 
@@ -83,12 +80,11 @@
                 </div>
 			      
 			      
-			      <!-- FLOATING TOOLBAR -->
-		          <ul id="view-toolbar">
-		          	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-		          	<li class="pdf"><a href="#" title="Download as PDF">Download as PDF</a></li>
-		          	<li class="print"><a href="#" title="Print">Print</a></li>
-		          </ul>
+				   <!-- FLOATING TOOLBAR -->
+                  <ul id="view-toolbar">
+                    <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
+                    <li class="print"><a href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
+                  </ul>
 			      
 			      
 			      <!-- content box -->

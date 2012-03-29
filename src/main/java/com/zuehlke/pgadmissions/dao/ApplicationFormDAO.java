@@ -78,21 +78,4 @@ public class ApplicationFormDAO {
 		return (Referee) sessionFactory.getCurrentSession().get(Referee.class, id);
 	}
 
-	public Telephone getTelephoneById(Integer id) {
-		return (Telephone) sessionFactory.getCurrentSession().get(Telephone.class, id);
-	}
-
-	public void saveTelephone(Telephone telephone) {
-		sessionFactory.getCurrentSession().saveOrUpdate(telephone);
-
-	}
-
-	public void saveReferee(Referee referee) {
-		sessionFactory.getCurrentSession().saveOrUpdate(referee);
-	}
-
-	public void saveDocument(Document document) {
-		sessionFactory.getCurrentSession().saveOrUpdate(document);
-	}
-
 }

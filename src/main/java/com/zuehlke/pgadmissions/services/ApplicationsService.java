@@ -111,22 +111,6 @@ public class ApplicationsService {
 	}
 
 
-	public Telephone getTelephoneById(Integer id) {
-		return applicationFormDAO.getTelephoneById(id);
-	}
-
-	@Transactional
-	public void saveTelephone(Telephone telephone) {
-		applicationFormDAO.saveTelephone(telephone);
-
-	}
-
-	@Transactional
-	public void saveReferee(com.zuehlke.pgadmissions.domain.Referee referee) {
-		applicationFormDAO.saveReferee(referee);
-
-	}
-
 	@Transactional
 	public void deleteAddress(Address address) {
 		addressDAO.delete(address);
@@ -155,12 +139,6 @@ public class ApplicationsService {
 		refereeDAO.delete(referee);		
 	}
 
-	@Transactional
-	public void saveDocument(Document document) {
-		applicationFormDAO.saveDocument(document);
-		
-	}
-	
 	@Transactional
 	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Project project) {
 

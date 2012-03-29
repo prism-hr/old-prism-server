@@ -87,8 +87,8 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase{
 	public void shouldGetReviewByApplicationForm(){
 
 		
-		ApplicationForm applicationOne = new ApplicationFormBuilder().id(1).project(project).applicant(user).toApplicationForm();
-		ApplicationForm applicationTwo  = new ApplicationFormBuilder().id(1).project(project).applicant(user).toApplicationForm();
+		ApplicationForm applicationOne = new ApplicationFormBuilder().id(4).project(project).applicant(user).toApplicationForm();
+		ApplicationForm applicationTwo  = new ApplicationFormBuilder().id(5).project(project).applicant(user).toApplicationForm();
 		save(applicationOne, applicationTwo);
 		flushAndClearSession();
 		

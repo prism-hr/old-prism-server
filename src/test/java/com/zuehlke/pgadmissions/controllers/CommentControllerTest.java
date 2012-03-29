@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
+import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -82,6 +83,16 @@ public class CommentControllerTest {
 		ModelAndView modelAndView = controller.getCommentedApplicationPage(1, "Amazing Research !!!");
 		assertEquals("redirect:/application?view=comments", modelAndView.getViewName());
 		EasyMock.verify(applicationsServiceMock);
+	}
+	
+	@Test
+	public void shouldGetAllCommentsForApplication(){
+		ApplicationForm appForm = EasyMock.createMock(ApplicationForm.class);
+		EasyMock.expect(appForm.getId()).andReturn(23);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(23)).andReturn(appForm);
+		EasyMock.replay(appForm, applicationsServiceMock);
+		ModelAndView modelAndView = controller.getAllCommentsForApplication(23);
+		Assert.assertEquals("redirect:/application?view=comments", modelAndView.getViewName());
 	}
 	
 	@Test(expected = CannotCommentException.class)

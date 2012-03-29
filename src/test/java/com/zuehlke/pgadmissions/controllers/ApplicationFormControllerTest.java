@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
@@ -52,11 +53,19 @@ public class ApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, project)).andReturn(applicationForm);
 		EasyMock.replay(projectDAOMock, applicationsServiceMock);
 		
-		
 		ModelAndView modelAndView = applicationController.createNewApplicationForm(12);
 		assertEquals(applicationForm.getId(), modelAndView.getModel().get("id"));
 		assertEquals("redirect:/application", modelAndView.getViewName());
 
+	}
+	
+	@Test
+	public void shouldBindPropertyEditors() {
+		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+		binderMock.registerCustomEditor(RegisteredUser.class, userPropertyEditorMock);
+		EasyMock.replay(binderMock);
+		applicationController.registerPropertyEditors(binderMock);
+		EasyMock.verify(binderMock);
 	}
 
 

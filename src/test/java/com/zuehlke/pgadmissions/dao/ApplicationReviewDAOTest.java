@@ -31,6 +31,13 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase{
 	private RegisteredUser user;
 	private Project project;
 	
+	@Test(expected=NullPointerException.class)
+	public void shouldThrowNullPointerException(){
+		ApplicationReviewDAO reviewDAO = new ApplicationReviewDAO();
+		ApplicationReview review = new ApplicationReviewBuilder().id(1).toApplicationReview();
+		reviewDAO.save(review);
+	}
+	
 	@Before
 	public void setup() {
 		applicationReviewDAO = new ApplicationReviewDAO(sessionFactory);
@@ -76,12 +83,6 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase{
 		assertEquals(review.getComment(), reloadedReview.getComment());
 	}
 	
-	@Test(expected=NullPointerException.class)
-	public void shouldThrowNullPointerException(){
-		ApplicationReviewDAO reviewDAO = new ApplicationReviewDAO();
-		ApplicationReview review = new ApplicationReviewBuilder().id(1).toApplicationReview();
-		reviewDAO.save(review);
-	}
 
 	@Test
 	public void shouldGetReviewByApplicationForm(){

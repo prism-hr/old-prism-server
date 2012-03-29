@@ -49,6 +49,13 @@ public class AddressDAOTest extends AutomaticRollbackTestCase {
 		assertNull(sessionFactory.getCurrentSession().get(Address.class, id));
 	}
 	
+	@Test(expected=NullPointerException.class)
+	public void shouldSendNullPointerException(){
+		AddressDAO addressDAO = new AddressDAO();
+		Address address = new AddressBuilder().id(1).toAddress();
+		addressDAO.delete(address);
+	}
+	
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
@@ -60,4 +67,6 @@ public class AddressDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 	}
+	
+	
 }

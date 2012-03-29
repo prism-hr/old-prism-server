@@ -8,7 +8,8 @@ $(document).ready(function()
     content: {
        text: function(api) {
          // Retrieve content from custom attribute of the $('.selector') elements.
-         return $(this).attr('data-desc');
+//         return $(this).attr('data-desc');
+    	   return "Tooltip demonstration.";
       } 
     },
     position: {
@@ -24,6 +25,25 @@ $(document).ready(function()
   
   
 
+  // Delete button tooltips.
+  $('.button-delete').qtip({
+	    content: {
+	        text: function(api) {
+	          // Retrieve content from custom attribute of the $('.selector') elements.
+	          return "Tooltip demonstration.";
+	       } 
+	     },
+	     position: {
+	        my: 'bottom right', // Use the corner...
+	        at: 'top center', // ...and opposite corner
+	        viewport: $(window),
+	        adjust: {
+	           method: 'flip shift'
+	        }
+	     },
+	     style: 'tooltip-pgr ui-tooltip-shadow'
+	   });
+  
 
   $('section.folding a.row-arrow').each(function()
   {
@@ -86,6 +106,15 @@ $(document).ready(function()
   $('table.data').tablesorter();
   $('table.data thead th').not(':first,:last').wrapInner('<span class="arrow" />');
   
+  //Adding style to delete button to make it free from inherited style
+  
+  var styleMap = {
+		'padding':'0',
+  		'background' : 'none'
+  } 
+  
+  $('.button-delete').parent().css(styleMap);
+  
 });
 
 
@@ -109,4 +138,4 @@ function backToTop()
 {
 	$.scrollTo('#wrapper', 900);
 }
-  
+

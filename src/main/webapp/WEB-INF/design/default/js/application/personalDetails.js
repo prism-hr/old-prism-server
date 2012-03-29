@@ -29,6 +29,8 @@ $(document).ready(function(){
 			$('#personal_details_phonenumbers').append(html);
 			
 			$('#phoneNumber').val('');
+			
+			$('#telephone-em').remove();
 		}
 	});
 	
@@ -55,6 +57,8 @@ $(document).ready(function(){
 		  	
 			$('#existingProficiencies').append(html);
 			$('#languageSelect').val("");
+			
+			$('#aptitude-em').remove();
 		}
 	});
 	
@@ -77,6 +81,8 @@ $(document).ready(function(){
 			$('#existingCandidateNationalities').append(html);
 			
 			$('#candidateNationalityCountry').val("");
+			
+			$('#nationality-em').remove();
 		}
 		
 	});

@@ -46,6 +46,12 @@ public class ProgrammeDetailsBuilder {
 		return this;
 	}
 	
+	public ProgrammeDetailsBuilder projectName(String projectName) {
+		this.projectName = projectName;
+		return this;
+	}
+	
+	
 	public ProgrammeDetailsBuilder referrer(Referrer referrer) {
 		this.referrer = referrer;
 		return this;

@@ -106,5 +106,9 @@ public class Document extends DomainObject<Integer> {
 		this.applicationForm = applicationForm;
 	}
 
+	public void setDateUploaded(Date dateUploaded) {
+		this.dateUploaded = dateUploaded;
+	}
+
 	
 }

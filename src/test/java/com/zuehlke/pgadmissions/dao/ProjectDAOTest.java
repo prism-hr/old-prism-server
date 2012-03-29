@@ -14,6 +14,13 @@ import com.zuehlke.pgadmissions.domain.Project;
 
 public class ProjectDAOTest extends AutomaticRollbackTestCase {
 
+	@Test(expected=NullPointerException.class)
+	public void shouldThrowNullPointerException(){
+		ProjectDAO projectDAO = new ProjectDAO();
+		projectDAO.getAllProjects();
+	}
+
+	
 	@Test
 	public void shouldGetAllProjects() {
 		ProjectDAO projectDAO = new ProjectDAO(sessionFactory);

@@ -64,12 +64,16 @@
 
                 <!-- Document upload -->
                 <div class="row">
-                    <span class="label">Document</span>
+                    <span class="label">PDF document</span>
                     <span class="hint"></span>
                     <div class="field">
                 		<input class="full" type="file" name="file" value=""  <#if model.applicationForm.submitted>disabled="disabled"</#if>/>                      	
                         <button style="margin-left:30px" class="blue" type="submit" value="close"  <#if model.applicationForm.submitted>disabled="disabled"</#if>>Upload</button>          
                     </div>  
+				</div>
+				<div class="row">
+                    <span class="label">Max file size is 10Mb.</span>
+                  
 				</div>
 				<#if model.uploadErrorCode?? >
 				    <div class="row">

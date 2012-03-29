@@ -34,28 +34,6 @@ public class ApplicationReviewDAO {
 				ApplicationReview.class, id);
 	}
 	
-	public List<ApplicationReview> getReviewsByUser(RegisteredUser user) {
-		@SuppressWarnings("unchecked")
-		List<ApplicationReview> list = sessionFactory.getCurrentSession()
-				.createCriteria(ApplicationReview.class)
-				.add(Restrictions.eq("user", user)).list();
-		return list;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<ApplicationReview> getAllReviews() {
-		return  (List<ApplicationReview>)sessionFactory.getCurrentSession()
-				.createCriteria(ApplicationReview.class).list();
-				
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<ApplicationForm> getAllApplications() {
-		return  (List<ApplicationForm>)sessionFactory.getCurrentSession()
-				.createCriteria(ApplicationForm.class).list();
-				
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<ApplicationReview> getReviewsByApplication(ApplicationForm application) {
 		return sessionFactory.getCurrentSession()
@@ -63,8 +41,4 @@ public class ApplicationReviewDAO {
 				.add(Restrictions.eq("application", application)).list();
 	}
 	
-	public void saveUser(RegisteredUser currentuser) {
-		sessionFactory.getCurrentSession().saveOrUpdate(currentuser);
-		
-	}
 }

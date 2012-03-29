@@ -14,6 +14,12 @@ import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 
 public class LanguageDAOTest extends AutomaticRollbackTestCase{
 
+	@Test(expected=NullPointerException.class)
+	public void shouldThrowNullPointerException(){
+		LanguageDAO languageDAO = new LanguageDAO();
+		languageDAO.getAllLanguages();
+	}
+	
 	@Test
 	public void shouldGetAllLanguagesInAlhphabeticalOrder() {
 		BigInteger numberOfLanguages = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from LANGUAGE").uniqueResult();
@@ -33,7 +39,7 @@ public class LanguageDAOTest extends AutomaticRollbackTestCase{
 	
 	
 	@Test
-	public void shouldGetCountryById(){
+	public void shouldGetLanguageById(){
 
 		Language language1 = new LanguageBuilder().name("ZZZZZZ").toLanguage();
 		Language language2 = new LanguageBuilder().name("AAAAAA").toLanguage();

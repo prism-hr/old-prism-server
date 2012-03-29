@@ -11,6 +11,13 @@ import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 
 public class DocumentDAOTest extends AutomaticRollbackTestCase {
 
+	@Test(expected=NullPointerException.class)
+	public void shouldThrowNullPointerException(){
+		Document document = new DocumentBuilder().id(1).toDocument();
+		DocumentDAO documentDAO = new DocumentDAO();
+		documentDAO.save(document);
+	}
+	
 	@Test
 	public void shouldSaveDocument() {
 		Document document = new DocumentBuilder().fileName("bob").content("aa".getBytes()).toDocument();

@@ -30,6 +30,13 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	private Country country;
 	private ApplicationForm applicationForm;
 
+	
+	@Test(expected=NullPointerException.class)
+	public void shouldThrowNullPointerException(){
+		ProgrammeDetailDAO personalDetailsDAO = new ProgrammeDetailDAO();
+		personalDetailsDAO.getProgrammeDetailWithId(1);
+	}
+	
 	@Test
 	public void shouldGetPersonalDetailsById() throws ParseException {
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))

@@ -59,13 +59,6 @@ public class UserService {
 	}
 
 	
-
-	public Role getRoleById(int id) {
-		return userDAO.getRoleById(id);
-		
-	}
-
-
 	public List<RegisteredUser> getAllUsers(){
 		return userDAO.getAllUsers();
 	}

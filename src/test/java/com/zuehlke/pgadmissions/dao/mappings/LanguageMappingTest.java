@@ -11,6 +11,7 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 
 public class LanguageMappingTest extends AutomaticRollbackTestCase {
+	
 	@Test
 	public void shouldSaveAndLoadLanguage(){
 		Language language = new LanguageBuilder().name("ZZZZZZ").toLanguage();

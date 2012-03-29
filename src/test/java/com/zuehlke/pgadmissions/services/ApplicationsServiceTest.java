@@ -252,7 +252,7 @@ public class ApplicationsServiceTest{
 		EasyMock.expect(applicationFormDAOMock.getAdddressById(23)).andReturn(address);
 		
 		EasyMock.replay(address, applicationFormDAOMock);
-		Assert.assertEquals(address, applicationFormDAOMock.getAdddressById(23));
+		Assert.assertEquals(address, applicationsService.getAddressById(23));
 	}
 	
 	@Test

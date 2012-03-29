@@ -171,7 +171,7 @@ public class UserServiceTest {
 		EasyMock.expect(userDAOMock.getRoleById(23)).andReturn(role);
 		
 		EasyMock.replay(role, userDAOMock);
-		Assert.assertEquals(role, userDAOMock.getRoleById(23));
+		Assert.assertEquals(role, userService.getRoleById(23));
 	}
 	
 	@Test

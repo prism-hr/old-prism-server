@@ -36,13 +36,15 @@ public class ApplicantRecordValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", "record.firstname.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", "record.lastname.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "record.email.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "record.password.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword", "record.confirmPassword.notempty");
 		RegistrationDTO record = (RegistrationDTO) target;
 		if(record.getConfirmPassword()!=null && record.getPassword() !=null && !record.getConfirmPassword().equals(record.getPassword())){
+			errors.rejectValue("password", "record.password.notmatch");
+			errors.rejectValue("confirmPassword", "record.confirmPassword.notmatch");
+		}
+		if(record.getPassword().length()<8){
 			errors.rejectValue("password", "record.password.notvalid");
-			errors.rejectValue("confirmPassword", "record.confirmPassword.notvalid");
 		}
 		List<RegisteredUser> allUsers = userService.getAllUsers();
 		for (RegisteredUser user : allUsers) {

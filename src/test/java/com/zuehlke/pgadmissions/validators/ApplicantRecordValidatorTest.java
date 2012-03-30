@@ -35,8 +35,8 @@ public class ApplicantRecordValidatorTest {
 		record.setFirstname("Mark");
 		record.setLastname("Euston");
 		record.setEmail("meuston@gmail.com");
-		record.setPassword("1234");
-		record.setConfirmPassword("1234");
+		record.setPassword("12345678");
+		record.setConfirmPassword("12345678");
 		user = new RegisteredUserBuilder().id(1).email("differentEmail").toUser();
 		userServiceMock = EasyMock.createMock(UserService.class);
 		recordValidator = new ApplicantRecordValidator(userServiceMock);
@@ -66,19 +66,6 @@ public class ApplicantRecordValidatorTest {
 		Assert.assertEquals("record.lastname.notempty", mappingResult.getFieldError("lastname").getCode());
 	}
 
-	@Ignore
-	@Test
-	public void shouldRejectIfEmailIsEmpty() {
-		record.setEmail(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(record, "email");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
-		EasyMock.replay(userServiceMock);
-		recordValidator.validate(record, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("record.email.notempty", mappingResult.getFieldError("email").getCode());
-	}
-	
 	@Test
 	public void shouldRejectIfEmailNotValidEmail() {
 		record.setEmail("nonvalidemail");
@@ -89,17 +76,6 @@ public class ApplicantRecordValidatorTest {
 		recordValidator.validate(record, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("record.email.invalid", mappingResult.getFieldError("email").getCode());
-	}
-	@Test
-	public void shouldRejectIfNoPassword() {
-		record.setPassword(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(record, "password");
-		userServiceMock.save(user);
-		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
-		EasyMock.replay(userServiceMock);
-		recordValidator.validate(record, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("record.password.notempty", mappingResult.getFieldError("password").getCode());
 	}
 	
 	@Test
@@ -116,15 +92,28 @@ public class ApplicantRecordValidatorTest {
 	
 	@Test
 	public void shouldRejectIfPasswordsDoNotMatch() {
-		record.setConfirmPassword("1234");
-		record.setPassword("12");
+		record.setConfirmPassword("12345");
+		record.setPassword("12345678");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(record, "confirmPassword");
 		userServiceMock.save(user);
 		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
 		EasyMock.replay(userServiceMock);
 		recordValidator.validate(record, mappingResult);
 		Assert.assertEquals(2, mappingResult.getErrorCount());
-		Assert.assertEquals("record.confirmPassword.notvalid", mappingResult.getFieldError("confirmPassword").getCode());
+		Assert.assertEquals("record.confirmPassword.notmatch", mappingResult.getFieldError("confirmPassword").getCode());
+		Assert.assertEquals("record.password.notmatch", mappingResult.getFieldError("password").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfPasswordsNotValid() {
+		record.setPassword("12");
+		record.setConfirmPassword("12");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(record, "password");
+		userServiceMock.save(user);
+		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
+		EasyMock.replay(userServiceMock);
+		recordValidator.validate(record, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("record.password.notvalid", mappingResult.getFieldError("password").getCode());
 	}
 	

@@ -4,9 +4,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+
+import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -21,15 +23,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
-import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -62,54 +65,65 @@ public class SubmitApplicationFormControllerTest {
 	@Test
 	@Ignore
 	public void shouldLoadApplicationFormByIdAndChangeSubmissionStatusToSubmittedAndSetTheCurrentTimeStampToSubmitDate() {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		form.setApplicant(student);
-		com.zuehlke.pgadmissions.domain.Address address = new com.zuehlke.pgadmissions.domain.Address();
-		address.setApplication(form);
-		address.setCountry(new Country());
-		address.setLocation("test");
-		address.setStartDate(new Date());
-		address.setEndDate(new Date());
-		address.setPostCode("test");
-		address.setPurpose(AddressPurpose.EDUCATION);
-		address.setContactAddress(AddressStatus.YES);
+		ProgrammeDetail programmeDetail = EasyMock.createMock(ProgrammeDetail.class);
+		EasyMock.expect(programmeDetail.getSupervisors()).andReturn(new ArrayList<Supervisor>());
+		EasyMock.expect(programmeDetail.getProgrammeName()).andReturn("test");
+		EasyMock.expect(programmeDetail.getProjectName()).andReturn("test");
+		EasyMock.expect(programmeDetail.getReferrer()).andReturn(Referrer.OPTION_1);
+		EasyMock.expect(programmeDetail.getStartDate()).andReturn(new Date());
+		EasyMock.expect(programmeDetail.getStudyOption()).andReturn(StudyOption.FULL_TIME);
+		EasyMock.replay(programmeDetail);
 		
-		form.getAddresses().add(address);
-		applicationsServiceMock.save(form);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		ApplicationFormDetails applDetails = new ApplicationFormDetails();
-		BindingResult mappingResult = new BeanPropertyBindingResult(applDetails, "applicationFormDetails", true, 100);
-		assertEquals(SubmissionStatus.UNSUBMITTED, form.getSubmissionStatus());
-		PersonalDetail personalDetail = new PersonalDetail();
-		personalDetail.setId(2);
-		personalDetail.setApplication(form);
-		Country country = new Country();
-		country.setId(1); country.setName("ENGLAND"); country.setCode("EN");
-		personalDetail.setCountry(country);
-		personalDetail.setDateOfBirth(new Date());
-		personalDetail.setGender(Gender.FEMALE);
-		personalDetail.setFirstName("test");
-		personalDetail.setLastName("test");
-		personalDetail.setEmail("email@test.com");
-		personalDetail.setResidenceCountry(country);
-		personalDetail.setResidenceStatus(ResidenceStatus.EXCEPTIONAL_LEAVE_TO_REMAIN);
-		//EasyMock.expect(personalDetailDAOMock.getPersonalDetailWithApplication(form)).andReturn(personalDetail);
+		PersonalDetail personalDetail = EasyMock.createMock(PersonalDetail.class);
+		EasyMock.replay(personalDetail);
+		
+		ApplicationForm appForm = EasyMock.createMock(ApplicationForm.class);
+		EasyMock.expect(appForm.getApplicant()).andReturn(student);
+		EasyMock.expect(appForm.getApplicant()).andReturn(student);
+		EasyMock.expect(appForm.isSubmitted()).andReturn(false);
+		EasyMock.expect(appForm.getAddresses()).andReturn(new ArrayList<Address>());
+		EasyMock.expect(appForm.getAddresses()).andReturn(new ArrayList<Address>());
+		EasyMock.expect(appForm.getReferees()).andReturn(new ArrayList<Referee>());
+		EasyMock.expect(appForm.getProgrammeDetails()).andReturn(programmeDetail);
+		EasyMock.expect(appForm.getPersonalDetails()).andReturn(personalDetail);
+		
+		EasyMock.expect(appForm.getProgrammeDetails()).andReturn(programmeDetail);
+		EasyMock.expect(appForm.getSubmissionStatus()).andReturn(SubmissionStatus.UNSUBMITTED);
+		EasyMock.replay(appForm);
+		
+		EasyMock.expect(applicationsServiceMock.getApplicationById(23)).andReturn(appForm);
+		
+		ApplicationFormDetails details = EasyMock.createMock(ApplicationFormDetails.class);
+		details.setNumberOfAddresses(0);
+		details.setNumberOfReferees(0);
+		details.setNumberOfContactAddresses(0);
+		details.setPersonalDetails(personalDetail);
+		details.setProgrammeDetails(programmeDetail);
+		EasyMock.expect(details.getNumberOfAddresses()).andReturn(1);
+		EasyMock.expect(details.getNumberOfContactAddresses()).andReturn(1);
+		EasyMock.expect(details.getNumberOfContactAddresses()).andReturn(1);
+		EasyMock.expect(details.getNumberOfReferees()).andReturn(2);
+		EasyMock.expect(details.getProgrammeDetails()).andReturn(programmeDetail);
+		EasyMock.expect(details.getProgrammeDetails()).andReturn(programmeDetail);
+		EasyMock.expect(details.getProgrammeDetails()).andReturn(programmeDetail);
+		EasyMock.replay(details);
+		
+		BindingResult result = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(result.hasErrors()).andReturn(false);
+		EasyMock.replay(result);
+		
 		EasyMock.replay(applicationsServiceMock);
-		assertEquals("redirect:/applications?submissionSuccess=true", applicationController.submitApplication(applDetails, 2, mappingResult).getViewName());
-		assertEquals(SubmissionStatus.SUBMITTED, form.getSubmissionStatus());
-		java.util.Date date= new java.util.Date();
-		assertEquals(new Timestamp(date.getTime()), form.getSubmittedDate());
-		EasyMock.verify(applicationsServiceMock);
+		ModelAndView modelAndView = applicationController.submitApplication(details, 23, result);
+		Assert.assertEquals("redirect:/applications?submissionSuccess=true", modelAndView.getViewName());
+		Assert.assertNotNull(appForm.getSubmittedDate());
 	}
 	
 	@Test
-
 	public void shouldReLoadApplicationFormWhenIncomplete() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		form.setApplicant(student);
 		applicationsServiceMock.save(form);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		//EasyMock.expect(personalDetailDAOMock.getPersonalDetailWithApplication(form)).andReturn(new PersonalDetail());
 		EasyMock.replay(applicationsServiceMock);
 		ApplicationFormDetails applDetails = new ApplicationFormDetails();
 		BindingResult mappingResult = new BeanPropertyBindingResult(applDetails, "applicationFormDetails", true, 100);
@@ -123,10 +137,6 @@ public class SubmitApplicationFormControllerTest {
 		assertNotNull(model.getFunding());
 		assertNotNull(model.getEmploymentPosition());
 		assertNotNull(model.getReferrers());
-		
-	//	assertSame(countries, model.getCountries());
-	//	assertSame(languages, model.getLanguages());
-	//	assertEquals(userMock, model.getUser());
 		
 		assertEquals(ResidenceStatus.values().length, model.getResidenceStatuses().size());
 		assertTrue(model.getResidenceStatuses().containsAll(Arrays.asList(ResidenceStatus.values())));

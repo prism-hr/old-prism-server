@@ -87,6 +87,10 @@ public class PdfDocumentBuilder {
 		addSectionSeparators(document);
 
 		addSupportingDocuments(application, document);
+
+		addSectionSeparators(document);
+
+		addUploadedReferences(application, document);
 	}
 
 	private void addSectionSeparators(Document document) throws DocumentException {
@@ -451,14 +455,27 @@ public class PdfDocumentBuilder {
 				String content = new String(doc.getContent());
 				document.add(new Chunk(content));
 			} else if (doc.getFileName().endsWith(".pdf")) {
-				PdfReader pdfReader = new PdfReader(doc.getContent());
-				PdfContentByte cb = writer.getDirectContent();
-				for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
-					document.newPage();
-					PdfImportedPage page = writer.getImportedPage(pdfReader, i);
-					cb.addTemplate(page, 0, 0);
-				}
+				readPdf(document, doc);
 			}
+		}
+	}
+
+
+	private void addUploadedReferences(ApplicationForm application, Document document) throws IOException {
+		for (Referee referee : application.getReferees()) {
+			if (referee.getReference()!= null) {
+				readPdf(document, referee.getReference().getDocument());
+			}
+		}
+	}
+
+	private void readPdf(Document document, com.zuehlke.pgadmissions.domain.Document doc) throws IOException {
+		PdfReader pdfReader = new PdfReader(doc.getContent());
+		PdfContentByte cb = writer.getDirectContent();
+		for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {
+			document.newPage();
+			PdfImportedPage page = writer.getImportedPage(pdfReader, i);
+			cb.addTemplate(page, 0, 0);
 		}
 	}
 

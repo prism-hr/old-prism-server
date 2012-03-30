@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.assertEquals;
 
+import java.math.BigInteger;
+
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,13 +23,14 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase{
 
 		@Test
 		public void shouldGetAllPrograms() {
+			BigInteger	existingNumberOfPrograms = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from PROGRAM").uniqueResult();
 			Program program1 = new ProgramBuilder().id(1).code("code1").description("blahblab").title("another title").toProgram();
 			Program program2= new ProgramBuilder().id(1).code("code2").description("blahblab").title("another title").toProgram();
 			sessionFactory.getCurrentSession().save(program1);
 			sessionFactory.getCurrentSession().save(program2);
 			flushAndClearSession();
 			ProgramDAO programDAO = new ProgramDAO(sessionFactory);
-			Assert.assertEquals(5, programDAO.getAllPrograms().size());
+			Assert.assertEquals(existingNumberOfPrograms.intValue() + 2, programDAO.getAllPrograms().size());
 		}
 
 		

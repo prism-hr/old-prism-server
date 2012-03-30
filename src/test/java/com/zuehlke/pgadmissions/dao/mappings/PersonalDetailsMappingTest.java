@@ -331,10 +331,11 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(2, reloadedDetails.getLanguageProficiencies().size());
 		assertTrue(reloadedDetails.getLanguageProficiencies().containsAll(Arrays.asList(prof1,prof2)));
 		Integer tobeRemovedId = prof2.getId();
-		reloadedDetails.getLanguageProficiencies().remove(1);
+		reloadedDetails.getLanguageProficiencies().remove(prof2);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
 
 		flushAndClearSession();
+		
 		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
 		assertEquals(1, reloadedDetails.getLanguageProficiencies().size());
 		assertTrue(reloadedDetails.getLanguageProficiencies().containsAll(Arrays.asList(prof1)));
@@ -346,7 +347,6 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
 		assertEquals(2, reloadedDetails.getLanguageProficiencies().size());
 		assertTrue(reloadedDetails.getLanguageProficiencies().containsAll(Arrays.asList(prof1, prof3)));
-		
 		 assertNull(sessionFactory.getCurrentSession().get(Nationality.class, tobeRemovedId));
 	}
 	

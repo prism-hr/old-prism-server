@@ -22,6 +22,8 @@ $(document).ready(function(){
 			// close everything
 			$('section.folding:not(.error) > div').removeClass("open").hide();
 			$('section.folding:not(.error) > h2').removeClass("open");
+			
+
 		}
 		
 		// To make uncompleted functionalities disable.

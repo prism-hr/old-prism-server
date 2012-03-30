@@ -63,7 +63,7 @@
 
 	<bean id="mimeMessagePreparatorFactory" class="com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory">
 	<constructor-arg index="0"><ref bean="freemarkerConfig"/></constructor-arg>
-	<constructor-arg index="1" value="false"/>
+	<constructor-arg index="1" value="${email.prod}"/>
 	</bean>
 
 	<bean id="themeResolver"

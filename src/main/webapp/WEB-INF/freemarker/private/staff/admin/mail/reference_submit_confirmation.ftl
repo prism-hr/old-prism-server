@@ -35,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">A reference has been provided for application ${application.id?string("######")} by ${referee.firstname} ${referee.lastname} You can view the application here: </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">A reference has been provided for application ${application.id?string("######")} by ${referee.firstname} ${referee.lastname}. You can view the application here: </font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

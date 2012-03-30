@@ -39,7 +39,7 @@ public class PrintController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public void printPage(HttpServletRequest request, HttpServletResponse response) {
+	public Document printPage(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			Integer applicationFormId = ServletRequestUtils.getIntParameter(request, "applicationFormId");
 			ApplicationForm application = applicationSevice.getApplicationById(applicationFormId);
@@ -76,10 +76,11 @@ public class PrintController {
 			out.flush();
 			out.close();
 
-
+			return document;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	@RequestMapping(value = "/all", method = RequestMethod.GET)

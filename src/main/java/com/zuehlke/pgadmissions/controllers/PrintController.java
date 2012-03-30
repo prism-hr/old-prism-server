@@ -84,7 +84,7 @@ public class PrintController {
 	}
 
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
-	public void printAll(HttpServletRequest request, HttpServletResponse response) throws ServletRequestBindingException, DocumentException, IOException {
+	public Document printAll(HttpServletRequest request, HttpServletResponse response) throws ServletRequestBindingException, DocumentException, IOException {
 		String appListToPrint = ServletRequestUtils.getStringParameter(request, "appList");
 		String[] applications = appListToPrint.split(";");
 
@@ -113,6 +113,8 @@ public class PrintController {
 		baos.writeTo(out); 
 		out.flush();
 		out.close();
+		
+		return document;
 	}
 
 }

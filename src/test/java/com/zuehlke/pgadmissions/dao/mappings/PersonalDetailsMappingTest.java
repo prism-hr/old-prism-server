@@ -279,7 +279,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(2, reloadedDetails.getPaternalGuardianNationalities().size());
 		assertTrue(reloadedDetails.getPaternalGuardianNationalities().containsAll(Arrays.asList(nationality1,nationality2)));
 		Integer tobeRemovedId = nationality2.getId();
-		reloadedDetails.getPaternalGuardianNationalities().remove(1);
+		reloadedDetails.getPaternalGuardianNationalities().remove(nationality2);
 		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
 
 		flushAndClearSession();

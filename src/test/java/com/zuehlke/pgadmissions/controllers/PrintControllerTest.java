@@ -37,7 +37,7 @@ public class PrintControllerTest {
 		response.setHeader("Pragma", "public");
 		response.setHeader("Content-Disposition", "inline; filename=\"application23.pdf\"");
 		response.setContentType("application/pdf");
-		response.setContentLength(1997);
+		response.setContentLength(EasyMock.anyInt());
 		EasyMock.expect(response.getOutputStream()).andReturn(new ServletOutputStream() {
 			@Override
 			public void write(int b) throws IOException {}
@@ -68,7 +68,7 @@ public class PrintControllerTest {
 		response.setHeader("Pragma", "public");
 		response.setHeader("Content-Disposition", "attachment; filename=\"applications.pdf\"");
 		response.setContentType("application/pdf");
-		response.setContentLength(3300);
+		response.setContentLength(EasyMock.anyInt());
 		EasyMock.expect(response.getOutputStream()).andReturn(new ServletOutputStream() {
 			@Override
 			public void write(int b) throws IOException {}

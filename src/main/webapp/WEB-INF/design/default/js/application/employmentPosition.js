@@ -70,12 +70,15 @@ $('a[name="positionEditButton"]').click(function(){
 	$("#position_language").val($('#'+id+"_language").val());
 	$("#position_title").val($('#'+id+"_positionTitle").val());
 	$("#position_startDate").val($('#'+id+"_positionStartDate").val());
-	$("#position_endDate").val($('#'+id+"_positionEndDate").val());
 	if ($('#'+id+'_positionCompleted').val() =='YES'){
 		$("#completedPositionCB").attr('checked', true);
+		$("#endDateField").html("<input class=\"half date\" type=\"text\" id=\"position_endDate\" name=\"position_endDate\" value=\"\"</input>	");
+		$("#completedPosition").val("YES");
+		bindDatePickers();
 	} else {
 		$("#completedPositionCB").attr('checked', false);
 	}
+	$("#position_endDate").val($('#'+id+"_positionEndDate").val());
 });
 
 $('a[name="positionCancelButton"]').click(function(){

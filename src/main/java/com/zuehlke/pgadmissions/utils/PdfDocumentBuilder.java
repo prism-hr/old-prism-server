@@ -465,8 +465,8 @@ public class PdfDocumentBuilder {
 		for (Referee referee : application.getReferees()) {
 			if (referee.getReference()!= null) {
 				document.newPage();
-				document.add(new Paragraph("Reference from " + referee.getFirstname() + " " + referee.getLastname()));
-				document.add(new Paragraph(referee.getRelationship()));
+				document.add(new Paragraph("Reference from " + referee.getFirstname() + " " + referee.getLastname(), boldFont));
+				document.add(new Paragraph("Relationship: " + referee.getRelationship(), boldFont));
 				readPdf(document, referee.getReference().getDocument());
 			}
 		}

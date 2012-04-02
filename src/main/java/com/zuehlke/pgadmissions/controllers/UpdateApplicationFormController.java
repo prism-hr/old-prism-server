@@ -145,7 +145,7 @@ public class UpdateApplicationFormController {
 			qualification.setQualificationLevel(qual.getQualificationLevel());
 			qualification.setQualificationProgramName(qual.getQualificationProgramName());			
 			qualification.setQualificationStartDate(qual.getQualificationStartDate());
-			qualification.setCompleted(qual.isCompleted());
+			qualification.setCompleted(qual.getCompleted());
 			qualification.setQualificationType(qual.getQualificationType());
 			if (qual.getQualificationId() == null) {
 				application.getQualifications().add(qualification);
@@ -221,7 +221,7 @@ public class UpdateApplicationFormController {
 			position.setPosition_remit(positionDto.getPosition_remit());
 			position.setPosition_startDate(positionDto.getPosition_startDate());
 			position.setPosition_title(positionDto.getPosition_title());
-			position.setCompleted(positionDto.isCompleted());
+			position.setCompleted(positionDto.getCompleted());
 			if (positionDto.getPositionId() == null) {
 				application.getEmploymentPositions().add(position);
 			}

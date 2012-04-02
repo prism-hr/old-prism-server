@@ -8,8 +8,8 @@ $(document).ready(function()
     content: {
        text: function(api) {
          // Retrieve content from custom attribute of the $('.selector') elements.
-//         return $(this).attr('data-desc');
-    	   return "Tooltip demonstration.";
+    	   return $(this).attr('data-desc');
+    	 
       } 
     },
     position: {

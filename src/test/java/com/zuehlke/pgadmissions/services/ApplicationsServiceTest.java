@@ -72,7 +72,7 @@ public class ApplicationsServiceTest{
 	@Test
 	public void shouldGetListOfQualificationsForApplication() throws ParseException{
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
-		Qualification qual = new QualificationBuilder().id(3).application(applicationForm).q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_grade("").q_institution("").q_language_of_study(null).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("").q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
+		Qualification qual = new QualificationBuilder().id(3).application(applicationForm).q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_grade("").q_institution("").q_language_of_study(null).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
 		EasyMock.expect(applicationFormDAOMock.getQualificationsByApplication(applicationForm)).andReturn(Arrays.asList(qual));
 		EasyMock.replay(applicationFormDAOMock);
 		List<Qualification> qualifications = applicationsService.getQualificationsByApplication(applicationForm);

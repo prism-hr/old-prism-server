@@ -15,8 +15,7 @@ public class QualificationBuilder {
 	private Language q_language_of_study;
 	private QualificationLevel q_level;
 	private String q_type;
-	private String q_grade;
-	private String q_score;
+	private String q_grade;	
 	private Date q_start_date;
 	private Date q_award_date;
 	private ApplicationForm application;
@@ -69,10 +68,7 @@ public class QualificationBuilder {
 		this.q_grade = q_grade;
 		return this;
 	}
-	public QualificationBuilder q_score(String q_score) {
-		this.q_score = q_score;
-		return this;
-	}
+
 	public QualificationBuilder q_start_date(Date q_start_date) {
 		this.q_start_date = q_start_date;
 		return this;
@@ -87,7 +83,6 @@ public class QualificationBuilder {
 		qualification.setQualificationLanguage(q_language_of_study);
 		qualification.setQualificationLevel(q_level);
 		qualification.setQualificationProgramName(q_name_of_programme);
-		qualification.setQualificationScore(q_score);
 		qualification.setQualificationStartDate(q_start_date);
 		qualification.setQualificationType(q_type);
 		qualification.setId(id);

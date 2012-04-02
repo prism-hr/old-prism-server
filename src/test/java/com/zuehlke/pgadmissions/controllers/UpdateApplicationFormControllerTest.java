@@ -40,7 +40,6 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -181,7 +180,6 @@ public class UpdateApplicationFormControllerTest {
 
 		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
 		positionDto.setPosition_employer("Mark");
-		positionDto.setCompleted(CheckedStatus.YES);
 		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		positionDto.setPosition_language(2);
 		positionDto.setPosition_remit("cashier");
@@ -462,9 +460,7 @@ public class UpdateApplicationFormControllerTest {
 		Assert.assertEquals(qualificationDto.getQualificationProgramName(),
 				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
 						.getQualificationProgramName());
-		Assert.assertEquals(qualificationDto.getQualificationScore(),
-				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
-						.getQualificationScore());
+	
 		Assert.assertEquals(qualificationDto.getQualificationStartDate(),
 				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
 						.getQualificationStartDate());
@@ -578,15 +574,13 @@ public class UpdateApplicationFormControllerTest {
 		qualificationDto.setQualificationInstitution("UCL");
 		qualificationDto.setQualificationLanguage(2);
 		qualificationDto.setQualificationLevel(QualificationLevel.COLLEGE);
-		qualificationDto.setQualificationProgramName("CS");
-		qualificationDto.setQualificationScore("100");
-		qualificationDto.setCompleted(CheckedStatus.YES);
-		qualificationDto.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+		qualificationDto.setQualificationProgramName("CS");		
+		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		qualificationDto.setQualificationType("degree");
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		qualification = new QualificationBuilder().id(3).isCompleted(CheckedStatus.YES)
+		qualification = new QualificationBuilder().id(3)
 				.q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).q_grade("").q_institution("")
-				.q_language_of_study(new Language()).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").q_score("")
+				.q_language_of_study(new Language()).q_level(QualificationLevel.COLLEGE).q_name_of_programme("")
 				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark")
 				.lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();

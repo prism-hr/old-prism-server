@@ -80,7 +80,7 @@ public class FundingControllerTest {
 		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
 		Assert.assertEquals(FundingType.SCHOLARSHIP, ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
 				.getFundings().get(0).getType());
-		Assert.assertEquals("add", modelAndView.getModel().get("add"));
+		Assert.assertEquals("add", modelAndView.getModel().get("fundingAdd"));
 	}
 
 	@Test

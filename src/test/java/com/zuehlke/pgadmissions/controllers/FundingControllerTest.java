@@ -55,7 +55,7 @@ public class FundingControllerTest {
 		funding.setFundingValue("2000");
 		funding.setFundingAwardDate(new Date());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = fundingController.addFunding(funding, 2, null, null, mappingResult, new ModelMap());
+		ModelAndView modelAndView = fundingController.addFunding(funding, 2, null, mappingResult, new ModelMap());
 		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
 		Assert.assertEquals(FundingType.SCHOLARSHIP, ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
 				.getFundings().get(0).getType());
@@ -76,7 +76,7 @@ public class FundingControllerTest {
 		funding.setFundingValue("2000");
 		funding.setFundingAwardDate(new Date());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = fundingController.addFunding(funding, 2, "add",null, mappingResult, new ModelMap());
+		ModelAndView modelAndView = fundingController.addFunding(funding, 2, "add", mappingResult, new ModelMap());
 		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
 		Assert.assertEquals(FundingType.SCHOLARSHIP, ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
 				.getFundings().get(0).getType());
@@ -91,7 +91,7 @@ public class FundingControllerTest {
 		Funding funding = new Funding();
 		funding.setFundingType(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = fundingController.addFunding(funding, 2, null,null, mappingResult, new ModelMap());
+		ModelAndView modelAndView = fundingController.addFunding(funding, 2, null, mappingResult, new ModelMap());
 		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
 	}
 
@@ -105,7 +105,7 @@ public class FundingControllerTest {
 
 		Funding funding = new Funding();
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		fundingController.addFunding(funding, 2,null,  null, mappingResult, new ModelMap());
+		fundingController.addFunding(funding, 2,null, mappingResult, new ModelMap());
 	}
 	
 	@Test

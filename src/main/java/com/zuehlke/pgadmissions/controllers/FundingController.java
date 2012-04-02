@@ -54,7 +54,7 @@ public class FundingController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer appIdFunding, 
-			@RequestParam(required=false) String shouldAdd, BindingResult result, ModelMap modelMap) throws IOException {
+			@RequestParam(required=false) String isFundingAdd, BindingResult result, ModelMap modelMap) throws IOException {
 		ApplicationForm application = applicationService.getApplicationById(appIdFunding);
 
 		if (application.isSubmitted()) {
@@ -107,8 +107,8 @@ public class FundingController {
 		}
 
 		modelMap.put("model", model);
-		if(StringUtils.isNotBlank(shouldAdd)){
-			modelMap.put("add", "add");
+		if(StringUtils.isNotBlank(isFundingAdd)){
+			modelMap.put("fundingAdd", "add");
 		}
 		modelMap.put("id", applicationForm.getId());
 		return new ModelAndView("redirect:/application", modelMap);

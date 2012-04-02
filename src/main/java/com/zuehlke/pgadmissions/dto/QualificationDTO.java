@@ -14,8 +14,7 @@ public class QualificationDTO {
 	private Integer qualificationLanguage;
 	private QualificationLevel qualificationLevel;
 	private String qualificationType;
-	private String qualificationGrade;
-	private String qualificationScore;
+	private String qualificationGrade;	
 	private Date qualificationAwardDate;
 	private CheckedStatus completed;
 
@@ -67,13 +66,7 @@ public class QualificationDTO {
 		this.qualificationProgramName = qualificationProgramName;
 	}
 	
-	public String getQualificationScore() {
-		return qualificationScore;
-	}
-	
-	public void setQualificationScore(String qualificationScore) {
-		this.qualificationScore = qualificationScore;
-	}
+
 	
 	public Date getQualificationStartDate() {
 		return qualificationStartDate;

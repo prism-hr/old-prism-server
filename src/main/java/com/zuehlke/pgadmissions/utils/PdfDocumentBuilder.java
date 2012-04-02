@@ -461,9 +461,12 @@ public class PdfDocumentBuilder {
 	}
 
 
-	private void addUploadedReferences(ApplicationForm application, Document document) throws IOException {
+	private void addUploadedReferences(ApplicationForm application, Document document) throws IOException, DocumentException {
 		for (Referee referee : application.getReferees()) {
 			if (referee.getReference()!= null) {
+				document.newPage();
+				document.add(new Paragraph("Reference from " + referee.getFirstname() + " " + referee.getLastname()));
+				document.add(new Paragraph(referee.getRelationship()));
 				readPdf(document, referee.getReference().getDocument());
 			}
 		}

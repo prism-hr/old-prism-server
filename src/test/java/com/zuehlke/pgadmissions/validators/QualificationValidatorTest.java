@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import junit.framework.Assert;
 
@@ -64,7 +66,24 @@ public class QualificationValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.level.notempty",mappingResult.getFieldError("qualificationLevel").getCode());
 	}
+	
 	@Test
+	public void shouldRejectIfStartDateAndEndDateAreFutureDates(){
+		Date tomorrow, dayAfterTomorrow;
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE, 1);
+		tomorrow = calendar.getTime();
+		calendar.add(Calendar.DATE, 2);
+		dayAfterTomorrow = calendar.getTime();
+		qualificationDto.setQualificationStartDate(tomorrow);
+		qualificationDto.setQualificationAwardDate(dayAfterTomorrow);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
+		qualificationValidator.validate(qualificationDto, mappingResult);
+		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals("qualification.start_date.future",mappingResult.getFieldError("qualificationStartDate").getCode());
+		Assert.assertEquals("qualification.award_date.future",mappingResult.getFieldError("qualificationAwardDate").getCode());
+	}
+	
 	public void shouldRejectIfTypeIsEmpty(){
 		qualificationDto.setQualificationType(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");

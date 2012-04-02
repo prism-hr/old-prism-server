@@ -49,7 +49,7 @@
 						<label class="label">First Name<em>*</em></label>
 						<span class="hint"></span>
 						<div class="field">                    	
-								<input class="full" readonly="readonly" type="text" value="${model.user.firstName!}"  name="firstName" id="firstName"/>	          
+								<input class="full" readonly="readonly" type="text" value="${(model.user.firstName?html)!}"  name="firstName" id="firstName"/>	          
 						</div>
 					 </div>
                  
@@ -57,7 +57,7 @@
 						<label class="label">Last Name<em>*</em></label>
 						<span class="hint"></span>
 						<div class="field">
-								<input class="full" readonly="readonly" type="text" value="${model.user.lastName!}"   name="lastName" id="lastName"/>	          
+								<input class="full" readonly="readonly" type="text" value="${(model.user.lastName?html)!}"   name="lastName" id="lastName"/>	          
 						</div>
 					 </div>
                  
@@ -126,7 +126,7 @@
                   	  	 		<label class="label">Nationality</label>    
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
-                  	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
+                  	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson?html}'/>
 									<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
                   	  			</div>
                   	  		</div>
@@ -168,7 +168,7 @@
 									<label class="label">Maternal Guardian Nationality</label>    
 									<div class="field">
 										<label class="full">${nationality.country.name}</label>  
-										<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
+										<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson?html}'/>
 										<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
 									</div>
 								</div>            
@@ -202,8 +202,8 @@
 								<div class="row">
 									<label class="label">Paternal Guardian Nationality</label>    
 									<div class="field">
-										<label class="full">${nationality.country.name}</label>  
-										<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
+										<label class="full">${nationality.country.name?html}</label>  
+										<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson?html}'/>
 										<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
 									</div>
 								</div>            
@@ -216,7 +216,7 @@
 	                     	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
 	                      		<option value="">Select...</option>
 	                        	<#list model.countries as country>
-	                              <option value="${country.id?string('#######')}">${country.name}</option>               
+	                              <option value="${country.id?string('#######')}">${country.name?html}</option>               
 	                       	 </#list>
 	                     	 </select>             	 
 	                   	 </div>
@@ -329,7 +329,7 @@
                 		<span class="label">Email<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
-                    		<input class="full" readonly="readonly" type="email" value="${model.user.email!}"  name="email" id="email" />	          
+                    		<input class="full" readonly="readonly" type="email" value="${(model.user.email?html)!}"  name="email" id="email" />	          
                     </div>
                   </div>
                 </div>
@@ -342,12 +342,12 @@
 	                  	  	 		<span class="label">Telephone</span>    
 	                  				<div class="field">
 	                  					<label class="half"> ${phoneNumber.telephoneType.displayValue}</label>
-	                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
+	                  					<label class="half"> ${phoneNumber.telephoneNumber?html}</label> 
 	                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
 	                  	  			</div>
 	                  	  			
 	                  	  		</div>   
-	                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson}'/>   
+	                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson?html}'/>   
 	                  	  	</span>
 	                    </#list>
 	                  </div>
@@ -382,9 +382,9 @@
                     <span class="hint"></span>
                     <div class="field">                    	
                     <#if !model.applicationForm.isSubmitted()>
-                    	<input class="full" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="pd_messenger" id="pd_messenger"/>
+                    	<input class="full" type="text" value="${(model.applicationForm.personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger"/>
                     	<#else>
-                    		<input class="full" readonly="readonly" type="text" value="${model.applicationForm.personalDetails.messenger!}" name="pd_messenger" id="pd_messenger" />	          
+                    		<input class="full" readonly="readonly" type="text" value="${(model.applicationForm.personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger" />	          
                     	</#if>
                     </div>
                 </div>

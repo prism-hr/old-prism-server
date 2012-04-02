@@ -52,9 +52,9 @@
 		                  	
 		                  	<!-- Non-rendering data -->
 							<input type="hidden" id="${funding.id?string('#######')}_fundingIdDP" value="${funding.id?string('#######')}"/>
-	                        <input type="hidden" id="${funding.id?string('#######')}_fundingTypeDP" value="${funding.type}"/>
-	                        <input type="hidden" id="${funding.id?string('#######')}_fundingValueDP" value="${funding.value}"/>
-	                        <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description}"/>
+	                        <input type="hidden" id="${funding.id?string('#######')}_fundingTypeDP" value="${funding.type?html}"/>
+	                        <input type="hidden" id="${funding.id?string('#######')}_fundingValueDP" value="${funding.value?html}"/>
+	                        <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description?html}"/>
 	                        <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
 		                  	
 		                </tr>
@@ -100,12 +100,12 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
 					<div class="field">
 				    <#if !model.applicationForm.isSubmitted()>
-                    	<input id="fundingDescription" name="fundingDescription" class="full" type="text" value="${model.funding.fundingDescription!}" />
+                    	<input id="fundingDescription" name="fundingDescription" class="full" type="text" value="${(model.funding.fundingDescription?html)!}" />
 	                    <#if model.hasError('fundingDescription')>                           
 	                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
 	                    </#if>
                     <#else>
-                        <input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${model.funding.fundingDescription!}" />
+                        <input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${(model.funding.fundingDescription?html)!}" />
                     </#if>
                     </div>
                     
@@ -117,12 +117,12 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
                     <#if !model.applicationForm.isSubmitted()>
-                    	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${model.funding.fundingValue!}" />
+                    	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${(model.funding.fundingValue?html)!}" />
 	                    <#if model.hasError('fundingValue')>
 	                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingValue').code /></span>
 	                    </#if>
                     <#else>
-                       <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${model.funding.fundingValue!}" />
+                       <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${(model.funding.fundingValue?html)!}" />
                     </#if>
                     </div>
 				</div>

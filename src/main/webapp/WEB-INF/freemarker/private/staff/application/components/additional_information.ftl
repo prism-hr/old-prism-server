@@ -9,7 +9,7 @@
               
         	<!-- Free text field for info. -->
             <div>
-                <textarea readonly="readonly" id="additionalInformation" name="additionalInformation" class="max" rows="5" cols="90" >${model.applicationForm.additionalInformation!}</textarea>
+                <textarea readonly="readonly" id="additionalInformation" name="additionalInformation" class="max" rows="5" cols="90" >${(model.applicationForm.additionalInformation?html)!}</textarea>
 			</div>
 
             <div class="buttons">

@@ -40,9 +40,9 @@
 		                	<#list model.applicationForm.qualifications as qualification>
 			                	<tr>
 				                  	<td><a class="row-arrow" id="qualification_${qualification.id?string('#######')}" name ="editQualificationLink">-</a></td>
-				                  	<td>${qualification.qualificationType!}</td>
-				                  	<td>${qualification.qualificationGrade!}</td>
-				                  	<td>${qualification.qualificationInstitution!}</td>
+				                  	<td>${(qualification.qualificationType?html)!}</td>
+				                  	<td>${(qualification.qualificationGrade?html)!}</td>
+				                  	<td>${(qualification.qualificationInstitution?html)!}</td>
 				                  	<td>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
 				                  	  <td>
 				                  	  	   <#if !model.applicationForm.isSubmitted()>
@@ -55,14 +55,14 @@
 			                  	</tr>
 			                  	
                              	<input type="hidden" id="${qualification.id?string('#######')}_qualificationIdDP" value="${qualification.id?string('#######')}"/>
-                             	<input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionDP" value="${qualification.qualificationInstitution!}"/> 
-                           		<input type="hidden" id="${qualification.id?string('#######')}_qualificationProgramNameDP" value="${qualification.qualificationProgramName!}"/> 
+                             	<input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionDP" value="${(qualification.qualificationInstitution?html)!}"/> 
+                           		<input type="hidden" id="${qualification.id?string('#######')}_qualificationProgramNameDP" value="${(qualification.qualificationProgramName?html)!}"/> 
                              	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/> 
                             	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationLanguageDP" value="${qualification.qualificationLanguage.id?string('#######')!}"/> 
-                            	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationLevelDP" value="${qualification.qualificationLevel!}"/> 
-                             	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationTypeDP" value="${qualification.qualificationType!}"/> 
-                             	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${qualification.qualificationGrade!}"/> 
-                             	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationScoreDP" value="${qualification.qualificationScore!}"/> 
+                            	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationLevelDP" value="${(qualification.qualificationLevel?html)!}"/> 
+                             	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationTypeDP" value="${(qualification.qualificationType?html)!}"/> 
+                             	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${(qualification.qualificationGrade?html)!}"/> 
+                             	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationScoreDP" value="${(qualification.qualificationScore?html)!}"/> 
                              	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
 			                  	
 							</#list>
@@ -85,13 +85,13 @@
 		                    <div class="field">
 		                    	<#if !model.applicationForm.isSubmitted()>
 		                    	<input id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL" 
-		                    									value="${model.qualification.qualificationInstitution!}" />
+		                    									value="${(model.qualification.qualificationInstitution?html)!}" />
 			                    <#if model.hasError('qualificationInstitution')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationInstitution').code /></span>                    		
                     			</#if>
                     			<#else>
                     			     <input readonly="readonly" id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL" 
-                                                                value="${model.qualification.qualificationInstitution!}" />
+                                                                value="${(model.qualification.qualificationInstitution?html)!}" />
                     			</#if>
 			                    									
 		                    </div>
@@ -104,13 +104,13 @@
 		                    <div class="field">
 		                    	<#if !model.applicationForm.isSubmitted()>
 		                    	<input id="qualificationProgramName" class="full" type="text" placeholder="e.g. Civil Engineering" 
-		                    									value="${model.qualification.qualificationProgramName!}"/>
+		                    									value="${(model.qualification.qualificationProgramName?html)!}"/>
 		       					<#if model.hasError('qualificationProgramName')>
 		       						<span class="invalid"><@spring.message  model.result.getFieldError('qualificationProgramName').code /></span>
 		       					</#if>
 		       					<#else>
 		       					  <input readonly="readonly" id="qualificationProgramName" class="full" type="text" placeholder="e.g. Civil Engineering" 
-                                                                value="${model.qualification.qualificationProgramName!}"/>
+                                                                value="${(model.qualification.qualificationProgramName?html)!}"/>
 		       					</#if>
 		       					
 		                    </div>
@@ -147,7 +147,7 @@
                                             </#if>>
                         		<option value="">Select...</option>
                          			<#list model.languages as language>
-                         				<option value="${language.id?string('#######')}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.id> selected="selected"</#if>>${language.name}</option>
+                         				<option value="${language.id?string('#######')}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.id> selected="selected"</#if>>${language.name?html}</option>
                          			</#list>
                       			</select>
 								<#if model.hasError('qualificationLanguage')>                    		
@@ -172,7 +172,7 @@
                              			 <#if model.qualification.qualificationLevel?? &&  model.qualification.qualificationLevel == level >
                                         selected="selected"
                                         </#if>
-                                >${level.displayValue}</option>               
+                                >${level.displayValue?html}</option>               
                         			</#list>
                       			</select>
 								<#if model.hasError('qualificationLevel')>                    		
@@ -188,13 +188,13 @@
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
                       			<input id="qualificationType" class="full" type="text" 
-			             										value="${model.qualification.qualificationType!}"/>
+			             										value="${(model.qualification.qualificationType?html)!}"/>
 								<#if model.hasError('qualificationType')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationType').code /></span>                    		
                     			</#if>
                     			<#else>
                     			 <input readonly="readonly" id="qualificationType" class="full" type="text" 
-                                                                value="${model.qualification.qualificationType!}"/>
+                                                                value="${(model.qualification.qualificationType?html)!}"/>
                     			</#if>
                     		</div>
                   		</div>
@@ -206,13 +206,13 @@
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
                       			<input id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction"
-			                    								value="${model.qualification.qualificationGrade!}"/>
+			                    								value="${(model.qualification.qualificationGrade?html)!}"/>
 								<#if model.hasError('qualificationGrade')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationGrade').code /></span>                    		
                     			</#if>
                     			<#else>
                     			     <input readonly="readonly" id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction"
-                                                                value="${model.qualification.qualificationGrade!}"/>
+                                                                value="${(model.qualification.qualificationGrade?html)!}"/>
                     			</#if>
                     		</div>
                   		</div>
@@ -224,13 +224,13 @@
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
                       			<input id="qualificationScore" class="full" type="text" placeholder="e.g. 114"
-			                    								value="${model.qualification.qualificationScore!}"/>
+			                    								value="${(model.qualification.qualificationScore?html)!}"/>
 								<#if model.hasError('qualificationScore')>                    		
                     				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationScore').code /></span>                    		
                     			</#if>
                     			<#else>
                     			 <input readonly="readonly" id="qualificationScore" class="full" type="text" placeholder="e.g. 114"
-                                                                value="${model.qualification.qualificationScore!}"/>
+                                                                value="${(model.qualification.qualificationScore?html)!}"/>
                     			</#if>
                     		</div>
                   		</div>

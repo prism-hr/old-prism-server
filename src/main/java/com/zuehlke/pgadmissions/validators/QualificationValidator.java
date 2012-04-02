@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.validators;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
@@ -19,6 +23,7 @@ public class QualificationValidator  implements Validator{
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", "qualification.institution.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationProgramName", "qualification.name_of_programme.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationStartDate", "qualification.start_date.notempty");
@@ -28,10 +33,16 @@ public class QualificationValidator  implements Validator{
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationGrade", "qualification.grade.notempty");		
 		QualificationDTO qualification = (QualificationDTO) target;
 		String startDate = qualification.getQualificationStartDate() == null ? "": qualification.getQualificationStartDate().toString();
+		String awardDate = qualification.getQualificationAwardDate() == null ? "": qualification.getQualificationAwardDate().toString();
 		if (StringUtils.isNotBlank(startDate) && qualification.getQualificationAwardDate() != null && qualification.getQualificationStartDate().after(qualification.getQualificationAwardDate())) {
 			errors.rejectValue("qualificationStartDate", "qualification.start_date.notvalid");
 		}
-		String awardDate = qualification.getQualificationAwardDate() == null ? "": qualification.getQualificationAwardDate().toString();
+		if (StringUtils.isNotBlank(startDate) && qualification.getQualificationStartDate().after(today)) {
+			errors.rejectValue("qualificationStartDate", "qualification.start_date.future");
+		}
+		if (StringUtils.isNotBlank(awardDate) && qualification.getQualificationAwardDate().after(today)) {
+			errors.rejectValue("qualificationAwardDate", "qualification.award_date.future");
+		}
 		if (qualification.getCompleted()== CheckedStatus.YES && StringUtils.isBlank(awardDate)){
 			errors.rejectValue("qualificationAwardDate", "qualification.award_date.notempty");
 		}

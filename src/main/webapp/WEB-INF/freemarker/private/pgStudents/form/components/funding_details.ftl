@@ -149,7 +149,7 @@
                     
                 </div>
                 
-                <input id="shouldAdd" name="shouldAdd" class="full" type="hidden" />
+                <input id="isFundingAdd" name="isFundingAdd" class="full" type="hidden" />
                
                 <div class="row">
                   	<span class="label">Supporting Document<em>*</em></span>
@@ -179,7 +179,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>
 	
-<#if (model.result?? && model.result.hasErrors() ) || add?? >
+<#if (model.result?? && model.result.hasErrors() ) || fundingAdd?? >
 
 <#else >
 <script type="text/javascript">

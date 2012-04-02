@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -55,7 +54,7 @@ public class FundingController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView addFunding(@ModelAttribute Funding fund, @RequestParam Integer appIdFunding, 
-			@RequestParam(required=false) String shouldAdd, @RequestParam("fundingFile") MultipartFile fundingFile,  BindingResult result, ModelMap modelMap) throws IOException {
+			@RequestParam(required=false) String isFundingAdd, BindingResult result, ModelMap modelMap) throws IOException {
 		ApplicationForm application = applicationService.getApplicationById(appIdFunding);
 
 		if (application.isSubmitted()) {
@@ -84,10 +83,10 @@ public class FundingController {
 			funding.setValue(fund.getFundingValue());
 			funding.setAwardDate(fund.getFundingAwardDate());
 			Document document = new Document();
-			if (fundingFile != null) {
-				document.setFileName(fundingFile.getOriginalFilename());
-				document.setContentType(fundingFile.getContentType());
-				document.setContent(fundingFile.getBytes());
+			if (fund.getFundingFile() != null) {
+				document.setFileName(fund.getFundingFile().getOriginalFilename());
+				document.setContentType(fund.getFundingFile().getContentType());
+				document.setContent(fund.getFundingFile().getBytes());
 				document.setType(DocumentType.SUPPORTING_FUNDING);
 				
 				BindingResult errors = newErrors(document);
@@ -108,8 +107,8 @@ public class FundingController {
 		}
 
 		modelMap.put("model", model);
-		if(StringUtils.isNotBlank(shouldAdd)){
-			modelMap.put("add", "add");
+		if(StringUtils.isNotBlank(isFundingAdd)){
+			modelMap.put("fundingAdd", "add");
 		}
 		modelMap.put("id", applicationForm.getId());
 		return new ModelAndView("redirect:/application", modelMap);

@@ -14,7 +14,7 @@ $(document).ready(function(){
 	});
 	
 	$('#fundingSaveAddButton').click(function(){
-		$("#shouldAdd").val("add");
+		$("#isFundingAdd").val("add");
 	});
 
 	$('a[name="fundingEditButton"]').click(function(){

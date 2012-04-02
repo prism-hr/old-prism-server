@@ -56,7 +56,8 @@
                             <input type="hidden" id="${position.id?string('#######')}_positionTitle" value="${(position.position_title?html)!}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionStartDate" value="${(position.position_startDate?string('dd-MMM-yyyy'))!}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionEndDate" value="${(position.position_endDate?string('dd-MMM-yyyy'))!}"/>
-		                    
+		                    <input type="hidden"  id="${position.id?string('#######')}_positionCompleted" value="${position.completed!}"/> 
+						
 		                </tr>
 		            </#list>
 				</tbody>
@@ -144,22 +145,25 @@
                         </#if>
                     </div>
                 </div>
+                <div class="row">
+                       <label class="label">Is Completed</label>
+                       		<input type="checkbox" name="completedPositionCB" id="completedPositionCB"/>
+                       		<input type="hidden" name="completedPosition" id="completedPosition"/>
+               			 </div>
                 
                 <!-- End date -->
                 <div class="row">
                     <span class="label">End Date</span>
                     <span class="hint"></span>
-                    <div class="field">
+                    <div class="field" id="endDateField">
                       	<input class="half date" type="text" id="position_endDate" name="position_endDate" 
                       			value="${(model.employmentPosition.position_endDate?string('dd-MMM-yyyy'))!}"
-                      			<#if model.applicationForm.isSubmitted()>
-                                          disabled="disabled"
-                                </#if>>
+                                          disabled="disabled">
                       	</input>		
+                    </div>
 						<#if model.hasError('position_endDate')>                           
                         	<span class="invalid"><@spring.message  model.result.getFieldError('position_endDate').code /></span>                           
                         </#if>
-                    </div>
                	</div>
                 
                 <!-- Language -->

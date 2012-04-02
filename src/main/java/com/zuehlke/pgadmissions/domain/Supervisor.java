@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
-import com.zuehlke.pgadmissions.domain.enums.PrimaryStatus;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Entity(name="SUPERVISOR")
 @Access(AccessType.FIELD)
@@ -34,9 +34,9 @@ public class Supervisor extends DomainObject<Integer>{
 		return id;
 	}
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.PrimaryStatusEnumUserType")
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
 	@Column(name="primary_supervisor")
-	private PrimaryStatus primarySupervisor;
+	private CheckedStatus primarySupervisor;
 	
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AwareStatusEnumUserType")
 	@Column(name="aware_supervisor")
@@ -70,11 +70,11 @@ public class Supervisor extends DomainObject<Integer>{
 		this.email = email;
 	}
 	
-	public PrimaryStatus getPrimarySupervisor() {
+	public CheckedStatus getPrimarySupervisor() {
 		return primarySupervisor;
 	}
 	
-	public void setPrimarySupervisor(PrimaryStatus primarySupervisor) {
+	public void setPrimarySupervisor(CheckedStatus primarySupervisor) {
 		this.primarySupervisor = primarySupervisor;
 	}
 	

@@ -5,6 +5,7 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class EmploymentPositionBuilder {
 	
@@ -24,6 +25,8 @@ public class EmploymentPositionBuilder {
 	
 	private Integer id;
 	
+	private CheckedStatus completed;
+	
 	public EmploymentPositionBuilder employer(String employer){
 		this.employer = employer;
 		return this;
@@ -39,6 +42,11 @@ public class EmploymentPositionBuilder {
 	
 	public EmploymentPositionBuilder id(Integer id){
 		this.id = id;
+		return this;
+	}
+	
+	public EmploymentPositionBuilder isCompleted(CheckedStatus isCompleted){
+		this.completed = isCompleted;
 		return this;
 	}
 	
@@ -67,6 +75,7 @@ public class EmploymentPositionBuilder {
 		position.setPosition_remit(remit);
 		position.setPosition_startDate(startDate);
 		position.setPosition_title(title);
+		position.setCompleted(completed);
 		position.setId(id);
 		return position;
 	}

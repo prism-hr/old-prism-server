@@ -64,7 +64,7 @@
                              	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${(qualification.qualificationGrade?html)!}"/> 
                              	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationScoreDP" value="${(qualification.qualificationScore?html)!}"/> 
                              	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
-			                  	
+                             	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationCompleted" value="${qualification.completed!}"/> 
 							</#list>
 										
 		                </tbody>
@@ -134,7 +134,12 @@
 			                    
 		                    </div>
 	                 	</div>
-
+	                 	
+						<div class="row">
+                       <label class="label">Is Completed</label>
+                       		<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"/>
+                       		<input type="hidden" name="currentQualification" id="currentQualification"/>
+               			 </div>
 	                
                   		<!-- Language (in which programme was undertaken) -->
                   		<div class="row">
@@ -239,12 +244,13 @@
                   		<div class="row">
                     		<span class="label">Award Date</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
-                    		<div class="field">
+							<#if model.hasError('qualificationAwardDate')>                    		
+                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationAwardDate').code /></span>                    		
+                    			</#if>
+                    		<div class="field" id="awardDateField">
                     			<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" 
                     							value="${(model.qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"
-                    							<#if model.applicationForm.isSubmitted()>
-                                            disabled="disabled"
-                            </#if>>
+                                            disabled="disabled">
                             </input>
                     		</div>
                   		</div>

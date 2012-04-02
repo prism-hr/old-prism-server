@@ -9,8 +9,8 @@ public class PrimaryStatusTest {
 
 	@Test
 	public void shouldOutputCorrectDisplayValues(){
-		Assert.assertEquals("Yes", PrimaryStatus.YES.displayValue());
-		Assert.assertEquals("No", PrimaryStatus.NO.displayValue());
+		Assert.assertEquals("Yes", CheckedStatus.YES.displayValue());
+		Assert.assertEquals("No", CheckedStatus.NO.displayValue());
 	}
 	
 	@Test
@@ -20,11 +20,11 @@ public class PrimaryStatusTest {
 	
 	@Test
 	public void shouldReturnYesPrimaryStatusWhenYesStringGiven() {
-		Assert.assertEquals(PrimaryStatus.YES, PrimaryStatus.fromString("YES"));
+		Assert.assertEquals(CheckedStatus.YES, CheckedStatus.fromString("YES"));
 	}
 	
 	@Test
 	public void shouldReturnNoPrimaryStatusWhenNoStringGiven() {
-		Assert.assertEquals(PrimaryStatus.NO, PrimaryStatus.fromString("NO"));
+		Assert.assertEquals(CheckedStatus.NO, CheckedStatus.fromString("NO"));
 	}
 }

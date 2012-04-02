@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+
 
 public class EmploymentPosition {
 
@@ -16,6 +18,8 @@ public class EmploymentPosition {
 	private Date position_endDate;
 	
 	private Integer position_language;
+	
+	private CheckedStatus completed;
 	
 	private Integer positionId;
 	public String getPosition_employer() {
@@ -72,6 +76,14 @@ public class EmploymentPosition {
 
 	public void setPositionId(Integer positionId) {
 		this.positionId = positionId;
+	}
+
+	public CheckedStatus isCompleted() {
+		return completed;
+	}
+
+	public void setCompleted(CheckedStatus completed) {
+		this.completed = completed;
 	}
 
 

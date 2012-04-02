@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.dto;
 
 import java.util.Date;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 
 public class Funding {
@@ -11,6 +13,7 @@ public class Funding {
 	private String fundingValue;
 	private Date fundingAwardDate;
 	private Integer fundingId;
+	private MultipartFile fundingFile;
 
 	public String getFundingDescription() {
 		return fundingDescription;
@@ -50,6 +53,14 @@ public class Funding {
 	
 	public void setFundingId(Integer fundingId) {
 		this.fundingId = fundingId;
+	}
+	
+	public MultipartFile getFundingFile() {
+		return fundingFile;
+	}
+	
+	public void setFundingFile(MultipartFile fundingFile) {
+		this.fundingFile = fundingFile;
 	}
 	
 }

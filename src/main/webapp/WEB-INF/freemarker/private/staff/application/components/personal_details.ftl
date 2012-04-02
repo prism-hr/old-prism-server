@@ -87,6 +87,11 @@
                             ${(model.applicationForm.personalDetails.residenceStatus.displayValue?html)!}
                         </div>
                     </div>
+                    	
+                	<div class="row">
+                  		<label class="label">From</label>
+                    	<div class="field">${(model.applicationForm.personalDetails.residenceFromDate?string('dd-MMM-yyyy'))!}</div>
+                  	</div>
                   	
                 </div>
                 

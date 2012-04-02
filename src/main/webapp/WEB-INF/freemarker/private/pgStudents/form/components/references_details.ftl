@@ -150,7 +150,7 @@
                             		<span class="invalid"><@spring.message  model.result.getFieldError('lastname').code /></span>                           
                             	</#if>
                             	<#else>
-                            	   <input readonly="readonly" class="full" id="ref_lastname" name="ref_lastname" value="${(model.referee.lastname)?html!}"/>
+                            	   <input readonly="readonly" class="full" id="ref_lastname" name="ref_lastname" value="${(model.referee.lastname?html)!}"/>
                             	</#if>
                     		</div>
                   		</div>

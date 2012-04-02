@@ -102,6 +102,16 @@ public class ProgrammeDetailsValidatorTest {
 		Assert.assertEquals("programmeDetails.email.invalid", mappingResult.getFieldError("supervisors").getCode());
 	}
 	
+	@Test
+	public void shouldRejectIfResidenceFromDateIsEmpty() {
+		programmeDetail.getSupervisors().get(0).setEmail("");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "supervisors");
+		programmeDetailsValidator.validate(programmeDetail, mappingResult);
+		System.out.println(mappingResult.getAllErrors());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("programmeDetails.email.invalid", mappingResult.getFieldError("supervisors").getCode());
+	}
+	
 	@Before
 	public void setup() throws ParseException{
 		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();

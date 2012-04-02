@@ -321,6 +321,20 @@
 							</#if>
 						</div>
 					</div>
+					<div class="row">
+						<label class="label">From<em>*</em> </label>
+						<span class="hint"></span>
+						<div class="field">
+						<#if !model.applicationForm.isSubmitted()>
+							<input class="half date" value="${(model.applicationForm.personalDetails.residenceFromDate?string('dd-MMM-yyyy'))!}" name="residenceFromDate" id="residenceFromDate"/>
+							<#if model.hasError('residenceFromDate')>                           
+									<span class="invalid"><@spring.message  model.result.getFieldError('residenceFromDate').code /></span>                           
+							</#if>
+						<#else>
+							<input class="full" readonly="readonly" type="text" value="${(model.applicationForm.personalDetails.residenceFromDate?string('dd-MMM-yyyy'))!}" name="residenceFromDate" id="residenceFromDate" />             
+						</#if>    
+						</div>                
+					</div>
                 </div>
 
               	<div>

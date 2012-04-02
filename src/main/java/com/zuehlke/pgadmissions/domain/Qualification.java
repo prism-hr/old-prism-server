@@ -16,6 +16,7 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
 
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
 @Entity(name="APPLICATION_FORM_QUALIFICATION")
@@ -58,8 +59,11 @@ public class Qualification extends DomainObject<Integer>{
 	@Temporal(TemporalType.DATE)
 	private Date qualificationStartDate;
 	
-
-
+	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	@Column(name="completed")
+	private CheckedStatus completed;
+	
 	public String getQualificationProgramName() {
 		return qualificationProgramName;
 	}
@@ -159,6 +163,15 @@ public class Qualification extends DomainObject<Integer>{
 	public Integer getId() {
 		return id;
 	}
+
+	public CheckedStatus isCompleted() {
+		return completed;
+	}
+
+	public void setCompleted(CheckedStatus completed) {
+		this.completed = completed;
+	}
+
 
 
 }

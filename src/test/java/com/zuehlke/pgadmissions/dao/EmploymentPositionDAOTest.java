@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase{
@@ -38,7 +39,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase{
 		application.setProject(project);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().application(application).employer("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).title("rerew").toEmploymentPosition();		
+		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().isCompleted(CheckedStatus.YES).application(application).employer("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).title("rerew").toEmploymentPosition();		
 		save(application, employmentPosition);
 		flushAndClearSession();
 		

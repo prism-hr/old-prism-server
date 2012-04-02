@@ -6,6 +6,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 
 
@@ -30,6 +31,13 @@ public class QualificationValidator  implements Validator{
 		String startDate = qualification.getQualificationStartDate() == null ? "": qualification.getQualificationStartDate().toString();
 		if (StringUtils.isNotBlank(startDate) && qualification.getQualificationAwardDate() != null && qualification.getQualificationStartDate().after(qualification.getQualificationAwardDate())) {
 			errors.rejectValue("qualificationStartDate", "qualification.start_date.notvalid");
+		}
+		String awardDate = qualification.getQualificationAwardDate() == null ? "": qualification.getQualificationAwardDate().toString();
+		if (qualification.isCompleted()== CheckedStatus.YES && StringUtils.isBlank(awardDate)){
+			errors.rejectValue("qualificationAwardDate", "qualification.award_date.notempty");
+		}
+		if (qualification.isCompleted() == CheckedStatus.NO && StringUtils.isNotBlank(awardDate)){
+			errors.rejectValue("qualificationAwardDate", "qualification.award_date.empty");
 		}
 	}
 

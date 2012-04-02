@@ -10,7 +10,7 @@ $(document).ready(function(){
 	});
 	
 	$('#fundingSaveCloseButton').click(function(){
-		$.post("/pgadmissions/update/addFunding", { 
+		$.post("/pgadmissions/updateFunding", { 
 			fundingType: $("#fundingType").val(),
 			fundingDescription: $("#fundingDescription").val(), 
 			fundingValue: $("#fundingValue").val(), 
@@ -26,7 +26,7 @@ $(document).ready(function(){
 	});
 	
 	$('#fundingSaveAddButton').click(function(){
-		$.post("/pgadmissions/update/addFunding", { 
+		$.post("/pgadmissions/updateFunding", { 
 			fundingType: $("#fundingType").val(),
 			fundingDescription: $("#fundingDescription").val(), 
 			fundingValue: $("#fundingValue").val(), 

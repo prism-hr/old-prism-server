@@ -81,12 +81,15 @@ $(document).ready(function(){
 		$('#qualificationScore').val($('#'+id+'_qualificationScoreDP').val());
 		$('#qualificationStartDate').val($('#'+id+'_qualificationStartDateDP').val());
 		$('#qualificationLanguage').val($('#'+id+'_qualificationLanguageDP').val());
-		$('#qualificationAwardDate').val($('#'+id+'_qualificationAwardDateDP').val());
 		if ($('#'+id+'_qualificationCompleted').val() =='YES'){
 			$("#currentQualificationCB").attr('checked', true);
+			$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\"> </input>");
+			$("#currentQualification").val("YES");
+			bindDatePickers();
 		} else {
 			$("#currentQualificationCB").attr('checked', false);
 		}
+		$('#qualificationAwardDate').val($('#'+id+'_qualificationAwardDateDP').val());
 	});
 	
 	$('a[name="qualificationCancelButton"]').click(function(){
@@ -100,6 +103,7 @@ $(document).ready(function(){
 		$("#qualificationStartDate").val("");
 		$("#qualificationLanguage").val("");
 		$("#qualificationAwardDate").val("");
+		$("#currentQualificationCB").attr('checked', false);
 		$("span[class='invalid']").each(function(){
 			$(this).html("");
 		});

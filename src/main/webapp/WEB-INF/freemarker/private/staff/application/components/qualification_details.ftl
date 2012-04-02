@@ -101,6 +101,13 @@
                             </input>
 		                    </div>
 	                 	</div>
+	                 	
+	                 	<div class="row">
+                       <label class="label">Is Completed</label>
+                         <span class="hint" data-desc="Tooltip demonstration."></span>
+                       		<input type="text" value="${(model.qualification.completed)!}" 
+                                            readonly="readonly">
+               			 </div>
 	                
                   		<!-- Language (in which programme was undertaken) -->
                   		<div class="row">

@@ -164,7 +164,7 @@ public class Qualification extends DomainObject<Integer>{
 		return id;
 	}
 
-	public CheckedStatus isCompleted() {
+	public CheckedStatus getCompleted() {
 		return completed;
 	}
 

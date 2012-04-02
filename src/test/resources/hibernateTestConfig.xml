@@ -10,7 +10,7 @@
 	<context:property-placeholder location="classpath:environment.properties" />
 	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close" >
-		<property name = "maxActive" value="20"/>
+		<property name = "maxActive" value="-1"/>		
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 		<property name="url" value="jdbc:mysql://${db.host}/${db.schema}" />
 		<property name="username" value="pgadmissions" />

@@ -38,7 +38,7 @@
 			        	<#list model.applicationForm.addresses as address>
 				        	<tr>
 				            	<td><a class="row-arrow"  name="addressEditButton" id="address_${address.id?string('#######')}">-</a></td>
-				                <td>${address.location}, ${address.postCode}</td>
+				                <td>${address.location?html}, ${address.postCode?html}</td>
 				                <td>${address.startDate?string('dd-MMM-yyyy')}</td>
 				                <td>${(address.endDate?string('dd-MMM-yyyy'))!}</td>
 				                <td>
@@ -51,13 +51,13 @@
 				        </td>
 				                
 								<input type="hidden" id="${address.id?string('#######')}_addressIdDP" value="${address.id?string('#######')}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_locationDP" value="${address.location}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_postCodeDP" value="${address.postCode}"/>
+	                            <input type="hidden" id="${address.id?string('#######')}_locationDP" value="${address.location?html}"/>
+	                            <input type="hidden" id="${address.id?string('#######')}_postCodeDP" value="${address.postCode?html}"/>
 	                            <input type="hidden" id="${address.id?string('#######')}_countryDP" value="${address.country.id?string('#######')}"/>
 	                            <input type="hidden" id="${address.id?string('#######')}_startDateDP" value="${address.startDate?string('dd-MMM-yyyy')}"/>
 	                            <input type="hidden" id="${address.id?string('#######')}_endDateDP" value="${(address.endDate?string('dd-MMM-yyyy'))!}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_purposeDP" value="${address.purpose}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_contactAddressDP" value="${address.contactAddress}"/>
+	                            <input type="hidden" id="${address.id?string('#######')}_purposeDP" value="${address.purpose?html}"/>
+	                            <input type="hidden" id="${address.id?string('#######')}_contactAddressDP" value="${address.contactAddress?html}"/>
 				                
 							</tr>
 						</#list>
@@ -88,14 +88,14 @@
                     	<span class="hint"></span>
                     	<div class="field">
                     	   <#if !model.applicationForm.isSubmitted()>
-                      		<textarea id="addressLocation" class="max" rows="6" cols="80" >${model.address.addressLocation!}</textarea>
+                      		<textarea id="addressLocation" class="max" rows="6" cols="80" >${(model.address.addressLocation?html)!}</textarea>
 							
                                 <#if model.hasError('addressLocation')>                           
                             	   <span class="invalid"><@spring.message  model.result.getFieldError('addressLocation').code /></span>                           
                                 </#if>
                             <#else>
                       		    <textarea readonly="readonly" id="addressLocation" class="max" rows="6" cols="80" 
-                                                    value="${model.address.addressLocation!}"></textarea>
+                                                    value="${(model.address.addressLocation?html)!}"></textarea>
                             </#if>
                     	</div>
                   	</div>
@@ -107,13 +107,13 @@
                     	<div class="field">
                     	<#if !model.applicationForm.isSubmitted()>
                       		<input class="half" type="text" id="addressPostCode" 
-                      							name="addressPostCode" value="${model.address.addressPostCode!}" />
+                      							name="addressPostCode" value="${(model.address.addressPostCode?html)!}" />
                             <#if model.hasError('addressPostCode')>                           
                             	<span class="invalid"><@spring.message  model.result.getFieldError('addressPostCode').code /></span>                           
                             </#if>
                         <#else>
                             <input readonly="readonly" class="half" type="text" id="addressPostCode" 
-                                                name="addressPostCode" value="${model.address.addressPostCode!}" />
+                                                name="addressPostCode" value="${(model.address.addressPostCode?html)!}" />
                         </#if>                            
                     	</div>
                   	</div>
@@ -129,7 +129,7 @@
                             </#if>>
                             <option value="">Select...</option>
                             	<#list model.countries as country>
-                                	<option value="${country.id?string('#######')}" <#if model.address.addressCountry?? && model.address.addressCountry == country.id> selected="selected"</#if>>${country.name}</option>               
+                                	<option value="${country.id?string('#######')}" <#if model.address.addressCountry?? && model.address.addressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
                             	</#list>
                             </select>
                             
@@ -200,7 +200,7 @@
                              	<#if model.address.addressPurpose?? &&  model.address.addressPurpose == purpose >
                                 selected="selected"
                                 </#if> 
-                             	>${purpose.displayValue}</option>               
+                             	>${purpose.displayValue?html}</option>               
                         	</#list>
                       		</select>
                             <#if model.hasError('addressPurpose')>                           
@@ -239,7 +239,7 @@
                                 >
                       			</input> This is my contact address
                       		</label>
-                      		<input type="hidden" id="addressContactAddress" value="${model.address.addressContactAddress!}"/>
+                      		<input type="hidden" id="addressContactAddress" value="${(model.address.addressContactAddress?html)!}"/>
                     	</div>
                   	</div>
                 </div>

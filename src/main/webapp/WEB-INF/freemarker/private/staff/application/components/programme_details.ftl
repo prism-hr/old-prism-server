@@ -31,7 +31,7 @@
                 	<label class="label">Programme</label>
                     <span class="hint" title="Tooltip demonstration."></span>
                     <div class="field">
-                    	${model.applicationForm.project.program.title}
+                    	${model.applicationForm.project.program.title?html}
                     </div>
 				</div>
                   
@@ -51,7 +51,7 @@
                     <label class="label">Project</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                		${model.applicationForm.project.title}
+                		${model.applicationForm.project.title?html}
                     </div>
 				</div>
 			
@@ -64,7 +64,7 @@
 		            	  	 <label class="label">Supervision</label>
 		            	  	 <span class="hint" data-desc="Tooltip demonstration."></span>
 		            	   <div class="field">
-		            	       Name: ${supervisor.firstname!} ${supervisor.lastname!}, Email :${supervisor.email}, Primary:${supervisor.primarySupervisor}, Supervisor is aware of the application:${supervisor.awareSupervisor}
+		            	       Name: ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!}, Email :${supervisor.email?html}, Primary:${supervisor.primarySupervisor?html}, Supervisor is aware of the application:${supervisor.awareSupervisor?html}
 		            	       <br/>
 		            	   </div>
 		            	 </div>

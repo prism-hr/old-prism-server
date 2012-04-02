@@ -50,10 +50,10 @@
 	                		<#list model.applicationForm.referees as referee>
 			                  	<tr>
 				                    <td><a class="row-arrow" name="refereeEditButton" id="referee_${(referee.id?string('#######'))!}">-</a></td>
-				                    <td>${referee.firstname!}</td>
-				                    <td>${referee.lastname!}</td>
-				                    <td>${referee.jobTitle!}</td>
-				                    <td>${referee.email!}</td>
+				                    <td>${(referee.firstname?html)!}</td>
+				                    <td>${(referee.lastname?html)!}</td>
+				                    <td>${(referee.jobTitle?html)!}</td>
+				                    <td>${(referee.email?html)!}</td>
 				                     <#if model.applicationForm.isSubmitted()>
 					                    <td>
 					                    	<#if referee.hasProvidedReference() >Yes<#else>No</#if>
@@ -69,13 +69,13 @@
 							        	</td>
 				                     </#if>
                                     <input type="hidden" id="${referee.id?string('#######')}_refereeId" value="${referee.id?string('#######')}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_firstname" value="${referee.firstname!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_lastname" value="${referee.lastname!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_relationship" value="${referee.relationship!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_jobEmployer" value="${referee.jobEmployer!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_jobTitle" value="${referee.jobTitle!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_addressLocation" value="${referee.addressLocation!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_addressPostcode" value="${referee.addressPostcode!}"/>                                    
+                                    <input type="hidden" id="${referee.id?string('#######')}_firstname" value="${(referee.firstname?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_lastname" value="${(referee.lastname?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_relationship" value="${(referee.relationship?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_jobEmployer" value="${(referee.jobEmployer?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_jobTitle" value="${(referee.jobTitle?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_addressLocation" value="${(referee.addressLocation?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_addressPostcode" value="${(referee.addressPostcode?html)!}"/>                                    
                                     <input type="hidden" id="${referee.id?string('#######')}_addressCountry" <#if referee.addressCountry??> value="${referee.addressCountry.id?string('#######')}" </#if>/>
                                     <input type="hidden" id="${referee.id?string('#######')}_lastUpdated" value="<#if referee.hasProvidedReference() > 
 			                    		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
@@ -83,25 +83,25 @@
 			                    		Not provided
 			                    	</#if>"/>
 			                    	
-                                    <input type="hidden" id="${referee.id?string('#######')}_email" value="${referee.email!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_email" value="${(referee.email?html)!}"/>
 									<#list referee.phoneNumbers! as phoneNumber>
 										<span name="${referee.id?string('#######')}_hiddenPhones" style="display:none" >
 			                  	  		<div class="row">
 			                  	  	 		<span class="label">Telephone</span>    
 			                  				<div class="field">
-			                  					<label class="half"> ${phoneNumber.telephoneType.displayValue}</label>
-			                  					<label id="multi-phone" class="half"> ${phoneNumber.telephoneNumber}</label> 
+			                  					<label class="half"> ${phoneNumber.telephoneType.displayValue?html}</label>
+			                  					<label id="multi-phone" class="half"> ${phoneNumber.telephoneNumber?html}</label> 
 			                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
 			                  	  			</div>
 			                  	  			
 			                  	  		</div>   
-			                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson}'/>   
+			                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson?html}'/>   
 			                            </span>
 		                            </#list>
 									
 								
 									
-									 <input type="hidden" id="${referee.id?string('#######')}_messenger" value="${referee.messenger!}"/>   
+									 <input type="hidden" id="${referee.id?string('#######')}_messenger" value="${(referee.messenger?html)!}"/>   
 
 			                  	</tr>
 		                  	</#list>
@@ -127,13 +127,13 @@
                     		<span class="hint"></span>
                     		<div class="field">
                     			<#if !model.applicationForm.isSubmitted()>
-                    			<input class="full" id="ref_firstname" name="ref_firstname" value="${model.referee.firstname!}"/> 
+                    			<input class="full" id="ref_firstname" name="ref_firstname" value="${(model.referee.firstname?html)!}"/> 
                                  
                            		<#if model.hasError('firstname')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('firstname').code /></span>                           
                             	</#if>
                             	<#else>
-                            	   <input readonly="readonly" class="full" id="ref_firstname" name="ref_firstname" value="${model.referee.firstname!}"/>
+                            	   <input readonly="readonly" class="full" id="ref_firstname" name="ref_firstname" value="${(model.referee.firstname?html)!}"/>
                             	</#if>
                       			
                     		</div>
@@ -145,12 +145,12 @@
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
-                      			<input class="full" id="ref_lastname" name="ref_lastname" value="${model.referee.lastname!}"/>
+                      			<input class="full" id="ref_lastname" name="ref_lastname" value="${(model.referee.lastname?html)!}"/>
                                 <#if model.hasError('lastname')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('lastname').code /></span>                           
                             	</#if>
                             	<#else>
-                            	   <input readonly="readonly" class="full" id="ref_lastname" name="ref_lastname" value="${model.referee.lastname!}"/>
+                            	   <input readonly="readonly" class="full" id="ref_lastname" name="ref_lastname" value="${(model.referee.lastname?html)!}"/>
                             	</#if>
                     		</div>
                   		</div>
@@ -161,12 +161,12 @@
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
-                      			<input class="full" id="ref_relationship" name="ref_relationship" value="${model.referee.relationship!}"/>
+                      			<input class="full" id="ref_relationship" name="ref_relationship" value="${(model.referee.relationship?html)!}"/>
                                 <#if model.hasError('relationship')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('relationship').code /></span>                           
                             	</#if>
                             	<#else>
-                            	   <input readonly="readonly" class="full" id="ref_relationship" name="ref_relationship" value="${model.referee.relationship!}"/>
+                            	   <input readonly="readonly" class="full" id="ref_relationship" name="ref_relationship" value="${(model.referee.relationship?html)!}"/>
                             	</#if>
                     		</div>
                   		</div>
@@ -183,12 +183,12 @@
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
-                      			<input class="full" id="ref_employer" name="ref_employer" value="${model.referee.jobEmployer!}"/>
+                      			<input class="full" id="ref_employer" name="ref_employer" value="${(model.referee.jobEmployer?html)!}"/>
                                 <#if model.hasError('jobEmployer')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('jobEmployer').code /></span>                           
                             	</#if>
                             	<#else>
-                            	   <input readonly="readonly" class="full" id="ref_employer" name="ref_employer" value="${model.referee.jobEmployer!}"/>
+                            	   <input readonly="readonly" class="full" id="ref_employer" name="ref_employer" value="${(model.referee.jobEmployer?html)!}"/>
                             	</#if>
                     		</div>
                   		</div>
@@ -199,12 +199,12 @@
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
-                      			<input class="full" id="ref_position" name="ref_position" value="${model.referee.jobTitle!}"/>
+                      			<input class="full" id="ref_position" name="ref_position" value="${(model.referee.jobTitle?html)!}"/>
                                 <#if model.hasError('jobTitle')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('jobTitle').code /></span>                           
                             	</#if>
                             	<#else>
-                            	   <input readonly="readonly" class="full" id="ref_position" name="ref_position" value="${model.referee.jobTitle!}"/>
+                            	   <input readonly="readonly" class="full" id="ref_position" name="ref_position" value="${(model.referee.jobTitle?html)!}"/>
                             	</#if>   
                     		</div>
                   		</div>
@@ -222,13 +222,13 @@
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
                       			<textarea class="max" rows="6" cols="70" id="ref_address_location" 
-                      				name="ref_address_location">${model.referee.addressLocation!}</textarea>
+                      				name="ref_address_location">${(model.referee.addressLocation?html)!}</textarea>
                       			<#if model.hasError('addressLocation')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('addressLocation').code /></span>                           
                             	</#if>
                             	<#else>
                             	   <textarea readonly="readonly" class="max" rows="6" cols="70" id="ref_address_location" 
-                                    name="ref_address_location" value="${model.referee.addressLocation!}"></textarea>
+                                    name="ref_address_location" value="${(model.referee.addressLocation?html)!}"></textarea>
                             	</#if> 
                     		</div>
                   		</div>
@@ -239,12 +239,12 @@
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
-                      			<input class="half" id="ref_address_postcode" name="ref_address_postcode" value="${model.referee.addressPostcode!}"/>
+                      			<input class="half" id="ref_address_postcode" name="ref_address_postcode" value="${(model.referee.addressPostcode?html)!}"/>
                                 <#if model.hasError('addressPostcode')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('addressPostcode').code /></span>                           
                             	</#if>
                             	<#else>
-                            	   <input readonly="readonly" class="half" id="ref_address_postcode" name="ref_address_postcode" value="${model.referee.addressPostcode!}"/>
+                            	   <input readonly="readonly" class="half" id="ref_address_postcode" name="ref_address_postcode" value="${(model.referee.addressPostcode?html)!}"/>
                             	</#if>
                     		</div>
                   		</div>
@@ -260,7 +260,7 @@
                             </#if>>
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id?string('#######')}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
+                                    <option value="${country.id?string('#######')}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
                                 </#list>
                             </select>
                     		</div>
@@ -278,12 +278,12 @@
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
-                      			<input class="full" type="email" id="ref_email" name="ref_email" value="${model.referee.email!}"/>
+                      			<input class="full" type="email" id="ref_email" name="ref_email" value="${(model.referee.email?html)!}"/>
                                 <#if model.hasError('email')>                           
                             		<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                           
                             	</#if>
                             	<#else>
-                            	   <input readonly="readonly" class="full" type="email" id="ref_email" name="ref_email" value="${model.referee.email!}"/>
+                            	   <input readonly="readonly" class="full" type="email" id="ref_email" name="ref_email" value="${(model.referee.email?html)!}"/>
                             	</#if>
                     		</div>
                   		</div>
@@ -296,13 +296,13 @@
 		                  	  		<div class="row">
 		                  	  	 		<span class="label">Telephone</span>    
 		                  				<div class="field">
-		                  					<label class="half"> ${phoneNumber.telephoneType.displayValue}</label>
-		                  					<label class="half"> ${phoneNumber.telephoneNumber}</label> 
+		                  					<label class="half"> ${phoneNumber.telephoneType.displayValue?html}</label>
+		                  					<label class="half"> ${phoneNumber.telephoneNumber?html}</label> 
 		                  	  				<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>           
 		                  	  			</div>
 		                  	  			
 		                  	  		</div>   
-		                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson}'/>   
+		                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson?html}'/>   
                   	  			</span>              
 		                      	</#list>
                     		</div>
@@ -337,10 +337,10 @@
                     		<span class="hint"></span>
                     		<div class="field">
                     			<#if !model.applicationForm.isSubmitted()>
-                    			<input class="full" id="ref_messenger" name="ref_messenger" value="${model.referee.messenger!}"/> 
+                    			<input class="full" id="ref_messenger" name="ref_messenger" value="${(model.referee.messenger?html)!}"/> 
                                  
                             	<#else>
-                            	   <input readonly="readonly" class="full" id="ref_messenger" name="ref_messenger" value="${model.referee.messenger!}"/>
+                            	   <input readonly="readonly" class="full" id="ref_messenger" name="ref_messenger" value="${(model.referee.messenger?html)!}"/>
                             	</#if>
                       			
                     		</div>

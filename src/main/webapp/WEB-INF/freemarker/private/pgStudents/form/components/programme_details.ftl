@@ -26,7 +26,7 @@
                 	<label class="label">Programme</label>
                     <span class="hint" title="Tooltip demonstration."></span>
                     <div class="field">
-                    	<input class="full" id="programmeName" name="programmeName" type="text" value="${model.applicationForm.project.program.title}" disabled="disabled" />
+                    	<input class="full" id="programmeName" name="programmeName" type="text" value="${model.applicationForm.project.program.title?html}" disabled="disabled" />
                     </div>
 				</div>
                   
@@ -59,7 +59,7 @@
                     <label class="label">Project</label>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                		<input class="full" id="projectName" name="projectName" type="text" value="${model.applicationForm.project.title}" disabled="disabled"/>
+                		<input class="full" id="projectName" name="projectName" type="text" value="${model.applicationForm.project.title?html}" disabled="disabled"/>
                     </div>
 				</div>
 			
@@ -78,8 +78,8 @@
                     </#if>
                    <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
                    <span name="supervisor_span">
-                         Name: ${supervisor.firstname!} ${supervisor.lastname!}, Email: ${supervisor.email}, Primary:${supervisor.primarySupervisor}, Is supervisor aware of your application:${supervisor.awareSupervisor} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
-                       <input type="hidden" name="supervisors" value='{"firstname" :"${supervisor.firstname!}","lastname" :"${supervisor.lastname!}","email" :"${supervisor.email}", "primarySupervisor":"${supervisor.primarySupervisor}", "awareSupervisor":"${supervisor.awareSupervisor}"}' />                             
+                         Name: ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!}, Email: ${supervisor.email?html}, Primary:${supervisor.primarySupervisor?html}, Is supervisor aware of your application:${supervisor.awareSupervisor?html} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
+                       <input type="hidden" name="supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "primarySupervisor":"${supervisor.primarySupervisor?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
                        <p></p>
                   </span>
                   </#list>

@@ -154,7 +154,7 @@ public class ApplicationFormDetailsTest {
 		
 		Nationality nationality = new Nationality();
 		LanguageProficiency languageProficiency = new LanguageProficiencyBuilder().id(1).toLanguageProficiency();
-		personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality).languageProficiencies(languageProficiency).maternalGuardianNationalities(nationality).paternalGuardianNationalities(nationality).applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm()).country(new CountryBuilder().toCountry()).dateOfBirth(new Date()).email("email@test.com").firstName("bob")
+		personalDetails = new PersonalDetailsBuilder().residenceFromDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06")).candiateNationalities(nationality).languageProficiencies(languageProficiency).maternalGuardianNationalities(nationality).paternalGuardianNationalities(nationality).applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm()).country(new CountryBuilder().toCountry()).dateOfBirth(new Date()).email("email@test.com").firstName("bob")
 		.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith").residenceCountry(new CountryBuilder().toCountry()).residenceStatus(ResidenceStatus.EXCEPTIONAL_LEAVE_TO_REMAIN).toPersonalDetails();
 		appFormDetails.setPersonalDetails(personalDetails);
 		

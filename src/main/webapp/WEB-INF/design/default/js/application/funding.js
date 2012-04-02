@@ -10,36 +10,11 @@ $(document).ready(function(){
 	});
 	
 	$('#fundingSaveCloseButton').click(function(){
-		$.post("/pgadmissions/updateFunding", { 
-			fundingType: $("#fundingType").val(),
-			fundingDescription: $("#fundingDescription").val(), 
-			fundingValue: $("#fundingValue").val(), 
-			fundingAwardDate: $("#fundingAwardDate").val(), 
-			id: $("#id").val(), 
-			appId: $("#appId").val(),
-			fundingId: $("#fundingId").val()
-		},
-		
-		function(data) {
-			$('#fundingSection').html(data);
-		});
+		$("#shouldAdd").val("");
 	});
 	
 	$('#fundingSaveAddButton').click(function(){
-		$.post("/pgadmissions/updateFunding", { 
-			fundingType: $("#fundingType").val(),
-			fundingDescription: $("#fundingDescription").val(), 
-			fundingValue: $("#fundingValue").val(), 
-			fundingAwardDate: $("#fundingAwardDate").val(), 
-			id: $("#id").val(), 
-			appId: $("#appId").val(),
-			fundingId: $("#fundingId").val(),
-			add:"add"
-		},
-		
-		function(data) {
-			$('#fundingSection').html(data);
-		});
+		$("#shouldAdd").val("add");
 	});
 
 	$('a[name="fundingEditButton"]').click(function(){

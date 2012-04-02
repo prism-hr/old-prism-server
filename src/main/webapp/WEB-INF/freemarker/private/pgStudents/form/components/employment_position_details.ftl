@@ -146,8 +146,12 @@
                     </div>
                 </div>
                 <div class="row">
-                       <label class="label">Is Completed</label>
-                       		<input type="checkbox" name="completedPositionCB" id="completedPositionCB"/>
+                       <label class="label">Is Completed<em>*</em></label>
+                       <span class="hint"></span>
+                       		<input type="checkbox" name="completedPositionCB" id="completedPositionCB"/
+                       		<#if model.applicationForm.isSubmitted()>
+                                          disabled="disabled"
+                                </#if>>
                        		<input type="hidden" name="completedPosition" id="completedPosition"/>
                			 </div>
                 

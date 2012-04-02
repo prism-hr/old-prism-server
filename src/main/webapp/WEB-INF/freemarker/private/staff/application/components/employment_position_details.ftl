@@ -42,9 +42,9 @@
 		                    <td>${(position.position_endDate?string('dd-MMM-yyyy'))!}</td>
 		                    
 		                    <input type="hidden" id="${position.id?string('#######')}_positionId" value="${position.id?string('#######')}"/>
-                            <input type="hidden" id="${position.id?string('#######')}_employer" value="${position.position_employer!}"/>
-                            <input type="hidden" id="${position.id?string('#######')}_remit" value="${position.position_remit!}"/>
-                            <input type="hidden" id="${position.id?string('#######')}_language" value="${position.position_language!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_employer" value="${(position.position_employer?html)!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_remit" value="${(position.position_remit?html)!}"/>
+                            <input type="hidden" id="${position.id?string('#######')}_language" value="${(position.position_language?html)!}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionTitle" value="${position.position_title}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionStartDate" value="${(position.position_startDate?string('dd-MMM-yyyy'))!}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionEndDate" value="${(position.position_endDate?string('dd-MMM-yyyy'))!}"/>
@@ -67,7 +67,7 @@
                     <span class="hint"></span>
                     <div class="field">
                     <input readonly="readonly" class="full" type="text" id="position_employer" name="position_employer" 
-                                        value="${model.employmentPosition.position_employer!}" placeholder="Provider of employment" />
+                                        value="${(model.employmentPosition.position_employer?html)!}" placeholder="Provider of employment" />
                    	</div>
                 </div>
                 
@@ -77,7 +77,7 @@
                     <span class="hint"></span>
                     <div class="field">
                     <input readonly="readonly" class="full" type="text" id="position_title" name="position_title" 
-                                        value="${model.employmentPosition.position_title!}" placeholder="Title of position" />
+                                        value="${(model.employmentPosition.position_title?html)!}" placeholder="Title of position" />
                     </div>
                 </div>
                 
@@ -87,7 +87,7 @@
                     <span class="hint"></span>
                     <div class="field">
                       <textarea readonly="readonly" cols="70" rows="3" class="max" id="position_remit" 
-                            name="position_remit" value="${model.employmentPosition.position_remit!}" 
+                            name="position_remit" value="${(model.employmentPosition.position_remit?html)!}" 
                             placeholder="Summary of responsibilities"></textarea>  
                     </div>
              	</div>
@@ -121,11 +121,11 @@
                     <span class="label">Language of work</span>
                     <span class="hint"></span>
                     <div class="field">
-                        <select class="full" id="position_language" name="position_language" value="${model.employmentPosition.position_language!}"
+                        <select class="full" id="position_language" name="position_language" value="${(model.employmentPosition.position_language?html)!}"
                                                 disabled="disabled">
                         <option value="">Select...</option>
                          <#list model.languages as language>
-                            <option value="${language.id?string('#######')}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.id> selected="selected"</#if>>${language.name}</option>
+                            <option value="${language.id?string('#######')}" <#if model.employmentPosition.position_language?? && model.employmentPosition.position_language == language.id> selected="selected"</#if>>${language.name?html}</option>
                          </#list>
                       </select>
                     </div>

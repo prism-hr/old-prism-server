@@ -37,18 +37,18 @@
 			        	<#list model.applicationForm.addresses as address>
 				        	<tr>
 				            	<td><a class="row-arrow"  name="addressEditButton" id="address_${address.id?string('#######')}">-</a></td>
-				                <td>${address.location}, ${address.postCode}</td>
+				                <td>${address.location?html}, ${address.postCode?html}</td>
 				                <td>${address.startDate?string('dd-MMM-yyyy')}</td>
 				                <td>${(address.endDate?string('dd-MMM-yyyy'))!}</td>
 				                
 				                <input type="hidden" id="${address.id?string('#######')}_addressIdDP" value="${address.id?string('#######')}"/>
-                                <input type="hidden" id="${address.id?string('#######')}_locationDP" value="${address.location}"/>
-                                <input type="hidden" id="${address.id?string('#######')}_postCodeDP" value="${address.postCode}"/>
+                                <input type="hidden" id="${address.id?string('#######')}_locationDP" value="${address.location?html}"/>
+                                <input type="hidden" id="${address.id?string('#######')}_postCodeDP" value="${address.postCode?html}"/>
                                 <input type="hidden" id="${address.id?string('#######')}_countryDP" value="${address.country.id?string('#######')}"/>
                                 <input type="hidden" id="${address.id?string('#######')}_startDateDP" value="${address.startDate?string('dd-MMM-yyyy')}"/>
                                 <input type="hidden" id="${address.id?string('#######')}_endDateDP" value="${(address.endDate?string('dd-MMM-yyyy'))!}"/>
-                                <input type="hidden" id="${address.id?string('#######')}_purposeDP" value="${address.purpose}"/>
-                                <input type="hidden" id="${address.id?string('#######')}_contactAddressDP" value="${address.contactAddress}"/>
+                                <input type="hidden" id="${address.id?string('#######')}_purposeDP" value="${address.purpose?html}"/>
+                                <input type="hidden" id="${address.id?string('#######')}_contactAddressDP" value="${address.contactAddress?html}"/>
                                 
 							</tr>
 						</#list>
@@ -68,7 +68,7 @@
                     	<span class="hint"></span>
                     	<div class="field">
                     	 <textarea readonly="readonly" id="addressLocation" class="max" rows="6" cols="80" 
-                                                    value="${model.address.addressLocation!}"></textarea>
+                                                    value="${(model.address.addressLocation?html)!}"></textarea>
                     	</div>
                   	</div>
 
@@ -78,7 +78,7 @@
                     	<span class="hint"></span>
                     	<div class="field">
                     	<input readonly="readonly" class="half" type="text" id="addressPostCode" 
-                                                name="addressPostCode" value="${model.address.addressPostCode!}" />
+                                                name="addressPostCode" value="${(model.address.addressPostCode?html)!}" />
 						</div>
                   	</div>
 
@@ -90,7 +90,7 @@
                                             disabled="disabled">
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id?string('#######')}" <#if model.address.addressCountry?? && model.address.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
+                                    <option value="${country.id?string('#######')}" <#if model.address.addressCountry?? && model.address.addressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
                                 </#list>
                             </select>
 						</div>
@@ -126,7 +126,7 @@
                     	<span class="label">Purpose</span>
                     	<span class="hint"></span>
                     	<div class="field">
-                    	   <select id="addressPurpose" name="addressPurpose" class="full" value="${model.address.addressPurpose!}"
+                    	   <select id="addressPurpose" name="addressPurpose" class="full" value="${(model.address.addressPurpose?html)!}"
                                                 disabled="disabled">
                             <option value="">Select...</option>
                             <#list model.addressPurposes as purpose>
@@ -152,7 +152,7 @@
                                       disabled="disabled">
                                 </input> This is my contact address
                             </label>
-                            <input type="hidden" id="addressContactAddress" value="${model.address.addressContactAddress!}"/>
+                            <input type="hidden" id="addressContactAddress" value="${(model.address.addressContactAddress?html)!}"/>
                         </div>
                     </div>
                 </div>

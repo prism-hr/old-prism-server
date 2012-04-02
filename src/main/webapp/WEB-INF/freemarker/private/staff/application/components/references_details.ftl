@@ -38,22 +38,22 @@
 	                		<#list model.applicationForm.referees as referee>
 			                  	<tr>
 				                    <td><a class="row-arrow" name="refereeEditButton" id="referee_${referee.id?string('#######')}">-</a></td>
-				                    <td>${referee.firstname!}</td>
-				                    <td>${referee.lastname!}</td>
-				                    <td>${referee.jobTitle!}</td>
-				                    <td>${referee.email!}</td>
+				                    <td>${(referee.firstname?html)!}</td>
+				                    <td>${(referee.lastname?html)!}</td>
+				                    <td>${(referee.jobTitle?html)!}</td>
+				                    <td>${(referee.email?html)!}</td>
 				                    <td>
-					                    <#if referee.hasProvidedReference() ><a href="<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/>">${referee.reference.document.fileName}</a><#else> - </#if>
+					                    <#if referee.hasProvidedReference() ><a href="<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/>">${referee.reference.document.fileName?html}</a><#else> - </#if>
 					                 </td>
                                     <input type="hidden" id="${referee.id?string('#######')}_refereeId" value="${referee.id?string('#######')}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_firstname" value="${referee.firstname!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_lastname" value="${referee.lastname!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_relationship" value="${referee.relationship!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_jobEmployer" value="${referee.jobEmployer!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_jobTitle" value="${referee.jobTitle!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_addressLocation" value="${referee.addressLocation!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_addressPostcode" value="${referee.addressPostcode!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_addressCountry" <#if referee.addressCountry??> value="${referee.addressCountry.id!}" </#if>/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_firstname" value="${(referee.firstname?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_lastname" value="${(referee.lastname?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_relationship" value="${(referee.relationship?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_jobEmployer" value="${(referee.jobEmployer?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_jobTitle" value="${(referee.jobTitle?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_addressLocation" value="${(referee.addressLocation?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_addressPostcode" value="${(referee.addressPostcode?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_addressCountry" <#if referee.addressCountry??> value="${(referee.addressCountry.id?html)!}" </#if>/>
                                      <input type="hidden" id="${referee.id?string('#######')}_lastUpdated" value="<#if referee.hasProvidedReference() > 
 			                    		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
 			                    	<#else>
@@ -63,19 +63,19 @@
 			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_url" value="<#if referee.hasProvidedReference() && referee.reference.document?? >
 			                    	 	<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/></#if>"
 			                    	 />
-			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName}<#else>No document uploaded</#if></#if>" />
-                                    <input type="hidden" id="${referee.id?string('#######')}_email" value="${referee.email!}"/>
+			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName?html}<#else>No document uploaded</#if></#if>" />
+                                    <input type="hidden" id="${referee.id?string('#######')}_email" value="${(referee.email?html)!}"/>
 									
 									<#list referee.phoneNumbers! as phoneNumber>
 									<span name="${referee.id?string('#######')}_hiddenPhones" style="display:none" >
                    		 				${phoneNumber.telephoneType.displayValue!}
-		                        		${phoneNumber.telephoneNumber!}
+		                        		${(phoneNumber.telephoneNumber?html)!}
 											<input class="half" type="hidden" placeholder="Number" name="phoneNumbers" 
-		                      			value='{"type" :"${phoneNumber.telephoneType}", "number":"${phoneNumber.telephoneNumber}"}' />
+		                      			value='{"type" :"${phoneNumber.telephoneType?html}", "number":"${phoneNumber.telephoneNumber?html}"}' />
 		                      				</span>
 									</#list>
 									
-									<input type="hidden" id="${referee.id?string('#######')}_messenger" value="${referee.messenger!}"/>   
+									<input type="hidden" id="${referee.id?string('#######')}_messenger" value="${(referee.messenger?html)!}"/>   
 
 			                  	</tr>
 		                  	</#list>
@@ -95,7 +95,7 @@
                     		<span class="label">First Name</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		  <input readonly="readonly" class="full" id="ref_firstname" name="ref_firstname" value="${model.referee.firstname!}"/>
+                    		  <input readonly="readonly" class="full" id="ref_firstname" name="ref_firstname" value="${(model.referee.firstname?html)!}"/>
                     		</div>
                   		</div>
                 
@@ -104,7 +104,7 @@
                     		<span class="label">Last Name</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<input readonly="readonly" class="full" id="ref_lastname" name="ref_lastname" value="${model.referee.lastname!}"/>
+                    		<input readonly="readonly" class="full" id="ref_lastname" name="ref_lastname" value="${(model.referee.lastname?html)!}"/>
 							</div>
                   		</div>
                 
@@ -113,7 +113,7 @@
                     		<span class="label">Relationship</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<input readonly="readonly" class="full" id="ref_relationship" name="ref_relationship" value="${model.referee.relationship!}"/>
+                    		<input readonly="readonly" class="full" id="ref_relationship" name="ref_relationship" value="${(model.referee.relationship?html)!}"/>
                     		</div>
                   		</div>
                 	
@@ -128,7 +128,7 @@
                     		<span class="label">Employer</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<input readonly="readonly" class="full" id="ref_employer" name="ref_employer" value="${model.referee.jobEmployer!}"/>
+                    		<input readonly="readonly" class="full" id="ref_employer" name="ref_employer" value="${(model.referee.jobEmployer?html)!}"/>
                     		</div>
                   		</div>
                 
@@ -137,7 +137,7 @@
                     		<span class="label">Title</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<input readonly="readonly" class="full" id="ref_position" name="ref_position" value="${model.referee.jobTitle!}"/>
+                    		<input readonly="readonly" class="full" id="ref_position" name="ref_position" value="${(model.referee.jobTitle?html)!}"/>
                     		</div>
                   		</div>
                   		
@@ -153,7 +153,7 @@
                     		<span class="hint"></span>
                     		<div class="field">
                     		<textarea readonly="readonly" class="max" rows="6" cols="70" id="ref_address_location" 
-                                    name="ref_address_location" value="${model.referee.addressLocation!}"></textarea>
+                                    name="ref_address_location" value="${(model.referee.addressLocation?html)!}"></textarea>
                     		</div>
                   		</div>
                 
@@ -162,7 +162,7 @@
                     		<span class="label">Postal Code</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<input readonly="readonly" class="half" id="ref_address_postcode" name="ref_address_postcode" value="${model.referee.addressPostcode!}"/>
+                    		<input readonly="readonly" class="half" id="ref_address_postcode" name="ref_address_postcode" value="${(model.referee.addressPostcode?html)!}"/>
                     		</div>
                   		</div>
                 
@@ -175,7 +175,7 @@
                                             disabled="disabled">
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id?string('#######')}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name}</option>               
+                                    <option value="${country.id?string('#######')}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
                                 </#list>
                             </select>
                     		</div>
@@ -192,7 +192,7 @@
                     		<span class="label">Email</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<input readonly="readonly" class="full" type="email" id="ref_email" name="ref_email" value="${model.referee.email!}"/>
+                    		<input readonly="readonly" class="full" type="email" id="ref_email" name="ref_email" value="${(model.referee.email?html)!}"/>
                     		</div>
                   		</div>
 
@@ -204,7 +204,7 @@
                     			<#list model.referee.phoneNumbers! as phoneNumber>
                     				<p>
                    		 				${phoneNumber.telephoneType.displayValue} 
-                   		 				${phoneNumber.telephoneNumber}								
+                   		 				${phoneNumber.telephoneNumber?html}								
 									</p>	
 		                      	</#list>
                     		</div>
@@ -215,7 +215,7 @@
                     		<span class="label">Skype</span>
                     		<span class="hint"></span>
                     		<div class="field">
-                    		<input readonly="readonly" class="full" type="email" id="ref_messenger" name="ref_messenger" value="${model.referee.messenger!}"/>
+                    		<input readonly="readonly" class="full" type="email" id="ref_messenger" name="ref_messenger" value="${(model.referee.messenger?html)!}"/>
                     		</div>
                   		</div>
                   		

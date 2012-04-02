@@ -10,12 +10,12 @@
         	<!-- Free text field for info. -->
             <div class="row">
             <#if !model.applicationForm.isSubmitted()>
-            	<textarea id="additionalInformation" name="additionalInformation" class="max" rows="5" cols="90" >${model.applicationForm.additionalInformation!}</textarea>
+            	<textarea id="additionalInformation" name="additionalInformation" class="max" rows="5" cols="90" >${(model.applicationForm.additionalInformation?html)!}</textarea>
             	<#if model.hasError('additionalInformation')>                           
                     <span class="invalid"><@spring.message  model.result.getFieldError('additionalInformation').code /></span><br/>
                 </#if>
                 <#else>
-                    <textarea readonly="readonly" id="additionalInformation" name="additionalInformation" class="max" rows="5" cols="90" >${model.applicationForm.additionalInformation!}</textarea>
+                    <textarea readonly="readonly" id="additionalInformation" name="additionalInformation" class="max" rows="5" cols="90" >${(model.applicationForm.additionalInformation?html)!}</textarea>
                 </#if>
 			</div>
 

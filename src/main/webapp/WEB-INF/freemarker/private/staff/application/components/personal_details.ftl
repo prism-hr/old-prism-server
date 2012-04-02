@@ -34,21 +34,21 @@
 					<div class="row">
                   		<label class="label">First Name</label>
                     	<div class="field">
-                    		${model.applicationForm.personalDetails.firstName!}
+                    		${(model.applicationForm.personalDetails.firstName?html)!}
                     	</div>
                     </div>
 
                 	<div class="row">
 	                  	<label class="label">Last Name</label>
     	                <div class="field">
-        	            	${model.applicationForm.personalDetails.lastName!}
+        	            	${(model.applicationForm.personalDetails.lastName?html)!}
             	        </div>
                  	</div>
 
                 	<div class="row">
                   		<label class="label">Gender</label>
                     	<div class="field">
-                      		${model.applicationForm.personalDetails.gender!}
+                      		${(model.applicationForm.personalDetails.gender?html)!}
                     	</div>
                   	</div>
                 	
@@ -65,7 +65,7 @@
                 	<div class="row">
                   		<label class="label">Country of Birth</label>
                     	<div class="field">
-                    		${model.applicationForm.personalDetails.country.name!}
+                    		${(model.applicationForm.personalDetails.country.name?html)!}
                     	</div>
                   	</div>
                   	
@@ -78,13 +78,13 @@
                 	<div class="row">
                   		<span class="label">Country</span>
                     	<div class="field">
-                      		${model.applicationForm.personalDetails.residenceCountry.name!}
+                      		${(model.applicationForm.personalDetails.residenceCountry.name?html)!}
                     	</div>
                   	</div>
                   	<div class="row">
                         <span class="label">Status</span>
                         <div class="field">
-                            ${model.applicationForm.personalDetails.residenceStatus.displayValue!}
+                            ${(model.applicationForm.personalDetails.residenceStatus.displayValue?html)!}
                         </div>
                     </div>
                   	
@@ -183,7 +183,7 @@
                 	<div class="row">
                 		<span class="label">Email</span>
                     	<div class="field">
-	                    	${model.applicationForm.personalDetails.email!}
+	                    	${(model.applicationForm.personalDetails.email?html)!}
                     	</div>
                   	</div>
                 
@@ -213,7 +213,7 @@
               	<div class="row">
                 		<span class="label">Skype</span>
                     	<div class="field">
-	                    	${model.applicationForm.personalDetails.messenger!}
+	                    	${(model.applicationForm.personalDetails.messenger?html)!}
                     	</div>
                   	</div>
                   	</div>
@@ -241,8 +241,8 @@
 		                    	 <ul>
 		                    	<#list model.applicationComments as comment>
 									<li>
-										<strong>${comment.user.username}</strong>
-										<span>${comment.comment}</span>
+										<strong>${comment.user.username?html}</strong>
+										<span>${comment.comment?html}</span>
 									</li>
 								</#list>
 								 </ul>

@@ -57,9 +57,9 @@ $(document).ready(function(){
 			
 		
 			$('#supervisor_div').append('<span name="supervisor_span">'+ 
-					"Name: " + $('#supervisorFirstname').val()+" "+ $('#supervisorLastname').val()+", Email: "+
-					$('#supervisorEmail').val()+ ", Primary:" + $('#primarySupervisor').val() +", Is supervisor aware of your application:" + $('#awareSupervisor').val() +'<a class="button-delete">delete</a>'+
-					'<input type="hidden" name="supervisors" value=' +"'" + '{"firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val()+ '", "primarySupervisor":"' + $('#primarySupervisor').val() + '", "awareSupervisor":"' + $('#awareSupervisor').val()+ '"} ' + "'" + "/>"									
+					"Name: " + escape($('#supervisorFirstname').val())+" "+ escape($('#supervisorLastname').val())+", Email: "+
+					escape($('#supervisorEmail').val())+ ", Primary:" + escape($('#primarySupervisor').val()) +", Is supervisor aware of your application:" + escape($('#awareSupervisor').val()) +'<a class="button-delete">delete</a>'+
+					'<input type="hidden" name="supervisors" value=' +"'" + '{"firstname":"' +  escape($('#supervisorFirstname').val())+ '","lastname":"' +  escape($('#supervisorLastname').val())+ '","email":"' +  escape($('#supervisorEmail').val()) + '", "primarySupervisor":"' + escape($('#primarySupervisor').val()) + '", "awareSupervisor":"' + escape($('#awareSupervisor').val()) + '"} ' + "'" + "/>"									
 					+'<br/></span>');
 			$('#supervisorFirstname').val('')
 			$('#supervisorLastname').val('')

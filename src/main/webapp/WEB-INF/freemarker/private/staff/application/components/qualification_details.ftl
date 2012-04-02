@@ -41,20 +41,20 @@
 			                	<tr>
 				                  	<td><a class="row-arrow" id="qualification_${qualification.id?string('#######')}" name ="editQualificationLink">-</a></td>
 				                  	<td>${qualification.qualificationType}</td>
-				                  	<td>${qualification.qualificationGrade}</td>
-				                  	<td>${qualification.qualificationInstitution}</td>
+				                  	<td>${qualification.qualificationGrade?html}</td>
+				                  	<td>${qualification.qualificationInstitution?html}</td>
 				                  	<td>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
 				                  	
 				                  	     
                                 <input type="hidden" id="${qualification.id?string('#######')}_qualificationIdDP" value="${qualification.id?string('#######')}"/>
-                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionDP" value="${qualification.qualificationInstitution!}"/> 
-                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationProgramNameDP" value="${qualification.qualificationProgramName!}"/> 
+                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionDP" value="${(qualification.qualificationInstitution?html)!}"/> 
+                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationProgramNameDP" value="${(qualification.qualificationProgramName?html)!}"/> 
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/> 
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationLanguageDP" value="${qualification.qualificationLanguage.id!}"/> 
-                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationLevelDP" value="${qualification.qualificationLevel!}"/> 
-                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationTypeDP" value="${qualification.qualificationType!}"/> 
-                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${qualification.qualificationGrade!}"/> 
-                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationScoreDP" value="${qualification.qualificationScore!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationLevelDP" value="${(qualification.qualificationLevel?html)!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationTypeDP" value="${(qualification.qualificationType?html)!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${(qualification.qualificationGrade?html)!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationScoreDP" value="${(qualification.qualificationScore?html)!}"/> 
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
 			                  	</tr>
 							</#list>
@@ -76,7 +76,7 @@
 		                    <span class="hint" data-desc="Tooltip demonstration."></span>
 		                    <div class="field">
 		                     <input readonly="readonly" id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL" 
-                                                                value="${model.qualification.qualificationInstitution!}" />
+                                                                value="${(model.qualification.qualificationInstitution?html)!}" />
 		                    </div>
 	                  	</div>
 	                  
@@ -86,7 +86,7 @@
 		                    <span class="hint" data-desc="Tooltip demonstration."></span>
 		                    <div class="field">
 		                    <input readonly="readonly" id="qualificationProgramName" class="full" type="text" placeholder="e.g. Civil Engineering" 
-                                                                value="${model.qualification.qualificationProgramName!}"/>
+                                                                value="${(model.qualification.qualificationProgramName?html)!}"/>
 		                    </div>
 	             		</div>
 	                  
@@ -107,7 +107,7 @@
                     		<span class="label">Language of Study</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
-                    		  <select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${model.qualification.qualificationLanguage!}"
+                    		  <select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${(model.qualification.qualificationLanguage?html)!}"
                                                 disabled="disabled">
                                 <option value="">Select...</option>
                                     <#list model.languages as language>
@@ -122,7 +122,7 @@
 	                    	<span class="label">Level</span>
 	                    	<span class="hint" data-desc="Tooltip demonstration."></span>
 	                    	<div class="field">
-	                    	  <select name="qualificationLevel" id="qualificationLevel" value="${model.qualification.qualificationLevel!}"
+	                    	  <select name="qualificationLevel" id="qualificationLevel" value="${(model.qualification.qualificationLevel?html)!}"
                                                 disabled="disabled">
                                      <option value="">Select...</option>
                                      <#list model.qualificationLevels as level>
@@ -142,7 +142,7 @@
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     		 <input readonly="readonly" id="qualificationType" class="full" type="text" 
-                                                                value="${model.qualification.qualificationType!}"/>
+                                                                value="${(model.qualification.qualificationType?html)!}"/>
                     		</div>
                   		</div>
 
@@ -152,7 +152,7 @@
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     		 <input readonly="readonly" id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction"
-                                                                value="${model.qualification.qualificationGrade!}"/>
+                                                                value="${(model.qualification.qualificationGrade?html)!}"/>
                     		</div>
                   		</div>
 
@@ -162,7 +162,7 @@
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
                     		 <input readonly="readonly" id="qualificationScore" class="full" type="text" placeholder="e.g. 114"
-                                                                value="${model.qualification.qualificationScore!}"/>
+                                                                value="${(model.qualification.qualificationScore?html)!}"/>
                     		</div>
                   		</div>
                   

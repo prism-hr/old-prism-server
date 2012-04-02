@@ -33,10 +33,10 @@ public class QualificationValidator  implements Validator{
 			errors.rejectValue("qualificationStartDate", "qualification.start_date.notvalid");
 		}
 		String awardDate = qualification.getQualificationAwardDate() == null ? "": qualification.getQualificationAwardDate().toString();
-		if (qualification.isCompleted()== CheckedStatus.YES && StringUtils.isBlank(awardDate)){
+		if (qualification.getCompleted()== CheckedStatus.YES && StringUtils.isBlank(awardDate)){
 			errors.rejectValue("qualificationAwardDate", "qualification.award_date.notempty");
 		}
-		if (qualification.isCompleted() == CheckedStatus.NO && StringUtils.isNotBlank(awardDate)){
+		if (qualification.getCompleted() == CheckedStatus.NO && StringUtils.isNotBlank(awardDate)){
 			errors.rejectValue("qualificationAwardDate", "qualification.award_date.empty");
 		}
 	}

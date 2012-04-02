@@ -99,7 +99,7 @@ public class QualificationDTO {
 		this.qualificationType = qualificationType;
 	}
 
-	public CheckedStatus isCompleted() {
+	public CheckedStatus getCompleted() {
 		return completed;
 	}
 

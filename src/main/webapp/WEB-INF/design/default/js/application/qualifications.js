@@ -1,8 +1,24 @@
+
+
 $(document).ready(function(){
+	
+	$("#currentQualificationCB").attr('checked', false);
+	$("#currentQualification").val("NO");
 	
 	$('#qualificationsCloseButton').click(function(){
 		$('#qualifications-H2').trigger('click');
 		return false;
+	});
+	
+	$("input[name*='currentQualificationCB']").click(function() {
+		if ($("#currentQualification").val() =='YES'){
+			$("#currentQualification").val("NO");
+			$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\" disabled=\"disabled\"> </input>");
+		} else {		
+			$("#currentQualification").val("YES");
+			$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\"> </input>");
+			bindDatePickers();
+		}
 	});
 	
 	$('a[name="deleteButton"]').click( function(){	
@@ -21,6 +37,7 @@ $(document).ready(function(){
 			qualificationStartDate: $("#qualificationStartDate").val(),
 			qualificationLanguage: $("#qualificationLanguage").val(),
 			qualificationAwardDate: $("#qualificationAwardDate").val(),
+			completed: $("#currentQualification").val(),
 			appId: $("#appId").val(),
 			qualificationId: $("#qualificationId").val(),
 			id: $("#id").val(),
@@ -43,6 +60,7 @@ $(document).ready(function(){
 			qualificationLanguage: $("#qualificationLanguage").val(),
 			qualificationAwardDate: $("#qualificationAwardDate").val(),
 			appId: $("#appId").val(),
+			completed: $("#currentQualification").val(),
 			qualificationId: $("#qualificationId").val(),
 			id: $("#id").val()
 		},
@@ -64,6 +82,11 @@ $(document).ready(function(){
 		$('#qualificationStartDate').val($('#'+id+'_qualificationStartDateDP').val());
 		$('#qualificationLanguage').val($('#'+id+'_qualificationLanguageDP').val());
 		$('#qualificationAwardDate').val($('#'+id+'_qualificationAwardDateDP').val());
+		if ($('#'+id+'_qualificationCompleted').val() =='YES'){
+			$("#currentQualificationCB").attr('checked', true);
+		} else {
+			$("#currentQualificationCB").attr('checked', false);
+		}
 	});
 	
 	$('a[name="qualificationCancelButton"]').click(function(){

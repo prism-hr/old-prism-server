@@ -5,6 +5,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 
 
@@ -26,6 +27,13 @@ public class EmploymentPositionValidator implements Validator{
 		String startDate = position.getPosition_startDate() == null ? "": position.getPosition_startDate().toString();
 		if (StringUtils.isNotBlank(startDate) && position.getPosition_endDate() != null && position.getPosition_startDate().after(position.getPosition_endDate())) {
 			errors.rejectValue("position_startDate", "position.position_startDate.notvalid");
+		}
+		String endDate = position.getPosition_endDate() == null ? "": position.getPosition_endDate().toString();
+		if (position.isCompleted() == CheckedStatus.YES && StringUtils.isBlank(endDate)){
+			errors.rejectValue("position_endDate", "position.position_endDate.notempty");
+		}
+		if (position.isCompleted()== CheckedStatus.NO && StringUtils.isNotBlank(endDate)){
+			errors.rejectValue("position_endDate", "position.position_endDate.empty");
 		}
 	}
 }

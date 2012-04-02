@@ -14,6 +14,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+
 @Entity(name="APPLICATION_FORM_EMPLOYMENT_POSITION")
 @Access(AccessType.FIELD) 
 public class EmploymentPosition extends DomainObject<Integer>{
@@ -49,6 +53,9 @@ public class EmploymentPosition extends DomainObject<Integer>{
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
 	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	@Column(name="completed")
+	private CheckedStatus completed;
 
 	@Override
 	public void setId(Integer id) {
@@ -105,5 +112,14 @@ public class EmploymentPosition extends DomainObject<Integer>{
 	public void setPosition_language(Language language) {
 		this.position_language = language;
 	}
+
+	public CheckedStatus getCompleted() {
+		return completed;
+	}
+
+	public void setCompleted(CheckedStatus completed) {
+		this.completed = completed;
+	}
+
 
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
-import com.zuehlke.pgadmissions.domain.enums.PrimaryStatus;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Component
 public class SupervisorJSONPropertyEditor extends PropertyEditorSupport {
@@ -29,7 +29,7 @@ public class SupervisorJSONPropertyEditor extends PropertyEditorSupport {
 			supervisor.setFirstname((String) properties.get("firstname"));
 			supervisor.setLastname((String) properties.get("lastname"));
 			supervisor.setEmail((String) properties.get("email"));
-			supervisor.setPrimarySupervisor(PrimaryStatus.valueOf((String) properties.get("primarySupervisor")));
+			supervisor.setPrimarySupervisor(CheckedStatus.valueOf((String) properties.get("primarySupervisor")));
 			supervisor.setAwareSupervisor(AwareStatus.valueOf((String) properties.get("awareSupervisor")));
 			
 			setValue(supervisor);

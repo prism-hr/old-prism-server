@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -124,7 +125,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		language.setName("language");
 		Qualification qualification = new QualificationBuilder().id(17)
 				.q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).q_level(QualificationLevel.COLLEGE).q_grade("").q_institution("")
-				.q_language_of_study(language).q_name_of_programme("").q_score("")
+				.q_language_of_study(language).q_name_of_programme("").q_score("").isCompleted(CheckedStatus.YES)
 				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
 		sessionFactory.getCurrentSession().save(language);
 		sessionFactory.getCurrentSession().save(qualification);
@@ -150,7 +151,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldGetEmploymentpositionById() throws ParseException{
 		EmploymentPosition position = new EmploymentPositionBuilder().id(1).employer("eployer").remit("remit")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"))
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).isCompleted(CheckedStatus.YES)
 				.title("title").endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/10/10")).toEmploymentPosition();
 		sessionFactory.getCurrentSession().save(position);
 		flushAndClearSession();

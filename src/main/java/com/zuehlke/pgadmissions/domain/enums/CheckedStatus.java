@@ -4,7 +4,7 @@ import org.apache.commons.lang.StringUtils;
 
 
 
-public enum PrimaryStatus {
+public enum CheckedStatus {
 	
 	YES, NO;
 
@@ -12,9 +12,9 @@ public enum PrimaryStatus {
 			return StringUtils.capitalize(this.toString().toLowerCase()); 
 	}
 	
-	public static PrimaryStatus fromString(String text) {
+	public static CheckedStatus fromString(String text) {
 	    if (text != null) {
-	      for (PrimaryStatus b : PrimaryStatus.values()) {
+	      for (CheckedStatus b : CheckedStatus.values()) {
 	        if (text.equalsIgnoreCase(b.displayValue())) {
 	          return b;
 	        }

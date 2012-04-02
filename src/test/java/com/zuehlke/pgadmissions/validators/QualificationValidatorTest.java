@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 
@@ -65,6 +66,23 @@ public class QualificationValidatorTest {
 		Assert.assertEquals("qualification.level.notempty",mappingResult.getFieldError("qualificationLevel").getCode());
 	}
 	@Test
+	public void shouldRejectIfEndDateIsSetForNonCompletedQualification(){
+		qualificationDto.setCompleted(CheckedStatus.NO);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
+		qualificationValidator.validate(qualificationDto, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("qualification.award_date.empty",mappingResult.getFieldError("qualificationAwardDate").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfEndDateIsNotSetForCompletedQualification(){
+		qualificationDto.setQualificationAwardDate(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
+		qualificationValidator.validate(qualificationDto, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("qualification.award_date.notempty",mappingResult.getFieldError("qualificationAwardDate").getCode());
+	}
+	@Test
 	public void shouldRejectIfTypeIsEmpty(){
 		qualificationDto.setQualificationType(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
@@ -112,6 +130,8 @@ public class QualificationValidatorTest {
 		qualificationDto.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualificationDto.setQualificationProgramName("CS");
 		qualificationDto.setQualificationScore("100");
+		qualificationDto.setCompleted(CheckedStatus.YES);
 		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
-		qualificationDto.setQualificationType("degree");	}
+		qualificationDto.setQualificationType("degree");
+	}
 }

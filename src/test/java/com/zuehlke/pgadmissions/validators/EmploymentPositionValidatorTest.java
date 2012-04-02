@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 
 public class EmploymentPositionValidatorTest {
@@ -42,6 +43,24 @@ public class EmploymentPositionValidatorTest {
 	}
 	
 	@Test
+	public void shouldRejectIfEndDateIsNotSetForCompletedEmploymentPosition(){
+		positionDto.setPosition_endDate(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
+		positionValidator.validate(positionDto, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("position.position_endDate.notempty",mappingResult.getFieldError("position_endDate").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfEndDateIsSetForNotCompletedEmploymentPosition(){
+		positionDto.setCompleted(CheckedStatus.NO);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
+		positionValidator.validate(positionDto, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("position.position_endDate.empty",mappingResult.getFieldError("position_endDate").getCode());
+	}
+	
+	@Test
 	public void shouldRejectIfLanguageIsEmpty(){
 		positionDto.setPosition_language(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
@@ -69,14 +88,6 @@ public class EmploymentPositionValidatorTest {
 	}
 	
 	@Test
-	public void shouldNotRejectIfEndIsEmpty(){
-		positionDto.setPosition_endDate(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		positionValidator.validate(positionDto, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-	}
-	
-	@Test
 	public void shouldRejectIfStartDateIsAfterEndDate() throws ParseException{
 		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
@@ -95,6 +106,7 @@ public class EmploymentPositionValidatorTest {
 		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		positionDto.setPosition_language(3);
 		positionDto.setPosition_remit("cashier");
+		positionDto.setCompleted(CheckedStatus.YES);
 		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		positionDto.setPosition_title("head of department");}
 }

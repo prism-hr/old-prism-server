@@ -5,6 +5,7 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
 public class QualificationBuilder {
@@ -20,6 +21,7 @@ public class QualificationBuilder {
 	private Date q_award_date;
 	private ApplicationForm application;
 	private Integer id;
+	private CheckedStatus completed;
 
 	
 	public QualificationBuilder application(ApplicationForm application) {
@@ -43,6 +45,11 @@ public class QualificationBuilder {
 		return this;
 	}
 
+	public QualificationBuilder isCompleted(CheckedStatus isCompleted) {
+		this.completed = isCompleted;
+		return this;
+	}
+	
 
 	public QualificationBuilder q_language_of_study(Language q_language_of_study) {
 		this.q_language_of_study = q_language_of_study;
@@ -84,6 +91,7 @@ public class QualificationBuilder {
 		qualification.setQualificationStartDate(q_start_date);
 		qualification.setQualificationType(q_type);
 		qualification.setId(id);
+		qualification.setCompleted(completed);
 		return qualification;
 	}
 

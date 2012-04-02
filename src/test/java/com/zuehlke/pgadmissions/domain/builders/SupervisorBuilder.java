@@ -2,13 +2,13 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
-import com.zuehlke.pgadmissions.domain.enums.PrimaryStatus;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class SupervisorBuilder {
 
 	private Integer id;
 	private AwareStatus awareSupervisor;
-	private PrimaryStatus primarySupervisor;
+	private CheckedStatus primarySupervisor;
 	private String email;
 	private String firstname;
 	private String lastname;
@@ -23,7 +23,7 @@ public class SupervisorBuilder {
 		return this;
 	}
 	
-	public SupervisorBuilder primarySupervisor(PrimaryStatus primarySupervisor) {
+	public SupervisorBuilder primarySupervisor(CheckedStatus primarySupervisor) {
 		this.primarySupervisor = primarySupervisor;
 		return this;
 	}

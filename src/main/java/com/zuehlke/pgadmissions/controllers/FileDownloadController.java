@@ -46,8 +46,10 @@ public class FileDownloadController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void downloadApplicationDocument(@RequestParam("documentId") Integer documentId, HttpServletResponse response) throws IOException {
 		Document document = documentService.getDocumentById(documentId);
-		if (DocumentType.REFERENCE == document.getType() || !((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).canSee(document.getApplicationForm())) {
-			throw new ResourceNotFoundException();
+		if (DocumentType.SUPPORTING_FUNDING != document.getType()) {
+			if (DocumentType.REFERENCE == document.getType() || !((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).canSee(document.getApplicationForm())) {
+				throw new ResourceNotFoundException();
+			}
 		}
 		sendDocument(response, document);
 	}
@@ -60,11 +62,11 @@ public class FileDownloadController {
 			throw new ResourceNotFoundException();
 		}
 		Document document = reference.getDocument();
-		
+
 		sendDocument(response, document);
-		
+
 	}
-	
+
 
 	@RequestMapping(value="/referee", method = RequestMethod.GET)
 	public void downloadReferenceDocumentForReferee(String activationCode, HttpServletResponse response) throws IOException {
@@ -74,9 +76,9 @@ public class FileDownloadController {
 		}
 		Document document = referee.getReference().getDocument();
 		sendDocument(response, document);
-		
+
 	}
-	
+
 	private void sendDocument(HttpServletResponse response, Document document) throws IOException {
 		response.setHeader("Expires", "0");
 		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");

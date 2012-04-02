@@ -29,7 +29,7 @@ public class FileUploadController {
 
 
 
-	final private ApplicationsService applicationService;
+	private final ApplicationsService applicationService;
 	private final DocumentValidator documentValidator;
 
 	FileUploadController() {
@@ -62,7 +62,7 @@ public class FileUploadController {
 			if(errors.hasFieldErrors("fileName")){
 				modelMap.put("uploadErrorCode", errors.getFieldError("fileName").getCode());
 				errorsCount++;
-			}else{
+			} else{
 				applicationForm.getSupportingDocuments().add(document);
 			}
 		}

@@ -64,7 +64,7 @@
                 
                 <!-- Document upload -->
                 <div class="row">
-                    <span class="label">CV / resume (PDF)</span>
+                    <span class="label">CV / resume (PDF)<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
                 		<input class="full" type="file" name="resume" value=""  <#if model.applicationForm.submitted>disabled="disabled"</#if>/>                      	
@@ -77,7 +77,7 @@
 				</div>
 				
 				<div class="row">
-				    <span class="label">Personal Statement (PDF)</span>
+				    <span class="label">Personal Statement (PDF)<em>*</em></span>
                     <span class="hint"></span>
                     <div class="field">
                         <input class="full" type="file" name="personalStatement" value=""  <#if model.applicationForm.submitted>disabled="disabled"</#if>/>

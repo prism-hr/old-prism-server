@@ -322,7 +322,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<label class="label">From<em>*</em> </label>
+						<span class="label">From<em>*</em> </span>
 						<span class="hint"></span>
 						<div class="field">
 						<#if !model.applicationForm.isSubmitted()>

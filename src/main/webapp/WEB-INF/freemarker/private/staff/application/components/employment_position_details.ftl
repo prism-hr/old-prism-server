@@ -103,6 +103,12 @@
                         </input>  
                     </div>
                 </div>
+                <div class="row">
+                       <label class="label">Is Completed</label>
+                <span class="hint" data-desc="Tooltip demonstration."></span>
+                       		<input type="text" value="${(model.employmentPosition.completed)!}" 
+                                            readonly="readonly">
+               			 </div>
                 
                 <!-- End date -->
                 <div class="row">

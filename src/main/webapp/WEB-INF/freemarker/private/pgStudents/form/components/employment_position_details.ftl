@@ -56,7 +56,7 @@
                             <input type="hidden" id="${position.id?string('#######')}_positionTitle" value="${(position.position_title?html)!}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionStartDate" value="${(position.position_startDate?string('dd-MMM-yyyy'))!}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionEndDate" value="${(position.position_endDate?string('dd-MMM-yyyy'))!}"/>
-		                    <input type="hidden"  id="${position.id?string('#######')}_positionCompleted" value="${position.completed!}"/> 
+		                    <input type="hidden"  id="${position.id?string('#######')}_positionCompleted" value="${position.completed}"/> 
 						
 		                </tr>
 		            </#list>

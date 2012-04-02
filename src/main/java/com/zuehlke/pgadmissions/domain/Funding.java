@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -26,6 +27,11 @@ public class Funding extends DomainObject<Integer> {
 	@Column(name="award_type")
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.FundingTypeEnumUserType")
 	private FundingType type;
+	
+	@OneToOne(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "document_id")
+	private Document document;
 	
 	private String description;
 	
@@ -94,4 +100,11 @@ public class Funding extends DomainObject<Integer> {
 		this.application = application;
 	}
 	
+	public Document getDocument() {
+		return document;
+	}
+	
+	public void setDocument(Document document) {
+		this.document = document;
+	}
 }

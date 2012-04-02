@@ -19,6 +19,7 @@
 				<colgroup>
 	            	<col style="width: 30px" />
 	                <col style="width: 120px" />
+	                <col style="width: 120px" />
 	                <col />
 	                <col style="width: 120px" />
 	                <col style="width: 30px" />
@@ -28,6 +29,7 @@
 					<tr>
 	                	<th colspan="2">Funding Type</th>
 	                    <th>Description</th>
+	                    <th>Supporting Documentation</th>
 	                    <th>Award Date</th>
 	                    <th colspan="1">&nbsp;</th>
 					</tr>
@@ -40,6 +42,8 @@
 		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id?string('#######')}">-</a></td>
 		                  	<td>${funding.type.displayValue}</td>
 		                  	<td>${funding.description}</td>
+		                  	<td ><a href="<@spring.url '/download'/>?documentId=${funding.document.id?string('#######')}">
+                            <#if funding.document.fileName?length <20 >${funding.document.fileName}<#else>${funding.document.fileName?substring(0,17)}...</#if></a></td>
 		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
 		                  	      <td>
 		                  	      	 <#if !model.applicationForm.isSubmitted()>
@@ -64,9 +68,10 @@
 			</table>
         </#if>
         <!-- Non-rendering data -->
-        <input type="hidden" id="fundingId" name="fundingId"/>
               
-		<form>
+		<form id="updateFunding" method="POST" action="<@spring.url '/updateFunding'/>" enctype="multipart/form-data">
+        <input type="hidden" id="fundingId" name="fundingId"/>
+        <input type="hidden" id="appIdFunding" name="appIdFunding" value="${model.applicationForm.id?string("######")}"/>
                 
 			<div>
 				<!-- Award type -->
@@ -143,18 +148,16 @@
                     </div>
                     
                 </div>
+                
+                <input id="shouldAdd" name="shouldAdd" class="full" type="hidden" />
                
-               <!--   
                 <div class="row">
-                  	<span class="label">Supporting Document</span>
+                  	<span class="label">Supporting Document<em>*</em></span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    	<input class="full" type="text" value="" />
-                      	<a class="button" href="#">Browse</a>
-                      	<a class="button" href="#">Upload</a>
-                      	<a class="button plus" href="#">Add Another</a>
+                    	<input class="full" type="file" name="fundingFile" value=""  <#if model.applicationForm.submitted>disabled="disabled"</#if>/>   
                     </div>	
-				</div> -->
+				</div>
 
 			</div>
 
@@ -163,8 +166,8 @@
             	
             	<a class="button" type="button" id="fundingCancelButton" name="fundingCancelButton">Cancel</a>
             	<button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>
-				<button class="blue" type="button" id="fundingSaveCloseButton" name="fundingSaveCloseButton" value="close">Save and Close</button>
-                <button class="blue" type="button" id="fundingSaveAddButton" name="fundingSaveAddButton" value="add">Save and Add</button>
+				<button class="blue" type="submit" id="fundingSaveCloseButton" value="close">Save and Close</button>
+                <button class="blue" type="submit" id="fundingSaveAddButton" value="add">Save and Add</button>
               <#else>
                     <a id="fundingCloseButton" class="button blue">Close</a>  
 	   </#if>

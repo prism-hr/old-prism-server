@@ -90,7 +90,7 @@ public class SubmitApplicationFormController {
 		
 		appForm.setNumberOfContactAddresses(numberOfContactAddresses);
 		appForm.setProgrammeDetails(applicationForm.getProgrammeDetails());
-
+		appForm.setSupportingDocuments(applicationForm.getSupportingDocuments());
 		
 		ApplicationFormValidator validator = new ApplicationFormValidator();
 		

@@ -183,8 +183,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setProject(project);
 		application.setApplicant(user);
 		Document doc1 = new DocumentBuilder().fileName("bob").type(DocumentType.CV).content("aaa!".getBytes()).toDocument();
-		Document doc2 = new DocumentBuilder().fileName("bob").type(DocumentType.SUPPORTING_ADDRESS).content("aaa!".getBytes()).toDocument();
-		Document doc3 = new DocumentBuilder().fileName("bob").type(DocumentType.SUPPORTING_EMPLOYMENT).content("aaa!".getBytes()).toDocument();
+		Document doc2 = new DocumentBuilder().fileName("bob").type(DocumentType.PERSONAL_STATEMENT).content("aaa!".getBytes()).toDocument();
+		Document doc3 = new DocumentBuilder().fileName("bob").type(DocumentType.PERSONAL_STATEMENT).content("aaa!".getBytes()).toDocument();
 
 		application.setSupportingDocuments(Arrays.asList(doc1, doc2));
 		sessionFactory.getCurrentSession().save(application);

@@ -1,3 +1,8 @@
+<#if model.applicationForm.supportingDocuments?has_content>
+    <#assign hasDocs = true>
+<#else>
+    <#assign hasDocs = false>
+</#if> 
 <#import "/spring.ftl" as spring />
 	<h2 id="documents-H2" class="empty">
     	<span class="left"></span><span class="right"></span><span class="status"></span>
@@ -5,7 +10,8 @@
 	</h2>
     
     <div>
-    	
+
+        <#if hasDocs>                    
     	<table class="existing">
         	<colgroup>
             	<col style="width: 20px" />
@@ -44,54 +50,64 @@
 					</#list>
                 </tbody>
 		</table>
+		</#if>
         
 		<form id="documentUploadForm" method="POST" action="<@spring.url '/documents'/>" enctype="multipart/form-data">
              <input type="hidden" name="id" value="${model.applicationForm.id?string('#######')}"/>
              <div>
+             
+             <div class="row">
+             <#if model.hasError('supportingDocuments')>                           
+                     <span class="invalid"><@spring.message  model.result.getFieldError('supportingDocuments').code /></span>                           
+             </#if>
+             </div>
                 
-             	<!-- Document type -->
-                <div class="row">
-                    <span class="label">Type</span>
-                    <span class="hint"></span>
-                    <div class="field">
-                    	<select class="full" name="documentType" <#if model.applicationForm.submitted>disabled="disabled"</#if>>
-                    		<#list model.documentTypes as documentType>                    			
-                    			<option value="${documentType}">${documentType.displayValue}</option>
-                    		</#list>	              
-                      	</select>
-                    </div>  
-				</div>
-
                 <!-- Document upload -->
                 <div class="row">
-                    <span class="label">PDF document</span>
+                    <span class="label">CV / resume (PDF)</span>
                     <span class="hint"></span>
                     <div class="field">
-                		<input class="full" type="file" name="file" value=""  <#if model.applicationForm.submitted>disabled="disabled"</#if>/>                      	
-                        <button style="margin-left:30px" class="blue" type="submit" value="close"  <#if model.applicationForm.submitted>disabled="disabled"</#if>>Upload</button>          
-                    </div>  
+                		<input class="full" type="file" name="resume" value=""  <#if model.applicationForm.submitted>disabled="disabled"</#if>/>                      	
+                    <#if model.uploadErrorCode?? >
+                    <div class="row">
+                       <span class="invalid"><@spring.message  model.uploadErrorCode /></span>
+                    </div>            
+                </#if>  
+                    </div>
 				</div>
+				
+				<div class="row">
+				    <span class="label">Personal Statement (PDF)</span>
+                    <span class="hint"></span>
+                    <div class="field">
+                        <input class="full" type="file" name="personalStatement" value=""  <#if model.applicationForm.submitted>disabled="disabled"</#if>/>
+                   <#if model.uploadTwoErrorCode?? >
+                    <div class="row">
+                       <span class="invalid"><@spring.message  model.uploadTwoErrorCode /></span>
+                    </div> 
+                   </#if>                                       
+                    </div> 
+                     
+                </div>
 				<div class="row">
                     <span class="label">Max file size is 10Mb.</span>
                   
 				</div>
-				<#if model.uploadErrorCode?? >
-				    <div class="row">
-					   <span class="invalid"><@spring.message  model.uploadErrorCode /></span>
-					</div>            
-				</#if>				
 			</div>
 
 			<div class="buttons">
 				<button type="reset" id="documentsCancelButton" value="cancel">Cancel</button>
-                <button class="blue" id="documentsCloseButton" value="close">Close</button>              
+                <button class="blue" id="documentsCloseButton" value="close">Close</button> 
+                <#if !model.applicationForm.submitted>
+                    <button class="blue" type="submit" id="documentsSaveButton" value="close">Save</button> 
+                </#if>             
 			</div>
 
 		</form>
 	</div>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/application/documents.js'/>"></script>
 	
-<#if model.uploadErrorCode??  >
+<#if model.uploadErrorCode?? || model.uploadTwoErrorCode?? || model.hasError('supportingDocuments') >
 
 <#else >
 <script type="text/javascript">

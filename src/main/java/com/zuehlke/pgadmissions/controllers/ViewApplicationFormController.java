@@ -37,7 +37,7 @@ public class ViewApplicationFormController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getViewApplicationPage(@RequestParam(required = false) String view, @RequestParam Integer id,
-			@RequestParam(required = false) String uploadErrorCode) {
+			@RequestParam(required = false) String uploadErrorCode, @RequestParam(required = false) String uploadTwoErrorCode) {
 		RegisteredUser currentuser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		ApplicationForm applicationForm = applicationService.getApplicationById(id);
 		if (applicationForm == null || !currentuser.canSee(applicationForm)) {
@@ -46,10 +46,10 @@ public class ViewApplicationFormController {
 
 		if (applicationForm.getApplicant().equals(currentuser)) {
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(applicationForm,
-					uploadErrorCode, view));
+					uploadErrorCode, view, uploadTwoErrorCode));
 		}
 		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(applicationForm,
-				uploadErrorCode, view));
+				uploadErrorCode, view, uploadTwoErrorCode));
 
 	}
 

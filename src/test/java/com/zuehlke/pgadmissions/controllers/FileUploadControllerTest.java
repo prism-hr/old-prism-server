@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -90,7 +91,7 @@ public class FileUploadControllerTest {
 
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		controller.uploadFile(applicationForm, DocumentType.CV, multipartFileMock);
+		controller.uploadFile(applicationForm, multipartFileMock, null);
 
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals(1, applicationForm.getSupportingDocuments().size());
@@ -113,7 +114,7 @@ public class FileUploadControllerTest {
 
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		ModelAndView modelAndView = controller.uploadFile(applicationForm, DocumentType.CV, multipartFileMock);
+		ModelAndView modelAndView = controller.uploadFile(applicationForm, multipartFileMock, null);
 		assertEquals("redirect:/application", modelAndView.getViewName());
 		assertEquals(8, modelAndView.getModel().get("id"));
 	}
@@ -138,7 +139,7 @@ public class FileUploadControllerTest {
 		EasyMock.replay(fieldError, errors);
 	
 		EasyMock.replay(applicationsServiceMock);
-		ModelAndView modelAndView = controller.uploadFile(applicationForm, DocumentType.CV, multipartFileMock);
+		ModelAndView modelAndView = controller.uploadFile(applicationForm, multipartFileMock, null);
 		assertEquals("redirect:/application", modelAndView.getViewName());
 		assertEquals(8, modelAndView.getModel().get("id"));
 		assertEquals("bob", modelAndView.getModel().get("uploadErrorCode"));

@@ -58,13 +58,13 @@ public class ApplicationPageModelBuilderTest {
 	@Test
 	public void shouldSetApplicationFormOnModel() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null);
 		assertSame(applicationForm, model.getApplicationForm());
 	}
 
 	@Test
 	public void shouldSeCurrentUserOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertSame(userMock, model.getUser());
 	}
 
@@ -73,7 +73,7 @@ public class ApplicationPageModelBuilderTest {
 		List<Country> countries = Arrays.asList(new CountryBuilder().id(1).toCountry());
 		EasyMock.expect(countryServiceMock.getAllCountries()).andReturn(countries);
 		EasyMock.replay(countryServiceMock);
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertSame(countries, model.getCountries());
 	}
 
@@ -82,76 +82,76 @@ public class ApplicationPageModelBuilderTest {
 		List<Language> languages = Arrays.asList(new LanguageBuilder().id(1).toLanguage());
 		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(languages);
 		EasyMock.replay(languageServiceMock);
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertSame(languages, model.getLanguages());
 	}
 
 	@Test
 	public void shouldSetAllsetResidenceStatusesOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertEquals(ResidenceStatus.values().length, model.getResidenceStatuses().size());
 		assertTrue(model.getResidenceStatuses().containsAll(Arrays.asList(ResidenceStatus.values())));
 	}
 
 	@Test
 	public void shouldSetAllGendersOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertEquals(Gender.values().length, model.getGenders().size());
 		assertTrue(model.getGenders().containsAll(Arrays.asList(Gender.values())));
 	}
 
 	@Test
 	public void shouldSetAllStudyOptionsOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertEquals(StudyOption.values().length, model.getStudyOptions().size());
 		assertTrue(model.getStudyOptions().containsAll(Arrays.asList(StudyOption.values())));
 	}
 
 	@Test
 	public void shouldSetAllReferrersOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertEquals(Referrer.values().length, model.getReferrers().size());
 		assertTrue(model.getReferrers().containsAll(Arrays.asList(Referrer.values())));
 	}
 
 	@Test
 	public void shouldSetAllPhoneTypesOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertEquals(PhoneType.values().length, model.getPhoneTypes().size());
 		assertTrue(model.getPhoneTypes().containsAll(Arrays.asList(PhoneType.values())));
 	}
 
 	@Test
 	public void shouldSetAllLanguageAptitudesOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertEquals(LanguageAptitude.values().length, model.getLanguageAptitudes().size());
 		assertTrue(model.getLanguageAptitudes().containsAll(Arrays.asList(LanguageAptitude.values())));
 	}
 
 	@Test
 	public void shouldSetAllQaulificationLevelsOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertEquals(QualificationLevel.values().length, model.getQualificationLevels().size());
 		assertTrue(model.getQualificationLevels().containsAll(Arrays.asList(QualificationLevel.values())));
 	}
 
 	@Test
 	public void shouldSetAllFundingTypesOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertEquals(FundingType.values().length, model.getFundingTypes().size());
 		assertTrue(model.getFundingTypes().containsAll(Arrays.asList(FundingType.values())));
 	}
 
 	@Test
 	public void shouldSetAllAddressPurposesOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertEquals(AddressPurpose.values().length, model.getAddressPurposes().size());
 		assertTrue(model.getAddressPurposes().containsAll(Arrays.asList(AddressPurpose.values())));
 	}
 
 	@Test
 	public void shouldSetAllDocumentTypesOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
 		assertEquals(DocumentType.values().length, model.getDocumentTypes().size());
 		assertTrue(model.getDocumentTypes().containsAll(Arrays.asList(DocumentType.values())));
 	}
@@ -163,7 +163,7 @@ public class ApplicationPageModelBuilderTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		applicationForm.getSupportingDocuments().addAll(Arrays.asList(cv, statement));
 
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null);
 
 		assertEquals(DocumentType.values().length - 2, model.getDocumentTypes().size());
 		assertFalse(model.getDocumentTypes().contains(DocumentType.CV));
@@ -172,19 +172,19 @@ public class ApplicationPageModelBuilderTest {
 
 	@Test
 	public void shouldAddUploadErrorCode() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, "hello.world", null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, "hello.world", null, null);
 		assertEquals("hello.world", model.getUploadErrorCode());
 	}
 
 	@Test
 	public void shouldSetViewOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, "bob");
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, "bob", null);
 		assertEquals("bob", model.getView());
 	}
 
 	@Test
 	public void shouldSetErrorMessageForErrorViewParameter() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, "errors");
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, "errors", null);
 		assertEquals("There are missing required fields on the form, please review.", model.getMessage());
 	}
 
@@ -194,7 +194,7 @@ public class ApplicationPageModelBuilderTest {
 		ApplicationReview comment2 = new ApplicationReviewBuilder().id(2).toApplicationReview();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
 		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null);
 		assertTrue(model.getApplicationComments().isEmpty());
 
 	}
@@ -209,7 +209,7 @@ public class ApplicationPageModelBuilderTest {
 		ApplicationReview comment2 = new ApplicationReviewBuilder().id(2).toApplicationReview();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
 		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null);
 		assertEquals(2, model.getApplicationComments().size());
 		assertTrue(model.getApplicationComments().containsAll(Arrays.asList(comment1, comment2)));
 
@@ -226,7 +226,7 @@ public class ApplicationPageModelBuilderTest {
 		ApplicationReview comment2 = new ApplicationReviewBuilder().id(2).toApplicationReview();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
 		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null);
 		assertEquals(2, model.getApplicationComments().size());
 		assertTrue(model.getApplicationComments().containsAll(Arrays.asList(comment1, comment2)));
 
@@ -244,7 +244,7 @@ public class ApplicationPageModelBuilderTest {
 		ApplicationReview comment2 = new ApplicationReviewBuilder().id(2).toApplicationReview();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
 		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null);
 		assertEquals(2, model.getApplicationComments().size());
 		assertTrue(model.getApplicationComments().containsAll(Arrays.asList(comment1, comment2)));
 
@@ -264,7 +264,7 @@ public class ApplicationPageModelBuilderTest {
 		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
 		EasyMock.expect(applicationReviewServiceMock.getVisibleComments(applicationForm, userMock)).andReturn(Arrays.asList(comment2));
 		EasyMock.replay(userMock, applicationReviewServiceMock);
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null);
 		assertEquals(1, model.getApplicationComments().size());
 		assertTrue(model.getApplicationComments().containsAll(Arrays.asList(comment2)));
 
@@ -276,7 +276,7 @@ public class ApplicationPageModelBuilderTest {
 		authenticationToken.setDetails(webAuthenticationDetails);
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null);
+		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null);
 		assertSame(applicationForm, model.getApplicationForm());
 	}
 

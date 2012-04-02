@@ -47,6 +47,7 @@ public class ApplicationPageModel extends PageModel {
 	private List<Referrer> referrers = new LinkedList<Referrer>();
 	
 	private String uploadErrorCode;
+	private String uploadTwoErrorCode;
 	private List<FundingType> fundingTypes = new LinkedList<FundingType>();
 	private List<AddressPurpose> addressPurposes = new LinkedList<AddressPurpose>();
 
@@ -209,5 +210,13 @@ public class ApplicationPageModel extends PageModel {
 	
 	public List<AddressPurpose> getAddressPurposes() {
 		return addressPurposes;
+	}
+	
+	public String getUploadTwoErrorCode() {
+		return uploadTwoErrorCode;
+	}
+	
+	public void setUploadTwoErrorCode(String uploadTwoErrorCode) {
+		this.uploadTwoErrorCode = uploadTwoErrorCode;
 	}
 }

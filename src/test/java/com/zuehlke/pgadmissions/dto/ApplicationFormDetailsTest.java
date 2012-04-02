@@ -4,7 +4,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import junit.framework.Assert;
 
@@ -13,6 +15,7 @@ import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
@@ -30,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PrimaryStatus;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
@@ -122,6 +126,14 @@ public class ApplicationFormDetailsTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
 	
+	@Test
+	public void shouldRejectIfIncompleteUploadedDocuments() {
+		appFormDetails.setSupportingDocuments(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(appFormDetails, "applicationFormDetails");
+		validator.validate(appFormDetails, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+	
 	@Before
 	public void setup() throws ParseException{
 		validator = new ApplicationFormValidator();
@@ -130,6 +142,15 @@ public class ApplicationFormDetailsTest {
 		appFormDetails.setNumberOfAddresses(1);
 		appFormDetails.setNumberOfContactAddresses(1);
 		appFormDetails.setNumberOfReferees(2);
+		List<Document> supportingDocuments = new ArrayList<Document>();
+		Document resume = new Document();
+		resume.setType(DocumentType.CV);
+		supportingDocuments.add(resume);
+		
+		Document personalStatement = new Document();
+		personalStatement.setType(DocumentType.PERSONAL_STATEMENT);
+		supportingDocuments.add(personalStatement);
+		appFormDetails.setSupportingDocuments(supportingDocuments);
 		
 		Nationality nationality = new Nationality();
 		LanguageProficiency languageProficiency = new LanguageProficiencyBuilder().id(1).toLanguageProficiency();

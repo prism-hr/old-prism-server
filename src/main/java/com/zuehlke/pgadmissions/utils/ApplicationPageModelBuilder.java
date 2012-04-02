@@ -40,7 +40,7 @@ public class ApplicationPageModelBuilder {
 		this.languageService = languageService;
 	}
 
-	public ApplicationPageModel createAndPopulatePageModel(ApplicationForm applicationForm, String uploadErrorCode, String view) {
+	public ApplicationPageModel createAndPopulatePageModel(ApplicationForm applicationForm, String uploadErrorCode, String view, String uploadTwoErrorCode) {
 		RegisteredUser currentUser = null;
 		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null
 				&& SecurityContextHolder.getContext().getAuthentication().getDetails() instanceof RegisteredUser) {
@@ -54,6 +54,7 @@ public class ApplicationPageModelBuilder {
 		viewApplicationModel.setApplicationForm(applicationForm);
 
 		viewApplicationModel.setUploadErrorCode(uploadErrorCode);
+		viewApplicationModel.setUploadTwoErrorCode(uploadTwoErrorCode);
 		viewApplicationModel.setCountries(countryService.getAllCountries());
 		viewApplicationModel.setLanguages(languageService.getAllLanguages());
 		viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());

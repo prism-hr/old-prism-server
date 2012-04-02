@@ -36,41 +36,60 @@ public class FileUploadController {
 		this(null, null);
 	}
 
-	
+
 	@Autowired
 	public FileUploadController(ApplicationsService applicationService, DocumentValidator documentValidator) {
 		this.applicationService = applicationService;
 		this.documentValidator = documentValidator;
-	
+
 
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView uploadFile(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @RequestParam("documentType") DocumentType documentType,
-			@RequestParam("file") MultipartFile multipartFile) throws IOException {
+	public ModelAndView uploadFile(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @RequestParam("resume") MultipartFile resume,
+			@RequestParam("personalStatement") MultipartFile personalStatement) throws IOException {
 
-		Document document = newDocument();
-		document.setFileName(multipartFile.getOriginalFilename());
-		document.setContentType(multipartFile.getContentType());
-		document.setContent(multipartFile.getBytes());
-		document.setType(documentType);
-		BindingResult errors = newErrors(document);
-		documentValidator.validate(document, errors);
 		ModelMap modelMap = new ModelMap();		
-		if(errors.hasFieldErrors("fileName")){
-			modelMap.put("uploadErrorCode", errors.getFieldError("fileName").getCode());
-		}else{
-			applicationForm.getSupportingDocuments().add(document);
+		Document document = newDocument();
+		int errorsCount = 0;
+		if (resume != null) {
+			document.setFileName(resume.getOriginalFilename());
+			document.setContentType(resume.getContentType());
+			document.setContent(resume.getBytes());
+			document.setType(DocumentType.CV);
+			BindingResult errors = newErrors(document);
+			documentValidator.validate(document, errors);
+			if(errors.hasFieldErrors("fileName")){
+				modelMap.put("uploadErrorCode", errors.getFieldError("fileName").getCode());
+				errorsCount++;
+			}else{
+				applicationForm.getSupportingDocuments().add(document);
+			}
+		}
+
+		if (personalStatement != null) {
+			document = newDocument();
+			document.setFileName(personalStatement.getOriginalFilename());
+			document.setContentType(personalStatement.getContentType());
+			document.setContent(personalStatement.getBytes());
+			document.setType(DocumentType.PERSONAL_STATEMENT);
+			BindingResult errors = newErrors(document);
+			documentValidator.validate(document, errors);
+			if(errors.hasFieldErrors("fileName")){
+				modelMap.put("uploadTwoErrorCode", errors.getFieldError("fileName").getCode());
+			}else{
+				applicationForm.getSupportingDocuments().add(document);
+			}
+		}
+		if (errorsCount == 0) {
 			applicationService.save(applicationForm);
 		}
 		modelMap.put("id", applicationForm.getId());
 		return new ModelAndView("redirect:/application", modelMap);
-
 	}
 
-
 	BindingResult newErrors(Document document) {
-		return new DirectFieldBindingResult(document, "document");
+		return new DirectFieldBindingResult(document, document.getFileName());
 	}
 
 	Document newDocument() {
@@ -89,6 +108,6 @@ public class FileUploadController {
 		return applicationform;
 	}
 
-	
+
 
 }

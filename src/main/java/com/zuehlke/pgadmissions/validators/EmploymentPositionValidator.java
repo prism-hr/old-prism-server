@@ -29,10 +29,10 @@ public class EmploymentPositionValidator implements Validator{
 			errors.rejectValue("position_startDate", "position.position_startDate.notvalid");
 		}
 		String endDate = position.getPosition_endDate() == null ? "": position.getPosition_endDate().toString();
-		if (position.isCompleted() == CheckedStatus.YES && StringUtils.isBlank(endDate)){
+		if (position.getCompleted() == CheckedStatus.YES && StringUtils.isBlank(endDate)){
 			errors.rejectValue("position_endDate", "position.position_endDate.notempty");
 		}
-		if (position.isCompleted()== CheckedStatus.NO && StringUtils.isNotBlank(endDate)){
+		if (position.getCompleted()== CheckedStatus.NO && StringUtils.isNotBlank(endDate)){
 			errors.rejectValue("position_endDate", "position.position_endDate.empty");
 		}
 	}

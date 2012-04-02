@@ -78,7 +78,7 @@ public class EmploymentPosition {
 		this.positionId = positionId;
 	}
 
-	public CheckedStatus isCompleted() {
+	public CheckedStatus getCompleted() {
 		return completed;
 	}
 

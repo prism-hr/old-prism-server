@@ -64,7 +64,7 @@
                              	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${(qualification.qualificationGrade?html)!}"/> 
                              	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationScoreDP" value="${(qualification.qualificationScore?html)!}"/> 
                              	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
-                             	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationCompleted" value="${qualification.completed!}"/> 
+                             	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationCompleted" value="${qualification.completed}"/> 
 							</#list>
 										
 		                </tbody>

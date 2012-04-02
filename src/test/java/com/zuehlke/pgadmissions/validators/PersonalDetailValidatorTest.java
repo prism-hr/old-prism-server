@@ -83,6 +83,15 @@ public class PersonalDetailValidatorTest {
 	}
 	
 	@Test
+	public void shouldRejectIfResidenceFromDateIsNull() {
+		personalDetails.setResidenceFromDate(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "residenceFromDate");
+		personalDetailValidator.validate(personalDetails, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("personalDetails.residenceFromDate.notempty", mappingResult.getFieldError("residenceFromDate").getCode());
+	}
+	
+	@Test
 	public void shouldRejectIfCountryIsNull() {
 		personalDetails.setCountry(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "country");
@@ -141,7 +150,7 @@ public class PersonalDetailValidatorTest {
 		Nationality nationality = new Nationality();
 		LanguageProficiency languageProficiency = new LanguageProficiencyBuilder().id(1).toLanguageProficiency();
 		personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality).languageProficiencies(languageProficiency).maternalGuardianNationalities(nationality).paternalGuardianNationalities(nationality).applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm()).country(new CountryBuilder().toCountry()).dateOfBirth(new Date()).email("email@test.com").firstName("bob")
-		.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith").residenceCountry(new CountryBuilder().toCountry()).residenceStatus(ResidenceStatus.EXCEPTIONAL_LEAVE_TO_REMAIN).toPersonalDetails();
+		.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith").residenceCountry(new CountryBuilder().toCountry()).residenceFromDate(new Date()).residenceStatus(ResidenceStatus.EXCEPTIONAL_LEAVE_TO_REMAIN).toPersonalDetails();
 		
 		personalDetailValidator = new PersonalDetailValidator();
 	}

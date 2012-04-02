@@ -64,6 +64,8 @@ public class PersonalDetail extends DomainObject<Integer> {
 	@JoinColumn(name = "personal_details_id")
 	private List<LanguageProficiency> languageProficiencies= new ArrayList<LanguageProficiency>();
 	
+	@Column(name = "residence_from_date")
+	private Date residenceFromDate;
 	
 	@Column(name = "first_name")
 	private String firstName;
@@ -255,6 +257,14 @@ public class PersonalDetail extends DomainObject<Integer> {
 
 	public void setMessenger(String messenger) {
 		this.messenger = messenger;
+	}
+
+	public Date getResidenceFromDate() {
+		return residenceFromDate;
+	}
+
+	public void setResidenceFromDate(Date residenceFromDate) {
+		this.residenceFromDate = residenceFromDate;
 	}
 
 

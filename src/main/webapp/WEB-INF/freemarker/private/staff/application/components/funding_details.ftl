@@ -39,12 +39,12 @@
 						<tr>
 		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id?string('#######')}">-</a></td>
 		                  	<td>${funding.type.displayValue}</td>
-		                  	<td>${funding.description}</td>
+		                  	<td>${funding.description?html}</td>
 		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
 		                  	<input type="hidden" id="${funding.id?string('#######')}_fundingIdDP" value="${funding.id?string('#######')}"/>
-                            <input type="hidden" id="${funding.id?string('#######')}_fundingTypeDP" value="${funding.type}"/>
-                            <input type="hidden" id="${funding.id?string('#######')}_fundingValueDP" value="${funding.value}"/>
-                            <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description}"/>
+                            <input type="hidden" id="${funding.id?string('#######')}_fundingTypeDP" value="${funding.type?html}"/>
+                            <input type="hidden" id="${funding.id?string('#######')}_fundingValueDP" value="${funding.value?html}"/>
+                            <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description?html}"/>
                             <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
 		                </tr>
 					</#list>				               
@@ -64,7 +64,7 @@
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                 	
                 	<div class="field">
-                	<select id="fundingType" name="fundingType" class="full" value="${model.funding.fundingType!}" 
+                	<select id="fundingType" name="fundingType" class="full" value="${(model.funding.fundingType?html)!}" 
                                                 disabled="disabled">
                             <option value="">Select...</option>
                             <#list model.fundingTypes as type>
@@ -83,7 +83,7 @@
                 	<span class="label">Description</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
 					<div class="field">
-					<input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${model.funding.fundingDescription!}" />
+					<input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${(model.funding.fundingDescription?html)!}" />
 					</div>
 				</div>
                   
@@ -92,7 +92,7 @@
                   	<span class="label">Value of Award</span>
                     <span class="hint" data-desc="Tooltip demonstration."></span>
                     <div class="field">
-                    <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${model.funding.fundingValue!}" />
+                    <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${(model.funding.fundingValue?html)!}" />
 					</div>
 				</div>
                   

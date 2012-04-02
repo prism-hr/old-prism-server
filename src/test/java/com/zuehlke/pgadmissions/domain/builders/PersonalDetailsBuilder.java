@@ -22,6 +22,7 @@ public class PersonalDetailsBuilder {
 	private Gender gender;
 	private String email;
 	private Date dateOfBirth;
+	private Date residenceFromDate;
 	private Country country;
 	private Country residenceCountry;
 	private ResidenceStatus residenceStatus;
@@ -41,6 +42,12 @@ public class PersonalDetailsBuilder {
 
 	public PersonalDetailsBuilder languageProficiencies(LanguageProficiency... languageProficiencies) {
 		this.languageProficiencies.addAll(Arrays.asList(languageProficiencies));
+		return this;
+	}
+	
+	
+	public PersonalDetailsBuilder residenceFromDate(Date residenceFromDate) {
+		this.residenceFromDate = residenceFromDate;
 		return this;
 	}
 	
@@ -131,6 +138,7 @@ public class PersonalDetailsBuilder {
 		personalDetails.setCandidateNationalities(candiateNationalities);
 		personalDetails.setLanguageProficiencies(languageProficiencies);
 		personalDetails.setMessenger(messenger);
+		personalDetails.setResidenceFromDate(residenceFromDate);
 		return personalDetails;
 	}
 }

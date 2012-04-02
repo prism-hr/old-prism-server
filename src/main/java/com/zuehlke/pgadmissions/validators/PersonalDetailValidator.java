@@ -32,6 +32,7 @@ public class PersonalDetailValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", "personalDetails.residenceCountry.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceStatus", "personalDetails.residenceStatus.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", "personalDetails.dateOfBirth.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceFromDate", "personalDetails.residenceFromDate.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", "personalDetails.application.notempty");
 		
 	

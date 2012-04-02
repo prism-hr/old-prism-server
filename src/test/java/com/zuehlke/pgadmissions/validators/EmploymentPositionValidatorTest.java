@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import junit.framework.Assert;
 
@@ -31,6 +33,23 @@ public class EmploymentPositionValidatorTest {
 		positionValidator.validate(positionDto, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("position.position_employer.notempty",mappingResult.getFieldError("position_employer").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfStartDateAndEndDateAreFutureDates(){
+		Date tomorrow, dayAfterTomorrow;
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE, 1);
+		tomorrow = calendar.getTime();
+		calendar.add(Calendar.DATE, 2);
+		dayAfterTomorrow = calendar.getTime();
+		positionDto.setPosition_startDate(tomorrow);
+		positionDto.setPosition_endDate(dayAfterTomorrow);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
+		positionValidator.validate(positionDto, mappingResult);
+		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals("position.position_startDate.future",mappingResult.getFieldError("position_startDate").getCode());
+		Assert.assertEquals("position.position_endDate.future",mappingResult.getFieldError("position_endDate").getCode());
 	}
 	
 	@Test

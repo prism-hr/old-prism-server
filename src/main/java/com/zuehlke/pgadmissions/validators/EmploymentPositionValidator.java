@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.validators;
 
+import java.util.Date;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
@@ -18,6 +20,7 @@ public class EmploymentPositionValidator implements Validator{
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position_employer", "position.position_employer.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position_title", "position.position_title.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position_remit", "position.position_remit.notempty");
@@ -25,10 +28,16 @@ public class EmploymentPositionValidator implements Validator{
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "position_language", "position.position_language.notempty");
 		EmploymentPosition position = (EmploymentPosition) target;
 		String startDate = position.getPosition_startDate() == null ? "": position.getPosition_startDate().toString();
+		String endDate = position.getPosition_endDate() == null ? "": position.getPosition_endDate().toString();
+		if (StringUtils.isNotBlank(startDate) && position.getPosition_startDate().after(today)) {
+			errors.rejectValue("position_startDate", "position.position_startDate.future");
+		}
+		if (StringUtils.isNotBlank(endDate) && position.getPosition_endDate().after(today)) {
+			errors.rejectValue("position_endDate", "position.position_endDate.future");
+		}
 		if (StringUtils.isNotBlank(startDate) && position.getPosition_endDate() != null && position.getPosition_startDate().after(position.getPosition_endDate())) {
 			errors.rejectValue("position_startDate", "position.position_startDate.notvalid");
 		}
-		String endDate = position.getPosition_endDate() == null ? "": position.getPosition_endDate().toString();
 		if (position.getCompleted() == CheckedStatus.YES && StringUtils.isBlank(endDate)){
 			errors.rejectValue("position_endDate", "position.position_endDate.notempty");
 		}

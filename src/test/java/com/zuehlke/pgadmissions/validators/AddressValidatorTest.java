@@ -2,6 +2,9 @@ package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -66,13 +69,30 @@ public class AddressValidatorTest {
 	
 	@SuppressWarnings("deprecation")
 	@Test
-	public void shouldRejectIfStartDateLaterThanEndDate() {
-		address.setAddressStartDate(new Date(2010,1,1));
-		address.setAddressEndDate(new Date(2001,1,1));
+	public void shouldRejectIfStartDateLaterThanEndDate() throws ParseException {
+		address.setAddressStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
+		address.setAddressEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2005/09/09"));
+	}
+	
+	@Test
+	public void shouldRejectIfStartDateAndEndDateAreFutureDates(){
+		Date tomorrow, dayAfterTomorrow;
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE, 1);
+		tomorrow = calendar.getTime();
+		calendar.add(Calendar.DATE, 2);
+		dayAfterTomorrow = calendar.getTime();
+		address.setAddressStartDate(tomorrow);
+		address.setAddressEndDate(dayAfterTomorrow);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
+		validator.validate(address, mappingResult);
+		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals("address.startDate.future",mappingResult.getFieldError("addressStartDate").getCode());
+		Assert.assertEquals("address.endDate.future",mappingResult.getFieldError("addressEndDate").getCode());
 	}
 	
 	@Before
-	public void setup(){
+	public void setup() throws ParseException{
 		validator = new AddressValidator();
 		
 		address = new Address();
@@ -82,7 +102,7 @@ public class AddressValidatorTest {
 		address.setAddressLocation("London");
 		address.setAddressPostCode("NW3445");
 		address.setAddressPurpose(AddressPurpose.EDUCATION);
-		address.setAddressStartDate(new Date(2001,1,1));
-		address.setAddressEndDate(null);
+		address.setAddressStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
+		address.setAddressEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2007/09/09"));
 	}
 }

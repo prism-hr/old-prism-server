@@ -89,7 +89,7 @@ public class UpdateApplicationFormControllerTest {
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void shouldSaveNewAddress() {
+	public void shouldSaveNewAddress() throws ParseException {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		Country country = new Country();
@@ -103,8 +103,8 @@ public class UpdateApplicationFormControllerTest {
 		address.setAddressPostCode("NW2345");
 		address.setAddressPurpose(AddressPurpose.RESIDENCE);
 		address.setAddressCountry(6);
-		address.setAddressStartDate(new Date(2011, 11, 11));
-		address.setAddressEndDate(new Date(2012, 11, 11));
+		address.setAddressStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
+		address.setAddressEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/10"));
 		address.setAddressContactAddress("YES");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 2, null, mappingResult, new ModelMap());

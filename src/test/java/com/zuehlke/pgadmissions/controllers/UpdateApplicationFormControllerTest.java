@@ -40,12 +40,10 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
-import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -166,73 +164,6 @@ public class UpdateApplicationFormControllerTest {
 		address.setAddressLocation("london, uk");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		applicationController.editAddress(address, 2, null, mappingResult, new ModelMap());
-	}
-
-	@Test
-	public void shouldSaveNewFunding() {
-
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
-
-		Funding funding = new Funding();
-		funding.setFundingType(FundingType.SCHOLARSHIP);
-		funding.setFundingDescription("my description");
-		funding.setFundingValue("2000");
-		funding.setFundingAwardDate(new Date());
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = applicationController.addFunding(funding, 2, null,mappingResult, new ModelMap());
-		Assert.assertEquals("private/pgStudents/form/components/funding_details", modelAndView.getViewName());
-		Assert.assertEquals(FundingType.SCHOLARSHIP, ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
-				.getFundings().get(0).getType());
-		Assert.assertNull(modelAndView.getModel().get("add"));
-	}
-
-	@Test
-	public void shouldAddMessageIdFundingAddParameterProvided() {
-
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
-
-		Funding funding = new Funding();
-		funding.setFundingType(FundingType.SCHOLARSHIP);
-		funding.setFundingDescription("my description");
-		funding.setFundingValue("2000");
-		funding.setFundingAwardDate(new Date());
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = applicationController.addFunding(funding, 2, "add",mappingResult, new ModelMap());
-		Assert.assertEquals("private/pgStudents/form/components/funding_details", modelAndView.getViewName());
-		Assert.assertEquals(FundingType.SCHOLARSHIP, ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
-				.getFundings().get(0).getType());
-		Assert.assertEquals("add", modelAndView.getModel().get("add"));
-	}
-
-	@Test
-	public void shouldNotSaveNewFunding() {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock);
-		Funding funding = new Funding();
-		funding.setFundingType(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = applicationController.addFunding(funding, 2, null,mappingResult, new ModelMap());
-		Assert.assertEquals("private/pgStudents/form/components/funding_details", modelAndView.getViewName());
-	}
-
-	@Test(expected = CannotUpdateApplicationException.class)
-	public void shouldNotSaveNewFundingWhenAplicationIsSubmitted() {
-
-		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED)
-				.toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock);
-
-		Funding funding = new Funding();
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		applicationController.addFunding(funding, 2,null,  mappingResult, new ModelMap());
 	}
 
 	@Test

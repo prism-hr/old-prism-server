@@ -52,8 +52,6 @@ public class Qualification extends DomainObject<Integer>{
 	@Column(name="grade")
 	private String qualificationGrade;
 	
-	@Column(name="score")
-	private String qualificationScore;
 	
 	@Column(name="start_date")
 	@Temporal(TemporalType.DATE)
@@ -110,14 +108,6 @@ public class Qualification extends DomainObject<Integer>{
 
 	public void setQualificationGrade(String q_grade) {
 		this.qualificationGrade = q_grade;
-	}
-
-	public String getQualificationScore() {
-		return qualificationScore;
-	}
-
-	public void setQualificationScore(String q_score) {
-		this.qualificationScore = q_score;
 	}
 
 	public Date getQualificationStartDate() {

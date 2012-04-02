@@ -344,8 +344,7 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("Language: "+ qualification.getQualificationLanguage().getName()));
 				document.add(new Paragraph("Level: " + qualification.getQualificationLevel().getDisplayValue()));
 				document.add(new Paragraph("Type: " + qualification.getQualificationType()));
-				document.add(new Paragraph("Grade: " + qualification.getQualificationGrade()));
-				document.add(new Paragraph("Score: " + qualification.getQualificationScore()));
+				document.add(new Paragraph("Grade: " + qualification.getQualificationGrade()));				
 				document.add(new Paragraph("Award Date: " + qualification.getQualificationAwardDate().toString()));
 
 				document.add(new Paragraph(" "));

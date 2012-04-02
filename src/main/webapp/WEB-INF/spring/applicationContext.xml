@@ -27,10 +27,13 @@
     </bean>
     
 	<bean id="messageSource"
-		class="org.springframework.context.support.ResourceBundleMessageSource">
-		<property name="basename">
-			<value>messages</value>
-		</property>
+		class="org.springframework.context.support.ResourceBundleMessageSource">		
+		  <property name="basenames">
+		      <list>
+		        <value>messages</value>
+		        <value>tooltips</value>		        
+		      </list>
+		    </property>
 	</bean>
 	<!-- general exception page handler -->
 	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">

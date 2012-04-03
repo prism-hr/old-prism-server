@@ -10,7 +10,6 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
-import com.zuehlke.pgadmissions.dto.Address;
 
 @Component
 public class PersonalDetailValidator implements Validator {

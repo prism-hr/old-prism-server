@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Service("userService")
@@ -99,6 +98,11 @@ public class UserService {
 			}
 		}
 		return availableUsers;
+	}
+
+	public RegisteredUser getUserByEmail(String email) {
+		return userDAO.getUserByEmail(email);
+		
 	}
 
 

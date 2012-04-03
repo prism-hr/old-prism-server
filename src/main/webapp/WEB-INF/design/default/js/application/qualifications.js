@@ -86,6 +86,7 @@ $(document).ready(function(){
 			bindDatePickers();
 		} else {
 			$("#currentQualificationCB").attr('checked', false);
+			$("#currentQualification").val("NO");
 		}
 		$('#qualificationAwardDate').val($('#'+id+'_qualificationAwardDateDP').val());
 	});

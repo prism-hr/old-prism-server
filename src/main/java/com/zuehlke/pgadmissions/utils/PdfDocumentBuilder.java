@@ -310,7 +310,9 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("Level: " + qualification.getQualificationLevel().getDisplayValue()));
 				document.add(new Paragraph("Type: " + qualification.getQualificationType()));
 				document.add(new Paragraph("Grade: " + qualification.getQualificationGrade()));				
-				document.add(new Paragraph("Award Date: " + qualification.getQualificationAwardDate().toString()));
+				if(qualification.getQualificationAwardDate() != null){
+					document.add(new Paragraph("Award Date: " + qualification.getQualificationAwardDate().toString()));
+				}
 
 				document.add(new Paragraph(" "));
 			}

@@ -22,5 +22,8 @@ public class QualificationDAO {
 		sessionFactory.getCurrentSession().delete(qualification);
 		
 	}
+	public Qualification getQualificationById(Integer id) {
+		return (Qualification) sessionFactory.getCurrentSession().get(Qualification.class, id);
+	}
 
 }

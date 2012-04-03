@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
@@ -33,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
-import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
@@ -101,7 +101,7 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setApplicationForm(applicationForm);
 			viewApplicationModel.setAddress(new Address());
 			viewApplicationModel.setFunding(new com.zuehlke.pgadmissions.dto.Funding());
-			viewApplicationModel.setQualification(new QualificationDTO());
+			viewApplicationModel.setQualification(new Qualification());
 			viewApplicationModel.setEmploymentPosition(new EmploymentPosition());
 			viewApplicationModel.setReferee(new Referee());
 			viewApplicationModel.setMessage("Some required fields are missing, please review your application form.");

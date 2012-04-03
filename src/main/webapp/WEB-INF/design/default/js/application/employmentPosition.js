@@ -92,7 +92,7 @@ $('a[name="positionCancelButton"]').click(function(){
 	$("#position_endDate").val("");
 	$("#completedPositionCB").attr('checked', false);
 	$("span[class='invalid']").each(function(){
-		$(this).html("");
+		$(this).hide();
 	});
 	
 });

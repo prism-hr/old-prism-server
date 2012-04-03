@@ -59,8 +59,8 @@
 		    	<!--form method="post" action="w00pw00p"-->
 		      		<p>&gt; Login</p>
 		        	
-		        	<input type="text" id ="username_or_email" name="j_username" placeholder="Email address" />
-		        	<input type="password" id ="password" name="j_password" placeholder="Password" />
+		        	<input type="text" id ="username_or_email" name="j_username" value="Email address" />
+		        	<input type="password" id ="password" name="j_password" value="Password" />
 		        	<#if RequestParameters.login_error??>
 		        	<span class="invalid">Invalid username/password combination.</span>
 		            </#if>
@@ -81,5 +81,6 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/login.js'/>"></script>
 	</body>
 </html>

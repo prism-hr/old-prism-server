@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.errors.ValidationErrorsUtil;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -100,9 +99,9 @@ public class FundingController {
 		if(StringUtils.isNotBlank(isFundingAdd)){
 			modelMap.put("fundingAdd", "add");
 		}
-		if (result.hasErrors()) {
-			modelMap.put("fundingErrors", ValidationErrorsUtil.getErrorString(result));
-		}
+//		if (result.hasErrors()) {
+//			modelMap.put("fundingErrors", ValidationErrorsUtil.getErrorString(result));
+//		}
 		modelMap.put("id", applicationForm.getId());
 		return new ModelAndView("redirect:/application", modelMap);
 	}

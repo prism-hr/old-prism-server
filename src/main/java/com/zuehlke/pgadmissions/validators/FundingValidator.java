@@ -34,9 +34,8 @@ public class FundingValidator implements Validator {
 
 		if (fund.getFundingFile() != null) {
 			Document document = new Document();
-		Funding funding = (Funding) target;
-		String awardDate = funding.getFundingAwardDate() == null ? "": funding.getFundingAwardDate().toString();
-		if (StringUtils.isNotBlank(awardDate) && funding.getFundingAwardDate().after(today)) {
+		String awardDate = fund.getFundingAwardDate() == null ? "": fund.getFundingAwardDate().toString();
+		if (StringUtils.isNotBlank(awardDate) && fund.getFundingAwardDate().after(today)) {
 			errors.rejectValue("fundingAwardDate", "funding.fundingAwardDate.future");
 		}
 			document.setFileName(fund.getFundingFile().getOriginalFilename());

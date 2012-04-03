@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.dto.QualificationDTO;
+import com.zuehlke.pgadmissions.errors.FundingErrors;
 
 public class ApplicationPageModel extends PageModel {
 
@@ -50,6 +51,8 @@ public class ApplicationPageModel extends PageModel {
 	private String uploadTwoErrorCode;
 	private List<FundingType> fundingTypes = new LinkedList<FundingType>();
 	private List<AddressPurpose> addressPurposes = new LinkedList<AddressPurpose>();
+	
+	private FundingErrors fundingErrors;
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -219,4 +222,13 @@ public class ApplicationPageModel extends PageModel {
 	public void setUploadTwoErrorCode(String uploadTwoErrorCode) {
 		this.uploadTwoErrorCode = uploadTwoErrorCode;
 	}
+	
+	public FundingErrors getFundingErrors() {
+		return fundingErrors;
+	}
+	
+	public void setFundingErrors(FundingErrors fundingErrors) {
+		this.fundingErrors = fundingErrors;
+	}
+	
 }

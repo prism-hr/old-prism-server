@@ -7,7 +7,7 @@ $(document).ready(function(){
 	
 	$('#documentsCancelButton').click(function(){
 		$("span[class='invalid']").each(function(){
-			$(this).html("");
+			$(this).hide();
 		});
 	});
 	

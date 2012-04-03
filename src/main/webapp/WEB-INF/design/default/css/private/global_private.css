@@ -162,7 +162,8 @@ div.search-box button {
 }
 
 /* Validation errors. */
-span.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; color: red; display: inline-block; margin-left: 10px; padding-left: 24px; }
+span.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; color: red; display: inline-block; margin-left: 10px; padding-left: 24px; 
+/*IE 7*/ zoom: 1; *display: inline;}
 input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin: -1px; }
 p.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; color: red; clear: left; display: inline-block; padding-bottom: 10px; padding-left: 24px; line-height: 24px;}
 

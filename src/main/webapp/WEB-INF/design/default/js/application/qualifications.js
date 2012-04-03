@@ -104,7 +104,7 @@ $(document).ready(function(){
 		$("#qualificationAwardDate").val("");
 		$("#currentQualificationCB").attr('checked', false);
 		$("span[class='invalid']").each(function(){
-			$(this).html("");
+			$(this).hide();
 		});
 	});
 	

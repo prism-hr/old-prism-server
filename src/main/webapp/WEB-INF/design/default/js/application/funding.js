@@ -34,7 +34,7 @@ $(document).ready(function(){
 		$("#fundingDescription").val("");
 		$("#fundingAwardDate").val("");
 		$("span[class='invalid']").each(function(){
-			$(this).html("");
+			$(this).hide();
 		});
 		
 	});

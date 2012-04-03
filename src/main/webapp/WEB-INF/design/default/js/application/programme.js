@@ -12,7 +12,7 @@ $(document).ready(function(){
 	
 	$('#programmeCancelButton').click(function(){
 		$("span[class='invalid']").each(function(){
-			$(this).html("");
+			$(this).hide();
 		});
 	});
 	

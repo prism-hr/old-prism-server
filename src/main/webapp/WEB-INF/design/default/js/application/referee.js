@@ -102,7 +102,7 @@ $('a[name="refereeCancelButton"]').click(function(){
 	$("#ref_messenger").val("");
 	$('#phonenumbersref').html("");
 	$("span[class='invalid']").each(function(){
-		$(this).html("");
+		$(this).hide();
 	});
 });
 

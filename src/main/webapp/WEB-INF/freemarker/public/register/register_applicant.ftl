@@ -58,27 +58,27 @@
 		      		<p>&gt; Register Today...</p>
 		            <input id="recordId" type="hidden" name="recordId" />
 		            
-		            <input id="firstname" type="text" name="firstname" value="${model.record.firstname!}" placeholder="First Name"/>
+		            <input id="firstname" type="text" name="firstname" value="${model.record.firstname!"First Name"}"/>
 		            <#if model.hasError('firstname')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('firstname').code /></span>                    		
                     </#if>
 		            
-		            <input id="lastname" type="text" name="lastname" value="${model.record.lastname!}" placeholder="Last Name"/>
+		            <input id="lastname" type="text" name="lastname" value="${model.record.lastname!"Last Name"}"/>
 		            <#if model.hasError('lastname')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('lastname').code /></span>                    		
                     </#if>
 		            
-		            <input id="email" type="text" name="email" value="${model.record.email!}" placeholder="Email Address"/>
+		            <input id="email" type="text" name="email" value="${model.record.email!"Email Address"}"/>
 		            <#if model.hasError('email')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                    		
                     </#if>
 		            
-		            <input id="password" type="password" name="password" placeholder="Password"/>
+		            <input id="password" type="password" name="password" value="Password""/>
 		            <#if model.hasError('password')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('password').code /></span>                    		
                     </#if>
 		            
-		            <input id="confirmPassword" type="password" name="confirmPassword" placeholder="Confirm Password"/>
+		            <input id="confirmPassword" type="password" name="confirmPassword" value="Password"/>
 		            <#if model.hasError('confirmPassword')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('confirmPassword').code /></span>                    		
                     </#if>

@@ -1,14 +1,26 @@
 $(document).ready(function(){
 
+	$("#englishFirstLanguageCB").attr('checked', false);
+	$("#englishFirstLanguage").val("NO");
+	
 	$('#personalDetailsCloseButton').click(function(){		
 		$('#personalDetails-H2').trigger('click');
 		return false;
 	});
 	
 	$('#personalDetailsCancelButton').click(function(){
+		$("#englishFirstLanguageCB").attr('checked', false);
 		$("span[class='invalid']").each(function(){
 			$(this).html("");
 		});
+	});
+	
+	$("input[name*='englishFirstLanguageCB']").click(function() {
+		if ($("#englishFirstLanguage").val() =='YES'){
+			$("#englishFirstLanguage").val("NO");
+		} else {		
+			$("#englishFirstLanguage").val("YES");
+		}
 	});
 	
 	$('#addPhoneButton').on('click', function(){
@@ -151,7 +163,8 @@ $(document).ready(function(){
 				residenceCountry: $("#residenceCountry").val(),
 				messenger: $("#pd_messenger").val(),
 				personalDetailsId: $("#id").val(), 
-				application: $("#appId").val(),		
+				application: $("#appId").val(),	
+				englishFirstLanguage: $("#englishFirstLanguage").val(),
 				candidateNationalities:"",
 				maternalGuardianNationalities:"",
 				paternalGuardianNationalities:"",

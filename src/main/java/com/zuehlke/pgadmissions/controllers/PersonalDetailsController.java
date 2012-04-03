@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
@@ -85,6 +86,9 @@ public class PersonalDetailsController {
 
 		personalDetailValidator.validate(personalDetail, errors);
 		if (!errors.hasErrors()) {
+			System.out.println("ENGLISH: " + personalDetail.getEnglishFirstLanguage());
+			CheckedStatus englishFirstLanguage = personalDetail.getEnglishFirstLanguage();
+			personalDetail.setEnglishFirstLanguage(englishFirstLanguage);
 			personalDetailsService.save(personalDetail);
 
 		}

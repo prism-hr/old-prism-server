@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -152,6 +153,7 @@ public class PersonalDetailsControllerTest {
 		EasyMock.verify(personalDetailsServiceMock);
 
 	}
+	
 
 	@Test
 	public void shouldSaveDBIfNotNewAndValid() {
@@ -218,7 +220,7 @@ public class PersonalDetailsControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(currentUser).toApplicationForm();
-		PersonalDetail personalDetail = new PersonalDetailsBuilder().id(5).applicationForm(form).messengers("skypeAddress").toPersonalDetails();
+		PersonalDetail personalDetail = new PersonalDetailsBuilder().id(5).applicationForm(form).englishFirstLanguage(CheckedStatus.YES).messengers("skypeAddress").toPersonalDetails();
 		personalDetailsServiceMock.save(personalDetail);
 		Country country1 = new CountryBuilder().id(1).toCountry();
 		Country country2 = new CountryBuilder().id(2).toCountry();
@@ -236,6 +238,8 @@ public class PersonalDetailsControllerTest {
 		assertEquals(form, model.getApplicationForm());
 		assertEquals(form, model.getApplicationForm());
 		assertEquals("skypeAddress", model.getApplicationForm().getPersonalDetails().getMessenger());
+		assertEquals(CheckedStatus.YES, model.getApplicationForm().getPersonalDetails().getEnglishFirstLanguage());
+		assertTrue(model.getApplicationForm().getPersonalDetails().isEnglishFirstLanguage());
 		assertEquals(errorsMock, model.getResult());
 		assertSame(countryList, model.getCountries());
 		assertSame(languages, model.getLanguages());

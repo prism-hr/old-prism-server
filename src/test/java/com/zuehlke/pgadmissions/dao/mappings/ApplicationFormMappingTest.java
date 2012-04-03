@@ -99,7 +99,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().save(application);
 		flushAndClearSession();
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country2)
+				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country2).englishFirstLanguage(CheckedStatus.YES)
 				.applicationForm(application).toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);

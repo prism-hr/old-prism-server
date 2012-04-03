@@ -65,7 +65,7 @@
 			</table>
 		</#if>
         
-        <input type="hidden" id="positionId" name="positionId"/>
+        <input type="hidden" id="positionId" name="positionId" value="${(model.employmentPosition.positionId?html)!}"/>
         
         <form>
         	

@@ -8,29 +8,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.NewAdminUserDTO;
 import com.zuehlke.pgadmissions.dto.NewRolesDTO;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.RolePropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.NewAdminUserDTOValidator;
 
 @Controller
 @RequestMapping("/manageUsers")
 public class ManageUsersController {
 
 	private static final String ROLES_PAGE_VIEW_NAME = "private/staff/superAdmin/assign_roles_page";
+	private static final String NEW_USER_VIEW_NAME = "private/staff/superAdmin/create_new_user_in_role_page";
 	private final ProgramsService programsService;
 	private final UserService userService;
 	private final RolePropertyEditor rolePropertyEditor;
@@ -65,8 +71,45 @@ public class ManageUsersController {
 
 	}
 
+	@RequestMapping(method = RequestMethod.GET, value = "/createNewUser")
+	public ModelAndView createNewUser() {
+		return new ModelAndView(NEW_USER_VIEW_NAME);
+	}
+
+	@RequestMapping(method = RequestMethod.POST, value = "/createNewUser")
+	public ModelAndView addNewUser(@ModelAttribute NewAdminUserDTO adminUser,
+			@RequestParam Integer selectedProgramForNewUser, @ModelAttribute NewRolesDTO newRolesDTO, ModelMap modelMap) {
+
+		Program program = getProgram(selectedProgramForNewUser);
+
+		NewAdminUserDTOValidator validator = new NewAdminUserDTOValidator();
+		BindingResult result = new DirectFieldBindingResult(adminUser, "adminUser");
+		validator.validate(adminUser, result);
+
+		if (result.hasErrors()) {
+			modelMap.put("result", result);
+			modelMap.put("selectedProgram", program);
+			modelMap.put("newUserFirstName", adminUser.getNewUserFirstName());
+			modelMap.put("newUserLastName", adminUser.getNewUserLastName());
+			modelMap.put("newUserEmail", adminUser.getNewUserEmail());
+		} else {
+
+			RegisteredUser potentiallyNewUser = userService.getUserByEmail(adminUser.getNewUserEmail());
+			if (potentiallyNewUser != null) {
+				//TODO: should save user
+				System.out.println("!!should save user");
+			}
+		}
+
+		return new ModelAndView(NEW_USER_VIEW_NAME, modelMap);
+	}
+
 	@ModelAttribute("selectedProgram")
 	public Program getSelectedProgram(@RequestParam(required = false) Integer programId) {
+		return getProgram(programId);
+	}
+
+	private Program getProgram(Integer programId) {
 		if (programId == null) {
 			return null;
 		}

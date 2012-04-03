@@ -81,17 +81,6 @@
                       		${(model.applicationForm.personalDetails.residenceCountry.name?html)!}
                     	</div>
                   	</div>
-                  	<div class="row">
-                        <span class="label">Status</span>
-                        <div class="field">
-                            ${(model.applicationForm.personalDetails.residenceStatus.displayValue?html)!}
-                        </div>
-                    </div>
-                    	
-                	<div class="row">
-                  		<label class="label">From</label>
-                    	<div class="field">${(model.applicationForm.personalDetails.residenceFromDate?string('dd-MMM-yyyy'))!}</div>
-                  	</div>
                   	
                 </div>
                 
@@ -163,21 +152,6 @@
 				<!-- Language -->
               	<div>
                 	
-                	 <#list model.applicationForm.personalDetails.languageProficiencies as prof >
-                  	  	<span>
-                  	  		<div class="row">
-                  	  	 		<label class="label">Language</label>    
-                  				<div class="field">
-                  					<label class="full"> ${prof.language.name}</label>                  	  		
-                  	  			</div>
-                  	  			<span class="label">Aptitude</span>    
-                  				<div class="field">
-                  					<label class="full"> ${prof.aptitude.displayValue}</label>    
-                  	  			</div>
-                  	  		</div>   
-                           
-                  	  	</span>
-                  	  </#list>
                 
                 </div>
 

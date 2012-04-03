@@ -81,7 +81,7 @@
 	                  	<!-- Provider -->
 	                	<div class="row">
 		                  	<span class="label">Provider<em>*</em></span>
-		                    <span class="hint" data-desc="Tooltip demonstration."></span>
+		                    <span class="hint" data-desc="<@spring.message 'education.qualifications.institutionName'/>"></span>
 		                    <div class="field">
 		                    	<#if !model.applicationForm.isSubmitted()>
 		                    	<input id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL" 
@@ -156,7 +156,7 @@
                                             </#if>>
                         		<option value="">Select...</option>
                          			<#list model.languages as language>
-                         				<option value="${language.id?string('#######')}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.id> selected="selected"</#if>>${language.name?html}</option>
+                         				<option value="${language.id?string('#######')}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage.id == language.id> selected="selected"</#if>>${language.name?html}</option>
                          			</#list>
                       			</select>
 								<#if model.hasError('qualificationLanguage')>                    		

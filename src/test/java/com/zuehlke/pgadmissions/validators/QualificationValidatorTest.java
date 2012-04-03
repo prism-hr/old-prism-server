@@ -13,56 +13,57 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
+import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
-import com.zuehlke.pgadmissions.dto.QualificationDTO;
 
 public class QualificationValidatorTest {
 	
-	private QualificationDTO qualificationDto;
+	private Qualification qualification;
 	private QualificationValidator qualificationValidator;
 
 	@Test
 	public void shouldSupportQualification() {
-		assertTrue(qualificationValidator.supports(QualificationDTO.class));
+		assertTrue(qualificationValidator.supports(Qualification.class));
 	}
 	
 	@Test
 	public void shouldRejectIfProviderIsEmpty(){
-		qualificationDto.setQualificationInstitution(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		qualificationValidator.validate(qualificationDto, mappingResult);
+		qualification.setQualificationInstitution(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.institution.notempty",mappingResult.getFieldError("qualificationInstitution").getCode());
 	}
 	@Test
 	public void shouldRejectIfNameOfProgrammeIsEmpty(){
-		qualificationDto.setQualificationProgramName(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		qualificationValidator.validate(qualificationDto, mappingResult);
+		qualification.setQualificationProgramName(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.name_of_programme.notempty",mappingResult.getFieldError("qualificationProgramName").getCode());
 	}
 	@Test
 	public void shouldRejectIfStartDateIsEmpty(){
-		qualificationDto.setQualificationStartDate(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		qualificationValidator.validate(qualificationDto, mappingResult);
+		qualification.setQualificationStartDate(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.start_date.notempty",mappingResult.getFieldError("qualificationStartDate").getCode());
 	}
 	@Test
 	public void shouldRejectIfLanguageIsEmpty(){
-		qualificationDto.setQualificationLanguage(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		qualificationValidator.validate(qualificationDto, mappingResult);
+		qualification.setQualificationLanguage(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.language_of_study.notempty",mappingResult.getFieldError("qualificationLanguage").getCode());
 	}
 	@Test
 	public void shouldRejectIfLevelIsEmpty(){
-		qualificationDto.setQualificationLevel(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		qualificationValidator.validate(qualificationDto, mappingResult);
+		qualification.setQualificationLevel(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.level.notempty",mappingResult.getFieldError("qualificationLevel").getCode());
 	}
@@ -75,27 +76,27 @@ public class QualificationValidatorTest {
 		tomorrow = calendar.getTime();
 		calendar.add(Calendar.DATE, 2);
 		dayAfterTomorrow = calendar.getTime();
-		qualificationDto.setQualificationStartDate(tomorrow);
-		qualificationDto.setQualificationAwardDate(dayAfterTomorrow);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		qualificationValidator.validate(qualificationDto, mappingResult);
+		qualification.setQualificationStartDate(tomorrow);
+		qualification.setQualificationAwardDate(dayAfterTomorrow);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(2, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.start_date.future",mappingResult.getFieldError("qualificationStartDate").getCode());
 		Assert.assertEquals("qualification.award_date.future",mappingResult.getFieldError("qualificationAwardDate").getCode());
 	}
 	
 	public void shouldRejectIfTypeIsEmpty(){
-		qualificationDto.setQualificationType(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		qualificationValidator.validate(qualificationDto, mappingResult);
+		qualification.setQualificationType(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.type.notempty",mappingResult.getFieldError("qualificationType").getCode());
 	}
 	@Test
 	public void shouldRejectIfGradeIsEmpty(){
-		qualificationDto.setQualificationGrade(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		qualificationValidator.validate(qualificationDto, mappingResult);
+		qualification.setQualificationGrade(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.grade.notempty",mappingResult.getFieldError("qualificationGrade").getCode());
 	}
@@ -103,10 +104,10 @@ public class QualificationValidatorTest {
 	
 	@Test
 	public void shouldRejectIfStartDateIsAfterEndDate() throws ParseException{
-		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		qualificationDto.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		qualificationValidator.validate(qualificationDto, mappingResult);
+		qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+		qualification.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.start_date.notvalid",mappingResult.getFieldError("qualificationStartDate").getCode());
 	}
@@ -115,14 +116,14 @@ public class QualificationValidatorTest {
 	public void setup() throws ParseException{
 		
 		qualificationValidator = new QualificationValidator();
-		qualificationDto = new QualificationDTO();
-		qualificationDto.setQualificationId(3);
-		qualificationDto.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
-		qualificationDto.setQualificationGrade("first");
-		qualificationDto.setQualificationInstitution("UCL");
-		qualificationDto.setQualificationLanguage(2);
-		qualificationDto.setQualificationLevel(QualificationLevel.COLLEGE);
-		qualificationDto.setQualificationProgramName("CS");		
-		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
-		qualificationDto.setQualificationType("degree");	}
+		qualification = new Qualification();
+		qualification.setId(3);
+		qualification.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
+		qualification.setQualificationGrade("first");
+		qualification.setQualificationInstitution("UCL");
+		qualification.setQualificationLanguage(new LanguageBuilder().id(1).toLanguage());
+		qualification.setQualificationLevel(QualificationLevel.COLLEGE);
+		qualification.setQualificationProgramName("CS");		
+		qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
+		qualification.setQualificationType("degree");	}
 }

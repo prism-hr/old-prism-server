@@ -7,28 +7,27 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.QualificationDTO;
+
 import com.zuehlke.pgadmissions.errors.FundingErrors;
 
 public class ApplicationPageModel extends PageModel {
 
 	private Address address = new Address();
 	private Funding funding = new Funding();
-	private QualificationDTO qualification = new QualificationDTO();
+	private Qualification qualification = new Qualification();
 	private EmploymentPosition employmentPosition =new EmploymentPosition();
 	private Referee referee= new Referee();
 	private String message;
@@ -37,10 +36,8 @@ public class ApplicationPageModel extends PageModel {
 	private List<Country> countries;
 	private List<Language> languages;
 	
-	private List<ResidenceStatus> residenceStatuses = new LinkedList<ResidenceStatus>();
 	private List<Gender> genders = new LinkedList<Gender>();
 	private List<PhoneType> phoneTypes = new LinkedList<PhoneType>();
-	private List<LanguageAptitude> languageAptitudes = new LinkedList<LanguageAptitude>();
 	private List<DocumentType> documentTypes = new LinkedList<DocumentType>();
 	private List<QualificationLevel> qualificationLevels = new LinkedList<QualificationLevel>();
 
@@ -87,11 +84,11 @@ public class ApplicationPageModel extends PageModel {
 
 	}
 
-	public QualificationDTO getQualification() {
+	public Qualification getQualification() {
 		return qualification;
 	}
 
-	public void setQualification(QualificationDTO qualification) {
+	public void setQualification(Qualification qualification) {
 		this.qualification = qualification;
 	}
 
@@ -110,14 +107,6 @@ public class ApplicationPageModel extends PageModel {
 
 	public EmploymentPosition getEmploymentPosition() {
 		return employmentPosition;
-	}
-
-	public List<ResidenceStatus> getResidenceStatuses() {
-		return residenceStatuses;
-	}
-
-	public void setResidenceStatuses(ResidenceStatus[] values) {
-		this.residenceStatuses.addAll(Arrays.asList(values));
 	}
 
 	public List<StudyOption> getStudyOptions() {
@@ -166,14 +155,6 @@ public class ApplicationPageModel extends PageModel {
 
 	public void setLanguages(List<Language> languages) {
 		this.languages = languages;
-	}
-
-	public List<LanguageAptitude> getLanguageAptitudes() {
-		return languageAptitudes;
-	}
-
-	public void setLanguageAptitudes(LanguageAptitude[] languageAptitudes) {
-		this.languageAptitudes.addAll(Arrays.asList(languageAptitudes));
 	}
 
 	public List<DocumentType> getDocumentTypes() {

@@ -40,7 +40,6 @@ $(document).ready(function(){
 			completed: $("#currentQualification").val(),
 			appId: $("#appId").val(),
 			qualificationId: $("#qualificationId").val(),
-			id: $("#id").val(),
 			add:"add"
 		},
 		function(data) {
@@ -61,8 +60,7 @@ $(document).ready(function(){
 			qualificationAwardDate: $("#qualificationAwardDate").val(),
 			appId: $("#appId").val(),
 			completed: $("#currentQualification").val(),
-			qualificationId: $("#qualificationId").val(),
-			id: $("#id").val()
+			qualificationId: $("#qualificationId").val()
 		},
 		function(data) {
 			$('#qualificationsSection').html(data);

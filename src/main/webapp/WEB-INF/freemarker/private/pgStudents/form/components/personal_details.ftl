@@ -236,64 +236,10 @@
               	
               	<div>
               	     <div class="row">
-						<label class="label">Languages</label>
+						<label class="label">Language</label>
 						 <span class="hint" data-desc="<@spring.message 'personalDetails.language.section'/>"></span>                  
 						
 					</div>                              
-                    <div class="row" id="existingProficiencies">
-						<#list model.applicationForm.personalDetails.languageProficiencies as prof >
-							<span>
-								<div class="row">
-									<label class="label">Language</label>    
-									<div class="field">
-										<label class="full"> ${prof.language.name}</label> 
-										<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if> 
-									</div>
-									<span class="label">Aptitude</span>    
-									<div class="field">
-										<label class="full"> ${prof.aptitude.displayValue}</label>                   	  				
-										
-									</div>
-								</div>   
-								<input type="hidden" name="languageProficiencies" value='${prof.asJson}'/>   
-							</span>
-                  	  </#list>
-					</div>
-                  
-                	<div class="row">
-						<label class="label">Language</label>
-						 <span class="hint" data-desc="<@spring.message 'personalDetails.language.language'/>"></span>                       
-						<div class="field">
-							<select class="full" id="languageSelect" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
-								<option value="">Select...</option>
-								<#list model.languages as language>
-									<option value="${language.id?string('#######')}">${language.name}</option>
-								</#list>
-							</select>
-						</div>
-					</div>
-					<div class="row">
-						<span class="label">Aptitude
-						<#if !proficiencyExist>
-							<em id="aptitude-em">*</em>
-						</#if>
-						</span>
-						<span class="hint" data-desc="<@spring.message 'personalDetails.language.competency'/>"></span>        
-						<div class="field">
-							<select class="full" id="aptitude" name="aptitude" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>                      	
-							   <#list model.languageAptitudes as aptitude >
-									<option value="${aptitude}">${aptitude.displayValue}</option>
-								</#list>
-							</select>
-							<#if model.hasError('languageProficiencies')>                         
-                                <span class="invalid"><@spring.message  model.result.getFieldError('languageProficiencies').code /></span>                           
-							</#if>
-						</div>
-					</div>
-                	<div class="row">
-                  		<div class="field"><a class="button blue" id="addLanguageButton">Add language</a></div>
-					</div>
-                
                 </div>
 
               	<div>
@@ -316,34 +262,6 @@
 									<span class="invalid"><@spring.message  model.result.getFieldError('residenceCountry').code /></span>                           
 							</#if>
 						</div>
-					</div>
-					<div class="row">
-						<span class="label">Status<em>*</em></span>
-						<span class="hint" data-desc="<@spring.message 'personalDetails.residence.status'/>"></span>       
-						<div class="field">
-							 <select class="full"  name="residenceStatus" id="residenceStatus" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
-								 <#list model.residenceStatuses as residenceStatus>
-									  <option value="${residenceStatus}">${residenceStatus.displayValue}</option>               
-								</#list>
-							 </select>
-							  <#if model.hasError('residenceStatus')>                         
-									<span class="invalid"><@spring.message  model.result.getFieldError('residenceStatus').code /></span>                           
-							</#if>
-						</div>
-					</div>
-					<div class="row">
-						<label class="label">From<em>*</em> </label>
-						<span class="hint" data-desc="<@spring.message 'personalDetails.residence.dateOfCommencement'/>"></span>    
-						<div class="field">
-						<#if !model.applicationForm.isSubmitted()>
-							<input class="half date" value="${(model.applicationForm.personalDetails.residenceFromDate?string('dd-MMM-yyyy'))!}" name="residenceFromDate" id="residenceFromDate"/>
-							<#if model.hasError('residenceFromDate')>                           
-									<span class="invalid"><@spring.message  model.result.getFieldError('residenceFromDate').code /></span>                           
-							</#if>
-						<#else>
-							<input class="full" readonly="readonly" type="text" value="${(model.applicationForm.personalDetails.residenceFromDate?string('dd-MMM-yyyy'))!}" name="residenceFromDate" id="residenceFromDate" />             
-						</#if>    
-						</div>                
 					</div>
                 </div>
 

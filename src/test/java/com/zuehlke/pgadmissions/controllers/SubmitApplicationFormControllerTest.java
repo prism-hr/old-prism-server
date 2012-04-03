@@ -36,10 +36,8 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
@@ -138,8 +136,6 @@ public class SubmitApplicationFormControllerTest {
 		assertNotNull(model.getEmploymentPosition());
 		assertNotNull(model.getReferrers());
 		
-		assertEquals(ResidenceStatus.values().length, model.getResidenceStatuses().size());
-		assertTrue(model.getResidenceStatuses().containsAll(Arrays.asList(ResidenceStatus.values())));
 		assertEquals(Gender.values().length, model.getGenders().size());
 		assertTrue(model.getGenders().containsAll(Arrays.asList(Gender.values())));
 		assertEquals(StudyOption.values().length, model.getStudyOptions().size());
@@ -148,9 +144,6 @@ public class SubmitApplicationFormControllerTest {
 		assertTrue(model.getReferrers().containsAll(Arrays.asList(Referrer.values())));
 		assertEquals(PhoneType.values().length, model.getPhoneTypes().size());
 		assertTrue(model.getPhoneTypes().containsAll(Arrays.asList(PhoneType.values())));
-		
-		assertEquals(LanguageAptitude.values().length, model.getLanguageAptitudes().size());
-		assertTrue(model.getLanguageAptitudes().containsAll(Arrays.asList(LanguageAptitude.values())));
 		
 		assertEquals(DocumentType.values().length, model.getDocumentTypes().size());
 		assertTrue(model.getDocumentTypes().containsAll(Arrays.asList(DocumentType.values())));

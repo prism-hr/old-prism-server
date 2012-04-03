@@ -8,15 +8,15 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
-import com.zuehlke.pgadmissions.dto.QualificationDTO;
 
 
 @Service
 public class QualificationValidator  implements Validator{
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return QualificationDTO.class.equals(clazz);
+		return Qualification.class.equals(clazz);
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class QualificationValidator  implements Validator{
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLevel", "qualification.level.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", "qualification.type.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationGrade", "qualification.grade.notempty");		
-		QualificationDTO qualification = (QualificationDTO) target;
+		Qualification qualification = (Qualification) target;
 		String startDate = qualification.getQualificationStartDate() == null ? "": qualification.getQualificationStartDate().toString();
 		String awardDate = qualification.getQualificationAwardDate() == null ? "": qualification.getQualificationAwardDate().toString();
 		if (StringUtils.isNotBlank(startDate) && qualification.getQualificationAwardDate() != null && qualification.getQualificationStartDate().after(qualification.getQualificationAwardDate())) {

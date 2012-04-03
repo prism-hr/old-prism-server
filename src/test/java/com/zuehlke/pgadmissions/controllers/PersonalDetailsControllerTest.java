@@ -23,7 +23,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -34,9 +33,7 @@ import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -44,7 +41,6 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.LanguageProficiencyJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.NationalityJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
@@ -67,7 +63,6 @@ public class PersonalDetailsControllerTest {
 	private LanguageService languageServiceMok;
 	private LanguagePropertyEditor languagePropertyEditorMopck;
 	private NationalityJSONPropertyEditor nationalityJSONPropertyEditorMock;
-	private LanguageProficiencyJSONPropertyEditor languageProficiencyJSONPropertyEditorMock;
 
 	@Test
 	public void shouldBindPropertyEditors() {
@@ -78,7 +73,6 @@ public class PersonalDetailsControllerTest {
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		binderMock.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditorMock);
 		binderMock.registerCustomEditor(Nationality.class, nationalityJSONPropertyEditorMock);
-		binderMock.registerCustomEditor(LanguageProficiency.class, languageProficiencyJSONPropertyEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
@@ -110,7 +104,7 @@ public class PersonalDetailsControllerTest {
 
 		controller = new PersonalDetailsController(personalDetailsServiceMock, countryServiceMock, languageServiceMok, applicationFormPropertyEditorMock,
 				countryPropertyEditorMock, languagePropertyEditorMopck, datePropertyEditorMock, personalDetailValidatorMock, phoneNumberJSONPropertyEditorMock,
-				nationalityJSONPropertyEditorMock, languageProficiencyJSONPropertyEditorMock) {
+				nationalityJSONPropertyEditorMock) {
 			@Override
 			PersonalDetail newPersonalDetail() {
 				return personalDetails;
@@ -245,15 +239,11 @@ public class PersonalDetailsControllerTest {
 		assertEquals(errorsMock, model.getResult());
 		assertSame(countryList, model.getCountries());
 		assertSame(languages, model.getLanguages());
-		assertEquals(ResidenceStatus.values().length, model.getResidenceStatuses().size());
-		assertTrue(model.getResidenceStatuses().containsAll(Arrays.asList(ResidenceStatus.values())));
 		assertEquals(Gender.values().length, model.getGenders().size());
 		assertTrue(model.getGenders().containsAll(Arrays.asList(Gender.values())));
 		assertEquals(PhoneType.values().length, model.getPhoneTypes().size());
 		assertTrue(model.getPhoneTypes().containsAll(Arrays.asList(PhoneType.values())));
 
-		assertEquals(LanguageAptitude.values().length, model.getLanguageAptitudes().size());
-		assertTrue(model.getLanguageAptitudes().containsAll(Arrays.asList(LanguageAptitude.values())));
 
 	}
 
@@ -271,12 +261,11 @@ public class PersonalDetailsControllerTest {
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 		phoneNumberJSONPropertyEditorMock = EasyMock.createMock(PhoneNumberJSONPropertyEditor.class);
 		nationalityJSONPropertyEditorMock = EasyMock.createMock(NationalityJSONPropertyEditor.class);
-		languageProficiencyJSONPropertyEditorMock = EasyMock.createMock(LanguageProficiencyJSONPropertyEditor.class);
 		
 		
 		controller = new PersonalDetailsController(personalDetailsServiceMock, countryServiceMock, languageServiceMok, applicationFormPropertyEditorMock,
 				countryPropertyEditorMock, languagePropertyEditorMopck, datePropertyEditorMock, personalDetailValidatorMock, phoneNumberJSONPropertyEditorMock,
-				nationalityJSONPropertyEditorMock, languageProficiencyJSONPropertyEditorMock);
+				nationalityJSONPropertyEditorMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);

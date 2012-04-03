@@ -28,7 +28,7 @@ $(document).ready(function(){
 	
 	$('#qualificationsSaveButton').click(function(){
 		$.post("/pgadmissions/update/editQualification", {  
-			qualificationProgramName: $("#qualificationProgramName").val(), 
+			qualificationSubject: $("#qualificationSubject").val(), 
 			qualificationInstitution: $("#qualificationInstitution").val(), 
 			qualificationLevel: $("#qualificationLevel").val(),
 			qualificationType: $("#qualificationType").val(),
@@ -49,7 +49,7 @@ $(document).ready(function(){
 	
 	$('#qualificationSaveCloseButton').click(function(){
 		$.post("/pgadmissions/update/editQualification", {  
-			qualificationProgramName: $("#qualificationProgramName").val(), 
+			qualificationSubject: $("#qualificationSubject").val(), 
 			qualificationInstitution: $("#qualificationInstitution").val(), 
 			qualificationLevel: $("#qualificationLevel").val(),
 			qualificationType: $("#qualificationType").val(),
@@ -71,7 +71,7 @@ $(document).ready(function(){
 		var id = this.id;
 		id = id.replace('qualification_', '');
 		$('#qualificationId').val($('#'+id+'_qualificationIdDP').val());
-		$('#qualificationProgramName').val($('#'+id+'_qualificationProgramNameDP').val());
+		$('#qualificationSubject').val($('#'+id+'_qualificationSubjectDP').val());
 		$('#qualificationInstitution').val($('#'+id+'_qualificationInstitutionDP').val());
 		$('#qualificationLevel').val($('#'+id+'_qualificationLevelDP').val());
 		$('#qualificationType').val($('#'+id+'_qualificationTypeDP').val());
@@ -92,7 +92,7 @@ $(document).ready(function(){
 	
 	$('a[name="qualificationCancelButton"]').click(function(){
 		$("#qualificationId").val("");
-		$("#qualificationProgramName").val("");
+		$("#qualificationSubject").val("");
 		$("#qualificationInstitution").val("");
 		$("#qualificationLevel").val("");
 		$("#qualificationGrade").val("");

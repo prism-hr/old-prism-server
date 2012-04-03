@@ -23,7 +23,7 @@ public class QualificationValidator  implements Validator{
 	public void validate(Object target, Errors errors) {
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationInstitution", "qualification.institution.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationProgramName", "qualification.name_of_programme.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationSubject", "qualification.subject.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationStartDate", "qualification.start_date.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLanguage", "qualification.language_of_study.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLevel", "qualification.level.notempty");

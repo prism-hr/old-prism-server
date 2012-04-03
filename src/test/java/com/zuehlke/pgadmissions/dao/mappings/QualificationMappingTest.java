@@ -35,9 +35,9 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		
 		Qualification qualification = new QualificationBuilder().id(3)
-				.q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).q_grade("").q_institution("")
-				.q_language_of_study(languageDAO.getLanguageById(1)).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").isCompleted(CheckedStatus.YES)
-				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
+				.awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("").institution("")
+				.languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
 
 		sessionFactory.getCurrentSession().save(qualification);
 		assertNotNull(qualification.getId());
@@ -58,7 +58,7 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 		assertEquals(qualification.getQualificationInstitution(), qualificationDetails.getQualificationInstitution());
 		assertEquals(qualification.getQualificationLanguage(),	qualificationDetails.getQualificationLanguage());
 		assertEquals(qualification.getQualificationLevel(), qualificationDetails.getQualificationLevel());
-		assertEquals(qualification.getQualificationProgramName(), qualificationDetails.getQualificationProgramName());		
+		assertEquals(qualification.getQualificationSubject(), qualificationDetails.getQualificationSubject());		
 		assertEquals(qualification.getQualificationStartDate(), qualificationDetails.getQualificationStartDate());
 		assertEquals(qualification.getQualificationType(), qualificationDetails.getQualificationType());
 		assertEquals(qualification.getCompleted(), qualificationDetails.getCompleted());

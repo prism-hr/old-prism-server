@@ -36,12 +36,12 @@ public class QualificationValidatorTest {
 		Assert.assertEquals("qualification.institution.notempty",mappingResult.getFieldError("qualificationInstitution").getCode());
 	}
 	@Test
-	public void shouldRejectIfNameOfProgrammeIsEmpty(){
-		qualification.setQualificationProgramName(null);
+	public void shouldRejectIfSubjectIsEmpty(){
+		qualification.setQualificationSubject(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
 		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("qualification.name_of_programme.notempty",mappingResult.getFieldError("qualificationProgramName").getCode());
+		Assert.assertEquals("qualification.subject.notempty",mappingResult.getFieldError("qualificationSubject").getCode());
 	}
 	@Test
 	public void shouldRejectIfStartDateIsEmpty(){
@@ -123,7 +123,7 @@ public class QualificationValidatorTest {
 		qualification.setQualificationInstitution("UCL");
 		qualification.setQualificationLanguage(new LanguageBuilder().id(1).toLanguage());
 		qualification.setQualificationLevel(QualificationLevel.COLLEGE);
-		qualification.setQualificationProgramName("CS");		
+		qualification.setQualificationSubject("CS");		
 		qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
 		qualification.setQualificationType("degree");	}
 }

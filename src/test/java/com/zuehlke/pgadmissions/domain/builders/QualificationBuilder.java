@@ -28,18 +28,18 @@ public class QualificationBuilder {
 		return this;
 	}
 	
-	public QualificationBuilder q_award_date(Date q_award_date) {
+	public QualificationBuilder awardDate(Date q_award_date) {
 		this.q_award_date = q_award_date;
 		return this;
 	}
 
 
-	public QualificationBuilder q_name_of_programme(String q_name_of_programme) {
+	public QualificationBuilder subject(String q_name_of_programme) {
 		this.q_name_of_programme = q_name_of_programme;
 		return this;
 	}
 
-	public QualificationBuilder q_institution(String q_institution) {
+	public QualificationBuilder institution(String q_institution) {
 		this.q_institution = q_institution;
 		return this;
 	}
@@ -50,26 +50,26 @@ public class QualificationBuilder {
 	}
 	
 
-	public QualificationBuilder q_language_of_study(Language q_language_of_study) {
+	public QualificationBuilder languageOfStudy(Language q_language_of_study) {
 		this.q_language_of_study = q_language_of_study;
 		return this;
 	}
 
 	
-	public QualificationBuilder q_level(QualificationLevel q_level) {
+	public QualificationBuilder level(QualificationLevel q_level) {
 		this.q_level = q_level;
 		return this;
 	}
-	public QualificationBuilder q_type(String q_type) {
+	public QualificationBuilder type(String q_type) {
 		this.q_type = q_type;
 		return this;
 	}
-	public QualificationBuilder q_grade(String q_grade) {
+	public QualificationBuilder grade(String q_grade) {
 		this.q_grade = q_grade;
 		return this;
 	}
 
-	public QualificationBuilder q_start_date(Date q_start_date) {
+	public QualificationBuilder startDate(Date q_start_date) {
 		this.q_start_date = q_start_date;
 		return this;
 	}
@@ -82,7 +82,7 @@ public class QualificationBuilder {
 		qualification.setQualificationInstitution(q_institution);
 		qualification.setQualificationLanguage(q_language_of_study);
 		qualification.setQualificationLevel(q_level);
-		qualification.setQualificationProgramName(q_name_of_programme);
+		qualification.setQualificationSubject(q_name_of_programme);
 		qualification.setQualificationStartDate(q_start_date);
 		qualification.setQualificationType(q_type);
 		qualification.setId(id);

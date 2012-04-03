@@ -248,12 +248,12 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		// flushAndClearSession();
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		
-		Qualification qualification1 = new QualificationBuilder().q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_grade("")
-				.q_institution("").q_language_of_study(languageDAO.getLanguageById(1)).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").isCompleted(CheckedStatus.YES)
-				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
-		Qualification qualification2 = new QualificationBuilder().q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_grade("").isCompleted(CheckedStatus.YES)
-				.q_institution("").q_language_of_study(languageDAO.getLanguageById(2)).q_level(QualificationLevel.COLLEGE).q_name_of_programme("")
-				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
+		Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
+				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
+		Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").isCompleted(CheckedStatus.YES)
+				.institution("").languageOfStudy(languageDAO.getLanguageById(2)).level(QualificationLevel.COLLEGE).subject("")
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
 
 		application.getQualifications().addAll(Arrays.asList(qualification1, qualification2));
 

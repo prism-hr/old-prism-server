@@ -304,7 +304,7 @@ public class PdfDocumentBuilder {
 
 			for (Qualification qualification : application.getQualifications()) {
 				document.add(new Paragraph("Provider: " + qualification.getQualificationInstitution()));
-				document.add(new Paragraph("Programme: "+ qualification.getQualificationProgramName()));
+				document.add(new Paragraph("Subject: "+ qualification.getQualificationSubject()));
 				document.add(new Paragraph("Start Date: " + qualification.getQualificationStartDate().toString()));
 				document.add(new Paragraph("Language: "+ qualification.getQualificationLanguage().getName()));
 				document.add(new Paragraph("Level: " + qualification.getQualificationLevel().getDisplayValue()));

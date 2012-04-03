@@ -124,9 +124,9 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		language.setId(90);
 		language.setName("language");
 		Qualification qualification = new QualificationBuilder().id(17)
-				.q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).q_level(QualificationLevel.COLLEGE).q_grade("").q_institution("")
-				.q_language_of_study(language).q_name_of_programme("").isCompleted(CheckedStatus.YES)
-				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
+				.awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).level(QualificationLevel.COLLEGE).grade("").institution("")
+				.languageOfStudy(language).subject("").isCompleted(CheckedStatus.YES)
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
 		sessionFactory.getCurrentSession().save(language);
 		sessionFactory.getCurrentSession().save(qualification);
 		flushAndClearSession();
@@ -236,7 +236,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		qualification1.setQualificationLanguage(languageDAO.getLanguageById(1));
 		qualification1.setQualificationLevel(QualificationLevel.COLLEGE);
-		qualification1.setQualificationProgramName("");		
+		qualification1.setQualificationSubject("");		
 		qualification1.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
 		qualification1.setQualificationType("");
 		
@@ -248,7 +248,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		qualification2.setQualificationInstitution("");
 		qualification2.setQualificationLanguage(languageDAO.getLanguageById(1));
 		qualification2.setQualificationLevel(QualificationLevel.COLLEGE);
-		qualification2.setQualificationProgramName("");		
+		qualification2.setQualificationSubject("");		
 		qualification2.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
 		qualification2.setQualificationType("");
 		

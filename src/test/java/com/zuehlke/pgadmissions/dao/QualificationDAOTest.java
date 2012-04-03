@@ -35,9 +35,9 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		
 	@Test
 	public void shouldGetQualificationById() throws ParseException{
-		Qualification qualification =new QualificationBuilder().q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_grade("")
-				.q_institution("").q_language_of_study(languageDAO.getLanguageById(1)).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").isCompleted(CheckedStatus.YES)
-				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
+		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
+				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
 		sessionFactory.getCurrentSession().save(qualification);
 		Integer id = qualification.getId();
 		flushAndClearSession();
@@ -54,9 +54,9 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 
-		Qualification qualification =new QualificationBuilder().q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_grade("")
-				.q_institution("").q_language_of_study(languageDAO.getLanguageById(1)).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").isCompleted(CheckedStatus.YES)
-				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
+		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
+				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
 		save(application, qualification);
 		flushAndClearSession();
 		

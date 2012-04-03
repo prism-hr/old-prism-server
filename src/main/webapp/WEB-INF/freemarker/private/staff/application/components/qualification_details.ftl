@@ -48,7 +48,7 @@
 				                  	     
                                 <input type="hidden" id="${qualification.id?string('#######')}_qualificationIdDP" value="${qualification.id?string('#######')}"/>
                                 <input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionDP" value="${(qualification.qualificationInstitution?html)!}"/> 
-                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationProgramNameDP" value="${(qualification.qualificationProgramName?html)!}"/> 
+                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationSubjectDP" value="${(qualification.qualificationSubject?html)!}"/> 
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/> 
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationLanguageDP" value="${qualification.qualificationLanguage.id!}"/> 
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationLevelDP" value="${(qualification.qualificationLevel?html)!}"/> 
@@ -85,8 +85,8 @@
 		                  	<span class="label">Programme</span>
 		                    <span class="hint" data-desc="Tooltip demonstration."></span>
 		                    <div class="field">
-		                    <input readonly="readonly" id="qualificationProgramName" class="full" type="text" placeholder="e.g. Civil Engineering" 
-                                                                value="${(model.qualification.qualificationProgramName?html)!}"/>
+		                    <input readonly="readonly" id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering" 
+                                                                value="${(model.qualification.qualificationSubject?html)!}"/>
 		                    </div>
 	             		</div>
 	                  
@@ -163,15 +163,7 @@
                     		</div>
                   		</div>
 
-                  		<!-- Qualification score -->
-                  		<div class="row">
-                    		<span class="label">Score</span>
-                    		<span class="hint" data-desc="Tooltip demonstration."></span>
-                    		<div class="field">
-                    		 <input readonly="readonly" id="qualificationScore" class="full" type="text" placeholder="e.g. 114"
-                                                                value="${(model.qualification.qualificationScore?html)!}"/>
-                    		</div>
-                  		</div>
+    
                   
                   		<!-- Award date -->
                   		<div class="row">

@@ -32,8 +32,8 @@ public class Qualification extends DomainObject<Integer>{
 	@Column(name="award_date")
 	private Date qualificationAwardDate;
 	
-	@Column(name="name_of_programme")
-	private String qualificationProgramName;
+	@Column(name="subject")
+	private String qualificationSubject;
 	
 	@Column(name="institution")
 	private String qualificationInstitution;
@@ -62,12 +62,12 @@ public class Qualification extends DomainObject<Integer>{
 	@Column(name="completed")
 	private CheckedStatus completed;
 	
-	public String getQualificationProgramName() {
-		return qualificationProgramName;
+	public String getQualificationSubject() {
+		return qualificationSubject;
 	}
 
-	public void setQualificationProgramName(String q_name_of_programme) {
-		this.qualificationProgramName = q_name_of_programme;
+	public void setQualificationSubject(String q_name_of_programme) {
+		this.qualificationSubject = q_name_of_programme;
 	}
 
 	public String getQualificationInstitution() {

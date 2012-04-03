@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -15,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -30,7 +33,6 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.validators.DocumentValidator;
 
 
 public class FundingControllerTest {
@@ -39,7 +41,6 @@ public class FundingControllerTest {
 	private FundingController fundingController;
 	private RegisteredUser student;
 	private DatePropertyEditor datePropertyEditorMock;
-	private DocumentValidator documentValidatorMock;
 
 	@Test
 	public void shouldSaveNewFunding() throws IOException {
@@ -54,6 +55,54 @@ public class FundingControllerTest {
 		funding.setFundingDescription("my description");
 		funding.setFundingValue("2000");
 		funding.setFundingAwardDate(new Date());
+		funding.setFundingFile(new MultipartFile() {
+			
+			@Override
+			public void transferTo(File dest) throws IOException, IllegalStateException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public boolean isEmpty() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public long getSize() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public String getOriginalFilename() {
+				return "test.pdf";
+			}
+			
+			@Override
+			public String getName() {
+				return "test";
+			}
+			
+			@Override
+			public InputStream getInputStream() throws IOException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getContentType() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public byte[] getBytes() throws IOException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
 		ModelAndView modelAndView = fundingController.addFunding(funding, 2, null, mappingResult, new ModelMap());
 		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
@@ -75,6 +124,54 @@ public class FundingControllerTest {
 		funding.setFundingDescription("my description");
 		funding.setFundingValue("2000");
 		funding.setFundingAwardDate(new Date());
+		funding.setFundingFile(new MultipartFile() {
+			
+			@Override
+			public void transferTo(File dest) throws IOException, IllegalStateException {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public boolean isEmpty() {
+				// TODO Auto-generated method stub
+				return false;
+			}
+			
+			@Override
+			public long getSize() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+			
+			@Override
+			public String getOriginalFilename() {
+				return "test.pdf";
+			}
+			
+			@Override
+			public String getName() {
+				return "test";
+			}
+			
+			@Override
+			public InputStream getInputStream() throws IOException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public String getContentType() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public byte[] getBytes() throws IOException {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
 		ModelAndView modelAndView = fundingController.addFunding(funding, 2, "add", mappingResult, new ModelMap());
 		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
@@ -122,8 +219,7 @@ public class FundingControllerTest {
 		
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-		documentValidatorMock = EasyMock.createMock(DocumentValidator.class);
-		fundingController = new FundingController(applicationsServiceMock, datePropertyEditorMock, documentValidatorMock);
+		fundingController = new FundingController(applicationsServiceMock, datePropertyEditorMock);
 		
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark")

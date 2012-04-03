@@ -47,7 +47,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country2)
-				.englishFirstLanguage(CheckedStatus.NO).applicationForm(applicationForm).toPersonalDetails();
+				.requiresVisa(CheckedStatus.NO).englishFirstLanguage(CheckedStatus.NO).applicationForm(applicationForm).toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
 		assertNotNull(personalDetails.getId());
@@ -80,7 +80,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		Telephone telephone3 = new TelephoneBuilder().telephoneNumber("abc").telephoneType(PhoneType.WORK).toTelephone();
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().phoneNumbers(telephone1, telephone2).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.englishFirstLanguage(CheckedStatus.NO)
+				.englishFirstLanguage(CheckedStatus.NO).requiresVisa(CheckedStatus.NO)
 				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
 				.toPersonalDetails();
 
@@ -142,7 +142,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality1, nationality2).maternalGuardianNationalities(nationality4).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.englishFirstLanguage(CheckedStatus.NO)
+				.englishFirstLanguage(CheckedStatus.NO).requiresVisa(CheckedStatus.NO)
 				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
 				.toPersonalDetails();
 
@@ -205,7 +205,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().maternalGuardianNationalities(nationality1, nationality2).candiateNationalities(nationality4).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.englishFirstLanguage(CheckedStatus.NO)
+				.englishFirstLanguage(CheckedStatus.NO).requiresVisa(CheckedStatus.NO)
 				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
 				.toPersonalDetails();
 
@@ -267,7 +267,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().paternalGuardianNationalities(nationality1, nationality2).candiateNationalities(nationality4).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.englishFirstLanguage(CheckedStatus.NO)
+				.englishFirstLanguage(CheckedStatus.NO).requiresVisa(CheckedStatus.NO)
 				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
 				.toPersonalDetails();
 

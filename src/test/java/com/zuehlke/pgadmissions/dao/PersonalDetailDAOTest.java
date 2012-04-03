@@ -41,7 +41,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	public void shouldGetPersonalDetailsById() throws ParseException {
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country)
-				.englishFirstLanguage(CheckedStatus.NO)
+				.englishFirstLanguage(CheckedStatus.NO).requiresVisa(CheckedStatus.NO)
 				.applicationForm(applicationForm).toPersonalDetails();
 		sessionFactory.getCurrentSession().save(personalDetails);
 		
@@ -56,7 +56,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	public void shouldSavePersonalDetails() throws ParseException {
 		PersonalDetailDAO personalDetailDAO = new PersonalDetailDAO(sessionFactory);
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.englishFirstLanguage(CheckedStatus.NO)
+				.englishFirstLanguage(CheckedStatus.NO).requiresVisa(CheckedStatus.NO)
 				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country)
 				.applicationForm(applicationForm).toPersonalDetails();
 		

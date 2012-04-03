@@ -243,7 +243,7 @@
                        	<span class="hint"></span>
                        		<input type="checkbox" name="englishFirstLanguageCB" id="englishFirstLanguageCB"/
                        		<#if model.applicationForm.personalDetails.isEnglishCandidatesFirstLanguage()>
-                                          checked="yes"
+                                          checked
                                 </#if>
                        		<#if model.applicationForm.isSubmitted()>
                                           disabled="disabled"
@@ -272,6 +272,18 @@
 							<#if model.hasError('residenceCountry')>                         
 									<span class="invalid"><@spring.message  model.result.getFieldError('residenceCountry').code /></span>                           
 							</#if>
+							</div>
+							<div class="row">
+							 <label class="label">Requires Visa<em>*</em></label>
+                       		<span class="hint"></span>
+                       		<input type="checkbox" name="requiresVisaCB" id="requiresVisaCB"/
+                       			<#if model.applicationForm.personalDetails.isVisaRequired()>
+                                          checked
+                                </#if>
+                       			<#if model.applicationForm.isSubmitted()>
+                                          disabled="disabled"
+                                </#if>>
+                       		<input type="hidden" name="requiresVisa" id="requiresVisa"/>
 						</div>
 					</div>
                 </div>

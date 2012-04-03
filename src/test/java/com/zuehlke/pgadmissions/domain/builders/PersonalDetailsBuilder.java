@@ -30,6 +30,7 @@ public class PersonalDetailsBuilder {
 	private List<Nationality> maternalGuardianNationalities= new ArrayList<Nationality>();
 	private List<Nationality> paternalGuardianNationalities= new ArrayList<Nationality>();
 	private CheckedStatus englishFirstLanguage;
+	private CheckedStatus requiresVisa;
 	
 
 	public PersonalDetailsBuilder id(Integer id) {
@@ -39,6 +40,11 @@ public class PersonalDetailsBuilder {
 	
 	public PersonalDetailsBuilder englishFirstLanguage(CheckedStatus englishFirstLanguage) {
 		this.englishFirstLanguage = englishFirstLanguage;
+		return this;
+	}
+	
+	public PersonalDetailsBuilder requiresVisa(CheckedStatus requiresVisa) {
+		this.requiresVisa = requiresVisa;
 		return this;
 	}
 	
@@ -125,6 +131,7 @@ public class PersonalDetailsBuilder {
 		personalDetails.setCandidateNationalities(candiateNationalities);
 		personalDetails.setMessenger(messenger);
 		personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
+		personalDetails.setRequiresVisa(requiresVisa);
 		return personalDetails;
 	}
 }

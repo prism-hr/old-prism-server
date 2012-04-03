@@ -1,7 +1,22 @@
 $(document).ready(function(){
 
-	$("#englishFirstLanguageCB").attr('checked', false);
-	$("#englishFirstLanguage").val("NO");
+	if($("#dateOfBirth").val() == ""){
+		$("#englishFirstLanguageCB").attr('checked', false);
+		$("#requiresVisaCB").attr('checked', false);
+	}
+	if($("#englishFirstLanguageCB").is(":checked")){
+		$("#englishFirstLanguage").val("YES");
+	}
+	else{	
+		$("#englishFirstLanguage").val("NO");
+	}
+	
+	if($("#requiresVisaCB").is(":checked")){
+		$("#requiresVisa").val("YES");
+	}
+	else{	
+		$("#requiresVisa").val("NO");
+	}
 	
 	$('#personalDetailsCloseButton').click(function(){		
 		$('#personalDetails-H2').trigger('click');
@@ -10,6 +25,7 @@ $(document).ready(function(){
 	
 	$('#personalDetailsCancelButton').click(function(){
 		$("#englishFirstLanguageCB").attr('checked', false);
+		$("#requiresVisaCB").attr('checked', false);
 		$("span[class='invalid']").each(function(){
 			$(this).html("");
 		});
@@ -20,6 +36,14 @@ $(document).ready(function(){
 			$("#englishFirstLanguage").val("NO");
 		} else {		
 			$("#englishFirstLanguage").val("YES");
+		}
+	});
+	
+	$("input[name*='requiresVisaCB']").click(function() {
+		if ($("#requiresVisa").val() =='YES'){
+			$("#requiresVisa").val("NO");
+		} else {		
+			$("#requiresVisa").val("YES");
 		}
 	});
 	
@@ -165,6 +189,7 @@ $(document).ready(function(){
 				personalDetailsId: $("#id").val(), 
 				application: $("#appId").val(),	
 				englishFirstLanguage: $("#englishFirstLanguage").val(),			
+				requiresVisa: $("#requiresVisa").val(),			
 				candidateNationalities:"",
 				maternalGuardianNationalities:"",
 				paternalGuardianNationalities:"",

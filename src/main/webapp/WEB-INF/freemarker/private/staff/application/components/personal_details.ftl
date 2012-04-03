@@ -71,6 +71,16 @@
                   	
                 </div>
 
+
+				<div>
+              	     <div class="row">
+						<label class="label">Language</label>
+						<div class="field">
+                    		${(model.applicationForm.personalDetails.englishFirstLanguage?html)!}
+                    	</div>
+					</div>                              
+                </div>
+		
 				<!-- Nationality -->
               	<div>
                 	

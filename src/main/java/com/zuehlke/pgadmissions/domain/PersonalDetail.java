@@ -43,6 +43,10 @@ public class PersonalDetail extends DomainObject<Integer> {
 	@Column(name = "english_first_language")
 	private CheckedStatus englishFirstLanguage;
 	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	@Column(name = "requires_visa")
+	private CheckedStatus requiresVisa;
+	
 	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "personal_details_id")
@@ -236,12 +240,27 @@ public class PersonalDetail extends DomainObject<Integer> {
 		return englishFirstLanguage.equals(CheckedStatus.YES);
 	}
 
+	public boolean isVisaRequired(){
+		if(requiresVisa == null){
+			return false;
+		}
+		return requiresVisa.equals(CheckedStatus.YES);
+	}
+	
 	public CheckedStatus getEnglishFirstLanguage() {
 		return englishFirstLanguage;
 	}
 
 	public void setEnglishFirstLanguage(CheckedStatus englishFirstLanguage) {
 		this.englishFirstLanguage = englishFirstLanguage;
+	}
+
+	public CheckedStatus getRequiresVisa() {
+		return requiresVisa;
+	}
+
+	public void setRequiresVisa(CheckedStatus requiresVisa) {
+		this.requiresVisa = requiresVisa;
 	}
 
 	

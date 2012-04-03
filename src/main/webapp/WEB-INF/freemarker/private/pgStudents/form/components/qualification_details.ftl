@@ -139,6 +139,9 @@
                        <label class="label">Is Completed<em>*</em></label>
                        	<span class="hint"></span>
                        		<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"/
+                       		<#if model.qualification.isQualificationCompleted()>
+                                          checked
+                                </#if>
                        		<#if model.applicationForm.isSubmitted()>
                                           disabled="disabled"
                                 </#if>>

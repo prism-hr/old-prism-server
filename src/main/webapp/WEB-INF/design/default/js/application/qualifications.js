@@ -1,9 +1,21 @@
 
 
 $(document).ready(function(){
+	if($("#qualificationInstitution").val() == ""){
+		$("#currentQualificationCB").attr('checked', false);
+		$("#currentQualification").val("NO");
+	}
 	
-	$("#currentQualificationCB").attr('checked', false);
-	$("#currentQualification").val("NO");
+	if($("#currentQualificationCB").is(":checked")){
+		$("#currentQualification").val("YES");
+		$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\"> </input>");
+		bindDatePickers();
+	}
+	else{	
+		$("#currentQualification").val("NO");
+		$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\" disabled=\"disabled\"> </input>");
+			
+	}
 	
 	$('#qualificationsCloseButton').click(function(){
 		$('#qualifications-H2').trigger('click');

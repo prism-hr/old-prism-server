@@ -1,7 +1,20 @@
 $(document).ready(function(){
 
-	$("#completedPositionCB").attr('checked', false);
-	$("#completedPosition").val("NO");
+	if($("#position_employer").val() == ""){
+		$("#completedPositionCB").attr('checked', false);
+		$("#completedPosition").val("NO");
+	}
+	
+	if($("#completedPositionCB").is(":checked")){
+		$("#completedPosition").val("YES");
+		$("#endDateField").html("<input class=\"half date\" type=\"text\" id=\"position_endDate\" name=\"position_endDate\" value=\"\"</input>	");
+			bindDatePickers();
+	}
+	else{	
+		$("#completedPosition").val("NO");
+		$("#endDateField").html("<input class=\"half date\" type=\"text\" id=\"position_endDate\" name=\"position_endDate\" value=\"\" disabled=\"disabled\"</input>");
+		
+	}
 	
 	$("input[name*='completedPositionCB']").click(function() {
 		if ($("#completedPosition").val() =='YES'){
@@ -59,6 +72,7 @@ $('#positionSaveAndAddButton').click(function(){
 		 function(data) {
 		    $('#positionSection').html(data);
 	   });
+	
 });
 
 $('a[name="positionEditButton"]').click(function(){

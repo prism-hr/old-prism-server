@@ -81,6 +81,13 @@ public class EmploymentPosition {
 	public CheckedStatus getCompleted() {
 		return completed;
 	}
+	
+	public boolean isEmploymentPositionCompleted(){
+		if(completed==null ){
+			return false;
+		}
+		return completed.equals(CheckedStatus.YES);
+	}
 
 	public void setCompleted(CheckedStatus completed) {
 		this.completed = completed;

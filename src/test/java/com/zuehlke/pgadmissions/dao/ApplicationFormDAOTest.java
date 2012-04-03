@@ -118,21 +118,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		assertEquals(qualifications.get(0).getApplication(), qualifications.get(1).getApplication());
 	}
 	
-	@Test
-	public void shouldGetQualificationById() throws ParseException{
-		Language language = new Language();
-		language.setId(90);
-		language.setName("language");
-		Qualification qualification = new QualificationBuilder().id(17)
-				.awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).level(QualificationLevel.COLLEGE).grade("").institution("")
-				.languageOfStudy(language).subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
-		sessionFactory.getCurrentSession().save(language);
-		sessionFactory.getCurrentSession().save(qualification);
-		flushAndClearSession();
-		ApplicationFormDAO applicationFormDAO = new ApplicationFormDAO(sessionFactory);
-		assertEquals(qualification, applicationFormDAO.getQualification(qualification.getId()));
-	}
+
 	
 	@Test
 	public void shouldGetFundingById() throws ParseException{

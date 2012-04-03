@@ -31,13 +31,14 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	private Project project;
 	private LanguageDAO languageDAO;
 	private QualificationDAO qualificationDAO;
+	private CountriesDAO countriesDAO;
 
 		
 	@Test
 	public void shouldGetQualificationById() throws ParseException{
 		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
 				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
 		sessionFactory.getCurrentSession().save(qualification);
 		Integer id = qualification.getId();
 		flushAndClearSession();
@@ -56,7 +57,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 
 		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
 				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
 		save(application, qualification);
 		flushAndClearSession();
 		
@@ -76,7 +77,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
 		save(user, program, project);
 		languageDAO = new LanguageDAO(sessionFactory);
-		
+		countriesDAO = new CountriesDAO(sessionFactory);
 		flushAndClearSession();
 	}
 }

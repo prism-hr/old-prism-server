@@ -247,13 +247,13 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		// Integer id = application.getId();
 		// flushAndClearSession();
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
-		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
 				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
 		Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").isCompleted(CheckedStatus.YES)
 				.institution("").languageOfStudy(languageDAO.getLanguageById(2)).level(QualificationLevel.COLLEGE).subject("")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
 
 		application.getQualifications().addAll(Arrays.asList(qualification1, qualification2));
 

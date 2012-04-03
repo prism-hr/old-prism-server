@@ -219,14 +219,7 @@ public class ApplicationsServiceTest{
 		Assert.assertEquals(application, applicationsService.getApplicationById(234));
 	}
 	
-	@Test
-	public void shouldGetQualificationById() {
-		Qualification qualification = EasyMock.createMock(Qualification.class);
-		EasyMock.expect(applicationFormDAOMock.getQualification(23)).andReturn(qualification);
-		
-		EasyMock.replay(qualification, applicationFormDAOMock);
-		Assert.assertEquals(qualification, applicationsService.getQualificationById(23));
-	}
+	
 	
 	@Test 
 	public void shouldGetRefereeById() {

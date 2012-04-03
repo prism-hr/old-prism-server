@@ -4,6 +4,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.QualificationDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -12,12 +13,14 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.QualificationService;
 
 public class DeleteApplicationFormEntitiesControllerTest {
 
 	private ApplicationsService serviceMock;
 	private DeleteApplicationFormEntitiesController controller;
 	private ApplicationForm applicationForm;
+	private QualificationService qualificationServiceMock;
 	@Test
 	public void shoulGetAddressFromServiceAndDelete(){
 		Address address = new Address();
@@ -36,11 +39,11 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		Qualification qual = new Qualification();
 		qual.setApplication(applicationForm);
 		qual.setId(1);
-		EasyMock.expect(serviceMock.getQualificationById(1)).andReturn(qual);
-		serviceMock.deleteQualification(qual);
-		EasyMock.replay(serviceMock);
+		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(qual);
+		qualificationServiceMock.delete(qual);
+		EasyMock.replay(qualificationServiceMock);
 		controller.deleteQualification(1);
-		EasyMock.verify(serviceMock);
+		EasyMock.verify(qualificationServiceMock);
 	}
 
 	
@@ -83,6 +86,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	public void setup(){
 		applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
 		serviceMock = EasyMock.createMock(ApplicationsService.class);
-		controller = new DeleteApplicationFormEntitiesController(serviceMock);
+		qualificationServiceMock = EasyMock.createMock(QualificationService.class);
+		controller = new DeleteApplicationFormEntitiesController(serviceMock, qualificationServiceMock);
 	}
 }

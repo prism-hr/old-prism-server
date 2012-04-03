@@ -1,6 +1,11 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -75,7 +80,7 @@ public class PersonalDetailsController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView editPersonalDetails(@ModelAttribute("personalDetails") PersonalDetail personalDetail, BindingResult errors) {
-
+		
 		if (personalDetail.getApplication() != null && personalDetail.getApplication().isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
@@ -86,9 +91,7 @@ public class PersonalDetailsController {
 
 		personalDetailValidator.validate(personalDetail, errors);
 		if (!errors.hasErrors()) {
-			System.out.println("ENGLISH: " + personalDetail.getEnglishFirstLanguage());
-			CheckedStatus englishFirstLanguage = personalDetail.getEnglishFirstLanguage();
-			personalDetail.setEnglishFirstLanguage(englishFirstLanguage);
+					
 			personalDetailsService.save(personalDetail);
 
 		}

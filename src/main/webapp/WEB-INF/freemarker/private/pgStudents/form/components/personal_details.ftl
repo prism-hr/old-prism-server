@@ -242,7 +242,7 @@
                        <label class="label">Is English your first language<em>*</em></label>
                        	<span class="hint"></span>
                        		<input type="checkbox" name="englishFirstLanguageCB" id="englishFirstLanguageCB"/
-                       		<#if model.applicationForm.personalDetails.isEnglishFirstLanguage()>
+                       		<#if model.applicationForm.personalDetails.isEnglishCandidatesFirstLanguage()>
                                           checked="yes"
                                 </#if>
                        		<#if model.applicationForm.isSubmitted()>

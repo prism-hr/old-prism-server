@@ -13,20 +13,23 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.QualificationService;
 
 @Controller
 @RequestMapping("/deleteentity")
 public class DeleteApplicationFormEntitiesController {
 
 	private final ApplicationsService applicationsService;
+	private final QualificationService qualificationService;
 
 	DeleteApplicationFormEntitiesController() {
-		this(null);
+		this(null, null);
 	}
 
 	@Autowired
-	public DeleteApplicationFormEntitiesController(ApplicationsService applicationsService) {
+	public DeleteApplicationFormEntitiesController(ApplicationsService applicationsService, QualificationService qualificationService) {
 		this.applicationsService = applicationsService;
+		this.qualificationService = qualificationService;
 
 	}
 
@@ -40,9 +43,9 @@ public class DeleteApplicationFormEntitiesController {
 
 	@RequestMapping(value = "/qualification", method = RequestMethod.POST)
 	public ModelAndView deleteQualification(@RequestParam Integer id) {
-		Qualification qualification = applicationsService.getQualificationById(id);
+		Qualification qualification = qualificationService.getQualificationById(id);
 		Integer applicationFormId = qualification.getApplication().getId();
-		applicationsService.deleteQualification(qualification);
+		qualificationService.delete(qualification);
 		return new ModelAndView("redirect:/application", "id", applicationFormId);
 	}
 	

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -143,6 +144,20 @@ public class PersonalDetailValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("personalDetails.languageProficiencies.notempty", mappingResult.getFieldError("languageProficiencies").getCode());
 	}
+	
+	@Test
+	public void shouldRejectIfDOBISFutureDate(){
+		Date tomorrow;
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE, 1);
+		tomorrow = calendar.getTime();
+		personalDetails.setDateOfBirth(tomorrow);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "dateOfBirth");
+		personalDetailValidator.validate(personalDetails, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("personalDetails.dateOfBirth.future", mappingResult.getFieldError("dateOfBirth").getCode());
+	}
+	
 	
 	
 	@Before

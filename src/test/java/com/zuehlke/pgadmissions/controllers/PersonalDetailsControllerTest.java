@@ -239,7 +239,7 @@ public class PersonalDetailsControllerTest {
 		assertEquals(form, model.getApplicationForm());
 		assertEquals("skypeAddress", model.getApplicationForm().getPersonalDetails().getMessenger());
 		assertEquals(CheckedStatus.YES, model.getApplicationForm().getPersonalDetails().getEnglishFirstLanguage());
-		assertTrue(model.getApplicationForm().getPersonalDetails().isEnglishFirstLanguage());
+		assertTrue(model.getApplicationForm().getPersonalDetails().isEnglishCandidatesFirstLanguage());
 		assertEquals(errorsMock, model.getResult());
 		assertSame(countryList, model.getCountries());
 		assertSame(languages, model.getLanguages());

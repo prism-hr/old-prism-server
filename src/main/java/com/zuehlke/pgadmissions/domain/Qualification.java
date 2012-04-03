@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,10 +36,14 @@ public class Qualification extends DomainObject<Integer>{
 	@Column(name="subject")
 	private String qualificationSubject;
 	
+	@ManyToOne
+	@JoinColumn(name = "institution_country_id")	
+	private Country institutionCountry;
+	
 	@Column(name="institution")
 	private String qualificationInstitution;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "language_id")
 	private Language qualificationLanguage;
 	
@@ -160,6 +165,14 @@ public class Qualification extends DomainObject<Integer>{
 
 	public void setCompleted(CheckedStatus completed) {
 		this.completed = completed;
+	}
+
+	public Country getInstitutionCountry() {
+		return institutionCountry;
+	}
+
+	public void setInstitutionCountry(Country institutionCountry) {
+		this.institutionCountry = institutionCountry;
 	}
 
 

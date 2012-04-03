@@ -229,7 +229,10 @@ public class PersonalDetail extends DomainObject<Integer> {
 		this.messenger = messenger;
 	}
 	
-	public boolean isEnglishFirstLanguage(){
+	public boolean isEnglishCandidatesFirstLanguage(){
+		if(englishFirstLanguage == null){
+			return false;
+		}
 		return englishFirstLanguage.equals(CheckedStatus.YES);
 	}
 

@@ -432,8 +432,7 @@ public class UpdateApplicationFormControllerTest {
 	public void shoulAddMessageIfAddParameterProvided() {
 		Qualification qualification = new QualificationBuilder().id(3).toQualification();
 		ApplicationForm form = new ApplicationFormBuilder().qualification(qualification).id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);		
 		applicationsServiceMock.save(form);
 		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
 		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());

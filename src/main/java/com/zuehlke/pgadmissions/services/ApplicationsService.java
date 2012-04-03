@@ -83,10 +83,6 @@ public class ApplicationsService {
 
 	}
 
-	public Qualification getQualificationById(Integer id) {
-		return applicationFormDAO.getQualification(id);
-	}
-
 	@Transactional
 	public Referee getRefereeById(Integer id) {
 		return applicationFormDAO.getRefereeById(id);

@@ -24,6 +24,16 @@ public class QualificationServiceTest {
 		assertEquals(qualification, returnedQualification);
 	}
 	
+	@Test			
+	public void shouldDelegateDeleteToDAO(){
+		Qualification qualification = new QualificationBuilder().id(2).toQualification();
+		qualificationDAOMock.delete(qualification);
+		EasyMock.replay(qualificationDAOMock);
+		qualificationService.delete(qualification);
+		EasyMock.verify(qualificationDAOMock);
+	
+	}
+	
 	
 	@Before
 	public void setup(){

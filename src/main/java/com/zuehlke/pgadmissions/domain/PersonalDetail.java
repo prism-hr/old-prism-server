@@ -20,6 +20,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 
 @Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL")
@@ -37,6 +38,11 @@ public class PersonalDetail extends DomainObject<Integer> {
 	@JoinColumn(name = "personal_detail_id")
 	private List<Telephone> phoneNumbers=  new ArrayList<Telephone>();
 
+	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	@Column(name = "english_first_language")
+	private CheckedStatus englishFirstLanguage;
+	
 	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "personal_details_id")
@@ -221,6 +227,18 @@ public class PersonalDetail extends DomainObject<Integer> {
 
 	public void setMessenger(String messenger) {
 		this.messenger = messenger;
+	}
+	
+	public boolean isEnglishFirstLanguage(){
+		return englishFirstLanguage.equals(CheckedStatus.YES);
+	}
+
+	public CheckedStatus getEnglishFirstLanguage() {
+		return englishFirstLanguage;
+	}
+
+	public void setEnglishFirstLanguage(CheckedStatus englishFirstLanguage) {
+		this.englishFirstLanguage = englishFirstLanguage;
 	}
 
 	

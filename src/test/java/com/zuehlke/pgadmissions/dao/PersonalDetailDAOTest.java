@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 
 public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
@@ -40,6 +41,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	public void shouldGetPersonalDetailsById() throws ParseException {
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country)
+				.englishFirstLanguage(CheckedStatus.NO)
 				.applicationForm(applicationForm).toPersonalDetails();
 		sessionFactory.getCurrentSession().save(personalDetails);
 		
@@ -54,6 +56,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	public void shouldSavePersonalDetails() throws ParseException {
 		PersonalDetailDAO personalDetailDAO = new PersonalDetailDAO(sessionFactory);
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
+				.englishFirstLanguage(CheckedStatus.NO)
 				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country)
 				.applicationForm(applicationForm).toPersonalDetails();
 		

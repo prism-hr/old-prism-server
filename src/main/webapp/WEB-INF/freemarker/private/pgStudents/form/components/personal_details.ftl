@@ -238,7 +238,18 @@
               	     <div class="row">
 						<label class="label">Language</label>
 						 <span class="hint" data-desc="<@spring.message 'personalDetails.language.section'/>"></span>                  
-						
+						<div class="row">
+                       <label class="label">Is English your first language<em>*</em></label>
+                       	<span class="hint"></span>
+                       		<input type="checkbox" name="englishFirstLanguageCB" id="englishFirstLanguageCB"/
+                       		<#if model.applicationForm.personalDetails.isEnglishFirstLanguage()>
+                                          checked="yes"
+                                </#if>
+                       		<#if model.applicationForm.isSubmitted()>
+                                          disabled="disabled"
+                                </#if>>
+                       		<input type="hidden" name="englishFirstLanguage" id="englishFirstLanguage"/>
+               			 </div>
 					</div>                              
                 </div>
 

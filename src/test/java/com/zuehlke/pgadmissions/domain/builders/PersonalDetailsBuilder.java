@@ -10,6 +10,7 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Telephone;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 
 public class PersonalDetailsBuilder {
@@ -28,10 +29,16 @@ public class PersonalDetailsBuilder {
 	private List<Nationality> candiateNationalities = new ArrayList<Nationality>();
 	private List<Nationality> maternalGuardianNationalities= new ArrayList<Nationality>();
 	private List<Nationality> paternalGuardianNationalities= new ArrayList<Nationality>();
+	private CheckedStatus englishFirstLanguage;
 	
 
 	public PersonalDetailsBuilder id(Integer id) {
 		this.id = id;
+		return this;
+	}
+	
+	public PersonalDetailsBuilder englishFirstLanguage(CheckedStatus englishFirstLanguage) {
+		this.englishFirstLanguage = englishFirstLanguage;
 		return this;
 	}
 	
@@ -117,6 +124,7 @@ public class PersonalDetailsBuilder {
 		personalDetails.setPaternalGuardianNationalities(paternalGuardianNationalities);
 		personalDetails.setCandidateNationalities(candiateNationalities);
 		personalDetails.setMessenger(messenger);
+		personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
 		return personalDetails;
 	}
 }

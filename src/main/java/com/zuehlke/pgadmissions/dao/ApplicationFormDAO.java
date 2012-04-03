@@ -50,10 +50,6 @@ public class ApplicationFormDAO {
 
 	}
 
-	public Qualification getQualification(Integer qualificationId) {
-		return (Qualification) sessionFactory.getCurrentSession().get(Qualification.class, qualificationId);
-	}
-
 	@SuppressWarnings("unchecked")
 	public List<Qualification> getQualificationsByApplication(ApplicationForm application) {
 		return sessionFactory.getCurrentSession().createCriteria(Qualification.class)

@@ -3,15 +3,14 @@ package com.zuehlke.pgadmissions.validators;
 import java.io.IOException;
 import java.util.Date;
 
-import org.springframework.validation.BindingResult;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.dto.Funding;
 

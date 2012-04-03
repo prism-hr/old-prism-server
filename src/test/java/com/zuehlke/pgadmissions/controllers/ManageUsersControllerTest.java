@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -17,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -83,6 +86,12 @@ public class ManageUsersControllerTest {
 		EasyMock.expect(programsServiceMock.getProgramById(5)).andReturn(null);
 		EasyMock.replay(programsServiceMock);
 		manageUsersController.getSelectedProgram(5);
+	}
+	
+	@Test
+	public void shouldReturnCorrectViewForAddingNewUser() {
+		ModelAndView createNewUserView = manageUsersController.createNewUser();
+		Assert.assertEquals("private/staff/superAdmin/create_new_user_in_role_page", createNewUserView.getViewName());
 	}
 
 	@Test

@@ -85,4 +85,9 @@ public class UserDAO {
 		return users;
 	}
 
+	public RegisteredUser getUserByEmail(String email) {
+		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("email", email))
+		.uniqueResult();
+	}
+
 }

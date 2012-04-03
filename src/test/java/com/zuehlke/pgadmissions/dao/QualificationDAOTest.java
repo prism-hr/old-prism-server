@@ -33,7 +33,6 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	private QualificationDAO qualificationDAO;
 	private CountriesDAO countriesDAO;
 
-		
 	@Test
 	public void shouldGetQualificationById() throws ParseException{
 		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
@@ -44,6 +43,20 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		assertEquals(qualification, qualificationDAO.getQualificationById(id));
+		
+		
+	}
+	@Test
+	public void shouldSaveQualification() throws ParseException{
+		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
+				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
+		qualificationDAO.save(qualification);
+		flushAndClearSession();		
+		Integer id = qualification.getId();
+		
+		
+		assertEquals(qualification, sessionFactory.getCurrentSession().get(Qualification.class, id));
 		
 		
 	}

@@ -106,7 +106,7 @@
 					          	</div>
 			          
 					            <hr/>
-								
+								<input type="hidden" id="applicationId" name="applicationId" value="${model.applicationForm.id?string("######")}"/>
 					          	<section id="programmeDetailsSection" class="folding violet <#if model.hasError('programmeDetails')>error</#if>">					          	
 					          		<#include "/private/pgStudents/form/components/programme_details.ftl"/>
 					          	</section>
@@ -121,7 +121,7 @@
 			          			</section>
 			          
 			           			<section id="qualificationsSection" class="folding orange">
-			            			<#include "/private/pgStudents/form/components/qualification_details.ftl"/>
+			            		
 			          			</section>
 			          
 			           			<section id="positionSection" class="folding yellow">

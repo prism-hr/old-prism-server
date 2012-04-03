@@ -19,7 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -27,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.dto.AdditionalInformation;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
@@ -39,25 +37,21 @@ import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.QualificationPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
-import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
-import com.zuehlke.pgadmissions.validators.QualificationValidator;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
 @Controller
 @RequestMapping("/update")
 public class UpdateApplicationFormController {
 
-	private static final String APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/qualification_details";
 	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/address_details";
 	private static final String APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME = "private/pgStudents/form/components/employment_position_details";
 	private static final String APPLICATON_REFEREEE_VIEW_NAME = "private/pgStudents/form/components/references_details";
@@ -73,19 +67,17 @@ public class UpdateApplicationFormController {
 	private final LanguagePropertyEditor languagePropertyEditor;
 	private final CountryPropertyEditor countryPropertyEditor;
 	private final EncryptionUtils encryptionUtils;
-	private final QualificationValidator qualificationValidator;
-	private final QualificationService qualificationService;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null, null, null, null, null,  null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public UpdateApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor,
 			DatePropertyEditor datePropertyEditor, CountryService countryService, RefereeService refereeService,
-			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, 
-			ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator,
-			LanguageService languageService, LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, EncryptionUtils encryptionUtils, QualificationValidator qualificationValidator, QualificationService qualificationService) {
+			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor,
+			RefereeValidator refereeValidator, LanguageService languageService, LanguagePropertyEditor languagePropertyEditor,
+			CountryPropertyEditor countryPropertyEditor, EncryptionUtils encryptionUtils) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
@@ -98,10 +90,9 @@ public class UpdateApplicationFormController {
 		this.refereeValidator = refereeValidator;
 		this.languageService = languageService;
 		this.countryPropertyEditor = countryPropertyEditor;
-	
+
 		this.encryptionUtils = encryptionUtils;
-		this.qualificationValidator = qualificationValidator;
-		this.qualificationService = qualificationService;
+
 	}
 
 	@InitBinder
@@ -115,41 +106,9 @@ public class UpdateApplicationFormController {
 
 	}
 
-	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-	public ModelAndView editQualification(@ModelAttribute Qualification qualification, @RequestParam Integer appId, @RequestParam(required=false) String add, BindingResult result,
-			ModelMap modelMap) {
-
-		ApplicationForm application = applicationService.getApplicationById(appId);
-
-		if (application.isSubmitted()) {
-			throw new CannotUpdateApplicationException();
-		}
-
-		ApplicationPageModel model = new ApplicationPageModel();
-		
-		qualificationValidator.validate(qualification, result);
-		if (!result.hasErrors()) {
-			if(!application.getQualifications().contains(qualification)){
-				application.getQualifications().add(qualification);
-			}
-			applicationService.save(application);
-		} else {
-			model.setQualification(qualification);
-		}
-		model.setUser(getCurrentUser());
-		model.setApplicationForm(application);
-		model.setResult(result);
-		model.setLanguages(languageService.getAllLanguages());
-		model.setQualificationLevels(QualificationLevel.values());
-		modelMap.put("model", model);
-		if(StringUtils.isNotBlank(add)){
-			modelMap.put("add", "add");
-		}
-		return new ModelAndView(APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, modelMap);
-	}
-
 	@RequestMapping(value = "/addAdditionalInformation", method = RequestMethod.POST)
-	public ModelAndView addAdditionalInfo(@ModelAttribute AdditionalInformation additionalInformation, @RequestParam Integer appId, BindingResult result, ModelMap modelMap) {
+	public ModelAndView addAdditionalInfo(@ModelAttribute AdditionalInformation additionalInformation, @RequestParam Integer appId, BindingResult result,
+			ModelMap modelMap) {
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
 		if (application.isSubmitted()) {
@@ -160,10 +119,10 @@ public class UpdateApplicationFormController {
 		ApplicationForm applicationForm = application;
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
-		
+
 		AdditionalInformationValidator validator = new AdditionalInformationValidator();
 		validator.validate(additionalInformation, result);
-		
+
 		if (!result.hasErrors()) {
 			application.setAdditionalInformation(additionalInformation.getAdditionalInformation());
 			applicationService.save(application);
@@ -174,8 +133,8 @@ public class UpdateApplicationFormController {
 	}
 
 	@RequestMapping(value = "/addEmploymentPosition", method = RequestMethod.POST)
-	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer appId, @RequestParam(required=false) String add, BindingResult result,
-			ModelMap modelMap) {
+	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer appId, @RequestParam(required = false) String add,
+			BindingResult result, ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
 
@@ -215,14 +174,15 @@ public class UpdateApplicationFormController {
 			model.setEmploymentPosition(positionDto);
 		}
 		modelMap.put("model", model);
-		if(StringUtils.isNotBlank(add)){
+		if (StringUtils.isNotBlank(add)) {
 			modelMap.put("add", "add");
 		}
 		return new ModelAndView(APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME, modelMap);
 	}
 
 	@RequestMapping(value = "/editAddress", method = RequestMethod.POST)
-	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer appId, @RequestParam(required=false) String add, BindingResult result, ModelMap modelMap) {
+	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer appId, @RequestParam(required = false) String add,
+			BindingResult result, ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
 		if (application.isSubmitted()) {
@@ -265,7 +225,7 @@ public class UpdateApplicationFormController {
 			model.setAddress(addr);
 		}
 		modelMap.put("model", model);
-		if(StringUtils.isNotBlank(add)){
+		if (StringUtils.isNotBlank(add)) {
 			modelMap.put("add", "add");
 		}
 		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, modelMap);
@@ -275,10 +235,8 @@ public class UpdateApplicationFormController {
 		return new ApplicationForm();
 	}
 
-
-
 	@RequestMapping(value = "/refereeDetails", method = RequestMethod.POST)
-	public ModelAndView editReferee(@ModelAttribute("refereeDetails") Referee refereeDetails, @RequestParam(required=false) String add, BindingResult errors) {
+	public ModelAndView editReferee(@ModelAttribute("refereeDetails") Referee refereeDetails, @RequestParam(required = false) String add, BindingResult errors) {
 
 		if (refereeDetails.getApplication() != null && refereeDetails.getApplication().isSubmitted()) {
 			throw new CannotUpdateApplicationException();
@@ -307,7 +265,7 @@ public class UpdateApplicationFormController {
 		ModelAndView modelAndView = new ModelAndView(APPLICATON_REFEREEE_VIEW_NAME, "model", applicationPageModel);
 		modelAndView.addObject("formDisplayState", "open");
 
-		if(StringUtils.isNotBlank(add)){
+		if (StringUtils.isNotBlank(add)) {
 			modelAndView.getModel().put("add", "add");
 		}
 		return modelAndView;
@@ -331,18 +289,6 @@ public class UpdateApplicationFormController {
 
 	Referee newReferee() {
 		return new Referee();
-	}
-
-	@ModelAttribute
-	public Qualification getQualification(@RequestParam(required=false) Integer qualificationId) {
-		if(qualificationId == null){
-			return new Qualification();
-		}
-		Qualification qualification = qualificationService.getQualificationById(qualificationId);
-		if(qualification == null){
-			throw new ResourceNotFoundException();
-		}
-		return qualification;
 	}
 
 }

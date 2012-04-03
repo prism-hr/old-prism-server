@@ -1,4 +1,4 @@
-<#if model.applicationForm.qualifications?has_content>
+<#if applicationForm.qualifications?has_content>
 	<#assign hasQualifications = true>
 <#else>
 	<#assign hasQualifications = false>
@@ -37,7 +37,7 @@
 		                
 		                <tbody>
 		                
-		                	<#list model.applicationForm.qualifications as qualification>
+		                	<#list applicationForm.qualifications as qualification>
 			                	<tr>
 				                  	<td><a class="row-arrow" id="qualification_${qualification.id?string('#######')}" name ="editQualificationLink">-</a></td>
 				                  	<td>${(qualification.qualificationType?html)!}</td>
@@ -45,7 +45,7 @@
 				                  	<td>${(qualification.qualificationInstitution?html)!}</td>
 				                  	<td>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
 				                  	  <td>
-				                  	  	   <#if !model.applicationForm.isSubmitted()>
+				                  	  	   <#if !applicationForm.isSubmitted()>
 						                  	<form method="Post" action="<@spring.url '/deleteentity/qualification'/>">
 					                			<input type="hidden" name="id" value="${qualification.id?string('#######')}"/>		                		
 					                			<a name="deleteButton" class="button-delete">delete</a>
@@ -80,37 +80,53 @@
 	                  
 	                  	<!-- Provider -->
 	                	<div class="row">
-		                  	<span class="label">Provider<em>*</em></span>
+		                  	<span class="label">Institution<em>*</em></span>
 		                    <span class="hint" data-desc="<@spring.message 'education.qualifications.institutionName'/>"></span>
 		                    <div class="field">
-		                    	<#if !model.applicationForm.isSubmitted()>
-		                    	<input id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL" 
-		                    									value="${(model.qualification.qualificationInstitution?html)!}" />
-			                    <#if model.hasError('qualificationInstitution')>                    		
-                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationInstitution').code /></span>                    		
-                    			</#if>
+		                    	<#if !applicationForm.isSubmitted()>
+		                    	<input id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL"  value="${(qualification.qualificationInstitution?html)!}" />
+		                    	 <@spring.bind "qualification.qualificationInstitution" /> 
+		                    	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+		                    	
                     			<#else>
                     			     <input readonly="readonly" id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL" 
-                                                                value="${(model.qualification.qualificationInstitution?html)!}" />
+                                                                value="${(qualification.qualificationInstitution?html)!}" />
                     			</#if>
 			                    									
 		                    </div>
 	                  	</div>
 	                  
+	               		<div class="row">
+                    		<span class="label">Institution Country<em>*</em></span>
+                    		<span class="hint" data-desc="Tooltip demonstration."></span>
+                    		<div class="field">
+                      			<select class="full" id="institutionCountry" name="institutionCountry"
+                      			 <#if applicationForm.isSubmitted()>
+                                                disabled="disabled"
+                                            </#if>>
+                        		<option value="">Select...</option>
+                         			<#list countries as country>
+                         				<option value="${country.id?string('#######')}"  <#if qualification.institutionCountry?? && qualification.institutionCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>
+                         			</#list>
+                      			</select>
+								 <@spring.bind "qualification.institutionCountry" /> 
+		                    	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                    		</div>
+                  		</div>
+                  
 	                  	<!-- Name (of programme) -->
 	                	<div class="row">
 		                  	<span class="label">Title / subject<em>*</em></span>
 		                    <span class="hint" data-desc="Tooltip demonstration."></span>
 		                    <div class="field">
-		                    	<#if !model.applicationForm.isSubmitted()>
+		                    	<#if !applicationForm.isSubmitted()>
 		                    	<input id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering" 
-		                    									value="${(model.qualification.qualificationSubject?html)!}"/>
-		       					<#if model.hasError('qualificationSubject')>
-		       						<span class="invalid"><@spring.message  model.result.getFieldError('qualificationSubject').code /></span>
-		       					</#if>
+		                    									value="${(qualification.qualificationSubject?html)!}"/>
+		       					 <@spring.bind "qualification.qualificationSubject" /> 
+		                    	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 		       					<#else>
 		       					  <input readonly="readonly" id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering" 
-                                                                value="${(model.qualification.qualificationSubject?html)!}"/>
+                                                                value="${(qualification.qualificationSubject?html)!}"/>
 		       					</#if>
 		       					
 		                    </div>
@@ -123,22 +139,21 @@
 		                    <div class="field">
 			                    
 			                    <input id="qualificationStartDate" class="half date" type="text" 
-			                    								value="${(model.qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}" 
-			                    								<#if model.applicationForm.isSubmitted()>
+			                    								value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}" 
+			                    								<#if applicationForm.isSubmitted()>
                                             disabled="disabled"
                                             </#if>>
                             </input>
-			                    <#if model.hasError('qualificationStartDate')>
-			                    	<span class="invalid"><@spring.message  model.result.getFieldError('qualificationStartDate').code /></span>
-			                    </#if>
-			                    
+                           		<@spring.bind "qualification.qualificationStartDate" /> 
+		                    	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 		                    </div>
 	                 	</div>
 	                 	
 						<div class="row">
-                       <label class="label">Is Completed<em>*</em></label>
+                       <label class="label">Is Completed</label>
                        	<span class="hint"></span>
                        		<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"/
+                       		<#if applicationForm.isSubmitted()>
                        		<#if model.qualification.isQualificationCompleted()>
                                           checked
                                 </#if>
@@ -153,18 +168,17 @@
                     		<span class="label">Language of Study<em>*</em></span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
-                      			<select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${model.qualification.qualificationLanguage!}"
-                      			 <#if model.applicationForm.isSubmitted()>
+                      			<select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${qualification.qualificationLanguage!}"
+                      			 <#if applicationForm.isSubmitted()>
                                                 disabled="disabled"
                                             </#if>>
                         		<option value="">Select...</option>
-                         			<#list model.languages as language>
-                         				<option value="${language.id?string('#######')}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage.id == language.id> selected="selected"</#if>>${language.name?html}</option>
+                         			<#list languages as language>
+                         				<option value="${language.id?string('#######')}"  <#if qualification.qualificationLanguage?? && qualification.qualificationLanguage.id == language.id> selected="selected"</#if>>${language.name?html}</option>
                          			</#list>
                       			</select>
-								<#if model.hasError('qualificationLanguage')>                    		
-                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationLanguage').code /></span>                    		
-                    			</#if>
+								<@spring.bind "qualification.qualificationLanguage" /> 
+		                    	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 
                     		</div>
                   		</div>
@@ -174,22 +188,21 @@
 	                    	<span class="label">Level<em>*</em></span>
 	                    	<span class="hint" data-desc="Tooltip demonstration."></span>
 	                    	<div class="field">
-	                    		<select name="qualificationLevel" id="qualificationLevel" value="${model.qualification.qualificationLevel!}"
-	                    		 <#if model.applicationForm.isSubmitted()>
+	                    		<select name="qualificationLevel" id="qualificationLevel" value="${qualification.qualificationLevel!}"
+	                    		 <#if applicationForm.isSubmitted()>
                                                 disabled="disabled"
                                             </#if>>
                         			 <option value="">Select...</option>
-                        			 <#list model.qualificationLevels as level>
+                        			 <#list qualificationLevels as level>
                              			 <option value="${level}"
-                             			 <#if model.qualification.qualificationLevel?? &&  model.qualification.qualificationLevel == level >
+                             			 <#if qualification.qualificationLevel?? &&  qualification.qualificationLevel == level >
                                         selected="selected"
                                         </#if>
                                 >${level.displayValue?html}</option>               
                         			</#list>
                       			</select>
-								<#if model.hasError('qualificationLevel')>                    		
-                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationLevel').code /></span>                    		
-                    			</#if>
+								<@spring.bind "qualification.qualificationLevel" /> 
+		                    	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 	                    	</div>
 	                  	</div>
 
@@ -198,15 +211,14 @@
                     		<span class="label">Type<em>*</em></span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
-                    		<#if !model.applicationForm.isSubmitted()>
+                    		<#if !applicationForm.isSubmitted()>
                       			<input id="qualificationType" class="full" type="text" 
-			             										value="${(model.qualification.qualificationType?html)!}"/>
-								<#if model.hasError('qualificationType')>                    		
-                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationType').code /></span>                    		
-                    			</#if>
+			             										value="${(qualification.qualificationType?html)!}"/>
+								<@spring.bind "qualification.qualificationType" /> 
+		                    	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                     			<#else>
                     			 <input readonly="readonly" id="qualificationType" class="full" type="text" 
-                                                                value="${(model.qualification.qualificationType?html)!}"/>
+                                                                value="${(qualification.qualificationType?html)!}"/>
                     			</#if>
                     		</div>
                   		</div>
@@ -216,49 +228,31 @@
                     		<span class="label">Grade<em>*</em></span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
                     		<div class="field">
-                    		<#if !model.applicationForm.isSubmitted()>
+                    		<#if !applicationForm.isSubmitted()>
                       			<input id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction"
-			                    								value="${(model.qualification.qualificationGrade?html)!}"/>
-								<#if model.hasError('qualificationGrade')>                    		
-                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationGrade').code /></span>                    		
-                    			</#if>
+			                    								value="${(qualification.qualificationGrade?html)!}"/>
+								<@spring.bind "qualification.qualificationGrade" /> 
+		                    	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                     			<#else>
                     			     <input readonly="readonly" id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction"
-                                                                value="${(model.qualification.qualificationGrade?html)!}"/>
+                                                                value="${(qualification.qualificationGrade?html)!}"/>
                     			</#if>
                     		</div>
                   		</div>
 
-                  		<!-- Qualification score -->
-                  		<div class="row">
-                    		<span class="label">Score<em>*</em></span>
-                    		<span class="hint" data-desc="Tooltip demonstration."></span>
-                    		<div class="field">
-                    		<#if !model.applicationForm.isSubmitted()>
-                      			<input id="qualificationScore" class="full" type="text" placeholder="e.g. 114"
-			                    								value="${(model.qualification.qualificationScore?html)!}"/>
-								<#if model.hasError('qualificationScore')>                    		
-                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationScore').code /></span>                    		
-                    			</#if>
-                    			<#else>
-                    			 <input readonly="readonly" id="qualificationScore" class="full" type="text" placeholder="e.g. 114"
-                                                                value="${(model.qualification.qualificationScore?html)!}"/>
-                    			</#if>
-                    		</div>
-                  		</div>
-                  
+                  		
                   		<!-- Award date -->
                   		<div class="row">
                     		<span class="label">Award Date</span>
                     		<span class="hint" data-desc="Tooltip demonstration."></span>
-							<#if model.hasError('qualificationAwardDate')>                    		
-                    				<span class="invalid"><@spring.message  model.result.getFieldError('qualificationAwardDate').code /></span>                    		
-                    			</#if>
+							
                     		<div class="field" id="awardDateField">
                     			<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" 
-                    							value="${(model.qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"
+                    							value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"
                                             disabled="disabled">
-                            </input>
+                            	</input>
+                           	 	<@spring.bind "qualification.qualificationAwardDate" /> 
+		                    	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                     		</div>
                   		</div>
 
@@ -278,7 +272,7 @@
 	                </div>
 
 		        	<div class="buttons">
-		        	<#if !model.applicationForm.isSubmitted()>
+		        	<#if !applicationForm.isSubmitted()>
 		            	<a class="button" id="qualificationCancelButton" name="qualificationCancelButton">Cancel</a>
 		            	<button class="blue" type="button" id="qualificationsCloseButton" name="qualificationsCloseButton">Close</button>
 		                <button class="blue" type="button" id="qualificationSaveCloseButton"  name="id="qualificationSaveCloseButton"" value="close">Save and Close</button>
@@ -292,12 +286,11 @@
 		</div>
 <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>		
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/qualifications.js'/>"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/qualifications.js'/>"></script>
  
+ <@spring.bind "qualification.*" /> 
  
-<#if (model.result?? && model.result.hasErrors() ) || add??>
-
-<#else >
+<#if !spring.status.errorMessages?has_content && (message?? && message=='close')>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#qualifications-H2').trigger('click');

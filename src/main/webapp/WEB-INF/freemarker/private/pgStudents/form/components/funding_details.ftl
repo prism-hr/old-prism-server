@@ -93,8 +93,8 @@
                              	>${type.displayValue}</option>               
                         	</#list>
                       	</select>
-                		<#if model.hasError('fundingType')>
-                        	<span class="invalid"><@spring.message  model.result.getFieldError('fundingType').code /></span>                           
+                		<#if model.fundingErrors?? && model.fundingErrors.fundingType??>
+                        	<span class="invalid"><@spring.message model.fundingErrors.fundingType /></span>                           
                         </#if>
 					</div>
 				</div>
@@ -106,8 +106,8 @@
 					<div class="field">
 				    <#if !model.applicationForm.isSubmitted()>
                     	<input id="fundingDescription" name="fundingDescription" class="full" type="text" value="${(model.funding.fundingDescription?html)!}" />
-	                    <#if model.hasError('fundingDescription')>                           
-	                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingDescription').code /></span>                           
+	                    <#if model.fundingErrors?? && model.fundingErrors.fundingDescription??>                           
+	                    	<span class="invalid"><@spring.message model.fundingErrors.fundingDescription /></span>                           
 	                    </#if>
                     <#else>
                         <input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${(model.funding.fundingDescription?html)!}" />
@@ -123,8 +123,8 @@
                     <div class="field">
                     <#if !model.applicationForm.isSubmitted()>
                     	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${(model.funding.fundingValue?html)!}" />
-	                    <#if model.hasError('fundingValue')>
-	                    	<span class="invalid"><@spring.message  model.result.getFieldError('fundingValue').code /></span>
+	                    <#if model.fundingErrors?? && model.fundingErrors.fundingValue??>
+	                    	<span class="invalid"><@spring.message model.fundingErrors.fundingValue/></span>
 	                    </#if>
                     <#else>
                        <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${(model.funding.fundingValue?html)!}" />
@@ -142,8 +142,8 @@
                                                 disabled="disabled"
                                             </#if>>
                                     </input>
-                    	<#if model.hasError('fundingAwardDate')>                           
-                    		<span class="invalid""><@spring.message  model.result.getFieldError('fundingAwardDate').code /></span>                           
+                    	<#if model.fundingErrors?? && model.fundingErrors.fundingAwardDate??>                           
+                    		<span class="invalid""><@spring.message model.fundingErrors.fundingAwardDate /></span>                           
                     	</#if>
                     </div>
                     
@@ -179,8 +179,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>
 	
-<#if (model.result?? && model.result.hasErrors() ) || fundingAdd?? >
-
+<#if model.fundingErrors??>
 <#else >
 <script type="text/javascript">
 	$(document).ready(function(){

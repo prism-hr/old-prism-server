@@ -12,11 +12,9 @@ import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
@@ -36,10 +34,8 @@ public class ApplicationPageModel extends PageModel {
 	private List<Country> countries;
 	private List<Language> languages;
 	
-	private List<ResidenceStatus> residenceStatuses = new LinkedList<ResidenceStatus>();
 	private List<Gender> genders = new LinkedList<Gender>();
 	private List<PhoneType> phoneTypes = new LinkedList<PhoneType>();
-	private List<LanguageAptitude> languageAptitudes = new LinkedList<LanguageAptitude>();
 	private List<DocumentType> documentTypes = new LinkedList<DocumentType>();
 	private List<QualificationLevel> qualificationLevels = new LinkedList<QualificationLevel>();
 
@@ -109,14 +105,6 @@ public class ApplicationPageModel extends PageModel {
 		return employmentPosition;
 	}
 
-	public List<ResidenceStatus> getResidenceStatuses() {
-		return residenceStatuses;
-	}
-
-	public void setResidenceStatuses(ResidenceStatus[] values) {
-		this.residenceStatuses.addAll(Arrays.asList(values));
-	}
-
 	public List<StudyOption> getStudyOptions() {
 		return studyOptions;
 	}
@@ -163,14 +151,6 @@ public class ApplicationPageModel extends PageModel {
 
 	public void setLanguages(List<Language> languages) {
 		this.languages = languages;
-	}
-
-	public List<LanguageAptitude> getLanguageAptitudes() {
-		return languageAptitudes;
-	}
-
-	public void setLanguageAptitudes(LanguageAptitude[] languageAptitudes) {
-		this.languageAptitudes.addAll(Arrays.asList(languageAptitudes));
 	}
 
 	public List<DocumentType> getDocumentTypes() {

@@ -155,7 +155,7 @@
                        		<#if model.applicationForm.isSubmitted()>
                                           disabled="disabled"
                                 </#if>>
-                       		<input type="text" name="completedPosition" id="completedPosition" value"${(model.employmentPosition.completed.displayValue())!}"/>
+                       		<input type="hidden" name="completedPosition" id="completedPosition"/>
                			 </div>
                 
                 <!-- End date -->

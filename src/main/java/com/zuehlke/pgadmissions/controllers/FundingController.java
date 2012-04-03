@@ -10,7 +10,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,7 +28,6 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.validators.DocumentValidator;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
 
 @Controller
@@ -38,17 +36,15 @@ public class FundingController {
 
 	private final ApplicationsService applicationService;
 	private final PropertyEditor datePropertyEditor;
-	private final DocumentValidator documentValidator;
 
 	FundingController() {
-		this(null, null, null);
+		this(null, null);
 	}
 
 	@Autowired
-	public FundingController(ApplicationsService applicationService, DatePropertyEditor datePropertyEditor, DocumentValidator documentValidator) {
+	public FundingController(ApplicationsService applicationService, DatePropertyEditor datePropertyEditor) {
 		this.applicationService = applicationService;
 		this.datePropertyEditor = datePropertyEditor;
-		this.documentValidator = documentValidator;
 	}
 
 
@@ -82,20 +78,13 @@ public class FundingController {
 			funding.setDescription(fund.getFundingDescription());
 			funding.setValue(fund.getFundingValue());
 			funding.setAwardDate(fund.getFundingAwardDate());
-			Document document = new Document();
 			if (fund.getFundingFile() != null) {
+				Document document = new Document();
 				document.setFileName(fund.getFundingFile().getOriginalFilename());
 				document.setContentType(fund.getFundingFile().getContentType());
 				document.setContent(fund.getFundingFile().getBytes());
 				document.setType(DocumentType.SUPPORTING_FUNDING);
-				
-				BindingResult errors = newErrors(document);
-				documentValidator.validate(document, errors);
-				if(errors.hasFieldErrors("fileName")){
-					//TODO
-				} else {
-					funding.setDocument(document);
-				}
+				funding.setDocument(document);
 			}
 			if (fund.getFundingId() == null) {
 				application.getFundings().add(funding);
@@ -116,10 +105,6 @@ public class FundingController {
 
 	private RegisteredUser getCurrentUser() {
 		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-	}
-
-	BindingResult newErrors(Document document) {
-		return new DirectFieldBindingResult(document, document.getFileName());
 	}
 
 	@InitBinder

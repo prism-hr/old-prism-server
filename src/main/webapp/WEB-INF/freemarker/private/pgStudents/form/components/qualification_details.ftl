@@ -72,7 +72,7 @@
               		
               	</#if>
               
-              	<input type="hidden" id="qualificationId" name="qualificationId"/>
+              	<input type="hidden" id="qualificationId" name="qualificationId" value="${(model.qualification.id?html)!}"/>
               	
               	<form>
 

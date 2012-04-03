@@ -7,6 +7,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
@@ -19,13 +20,13 @@ import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
-import com.zuehlke.pgadmissions.dto.QualificationDTO;
+
 
 public class ApplicationPageModel extends PageModel {
 
 	private Address address = new Address();
 	private Funding funding = new Funding();
-	private QualificationDTO qualification = new QualificationDTO();
+	private Qualification qualification = new Qualification();
 	private EmploymentPosition employmentPosition =new EmploymentPosition();
 	private Referee referee= new Referee();
 	private String message;
@@ -80,11 +81,11 @@ public class ApplicationPageModel extends PageModel {
 
 	}
 
-	public QualificationDTO getQualification() {
+	public Qualification getQualification() {
 		return qualification;
 	}
 
-	public void setQualification(QualificationDTO qualification) {
+	public void setQualification(Qualification qualification) {
 		this.qualification = qualification;
 	}
 

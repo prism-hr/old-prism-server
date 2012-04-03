@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.text.ParseException;
@@ -28,13 +29,22 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	private RegisteredUser user;
 	private Program program;
 	private Project project;
+	private LanguageDAO languageDAO;
+	private QualificationDAO qualificationDAO;
 
-	
-	@Test(expected=NullPointerException.class)
-	public void shouldThrowNullPointerException(){
-		QualificationDAO qualificationDAO = new QualificationDAO();
-		Qualification qualification =new QualificationBuilder().toQualification();
-		qualificationDAO.delete(qualification);
+		
+	@Test
+	public void shouldGetQualificationById() throws ParseException{
+		Qualification qualification =new QualificationBuilder().q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_grade("")
+				.q_institution("").q_language_of_study(languageDAO.getLanguageById(1)).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").isCompleted(CheckedStatus.YES)
+				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
+		sessionFactory.getCurrentSession().save(qualification);
+		Integer id = qualification.getId();
+		flushAndClearSession();
+		
+		assertEquals(qualification, qualificationDAO.getQualificationById(id));
+		
+		
 	}
 	
 	@Test
@@ -43,7 +53,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		application.setProject(project);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
+
 		Qualification qualification =new QualificationBuilder().q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).q_grade("")
 				.q_institution("").q_language_of_study(languageDAO.getLanguageById(1)).q_level(QualificationLevel.COLLEGE).q_name_of_programme("").isCompleted(CheckedStatus.YES)
 				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
@@ -51,7 +61,6 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		Integer id = qualification.getId();
-		QualificationDAO qualificationDAO = new QualificationDAO(sessionFactory);
 		qualificationDAO.delete(qualification);
 		flushAndClearSession();
 		assertNull(sessionFactory.getCurrentSession().get(Qualification.class, id));
@@ -59,13 +68,15 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	
 	@Before
 	public void setup() {
+		qualificationDAO = new QualificationDAO(sessionFactory);
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
 		program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
 		project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
 		save(user, program, project);
-
+		languageDAO = new LanguageDAO(sessionFactory);
+		
 		flushAndClearSession();
 	}
 }

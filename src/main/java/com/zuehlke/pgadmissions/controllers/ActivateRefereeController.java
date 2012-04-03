@@ -59,6 +59,6 @@ public class ActivateRefereeController {
 		if (application.isDecided()) {
 			return new ModelAndView(EXPIRED_VIEW_NAME);
 		}
-		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(application, null, null, null));
+		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "model", applicationPageModelBuilder.createAndPopulatePageModel(application, null, null, null, null));
 	}
 }

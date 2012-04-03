@@ -85,7 +85,7 @@ public class ActivateRefereeControllerTest {
 	
 
 		ApplicationPageModel model = new ApplicationPageModel();
-		EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, null, null, null)).andReturn(model);
+		EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, null, null, null, null)).andReturn(model);
 		
 		EasyMock.replay(refereeServiceMock, applicationPageModelBuilderMock);
 		

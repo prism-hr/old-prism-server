@@ -2,6 +2,9 @@ package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -63,12 +66,26 @@ public class FundingValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
 	
+	@Test
+	public void shouldRejectIfAwardFateIsFutureDate(){
+		Date tomorrow;
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DATE, 1);
+		tomorrow = calendar.getTime();
+		funding.setFundingAwardDate(tomorrow);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "fundingAwardDate");
+		validator.validate(funding, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("funding.fundingAwardDate.future", mappingResult.getFieldError("fundingAwardDate").getCode());
+	}
+	
+	
 	@SuppressWarnings("deprecation")
 	@Before
-	public void setup(){
+	public void setup() throws ParseException{
 		validator = new FundingValidator();
 		funding = new Funding();
-		funding.setFundingAwardDate(new Date(2001,1,1));
+		funding.setFundingAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
 		funding.setFundingDescription("Description");
 		funding.setFundingId(2);
 		funding.setFundingType(FundingType.EMPLOYER);

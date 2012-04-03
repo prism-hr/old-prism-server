@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.validators;
 
+import java.util.Date;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -7,6 +10,7 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.dto.Address;
 
 @Component
 public class PersonalDetailValidator implements Validator {
@@ -18,6 +22,8 @@ public class PersonalDetailValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
+		PersonalDetail personalDetail = (PersonalDetail) target;
+		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "personalDetails.firstName.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "personalDetails.lastName.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", "personalDetails.gender.notempty");
@@ -32,6 +38,11 @@ public class PersonalDetailValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", "personalDetails.residenceCountry.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceStatus", "personalDetails.residenceStatus.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", "personalDetails.dateOfBirth.notempty");
+		String dob = personalDetail.getDateOfBirth() == null ? "": personalDetail.getDateOfBirth().toString();
+		if (StringUtils.isNotBlank(dob) && personalDetail.getDateOfBirth().after(today)) {
+			errors.rejectValue("dateOfBirth", "personalDetails.dateOfBirth.future");
+		}
+		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceFromDate", "personalDetails.residenceFromDate.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", "personalDetails.application.notempty");
 		
@@ -44,6 +55,8 @@ public class PersonalDetailValidator implements Validator {
 			errors.rejectValue("languageProficiencies", "personalDetails.languageProficiencies.notempty");
 		}
 	}
+	
+	
 	
 	private void validateCandidateNationalities(Object target, Errors errors) {
 		if(((PersonalDetail)target).getCandidateNationalities().isEmpty()){

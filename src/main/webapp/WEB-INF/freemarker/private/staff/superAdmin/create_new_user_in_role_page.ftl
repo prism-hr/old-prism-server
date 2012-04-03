@@ -40,16 +40,16 @@
 		      		<div class="content-box">
 		      			<div class="content-box-inner">
 		        
-			          		<form id ="programmeForm" name="programmeForm" action="/pgadmissions/manageUsers/updateRoles" method="POST">
+			          		<form id ="createNewUser" name="createNewUser" action="/pgadmissions/manageUsers/createNewUser" method="POST">
 			          
-			          			<h1>Add Existing programme users and assign roles</h1>
-			            		<p>Please add users to the programme.<br>You can select one or more roles for the user.</p>
+			          			<h1>Add New programme users and assign roles</h1>
+			            		<p>Please create a new user to administer the programme.</p>
 			            
 			            		<br>
 			            
 			            		<div class="row programme">
 				              		<label>Select programme</label>
-				              		<select name="programId" id="programId">
+				              		<select name="selectedProgramForNewUser" id="selectedProgramForNewUser">
 											<option value="">Please select a program</option>
 	                                		<#list programs as program>"
 	                                    		<option value='${program.id?string("######")}' 
@@ -60,28 +60,38 @@
 	                                		</#list>
 				              		</select>
 			            		</div>
-								<!-- // EXISTING USERS -->
-											
-				            	<hr>
-					          	<!-- Left side -->
 					          	<div class="left-column">
 					            
-					              	<div class="row">
-					                	<label>Please choose a user</label>
-					                	<select id="userId" name="userId">
-					                			<option value="">Please choose a user</option>
-					                			<#list availableUsers as user>						                			
-						                			<option value="${user.id?string("######")}"
-						                			<#if selectedUser?? && selectedUser.id == user.id >
-													 selected = "selected"
-													</#if>
-						                			>${user.firstName} ${user.lastName}</option>      
-												</#list>
-					                		</select>
-					              	</div>
-					              	<div class="row">
-					                	or <a href="/pgadmissions/manageUsers/createNewUser">add a new user</a>
-					              	</div>
+					            <div class="row">
+                                    <label class="label">First Name<em>*</em></label>
+                                            <div class="field">
+                                                <input class="full" type="text" <#if newUserFirstName??> value="${newUserFirstName}"</#if>  name="newUserFirstName" id="newUserFirstName"/>
+                               <#if result?? && result.getFieldError('newUserFirstName')??>
+                                   <p class="invalid"><@spring.message  result.getFieldError('newUserFirstName').code /></p>
+                               </#if>      
+                               </div>
+                               </div>
+
+                                <div class="row">
+                                    <label class="label">Last Name<em>*</em></label>
+                                    <div class="field">
+                                        <input class="full" type="text" <#if newUserLastName??> value="${newUserLastName}"</#if>  name="newUserLastName" id="newUserLastName"/>
+                                         <#if result?? && result.getFieldError('newUserLastName')??>
+                                            <p class="invalid"><@spring.message  result.getFieldError('newUserLastName').code /></p>
+                                        </#if> 
+                                    </div>
+                                </div>
+                                
+                                 <div class="row">
+                                    <label class="label">Email<em>*</em></label>
+                                            <div class="field">
+                                                <input class="full" type="text" <#if newUserEmail??> value="${newUserEmail}"</#if>  name="newUserEmail" id="newUserEmail"/>
+                                                <#if result?? && result.getFieldError('newUserEmail')??>
+                                                    <p class="invalid"><@spring.message  result.getFieldError('newUserEmail').code /></p>
+                                                </#if> 
+                                            </div>
+                                 </div>
+                                
 					            </div>
 					
 								<!-- Right side -->
@@ -91,48 +101,19 @@
 					                	<label>Role(s) in application process</label>
 					                	<select multiple size="4" id="roles" name="newRoles" >
                         				<#list authorities as authority>
-                      						<option value="${authority}" <#if selectedUser?? && selectedUser.isInRoleInProgram(authority, selectedProgram)>selected="selected" </#if>>${authority}</option>
+                      						<option value="${authority}">${authority}</option>
                       					</#list>
                       					</select>
 					              	</div>
 					            
 					              	<div class="buttons">
-					              		<button type="submit" value="adduser" >Add / update user</button>
+					              		<button type="submit" value="createuser" >Create user</button>
 					            	</div>
 					              
 								</div>
 								
 							</form>
 		          
-		          			<hr>
-		          			
-		          			<table class="data" border="0">
-		            			<colgroup>
-		              				<col style="width: 220px;" />
-		              				<col style="width: auto;" />
-		              				<col style="width: 200px;" />
-		              				<col style="width: 100px;" />
-		            			</colgroup>
-		            			<thead>
-		              				<tr>
-		                				<th scope="col">Email address</th>
-		                				<th scope="col">Name</th>
-		                				<th scope="col">Role(s)</th>
-		                				<th scope="col">Action</th>
-		              				</tr>
-		            			</thead>
-		            			<tbody>
-		            				<#list usersInRoles as userInRole>
-			              				<tr>
-			                				<td scope="col">${userInRole.email}</td>
-						                	<td scope="col">${userInRole.firstName} ${userInRole.lastName}</td>
-						                	<td scope="col">${userInRole.getAuthoritiesForProgramAsString(selectedProgram)}</td>
-			                				<td scope="col"><a href="<@spring.url '/manageUsers/showPage?programId=${selectedProgram.id?string("#######")}&userId=${userInRole.id?string("#######")}'/>">Edit</a> / <a href="#" name="removeuser" id="remove_${userInRole.id?string("#######")}">Remove</a></td>
-			              				</tr>
-									</#list>			              			
-		            			</tbody>
-		          			</table>
-		
 		        		</div><!-- .content-box-inner -->
 		      		</div><!-- .content-box -->
 		      

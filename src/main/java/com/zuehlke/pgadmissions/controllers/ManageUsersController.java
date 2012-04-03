@@ -80,7 +80,7 @@ public class ManageUsersController {
 	public ModelAndView addNewUser(@ModelAttribute NewAdminUserDTO adminUser,
 			@RequestParam Integer selectedProgramForNewUser, @ModelAttribute NewRolesDTO newRolesDTO, ModelMap modelMap) {
 
-		Program program = getProgram(selectedProgramForNewUser);
+		Program selectedProgram = getProgram(selectedProgramForNewUser);
 
 		NewAdminUserDTOValidator validator = new NewAdminUserDTOValidator();
 		BindingResult result = new DirectFieldBindingResult(adminUser, "adminUser");
@@ -88,20 +88,23 @@ public class ManageUsersController {
 
 		if (result.hasErrors()) {
 			modelMap.put("result", result);
-			modelMap.put("selectedProgram", program);
+			modelMap.put("selectedProgram", selectedProgram);
 			modelMap.put("newUserFirstName", adminUser.getNewUserFirstName());
 			modelMap.put("newUserLastName", adminUser.getNewUserLastName());
 			modelMap.put("newUserEmail", adminUser.getNewUserEmail());
-		} else {
 
-			RegisteredUser potentiallyNewUser = userService.getUserByEmail(adminUser.getNewUserEmail());
-			if (potentiallyNewUser != null) {
-				//TODO: should save user
-				System.out.println("!!should save user");
-			}
+			return new ModelAndView(NEW_USER_VIEW_NAME, modelMap);
+		} 
+
+		RegisteredUser potentiallyNewUser = userService.getUserByEmail(adminUser.getNewUserEmail());
+		String view;
+		if (potentiallyNewUser != null) {
+			view = updateSelectedUserInternal(potentiallyNewUser, selectedProgram, newRolesDTO);
+		} else {
+			view = NEW_USER_VIEW_NAME;
 		}
 
-		return new ModelAndView(NEW_USER_VIEW_NAME, modelMap);
+		return new ModelAndView(view);
 	}
 
 	@ModelAttribute("selectedProgram")
@@ -172,6 +175,10 @@ public class ManageUsersController {
 	public String updateUserWithNewRoles(@ModelAttribute("selectedUser") RegisteredUser selectedUser,
 			@ModelAttribute("selectedProgram") Program selectedProgram, @ModelAttribute NewRolesDTO newRolesDTO) {
 
+		return updateSelectedUserInternal(selectedUser, selectedProgram, newRolesDTO);
+	}
+
+	private String updateSelectedUserInternal(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
 		if(getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)){
 			removeFromSuperadminRoleIfRequired(selectedUser, newRolesDTO);
 		}

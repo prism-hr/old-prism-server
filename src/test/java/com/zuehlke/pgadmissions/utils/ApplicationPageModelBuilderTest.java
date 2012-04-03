@@ -35,11 +35,9 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
@@ -76,14 +74,6 @@ public class ApplicationPageModelBuilderTest {
 		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
 		assertSame(countries, model.getCountries());
 	}
-	
-	@Test
-	public void shouldSetAllLanguageAptitudesOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
-		assertEquals(LanguageAptitude.values().length, model.getLanguageAptitudes().size());
-		assertTrue(model.getLanguageAptitudes().containsAll(Arrays.asList(LanguageAptitude.values())));
-	}
-
 
 	@Test
 	public void shouldSetAllLanguagesOnModel() {
@@ -92,13 +82,6 @@ public class ApplicationPageModelBuilderTest {
 		EasyMock.replay(languageServiceMock);
 		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
 		assertSame(languages, model.getLanguages());
-	}
-
-	@Test
-	public void shouldSetAllsetResidenceStatusesOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
-		assertEquals(ResidenceStatus.values().length, model.getResidenceStatuses().size());
-		assertTrue(model.getResidenceStatuses().containsAll(Arrays.asList(ResidenceStatus.values())));
 	}
 
 	@Test
@@ -127,13 +110,6 @@ public class ApplicationPageModelBuilderTest {
 		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
 		assertEquals(PhoneType.values().length, model.getPhoneTypes().size());
 		assertTrue(model.getPhoneTypes().containsAll(Arrays.asList(PhoneType.values())));
-	}
-
-	@Test
-	public void shouldSetAllLanguageAptitudesOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
-		assertEquals(LanguageAptitude.values().length, model.getLanguageAptitudes().size());
-		assertTrue(model.getLanguageAptitudes().containsAll(Arrays.asList(LanguageAptitude.values())));
 	}
 
 	@Test

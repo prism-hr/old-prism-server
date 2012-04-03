@@ -77,6 +77,7 @@ $('a[name="positionEditButton"]').click(function(){
 		bindDatePickers();
 	} else {
 		$("#completedPositionCB").attr('checked', false);
+		$("#completedPosition").val("NO");
 	}
 	$("#position_endDate").val($('#'+id+"_positionEndDate").val());
 });

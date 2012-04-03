@@ -16,8 +16,6 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -27,17 +25,14 @@ import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.NationalityType;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 
 public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
@@ -51,7 +46,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country2)
-				.residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm).toPersonalDetails();
+				.applicationForm(applicationForm).toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
 		assertNotNull(personalDetails.getId());
@@ -74,7 +69,6 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(personalDetails.getGender(), reloadedDetails.getGender());
 		assertEquals(personalDetails.getLastName(), reloadedDetails.getLastName());
 		assertEquals(personalDetails.getResidenceCountry(), reloadedDetails.getResidenceCountry());
-		assertEquals(personalDetails.getResidenceStatus(), reloadedDetails.getResidenceStatus());
 
 	}
 
@@ -85,7 +79,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		Telephone telephone3 = new TelephoneBuilder().telephoneNumber("abc").telephoneType(PhoneType.WORK).toTelephone();
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().phoneNumbers(telephone1, telephone2).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
+				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
 				.toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
@@ -146,7 +140,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality1, nationality2).maternalGuardianNationalities(nationality4).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
+				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
 				.toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
@@ -208,7 +202,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().maternalGuardianNationalities(nationality1, nationality2).candiateNationalities(nationality4).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
+				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
 				.toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
@@ -269,7 +263,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().paternalGuardianNationalities(nationality1, nationality2).candiateNationalities(nationality4).country(country1)
 				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
+				.lastName("lastname").residenceCountry(country1).applicationForm(applicationForm)
 				.toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
@@ -295,58 +289,6 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(2, reloadedDetails.getPaternalGuardianNationalities().size());
 		assertTrue(reloadedDetails.getPaternalGuardianNationalities().containsAll(Arrays.asList(nationality1, nationality3)));
 		
-		 assertNull(sessionFactory.getCurrentSession().get(Nationality.class, tobeRemovedId));
-	}
-	
-	
-	@Test
-	public void shouldSaveAndLoadPersonalDetailsWithLanguageProficiencies() throws Exception {
-		Language language = new LanguageBuilder().name("aaaaa").toLanguage();
-		sessionFactory.getCurrentSession().save(language);
-
-		flushAndClearSession();
-		
-		LanguageProficiency prof1 = new LanguageProficiency();
-		prof1.setLanguage(language);
-		prof1.setAptitude(LanguageAptitude.ELEMENTARY);
-		
-		LanguageProficiency prof2 = new LanguageProficiency();
-		prof2.setLanguage(language);
-		prof2.setAptitude(LanguageAptitude.FULL);
-		
-		LanguageProficiency prof3 = new LanguageProficiency();
-		prof3.setLanguage(language);
-		prof3.setAptitude(LanguageAptitude.LIMITED);
-		
-		
-		PersonalDetail personalDetails = new PersonalDetailsBuilder().languageProficiencies(prof1, prof2).country(country1)
-				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).email("email").firstName("firstName").gender(Gender.MALE)
-				.lastName("lastname").residenceCountry(country1).residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm)
-				.toPersonalDetails();
-
-		sessionFactory.getCurrentSession().save(personalDetails);
-		
-		flushAndClearSession();
-		PersonalDetail reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
-		assertEquals(2, reloadedDetails.getLanguageProficiencies().size());
-		assertTrue(reloadedDetails.getLanguageProficiencies().containsAll(Arrays.asList(prof1,prof2)));
-		Integer tobeRemovedId = prof2.getId();
-		reloadedDetails.getLanguageProficiencies().remove(prof2);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
-
-		flushAndClearSession();
-		
-		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
-		assertEquals(1, reloadedDetails.getLanguageProficiencies().size());
-		assertTrue(reloadedDetails.getLanguageProficiencies().containsAll(Arrays.asList(prof1)));
-
-		reloadedDetails.getLanguageProficiencies().add(prof3);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedDetails);
-		flushAndClearSession();
-		
-		reloadedDetails = (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, personalDetails.getId());
-		assertEquals(2, reloadedDetails.getLanguageProficiencies().size());
-		assertTrue(reloadedDetails.getLanguageProficiencies().containsAll(Arrays.asList(prof1, prof3)));
 		 assertNull(sessionFactory.getCurrentSession().get(Nationality.class, tobeRemovedId));
 	}
 	

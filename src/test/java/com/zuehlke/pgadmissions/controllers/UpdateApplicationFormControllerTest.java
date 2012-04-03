@@ -1,9 +1,11 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +19,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -44,7 +47,6 @@ import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
-import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -54,10 +56,13 @@ import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.QualificationPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.QualificationService;
+import com.zuehlke.pgadmissions.services.QualificationServiceTest;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
@@ -70,9 +75,7 @@ public class UpdateApplicationFormControllerTest {
 	private ApplicationsService applicationsServiceMock;
 	private UserPropertyEditor userPropertyEditorMock;
 	private RegisteredUser student;
-	private Qualification qualification;
-	private QualificationDTO qualificationDto;
-	private Qualification newQualification;
+;
 	private QualificationValidator qualificationValidator;
 	private DatePropertyEditor datePropertyEditorMock;
 	private CountryService countriesServiceMock;
@@ -86,6 +89,9 @@ public class UpdateApplicationFormControllerTest {
 	private LanguagePropertyEditor languagePropertyEditorMock;
 	private CountryPropertyEditor countryPropertyEditor;
 	private EncryptionUtils encryptionUtilsMock;
+	private QualificationPropertyEditor qualificationPropertyEditorMock;
+	private Qualification newQualification;
+	private QualificationService qualificationServiceMock;
 
 	@SuppressWarnings("deprecation")
 	@Test
@@ -268,7 +274,7 @@ public class UpdateApplicationFormControllerTest {
 
 		applicationController = new UpdateApplicationFormController(applicationsServiceMock, userPropertyEditorMock,
 				datePropertyEditorMock, countriesServiceMock, refereeServiceMock, phoneNumberJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
-				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, encryptionUtilsMock){
+				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, encryptionUtilsMock, qualificationValidator, qualificationServiceMock){
 			Referee newReferee() {
 				return new Referee();
 			}
@@ -316,6 +322,29 @@ public class UpdateApplicationFormControllerTest {
 		applicationController.editReferee(referee, null,  errorsMock);
 		EasyMock.verify(refereeServiceMock);
 
+	}
+	
+	@Test
+	public void shouldGetQualificationFromServiceIfIdProvided(){
+		Qualification qualification = new QualificationBuilder().id(1).toQualification();
+		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(qualification);
+		EasyMock.replay(qualificationServiceMock);
+		Qualification returnedQualification = applicationController.getQualification(1);
+		assertEquals(qualification, returnedQualification);
+	}
+	
+	@Test
+	public void shouldReturnNewQualificationIfIdIsNull(){		
+		Qualification returnedQualification = applicationController.getQualification(null);
+		assertNull(returnedQualification.getId());
+	}
+	
+	@Test(expected=ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfQualificationDoesNotExist(){
+		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(null);
+		EasyMock.replay(qualificationServiceMock);
+		applicationController.getQualification(1);
+		
 	}
 	
 	@Ignore
@@ -397,26 +426,11 @@ public class UpdateApplicationFormControllerTest {
 		assertEquals("open", modelAndView.getModel().get("formDisplayState"));
 		assertEquals("add", modelAndView.getModel().get("add"));
 	}
-	
-	@Test
-	public void shouldSaveNewQualification() {
-		ApplicationForm form = new ApplicationFormBuilder().qualification(qualification).id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
-		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
-		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
-		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock,languageServiceMock);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2,null, mappingResult,
-				new ModelMap());
-		EasyMock.verify(applicationsServiceMock);
-		Assert.assertEquals("private/pgStudents/form/components/qualification_details", modelAndView.getViewName());
-		Assert.assertNull( modelAndView.getModel().get("add"));
-	}
+
 	
 	@Test
 	public void shoulAddMessageIfAddParameterProvided() {
+		Qualification qualification = new QualificationBuilder().id(3).toQualification();
 		ApplicationForm form = new ApplicationFormBuilder().qualification(qualification).id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
@@ -424,83 +438,76 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
 		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
 		EasyMock.replay(applicationsServiceMock,languageServiceMock);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2,"add", mappingResult, new ModelMap());		
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		ModelAndView modelAndView = applicationController.editQualification(qualification, 2,"add", mappingResult, new ModelMap());		
 		Assert.assertEquals("add", modelAndView.getModel().get("add"));
+
 	}
 
-	@Test
-	public void shouldPopulateQualificationFromDTO() {
-		ApplicationForm form = new ApplicationFormBuilder().qualification(qualification).id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.expect(applicationsServiceMock.getQualificationById(3)).andReturn(qualification);
-		applicationsServiceMock.save(form);
-		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
-		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
-		EasyMock.replay(applicationsServiceMock, languageServiceMock);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2, null,mappingResult,
-				new ModelMap());
-		Assert.assertEquals(qualificationDto.getQualificationAwardDate(),
-				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
-						.getQualificationAwardDate());
-		Assert.assertEquals(qualificationDto.getQualificationGrade(),
-				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
-						.getQualificationGrade());
-		Assert.assertEquals(qualificationDto.getQualificationInstitution(),
-				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
-						.getQualificationInstitution());
-//		Assert.assertEquals(qualificationDto.getQualificationLanguage(),
-//				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
-//						.getQualificationLanguage());
-		Assert.assertEquals(QualificationLevel.COLLEGE,
-				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
-						.getQualificationLevel());
-		Assert.assertEquals(qualificationDto.getQualificationProgramName(),
-				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
-						.getQualificationProgramName());
-	
-		Assert.assertEquals(qualificationDto.getQualificationStartDate(),
-				((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getQualifications().get(0)
-						.getQualificationStartDate());
-		Assert.assertEquals(qualificationDto.getQualificationType(), ((PageModel) modelAndView.getModel().get("model"))
-				.getApplicationForm().getQualifications().get(0).getQualificationType());
-	}
 
 	@Test
-	public void shouldReturnInputQualificationDtoIfHasErrors() {
-		qualificationDto.setQualificationId(null);
-		qualificationDto.setQualificationLevel(null);
+	public void shouldReturnInputQualificationIfHasErrors() {
+		Qualification qualification = new QualificationBuilder().id(1).toQualification();
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock, qualificationValidator);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2,null, mappingResult,
-				new ModelMap());
-		Assert.assertEquals(qualificationDto,
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);		
+		
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		qualificationValidator.validate(qualification, errors);
+		EasyMock.expect(errors.hasErrors()).andReturn(true);
+		EasyMock.replay(applicationsServiceMock, qualificationValidator, errors);
+		ModelAndView modelAndView = applicationController.editQualification(qualification, 2,null, errors,new ModelMap());
+		Assert.assertEquals(qualification,
 				((ApplicationPageModel) modelAndView.getModel().get("model")).getQualification());
-	}
-
-	@Test
-	public void shouldCreateANewQualification() {
-		qualificationDto.setQualificationId(null);
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		applicationsServiceMock.save(form);
-		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
-		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
-		EasyMock.replay(applicationsServiceMock, qualificationValidator, languageServiceMock);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualificationDto, "qualification");
-		ModelAndView modelAndView = applicationController.editQualification(qualificationDto, 2, null,mappingResult,
-				new ModelMap());
 		EasyMock.verify(applicationsServiceMock);
-		Assert.assertEquals(1, form.getQualifications().size());
-		Assert.assertEquals("first", ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
-				.getQualifications().get(0).getQualificationGrade());
-
 	}
 
+	
+	@Test
+	public void shouldSaveApplicationFomrIfNoErrorsInQualification(){
+		Qualification qualification = new QualificationBuilder().id(1).toQualification();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);		
+		applicationsServiceMock.save(form);
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		qualificationValidator.validate(qualification, errors);
+		EasyMock.expect(errors.hasErrors()).andReturn(false);
+		EasyMock.replay(applicationsServiceMock, qualificationValidator, errors);
+		applicationController.editQualification(qualification, 2,null, errors,new ModelMap());		
+		EasyMock.verify(applicationsServiceMock);
+	}
+	
+	@Test
+	public void shoulAddNewQualificationToApplicationForm(){
+		Qualification qualification = new QualificationBuilder().toQualification();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);		
+		applicationsServiceMock.save(form);
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		qualificationValidator.validate(EasyMock.same(qualification), EasyMock.same(errors));
+		EasyMock.expect(errors.hasErrors()).andReturn(false);
+		EasyMock.replay(applicationsServiceMock, qualificationValidator, errors);
+		applicationController.editQualification(qualification, 2,null, errors,new ModelMap());	
+		assertEquals(1, form.getQualifications().size());
+		assertSame(qualification, form.getQualifications().get(0));
+	}
+	
+	
+	@Test
+	public void shoulNotAddExistingQualificationToApplicationForm(){
+		Qualification qualification = new QualificationBuilder().id(2).toQualification();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).qualifications(qualification).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);		
+		applicationsServiceMock.save(form);
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		qualificationValidator.validate(EasyMock.same(qualification), EasyMock.same(errors));
+		EasyMock.expect(errors.hasErrors()).andReturn(false);
+		EasyMock.replay(applicationsServiceMock, qualificationValidator, errors);
+		applicationController.editQualification(qualification, 2,null, errors,new ModelMap());	
+		assertEquals(1, form.getQualifications().size());
+		assertSame(qualification, form.getQualifications().get(0));
+	}
+	
+	
 	
 	@Test
 	public void shouldBindPropertyEditors() {
@@ -511,6 +518,7 @@ public class UpdateApplicationFormControllerTest {
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		binderMock.registerCustomEditor(Language.class, languagePropertyEditorMock);
 		binderMock.registerCustomEditor(Country.class, countryPropertyEditor);
+		
 		EasyMock.replay(binderMock);
 		applicationController.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
@@ -533,55 +541,45 @@ public class UpdateApplicationFormControllerTest {
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 
 		applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		newQualification = new QualificationBuilder().id(1).toQualification();
+		
 
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
 		phoneNumberJSONPropertyEditorMock = EasyMock.createMock(PhoneNumberJSONPropertyEditor.class);
 		countryPropertyEditor = EasyMock.createMock(CountryPropertyEditor.class);
+		qualificationPropertyEditorMock = EasyMock.createMock(QualificationPropertyEditor.class);
 		
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
 
 		qualificationValidator = EasyMock.createMock(QualificationValidator.class);
 		countriesServiceMock = EasyMock.createMock(CountryService.class);
+		qualificationServiceMock = EasyMock.createMock(QualificationService.class);
 		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
 
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		
+		newQualification = new QualificationBuilder().id(5).toQualification();
 		applicationController = new UpdateApplicationFormController(applicationsServiceMock, userPropertyEditorMock,
 				datePropertyEditorMock, countriesServiceMock,  refereeServiceMock, phoneNumberJSONPropertyEditorMock, applicationFormPropertyEditorMock, refereeValidator,
-				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, encryptionUtilsMock){
+				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, encryptionUtilsMock, qualificationValidator, qualificationServiceMock){
+			
+
+			@Override
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}
-
-			Qualification newQualification() {
-				return newQualification;
-			}
 			
-
+			@Override
 			Referee newReferee() {
 				return new Referee();
 			}
 			
 		};
 
-		
-		qualificationDto = new QualificationDTO();
-		qualificationDto.setQualificationId(3);
-		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
-		qualificationDto.setQualificationGrade("first");
-		qualificationDto.setQualificationInstitution("UCL");
-		qualificationDto.setQualificationLanguage(2);
-		qualificationDto.setQualificationLevel(QualificationLevel.COLLEGE);
-		qualificationDto.setQualificationProgramName("CS");		
-		qualificationDto.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		qualificationDto.setQualificationType("degree");
+	
+
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		qualification = new QualificationBuilder().id(3)
-				.q_award_date(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).q_grade("").q_institution("")
-				.q_language_of_study(new Language()).q_level(QualificationLevel.COLLEGE).q_name_of_programme("")
-				.q_start_date(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).q_type("").toQualification();
+	
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark")
 				.lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		authenticationToken.setDetails(student);

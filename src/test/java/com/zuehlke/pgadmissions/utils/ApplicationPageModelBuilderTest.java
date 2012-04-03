@@ -76,6 +76,14 @@ public class ApplicationPageModelBuilderTest {
 		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
 		assertSame(countries, model.getCountries());
 	}
+	
+	@Test
+	public void shouldSetAllLanguageAptitudesOnModel() {
+		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null);
+		assertEquals(LanguageAptitude.values().length, model.getLanguageAptitudes().size());
+		assertTrue(model.getLanguageAptitudes().containsAll(Arrays.asList(LanguageAptitude.values())));
+	}
+
 
 	@Test
 	public void shouldSetAllLanguagesOnModel() {

@@ -21,7 +21,6 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.Where;
 
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 
 @Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL")
 @Access(AccessType.FIELD)
@@ -57,16 +56,6 @@ public class PersonalDetail extends DomainObject<Integer> {
 	@Where(clause="nationality_type='PATERNAL_GUARDIAN'")
 	private List<Nationality> paternalGuardianNationalities= new ArrayList<Nationality>();
 	
-
-
-	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "personal_details_id")
-	private List<LanguageProficiency> languageProficiencies= new ArrayList<LanguageProficiency>();
-	
-	@Column(name = "residence_from_date")
-	private Date residenceFromDate;
-	
 	@Column(name = "first_name")
 	private String firstName;
 
@@ -88,10 +77,6 @@ public class PersonalDetail extends DomainObject<Integer> {
 	@ManyToOne
 	@JoinColumn(name = "residence_country_id")
 	private Country residenceCountry;
-
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ResidenceStatusEnumUserType")
-	@Column(name = "residence_status")
-	private ResidenceStatus residenceStatus;
 
 	@OneToOne
 	@JoinColumn(name = "application_form_id")
@@ -150,13 +135,6 @@ public class PersonalDetail extends DomainObject<Integer> {
 		this.residenceCountry = residenceCountry;
 	}
 
-	public ResidenceStatus getResidenceStatus() {
-		return residenceStatus;
-	}
-
-	public void setResidenceStatus(ResidenceStatus residenceStatus) {
-		this.residenceStatus = residenceStatus;
-	}
 
 	public ApplicationForm getApplication() {
 		return application;
@@ -211,20 +189,6 @@ public class PersonalDetail extends DomainObject<Integer> {
 		
 	}
 
-	public List<LanguageProficiency> getLanguageProficiencies() {
-		return languageProficiencies;
-	}
-
-	public void setLanguageProficiencies(List<LanguageProficiency> languageProficiencies) {
-		this.languageProficiencies.clear();
-		for (LanguageProficiency languageProficiency : languageProficiencies) {
-			if(languageProficiency != null){
-				this.languageProficiencies.add(languageProficiency);
-			}
-		}
-	
-	}
-
 	public List<Nationality> getMaternalGuardianNationalities() {
 		return maternalGuardianNationalities;
 	}
@@ -258,15 +222,6 @@ public class PersonalDetail extends DomainObject<Integer> {
 	public void setMessenger(String messenger) {
 		this.messenger = messenger;
 	}
-
-	public Date getResidenceFromDate() {
-		return residenceFromDate;
-	}
-
-	public void setResidenceFromDate(Date residenceFromDate) {
-		this.residenceFromDate = residenceFromDate;
-	}
-
 
 	
 }

@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -188,41 +187,12 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Country of Birth: "+ application.getPersonalDetails().getCountry().getName()));
 		}
 
-		PdfPTable table;
-		PdfPCell c1;
-
 		addGivenNationality(document, "Nationality", application.getPersonalDetails().getCandidateNationalities());
 		addGivenNationality(document, "Maternal Guardian Nationality", application.getPersonalDetails().getMaternalGuardianNationalities());
 		addGivenNationality(document, "Paternal Guardian Nationality", application.getPersonalDetails().getPaternalGuardianNationalities());
 
-		document.add(new Paragraph("Language", smallBoldFont));
-		if (application.getPersonalDetails().getLanguageProficiencies().size() > 0) {
-			document.add(new Paragraph(" "));
-
-			table = new PdfPTable(2);
-			table.setWidthPercentage (100.0f);
-
-			c1 = new PdfPCell(new Phrase("Language", smallerBoldFont));
-			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			c1.setBackgroundColor(grayColor);
-			table.addCell(c1);
-
-			c1 = new PdfPCell(new Phrase("Aptitude", smallerBoldFont));
-			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			c1.setBackgroundColor(grayColor);
-			table.addCell(c1);
-			table.setHeaderRows(1);
-
-			for (LanguageProficiency language : application.getPersonalDetails().getLanguageProficiencies()) {
-				table.addCell(language.getLanguage().getName());
-				table.addCell(language.getAptitude().getDisplayValue());
-			}
-
-			document.add(table);
-		} else {
-			document.add(new Paragraph(createMessage("language")));
-		}
-
+		// language to be added
+		
 		document.add(new Paragraph("Residence", smallBoldFont));
 
 		if (application.getPersonalDetails().getResidenceCountry() == null) {
@@ -231,11 +201,6 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Country: "+ application.getPersonalDetails().getResidenceCountry().getName()));
 		}
 
-		if (application.getPersonalDetails().getResidenceStatus() == null) {
-			document.add(new Paragraph(createMessage("status")));
-		} else {
-			document.add(new Paragraph("Status: "+ application.getPersonalDetails().getResidenceStatus().getDisplayValue()));
-		}
 
 		document.add(new Paragraph("Contact Details", smallBoldFont));
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getEmail(), "Email");
@@ -345,7 +310,9 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("Level: " + qualification.getQualificationLevel().getDisplayValue()));
 				document.add(new Paragraph("Type: " + qualification.getQualificationType()));
 				document.add(new Paragraph("Grade: " + qualification.getQualificationGrade()));				
-				document.add(new Paragraph("Award Date: " + qualification.getQualificationAwardDate().toString()));
+				if(qualification.getQualificationAwardDate() != null){
+					document.add(new Paragraph("Award Date: " + qualification.getQualificationAwardDate().toString()));
+				}
 
 				document.add(new Paragraph(" "));
 			}

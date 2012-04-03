@@ -25,15 +25,12 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.dto.AdditionalInformation;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
-import com.zuehlke.pgadmissions.dto.QualificationDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -42,10 +39,12 @@ import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.QualificationPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.QualificationService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
@@ -74,9 +73,11 @@ public class UpdateApplicationFormController {
 	private final LanguagePropertyEditor languagePropertyEditor;
 	private final CountryPropertyEditor countryPropertyEditor;
 	private final EncryptionUtils encryptionUtils;
+	private final QualificationValidator qualificationValidator;
+	private final QualificationService qualificationService;
 
 	UpdateApplicationFormController() {
-		this(null, null, null, null, null, null, null, null, null, null,  null, null);
+		this(null, null, null, null, null, null, null, null, null, null,  null, null, null, null);
 	}
 
 	@Autowired
@@ -84,7 +85,7 @@ public class UpdateApplicationFormController {
 			DatePropertyEditor datePropertyEditor, CountryService countryService, RefereeService refereeService,
 			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, 
 			ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator,
-			LanguageService languageService, LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, EncryptionUtils encryptionUtils) {
+			LanguageService languageService, LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, EncryptionUtils encryptionUtils, QualificationValidator qualificationValidator, QualificationService qualificationService) {
 
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
@@ -97,7 +98,10 @@ public class UpdateApplicationFormController {
 		this.refereeValidator = refereeValidator;
 		this.languageService = languageService;
 		this.countryPropertyEditor = countryPropertyEditor;
+	
 		this.encryptionUtils = encryptionUtils;
+		this.qualificationValidator = qualificationValidator;
+		this.qualificationService = qualificationService;
 	}
 
 	@InitBinder
@@ -108,10 +112,11 @@ public class UpdateApplicationFormController {
 		binder.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditor);
 		binder.registerCustomEditor(Language.class, languagePropertyEditor);
 		binder.registerCustomEditor(Country.class, countryPropertyEditor);
+
 	}
 
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
-	public ModelAndView editQualification(@ModelAttribute QualificationDTO qual, @RequestParam Integer appId, @RequestParam(required=false) String add, BindingResult result,
+	public ModelAndView editQualification(@ModelAttribute Qualification qualification, @RequestParam Integer appId, @RequestParam(required=false) String add, BindingResult result,
 			ModelMap modelMap) {
 
 		ApplicationForm application = applicationService.getApplicationById(appId);
@@ -121,42 +126,21 @@ public class UpdateApplicationFormController {
 		}
 
 		ApplicationPageModel model = new ApplicationPageModel();
+		
+		qualificationValidator.validate(qualification, result);
+		if (!result.hasErrors()) {
+			if(!application.getQualifications().contains(qualification)){
+				application.getQualifications().add(qualification);
+			}
+			applicationService.save(application);
+		} else {
+			model.setQualification(qualification);
+		}
 		model.setUser(getCurrentUser());
 		model.setApplicationForm(application);
 		model.setResult(result);
 		model.setLanguages(languageService.getAllLanguages());
 		model.setQualificationLevels(QualificationLevel.values());
-
-		QualificationValidator qualificationValidator = new QualificationValidator();
-		qualificationValidator.validate(qual, result);
-		if (!result.hasErrors()) {
-			Qualification qualification;
-			if (qual.getQualificationId() == null) {
-				qualification = new Qualification();
-			} else {
-				qualification = applicationService.getQualificationById(qual.getQualificationId());
-			}
-
-			qualification.setApplication(application);
-			qualification.setQualificationAwardDate(qual.getQualificationAwardDate());
-			qualification.setQualificationGrade(qual.getQualificationGrade());
-			qualification.setQualificationInstitution(qual.getQualificationInstitution());
-			qualification.setQualificationLanguage(languageService.getLanguageById(qual.getQualificationLanguage()));
-			qualification.setQualificationLevel(qual.getQualificationLevel());
-			qualification.setQualificationProgramName(qual.getQualificationProgramName());			
-			qualification.setQualificationStartDate(qual.getQualificationStartDate());
-			qualification.setCompleted(qual.getCompleted());
-			qualification.setQualificationType(qual.getQualificationType());
-			if (qual.getQualificationId() == null) {
-				application.getQualifications().add(qualification);
-			} 
-				applicationService.save(application);
-				model.setQualification(new QualificationDTO());
-			
-		} else {
-			model.setQualification(qual);
-		}
-
 		modelMap.put("model", model);
 		if(StringUtils.isNotBlank(add)){
 			modelMap.put("add", "add");
@@ -291,9 +275,7 @@ public class UpdateApplicationFormController {
 		return new ApplicationForm();
 	}
 
-	Qualification newQualification() {
-		return new Qualification();
-	}
+
 
 	@RequestMapping(value = "/refereeDetails", method = RequestMethod.POST)
 	public ModelAndView editReferee(@ModelAttribute("refereeDetails") Referee refereeDetails, @RequestParam(required=false) String add, BindingResult errors) {
@@ -318,7 +300,6 @@ public class UpdateApplicationFormController {
 		applicationPageModel.setApplicationForm(refereeDetails.getApplication());
 		applicationPageModel.setUser(getCurrentUser());
 		applicationPageModel.setResult(errors);
-		applicationPageModel.setResidenceStatuses(ResidenceStatus.values());
 		applicationPageModel.setGenders(Gender.values());
 		applicationPageModel.setPhoneTypes(PhoneType.values());
 		applicationPageModel.setCountries(countryService.getAllCountries());
@@ -350,6 +331,18 @@ public class UpdateApplicationFormController {
 
 	Referee newReferee() {
 		return new Referee();
+	}
+
+	@ModelAttribute
+	public Qualification getQualification(@RequestParam(required=false) Integer qualificationId) {
+		if(qualificationId == null){
+			return new Qualification();
+		}
+		Qualification qualification = qualificationService.getQualificationById(qualificationId);
+		if(qualification == null){
+			throw new ResourceNotFoundException();
+		}
+		return qualification;
 	}
 
 }

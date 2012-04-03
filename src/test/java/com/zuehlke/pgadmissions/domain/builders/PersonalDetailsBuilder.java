@@ -7,12 +7,10 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.LanguageProficiency;
 import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 
 public class PersonalDetailsBuilder {
 
@@ -22,10 +20,8 @@ public class PersonalDetailsBuilder {
 	private Gender gender;
 	private String email;
 	private Date dateOfBirth;
-	private Date residenceFromDate;
 	private Country country;
 	private Country residenceCountry;
-	private ResidenceStatus residenceStatus;
 	private ApplicationForm applicationForm;
 	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();
 	private String messenger;
@@ -33,23 +29,12 @@ public class PersonalDetailsBuilder {
 	private List<Nationality> maternalGuardianNationalities= new ArrayList<Nationality>();
 	private List<Nationality> paternalGuardianNationalities= new ArrayList<Nationality>();
 	
-	private List<LanguageProficiency> languageProficiencies = new ArrayList<LanguageProficiency>();
 
 	public PersonalDetailsBuilder id(Integer id) {
 		this.id = id;
 		return this;
 	}
-
-	public PersonalDetailsBuilder languageProficiencies(LanguageProficiency... languageProficiencies) {
-		this.languageProficiencies.addAll(Arrays.asList(languageProficiencies));
-		return this;
-	}
 	
-	
-	public PersonalDetailsBuilder residenceFromDate(Date residenceFromDate) {
-		this.residenceFromDate = residenceFromDate;
-		return this;
-	}
 	
 	public PersonalDetailsBuilder paternalGuardianNationalities(Nationality... nationalities) {
 		this.maternalGuardianNationalities.addAll(Arrays.asList(nationalities));
@@ -110,10 +95,6 @@ public class PersonalDetailsBuilder {
 		return this;
 	}
 
-	public PersonalDetailsBuilder residenceStatus(ResidenceStatus residenceStatus) {
-		this.residenceStatus = residenceStatus;
-		return this;
-	}
 
 	public PersonalDetailsBuilder applicationForm(ApplicationForm applicationForm) {
 		this.applicationForm = applicationForm;
@@ -131,14 +112,11 @@ public class PersonalDetailsBuilder {
 		personalDetails.setGender(gender);
 		personalDetails.setLastName(lastName);
 		personalDetails.setResidenceCountry(residenceCountry);
-		personalDetails.setResidenceStatus(residenceStatus);
 		personalDetails.setPhoneNumbers(phoneNumbers);
 		personalDetails.setMaternalGuardianNationalities(maternalGuardianNationalities);
 		personalDetails.setPaternalGuardianNationalities(paternalGuardianNationalities);
 		personalDetails.setCandidateNationalities(candiateNationalities);
-		personalDetails.setLanguageProficiencies(languageProficiencies);
 		personalDetails.setMessenger(messenger);
-		personalDetails.setResidenceFromDate(residenceFromDate);
 		return personalDetails;
 	}
 }

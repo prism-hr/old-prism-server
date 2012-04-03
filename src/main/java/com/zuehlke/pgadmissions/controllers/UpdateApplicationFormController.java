@@ -29,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.dto.AdditionalInformation;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
@@ -318,7 +317,6 @@ public class UpdateApplicationFormController {
 		applicationPageModel.setApplicationForm(refereeDetails.getApplication());
 		applicationPageModel.setUser(getCurrentUser());
 		applicationPageModel.setResult(errors);
-		applicationPageModel.setResidenceStatuses(ResidenceStatus.values());
 		applicationPageModel.setGenders(Gender.values());
 		applicationPageModel.setPhoneTypes(PhoneType.values());
 		applicationPageModel.setCountries(countryService.getAllCountries());

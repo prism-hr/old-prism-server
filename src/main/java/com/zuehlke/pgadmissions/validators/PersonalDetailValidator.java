@@ -36,28 +36,15 @@ public class PersonalDetailValidator implements Validator {
 		}
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "personalDetails.country.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceCountry", "personalDetails.residenceCountry.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceStatus", "personalDetails.residenceStatus.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "dateOfBirth", "personalDetails.dateOfBirth.notempty");
 		String dob = personalDetail.getDateOfBirth() == null ? "": personalDetail.getDateOfBirth().toString();
 		if (StringUtils.isNotBlank(dob) && personalDetail.getDateOfBirth().after(today)) {
 			errors.rejectValue("dateOfBirth", "personalDetails.dateOfBirth.future");
 		}
 		
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "residenceFromDate", "personalDetails.residenceFromDate.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", "personalDetails.application.notempty");
-		
-	
-		validateLanguageProficiencies(target, errors);
 	}
 
-	private void validateLanguageProficiencies(Object target, Errors errors) {
-		if(((PersonalDetail)target).getLanguageProficiencies().isEmpty()){
-			errors.rejectValue("languageProficiencies", "personalDetails.languageProficiencies.notempty");
-		}
-	}
-	
-	
-	
 	private void validateCandidateNationalities(Object target, Errors errors) {
 		if(((PersonalDetail)target).getCandidateNationalities().isEmpty()){
 			errors.rejectValue("candidateNationalities", "personalDetails.candidateNationalities.notempty");

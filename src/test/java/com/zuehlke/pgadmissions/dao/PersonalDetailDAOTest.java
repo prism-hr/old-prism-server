@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 
 public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 
@@ -41,7 +40,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	public void shouldGetPersonalDetailsById() throws ParseException {
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country)
-				.residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm).toPersonalDetails();
+				.applicationForm(applicationForm).toPersonalDetails();
 		sessionFactory.getCurrentSession().save(personalDetails);
 		
 		flushAndClearSession();
@@ -56,7 +55,7 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 		PersonalDetailDAO personalDetailDAO = new PersonalDetailDAO(sessionFactory);
 		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country)
-				.residenceStatus(ResidenceStatus.INDEFINITE_RIGHT_TO_REMAIN).applicationForm(applicationForm).toPersonalDetails();
+				.applicationForm(applicationForm).toPersonalDetails();
 		
 		personalDetailDAO.save(personalDetails);
 		assertNotNull(personalDetails.getId());		

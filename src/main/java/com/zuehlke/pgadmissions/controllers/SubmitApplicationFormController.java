@@ -25,11 +25,9 @@ import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.LanguageAptitude;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.ResidenceStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.Address;
@@ -110,7 +108,6 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setResult(result);
 			viewApplicationModel.setUser(user);
 			viewApplicationModel.setCountries(countryService.getAllCountries());
-			viewApplicationModel.setResidenceStatuses(ResidenceStatus.values());
 			viewApplicationModel.setQualificationLevels(QualificationLevel.values());
 			viewApplicationModel.setStudyOptions(StudyOption.values());
 			viewApplicationModel.setReferrers(Referrer.values());
@@ -119,7 +116,6 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setAddressPurposes(AddressPurpose.values());
 			viewApplicationModel.setGenders(Gender.values());
 			viewApplicationModel.setPhoneTypes(PhoneType.values());
-			viewApplicationModel.setLanguageAptitudes(LanguageAptitude.values());
 			viewApplicationModel.setDocumentTypes(DocumentType.values());
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,"model", viewApplicationModel);
 			

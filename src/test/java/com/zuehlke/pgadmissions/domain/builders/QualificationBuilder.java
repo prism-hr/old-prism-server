@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
@@ -21,7 +22,14 @@ public class QualificationBuilder {
 	private ApplicationForm application;
 	private Integer id;
 	private CheckedStatus completed;
+	private Country institutionCountry;
 
+	
+	public QualificationBuilder institutionCountry(Country institutionCountry) {
+		this.institutionCountry = institutionCountry;
+		return this;
+	}
+	
 	
 	public QualificationBuilder application(ApplicationForm application) {
 		this.application = application;
@@ -87,6 +95,7 @@ public class QualificationBuilder {
 		qualification.setQualificationType(q_type);
 		qualification.setId(id);
 		qualification.setCompleted(completed);
+		qualification.setInstitutionCountry(institutionCountry);
 		return qualification;
 	}
 

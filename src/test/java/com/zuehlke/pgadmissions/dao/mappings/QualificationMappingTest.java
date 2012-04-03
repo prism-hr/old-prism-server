@@ -10,13 +10,16 @@ import java.text.SimpleDateFormat;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.LanguageDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
@@ -33,11 +36,11 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 	public void shouldSaveAndLoadQualification() throws Exception {
 
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
-		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Qualification qualification = new QualificationBuilder().id(3)
 				.awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("").institution("")
 				.languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
 
 		sessionFactory.getCurrentSession().save(qualification);
 		assertNotNull(qualification.getId());
@@ -56,6 +59,7 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 		assertEquals(qualification.getQualificationAwardDate(), qualificationDetails.getQualificationAwardDate());
 		assertEquals(qualification.getQualificationGrade(), qualificationDetails.getQualificationGrade());
 		assertEquals(qualification.getQualificationInstitution(), qualificationDetails.getQualificationInstitution());
+		assertEquals(qualification.getInstitutionCountry(), qualificationDetails.getInstitutionCountry());
 		assertEquals(qualification.getQualificationLanguage(),	qualificationDetails.getQualificationLanguage());
 		assertEquals(qualification.getQualificationLevel(), qualificationDetails.getQualificationLevel());
 		assertEquals(qualification.getQualificationSubject(), qualificationDetails.getQualificationSubject());		

@@ -7,6 +7,7 @@ public class RegisterPageModel extends PageModel{
 	private RegistrationDTO record;
 	private String message;
 	private String url;
+	private Integer isSuggestedUser;
 
 	public RegistrationDTO getRecord() {
 		return record;
@@ -30,5 +31,13 @@ public class RegisterPageModel extends PageModel{
 	
 	public String getUrl() {
 		return url;
+	}
+	
+	public Integer getIsSuggestedUser() {
+		return isSuggestedUser;
+	}
+	
+	public void setIsSuggestedUser(Integer isSuggestedUser) {
+		this.isSuggestedUser = isSuggestedUser;
 	}
 }

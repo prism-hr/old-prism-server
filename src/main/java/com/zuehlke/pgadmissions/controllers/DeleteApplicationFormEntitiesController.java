@@ -42,11 +42,12 @@ public class DeleteApplicationFormEntitiesController {
 	}
 
 	@RequestMapping(value = "/qualification", method = RequestMethod.POST)
-	public ModelAndView deleteQualification(@RequestParam Integer id) {
+	public String deleteQualification(@RequestParam Integer id) {
 		Qualification qualification = qualificationService.getQualificationById(id);
 		Integer applicationFormId = qualification.getApplication().getId();
 		qualificationService.delete(qualification);
-		return new ModelAndView("redirect:/application", "id", applicationFormId);
+		
+		return "redirect:/update/getQualification?applicationId=" +applicationFormId;
 	}
 	
 	@RequestMapping(value = "/funding", method = RequestMethod.POST)

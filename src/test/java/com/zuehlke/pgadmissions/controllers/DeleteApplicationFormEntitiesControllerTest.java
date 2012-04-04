@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static org.junit.Assert.*;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.QualificationDAO;
 import com.zuehlke.pgadmissions.domain.Address;
@@ -42,8 +45,9 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(qual);
 		qualificationServiceMock.delete(qual);
 		EasyMock.replay(qualificationServiceMock);
-		controller.deleteQualification(1);
+		String viewName = controller.deleteQualification(1);		
 		EasyMock.verify(qualificationServiceMock);
+		assertEquals("redirect:/update/getQualification?applicationId=2",viewName);
 	}
 
 	

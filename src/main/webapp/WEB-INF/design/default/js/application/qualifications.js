@@ -34,8 +34,18 @@ $(document).ready(function(){
 	
 	});
 	
-	$('a[name="deleteButton"]').click( function(){	
-		$(this).parent("form").submit();
+	$('a[name="deleteQualificationButton"]').click( function(){	
+		var id = $(this).attr("id").replace("qualification_", "");
+		$.post("/pgadmissions/deleteentity/qualification",
+				{
+					id: id	
+				}, 
+				
+				function(data) {
+					$('#qualificationsSection').html(data);
+				}	
+				
+			);
 	});
 	
 	
@@ -103,20 +113,14 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="qualificationCancelButton"]').click(function(){
-		$("#qualificationId").val("");
-		$("#qualificationSubject").val("");
-		$("#qualificationInstitution").val("");
-		$("#qualificationLevel").val("");
-		$("#qualificationGrade").val("");
-		$("#qualificationType").val("");
-		$("#qualificationScore").val("");
-		$("#qualificationStartDate").val("");
-		$("#qualificationLanguage").val("");
-		$("#qualificationAwardDate").val("");
-		$("#currentQualificationCB").attr('checked', false);
-		$("span[class='invalid']").each(function(){
-			$(this).hide();
-		});
+		$.get("/pgadmissions/update/getQualification",
+				{
+					applicationId:  $('#applicationId').val()
+				},
+				function(data) {
+					$('#qualificationsSection').html(data);
+				}
+		);
 	});
 	
 	bindDatePickers();

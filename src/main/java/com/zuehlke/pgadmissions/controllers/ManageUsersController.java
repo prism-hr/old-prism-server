@@ -140,6 +140,8 @@ public class ManageUsersController {
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				model.put("user", potentiallyNewUser);
 				model.put("suggestingUser", getCurrentUser());
+				model.put("programString", createProgramString(selectedProgramForNewUser));
+				model.put("newUserRoles", createRolesString(potentiallyNewUser.getRoles()));
 				InternetAddress toAddress = new InternetAddress(adminUser.getNewUserEmail(), adminUser.getNewUserFirstName() + " "+ adminUser.getNewUserLastName());
 				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "New User Suggested", "private/pgStudents/mail/new_user_suggestion.ftl", model));
 			} catch (Throwable e) {
@@ -148,6 +150,24 @@ public class ManageUsersController {
 		}
 
 		return new ModelAndView(view);
+	}
+
+	private String createRolesString(List<Role> roles) {
+		StringBuilder rolesString = new StringBuilder();
+		for (Role role : roles) {
+			rolesString.append(role.getAuthority() + " ");
+		}
+		
+		return rolesString.toString();
+	}
+
+	private Object createProgramString(Integer selectedProgramForNewUser) {
+		if (selectedProgramForNewUser != -1) {
+			Program program = programsService.getProgramById(selectedProgramForNewUser);
+			return "the program " + program.getTitle();
+		}
+		
+		return "all programs";
 	}
 
 	private RegisteredUser createNewRegisteredUser(NewAdminUserDTO adminUser) {

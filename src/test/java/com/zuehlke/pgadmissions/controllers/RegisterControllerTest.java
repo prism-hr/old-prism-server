@@ -46,7 +46,7 @@ public class RegisterControllerTest {
 	
 	@Test
 	public void shouldReturnRegisterPage(){
-		ModelAndView modelAndView = registerController.getRegisterPage();
+		ModelAndView modelAndView = registerController.getRegisterPage(null);
 		assertEquals("public/register/register_applicant", modelAndView.getViewName());
 	}
 	

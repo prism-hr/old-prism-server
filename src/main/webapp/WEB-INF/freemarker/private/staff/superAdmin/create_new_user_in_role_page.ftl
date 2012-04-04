@@ -51,7 +51,7 @@
 				              		<label>Select programme</label>
 				              		<select name="selectedProgramForNewUser" id="selectedProgramForNewUser">
 											<option value="">Please select a program</option>
-											<option value="-1"
+											<option value=-1
 											<#if allProgramsSelected?? >
                                                      selected = "selected"
                                                     </#if>

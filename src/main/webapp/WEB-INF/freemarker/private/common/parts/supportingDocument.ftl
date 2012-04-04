@@ -1,11 +1,12 @@
 <#import "/spring.ftl" as spring />
 <span name="supportingDocumentSpan">
-	<#if document??>
+	<#if document?? && document.id??>
 		<input type="hidden" id="profOfAwardId" value = "${document.id?string("#######")}"/>
-		<a href="<@spring.url '/filemanagement/view/${document.id?string("#######")}'/>">${document.fileName}</a>
-		<a id="deleteProofOfAwardButton" class="button-delete">delete</a>
+		<a href="<@spring.url '/filemanagement/view/${document.id?string("#######")}'/>">${document.fileName}</a>		
 	</#if>
 	<#if message??>
 		${message?html}
-	</#if> 	 
+	</#if>
+	 <@spring.bind "document.*" /> 
+     <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list> 	 
 </span>

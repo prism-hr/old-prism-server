@@ -147,14 +147,12 @@
            <span class="label">Has been awarded?</span>
            	<span class="hint" data-desc="<@spring.message 'education.qualifications.hasBeenAwarded'/>"></span>
            		<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"
-           		<#if applicationForm.isSubmitted()>
-           			<#if model.qualification.isQualificationCompleted()>
+           			<#if qualification.isQualificationCompleted()>
                               checked
                     </#if>
-           			<#if model.applicationForm.isSubmitted()>
+           			<#if applicationForm.isSubmitted()>
                               disabled="disabled"
                     </#if>
-                 </#if>
                     />
            		<input type="hidden" name="currentQualification" id="currentQualification"/>
    			 </div>

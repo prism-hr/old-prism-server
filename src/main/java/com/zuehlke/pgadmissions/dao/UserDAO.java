@@ -37,7 +37,7 @@ public class UserDAO {
 
 	public RegisteredUser getUserByUsername(String username) {
 		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("username", username))
-				.uniqueResult();
+			.add(Restrictions.eq("enabled", true)).uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -47,7 +47,8 @@ public class UserDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getUsersInRole(Role role) {
-		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles").add(Restrictions.eq("id", role.getId())).list();
+		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("enabled", true))
+		.createCriteria("roles").add(Restrictions.eq("id", role.getId())).list();
 
 	}
 
@@ -62,20 +63,22 @@ public class UserDAO {
 		users.addAll(getUsersInRole((Role) sessionFactory.getCurrentSession().createCriteria(Role.class)
 				.add(Restrictions.eq("authorityEnum", Authority.SUPERADMINISTRATOR)).uniqueResult()));
 		List<RegisteredUser> administrators = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-				.createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId())).list();
+		.add(Restrictions.eq("enabled", true)).createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId())).list();
 		for (RegisteredUser admin : administrators) {
 			if (!users.contains(admin)) {
 				users.add(admin);
 			}
 		}
-		List<RegisteredUser> approvers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichApprover")
+		List<RegisteredUser> approvers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+		.add(Restrictions.eq("enabled", true)).createCriteria("programsOfWhichApprover")
 				.add(Restrictions.eq("id", program.getId())).list();
 		for (RegisteredUser approver : approvers) {
 			if (!users.contains(approver)) {
 				users.add(approver);
 			}
 		}
-		List<RegisteredUser> reviewers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichReviewer")
+		List<RegisteredUser> reviewers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("enabled", true))
+		.createCriteria("programsOfWhichReviewer")
 				.add(Restrictions.eq("id", program.getId())).list();
 		for (RegisteredUser reviewer : reviewers) {
 			if (!users.contains(reviewer)) {
@@ -86,8 +89,8 @@ public class UserDAO {
 	}
 
 	public RegisteredUser getUserByEmail(String email) {
-		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("email", email))
-		.uniqueResult();
+		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("enabled", true))
+		.add(Restrictions.eq("email", email)).uniqueResult();
 	}
 
 }

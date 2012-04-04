@@ -64,6 +64,9 @@
 												>${program.title}</option>               
 	                                		</#list>
 				              		</select>
+				              		 <#if result?? && result.getFieldError('programForNewUser')??>
+                                            <p class="invalid"><@spring.message  result.getFieldError('programForNewUser').code /></p>
+                                    </#if>
 			            		</div>
 					          	<div class="left-column">
 					            

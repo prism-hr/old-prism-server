@@ -58,12 +58,21 @@ public class NewAdminUserDTOValidatorTest {
 		validator.validate(newAdminUserDTO, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
+	
+	@Test
+	public void shouldRejectAdminUserIfNullProgram() {
+		newAdminUserDTO.setProgramForNewUser(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(newAdminUserDTO, "adminUser");
+		validator.validate(newAdminUserDTO, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
 
 	@Before
 	public void setup(){
 		validator = new NewAdminUserDTOValidator();
 		
 		newAdminUserDTO = new NewAdminUserDTO();
+		newAdminUserDTO.setProgramForNewUser(2);
 		newAdminUserDTO.setNewUserEmail("test@gmail.com");
 		newAdminUserDTO.setNewUserFirstName("test");
 		newAdminUserDTO.setNewUserLastName("test");

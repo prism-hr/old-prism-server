@@ -23,6 +23,7 @@ public class NewAdminUserDTOValidator implements Validator{
 		if (!errors.hasFieldErrors("newUserEmail") && !EmailValidator.getInstance().isValid(((NewAdminUserDTO)target).getNewUserEmail())) {
 			errors.rejectValue("newUserEmail", "adminUser.email.invalid");
 		}
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programForNewUser", "selectedProgram.newAdminUser.notempty");
 	}
 
 }

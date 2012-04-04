@@ -5,6 +5,7 @@ public class NewAdminUserDTO {
 	private String newUserFirstName;
 	private String newUserLastName;
 	private String newUserEmail;
+	private Integer programForNewUser;
 	
 	public String getNewUserEmail() {
 		return newUserEmail;
@@ -28,5 +29,13 @@ public class NewAdminUserDTO {
 	
 	public void setNewUserLastName(String newUserLastName) {
 		this.newUserLastName = newUserLastName;
+	}
+	
+	public Integer getProgramForNewUser() {
+		return programForNewUser;
+	}
+	
+	public void setProgramForNewUser(Integer programForNewUser) {
+		this.programForNewUser = programForNewUser;
 	}
 }

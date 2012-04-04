@@ -108,10 +108,11 @@ public class ManageUsersController {
 			@RequestParam Integer selectedProgramForNewUser, @ModelAttribute NewRolesDTO newRolesDTO, ModelMap modelMap) {
 
 		Program selectedProgram = null;
-		if (selectedProgramForNewUser != -1) {
+		if (selectedProgramForNewUser != null && selectedProgramForNewUser != -1) {
 			selectedProgram = getProgram(selectedProgramForNewUser);
 		} 
 
+		adminUser.setProgramForNewUser(selectedProgramForNewUser);
 		NewAdminUserDTOValidator validator = new NewAdminUserDTOValidator();
 		BindingResult result = new DirectFieldBindingResult(adminUser, "adminUser");
 		validator.validate(adminUser, result);

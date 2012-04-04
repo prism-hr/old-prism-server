@@ -144,7 +144,7 @@ public class ManageUsersController {
 				model.put("programString", createProgramString(selectedProgramForNewUser));
 				model.put("newUserRoles", createRolesString(potentiallyNewUser.getRoles()));
 				InternetAddress toAddress = new InternetAddress(adminUser.getNewUserEmail(), adminUser.getNewUserFirstName() + " "+ adminUser.getNewUserLastName());
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "New User Suggested", "private/staff/mail/new_user_suggestion.ftl", model));
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "UCL Portal Registration", "private/staff/mail/new_user_suggestion.ftl", model));
 			} catch (Throwable e) {
 				log.warn("error while sending email",e);
 			}

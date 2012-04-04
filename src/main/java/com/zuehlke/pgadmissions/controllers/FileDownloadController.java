@@ -46,19 +46,22 @@ public class FileDownloadController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void downloadApplicationDocument(@RequestParam("documentId") Integer documentId, HttpServletResponse response) throws IOException {
 		Document document = documentService.getDocumentById(documentId);
-		if (DocumentType.SUPPORTING_FUNDING != document.getType()) {
-			if (DocumentType.REFERENCE == document.getType() || !((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).canSee(document.getApplicationForm())) {
+		if (DocumentType.SUPPORTING_FUNDING != document.getType() && DocumentType.PROOF_OF_AWARD != document.getType()) {
+			if (DocumentType.REFERENCE == document.getType()
+					|| !((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).canSee(document.getApplicationForm())) {
 				throw new ResourceNotFoundException();
 			}
 		}
+		
 		sendDocument(response, document);
 	}
 
-	@RequestMapping(value="/reference", method = RequestMethod.GET)
+	@RequestMapping(value = "/reference", method = RequestMethod.GET)
 	public void downloadReferenceDocument(@RequestParam("referenceId") Integer referenceId, HttpServletResponse response) throws IOException {
 		Reference reference = referenceService.getReferenceById(referenceId);
 		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		if(reference == null || reference.getDocument() == null ||currentUser.isInRole(Authority.APPLICANT) || !currentUser.canSee(reference.getReferee().getApplication()) ){
+		if (reference == null || reference.getDocument() == null || currentUser.isInRole(Authority.APPLICANT)
+				|| !currentUser.canSee(reference.getReferee().getApplication())) {
 			throw new ResourceNotFoundException();
 		}
 		Document document = reference.getDocument();
@@ -67,11 +70,10 @@ public class FileDownloadController {
 
 	}
 
-
-	@RequestMapping(value="/referee", method = RequestMethod.GET)
+	@RequestMapping(value = "/referee", method = RequestMethod.GET)
 	public void downloadReferenceDocumentForReferee(String activationCode, HttpServletResponse response) throws IOException {
 		Referee referee = refereeService.getRefereeByActivationCode(activationCode);
-		if(referee == null || referee.getReference() == null || referee.getReference().getDocument() == null){
+		if (referee == null || referee.getReference() == null || referee.getReference().getDocument() == null) {
 			throw new ResourceNotFoundException();
 		}
 		Document document = referee.getReference().getDocument();

@@ -144,7 +144,20 @@ public class RefereeService {
 			 user.getRoles().add(refereeRole);
 			 userService.save(user);
 		 }
+		 if(user==null){
+			 user = newRegisteredUser();
+			 user.setEmail(referee.getEmail());
+			 user.setFirstName(referee.getFirstname());
+			 user.setLastName(referee.getLastname());
+			 user.setUsername(referee.getEmail());
+			 user.getRoles().add(refereeRole);
+			 userService.save(user);
+		 }
 		return user;
+	}
+	
+	RegisteredUser newRegisteredUser(){
+		return new RegisteredUser();
 	}
 
 	

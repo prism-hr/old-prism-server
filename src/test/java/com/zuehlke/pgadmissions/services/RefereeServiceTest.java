@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -25,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -199,6 +201,28 @@ public class RefereeServiceTest {
 		RegisteredUser existedReferee = refereeService.processRefereeAndGetAsUser(referee);
 		Assert.assertNotNull(existedReferee);
 		Assert.assertEquals(1, existedReferee.getRoles().size());
+	}
+	
+	@Test
+	public void shouldCreateUserWithRefereeRoleIfRefereeDoesNotExist(){
+		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("emailemail@test.com").toReferee();
+		refereeService = new RefereeService(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock){
+			@Override
+			RegisteredUser newRegisteredUser() {
+				return user;
+			}
+		};
+		EasyMock.expect(userServiceMock.getUserByEmail("emailemail@test.com")).andReturn(null);
+		userServiceMock.save(user);
+		EasyMock.replay(userServiceMock);
+		RegisteredUser newUser = refereeService.processRefereeAndGetAsUser(referee);
+		EasyMock.verify(userServiceMock);
+		Assert.assertNotNull(newUser);
+		Assert.assertEquals(1, newUser.getRoles().size());
+		Assert.assertEquals("ref", newUser.getFirstName());
+		Assert.assertEquals("erre", newUser.getLastName());
+		Assert.assertEquals("emailemail@test.com", newUser.getEmail());
 	}
 	
 	@Test

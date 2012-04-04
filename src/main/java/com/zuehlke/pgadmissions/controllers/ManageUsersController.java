@@ -92,8 +92,11 @@ public class ManageUsersController {
 	public ModelAndView addNewUser(@ModelAttribute NewAdminUserDTO adminUser,
 			@RequestParam Integer selectedProgramForNewUser, @ModelAttribute NewRolesDTO newRolesDTO, ModelMap modelMap) {
 
-		Program selectedProgram = getProgram(selectedProgramForNewUser);
-
+		Program selectedProgram = null;
+		if (selectedProgramForNewUser != -1) {
+			selectedProgram = getProgram(selectedProgramForNewUser);
+		} 
+		
 		NewAdminUserDTOValidator validator = new NewAdminUserDTOValidator();
 		BindingResult result = new DirectFieldBindingResult(adminUser, "adminUser");
 		validator.validate(adminUser, result);
@@ -205,7 +208,11 @@ public class ManageUsersController {
 		addOrRemoveFromProgramsOfWhichApproverIfRequired(selectedUser, selectedProgram, newRolesDTO);
 		addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newRolesDTO);
 		userService.save(selectedUser);
-		return "redirect:/manageUsers/showPage?programId=" + selectedProgram.getId();
+		String id = "";
+		if (selectedProgram != null && selectedProgram.getId() != null) {
+			id = Integer.toString(selectedProgram.getId());
+		}
+		return "redirect:/manageUsers/showPage?programId=" + id;
 	}
 
 	private void removeFromSuperadminRoleIfRequired(RegisteredUser selectedUser, NewRolesDTO newRolesDTO) {

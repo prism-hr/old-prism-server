@@ -51,6 +51,11 @@
 				              		<label>Select programme</label>
 				              		<select name="selectedProgramForNewUser" id="selectedProgramForNewUser">
 											<option value="">Please select a program</option>
+											<option value=-1
+											<#if allProgramsSelected?? >
+                                                     selected = "selected"
+                                                    </#if>
+											>All programs</option>
 	                                		<#list programs as program>"
 	                                    		<option value='${program.id?string("######")}' 
 	                                    			<#if selectedProgram?? && selectedProgram.id == program.id >

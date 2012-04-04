@@ -1,6 +1,5 @@
-
-
 $(document).ready(function(){
+	
 	if($("#qualificationInstitution").val() == ""){
 		$("#currentQualificationCB").attr('checked', false);
 		$("#currentQualification").val("NO");
@@ -127,7 +126,7 @@ $(document).ready(function(){
 	});
 	
 	bindDatePickers();
-
+	addToolTips();
 	//open/close
 	var $header  =$('#qualifications-H2');
 	var $content = $header.next('div');
@@ -138,4 +137,55 @@ $(document).ready(function(){
 	  return false;
 	});
 		
+	$('#uploadFields').on('change','#proofOfAward', function(event){	
+
+		$('#progress').html("uploading file...");
+		$('#proofOfAward').hide();		
+		ajaxFileUpload();
+	});
+	
+	$('#uploadedDocument').on("click", '#deleteProofOfAwardButton', function(){
+		$('#uploadedDocument').hide();
+		$('#progress').html("deleting file...");
+		$.post("/pgadmissions/delete/asyncdelete",
+				{
+					documentId: $('#profOfAwardId').val()	
+				},
+				function(data) {		
+					$('#proofOfAward').val('');				
+					$('#proofOfAward').show();
+					$('#uploadedDocument').html("");						
+				}
+		);
+	});
 });
+
+function ajaxFileUpload()
+{	
+	
+	$("#progress").ajaxStart(function(){
+		$(this).show();
+	})
+	.ajaxComplete(function(){
+		$(this).hide();
+		$('#progress').html("");
+		
+	});
+
+	$.ajaxFileUpload
+	(
+		{
+			url:'/pgadmissions/documents/async',
+			secureuri:false,
+			fileElementId:'proofOfAward',	
+			dataType:'text',
+			success: function (data)
+			{		
+				$('#uploadedDocument').html(data);
+				$('#uploadedDocument').show();
+				
+			}
+		}
+	)
+
+}

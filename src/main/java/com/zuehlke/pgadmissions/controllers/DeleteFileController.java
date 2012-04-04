@@ -34,7 +34,7 @@ public class DeleteFileController {
 	public ModelAndView delete(@RequestParam("documentId") Integer documentId) {
 		Document document = documentService.getDocumentById(documentId);
 
-		if (document == null || !((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).equals(document.getApplicationForm().getApplicant())) {
+		if (document == null || !getCurrentUser().equals(document.getApplicationForm().getApplicant())) {
 			throw new ResourceNotFoundException();
 		}
 		if(document.getApplicationForm().isSubmitted()){
@@ -42,6 +42,21 @@ public class DeleteFileController {
 		}
 		documentService.delete(document);
 		return new ModelAndView("redirect:/application", "id", document.getApplicationForm().getId());
+
+	}
+
+	private RegisteredUser getCurrentUser() {
+		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+	}
+	
+	@RequestMapping(value="asyncdelete", method = RequestMethod.POST)
+	public ModelAndView asyncdelete(@RequestParam("documentId") Integer documentId) {
+		Document document = documentService.getDocumentById(documentId);	
+		if(document != null && getCurrentUser().equals(document.getUploadedBy()) ){
+			documentService.delete(document);
+		}
+		return new ModelAndView("/private/common/simpleMessage", "message", "ok");
+
 
 	}
 }

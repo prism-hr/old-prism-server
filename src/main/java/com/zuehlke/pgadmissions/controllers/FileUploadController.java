@@ -2,12 +2,16 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.io.IOException;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,39 +21,41 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
 
 @Controller
 @RequestMapping("/documents")
 public class FileUploadController {
 
-
-
 	private final ApplicationsService applicationService;
 	private final DocumentValidator documentValidator;
+	private final DocumentService documentService;
 
 	FileUploadController() {
-		this(null, null);
+		this(null, null, null);
+
 	}
 
-
 	@Autowired
-	public FileUploadController(ApplicationsService applicationService, DocumentValidator documentValidator) {
+	public FileUploadController(ApplicationsService applicationService, DocumentValidator documentValidator, DocumentService documentService) {
 		this.applicationService = applicationService;
 		this.documentValidator = documentValidator;
-
+		this.documentService = documentService;
 
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
+	@Deprecated
 	public ModelAndView uploadFile(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @RequestParam("resume") MultipartFile resume,
 			@RequestParam("personalStatement") MultipartFile personalStatement) throws IOException {
 
-		ModelMap modelMap = new ModelMap();		
+		ModelMap modelMap = new ModelMap();
 		Document document = newDocument();
 		int errorsCount = 0;
 		if (resume != null) {
@@ -59,10 +65,10 @@ public class FileUploadController {
 			document.setType(DocumentType.CV);
 			BindingResult errors = newErrors(document);
 			documentValidator.validate(document, errors);
-			if(errors.hasFieldErrors("fileName")){
+			if (errors.hasFieldErrors("fileName")) {
 				modelMap.put("uploadErrorCode", errors.getFieldError("fileName").getCode());
 				errorsCount++;
-			} else{
+			} else {
 				applicationForm.getSupportingDocuments().add(document);
 			}
 		}
@@ -75,9 +81,9 @@ public class FileUploadController {
 			document.setType(DocumentType.PERSONAL_STATEMENT);
 			BindingResult errors = newErrors(document);
 			documentValidator.validate(document, errors);
-			if(errors.hasFieldErrors("fileName")){
+			if (errors.hasFieldErrors("fileName")) {
 				modelMap.put("uploadTwoErrorCode", errors.getFieldError("fileName").getCode());
-			}else{
+			} else {
 				applicationForm.getSupportingDocuments().add(document);
 			}
 		}
@@ -96,8 +102,11 @@ public class FileUploadController {
 		return new Document();
 	}
 
-	@ModelAttribute("applicationForm") 
-	public ApplicationForm getApplicationForm(Integer id) {
+	@ModelAttribute("applicationForm")
+	public ApplicationForm getApplicationForm(@RequestParam(required=false)Integer id) {
+		if(id  == null){
+			return null;
+		}
 		ApplicationForm applicationform = applicationService.getApplicationById(id);
 		if (applicationform == null || !SecurityContextHolder.getContext().getAuthentication().getDetails().equals(applicationform.getApplicant())) {
 			throw new ResourceNotFoundException();
@@ -107,7 +116,34 @@ public class FileUploadController {
 		}
 		return applicationform;
 	}
+	
 
-
+	@ModelAttribute
+	public Document getDocument(@RequestParam( value="file", required=false) MultipartFile multipartFile) throws IOException {		 
+		if(multipartFile == null){
+			return null;
+		}
+		Document document = new Document();
+		document.setFileName(multipartFile.getOriginalFilename());
+		document.setContentType(multipartFile.getContentType());
+		document.setContent(multipartFile.getBytes());
+		document.setType(DocumentType.PROOF_OF_AWARD);
+		document.setUploadedBy((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails());
+		return document;
+	}
+	
+	@InitBinder(value="document")
+	public void initBinder(WebDataBinder binder) {
+		binder.setValidator(documentValidator);
+		
+		
+	}
+	@RequestMapping(value = "/async", method = RequestMethod.POST)
+	public String uploadFileAsynchronously(@Valid Document document, BindingResult errors) {
+		if(!errors.hasErrors()){
+			documentService.save(document);
+		}
+		return "/private/common/parts/supportingDocument";
+	}
 
 }

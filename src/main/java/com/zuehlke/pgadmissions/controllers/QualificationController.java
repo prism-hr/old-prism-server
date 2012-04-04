@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -28,6 +29,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
@@ -48,16 +50,17 @@ public class QualificationController {
 	private final QualificationValidator qualificationValidator;
 	private final CountryService countryService;
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
+	private final DocumentPropertyEditor documentPropertyEditor;
 
 	QualificationController() {
-		this(null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public QualificationController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
 			DatePropertyEditor datePropertyEditor, CountryService countryService, LanguageService languageService,
 			LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, QualificationValidator qualificationValidator,
-			QualificationService qualificationService) {
+			QualificationService qualificationService, DocumentPropertyEditor documentPropertyEditor) {
 		this.applicationService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
@@ -67,6 +70,7 @@ public class QualificationController {
 		this.countryPropertyEditor = countryPropertyEditor;
 		this.qualificationValidator = qualificationValidator;
 		this.qualificationService = qualificationService;
+		this.documentPropertyEditor = documentPropertyEditor;
 
 	}
 	
@@ -78,6 +82,7 @@ public class QualificationController {
 		binder.registerCustomEditor(Language.class, languagePropertyEditor);
 		binder.registerCustomEditor(Country.class, countryPropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+		binder.registerCustomEditor(Document.class, documentPropertyEditor);
 		
 	}
 	

@@ -42,6 +42,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldDeleteReferee() {
+	
 		ApplicationForm application = new ApplicationForm();
 		application.setProject(project);
 		application.setApplicant(user);

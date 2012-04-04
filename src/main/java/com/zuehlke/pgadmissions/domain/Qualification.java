@@ -10,8 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -28,7 +26,11 @@ public class Qualification extends DomainObject<Integer>{
 	 * 
 	 */
 	private static final long serialVersionUID = -8949535622435302565L;
-
+	
+	@ManyToOne
+	@JoinColumn(name = "proof_of_award_id")
+	private Document proofOfAward;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name="award_date")
 	private Date qualificationAwardDate;
@@ -180,6 +182,14 @@ public class Qualification extends DomainObject<Integer>{
 
 	public void setInstitutionCountry(Country institutionCountry) {
 		this.institutionCountry = institutionCountry;
+	}
+
+	public Document getProofOfAward() {
+		return proofOfAward;
+	}
+
+	public void setProofOfAward(Document proofOfAward) {
+		this.proofOfAward = proofOfAward;
 	}
 
 

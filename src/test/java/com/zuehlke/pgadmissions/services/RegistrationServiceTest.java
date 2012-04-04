@@ -12,6 +12,8 @@ import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+import junit.framework.Assert;
+
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,6 +80,27 @@ public class RegistrationServiceTest {
 		assertTrue(newUser.isCredentialsNonExpired());
 		assertFalse(newUser.isEnabled());
 		assertEquals("abc", newUser.getActivationCode());
+	}
+	
+	@Test
+	public void shouldUpdateUser() {
+		RegistrationDTO recordDTO = new RegistrationDTO();
+		recordDTO.setFirstname("Mark");
+		recordDTO.setLastname("Euston");
+		recordDTO.setEmail("meuston@gmail.com");
+		recordDTO.setPassword("1234");
+		recordDTO.setConfirmPassword("1234");
+		EasyMock.expect(userDAOMock.get(2)).andReturn(new RegisteredUser());
+		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("121");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234")).andReturn("1234");
+		EasyMock.replay(userDAOMock, encryptionUtilsMock);
+		RegisteredUser updateUser = registrationService.updateUser(recordDTO, 2);
+		Assert.assertEquals("Mark", updateUser.getFirstName());
+		Assert.assertEquals("Euston", updateUser.getLastName());
+		Assert.assertEquals("meuston@gmail.com", updateUser.getEmail());
+		Assert.assertEquals("meuston@gmail.com", updateUser.getUsername());
+		Assert.assertEquals("1234", updateUser.getPassword());
+		Assert.assertEquals("121", updateUser.getActivationCode());
 	}
 
 	@Test

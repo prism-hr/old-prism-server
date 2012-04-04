@@ -134,7 +134,6 @@ public class ManageUsersController {
 			potentiallyNewUser = createNewRegisteredUser(adminUser);
 		}
 		String view = updateSelectedUserInternal(potentiallyNewUser, selectedProgram, newRolesDTO);
-		System.out.println("!!!!is new user :"+ isNewUser);
 		if (isNewUser) {
 			try {
 				Map<String, Object> model = modelMap();

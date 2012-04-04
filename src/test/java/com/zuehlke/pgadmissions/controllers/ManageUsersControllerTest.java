@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -29,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.NewAdminUserDTO;
 import com.zuehlke.pgadmissions.dto.NewRolesDTO;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -108,6 +111,55 @@ public class ManageUsersControllerTest {
 		List<RegisteredUser> internalUsers = manageUsersController.getavailableUsers();
 		assertEquals(2, internalUsers.size());
 		assertTrue(internalUsers.containsAll(Arrays.asList(userOne, userTwo)));
+	}
+	
+	@Test
+	public void shouldNotCreateNewUserIfInvalidDTO() {
+		ModelMap modelMap = new ModelMap();
+		NewAdminUserDTO adminUser = new NewAdminUserDTO();
+		adminUser.setNewUserEmail("test");
+		ModelAndView addNewUserModelAndView = manageUsersController.addNewUser(adminUser, null, null, modelMap);
+		Assert.assertEquals("private/staff/superAdmin/create_new_user_in_role_page", addNewUserModelAndView.getViewName());
+		Assert.assertEquals(4, ((BindingResult)modelMap.get("result")).getErrorCount());
+		Assert.assertNull(modelMap.get("selectedProgram"));
+		Assert.assertNull(modelMap.get("newUserFirstName"));
+		Assert.assertNull(modelMap.get("newUserLastName"));
+		Assert.assertEquals("test", modelMap.get("newUserEmail"));
+	}
+	
+	@Test
+	public void shouldUpdateExistingEmailUserWithSuperAdminRole() {
+		ModelMap modelMap = new ModelMap();
+		NewAdminUserDTO adminUser = new NewAdminUserDTO();
+		adminUser.setNewUserFirstName("mark");
+		adminUser.setNewUserLastName("jones");
+		adminUser.setNewUserEmail("test@gmail.com");
+		NewRolesDTO newRolesDTO = new NewRolesDTO();
+		
+		Role superAdminRole = new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
+		newRolesDTO.getNewRoles().add(superAdminRole);
+		
+		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+		
+		RegisteredUser selectedUser = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userServiceMock.getUserByEmail("test@gmail.com")).andReturn(selectedUser);
+		EasyMock.expect(selectedUser.isInRole(Authority.APPLICANT)).andReturn(false);
+		EasyMock.expect(selectedUser.isInRole(Authority.REVIEWER)).andReturn(false);
+		EasyMock.expect(selectedUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(selectedUser.isInRole(Authority.APPROVER)).andReturn(false);
+		EasyMock.expect(selectedUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(selectedUser.isInRole(Authority.REFEREE)).andReturn(false);
+		EasyMock.expect(selectedUser.getProgramsOfWhichAdministrator()).andReturn(new ArrayList<Program>());
+		EasyMock.expect(selectedUser.getProgramsOfWhichApprover()).andReturn(new ArrayList<Program>());
+		EasyMock.expect(selectedUser.getProgramsOfWhichReviewer()).andReturn(new ArrayList<Program>());
+		EasyMock.expect(selectedUser.getRoles()).andReturn(new ArrayList<Role>());
+		
+		userServiceMock.save(selectedUser);
+		
+		EasyMock.replay(currentUser, selectedUser, userServiceMock);
+
+		ModelAndView addNewUserModelAndView = manageUsersControllerWithCurrentUserOverride.addNewUser(adminUser, -1, newRolesDTO, modelMap);
+		Assert.assertEquals("redirect:/manageUsers/showPage?programId=", addNewUserModelAndView.getViewName());
 	}
 
 	@Test(expected = AccessDeniedException.class)

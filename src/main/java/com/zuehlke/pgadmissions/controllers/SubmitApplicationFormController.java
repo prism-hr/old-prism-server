@@ -53,7 +53,7 @@ public class SubmitApplicationFormController {
 	private final CountryService countryService;
 	private final LanguageService languageService;
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/main_application_page";
-	private final SubmitApplicationService referencesService;
+	private final SubmitApplicationService submitApplicationService;
 	private final RefereeService refereeService;
 
 	SubmitApplicationFormController() {
@@ -61,13 +61,13 @@ public class SubmitApplicationFormController {
 	}
 
 	@Autowired
-	public SubmitApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor, CountryService countryService, LanguageService languageService, SubmitApplicationService referencesService
+	public SubmitApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor, CountryService countryService, LanguageService languageService, SubmitApplicationService submitApplicationService
 			, RefereeService refereeService) {
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.countryService = countryService;
 		this.languageService = languageService;
-		this.referencesService = referencesService;
+		this.submitApplicationService = submitApplicationService;
 		this.refereeService = refereeService;
 	}
 
@@ -128,7 +128,7 @@ public class SubmitApplicationFormController {
 		java.util.Date date= new java.util.Date();
 		applicationForm.setSubmittedDate(new Timestamp(date.getTime()));
 		refereeService.processRefereesRoles(applicationForm.getReferees());
-		referencesService.saveApplicationFormAndSendMailNotifications(applicationForm);
+		submitApplicationService.saveApplicationFormAndSendMailNotifications(applicationForm);
 		
 		return new ModelAndView("redirect:/applications?submissionSuccess=true");
 

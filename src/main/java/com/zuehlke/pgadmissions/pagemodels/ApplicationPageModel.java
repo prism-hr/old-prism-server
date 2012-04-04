@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
@@ -50,6 +51,7 @@ public class ApplicationPageModel extends PageModel {
 	private List<AddressPurpose> addressPurposes = new LinkedList<AddressPurpose>();
 	
 	private FundingErrors fundingErrors;
+	private RegisteredUser refereeUser;
 
 	public ApplicationForm getApplicationForm() {
 		return applicationForm;
@@ -211,5 +213,13 @@ public class ApplicationPageModel extends PageModel {
 	public void setFundingErrors(FundingErrors fundingErrors) {
 		this.fundingErrors = fundingErrors;
 	}
+
+	public void setRefereeUser(RegisteredUser refereeUser) {
+		this.refereeUser = refereeUser;
+		
+	}
 	
+	public RegisteredUser getRefereeUser() {
+		return refereeUser;
+	}
 }

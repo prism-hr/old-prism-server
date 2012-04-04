@@ -34,6 +34,8 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private String email;
 	private String username;
 	private String password;
+	@Transient
+	private String confirmPassword;
 	private boolean enabled;
 	private boolean accountNonExpired;
 	private boolean accountNonLocked;
@@ -306,6 +308,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public void setReferee(Referee referee) {
 		this.referee = referee;
+	}
+
+	public String getConfirmPassword() {
+		return confirmPassword;
+	}
+
+	public void setConfirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
 	}
 
 }

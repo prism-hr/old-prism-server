@@ -149,7 +149,6 @@ public class RefereeService {
 			 user.setEmail(referee.getEmail());
 			 user.setFirstName(referee.getFirstname());
 			 user.setLastName(referee.getLastname());
-			 user.setUsername(referee.getEmail());
 			 user.getRoles().add(refereeRole);
 			 userService.save(user);
 		 }

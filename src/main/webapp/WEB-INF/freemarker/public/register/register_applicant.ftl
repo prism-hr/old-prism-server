@@ -54,7 +54,7 @@
 		    <!-- Login form. -->
 		    <section id="registration-box">
 		    
-		    	<form method="post" action= "/pgadmissions/register/submit">
+		    	<form method="post" <#if (model.isSuggestedUser??)> action= "/pgadmissions/register/submit?isSuggestedUser=${model.isSuggestedUser?string('#######')}" <#else> action= "/pgadmissions/register/submit"</#if>>
 		      		<p>&gt; Register Today...</p>
 		            <input id="recordId" type="hidden" name="recordId" />
 		            

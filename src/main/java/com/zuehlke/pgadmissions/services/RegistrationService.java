@@ -69,11 +69,28 @@ public class RegistrationService {
 		user.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
 		return user;
 	}
+	
+
+	public RegisteredUser updateUser(RegistrationDTO record, Integer isSuggestedUser) {
+		RegisteredUser suggestedUser = userDAO.get(isSuggestedUser);
+		suggestedUser.setActivationCode(encryptionUtils.generateUUID());
+		suggestedUser.setPassword(encryptionUtils.getMD5Hash(record.getPassword()));
+		suggestedUser.setUsername(record.getEmail());
+		suggestedUser.setFirstName(record.getFirstname());
+		suggestedUser.setLastName(record.getLastname());
+		suggestedUser.setEmail(record.getEmail());
+		return suggestedUser;
+	}
 
 	@Transactional
-	public void generateAndSaveNewUser(RegistrationDTO recordDTO) {
+	public void generateAndSaveNewUser(RegistrationDTO recordDTO, Integer isSuggestedUser) {
 
-		RegisteredUser newUser = createNewUser(recordDTO);
+		RegisteredUser newUser;
+		if (isSuggestedUser != null) {
+			newUser = updateUser(recordDTO, isSuggestedUser);
+		} else {
+			newUser = createNewUser(recordDTO);
+		}
 		userDAO.save(newUser);
 	
 		try {
@@ -111,6 +128,5 @@ public class RegistrationService {
 		}
 		return adminsMails.toString();
 	}
-
 
 }

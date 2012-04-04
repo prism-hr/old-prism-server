@@ -60,12 +60,13 @@ public class RegisterControllerTest {
 		recordDTO.setConfirmPassword("1234");		
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		validatorMock.validate(recordDTO, errorsMock);
+		validatorMock.shouldValidateSameEmail(true);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		
 		
 		EasyMock.replay(validatorMock, errorsMock, registrationServiceMock);
 		
-		ModelAndView modelAndView = registerController.submitRegistration(recordDTO, errorsMock);
+		ModelAndView modelAndView = registerController.submitRegistration(recordDTO, null, errorsMock);
 		assertEquals("public/register/register_applicant", modelAndView.getViewName());
 		assertSame(recordDTO, ((RegisterPageModel) modelAndView.getModel().get("model")).getRecord());
 		assertSame(errorsMock, ((RegisterPageModel) modelAndView.getModel().get("model")).getResult());
@@ -82,13 +83,14 @@ public class RegisterControllerTest {
 		recordDTO.setConfirmPassword("1234");
 		recordDTO.setProjectId(1);
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+		validatorMock.shouldValidateSameEmail(true);
 		validatorMock.validate(recordDTO, errorsMock);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-		registrationServiceMock.generateAndSaveNewUser(recordDTO);
+		registrationServiceMock.generateAndSaveNewUser(recordDTO, null);
 		
 		EasyMock.replay(validatorMock, errorsMock, registrationServiceMock);
 		
-		ModelAndView modelAndView = registerController.submitRegistration(recordDTO, errorsMock);
+		ModelAndView modelAndView = registerController.submitRegistration(recordDTO, null, errorsMock);
 		assertEquals("redirect:/register/complete", modelAndView.getViewName());
 		
 		EasyMock.verify(registrationServiceMock);

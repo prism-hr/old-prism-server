@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class ApplicantRecordValidator implements Validator {
 
 	private UserService userService;
+	private boolean shouldValidateSameEmail;
 
 	ApplicantRecordValidator() {
 		this(null);
@@ -25,11 +26,19 @@ public class ApplicantRecordValidator implements Validator {
 	public ApplicantRecordValidator(UserService userService) {
 		this.userService = userService;
 	}
-	
-	
+
+
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return RegistrationDTO.class.equals(clazz);
+	}
+
+	public boolean shouldValidateSameEmail() {
+		return shouldValidateSameEmail;
+	}
+
+	public void shouldValidateSameEmail(boolean validate) {
+		this.shouldValidateSameEmail = validate;
 	}
 
 	@Override
@@ -46,10 +55,12 @@ public class ApplicantRecordValidator implements Validator {
 		if(record.getPassword().length()<8){
 			errors.rejectValue("password", "record.password.notvalid");
 		}
-		List<RegisteredUser> allUsers = userService.getAllUsers();
-		for (RegisteredUser user : allUsers) {
-			if(user.getEmail().equals(record.getEmail()))
-				errors.rejectValue("email", "record.email.alreadyexists");
+		if (shouldValidateSameEmail) {
+			List<RegisteredUser> allUsers = userService.getAllUsers();
+			for (RegisteredUser user : allUsers) {
+				if(user.getEmail().equals(record.getEmail()))
+					errors.rejectValue("email", "record.email.alreadyexists");
+			}
 		}
 		if (!EmailValidator.getInstance().isValid(record.getEmail())) {
 			errors.rejectValue("email", "record.email.invalid");

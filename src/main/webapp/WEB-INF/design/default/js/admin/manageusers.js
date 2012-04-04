@@ -7,6 +7,11 @@ $(document).ready(function(){
 		 window.location.href="/pgadmissions/manageUsers/showPage?programId=" + program;
 	});
 	
+	$('#selectedProgramForNewUser').change(function(){
+		 var program = $(this).val();
+		 window.location.href="/pgadmissions/manageUsers/createNewUser?selectedProgramForNewUser=" + program;
+	});
+	
 	$('#userId').change(function(){
 		 var user = $(this).val();
 		 var program = $('#programId').val();

@@ -44,9 +44,17 @@ public class RegisterController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getRegisterPage() {
+	public ModelAndView getRegisterPage(@RequestParam (required=false) Integer userId) {
 		RegisterPageModel model = new RegisterPageModel();
-		model.setRecord(new RegistrationDTO());
+		RegistrationDTO record = new RegistrationDTO();;
+		if (userId != null) {
+			RegisteredUser suggestedUser = userService.getUser(userId);
+			record.setFirstname(suggestedUser.getFirstName());
+			record.setLastname(suggestedUser.getLastName());
+			record.setEmail(suggestedUser.getEmail());
+		}
+		
+		model.setRecord(record);
 		return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
 	}
 

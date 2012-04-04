@@ -4,7 +4,9 @@
 section.folding h2 { background: #444; border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; cursor: pointer; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; padding-left: 5px; }
 section.folding h2 .left { background: url(../../images/bg_expand_arrow.png) no-repeat; float: left; height: 11px; margin: 5px 4px 0 0; width: 11px; }
 section.folding h2.open .left { background-position: 0 -11px; }
-section.folding h2 .status { background: url(../../images/bg_bar_status.png) no-repeat 0 14px; float: right; height: 14px; margin: 3px 3px 0 0; width: 14px; }
+section.folding h2 .status { 
+	/* background: url(../../images/bg_bar_status.png) no-repeat 0 14px; */ 
+	float: right; height: 14px; margin: 3px 3px 0 0; width: 14px; }
 
 /* Bar states */
 section.folding h2.tick .status { background-position: 0 0; }

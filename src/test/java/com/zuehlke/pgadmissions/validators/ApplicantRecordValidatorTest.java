@@ -8,7 +8,6 @@ import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
@@ -134,6 +133,7 @@ public class ApplicantRecordValidatorTest {
 		userServiceMock.save(user);
 		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(Arrays.asList(user));
 		EasyMock.replay(userServiceMock);
+		recordValidator.shouldValidateSameEmail(true);
 		recordValidator.validate(record, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("record.email.alreadyexists", mappingResult.getFieldError("email").getCode());

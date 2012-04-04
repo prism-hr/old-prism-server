@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -64,13 +63,11 @@ public class RegisterController {
 	public ModelAndView submitRegistration(@ModelAttribute("record") RegistrationDTO record, @RequestParam (required=false) Integer isSuggestedUser, BindingResult errors) {
 		validator.validate(record, errors);
 		if (isSuggestedUser != null) {
-			if (errors.hasFieldErrors("email")) {
-				FieldError fieldError = errors.getFieldError("email");
-				if ("".equals(fieldError.getCode())) {
-					errors.getFieldErrors().remove(fieldError);
-				}
-			}
+			validator.shouldValidateSameEmail(false);
+		} else {
+			validator.shouldValidateSameEmail(true);
 		}
+		
 		if (errors.hasErrors()) {
 			RegisterPageModel model = new RegisterPageModel();
 			model.setRecord(record);

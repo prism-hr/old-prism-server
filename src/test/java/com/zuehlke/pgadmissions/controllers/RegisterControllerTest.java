@@ -60,6 +60,7 @@ public class RegisterControllerTest {
 		recordDTO.setConfirmPassword("1234");		
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		validatorMock.validate(recordDTO, errorsMock);
+		validatorMock.shouldValidateSameEmail(true);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		
 		
@@ -82,6 +83,7 @@ public class RegisterControllerTest {
 		recordDTO.setConfirmPassword("1234");
 		recordDTO.setProjectId(1);
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
+		validatorMock.shouldValidateSameEmail(true);
 		validatorMock.validate(recordDTO, errorsMock);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		registrationServiceMock.generateAndSaveNewUser(recordDTO, null);

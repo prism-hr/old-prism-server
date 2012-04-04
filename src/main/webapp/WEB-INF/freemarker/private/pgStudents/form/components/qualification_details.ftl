@@ -153,11 +153,10 @@
                        <label class="label">Is Completed</label>
                        	<span class="hint"></span>
                        		<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"/
-                       		<#if applicationForm.isSubmitted()>
-                       		<#if model.qualification.isQualificationCompleted()>
+                       		<#if qualification.isQualificationCompleted()>
                                           checked
                                 </#if>
-                       		<#if model.applicationForm.isSubmitted()>
+                       		<#if applicationForm.isSubmitted()>
                                           disabled="disabled"
                                 </#if>>
                        		<input type="hidden" name="currentQualification" id="currentQualification"/>

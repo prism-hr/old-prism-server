@@ -48,6 +48,8 @@
                             <input type="hidden" id="${position.id?string('#######')}_positionTitle" value="${position.position_title}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionStartDate" value="${(position.position_startDate?string('dd-MMM-yyyy'))!}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionEndDate" value="${(position.position_endDate?string('dd-MMM-yyyy'))!}"/>
+		               		<input type="hidden"  id="${position.id?string('#######')}_positionCompleted" value="${position.completed}"/> 
+						
 		                </tr>
 		            </#list>
 				</tbody>
@@ -106,8 +108,13 @@
                 <div class="row">
                        <label class="label">Is Completed</label>
                 <span class="hint" data-desc="Tooltip demonstration."></span>
-                       		<input type="text" value="${(model.employmentPosition.completed)!}" 
-                                            readonly="readonly">
+                       		<input type="checkbox" name="completedPositionCB" id="completedPositionCB"/
+                       		<#if model.employmentPosition.isEmploymentPositionCompleted()>
+                                          checked
+                                </#if>
+                                          disabled="disabled">
+                    <input type="hidden" name="completedPosition" id="completedPosition"/>
+               		
                			 </div>
                 
                 <!-- End date -->

@@ -161,6 +161,28 @@ public class ManageUsersControllerTest {
 		ModelAndView addNewUserModelAndView = manageUsersControllerWithCurrentUserOverride.addNewUser(adminUser, -1, newRolesDTO, modelMap);
 		Assert.assertEquals("redirect:/manageUsers/showPage?programId=", addNewUserModelAndView.getViewName());
 	}
+	
+	@Test
+	public void shouldCreateNewUserWithSuperAdminRole() {
+		ModelMap modelMap = new ModelMap();
+		NewAdminUserDTO adminUser = new NewAdminUserDTO();
+		adminUser.setNewUserFirstName("mark");
+		adminUser.setNewUserLastName("jones");
+		adminUser.setNewUserEmail("test@gmail.com");
+		NewRolesDTO newRolesDTO = new NewRolesDTO();
+		
+		Role superAdminRole = new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
+		newRolesDTO.getNewRoles().add(superAdminRole);
+		
+		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
+		
+		EasyMock.expect(userServiceMock.getUserByEmail("test@gmail.com")).andReturn(null);
+		userServiceMock.save(EasyMock.anyObject(RegisteredUser.class));
+		EasyMock.replay(currentUser, userServiceMock);
+
+		ModelAndView addNewUserModelAndView = manageUsersControllerWithCurrentUserOverride.addNewUser(adminUser, -1, newRolesDTO, modelMap);
+		Assert.assertEquals("redirect:/manageUsers/showPage?programId=", addNewUserModelAndView.getViewName());
+	}
 
 	@Test(expected = AccessDeniedException.class)
 	public void shouldThrowExceptionForNonAdministrators() {

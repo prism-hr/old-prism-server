@@ -35,11 +35,11 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName},</font>
 		      		</h1>		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for registering with UCL Portal, your gateway to research opportunities in engineering. To confirm your registration and continue your application, please click the link below.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for registering with UCL Portal, your gateway to research opportunities in engineering. To confirm your registration and continue, please click the link below.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}">(Continue to Application)</a>
+			      			<a href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}">(Continue to Portal)</a>
 			      		</font>
 			      	</p>			      	
 			      	<p>

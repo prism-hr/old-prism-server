@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -31,7 +32,11 @@ public class Document extends DomainObject<Integer> {
 	@ManyToOne
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm applicationForm;
+	
+	@OneToOne(mappedBy="proofOfAward")	
+	private Qualification qualification;
 
+	
 	@Column(name = "uploaded_time_stamp", insertable = false)
 	@Generated(GenerationTime.INSERT)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -119,6 +124,14 @@ public class Document extends DomainObject<Integer> {
 
 	public void setUploadedBy(RegisteredUser uploadedBy) {
 		this.uploadedBy = uploadedBy;
+	}
+
+	public Qualification getQualification() {
+		return qualification;
+	}
+
+	public void setQualification(Qualification qualification) {
+		this.qualification = qualification;
 	}
 
 	

@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 
@@ -17,11 +18,17 @@ public class DocumentBuilder {
 	private byte[] content;
 	
 	private ApplicationForm applicationForm;
-	
+	private Qualification qualification;
 	private String contentType;
 	private DocumentType type;
 	private Date dateUploaded;
 	private RegisteredUser uploadedBy;
+	
+	public DocumentBuilder qualification(Qualification qualification){
+		this.qualification = qualification;
+		return this;
+	}
+	
 	
 	public DocumentBuilder uploadedBy(RegisteredUser uploadedBy){
 		this.uploadedBy = uploadedBy;
@@ -75,6 +82,7 @@ public class DocumentBuilder {
 		document.setDateUploaded(dateUploaded);
 		document.setApplicationForm(applicationForm);
 		document.setUploadedBy(uploadedBy);
+		document.setQualification(qualification);
 		return document;
 	}
 }

@@ -236,7 +236,7 @@
         		<div class="field" id="uploadFields">        	
           			<input id="proofOfAward" class="full" type="file" name="file" value="" />					
 					<span id="uploadedDocument" ><input type="hidden" id="profOfAwardId" value = "${(qualification.proofOfAward.id?string('######'))!}"/>
-					<a href="<@spring.url '/filemanagement/view/${(qualification.proofOfAward.id?string("#######"))!}'/>">${(qualification.proofOfAward.fileName)!}</a></span>
+					<a href="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>">${(qualification.proofOfAward.fileName)!}</a></span>
 					<span id="progress" style="display: none;" ></span>					
         		</div>  
         		

@@ -1,22 +1,31 @@
 package com.zuehlke.pgadmissions.dao.mappings;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.junit.Assert;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.CountriesDAO;
+import com.zuehlke.pgadmissions.dao.LanguageDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
+import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
 public class DocumentMappingTest extends AutomaticRollbackTestCase {
 
@@ -64,6 +73,33 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 		Document reloadedDoc = (Document) sessionFactory.getCurrentSession().get(Document.class, document.getId());
 
 		assertEquals(applicationForm, reloadedDoc.getApplicationForm());
+	}
+	
+	@Test	
+	public void shouldSLoadDocumentWithQualification() throws ParseException{
+		Document document = new Document();
+		document.setContent("s".getBytes());
+		document.setFileName("name.txt");
+		document.setContentType("bob");
+		document.setType(DocumentType.PROOF_OF_AWARD);
+		document.setUploadedBy(applicant);
+		sessionFactory.getCurrentSession().save(document);
+		
+		flushAndClearSession();
+		
+		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Qualification qualification = new QualificationBuilder().id(3)
+				.awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("").institution("")
+				.languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
+	
+		sessionFactory.getCurrentSession().save(qualification);		
+		flushAndClearSession();
+		
+		Document reloadedDoc = (Document) sessionFactory.getCurrentSession().get(Document.class, document.getId());
+
+		assertEquals(qualification, reloadedDoc.getQualification());
 	}
 	
 	@Before

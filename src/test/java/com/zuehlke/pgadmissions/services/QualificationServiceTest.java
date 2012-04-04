@@ -34,6 +34,15 @@ public class QualificationServiceTest {
 	
 	}
 	
+	@Test			
+	public void shouldDelegateSaveToDAO(){
+		Qualification qualification = new QualificationBuilder().id(2).toQualification();
+		qualificationDAOMock.save(qualification);
+		EasyMock.replay(qualificationDAOMock);
+		qualificationService.save(qualification);
+		EasyMock.verify(qualificationDAOMock);
+	
+	}
 	
 	@Before
 	public void setup(){

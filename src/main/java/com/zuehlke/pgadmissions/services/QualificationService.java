@@ -31,4 +31,10 @@ public class QualificationService {
 
 	}
 
+	@Transactional
+	public void save(Qualification qualification) {
+		qualificationDAO.save(qualification);
+		
+	}
+
 }

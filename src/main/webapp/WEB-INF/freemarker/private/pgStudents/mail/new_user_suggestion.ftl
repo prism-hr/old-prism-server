@@ -39,7 +39,7 @@
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/register">(Continue to Application)</a>
+			      			<a href="${host}/pgadmissions/register?userId=${user.id}">(Continue to Application)</a>
 			      		</font>
 			      	</p>			      	
 			      	<p>

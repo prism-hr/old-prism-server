@@ -127,11 +127,17 @@ public class ManageUsersController {
 		} 
 
 		RegisteredUser potentiallyNewUser = userService.getUserByEmail(adminUser.getNewUserEmail());
+		boolean isNewUser = false;
 		if (potentiallyNewUser == null) {
+			isNewUser = true;
+			potentiallyNewUser = createNewRegisteredUser(adminUser);
+		}
+		String view = updateSelectedUserInternal(potentiallyNewUser, selectedProgram, newRolesDTO);
+		System.out.println("!!!!is new user :"+ isNewUser);
+		if (isNewUser) {
 			try {
 				Map<String, Object> model = modelMap();
 				model.put("host", Environment.getInstance().getApplicationHostName());
-				potentiallyNewUser = createNewRegisteredUser(adminUser);
 				model.put("user", potentiallyNewUser);
 				model.put("suggestingUser", getCurrentUser());
 				InternetAddress toAddress = new InternetAddress(adminUser.getNewUserEmail(), adminUser.getNewUserFirstName() + " "+ adminUser.getNewUserLastName());
@@ -140,7 +146,6 @@ public class ManageUsersController {
 				log.warn("error while sending email",e);
 			}
 		}
-		String view = updateSelectedUserInternal(potentiallyNewUser, selectedProgram, newRolesDTO);
 
 		return new ModelAndView(view);
 	}

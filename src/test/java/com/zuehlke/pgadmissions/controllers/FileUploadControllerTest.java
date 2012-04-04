@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -13,7 +14,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -28,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.validators.DocumentValidator;
 
 public class FileUploadControllerTest {
@@ -38,6 +42,7 @@ public class FileUploadControllerTest {
 	private DocumentValidator documentValidatorMock;
 	private BindingResult errors;
 	private Document document;
+	private DocumentService documentServiceMock;
 
 	@Test
 	public void shouldGetApplicationFormFromService() {
@@ -81,7 +86,7 @@ public class FileUploadControllerTest {
 	}
 
 	@Test
-	public void shouldCreateDocumentFromFile() throws IOException {
+	public void shouldCreateDocumentFromFileInSynchronousUpload() throws IOException {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
 		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("filename");
@@ -145,14 +150,69 @@ public class FileUploadControllerTest {
 		assertEquals("bob", modelAndView.getModel().get("uploadErrorCode"));
 		EasyMock.verify(applicationsServiceMock);
 	}
+	
+	@Test
+	public void shouldCreateDocumentFromFile() throws IOException{
+		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
+		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("filename");
+		EasyMock.expect(multipartFileMock.getContentType()).andReturn("ContentType");
+		EasyMock.expect(multipartFileMock.getBytes()).andReturn("lala".getBytes());
+		EasyMock.replay(multipartFileMock);
 
+		Document document  = controller.getDocument(multipartFileMock);
+		assertNull(document.getId());
+		assertEquals("filename", document.getFileName());
+		assertEquals("ContentType", document.getContentType());
+		assertEquals("lala", new String(document.getContent()));
+		assertEquals(DocumentType.PROOF_OF_AWARD, document.getType());
+		assertEquals(currentUser,document.getUploadedBy());
+		
+	}
+	
+	@Test
+	public void shouldReturnNullIfMultiPartFileIsNull() throws IOException{		
+		assertNull(controller.getDocument(null));		
+	}
+	
+	@Test
+	public void shouldRegisterValidator(){
+		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+		binderMock.setValidator(documentValidatorMock);
+		EasyMock.replay(binderMock);
+		controller.initBinder(binderMock);
+		EasyMock.verify(binderMock);
+	}
+	
+	@Test
+	public void shouldSaveValidDocument(){
+		Document doc = new DocumentBuilder().id(1).toDocument();
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errors.hasErrors()).andReturn(false);
+		documentServiceMock.save(doc);
+		EasyMock.replay(errors, documentServiceMock);
+		String viewName = controller.uploadFileAsynchronously(doc, errors);
+		EasyMock.verify(documentServiceMock);
+		assertEquals("/private/common/parts/supportingDocument", viewName);
+	}
+	
+	@Test
+	public void shouldNotSaveInValidDocument(){
+		Document doc = new DocumentBuilder().id(1).toDocument();
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errors.hasErrors()).andReturn(true);		
+		EasyMock.replay(errors, documentServiceMock);
+		String viewName = controller.uploadFileAsynchronously(doc, errors);
+		EasyMock.verify(documentServiceMock);
+		assertEquals("/private/common/parts/supportingDocument", viewName);
+	}
 	@Before
 	public void setup() {
 		errors = EasyMock.createMock(BindingResult.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		documentValidatorMock = EasyMock.createMock(DocumentValidator.class);
+		documentServiceMock = EasyMock.createMock(DocumentService.class);
 		document = new DocumentBuilder().id(1).toDocument();
-		controller = new FileUploadController(applicationsServiceMock, documentValidatorMock) {
+		controller = new FileUploadController(applicationsServiceMock, documentValidatorMock, documentServiceMock) {
 			@Override
 			Document newDocument() {
 				return document;

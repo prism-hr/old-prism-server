@@ -69,8 +69,42 @@ public class DeleteFileControllerTest {
 		ModelAndView modelAndView = controller.delete(1);
 		assertEquals("redirect:/application", modelAndView.getViewName());
 		assertEquals(3, modelAndView.getModel().get("id"));		
+		EasyMock.verify(documentServiceMock);
 	}
 	
+	
+	@Test
+	public void shouldGetDocumentFromServiceAndDeleteInAsyncDelete(){		
+		Document document = new DocumentBuilder().uploadedBy(currentUser).content("aaaa".getBytes()).id(1).toDocument();
+		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
+		documentServiceMock.delete(document);
+		EasyMock.replay(documentServiceMock);
+		ModelAndView modelAndView = controller.asyncdelete(1);
+		assertEquals("/private/common/simpleMessage", modelAndView.getViewName());
+		assertEquals("ok", modelAndView.getModel().get("message"));
+		EasyMock.verify(documentServiceMock);
+	}
+	
+	@Test
+	public void shouldNOTDeleteDocumentIfUserIsNotUploadingUser(){		
+		Document document = new DocumentBuilder().uploadedBy(new RegisteredUserBuilder().id(8).toUser()).content("aaaa".getBytes()).id(1).toDocument();
+		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);		
+		EasyMock.replay(documentServiceMock);
+		ModelAndView modelAndView = controller.asyncdelete(1);
+		assertEquals("/private/common/simpleMessage", modelAndView.getViewName());
+		assertEquals("ok", modelAndView.getModel().get("message"));
+		EasyMock.verify(documentServiceMock);
+	}
+	
+	@Test
+	public void shouldNotFailIfDocumentIsNull(){			
+		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(null);		
+		EasyMock.replay(documentServiceMock);
+		ModelAndView modelAndView = controller.asyncdelete(1);
+		assertEquals("/private/common/simpleMessage", modelAndView.getViewName());
+		assertEquals("ok", modelAndView.getModel().get("message"));
+		EasyMock.verify(documentServiceMock);
+	}
 	@Before
 	public void setup() {
 

@@ -124,7 +124,8 @@ public class QualificationController {
 		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 	}
 
-
+	/* Reference data section */
+	
 	@ModelAttribute("languages")
 	public List<Language> getAllLanguages() {
 		return languageService.getAllLanguages();

@@ -90,7 +90,7 @@ public class ManageUsersControllerTest {
 	
 	@Test
 	public void shouldReturnCorrectViewForAddingNewUser() {
-		ModelAndView createNewUserView = manageUsersController.createNewUser();
+		ModelAndView createNewUserView = manageUsersControllerWithCurrentUserOverride.createNewUser(null, new ModelMap());
 		Assert.assertEquals("private/staff/superAdmin/create_new_user_in_role_page", createNewUserView.getViewName());
 	}
 

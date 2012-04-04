@@ -72,7 +72,19 @@ public class ManageUsersController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/createNewUser")
-	public ModelAndView createNewUser() {
+	public ModelAndView createNewUser(@RequestParam(required = false) Integer selectedProgramForNewUser, ModelMap modelMap) {
+		if (selectedProgramForNewUser!= null && selectedProgramForNewUser == -1) {
+			modelMap.put("allProgramsSelected", "yes");
+			if (getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+				modelMap.put("authorities", Arrays.asList(Authority.SUPERADMINISTRATOR));
+			} else {
+				modelMap.put("authorities", Arrays.asList());
+			}
+		} else {
+			modelMap.put("selectedProgram", getProgram(selectedProgramForNewUser));
+			modelMap.put("authorities", getAuthoritiesInternal());
+		}
+
 		return new ModelAndView(NEW_USER_VIEW_NAME);
 	}
 
@@ -148,12 +160,15 @@ public class ManageUsersController {
 
 	@ModelAttribute("authorities")
 	public List<Authority> getAuthorities() {
+		return getAuthoritiesInternal();
+	}
+
+	private List<Authority> getAuthoritiesInternal() {
 		if (getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
 			return Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER);
 
 		}
 		return Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER);
-
 	}
 
 	@ModelAttribute("programs")

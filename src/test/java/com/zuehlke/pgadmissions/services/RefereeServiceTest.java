@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
@@ -14,6 +15,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
+import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
@@ -33,8 +36,10 @@ import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 public class RefereeServiceTest {
 	
 	private RefereeService refereeService;
+	private UserService userServiceMock;
 	private RefereeDAO refereeDAOMock;
 	private JavaMailSender javaMailSenderMock;
+	private RoleDAO roleDAOMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	
 	@Before
@@ -42,7 +47,9 @@ public class RefereeServiceTest {
 		refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		refereeService = new RefereeService(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		userServiceMock = EasyMock.createMock(UserService.class);
+		roleDAOMock = EasyMock.createMock(RoleDAO.class);
+		refereeService = new RefereeService(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock);
 	}
 
 	@Test
@@ -140,6 +147,58 @@ public class RefereeServiceTest {
 		EasyMock.replay(referee, refereeDAOMock);
 		
 		Assert.assertEquals(referee, refereeService.getRefereeByActivationCode("2345"));
+	}
+	
+	@Test
+	public void shouldReturnUserIfRefereeAlreadyExists(){
+		Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole();
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		userServiceMock.save(reviewer);
+		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
+		EasyMock.expect(userServiceMock.getUserByEmail("email@test.com")).andReturn(reviewer);
+		EasyMock.replay(userServiceMock);
+		RegisteredUser existedReferee = refereeService.getRefereeIfAlreadyRegistered(referee);
+		Assert.assertNotNull(existedReferee);
+	}
+	
+	@Test
+	public void shouldReturnNullIfRefereeNotExists(){
+		Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole();
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		userServiceMock.save(reviewer);
+		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("otherrefemail@test.com").toReferee();
+		EasyMock.expect(userServiceMock.getUserByEmail("otherrefemail@test.com")).andReturn(null);
+		EasyMock.replay(userServiceMock);
+		RegisteredUser existedReferee = refereeService.getRefereeIfAlreadyRegistered(referee);
+		Assert.assertNull(existedReferee);
+	}
+	
+	@Test
+	public void shouldAddRefereeRoleIfUserExistsAndIsNotAReferee(){
+		Role reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		userServiceMock.save(user);
+		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
+		EasyMock.expect(userServiceMock.getUserByEmail("email@test.com")).andReturn(user);
+		userServiceMock.save(user);
+		EasyMock.replay(userServiceMock);
+		RegisteredUser existedReferee = refereeService.processRefereeAndGetAsUser(referee);
+		Assert.assertNotNull(existedReferee);
+		Assert.assertEquals(2, existedReferee.getRoles().size());
+	}
+	
+	@Test
+	public void shouldNotAddRefereeRoleIfUserExistsAndIsAlreadyAReferee(){
+		Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).toRole();
+		RegisteredUser user = new RegisteredUserBuilder().id(3).role(refereeRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		userServiceMock.save(user);
+		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
+		EasyMock.expect(userServiceMock.getUserByEmail("email@test.com")).andReturn(user);
+		userServiceMock.save(user);
+		EasyMock.replay(userServiceMock);
+		RegisteredUser existedReferee = refereeService.processRefereeAndGetAsUser(referee);
+		Assert.assertNotNull(existedReferee);
+		Assert.assertEquals(1, existedReferee.getRoles().size());
 	}
 	
 	@Test

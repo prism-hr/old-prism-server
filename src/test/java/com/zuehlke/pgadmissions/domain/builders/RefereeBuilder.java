@@ -8,6 +8,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Reference;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
 
 public class RefereeBuilder {
@@ -16,32 +17,20 @@ public class RefereeBuilder {
 	private Integer id;
 	
 	private ApplicationForm application;
-	
 	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();
-	
 	private String firstname;
-	
 	private String lastname;
-	
 	private String relationship;
-	
 	private String jobEmployer;
-	
 	private String jobTitle;
-	
 	private String addressLocation;
-	
 	private String addressPostcode;
-	
 	private String activationCode;
-	
 	private Country addressCountry;
-		
 	private Reference reference;
-	
 	private String email;
-
 	private String messenger;
+	private RegisteredUser user;
 	
 	public RefereeBuilder id(Integer id){
 		this.id = id;
@@ -50,6 +39,11 @@ public class RefereeBuilder {
 	
 	public RefereeBuilder application(ApplicationForm application){
 		this.application = application;
+		return this;
+	}
+	
+	public RefereeBuilder user(RegisteredUser user){
+		this.user = user;
 		return this;
 	}
 	
@@ -132,6 +126,7 @@ public class RefereeBuilder {
 		referee.setActivationCode(activationCode);
 		referee.setRelationship(relationship);
 		referee.setReference(reference);
+		referee.setUser(user);
 		return referee;
 	}
 }

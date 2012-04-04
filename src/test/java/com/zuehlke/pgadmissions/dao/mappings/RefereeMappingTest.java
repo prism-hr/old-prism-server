@@ -32,6 +32,7 @@ import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
 	private ApplicationForm applicationForm;
+	private RegisteredUser user;
 
 	@Test
 	public void shouldSaveAndLoadReferee() throws Exception {
@@ -145,6 +146,36 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		assertNull(sessionFactory.getCurrentSession().get(Reference.class, reference2Id));
 		
 
+	}
+	
+	@Test
+	public void shouldSaveAndLoadRefereeWithUser() throws Exception {
+		Reference reference = new ReferenceBuilder().toReference();
+		RegisteredUser user = new RegisteredUserBuilder().email("test@test.com").username("test@test.com").firstName("jane").lastName("u").password("123").toUser();
+		
+		sessionFactory.getCurrentSession().save(user);
+		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Referee referee = new RefereeBuilder().reference(reference).application(applicationForm).addressCountry(countriesDAO.getCountryById(1))
+				.addressLocation("loc").addressPostcode("pos").email("email").user(user).firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname")
+				.relationship("rel").toReferee();
+		
+		sessionFactory.getCurrentSession().save(referee);
+		assertNotNull(reference.getId());
+		Integer referenceId = reference.getId();
+		flushAndClearSession();
+		
+		Referee reloadedReferee = (Referee) sessionFactory.getCurrentSession().get(Referee.class, referee.getId());
+		assertEquals(reference, reloadedReferee.getReference());
+		Reference reloadedReference = (Reference) sessionFactory.getCurrentSession().get(Reference.class,referenceId);
+		assertEquals(reloadedReferee, reloadedReference.getReferee());
+		
+		reloadedReferee.setReference(null);
+		sessionFactory.getCurrentSession().saveOrUpdate(reloadedReferee);
+		flushAndClearSession();
+		
+		assertNull(sessionFactory.getCurrentSession().get(Reference.class, referenceId));
+		
 	}
 
 	@Before

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 
@@ -23,6 +24,7 @@ public class RegisteredUserBuilder {
 	private boolean credentialsNonExpired = true;
 	private String activationCode;
 	private Project projectOriginallyAppliedTo;
+	private Referee referee;
 
 	private List<Role> roles = new ArrayList<Role>();	
 	private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
@@ -47,6 +49,11 @@ public class RegisteredUserBuilder {
 	
 	public RegisteredUserBuilder projectOriginallyAppliedTo(Project projectOriginallyAppliedTo) {
 		this.projectOriginallyAppliedTo = projectOriginallyAppliedTo;
+		return this;
+	}
+	
+	public RegisteredUserBuilder referee(Referee referee) {
+		this.referee = referee;
 		return this;
 	}
 	
@@ -136,6 +143,7 @@ public class RegisteredUserBuilder {
 		user.setProgramsOfWhichAdministrator(programsOfWhichAdministrator);
 		user.setProgramsOfWhichApprover(programsOfWhichApprover);
 		user.setProgramsOfWhichReviewer(programsOfWhichReviewer);
+		user.setReferee(referee);
 		return user;
 	}
 

@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.SubmitApplicationService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
@@ -53,18 +54,21 @@ public class SubmitApplicationFormController {
 	private final LanguageService languageService;
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "private/pgStudents/form/main_application_page";
 	private final SubmitApplicationService referencesService;
+	private final RefereeService refereeService;
 
 	SubmitApplicationFormController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public SubmitApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor, CountryService countryService, LanguageService languageService, SubmitApplicationService referencesService) {
+	public SubmitApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor, CountryService countryService, LanguageService languageService, SubmitApplicationService referencesService
+			, RefereeService refereeService) {
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.countryService = countryService;
 		this.languageService = languageService;
 		this.referencesService = referencesService;
+		this.refereeService = refereeService;
 	}
 
 
@@ -123,6 +127,7 @@ public class SubmitApplicationFormController {
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		java.util.Date date= new java.util.Date();
 		applicationForm.setSubmittedDate(new Timestamp(date.getTime()));
+		refereeService.processRefereesRoles(applicationForm.getReferees());
 		referencesService.saveApplicationFormAndSendMailNotifications(applicationForm);
 		
 		return new ModelAndView("redirect:/applications?submissionSuccess=true");

@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
@@ -39,6 +40,8 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private boolean credentialsNonExpired;
 	private String activationCode;
 	
+	@OneToOne(mappedBy="user")
+	private Referee referee;
 	
 	@ManyToOne
 	@JoinColumn(name = "originally_project_id")
@@ -204,6 +207,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		if(this.equals(applicationForm.getApplicant())){
 			return true;
 		}
+		
 		return false;
 	}
 
@@ -294,6 +298,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 		return null;
+	}
+
+	public Referee getReferee() {
+		return referee;
+	}
+
+	public void setReferee(Referee referee) {
+		this.referee = referee;
 	}
 
 }

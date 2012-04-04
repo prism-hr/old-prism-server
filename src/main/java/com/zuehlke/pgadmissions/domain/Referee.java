@@ -22,6 +22,10 @@ public class Referee extends DomainObject<Integer>{
 
 	private static final long serialVersionUID = 4591043630090924738L;
 	
+	@OneToOne
+	@JoinColumn(name = "registered_user_id")
+	private RegisteredUser user = null;
+	
 	@OneToOne(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "reference_id")
@@ -212,6 +216,14 @@ public class Referee extends DomainObject<Integer>{
 
 	public void setMessenger(String messenger) {
 		this.messenger = messenger;
+	}
+
+	public RegisteredUser getUser() {
+		return user;
+	}
+
+	public void setUser(RegisteredUser user) {
+		this.user = user;
 	}
 
 }

@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -26,9 +27,11 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -55,7 +58,9 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
 public class UpdateApplicationFormControllerTest {
@@ -272,10 +277,14 @@ public class UpdateApplicationFormControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		Referee referee = new RefereeBuilder().id(1).toReferee();
 		refereeValidator.validate(referee, errorsMock);
-		EasyMock.replay(refereeValidator);
+		refereeServiceMock.save(referee);
+		EasyMock.expect(refereeServiceMock.processRefereeAndGetAsUser(referee)).andReturn(null);
+		EasyMock.replay(refereeServiceMock, refereeValidator);
 		applicationController.editReferee(referee, null, errorsMock);
 		EasyMock.verify(refereeValidator);
 	}
+	
+	
 
 	@Test
 	public void shouldSaveRefereeDetailsIfNewAndValid() {
@@ -343,12 +352,17 @@ public class UpdateApplicationFormControllerTest {
 	public void shouldReturnApplicationPageModelWithCorrectValues() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+
+		Referee referee = new RefereeBuilder().id(1).toReferee();
 		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(currentUser).toApplicationForm();
-		referee.setFirstname("firstname");
 		referee.setApplication(form);
-		refereeServiceMock.save(referee);
+		refereeValidator.validate(referee, errorsMock);
+		refereeServiceMock.save(EasyMock.same(referee));
+
+		EasyMock.replay(errorsMock, refereeServiceMock, refereeValidator);
 
 		ModelAndView modelAndView = applicationController.editReferee(referee, null, errorsMock);
+		EasyMock.verify(refereeServiceMock);
 		assertEquals("private/pgStudents/form/components/references_details", modelAndView.getViewName());
 		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");
 		assertNotNull(model);
@@ -365,11 +379,16 @@ public class UpdateApplicationFormControllerTest {
 	public void shouldSetMessageIfRefereeAddMessageProvided() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(currentUser).toApplicationForm();
-		referee.setFirstname("firstname");
-		referee.setApplication(form);
-		refereeServiceMock.save(referee);
 
+		Referee referee = new RefereeBuilder().id(1).toReferee();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(currentUser).toApplicationForm();
+		referee.setApplication(form);
+		refereeValidator.validate(referee, errorsMock);
+		refereeServiceMock.save(EasyMock.same(referee));
+		EasyMock.expect(refereeServiceMock.processRefereeAndGetAsUser(referee)).andReturn(null);
+
+		EasyMock.replay(errorsMock, refereeServiceMock, refereeValidator);
+		
 		ModelAndView modelAndView = applicationController.editReferee(referee, "add", errorsMock);
 		assertEquals("private/pgStudents/form/components/references_details", modelAndView.getViewName());
 		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");

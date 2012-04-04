@@ -13,9 +13,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
+import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
@@ -26,16 +29,21 @@ public class RefereeService {
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final Logger log = Logger.getLogger(SubmitApplicationService.class);
 	private final RefereeDAO refereeDAO;
+	private final UserService userService;
+	private final RoleDAO roleDAO;
 
 	RefereeService() {
-		this(null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public RefereeService(RefereeDAO refereeDAO, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
+	public RefereeService(RefereeDAO refereeDAO, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, UserService userService,
+			RoleDAO roleDAO) {
 		this.refereeDAO = refereeDAO;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
+		this.userService = userService;
+		this.roleDAO = roleDAO;
 
 	}
 
@@ -117,5 +125,28 @@ public class RefereeService {
 		}
 		return result;
 	}
+
+	public RegisteredUser getRefereeIfAlreadyRegistered(Referee referee) {
+		return userService.getUserByEmail(referee.getEmail());
+	}
+
+	public void processRefereesRoles(List<Referee> referees) {
+		for (Referee referee : referees) {
+			processRefereeAndGetAsUser(referee);
+		}
+		
+	}
+	
+	public RegisteredUser processRefereeAndGetAsUser(Referee referee) {
+		 RegisteredUser user = userService.getUserByEmail(referee.getEmail());
+		 Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
+		 if(user!=null && !user.isInRole(Authority.REFEREE)) {
+			 user.getRoles().add(refereeRole);
+			 userService.save(user);
+		 }
+		return user;
+	}
+
+	
 
 }

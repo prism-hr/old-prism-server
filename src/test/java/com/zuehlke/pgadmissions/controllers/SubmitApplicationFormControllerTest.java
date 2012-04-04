@@ -47,6 +47,7 @@ import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.SubmitApplicationService;
 
 public class SubmitApplicationFormControllerTest {
@@ -59,6 +60,7 @@ public class SubmitApplicationFormControllerTest {
 	private CountryService countryServiceMock;
 	private LanguageService languageServiceMock;
 	private SubmitApplicationService referencesServiceMock;
+	private RefereeService refereeServiceMock;
 
 	@Test
 	@Ignore
@@ -203,8 +205,9 @@ public class SubmitApplicationFormControllerTest {
 		countryServiceMock = EasyMock.createMock(CountryService.class);
 		languageServiceMock = EasyMock.createMock(LanguageService.class);
 		referencesServiceMock = EasyMock.createMock(SubmitApplicationService.class);
+		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		applicationController = new SubmitApplicationFormController(applicationsServiceMock, userPropertyEditorMock, 
-				countryServiceMock, languageServiceMock, referencesServiceMock) {
+				countryServiceMock, languageServiceMock, referencesServiceMock, refereeServiceMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

@@ -24,7 +24,10 @@ import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 public class Document extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = -6396463075916267580L;
-
+	@ManyToOne
+	@JoinColumn(name = "uploaded_by_id")
+	private RegisteredUser uploadedBy;
+	
 	@ManyToOne
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm applicationForm;
@@ -108,6 +111,14 @@ public class Document extends DomainObject<Integer> {
 
 	public void setDateUploaded(Date dateUploaded) {
 		this.dateUploaded = dateUploaded;
+	}
+
+	public RegisteredUser getUploadedBy() {
+		return uploadedBy;
+	}
+
+	public void setUploadedBy(RegisteredUser uploadedBy) {
+		this.uploadedBy = uploadedBy;
 	}
 
 	

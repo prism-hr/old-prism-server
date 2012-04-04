@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.dao.mappings;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,15 +21,40 @@ import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 public class DocumentMappingTest extends AutomaticRollbackTestCase {
 
 	private ApplicationForm applicationForm;
+	private RegisteredUser applicant;
 	
 	@Test	
-	public void shouldLoadDocumentWithApplicationForm(){
+	public void shouldSaveAndLoadDocument(){
+		Document document = new Document();
+		document.setUploadedBy(applicant);
+		document.setContent("s".getBytes());
+		document.setFileName("name.txt");
+		document.setContentType("bob");
+		document.setType(DocumentType.PERSONAL_STATEMENT);
+		document.setUploadedBy(applicant);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(document);
+		
+		flushAndClearSession();
+		
+		Document reloadedDoc = (Document) sessionFactory.getCurrentSession().get(Document.class, document.getId());
+
+		assertEquals(applicant, reloadedDoc.getUploadedBy());
+		assertArrayEquals("s".getBytes(), reloadedDoc.getContent());
+		assertEquals("name.txt", reloadedDoc.getFileName());
+		assertEquals("bob", reloadedDoc.getContentType());
+		assertEquals(DocumentType.PERSONAL_STATEMENT, reloadedDoc.getType());
+		assertNotNull(reloadedDoc.getDateUploaded());
+	}
+	
+	@Test	
+	public void shouldSLoadDocumentWithApplicationForm(){
 		Document document = new Document();
 		document.setContent("s".getBytes());
 		document.setFileName("name.txt");
 		document.setContentType("bob");
 		document.setType(DocumentType.PERSONAL_STATEMENT);
-		
+		document.setUploadedBy(applicant);
 		applicationForm.getSupportingDocuments().add(document);	
 		
 		sessionFactory.getCurrentSession().saveOrUpdate(applicationForm);
@@ -47,7 +74,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 		Project project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
 		save(program, project);
 
-		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
+		applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
 		save(applicant);

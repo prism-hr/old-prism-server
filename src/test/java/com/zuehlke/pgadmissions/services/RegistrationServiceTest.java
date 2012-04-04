@@ -142,7 +142,7 @@ public class RegistrationServiceTest {
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
-		registrationService.generateAndSaveNewUser(recordDTO);
+		registrationService.generateAndSaveNewUser(recordDTO, null);
 
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		assertEquals(newUser, modelMap.get("user"));
@@ -173,7 +173,7 @@ public class RegistrationServiceTest {
 
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		try {
-			registrationService.generateAndSaveNewUser(recordDTO);
+			registrationService.generateAndSaveNewUser(recordDTO, null);
 		} catch (RuntimeException e) {
 			// expected...ignore
 		}
@@ -212,7 +212,7 @@ public class RegistrationServiceTest {
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
-		registrationService.generateAndSaveNewUser(recordDTO);
+		registrationService.generateAndSaveNewUser(recordDTO, null);
 
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 

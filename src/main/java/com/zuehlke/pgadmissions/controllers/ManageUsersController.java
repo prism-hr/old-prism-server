@@ -48,7 +48,7 @@ public class ManageUsersController {
 	private final ProgramsService programsService;
 	private final UserService userService;
 	private final RolePropertyEditor rolePropertyEditor;
-	
+
 	private final JavaMailSender mailsender;
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final Logger log = Logger.getLogger(ManageUsersController.class);
@@ -111,7 +111,7 @@ public class ManageUsersController {
 		if (selectedProgramForNewUser != -1) {
 			selectedProgram = getProgram(selectedProgramForNewUser);
 		} 
-		
+
 		NewAdminUserDTOValidator validator = new NewAdminUserDTOValidator();
 		BindingResult result = new DirectFieldBindingResult(adminUser, "adminUser");
 		validator.validate(adminUser, result);
@@ -127,30 +127,39 @@ public class ManageUsersController {
 		} 
 
 		RegisteredUser potentiallyNewUser = userService.getUserByEmail(adminUser.getNewUserEmail());
-		String view;
-		if (potentiallyNewUser != null) {
-			view = updateSelectedUserInternal(potentiallyNewUser, selectedProgram, newRolesDTO);
-		} else {
-			String id = "";
-			if (selectedProgram != null && selectedProgram.getId() != null) {
-				id = Integer.toString(selectedProgram.getId());
-			}
-			view = "redirect:/manageUsers/showPage?programId=" + id;
-			
+		if (potentiallyNewUser == null) {
 			try {
 				Map<String, Object> model = modelMap();
 				model.put("host", Environment.getInstance().getApplicationHostName());
-				model.put("newAdminUserSuggested", adminUser);
+				potentiallyNewUser = createNewRegisteredUser(adminUser);
+				model.put("user", potentiallyNewUser);
+				model.put("suggestingUser", getCurrentUser());
 				InternetAddress toAddress = new InternetAddress(adminUser.getNewUserEmail(), adminUser.getNewUserFirstName() + " "+ adminUser.getNewUserLastName());
 				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "New User Suggested", "private/pgStudents/mail/new_user_suggestion.ftl", model));
 			} catch (Throwable e) {
 				log.warn("error while sending email",e);
 			}
 		}
+		String view = updateSelectedUserInternal(potentiallyNewUser, selectedProgram, newRolesDTO);
 
 		return new ModelAndView(view);
 	}
-	
+
+	private RegisteredUser createNewRegisteredUser(NewAdminUserDTO adminUser) {
+		RegisteredUser user = new RegisteredUser();
+
+		user.setUsername(adminUser.getNewUserEmail());
+		user.setFirstName(adminUser.getNewUserFirstName());
+		user.setLastName(adminUser.getNewUserLastName());
+		user.setEmail(adminUser.getNewUserEmail());
+		user.setAccountNonExpired(true);
+		user.setAccountNonLocked(true);
+		user.setEnabled(false);
+		user.setCredentialsNonExpired(true);
+
+		return user;
+	}
+
 	Map<String, Object> modelMap() {
 		return new HashMap<String, Object>();
 	}

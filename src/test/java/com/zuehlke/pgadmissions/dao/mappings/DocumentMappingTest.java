@@ -31,7 +31,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 		document.setFileName("name.txt");
 		document.setContentType("bob");
 		document.setType(DocumentType.PERSONAL_STATEMENT);
-		document.setUploadedBy(applicant);
+
 		
 		sessionFactory.getCurrentSession().saveOrUpdate(document);
 		

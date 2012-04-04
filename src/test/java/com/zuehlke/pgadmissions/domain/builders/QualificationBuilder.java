@@ -4,6 +4,7 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
@@ -23,7 +24,12 @@ public class QualificationBuilder {
 	private Integer id;
 	private CheckedStatus completed;
 	private Country institutionCountry;
-
+	private Document proofOfAward;
+	
+	public QualificationBuilder proofOfAward(Document proofOfAward) {
+		this.proofOfAward = proofOfAward;
+		return this;
+	}
 	
 	public QualificationBuilder institutionCountry(Country institutionCountry) {
 		this.institutionCountry = institutionCountry;
@@ -96,6 +102,7 @@ public class QualificationBuilder {
 		qualification.setId(id);
 		qualification.setCompleted(completed);
 		qualification.setInstitutionCountry(institutionCountry);
+		qualification.setProofOfAward(proofOfAward);
 		return qualification;
 	}
 

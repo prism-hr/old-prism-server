@@ -54,6 +54,7 @@ $(document).ready(function(){
 			applicationId:  $('#applicationId').val(),
 			application:  $('#applicationId').val(),
 			institutionCountry: $('#institutionCountry').val(),
+			proofOfAward: $('#profOfAwardId').val(),
 			message:"add"
 		},
 		function(data) {
@@ -77,6 +78,7 @@ $(document).ready(function(){
 			applicationId:  $('#applicationId').val(),
 			application:  $('#applicationId').val(),
 			institutionCountry: $('#institutionCountry').val(),
+			proofOfAward: $('#profOfAwardId').val(),
 			message:"close"
 		},
 		function(data) {
@@ -106,6 +108,7 @@ $(document).ready(function(){
 			$("#currentQualification").val("NO");
 		}
 		$('#qualificationAwardDate').val($('#'+id+'_qualificationAwardDateDP').val());
+		$('#profOfAwardId').val($('#'+id+'_qualificationProofOfAwardID').val());
 	});
 	
 	$('a[name="qualificationCancelButton"]').click(function(){

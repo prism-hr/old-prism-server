@@ -22,6 +22,7 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -39,6 +40,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
@@ -59,6 +61,7 @@ public class QualificationControllerTest {
 	private QualificationController controller;
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
 	private UsernamePasswordAuthenticationToken authenticationToken;
+	private DocumentPropertyEditor documentPropertyEditorMock;
 
 
 
@@ -154,6 +157,7 @@ public class QualificationControllerTest {
 		binderMock.registerCustomEditor(Language.class, languagePropertyEditorMock);
 		binderMock.registerCustomEditor(Country.class, countryPropertyEditor);
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
+		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
@@ -230,8 +234,10 @@ public class QualificationControllerTest {
 		qualificationValidatorMock = EasyMock.createMock(QualificationValidator.class);
 		qualificationServiceMock = EasyMock.createMock(QualificationService.class);
 
+		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+		
 		controller = new QualificationController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, countriesServiceMock,
-				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, qualificationValidatorMock, qualificationServiceMock);
+				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, qualificationValidatorMock, qualificationServiceMock, documentPropertyEditorMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		

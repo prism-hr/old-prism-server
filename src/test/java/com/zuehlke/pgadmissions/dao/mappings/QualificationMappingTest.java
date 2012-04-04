@@ -13,18 +13,18 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.LanguageDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
 public class QualificationMappingTest extends AutomaticRollbackTestCase{
@@ -35,11 +35,19 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldSaveAndLoadQualification() throws Exception {
 
+		Document document = new Document();		
+		document.setContent("s".getBytes());
+		document.setFileName("name.txt");
+		document.setContentType("bob");
+		document.setType(DocumentType.PERSONAL_STATEMENT);
+		sessionFactory.getCurrentSession().save(document);
+		flushAndClearSession();
+		
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Qualification qualification = new QualificationBuilder().id(3)
 				.awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("").institution("")
-				.languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
+				.languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
 
 		sessionFactory.getCurrentSession().save(qualification);
@@ -66,6 +74,7 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 		assertEquals(qualification.getQualificationStartDate(), qualificationDetails.getQualificationStartDate());
 		assertEquals(qualification.getQualificationType(), qualificationDetails.getQualificationType());
 		assertEquals(qualification.getCompleted(), qualificationDetails.getCompleted());
+		assertEquals(qualification.getProofOfAward(), qualificationDetails.getProofOfAward());
 
 	}
 	

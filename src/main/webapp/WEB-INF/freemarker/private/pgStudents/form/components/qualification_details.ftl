@@ -53,20 +53,6 @@
 		                		</#if>
 			        		</td>
                   	</tr>
-                  	
-                 	<input type="hidden" id="${qualification.id?string('#######')}_qualificationIdDP" value="${qualification.id?string('#######')}"/>
-                 	<input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionDP" value="${(qualification.qualificationInstitution?html)!}"/> 
-               		<input type="hidden" id="${qualification.id?string('#######')}_qualificationSubjectDP" value="${(qualification.qualificationSubject?html)!}"/> 
-                 	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/> 
-                	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationLanguageDP" value="${qualification.qualificationLanguage.id?string('#######')!}"/> 
-                	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationLevelDP" value="${(qualification.qualificationLevel?html)!}"/> 
-                 	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationTypeDP" value="${(qualification.qualificationType?html)!}"/> 
-                 	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${(qualification.qualificationGrade?html)!}"/> 
-                 	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationScoreDP" value="${(qualification.qualificationScore?html)!}"/> 
-                 	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
-                 	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationCompleted" value="${qualification.completed}"/>
-                 	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationProofOfAwardID" value="${(qualification.proofOfAward.id?string('######'))!}"/>
-                 	<input type="hidden"  id="${qualification.id?string('#######')}_qualificationProofOfAwardFilename" value="${(qualification.proofOfAward.fileName)!}"/>  
 				</#list>
 							
             </tbody>
@@ -252,7 +238,8 @@
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
         		<div class="field" id="uploadFields">        	
           			<input id="proofOfAward" class="full" type="file" name="file" value="" />					
-					<span id="uploadedDocument" style="display: none;" ><input type="hidden" id="profOfAwardId" value = ""/></span>
+					<span id="uploadedDocument" ><input type="hidden" id="profOfAwardId" value = "${(qualification.proofOfAward.id?string('######'))!}"/>
+					<a href="<@spring.url '/filemanagement/view/${(qualification.proofOfAward.id?string("#######"))!}'/>">${(qualification.proofOfAward.fileName)!}</a></span>
 					<span id="progress" style="display: none;" ></span>					
         		</div>  
         		

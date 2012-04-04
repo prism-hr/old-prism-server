@@ -4,6 +4,7 @@ $(document).ready(function(){
 	$.get("/pgadmissions/update/getQualification",
 			{
 				applicationId:  $('#applicationId').val()		
+				
 			},
 			function(data) {
 				$('#qualificationsSection').html(data);

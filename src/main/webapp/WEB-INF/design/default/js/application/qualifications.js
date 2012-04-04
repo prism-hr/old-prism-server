@@ -7,12 +7,11 @@ $(document).ready(function(){
 	
 	if($("#currentQualificationCB").is(":checked")){
 		$("#currentQualification").val("YES");
-		$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\"> </input>");
-		bindDatePickers();
 	}
 	else{	
 		$("#currentQualification").val("NO");
-		$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\" disabled=\"disabled\"> </input>");
+		$("#qualificationAwardDate").val("");
+		$("#qualificationAwardDate").attr("disabled", "disabled");
 			
 	}
 	
@@ -24,12 +23,15 @@ $(document).ready(function(){
 	$("input[name*='currentQualificationCB']").click(function() {
 		if ($("#currentQualification").val() =='YES'){
 			$("#currentQualification").val("NO");
-			$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\" disabled=\"disabled\"> </input>");
+			$("#qualificationAwardDate").val("");
+			$("#qualificationAwardDate").attr("disabled", "disabled");
 		} else {		
+		
 			$("#currentQualification").val("YES");
-			$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\"> </input>");
+			$("#qualificationAwardDate").removeAttr("disabled", "disabled");		
 			bindDatePickers();
 		}
+	
 	});
 	
 	$('a[name="deleteButton"]').click( function(){	
@@ -88,27 +90,16 @@ $(document).ready(function(){
 	
 	$('a[name="editQualificationLink"]').click(function(){
 		var id = this.id;
-		id = id.replace('qualification_', '');
-		$('#qualificationId').val($('#'+id+'_qualificationIdDP').val());
-		$('#qualificationSubject').val($('#'+id+'_qualificationSubjectDP').val());
-		$('#qualificationInstitution').val($('#'+id+'_qualificationInstitutionDP').val());
-		$('#qualificationLevel').val($('#'+id+'_qualificationLevelDP').val());
-		$('#qualificationType').val($('#'+id+'_qualificationTypeDP').val());
-		$('#qualificationGrade').val($('#'+id+'_qualificationGradeDP').val());
-		$('#qualificationScore').val($('#'+id+'_qualificationScoreDP').val());
-		$('#qualificationStartDate').val($('#'+id+'_qualificationStartDateDP').val());
-		$('#qualificationLanguage').val($('#'+id+'_qualificationLanguageDP').val());
-		if ($('#'+id+'_qualificationCompleted').val() =='YES'){
-			$("#currentQualificationCB").attr('checked', true);
-			$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\"> </input>");
-			$("#currentQualification").val("YES");
-			bindDatePickers();
-		} else {
-			$("#currentQualificationCB").attr('checked', false);
-			$("#currentQualification").val("NO");
-		}
-		$('#qualificationAwardDate').val($('#'+id+'_qualificationAwardDateDP').val());
-		$('#profOfAwardId').val($('#'+id+'_qualificationProofOfAwardID').val());
+		id = id.replace('qualification_', '');	
+		$.get("/pgadmissions/update/getQualification",
+				{
+					applicationId:  $('#applicationId').val(),
+					qualificationId: id
+				},
+				function(data) {
+					$('#qualificationsSection').html(data);
+				}
+		);
 	});
 	
 	$('a[name="qualificationCancelButton"]').click(function(){

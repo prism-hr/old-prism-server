@@ -1,4 +1,15 @@
 $(document).ready(function(){	
+	
+
+	$.get("/pgadmissions/update/getQualification",
+			{
+				applicationId:  $('#applicationId').val()		
+			},
+			function(data) {
+				$('#qualificationsSection').html(data);
+			}
+	);
+
 	/*
 	 * Submit application form on click of submit button.
 	 */ 
@@ -34,8 +45,10 @@ $(document).ready(function(){
 	
 	/* Cases for comment section */
 	
-	/* 1. Depending on the which view user has requested, the comment form will be displayed. Temparary.
-	commentForm */
+	/*
+	 * 1. Depending on the which view user has requested, the comment form will
+	 * be displayed. Temparary. commentForm
+	 */
 	
 	var viewType = $('input#view-type-personal-form').val();
 	
@@ -59,16 +72,21 @@ $(document).ready(function(){
 	}
 
 	
-	/* 2. Inside the Comment Box, on click of the close button, hide the Comment Box */
+	/*
+	 * 2. Inside the Comment Box, on click of the close button, hide the Comment
+	 * Box
+	 */
 	
 	$('#comment-close-button').click(function(){
-		//$('#comment').css("display", "none");
+		// $('#comment').css("display", "none");
 		$('div#show-comment-button-div').show();
 		$('#commentForm').hide();
 	});
 
-	/* 3. Outside the Comment Box, on click of the comment button, show the Comment Box and 
-	 * hide the comment button */
+	/*
+	 * 3. Outside the Comment Box, on click of the comment button, show the
+	 * Comment Box and hide the comment button
+	 */
 	
 	$('#comment-button').click(function(){
 		
@@ -91,12 +109,14 @@ $(document).ready(function(){
 	/* Tasks */
 	
 
-	/* Admin: Until the comment box have any characters, the submit button should not
-	 * be enabled.*/
+	/*
+	 * Admin: Until the comment box have any characters, the submit button
+	 * should not be enabled.
+	 */
 
 	
 	/* Extra */
-	//<input type ="hidden" id="prev-comment-div" value="${prevComments}"/>
+	// <input type ="hidden" id="prev-comment-div" value="${prevComments}"/>
 	
 
 

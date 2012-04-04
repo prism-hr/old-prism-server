@@ -68,13 +68,19 @@
                     		${(model.applicationForm.personalDetails.country.name?html)!}
                     	</div>
                   	</div>
+              	     <div class="row">
+						<label class="label">Requires Visa</label>
+						<div class="field">
+                    		${(model.applicationForm.personalDetails.requiresVisa?html)!}
+                    	</div>
+					</div>                              
                   	
                 </div>
 
 
 				<div>
               	     <div class="row">
-						<label class="label">Language</label>
+						<label class="label">Is English first language</label>
 						<div class="field">
                     		${(model.applicationForm.personalDetails.englishFirstLanguage?html)!}
                     	</div>

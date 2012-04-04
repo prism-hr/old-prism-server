@@ -45,7 +45,7 @@ public class Qualification extends DomainObject<Integer>{
 	
 	@ManyToOne
 	@JoinColumn(name = "language_id")
-	private Language qualificationLanguage;
+	private Language qualificationLanguage = null ;
 	
 	@Column(name="level")
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.QualificationLevelEnumUserType")
@@ -161,6 +161,13 @@ public class Qualification extends DomainObject<Integer>{
 
 	public CheckedStatus getCompleted() {
 		return completed;
+	}
+	
+	public boolean isQualificationCompleted(){
+		if(completed == null){
+			return false;
+		}
+		return completed.equals(CheckedStatus.YES);
 	}
 
 	public void setCompleted(CheckedStatus completed) {

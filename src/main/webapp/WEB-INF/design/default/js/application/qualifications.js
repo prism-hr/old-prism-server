@@ -1,9 +1,21 @@
 
 
 $(document).ready(function(){
+	if($("#qualificationInstitution").val() == ""){
+		$("#currentQualificationCB").attr('checked', false);
+		$("#currentQualification").val("NO");
+	}
 	
-	$("#currentQualificationCB").attr('checked', false);
-	$("#currentQualification").val("NO");
+	if($("#currentQualificationCB").is(":checked")){
+		$("#currentQualification").val("YES");
+		$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\"> </input>");
+		bindDatePickers();
+	}
+	else{	
+		$("#currentQualification").val("NO");
+		$("#awardDateField").html("<input type=\"text\" class=\"half date\" id=\"qualificationAwardDate\" name=\"qualificationAwardDate\" value=\"\" disabled=\"disabled\"> </input>");
+			
+	}
 	
 	$('#qualificationsCloseButton').click(function(){
 		$('#qualifications-H2').trigger('click');
@@ -27,6 +39,7 @@ $(document).ready(function(){
 	
 	
 	$('#qualificationsSaveButton').click(function(){
+
 		$.post("/pgadmissions/update/editQualification", {  
 			qualificationSubject: $("#qualificationSubject").val(), 
 			qualificationInstitution: $("#qualificationInstitution").val(), 
@@ -37,10 +50,12 @@ $(document).ready(function(){
 			qualificationStartDate: $("#qualificationStartDate").val(),
 			qualificationLanguage: $("#qualificationLanguage").val(),
 			qualificationAwardDate: $("#qualificationAwardDate").val(),
-			completed: $("#currentQualification").val(),
-			appId: $("#appId").val(),
+			completed: $("#currentQualification").val(),			
 			qualificationId: $("#qualificationId").val(),
-			add:"add"
+			applicationId:  $('#applicationId').val(),
+			application:  $('#applicationId').val(),
+			institutionCountry: $('#institutionCountry').val(),
+			message:"add"
 		},
 		function(data) {
 			$('#qualificationsSection').html(data);
@@ -58,9 +73,12 @@ $(document).ready(function(){
 			qualificationStartDate: $("#qualificationStartDate").val(),
 			qualificationLanguage: $("#qualificationLanguage").val(),
 			qualificationAwardDate: $("#qualificationAwardDate").val(),
-			appId: $("#appId").val(),
 			completed: $("#currentQualification").val(),
-			qualificationId: $("#qualificationId").val()
+			qualificationId: $("#qualificationId").val(),
+			applicationId:  $('#applicationId').val(),
+			application:  $('#applicationId').val(),
+			institutionCountry: $('#institutionCountry').val(),
+			message:"close"
 		},
 		function(data) {
 			$('#qualificationsSection').html(data);
@@ -108,16 +126,16 @@ $(document).ready(function(){
 		});
 	});
 	
-	  bindDatePickers();
+	bindDatePickers();
 
-		//open/close
-		var $header  =$('#qualifications-H2');
-		var $content = $header.next('div');
-		$header.bind('click', function()
-		{
-		  $content.toggle();
-		  $(this).toggleClass('open', $content.is(':visible'));
-		  return false;
-		});
+	//open/close
+	var $header  =$('#qualifications-H2');
+	var $content = $header.next('div');
+	$header.bind('click', function()
+	{
+	  $content.toggle();
+	  $(this).toggleClass('open', $content.is(':visible'));
+	  return false;
+	});
 		
 });

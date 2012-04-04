@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
@@ -34,6 +35,15 @@ public class QualificationValidatorTest {
 		qualificationValidator.validate(qualification, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.institution.notempty",mappingResult.getFieldError("qualificationInstitution").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfInstaitutionCoutnryIssEmpty(){
+		qualification.setInstitutionCountry(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
+		qualificationValidator.validate(qualification, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("qualification.institutionCountry.notempty",mappingResult.getFieldError("institutionCountry").getCode());
 	}
 	@Test
 	public void shouldRejectIfSubjectIsEmpty(){
@@ -121,6 +131,7 @@ public class QualificationValidatorTest {
 		qualification.setQualificationAwardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/09/09"));
 		qualification.setQualificationGrade("first");
 		qualification.setQualificationInstitution("UCL");
+		qualification.setInstitutionCountry(new Country());
 		qualification.setQualificationLanguage(new LanguageBuilder().id(1).toLanguage());
 		qualification.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualification.setQualificationSubject("CS");		

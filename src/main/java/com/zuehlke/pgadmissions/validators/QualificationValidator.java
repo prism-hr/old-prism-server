@@ -26,6 +26,7 @@ public class QualificationValidator  implements Validator{
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationSubject", "qualification.subject.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationStartDate", "qualification.start_date.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLanguage", "qualification.language_of_study.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "institutionCountry", "qualification.institutionCountry.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationLevel", "qualification.level.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationType", "qualification.type.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "qualificationGrade", "qualification.grade.notempty");		

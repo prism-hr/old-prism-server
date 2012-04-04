@@ -65,7 +65,7 @@
 			</table>
 		</#if>
         
-        <input type="hidden" id="positionId" name="positionId"/>
+        <input type="hidden" id="positionId" name="positionId" value="${(model.employmentPosition.positionId?html)!}"/>
         
         <form>
         	
@@ -149,6 +149,9 @@
                        <label class="label">Is Completed<em>*</em></label>
                        <span class="hint"></span>
                        		<input type="checkbox" name="completedPositionCB" id="completedPositionCB"/
+                       		<#if model.employmentPosition.isEmploymentPositionCompleted()>
+                                          checked
+                                </#if>
                        		<#if model.applicationForm.isSubmitted()>
                                           disabled="disabled"
                                 </#if>>
@@ -160,7 +163,7 @@
                     <span class="label">End Date</span>
                     <span class="hint"></span>
                     <div class="field" id="endDateField">
-                      	<input class="half date" type="text" id="position_endDate" name="position_endDate" 
+                      	<input class="half date" type="hidden" id="position_endDate" name="position_endDate" 
                       			value="${(model.employmentPosition.position_endDate?string('dd-MMM-yyyy'))!}"
                                           disabled="disabled">
                       	</input>		

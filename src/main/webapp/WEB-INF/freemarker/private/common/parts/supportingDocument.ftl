@@ -2,7 +2,7 @@
 <span name="supportingDocumentSpan">
 	<#if document?? && document.id??>
 		<input type="hidden" id="profOfAwardId" value = "${document.id?string("#######")}"/>
-		<a href="<@spring.url '/filemanagement/view/${document.id?string("#######")}'/>">${document.fileName}</a>		
+		<a href="<@spring.url '/download?documentId=${document.id?string("#######")}'/>">${document.fileName}</a>		
 	</#if>
 	<#if message??>
 		${message?html}

@@ -4,8 +4,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.zuehlke.pgadmissions.domain.DomainObject;
 import com.zuehlke.pgadmissions.utils.ApplicationContext;

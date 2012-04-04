@@ -142,7 +142,7 @@ public class ManageUsersController {
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				model.put("newAdminUserSuggested", adminUser);
 				InternetAddress toAddress = new InternetAddress(adminUser.getNewUserEmail(), adminUser.getNewUserFirstName() + " "+ adminUser.getNewUserLastName());
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "New User Suggested", "private/pgStudents/mail/registration_confirmation.ftl", model));
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "New User Suggested", "private/pgStudents/mail/new_user_suggestion.ftl", model));
 			} catch (Throwable e) {
 				log.warn("error while sending email",e);
 			}

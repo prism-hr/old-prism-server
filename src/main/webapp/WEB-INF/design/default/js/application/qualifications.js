@@ -127,7 +127,7 @@ $(document).ready(function(){
 	
 	bindDatePickers();
 	addToolTips();
-	//open/close
+	// open/close
 	var $header  =$('#qualifications-H2');
 	var $content = $header.next('div');
 	$header.bind('click', function()
@@ -138,28 +138,26 @@ $(document).ready(function(){
 	});
 		
 	$('#uploadFields').on('change','#proofOfAward', function(event){	
-
+		ajaxFileDelete();
 		$('#progress').html("uploading file...");
-		$('#proofOfAward').hide();		
+		$('#proofOfAward').attr("readonly", "readonly");
 		ajaxFileUpload();
+		$('#proofOfAward').removeAttr("readonly");
 	});
 	
-	$('#uploadedDocument').on("click", '#deleteProofOfAwardButton', function(){
-		$('#uploadedDocument').hide();
-		$('#progress').html("deleting file...");
-		$.post("/pgadmissions/delete/asyncdelete",
-				{
-					documentId: $('#profOfAwardId').val()	
-				},
-				function(data) {		
-					$('#proofOfAward').val('');				
-					$('#proofOfAward').show();
-					$('#uploadedDocument').html("");						
-				}
-		);
-	});
+	
 });
+function ajaxFileDelete(){
+	
+	if($('#profOfAwardId') && $('#profOfAwardId').val() && $('#profOfAwardId').val() != ''){
+		$.post("/pgadmissions/delete/asyncdelete",
+			{
+				documentId: $('#profOfAwardId').val()	
+			}				
+		);
 
+	}
+}
 function ajaxFileUpload()
 {	
 	
@@ -177,6 +175,7 @@ function ajaxFileUpload()
 		{
 			url:'/pgadmissions/documents/async',
 			secureuri:false,
+			
 			fileElementId:'proofOfAward',	
 			dataType:'text',
 			success: function (data)

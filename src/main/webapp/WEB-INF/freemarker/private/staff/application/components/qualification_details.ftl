@@ -56,7 +56,9 @@
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${(qualification.qualificationGrade?html)!}"/> 
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationScoreDP" value="${(qualification.qualificationScore?html)!}"/> 
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
-			                  	</tr>
+								<input type="hidden"  id="${qualification.id?string('#######')}_qualificationCompleted" value="${qualification.completed}"/> 
+										                  
+</tr>
 							</#list>
 										
 		                </tbody>
@@ -105,8 +107,13 @@
 	                 	<div class="row">
                        <label class="label">Is Completed</label>
                          <span class="hint" data-desc="Tooltip demonstration."></span>
-                       		<input type="text" value="${(model.qualification.completed)!}" 
-                                            readonly="readonly">
+                       		<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"/
+                       		<#if model.qualification.isQualificationCompleted()>
+                                          checked
+                                </#if>
+                                          disabled="disabled">
+                            <input type="hidden" name="currentQualification" id="currentQualification"/>
+               			
                			 </div>
 	                
                   		<!-- Language (in which programme was undertaken) -->

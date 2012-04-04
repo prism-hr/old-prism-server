@@ -52,14 +52,15 @@ public class RegisterController {
 			record.setFirstname(suggestedUser.getFirstName());
 			record.setLastname(suggestedUser.getLastName());
 			record.setEmail(suggestedUser.getEmail());
+			model.setIsSuggestedUser(userId);
 		}
-		
+
 		model.setRecord(record);
 		return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
-	public ModelAndView submitRegistration(@ModelAttribute("record") RegistrationDTO record, BindingResult errors) {
+	public ModelAndView submitRegistration(@ModelAttribute("record") RegistrationDTO record, @RequestParam (required=false) Integer isSuggestedUser, BindingResult errors) {
 		validator.validate(record, errors);
 		if (errors.hasErrors()) {
 			RegisterPageModel model = new RegisterPageModel();
@@ -67,7 +68,8 @@ public class RegisterController {
 			model.setResult(errors);
 			return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
 		}
-		registrationService.generateAndSaveNewUser(record);
+		registrationService.generateAndSaveNewUser(record, isSuggestedUser);
+
 		return new ModelAndView("redirect:" + REGISTER_COMPLETE_VIEW_NAME);
 
 	}

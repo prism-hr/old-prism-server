@@ -4,9 +4,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.After;
 import org.junit.Before;
+import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.zuehlke.pgadmissions.domain.DomainObject;
+import com.zuehlke.pgadmissions.utils.ApplicationContext;
 
 
 public abstract class AutomaticRollbackTestCase {
@@ -15,7 +17,7 @@ public abstract class AutomaticRollbackTestCase {
 	protected Transaction transaction;
 
 	public AutomaticRollbackTestCase() {
-		sessionFactory = (SessionFactory) new ClassPathXmlApplicationContext("hibernateTestConfig.xml").getBean("sessionFactory");
+		sessionFactory = (SessionFactory) ApplicationContext.getInstance().getClassPathXmlApplicationContext().getBean("sessionFactory");
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -27,12 +29,13 @@ public abstract class AutomaticRollbackTestCase {
 
 	@Before
 	public void setUp() {
-		transaction = sessionFactory.getCurrentSession().beginTransaction();
+		transaction = sessionFactory.getCurrentSession().beginTransaction();		
 	}
 
 	@After
 	public void tearDown() {
-		transaction.rollback();
+		transaction.rollback();		
+
 	}
 
 	protected void flushAndClearSession() {

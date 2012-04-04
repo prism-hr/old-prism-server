@@ -2,9 +2,15 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.mail.internet.InternetAddress;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -29,6 +35,8 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.RolePropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.Environment;
+import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.validators.NewAdminUserDTOValidator;
 
 @Controller
@@ -40,16 +48,23 @@ public class ManageUsersController {
 	private final ProgramsService programsService;
 	private final UserService userService;
 	private final RolePropertyEditor rolePropertyEditor;
+	
+	private final JavaMailSender mailsender;
+	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
+	private final Logger log = Logger.getLogger(ManageUsersController.class);
 
 	ManageUsersController() {
-		this(null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public ManageUsersController(ProgramsService programsService, UserService userService, RolePropertyEditor rolePropertyEditor) {
+	public ManageUsersController(ProgramsService programsService, UserService userService, RolePropertyEditor rolePropertyEditor,
+			MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
 		this.programsService = programsService;
 		this.userService = userService;
 		this.rolePropertyEditor = rolePropertyEditor;
+		this.mailsender = mailsender;
+		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/showPage")
@@ -116,10 +131,28 @@ public class ManageUsersController {
 		if (potentiallyNewUser != null) {
 			view = updateSelectedUserInternal(potentiallyNewUser, selectedProgram, newRolesDTO);
 		} else {
-			view = NEW_USER_VIEW_NAME;
+			String id = "";
+			if (selectedProgram != null && selectedProgram.getId() != null) {
+				id = Integer.toString(selectedProgram.getId());
+			}
+			view = "redirect:/manageUsers/showPage?programId=" + id;
+			
+			try {
+				Map<String, Object> model = modelMap();
+				model.put("host", Environment.getInstance().getApplicationHostName());
+				model.put("newAdminUserSuggested", adminUser);
+				InternetAddress toAddress = new InternetAddress(adminUser.getNewUserEmail(), adminUser.getNewUserFirstName() + " "+ adminUser.getNewUserLastName());
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "New User Suggested", "private/pgStudents/mail/registration_confirmation.ftl", model));
+			} catch (Throwable e) {
+				log.warn("error while sending email",e);
+			}
 		}
 
 		return new ModelAndView(view);
+	}
+	
+	Map<String, Object> modelMap() {
+		return new HashMap<String, Object>();
 	}
 
 	@ModelAttribute("selectedProgram")

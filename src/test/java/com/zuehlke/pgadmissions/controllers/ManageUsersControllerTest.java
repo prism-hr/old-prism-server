@@ -14,6 +14,7 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -34,6 +35,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.RolePropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
 public class ManageUsersControllerTest {
 
@@ -43,6 +45,8 @@ public class ManageUsersControllerTest {
 	private UserService userServiceMock;
 	private RolePropertyEditor rolePropertyEditorMock;
 	private ManageUsersController manageUsersControllerWithCurrentUserOverride;
+	private JavaMailSender javaMailSenderMock;
+	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 
 	@Test
 	public void shouldGetSelectedUserIfIdProvided() {
@@ -374,9 +378,13 @@ public class ManageUsersControllerTest {
 		programsServiceMock = EasyMock.createMock(ProgramsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		rolePropertyEditorMock = EasyMock.createMock(RolePropertyEditor.class);
-		manageUsersController = new ManageUsersController(programsServiceMock, userServiceMock, rolePropertyEditorMock);
+		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
+		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
+		manageUsersController = new ManageUsersController(programsServiceMock, userServiceMock, rolePropertyEditorMock,
+				mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		
-		manageUsersControllerWithCurrentUserOverride = new ManageUsersController(programsServiceMock, userServiceMock, rolePropertyEditorMock){
+		manageUsersControllerWithCurrentUserOverride = new ManageUsersController(programsServiceMock, userServiceMock, rolePropertyEditorMock,
+				mimeMessagePreparatorFactoryMock,javaMailSenderMock){
 
 			@Override
 			public RegisteredUser getCurrentUser() {

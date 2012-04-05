@@ -352,8 +352,7 @@
                 </div>
            </form>
 	</div>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
+
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>
 
 <#if model.result?? && model.result.hasErrors() >

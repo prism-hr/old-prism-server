@@ -1,6 +1,7 @@
 $(document).ready(function(){	
 	
-
+	
+	
 	$.get("/pgadmissions/update/getQualification",
 			{
 				applicationId:  $('#applicationId').val()					
@@ -17,6 +18,7 @@ $(document).ready(function(){
 				$('#positionSection').html(data);
 			}
 	);
+
 	/*
 	 * Submit application form on click of submit button.
 	 */ 
@@ -111,20 +113,6 @@ $(document).ready(function(){
 	});
 
 
-	
-	
-	/* Tasks */
-	
-
-	/*
-	 * Admin: Until the comment box have any characters, the submit button
-	 * should not be enabled.
-	 */
-
-	
-	/* Extra */
-	// <input type ="hidden" id="prev-comment-div" value="${prevComments}"/>
-	
 
 
 });

@@ -36,7 +36,7 @@
             
             	<#list applicationForm.employmentPositions as position>
 	            	<tr>
-	                    <td><a class="row-arrow" name="positionEditButton" id="position_${position.id?string('#######')}">-</a></td>
+	                    <td><a class="row-arrow <#if employmentPosition.id?? && position.id==employmentPosition.id>open</#if>" name="positionEditButton" id="position_${position.id?string('#######')}">-</a></td>
 	                    <td>${(position.position?html)!}</td>
 	                    <td>${(position.startDate?string('dd-MMM-yyyy'))!}</td>
 	                    <td>${(position.endDate?string('dd-MMM-yyyy'))!}</td>
@@ -106,8 +106,8 @@
             			<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
 					 <#else>
 					    <textarea readonly="readonly" cols="70" rows="3" class="max" id="position_employer_address" 
-                        name="position_employer_address" value="${(employmentPosition.employerAddress?html)!}" 
-                        placeholder="Employer's address"></textarea>  
+                        name="position_employer_address"
+                        placeholder="Employer's address">${(employmentPosition.employerAddress?html)!}</textarea>  
 					 </#if>   
                	</div>
             </div>
@@ -142,8 +142,8 @@
 					
 					 <#else>
 					    <textarea readonly="readonly" cols="70" rows="3" class="max" id="position_remit" 
-                        name="position_remit" value="${(employmentPosition.remit?html)!}" 
-                        placeholder="Summary of responsibilities"></textarea>  
+                        name="position_remit" 
+                        placeholder="Summary of responsibilities">${(employmentPosition.remit?html)!}</textarea>  
 					 </#if> 
 					 
                 </div>
@@ -208,15 +208,14 @@
 
 	</form>
 </div>
-<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>	
+	
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/employmentPosition.js'/>"></script>
  <@spring.bind "employmentPosition.*" /> 
  
-<#if !spring.status.errorMessages?has_content && (message?? && message=='close') >
+<#if !message?? || (!spring.status.errorMessages?has_content && (message=='close'))  >
 <script type="text/javascript">
 	$(document).ready(function(){
-		$('#qualifications-H2').trigger('click');
+		$('#position-H2').trigger('click');
 	});
 </script>
 </#if>

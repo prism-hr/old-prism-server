@@ -180,9 +180,7 @@
 	
 		</form>
 	</div>
-<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
+
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>
 
 <#if model.result?? && model.result.hasErrors()  >

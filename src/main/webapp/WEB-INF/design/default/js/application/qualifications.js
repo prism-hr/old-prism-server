@@ -50,11 +50,11 @@ $(document).ready(function(){
 	
 	
 	$('#qualificationsSaveButton').click(function(){
-		postData('add');
+		postQualificationData('add');
 	});
 	
 	$('#qualificationSaveCloseButton').click(function(){
-		postData('close');
+		postQualificationData('close');
 	});
 	
 	$('a[name="editQualificationLink"]').click(function(){
@@ -63,7 +63,8 @@ $(document).ready(function(){
 		$.get("/pgadmissions/update/getQualification",
 				{
 					applicationId:  $('#applicationId').val(),
-					qualificationId: id
+					qualificationId: id,
+					message: 'edit'
 				},
 				function(data) {
 					$('#qualificationsSection').html(data);
@@ -74,7 +75,8 @@ $(document).ready(function(){
 	$('a[name="qualificationCancelButton"]').click(function(){
 		$.get("/pgadmissions/update/getQualification",
 				{
-					applicationId:  $('#applicationId').val()
+					applicationId:  $('#applicationId').val(),
+					message: 'cancel'
 				},
 				function(data) {
 					$('#qualificationsSection').html(data);
@@ -82,7 +84,8 @@ $(document).ready(function(){
 		);
 	});
 	
-	bindDatePickers();
+	bindDatePicker('#qualificationStartDate');
+	bindDatePicker('#qualificationAwardDate');
 	addToolTips();
 	// open/close
 	var $header  =$('#qualifications-H2');
@@ -105,7 +108,7 @@ $(document).ready(function(){
 	
 });
 
-function postData(message){
+function postQualificationData(message){
 
 	$.post("/pgadmissions/update/editQualification", {  
 		qualificationSubject: $("#qualificationSubject").val(), 

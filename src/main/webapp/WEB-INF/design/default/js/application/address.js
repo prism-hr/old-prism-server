@@ -56,7 +56,7 @@ $(document).ready(function(){
 		$("#addressCountry").val($('#'+id+"_countryDP").val());
 	});
 
-	  bindDatePickers();
+	 // bindDatePickers();
 
 	//open/close
 	var $header  =$('#address-H2');

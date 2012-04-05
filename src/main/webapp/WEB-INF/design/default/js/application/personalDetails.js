@@ -245,7 +245,7 @@ $(document).ready(function(){
 		
 	}
 	
-	 bindDatePickers();
+	bindDatePicker('#dateOfBirth');
 
 		//open/close
 	var $header  = $('#personalDetails-H2');

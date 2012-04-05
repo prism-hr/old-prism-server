@@ -39,7 +39,7 @@ $(document).ready(function(){
 		
 	});
 	
-	  bindDatePickers();
+	bindDatePicker('#fundingAwardDate');
 
 		//open/close
 		var $header  =$('#funding-H2');

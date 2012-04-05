@@ -37,16 +37,16 @@
             
             <tbody>
             
-            	<#list applicationForm.qualifications as qualification>
+            	<#list applicationForm.qualifications as existingQualification>
                 	<tr>
-	                  	<td><a class="row-arrow" id="qualification_${qualification.id?string('#######')}" name ="editQualificationLink">-</a></td>
-	                  	<td>${(qualification.qualificationType?html)!}</td>
-	                  	<td>${(qualification.qualificationGrade?html)!}</td>
-	                  	<td>${(qualification.qualificationInstitution?html)!}</td>
-	                  	<td>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
+	                  	<td><a class="row-arrow <#if qualification.id?? && existingQualification.id==qualification.id>open</#if>" id="qualification_${existingQualification.id?string('#######')}" name ="editQualificationLink">-</a></td>
+	                  	<td>${(existingQualification.qualificationType?html)!}</td>
+	                  	<td>${(existingQualification.qualificationGrade?html)!}</td>
+	                  	<td>${(existingQualification.qualificationInstitution?html)!}</td>
+	                  	<td>${(existingQualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
 	                  	  <td>
 	                  	  	   <#if !applicationForm.isSubmitted()>
-		                			<a name="deleteQualificationButton" id="qualification_${qualification.id?string('#######')}" class="button-delete">delete</a>		                		
+		                			<a name="deleteQualificationButton" id="qualification_${existingQualification.id?string('#######')}" class="button-delete">delete</a>		                		
 		                		</#if>
 			        		</td>
                   	</tr>
@@ -258,13 +258,11 @@
   </form>
 </div>
 
-<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>		
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/qualifications.js'/>"></script>		
  <@spring.bind "qualification.*" /> 
  
-<#if !spring.status.errorMessages?has_content && (message?? && message=='close') >
+<#if !message?? || (!spring.status.errorMessages?has_content && (message=='close'))  >
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#qualifications-H2').trigger('click');

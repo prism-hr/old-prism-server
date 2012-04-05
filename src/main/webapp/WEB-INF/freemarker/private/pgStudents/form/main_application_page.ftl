@@ -42,6 +42,8 @@
 		<![endif]-->
 		
 		<!-- Styles for Application Page -->
+	
+
 		
 	</head>
 
@@ -183,13 +185,20 @@
 		</div> 
 		
 		<!-- Scripts -->
-			
-	
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>		
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>	
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/address.js'/>"></script>		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/referee.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/documents.js'/>"></script>
+			<script type="text/javascript" src="<@spring.url '/design/default/js/application/additional_information.js'/>"></script>
+		
+
 	</body>
 	
 </html>

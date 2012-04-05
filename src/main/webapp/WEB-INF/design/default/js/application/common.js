@@ -1,4 +1,4 @@
-function bindDatePickers(){
+/*function bindDatePickers(){
  // Date pickers.
 
 	$('input.date').each(function(){
@@ -12,7 +12,25 @@ function bindDatePickers(){
 		}
 	});
 
-}
+}*/
+
+function bindDatePicker(selector){
+	// Date pickers.
+
+		$(selector).each(function(){
+			
+			if(!$(this).hasClass('hasDatepicker')){
+			
+				$(this).attr("readonly", "readonly");	
+				$(this).datepicker({
+		  				dateFormat: 'dd-M-yy',
+		 				changeMonth: true,
+		  				changeYear: true,
+		  				yearRange: '1900:c+20' });
+			}
+		});
+
+	}
 
 function addToolTips(){
 	 // Form hint tooltips.

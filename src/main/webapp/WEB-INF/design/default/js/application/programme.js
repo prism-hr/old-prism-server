@@ -73,7 +73,7 @@ $(document).ready(function(){
 	});
 	
 	
-	  bindDatePickers();
+	  bindDatePicker('#startDate');
 
 		//open/close
 		var $header  =$('#programme-H2');

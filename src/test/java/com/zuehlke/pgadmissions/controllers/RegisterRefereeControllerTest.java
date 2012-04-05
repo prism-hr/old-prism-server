@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
+import gherkin.lexer.i18n.RU;
 
 import org.easymock.EasyMock;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.BindingResult;
@@ -63,6 +65,17 @@ public class RegisterRefereeControllerTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("f").referee(referee).lastName("l").email("e@test.com").username("u").toUser();
 		registerRefereeController.getReferee(user.getId());
 	}
+	
+	@Test
+	public void shouldSaveRefereeIfValid(){
+		RegisteredUser referee = new RegisteredUserBuilder().id(1).email("email").firstName("first").username("email").lastName("last").confirmPassword("12345678").password("12345678").toUser();
+		userServiceMock.saveAndEmailReferee(referee);
+		EasyMock.replay(userServiceMock);
+		BindingResult errors = EasyMock.createMock(BindingResult.class);		
+		registerRefereeController.submitRefereeAndGetLoginPage(referee, errors);
+		EasyMock.verify(userServiceMock);
+	}
+	
 	
 	@Before
 	public void setUp(){

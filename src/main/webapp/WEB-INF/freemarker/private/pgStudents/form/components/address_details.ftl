@@ -1,9 +1,3 @@
-<#if model.applicationForm.addresses?has_content>
-	<#assign hasAddresses = true>
-<#else>
-	<#assign hasAddresses = false>
-</#if> 
- 
 <#import "/spring.ftl" as spring />
 
   	
@@ -14,78 +8,32 @@
 	
 	<div>
 	
-			<#if hasAddresses>
-				<table class="existing">
-			    	<colgroup>
-			        	<col style="width: 30px" />
-			            <col />
-			            <col style="width: 100px" />
-			            <col style="width: 100px" />
-			            <col style="width: 30px" />
-					</colgroup>
-					
-			        <thead>
-			        	<tr>
-			            	<th colspan="2">Address</th>
-			            	<th>Country</th>
-			            	<th></th>
-			                <th>&nbsp;</th>
-						</tr>
-			            
-					</thead>
-			        
-			        <tbody>
-			        	<#list model.applicationForm.addresses as address>
-				        	<tr>
-				            	<td><a class="row-arrow"  name="addressEditButton" id="address_${address.id?string('#######')}">-</a></td>
-				                <td>${address.location?html}</td>
-				                <td>${address.country.name?html}</td>
-				                <td></td>
-				                <td>
-				                 <#if !model.applicationForm.isSubmitted()>
-				                  	<form method="Post" action="<@spring.url '/deleteentity/address'/>" style="padding:0">
-			                			<input type="hidden" name="id" value="${address.id?string('#######')}"/>		                		
-			                			<a name="deleteButton" class="button-delete">delete</a>
-			                		</form>
-			                		</#if>
-				                </td>
-				                
-								<input type="hidden" id="${address.id?string('#######')}_addressIdDP" value="${address.id?string('#######')}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_locationDP" value="${address.location?html}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_countryDP" value="${address.country.id?string('#######')}"/>
-				                
-							</tr>
-						</#list>
-					</tbody>
-				</table>
-        	</#if>
-
         	<form>
 				
-				<input type="hidden" id="addressId" name="addressId"/>
+				<input type="hidden" id="currentAddressId" name="currentAddressId" value="${model.address.currentAddressId!}"/>
+				<input type="hidden" id="contactAddressId" name="contactAddressId" value="${model.address.contactAddressId!}"/>
             	<div>
-            	           <#if model.hasError('numberOfAddresses')>            
-            	           <div class="row">
-                                <span class="invalid"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>
-                           </div>                             
-                           </#if>
+            	    <#if model.hasError('numberOfAddresses')>            
+            	       <div class="row">
+                         <span class="invalid"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>
+                       </div>                             
+                    </#if>
             	
                 	<h3>Address</h3>
                   
                   	<!-- Address body -->
                   	<div class="row">
-                    	<span class="label">Location<em>*</em></span>
+                    	<span class="label">Current Address<em>*</em></span>
                     	<span class="hint"></span>
                     	<div class="field">
                     	   <#if !model.applicationForm.isSubmitted()>
-                      		<textarea id="addressLocation" class="max" rows="6" cols="80" >${(model.address.addressLocation?html)!}</textarea>
+                      		<textarea id="currentAddressLocation" class="max" rows="6" cols="80" >${(model.address.currentAddressLocation?html)!}</textarea>
 							
-                                <#if model.hasError('addressLocation')>                           
-                            	   <span class="invalid"><@spring.message  model.result.getFieldError('addressLocation').code /></span>                           
+                                <#if model.hasError('currentAddressLocation')>                           
+                            	   <span class="invalid"><@spring.message  model.result.getFieldError('currentAddressLocation').code /></span>                           
                                 </#if>
                             <#else>
-                      		    <textarea readonly="readonly" id="addressLocation" class="max" rows="6" cols="80" 
-                                                    value="${(model.address.addressLocation?html)!}"></textarea>
+                      		    <textarea readonly="readonly" id="currentAddressLocation" class="max" rows="6" cols="80">${(model.address.currentAddressLocation?html)!}</textarea>
                             </#if>
                     	</div>
                   	</div>
@@ -95,22 +43,73 @@
                     	<span class="label">Country<em>*</em></span>
 	                    <div class="field">
 	                      	
-	                      	<select class="full" name="addressCountry" id="addressCountry"
+	                      	<select class="full" name="currentAddressCountry" id="currentAddressCountry"
 	                      	<#if model.applicationForm.isSubmitted()>
                                             disabled="disabled"
                             </#if>>
                             <option value="">Select...</option>
                             	<#list model.countries as country>
-                                	<option value="${country.id?string('#######')}" <#if model.address.addressCountry?? && model.address.addressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                                	<option value="${country.id?string('#######')}" <#if model.address.currentAddressCountry?? && model.address.currentAddressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
                             	</#list>
                             </select>
                             
-                            <#if model.hasError('addressCountry')>                           
-                            	<span class="invalid"><@spring.message  model.result.getFieldError('addressCountry').code /></span>                           
+                            <#if model.hasError('currentAddressCountry')>                           
+                            	<span class="invalid"><@spring.message  model.result.getFieldError('currentAddressCountry').code /></span>                           
                             </#if>
 	                      	
 						</div>
 					</div>
+					
+					<!-- Address body -->
+                    <div class="row">
+                        <span class="label">Contact Address<em>*</em></span>
+                        <span class="hint"></span>
+                       
+                       <div class="field">
+                            <span class="label">Is this the same as your current address?</span>
+                            <input type="checkbox" name="sameAddressCB" id="sameAddressCB"
+                            <#if model.applicationForm.isSubmitted()>
+                                          disabled="disabled"
+                                </#if>
+                            />
+                            <input type="hidden" name="sameAddress" id="sameAddress"/>
+                       </div>
+                    </div>
+                    
+                    <p></p>
+                        
+                    <div class="row">
+                        <div class="field">
+                           <#if !model.applicationForm.isSubmitted()>
+                            <textarea id="contactAddressLocation" class="max" rows="6" cols="80" >${(model.address.contactAddressLocation?html)!}</textarea>
+                           
+                           <#if model.hasError('contactAddressLocation')>                           
+                                   <span class="invalid"><@spring.message  model.result.getFieldError('contactAddressLocation').code /></span>                           
+                                </#if>
+                            <#else>
+                                <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80">${(model.address.contactAddressLocation?html)!}</textarea>
+                            </#if>
+                        </div>
+                    </div>
+                                        <!-- Country -->
+                    <div class="row">
+                        <span class="label">Country<em>*</em></span>
+                        <div class="field">
+                            
+                            <select class="full" name="contactAddressCountry" id="contactAddressCountry"
+                            <#if model.applicationForm.isSubmitted()>
+                                            disabled="disabled"
+                            </#if>>
+                            <option value="">Select...</option>
+                                <#list model.countries as country>
+                                    <option value="${country.id?string('#######')}" <#if model.address.contactAddressCountry?? && model.address.contactAddressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                                </#list>
+                            </select>
+                            <#if model.hasError('contactAddressCountry')>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('contactAddressCountry').code /></span>                           
+                            </#if>
+                        </div>
+                    </div>
 					
 				</div>
 

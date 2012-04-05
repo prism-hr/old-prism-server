@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -78,30 +77,33 @@ public class UpdateApplicationFormControllerTest {
 	private CountryPropertyEditor countryPropertyEditor;
 	private EncryptionUtils encryptionUtilsMock;
 
-	@SuppressWarnings("deprecation")
 	@Test
-	public void shouldSaveNewAddress() throws ParseException {
+	public void shouldSaveNewAddress(){
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		Country country = new Country();
 		country.setName("UK");
 		EasyMock.expect(countriesServiceMock.getAllCountries()).andReturn(Arrays.asList(country));
 		EasyMock.expect(countriesServiceMock.getCountryById(6)).andReturn(country);
+		EasyMock.expect(countriesServiceMock.getCountryById(6)).andReturn(country);
 		applicationsServiceMock.save(form);
 		EasyMock.replay(applicationsServiceMock, countriesServiceMock);
 		Address address = new Address();
-		address.setAddressLocation("1, Main Street, London");
-		address.setAddressCountry(6);
-		address.setAddressContactAddress("YES");
+		address.setCurrentAddressLocation("1, Main Street, London");
+		address.setCurrentAddressCountry(6);
+		address.setContactAddressLocation("NY");
+		address.setContactAddressCountry(6);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 2, null, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
-		com.zuehlke.pgadmissions.domain.Address addr = ((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getAddresses().get(0);
-		Assert.assertEquals("1, Main Street, London", addr.getLocation());
-		Assert.assertEquals("UK", addr.getCountry().getName());
+		com.zuehlke.pgadmissions.domain.Address currentAddr = ((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getAddresses().get(0);
+		Assert.assertEquals("1, Main Street, London", currentAddr.getLocation());
+		Assert.assertEquals("UK", currentAddr.getCountry().getName());
+		com.zuehlke.pgadmissions.domain.Address contactAddr = ((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getAddresses().get(1);
+		Assert.assertEquals("NY", contactAddr.getLocation());
+		Assert.assertEquals("UK", contactAddr.getCountry().getName());
 	}
 
-	@SuppressWarnings("deprecation")
 	@Test
 	public void shouldReturnAddMessageIfAddParameterProvided() {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
@@ -111,11 +113,13 @@ public class UpdateApplicationFormControllerTest {
 		country.setName("UK");
 		EasyMock.expect(countriesServiceMock.getAllCountries()).andReturn(Arrays.asList(country));
 		EasyMock.expect(countriesServiceMock.getCountryById(6)).andReturn(country);
+		EasyMock.expect(countriesServiceMock.getCountryById(6)).andReturn(country);
 		EasyMock.replay(applicationsServiceMock, countriesServiceMock);
 		Address address = new Address();
-		address.setAddressLocation("1, Main Street, London");
-		address.setAddressCountry(6);
-		address.setAddressContactAddress("YES");
+		address.setCurrentAddressLocation("1, Main Street, London");
+		address.setCurrentAddressCountry(6);
+		address.setContactAddressLocation("NY");
+		address.setContactAddressCountry(6);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 2, "add", mappingResult, new ModelMap());
 		Assert.assertEquals("add", modelAndView.getModel().get("add"));
@@ -127,7 +131,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
 		Address address = new Address();
-		address.setAddressLocation("");
+		address.setContactAddressLocation("");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 2, null, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
@@ -139,7 +143,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
 		Address address = new Address();
-		address.setAddressLocation("london, uk");
+		address.setContactAddressLocation("london, uk");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		applicationController.editAddress(address, 2, null, mappingResult, new ModelMap());
 	}

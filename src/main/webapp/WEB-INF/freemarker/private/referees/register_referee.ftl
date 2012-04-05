@@ -53,18 +53,18 @@
 		    <!-- Login form. -->
 		    <section id="registration-box">
 		    
-		    	<form method="post" action= "/pgadmissions/referee/register/submit">
+		    	<form method="post" action= "/pgadmissions/refereeRegistration/submit">
 		      		<p>&gt; Register Today...</p>
-		            <input id="recordId" type="hidden" name="recordId" />
+		            <input id="recordId" type="hidden" name="recordId" value="${model.refereeUser.id?string('#######')!}"/>
 		            
-		            <input id="firstname" type="text" name="firstname" value="${model.refereeUser.firstName!}"/>
-		            <#if model.hasError('firstname')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('firstname').code /></span>                    		
+		            <input id="firstName" type="text" name="firstName" value="${model.refereeUser.firstName!}"/>
+		            <#if model.hasError('firstName')>                    		
+                    	<span class="invalid"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
                     </#if>
 		            
-		            <input id="lastname" type="text" name="lastname" value="${model.refereeUser.lastName!}"/>
-		            <#if model.hasError('lastname')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('lastname').code /></span>                    		
+		            <input id="lastName" type="text" name="lastName" value="${model.refereeUser.lastName!}"/>
+		            <#if model.hasError('lastName')>                    		
+                    	<span class="invalid"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
                     </#if>
 		            
 		            <input id="email" type="text" name="email" value="${model.refereeUser.email!}"/>

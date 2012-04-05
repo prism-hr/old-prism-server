@@ -49,7 +49,7 @@ import com.zuehlke.pgadmissions.validators.RefereeValidator;
 public class UpdateApplicationFormController {
 
 	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/address_details";
-	
+
 	private static final String APPLICATON_REFEREEE_VIEW_NAME = "private/pgStudents/form/components/references_details";
 	private final ApplicationsService applicationService;
 	private final UserPropertyEditor userPropertyEditor;
@@ -128,7 +128,7 @@ public class UpdateApplicationFormController {
 		return new ModelAndView("private/pgStudents/form/components/additional_information", modelMap);
 	}
 
-	
+
 	@RequestMapping(value = "/editAddress", method = RequestMethod.POST)
 	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer appId, @RequestParam(required = false) String add,
 			BindingResult result, ModelMap modelMap) {
@@ -148,26 +148,48 @@ public class UpdateApplicationFormController {
 		model.setCountries(countryService.getAllCountries());
 
 		if (!result.hasErrors()) {
-			com.zuehlke.pgadmissions.domain.Address address;
-			if (addr.getAddressId() == null) {
-				address = new com.zuehlke.pgadmissions.domain.Address();
+			//CURRENT ADDRESS
+			com.zuehlke.pgadmissions.domain.Address currentAddress;
+			if (addr.getCurrentAddressId() == null) {
+				currentAddress = new com.zuehlke.pgadmissions.domain.Address();
 			} else {
-				address = applicationService.getAddressById(addr.getAddressId());
+				currentAddress = applicationService.getAddressById(addr.getCurrentAddressId());
 			}
 
-			address.setApplication(application);
-			address.setLocation(addr.getAddressLocation());
-			address.setCountry(countryService.getCountryById(addr.getAddressCountry()));
+			currentAddress.setApplication(application);
+			currentAddress.setLocation(addr.getCurrentAddressLocation());
+			currentAddress.setCountry(countryService.getCountryById(addr.getCurrentAddressCountry()));
 
-			if (addr.getAddressId() == null) {
-				application.getAddresses().add(address);
+			if (addr.getCurrentAddressId() == null) {
+				application.getAddresses().add(currentAddress);
 			}
+
+			//CONTACT ADDRESS
+			com.zuehlke.pgadmissions.domain.Address contactAddress;
+			if (addr.getCurrentAddressId() == null) {
+				contactAddress = new com.zuehlke.pgadmissions.domain.Address();
+			} else {
+				contactAddress = applicationService.getAddressById(addr.getContactAddressId());
+			}
+
+			contactAddress.setApplication(application);
+			contactAddress.setLocation(addr.getContactAddressLocation());
+			contactAddress.setCountry(countryService.getCountryById(addr.getContactAddressCountry()));
+
+			if (addr.getContactAddressId() == null) {
+				application.getAddresses().add(contactAddress);
+			}
+
 			applicationService.save(application);
-			model.setAddress(new Address());
-		} else {
-			model.setAddress(addr);
 		}
+		if (application.getAddresses().size() > 0) {
+			addr.setCurrentAddressId(application.getAddresses().get(0).getId());
+			addr.setContactAddressId(application.getAddresses().get(1).getId());
+		}
+		model.setAddress(addr);
+
 		modelMap.put("model", model);
+
 		if (StringUtils.isNotBlank(add)) {
 			modelMap.put("add", "add");
 		}

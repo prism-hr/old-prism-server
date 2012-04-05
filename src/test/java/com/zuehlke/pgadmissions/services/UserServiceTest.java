@@ -3,11 +3,15 @@ package com.zuehlke.pgadmissions.services;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import javax.mail.internet.InternetAddress;
 
 import junit.framework.Assert;
 
@@ -15,6 +19,9 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -23,13 +30,19 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
 public class UserServiceTest {
 
@@ -37,6 +50,8 @@ public class UserServiceTest {
 	private RegisteredUser user;
 	private UserService userService;
 	private RoleDAO roleDAOMock;
+	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
+	private JavaMailSender mailsenderMock;
 
 	@Test
 	public void shouldGetUserFromDAO() {
@@ -124,7 +139,7 @@ public class UserServiceTest {
 		final RegisteredUser userThree = new RegisteredUserBuilder().id(3).toUser();
 		final RegisteredUser userFour = new RegisteredUserBuilder().id(4).toUser();
 		final RegisteredUser userFive = new RegisteredUserBuilder().id(5).toUser();
-		userService = new UserService(userDAOMock, roleDAOMock){
+		userService = new UserService(userDAOMock, roleDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock){
 
 			@SuppressWarnings("unchecked")
 			@Override
@@ -189,8 +204,81 @@ public class UserServiceTest {
 		Assert.assertEquals(user, userService.getUserByUsername("mike"));
 	}
 	
+	@Test
+	public void shouldSaveRefereeAndSendEmailToReferee() throws UnsupportedEncodingException{
+	
+		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		Program program = new ProgramBuilder().administrators(administrator).toProgram();
+		Project project = new ProjectBuilder().program(program).toProject();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("applicant").lastName("hen").email("applicant@test.com").toUser();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).project(project).toApplicationForm();
+		Referee referee = new RefereeBuilder().application(form).toReferee();
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referee(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
+		ProgrammeDetail programmeDetails = new ProgrammeDetail();	
+		programmeDetails.setId(1);
+		form.setProgrammeDetails(programmeDetails);
+		userService.save(refereeUser);
+		
+		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		InternetAddress toAddress1 = new InternetAddress("hh@test.com", "harry hen");
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Referee Registration"),EasyMock.eq("private/referees/mail/register_referee_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
+		mailsenderMock.send(preparatorMock1);
+	
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock);
+	
+		
+		userService.saveAndEmailReferee(refereeUser);
+		EasyMock.verify(mimeMessagePreparatorFactoryMock, mailsenderMock);
+	}
+	
+	@Test
+	public void shouldNotSendEmailIfSaveFails() throws UnsupportedEncodingException {
+		userService.save(null);
+		EasyMock.expectLastCall().andThrow(new RuntimeException("aaaaaaaaaaargh"));
+
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock);
+		try {
+			userService.saveAndEmailReferee(null);
+		} catch (RuntimeException e) {
+			// expected...ignore
+		}
+
+		EasyMock.verify(mimeMessagePreparatorFactoryMock, mailsenderMock);
+	}
+	
+	@Test
+	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
+		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		Program program = new ProgramBuilder().administrators(administrator).toProgram();
+		Project project = new ProjectBuilder().program(program).toProject();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("applicant").lastName("hen").email("applicant@test.com").toUser();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).project(project).toApplicationForm();
+		Referee referee = new RefereeBuilder().application(form).toReferee();
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referee(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
+		ProgrammeDetail programmeDetails = new ProgrammeDetail();	
+		programmeDetails.setId(1);
+		form.setProgrammeDetails(programmeDetails);
+		userService.save(refereeUser);
+
+		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		InternetAddress toAddress1 = new InternetAddress("hh@test.com", "harry hen");
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Referee Registration"),EasyMock.eq("private/referees/mail/register_referee_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
+	
+		mailsenderMock.send(preparatorMock1);
+		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock);
+		userService.saveAndEmailReferee(refereeUser);
+
+		EasyMock.verify(mimeMessagePreparatorFactoryMock);
+
+	}
+	
 	@Before
 	public void setUp() {
+		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
+		mailsenderMock =EasyMock.createMock(JavaMailSender.class);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		authenticationToken.setDetails(user);
@@ -199,7 +287,7 @@ public class UserServiceTest {
 		SecurityContextHolder.setContext(secContext);
 		userDAOMock = EasyMock.createMock(UserDAO.class);
 		roleDAOMock = EasyMock.createMock(RoleDAO.class);
-		userService = new UserService(userDAOMock, roleDAOMock);
+		userService = new UserService(userDAOMock, roleDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock);
 
 	}
 

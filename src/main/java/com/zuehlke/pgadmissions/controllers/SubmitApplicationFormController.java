@@ -81,12 +81,12 @@ public class SubmitApplicationFormController {
 		appForm.setNumberOfAddresses(applicationForm.getAddresses().size());
 		appForm.setNumberOfReferees(applicationForm.getReferees().size());
 		appForm.setPersonalDetails(applicationForm.getPersonalDetails());
-		
+
 		appForm.setProgrammeDetails(applicationForm.getProgrammeDetails());
 		appForm.setSupportingDocuments(applicationForm.getSupportingDocuments());
-		
+
 		ApplicationFormValidator validator = new ApplicationFormValidator();
-		
+
 		validator.validate(appForm, result);
 		List<FieldError> fieldErrors = new LinkedList<FieldError>();
 		fieldErrors.addAll(result.getFieldErrors());
@@ -94,7 +94,9 @@ public class SubmitApplicationFormController {
 			ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
 
 			viewApplicationModel.setApplicationForm(applicationForm);
-			viewApplicationModel.setAddress(new Address());
+			if (applicationForm!= null) {
+				viewApplicationModel.setAddress(buildAddress(applicationForm));
+			} 
 			viewApplicationModel.setFunding(new com.zuehlke.pgadmissions.dto.Funding());
 			viewApplicationModel.setQualification(new Qualification());
 			viewApplicationModel.setEmploymentPosition(new EmploymentPosition());
@@ -112,19 +114,37 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setPhoneTypes(PhoneType.values());
 			viewApplicationModel.setDocumentTypes(DocumentType.values());
 			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,"model", viewApplicationModel);
-			
+
 		}
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		java.util.Date date= new java.util.Date();
 		applicationForm.setSubmittedDate(new Timestamp(date.getTime()));
 		refereeService.processRefereesRoles(applicationForm.getReferees());
 		submitApplicationService.saveApplicationFormAndSendMailNotifications(applicationForm);
-		
+
 		return new ModelAndView("redirect:/applications?submissionSuccess=true");
 
 	}
 
 
+	private Address buildAddress(ApplicationForm applicationForm) {
+		Address address = new Address();
+		if (applicationForm.getAddresses().size() > 0) {
+			com.zuehlke.pgadmissions.domain.Address currentAddress = applicationForm.getAddresses().get(0);
+			address.setCurrentAddressCountry(currentAddress.getCountry().getId());
+			address.setCurrentAddressId(currentAddress.getId());
+			address.setCurrentAddressLocation(currentAddress.getLocation());
+
+			com.zuehlke.pgadmissions.domain.Address contactAddress = applicationForm.getAddresses().get(1);
+			address.setContactAddressCountry(contactAddress.getCountry().getId());
+			address.setContactAddressId(contactAddress.getId());
+			address.setContactAddressLocation(contactAddress.getLocation());
+
+
+		}
+
+		return address;
+	}
 	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);

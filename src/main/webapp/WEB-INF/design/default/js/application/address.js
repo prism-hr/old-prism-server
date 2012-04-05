@@ -13,7 +13,7 @@ $(document).ready(function(){
 	});
 	
 	$('#addressSaveAndAddButton').click(function(){
-		$.post("/pgadmissions/update/editAddress", { 
+		$.post("/pgadmissions/editAddress", { 
 			currentAddressLocation: $("#currentAddressLocation").val(),
 			currentAddressCountry: $("#currentAddressCountry").val(), 
 			currentAddressId: $("#currentAddressId").val(),
@@ -46,7 +46,7 @@ $(document).ready(function(){
 	});
 	
 	$('#addressSaveAndCloseButton').click(function(){
-		$.post("/pgadmissions/update/editAddress", {
+		$.post("/pgadmissions/editAddress", {
 			currentAddressLocation: $("#currentAddressLocation").val(),
 			currentAddressCountry: $("#currentAddressCountry").val(), 
 			currentAddressId: $("#currentAddressId").val(),

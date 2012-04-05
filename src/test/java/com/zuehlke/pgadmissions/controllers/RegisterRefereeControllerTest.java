@@ -19,27 +19,15 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.validators.ApplicantRecordValidator;
+import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 
 public class RegisterRefereeControllerTest {
 
 	private RegisterRefereeController registerRefereeController;
 	private UserService userServiceMock;
 	private RefereeService refereeServiceMock;
-	private ApplicantRecordValidator validator;
+	private RegisterFormValidator validator;
 	private EncryptionUtils encryptionUtils;
-	
-	@Test(expected=CannotUpdateApplicationException.class)
-	public void shouldThrowExceptionIfApplicationFormAlreadySubmitted() {
-		ApplicationForm application = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().firstname("f").lastname("l").email("e@test.com").application(application).toReferee();
-		RegisteredUser user = new RegisteredUserBuilder().firstName("f").referee(referee).lastName("l").email("e@test.com").username("u").toUser();
-		BindingResult errors = EasyMock.createMock(BindingResult.class);		
-		userServiceMock.save(user);
-		EasyMock.replay(userServiceMock, errors);
-		registerRefereeController.submitRefereeAndGetLoginPage(user, errors);
-		EasyMock.verify(userServiceMock);
-	}
 	
 	@Test
 	public void shouldSaveRefereeAndEnableAccountIfNoErrors() {
@@ -80,7 +68,7 @@ public class RegisterRefereeControllerTest {
 	public void setUp(){
 		userServiceMock = EasyMock.createMock(UserService.class);
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
-		validator = EasyMock.createMock(ApplicantRecordValidator.class);
+		validator = EasyMock.createMock(RegisterFormValidator.class);
 		encryptionUtils = EasyMock.createMock(EncryptionUtils.class);
 		registerRefereeController = new RegisterRefereeController(userServiceMock, refereeServiceMock, validator, encryptionUtils);
 		

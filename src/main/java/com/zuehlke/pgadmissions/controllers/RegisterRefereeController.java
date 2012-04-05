@@ -15,13 +15,13 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.validators.ApplicantRecordValidator;
+import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 
 public class RegisterRefereeController {
 	
 	private final UserService userService;
 	private final RefereeService refereeService;
-	private final ApplicantRecordValidator validator;
+	private final RegisterFormValidator validator;
 	private static final String REGISTER_REFEREE_VIEW_NAME = "private/referees/register_referee";
 	private final EncryptionUtils encryptionUtils;
 
@@ -31,7 +31,7 @@ public class RegisterRefereeController {
 	
 	@Autowired
 	public RegisterRefereeController(UserService userService, RefereeService refereeService,
-			ApplicantRecordValidator validator, EncryptionUtils encryptionUtils){
+			RegisterFormValidator validator, EncryptionUtils encryptionUtils){
 		this.userService = userService;
 		this.refereeService = refereeService;
 		this.validator = validator;
@@ -40,9 +40,6 @@ public class RegisterRefereeController {
 
 	@RequestMapping(value = "/register/submit",method = RequestMethod.POST)
 	public String submitRefereeAndGetLoginPage(@Valid RegisteredUser referee, BindingResult result) {
-		if(referee.getReferee().getApplication().isSubmitted()){
-			throw new CannotUpdateApplicationException();
-		}
 		if(result.hasErrors()){
 			return REGISTER_REFEREE_VIEW_NAME;
 		}

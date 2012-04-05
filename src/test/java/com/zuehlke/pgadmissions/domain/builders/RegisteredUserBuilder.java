@@ -17,6 +17,7 @@ public class RegisteredUserBuilder {
 	private String email;
 	private String username;
 	private String password;
+	private String confirmPassword;
 	private Integer id;
 	private boolean enabled = true;
 	private boolean accountNonExpired = true;
@@ -99,6 +100,11 @@ public class RegisteredUserBuilder {
 		this.password = password;
 		return this;
 	}
+	
+	public RegisteredUserBuilder confirmPassword(String confirmPassword) {
+		this.confirmPassword = confirmPassword;
+		return this;
+	}
 
 	public RegisteredUserBuilder id(Integer id) {
 		this.id = id;
@@ -143,6 +149,7 @@ public class RegisteredUserBuilder {
 		user.setProgramsOfWhichAdministrator(programsOfWhichAdministrator);
 		user.setProgramsOfWhichApprover(programsOfWhichApprover);
 		user.setProgramsOfWhichReviewer(programsOfWhichReviewer);
+		user.setConfirmPassword(confirmPassword);
 		user.setReferee(referee);
 		return user;
 	}

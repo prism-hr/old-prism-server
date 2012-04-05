@@ -142,16 +142,27 @@ public class RefereeService {
 		 Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
 		 if(user!=null && !user.isInRole(Authority.REFEREE)) {
 			 user.getRoles().add(refereeRole);
-			 userService.save(user);
+			 referee.setUser(user);
+			 refereeDAO.save(referee);
 		 }
 		 if(user==null){
-			 user = newRegisteredUser();
-			 user.setEmail(referee.getEmail());
-			 user.setFirstName(referee.getFirstname());
-			 user.setLastName(referee.getLastname());
-			 user.getRoles().add(refereeRole);
-			 userService.save(user);
+			 user = createAndSaveNewUserWithRefereeRole(referee, refereeRole);
+			 referee.setUser(user);
+			 refereeDAO.save(referee);
 		 }
+		return user;
+	}
+
+	private RegisteredUser createAndSaveNewUserWithRefereeRole(Referee referee,
+			Role refereeRole) {
+			RegisteredUser user;
+			user = newRegisteredUser();
+			user.setEmail(referee.getEmail());
+			user.setFirstName(referee.getFirstname());
+			user.setLastName(referee.getLastname());
+			user.setUsername(referee.getEmail());
+			user.getRoles().add(refereeRole);
+			userService.save(user);
 		return user;
 	}
 	

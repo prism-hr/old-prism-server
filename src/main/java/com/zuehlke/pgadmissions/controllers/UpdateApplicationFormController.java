@@ -49,7 +49,7 @@ import com.zuehlke.pgadmissions.validators.RefereeValidator;
 public class UpdateApplicationFormController {
 
 	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/address_details";
-	
+
 	private static final String APPLICATON_REFEREEE_VIEW_NAME = "private/pgStudents/form/components/references_details";
 	private final ApplicationsService applicationService;
 	private final UserPropertyEditor userPropertyEditor;
@@ -128,7 +128,7 @@ public class UpdateApplicationFormController {
 		return new ModelAndView("private/pgStudents/form/components/additional_information", modelMap);
 	}
 
-	
+
 	@RequestMapping(value = "/editAddress", method = RequestMethod.POST)
 	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer appId, @RequestParam(required = false) String add,
 			BindingResult result, ModelMap modelMap) {
@@ -163,7 +163,7 @@ public class UpdateApplicationFormController {
 			if (addr.getCurrentAddressId() == null) {
 				application.getAddresses().add(currentAddress);
 			}
-			
+
 			//CONTACT ADDRESS
 			com.zuehlke.pgadmissions.domain.Address contactAddress;
 			if (addr.getCurrentAddressId() == null) {
@@ -179,14 +179,17 @@ public class UpdateApplicationFormController {
 			if (addr.getContactAddressId() == null) {
 				application.getAddresses().add(contactAddress);
 			}
-			
+
 			applicationService.save(application);
-			
-			model.setAddress(new Address());
-		} else {
-			model.setAddress(addr);
 		}
+		if (application.getAddresses().size() > 0) {
+			addr.setCurrentAddressId(application.getAddresses().get(0).getId());
+			addr.setContactAddressId(application.getAddresses().get(1).getId());
+		}
+		model.setAddress(addr);
+
 		modelMap.put("model", model);
+
 		if (StringUtils.isNotBlank(add)) {
 			modelMap.put("add", "add");
 		}

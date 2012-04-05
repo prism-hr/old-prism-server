@@ -66,8 +66,13 @@
                         <span class="hint"></span>
                        
                        <div class="field">
-                            <input type="checkbox" name="sameAddress" id="sameAddress"/>
                             <span class="label">Is this the same as your current address?</span>
+                            <input type="checkbox" name="sameAddressCB" id="sameAddressCB"
+                            <#if model.applicationForm.isSubmitted()>
+                                          disabled="disabled"
+                                </#if>
+                            />
+                            <input type="hidden" name="sameAddress" id="sameAddress"/>
                        </div>
                     </div>
                     

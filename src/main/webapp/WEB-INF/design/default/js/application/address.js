@@ -1,5 +1,7 @@
 $(document).ready(function(){
 
+	$("#sameAddressCB").attr('checked', false);
+	$("#sameAddress").val("NO");
 
 	$('#addressCloseButton').click(function(){
 		$('#address-H2').trigger('click');
@@ -27,6 +29,22 @@ $(document).ready(function(){
 		});
 	});
 	
+	$("input[name*='sameAddressCB']").click(function() {
+		if ($("#sameAddress").val() =='YES'){
+			$("#sameAddress").val("NO");
+			$("#contactAddressLocation").val("");
+			$("#contactAddressCountry").val("");
+			$("#contactAddressLocation").removeAttr('disabled');
+			$("#contactAddressCountry").removeAttr('disabled');
+		} else {		
+			$("#sameAddress").val("YES");
+			$("#contactAddressLocation").val($("#currentAddressLocation").val());
+			$("#contactAddressCountry").val($("#currentAddressCountry").val());
+			$("#contactAddressLocation").attr('disabled','disabled');
+			$("#contactAddressCountry").attr('disabled','disabled');
+		}
+	});
+	
 	$('#addressSaveAndCloseButton').click(function(){
 		$.post("/pgadmissions/update/editAddress", {
 			currentAddressLocation: $("#currentAddressLocation").val(),
@@ -50,6 +68,8 @@ $(document).ready(function(){
 		$("#contactAddressId").val("");
 		$("#contactAddressLocation").val("");
 		$("#contactAddressCountry").val("");
+		$("#sameAddressCB").attr('checked', false);
+		$("#sameAddress").val("NO");
 		$("span[class='invalid']").each(function(){
 			$(this).hide();
 		});

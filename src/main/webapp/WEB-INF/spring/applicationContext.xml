@@ -36,14 +36,14 @@
 		    </property>
 	</bean>
 	<!-- general exception page handler -->
-	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+	<!-- <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="warnLogCategory" value="any"/>
 		<property name="exceptionMappings">
 		<props>
 			<prop key="java.lang.Exception">redirect:error</prop>
 		</props>
 		</property>
-	</bean>
+	</bean> -->
 	
 	<import resource="dwrContext.xml"/> 
 

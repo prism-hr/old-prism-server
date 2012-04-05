@@ -50,52 +50,11 @@ $(document).ready(function(){
 	
 	
 	$('#qualificationsSaveButton').click(function(){
-
-		$.post("/pgadmissions/update/editQualification", {  
-			qualificationSubject: $("#qualificationSubject").val(), 
-			qualificationInstitution: $("#qualificationInstitution").val(), 
-			qualificationLevel: $("#qualificationLevel").val(),
-			qualificationType: $("#qualificationType").val(),
-			qualificationGrade: $("#qualificationGrade").val(),
-			qualificationScore: $("#qualificationScore").val(),
-			qualificationStartDate: $("#qualificationStartDate").val(),
-			qualificationLanguage: $("#qualificationLanguage").val(),
-			qualificationAwardDate: $("#qualificationAwardDate").val(),
-			completed: $("#currentQualification").val(),			
-			qualificationId: $("#qualificationId").val(),
-			applicationId:  $('#applicationId').val(),
-			application:  $('#applicationId').val(),
-			institutionCountry: $('#institutionCountry').val(),
-			proofOfAward: $('#profOfAwardId').val(),
-			message:"add"
-		},
-		function(data) {
-			$('#qualificationsSection').html(data);
-		});
+		postData('add');
 	});
 	
 	$('#qualificationSaveCloseButton').click(function(){
-		$.post("/pgadmissions/update/editQualification", {  
-			qualificationSubject: $("#qualificationSubject").val(), 
-			qualificationInstitution: $("#qualificationInstitution").val(), 
-			qualificationLevel: $("#qualificationLevel").val(),
-			qualificationType: $("#qualificationType").val(),
-			qualificationGrade: $("#qualificationGrade").val(),
-			qualificationScore: $("#qualificationScore").val(),
-			qualificationStartDate: $("#qualificationStartDate").val(),
-			qualificationLanguage: $("#qualificationLanguage").val(),
-			qualificationAwardDate: $("#qualificationAwardDate").val(),
-			completed: $("#currentQualification").val(),
-			qualificationId: $("#qualificationId").val(),
-			applicationId:  $('#applicationId').val(),
-			application:  $('#applicationId').val(),
-			institutionCountry: $('#institutionCountry').val(),
-			proofOfAward: $('#profOfAwardId').val(),
-			message:"close"
-		},
-		function(data) {
-			$('#qualificationsSection').html(data);
-		});
+		postData('close');
 	});
 	
 	$('a[name="editQualificationLink"]').click(function(){
@@ -145,6 +104,31 @@ $(document).ready(function(){
 	
 	
 });
+
+function postData(message){
+
+	$.post("/pgadmissions/update/editQualification", {  
+		qualificationSubject: $("#qualificationSubject").val(), 
+		qualificationInstitution: $("#qualificationInstitution").val(), 
+		qualificationLevel: $("#qualificationLevel").val(),
+		qualificationType: $("#qualificationType").val(),
+		qualificationGrade: $("#qualificationGrade").val(),
+		qualificationScore: $("#qualificationScore").val(),
+		qualificationStartDate: $("#qualificationStartDate").val(),
+		qualificationLanguage: $("#qualificationLanguage").val(),
+		qualificationAwardDate: $("#qualificationAwardDate").val(),
+		completed: $("#currentQualification").val(),			
+		qualificationId: $("#qualificationId").val(),
+		applicationId:  $('#applicationId').val(),
+		application:  $('#applicationId').val(),
+		institutionCountry: $('#institutionCountry').val(),
+		proofOfAward: $('#profOfAwardId').val(),
+		message:message
+	},
+	function(data) {
+		$('#qualificationsSection').html(data);
+	});
+}
 function ajaxFileDelete(){
 	
 	if($('#profOfAwardId') && $('#profOfAwardId').val() && $('#profOfAwardId').val() != ''){

@@ -24,13 +24,18 @@ public class EmploymentPositionBuilder {
 
 	private ApplicationForm application;
 	
-	private Integer id;
-	
-	private CheckedStatus completed;
+	private Integer id;	
 	
 	private String employerAdress;
 	
 	private Country employerCountry;
+	
+	private boolean current;
+	
+	public EmploymentPositionBuilder current(boolean current){
+		this.current = current;
+		return this;
+	}
 	
 	public EmploymentPositionBuilder employerAdress(String employerAdress){
 		this.employerAdress = employerAdress;
@@ -59,12 +64,7 @@ public class EmploymentPositionBuilder {
 		this.id = id;
 		return this;
 	}
-	
-	public EmploymentPositionBuilder isCompleted(CheckedStatus isCompleted){
-		this.completed = isCompleted;
-		return this;
-	}
-	
+
 	public EmploymentPositionBuilder language(Language language){
 		this.language = language;
 		return this;
@@ -92,8 +92,8 @@ public class EmploymentPositionBuilder {
 		employment.setRemit(remit);
 		employment.setStartDate(startDate);
 		employment.setPosition(position);
-		employment.setCompleted(completed);
 		employment.setId(id);
+		employment.setCurrent(current);
 		return employment;
 	}
 }

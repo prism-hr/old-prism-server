@@ -3,6 +3,8 @@ package com.zuehlke.pgadmissions.controllers;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -68,7 +70,7 @@ public class EmploymentController {
 
 	}
 
-	@InitBinder("employment")
+	@InitBinder("employmentPosition")
 	public void registerPropertyEditors(WebDataBinder binder) {
 
 		binder.setValidator(employmentPositionValidator);
@@ -89,7 +91,7 @@ public class EmploymentController {
 	}
 	
 	@RequestMapping(value = "/editEmploymentPosition", method = RequestMethod.POST)
-	public String editEmployment(EmploymentPosition employment, BindingResult result) {
+	public String editEmployment(@Valid EmploymentPosition employment, BindingResult result) {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}

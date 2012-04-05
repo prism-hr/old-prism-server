@@ -62,11 +62,11 @@ public class DeleteApplicationFormEntitiesController {
 	}
 
 	@RequestMapping(value = "/employment", method = RequestMethod.POST)
-	public ModelAndView deleteEmployment(@RequestParam Integer id) {
+	public String deleteEmployment(@RequestParam Integer id) {
 		EmploymentPosition position = employmentService.getEmploymentPositionById(id);
 		Integer applicationFormId = position.getApplication().getId();
 		employmentService.delete(position);
-		return new ModelAndView("redirect:/application", "id", applicationFormId);
+		return "redirect:/update/getEmploymentPosition?applicationId=" +applicationFormId;
 	}
 
 	@RequestMapping(value = "/referee", method = RequestMethod.POST)

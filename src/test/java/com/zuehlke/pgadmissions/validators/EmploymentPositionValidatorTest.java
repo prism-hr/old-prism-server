@@ -96,7 +96,7 @@ public class EmploymentPositionValidatorTest {
 	
 	@Test
 	public void shouldRejectIfEndDateIsSetForNotCompletedEmploymentPosition(){
-		position.setCompleted(CheckedStatus.NO);
+		position.setCurrent(true);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
 		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -149,7 +149,7 @@ public class EmploymentPositionValidatorTest {
 		position.setEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		position.setLanguage(new LanguageBuilder().id(3).toLanguage());
 		position.setRemit("cashier");
-		position.setCompleted(CheckedStatus.YES);
+		position.setCurrent(false);
 		position.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
 		position.setPosition("head of department");
 		position.setEmployerAddress("address");

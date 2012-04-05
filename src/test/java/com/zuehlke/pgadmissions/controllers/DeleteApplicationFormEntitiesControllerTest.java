@@ -71,8 +71,9 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		EasyMock.expect(employmentServiceMock.getEmploymentPositionById(1)).andReturn(employment);
 		employmentServiceMock.delete(employment);
 		EasyMock.replay(employmentServiceMock);
-		controller.deleteEmployment(1);
+		String viewName = controller.deleteEmployment(1);
 		EasyMock.verify(employmentServiceMock);
+		assertEquals("redirect:/update/getEmploymentPosition?applicationId=2",viewName);
 	}
 	
 	@Test

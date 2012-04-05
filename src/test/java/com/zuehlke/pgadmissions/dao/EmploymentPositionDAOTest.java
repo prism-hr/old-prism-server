@@ -40,7 +40,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase{
 		application.setProject(project);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").isCompleted(CheckedStatus.YES).application(application).employerName("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();		
+		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").application(application).employerName("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();		
 		save(application, employmentPosition);
 		flushAndClearSession();
 		
@@ -60,7 +60,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase{
 		save(application);
 		flushAndClearSession();
 		
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").isCompleted(CheckedStatus.YES).application(application).employerName("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
+		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").application(application).employerName("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
 		
 		EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
 		dao.save(employmentPosition);
@@ -75,7 +75,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase{
 		application.setProject(project);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").isCompleted(CheckedStatus.YES).application(application).employerName("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
+		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").application(application).employerName("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
 		save(application, employmentPosition);
 		flushAndClearSession();
 		

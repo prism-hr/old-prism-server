@@ -36,6 +36,8 @@ public class EmploymentPosition extends DomainObject<Integer>{
 	
 	private String position;
 	
+	private boolean current;
+	
 	private String remit;
 	
 	@Temporal(TemporalType.DATE)
@@ -54,9 +56,6 @@ public class EmploymentPosition extends DomainObject<Integer>{
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
-	@Column(name="completed")
-	private CheckedStatus completed;
 
 	@Override
 	public void setId(Integer id) {
@@ -114,13 +113,6 @@ public class EmploymentPosition extends DomainObject<Integer>{
 		this.language = language;
 	}
 
-	public CheckedStatus getCompleted() {
-		return completed;
-	}
-
-	public void setCompleted(CheckedStatus completed) {
-		this.completed = completed;
-	}
 
 	public String getEmployerAddress() {
 		return employerAddress;
@@ -136,6 +128,14 @@ public class EmploymentPosition extends DomainObject<Integer>{
 
 	public void setEmployerCountry(Country employerCountry) {
 		this.employerCountry = employerCountry;
+	}
+
+	public boolean isCurrent() {
+		return current;
+	}
+
+	public void setCurrent(boolean current) {
+		this.current = current;
 	}
 
 

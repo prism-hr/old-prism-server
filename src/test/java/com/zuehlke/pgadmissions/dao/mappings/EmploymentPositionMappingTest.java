@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao.mappings;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
@@ -41,32 +42,31 @@ public class EmploymentPositionMappingTest extends AutomaticRollbackTestCase {
 		Date endDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/12/2011");
 		Date startDate = new SimpleDateFormat("dd/MM/yyyy").parse("01/08/2011");
 		EmploymentPosition employment = new EmploymentPositionBuilder().application(applicationForm).employerName("employer").endDate(endDate)
-				.isCompleted(CheckedStatus.YES).language(language).remit("remit").position("position")
-				.startDate(startDate).employerAdress("address").employerCountry(country).toEmploymentPosition();
-		
+				.language(language).remit("remit").position("position").startDate(startDate).employerAdress("address").employerCountry(country).current(true)
+				.toEmploymentPosition();
+
 		save(employment);
 		Integer id = employment.getId();
-		
+
 		assertNotNull(id);
-		EmploymentPosition reloadedEmployment = (EmploymentPosition) sessionFactory.getCurrentSession().get(EmploymentPosition.class, id);		
+		EmploymentPosition reloadedEmployment = (EmploymentPosition) sessionFactory.getCurrentSession().get(EmploymentPosition.class, id);
 		assertSame(employment, reloadedEmployment);
-		
+
 		flushAndClearSession();
-		reloadedEmployment = (EmploymentPosition) sessionFactory.getCurrentSession().get(EmploymentPosition.class, id);		
+		reloadedEmployment = (EmploymentPosition) sessionFactory.getCurrentSession().get(EmploymentPosition.class, id);
 		assertNotSame(employment, reloadedEmployment);
 		assertEquals(employment, reloadedEmployment);
-		
+
 		assertEquals(applicationForm, reloadedEmployment.getApplication());
 		assertEquals("employer", reloadedEmployment.getEmployerName());
 		assertEquals(endDate, reloadedEmployment.getEndDate());
 		assertEquals(startDate, reloadedEmployment.getStartDate());
-		assertEquals(CheckedStatus.YES, reloadedEmployment.getCompleted());
 		assertEquals(language, reloadedEmployment.getLanguage());
 		assertEquals("remit", reloadedEmployment.getRemit());
 		assertEquals("position", reloadedEmployment.getPosition());
 		assertEquals("address", reloadedEmployment.getEmployerAddress());
 		assertEquals(country, reloadedEmployment.getEmployerCountry());
-		
+		assertTrue(reloadedEmployment.isCurrent());
 	}
 
 	@Before

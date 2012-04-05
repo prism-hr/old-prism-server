@@ -1,29 +1,11 @@
 $(document).ready(function(){
 
-	if($("#position_employer").val() == ""){
-		$("#completedPositionCB").attr('checked', false);
-		$("#completedPosition").val("NO");
-	}
-	
-	if($("#completedPositionCB").is(":checked")){
-		$("#completedPosition").val("YES");
-		$("#endDateField").html("<input class=\"half date\" type=\"text\" id=\"position_endDate\" name=\"position_endDate\" value=\"\"</input>	");
-			bindDatePickers();
-	}
-	else{	
-		$("#completedPosition").val("NO");
-		$("#endDateField").html("<input class=\"half date\" type=\"text\" id=\"position_endDate\" name=\"position_endDate\" value=\"\" disabled=\"disabled\"</input>");
-		
-	}
-	
-	$("input[name*='completedPositionCB']").click(function() {
-		if ($("#completedPosition").val() =='YES'){
-			$("#completedPosition").val("NO");
-			$("#endDateField").html("<input class=\"half date\" type=\"text\" id=\"position_endDate\" name=\"position_endDate\" value=\"\" disabled=\"disabled\"</input>");
-		} else {		
-			$("#completedPosition").val("YES");
-			$("#endDateField").html("<input class=\"half date\" type=\"text\" id=\"position_endDate\" name=\"position_endDate\" value=\"\"</input>	");
-			bindDatePickers();
+
+	$('#current').click(function() {
+		if ($('#current:checked').val() !== undefined) {
+			$('#position_endDate').attr("disabled", "disabled");
+		}else{
+			$('#position_endDate').removeAttr("disabled");
 		}
 	});
 	
@@ -33,96 +15,94 @@ $(document).ready(function(){
 		return false;
 	});
 	
-	$('a[name="deleteButton"]').click( function(){	
-		$(this).parent("form").submit();
+	$('a[name="deleteEmploymentButton"]').click( function(){	
+		var id = $(this).attr("id").replace("position_", "");
+		$.post("/pgadmissions/deleteentity/employment",
+				{
+					id: id	
+				}, 				
+				function(data) {
+					$('#positionSection').html(data);
+				}	
+				
+			);
 	});
 	
 	$('#positionSaveAndCloseButton').click(function(){
-		$.post("/pgadmissions/update/addEmploymentPosition", { 
-			position_title: $("#position_title").val(),
-			position_startDate: $("#position_startDate").val(), 
-			position_endDate: $("#position_endDate").val(), 
-			position_remit: $("#position_remit").val(), 
-			position_language: $("#position_language").val(), 
-			position_employer: $("#position_employer").val(), 
-			completed: $("#completedPosition").val(),
-			appId: $("#appId").val(),
-			id: $("#id").val(), 
-			positionId: $("#positionId").val()
-								},
-				   function(data) {
-				     $('#positionSection').html(data);
-				   });
+		postData('close');
 	});
 
-$('#positionSaveAndAddButton').click(function(){
-	$.post("/pgadmissions/update/addEmploymentPosition", { 
-		position_title: $("#position_title").val(),
-		position_startDate: $("#position_startDate").val(), 
-		position_endDate: $("#position_endDate").val(), 
-		position_remit: $("#position_remit").val(), 
-		position_language: $("#position_language").val(), 
-		position_employer: $("#position_employer").val(),
-		completed: $("#completedPosition").val(),
-		appId: $("#appId").val(),
-		id: $("#id").val(), 
-		positionId: $("#positionId").val(),
-		add: "add"
-		},
-		 function(data) {
-		    $('#positionSection').html(data);
-	   });
-	
-});
+	$('#positionSaveAndAddButton').click(function(){
+		postData('add');
+	});
 
-$('a[name="positionEditButton"]').click(function(){
-	var id = this.id;
-	id = id.replace('position_', '');
-	$("#positionId").val($('#'+id+"_positionId").val());
-	$("#position_employer").val($('#'+id+"_employer").val());
-	$("#position_remit").val($('#'+id+"_remit").val());
-	$("#position_language").val($('#'+id+"_language").val());
-	$("#position_title").val($('#'+id+"_positionTitle").val());
-	$("#position_startDate").val($('#'+id+"_positionStartDate").val());
-	if ($('#'+id+'_positionCompleted').val() =='YES'){
-		$("#completedPositionCB").attr('checked', true);
-		$("#endDateField").html("<input class=\"half date\" type=\"text\" id=\"position_endDate\" name=\"position_endDate\" value=\"\"</input>	");
-		$("#completedPosition").val("YES");
-		bindDatePickers();
-	} else {
+	$('a[name="positionEditButton"]').click(function(){
+		var id = this.id;
+		id = id.replace('position_', '');	
+		$.get("/pgadmissions/update/getEmploymentPosition",
+				{
+					applicationId:  $('#applicationId').val(), 
+					employmentId: id
+				},
+				function(data) {
+					$('#positionSection').html(data);
+				}
+		);
+	});
+
+	$('a[name="positionCancelButton"]').click(function(){
+		$("#positionId").val("");
+		$("#position_employer").val("");
+		$("#position_remit").val("");
+		$("#position_language").val("");
+		$("#position_title").val("");
+		$("#position_startDate").val("");
+		$("#position_endDate").val("");
 		$("#completedPositionCB").attr('checked', false);
-		$("#completedPosition").val("NO");
-	}
-	$("#position_endDate").val($('#'+id+"_positionEndDate").val());
-});
-
-$('a[name="positionCancelButton"]').click(function(){
-	$("#positionId").val("");
-	$("#position_employer").val("");
-	$("#position_remit").val("");
-	$("#position_language").val("");
-	$("#position_title").val("");
-	$("#position_startDate").val("");
-	$("#position_endDate").val("");
-	$("#completedPositionCB").attr('checked', false);
-	$("span[class='invalid']").each(function(){
-		$(this).hide();
+		$("span[class='invalid']").each(function(){
+			$(this).hide();
+		});
+		
 	});
+
+
+	//bindDatePickers();
 	
-});
-
-
-bindDatePickers();
-
-//open/close
-var $header  =$('#position-H2');
-var $content = $header.next('div');
-$header.bind('click', function()
-{
-  $content.toggle();
-  $(this).toggleClass('open', $content.is(':visible'));
-  return false;
-});
+	//open/close
+	var $header  =$('#position-H2');
+	var $content = $header.next('div');
+	$header.bind('click', function()
+	{
+	  $content.toggle();
+	  $(this).toggleClass('open', $content.is(':visible'));
+	  return false;
+	});
 
 
 });
+
+function postData(message){
+	var current = false;
+	if ($('#current:checked').val() !== undefined) {
+		 current = true;
+	}
+	$.post("/pgadmissions/update/editEmploymentPosition",
+	{ 
+		position: $("#position_title").val(),
+		startDate: $("#position_startDate").val(), 
+		endDate: $("#position_endDate").val(), 
+		remit: $("#position_remit").val(), 
+		language: $("#position_language").val(), 
+		employerCountry: $("#position_country").val(),
+		employerName: $("#position_employer_name").val(),
+		employerAddress: $("#position_employer_address").val(),
+		current: current,
+		application: $("#appId").val(),
+		applicationId: $("#appId").val(),		 
+		employmentId: $("#positionId").val(), 
+		message:message
+	},
+   function(data) {
+     $('#positionSection').html(data);
+   });
+}

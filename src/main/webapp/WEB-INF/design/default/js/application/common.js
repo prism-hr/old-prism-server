@@ -1,11 +1,17 @@
 function bindDatePickers(){
  // Date pickers.
-	$('input.date').attr("readonly", "readonly");	
-	$('input.date').datepicker({
+
+	$('input.date').each(function(){
+		if(!$(this).hasClass()){
+			$(this).attr("readonly", "readonly");	
+			$(this).datepicker({
 	  				dateFormat: 'dd-M-yy',
 	 				changeMonth: true,
 	  				changeYear: true,
 	  				yearRange: '1900:c+20' });
+		}
+	});
+
 }
 
 function addToolTips(){

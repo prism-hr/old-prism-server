@@ -52,10 +52,10 @@ public class RegistrationService {
 
 	public RegisteredUser createNewUser(RegisteredUser record) {
 		record.setActivationCode(encryptionUtils.generateUUID());
-		record.setAccountNonExpired(true);
-		record.setAccountNonLocked(true);
 		record.setUsername(record.getEmail());
 		record.setPassword(encryptionUtils.getMD5Hash(record.getPassword()));
+		record.setAccountNonExpired(true);
+		record.setAccountNonLocked(true);
 		record.setEnabled(false);
 		record.setCredentialsNonExpired(true);
 		if (record.getProjectId() != null) {

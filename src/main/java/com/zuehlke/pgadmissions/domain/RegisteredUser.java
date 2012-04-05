@@ -207,6 +207,15 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		if (isInRole(Authority.APPROVER)) {
 			return applicationForm.getProject().getProgram().isApprover(this);
 		}
+		
+		if (isInRole(Authority.REFEREE)) {
+			List<Referee> referees = applicationForm.getReferees();
+			for (Referee referee : referees) {
+				if(referee.getUser().equals(this) || (this.getReferee().equals(referee))){
+					return true;
+				}
+			}
+		}
 
 		if(this.equals(applicationForm.getApplicant())){
 			return true;

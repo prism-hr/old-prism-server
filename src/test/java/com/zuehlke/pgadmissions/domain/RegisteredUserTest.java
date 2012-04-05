@@ -13,6 +13,7 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -60,6 +61,23 @@ public class RegisteredUserTest {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).toApplicationForm();
 		assertTrue(applicant.canSee(applicationForm));
+		
+	}
+	
+	@Test
+	public void shouldReturnTrueIfUserIsRefereeOfTheApplicationForm(){
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();	
+		Referee referee = new RefereeBuilder().id(1).user(refereeUser).toReferee();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		assertTrue(refereeUser.canSee(applicationForm));
+		
+	}
+	
+	@Test
+	public void shouldReturnFalseIfUserIsRefereeOfButNotOnApplicationForm(){
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		assertFalse(refereeUser.canSee(applicationForm));
 		
 	}
 	

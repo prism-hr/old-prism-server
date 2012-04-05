@@ -22,5 +22,12 @@ public class EmploymentPositionDAO {
 		sessionFactory.getCurrentSession().delete(position);
 		
 	}
+	public void save(EmploymentPosition employmentPosition) {
+		sessionFactory.getCurrentSession().saveOrUpdate(employmentPosition);
+		
+	}
+	public EmploymentPosition getEmploymentPositionById(Integer id) {
+		return (EmploymentPosition) sessionFactory.getCurrentSession().get(EmploymentPosition.class, id);
+	}
 
 }

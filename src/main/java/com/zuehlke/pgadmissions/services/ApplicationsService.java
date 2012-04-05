@@ -96,9 +96,6 @@ public class ApplicationsService {
 		return applicationFormDAO.getFundingById(fundingId);
 	}
 
-	public EmploymentPosition getEmploymentPositionById(Integer positionId) {
-		return applicationFormDAO.getEmploymentById(positionId);
-	}
 
 	public com.zuehlke.pgadmissions.domain.Address getAddressById(Integer addressId) {
 		return applicationFormDAO.getAdddressById(addressId);
@@ -123,10 +120,7 @@ public class ApplicationsService {
 
 	}
 
-	@Transactional
-	public void deleteEmployment(EmploymentPosition position) {
-		employmentPositionDAO.delete(position);
-	}
+
 	
 	@Transactional
 	public void deleteReferee(Referee referee) {

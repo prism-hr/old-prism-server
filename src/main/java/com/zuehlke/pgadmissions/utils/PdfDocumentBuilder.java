@@ -326,17 +326,17 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph(createMessage("employment information")));
 		} else {
 			for (EmploymentPosition employment : application.getEmploymentPositions()) {
-				document.add(new Paragraph("Employer: " + employment.getPosition_employer()));
-				document.add(new Paragraph("Position: " + employment.getPosition_title()));
-				document.add(new Paragraph("Remit: " +  employment.getPosition_remit()));
-				document.add(new Paragraph("Start Date: " + employment.getPosition_startDate().toString()));
-				if (employment.getPosition_endDate() == null) {
+				document.add(new Paragraph("Employer: " + employment.getEmployerName()));
+				document.add(new Paragraph("Position: " + employment.getPosition()));
+				document.add(new Paragraph("Remit: " +  employment.getRemit()));
+				document.add(new Paragraph("Start Date: " + employment.getStartDate().toString()));
+				if (employment.getEndDate() == null) {
 					document.add(new Paragraph(createMessage("end date")));
 				} else {
-					document.add(new Paragraph("End Date: " + employment.getPosition_endDate().toString()));
+					document.add(new Paragraph("End Date: " + employment.getEndDate().toString()));
 				}
 
-				document.add(new Paragraph("Language of Work: " + employment.getPosition_language().getName()));
+				document.add(new Paragraph("Language of Work: " + employment.getLanguage().getName()));
 
 				document.add(new Paragraph(" "));
 			}

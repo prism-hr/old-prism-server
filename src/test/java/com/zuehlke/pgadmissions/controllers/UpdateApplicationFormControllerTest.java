@@ -70,7 +70,7 @@ public class UpdateApplicationFormControllerTest {
 	private ApplicationsService applicationsServiceMock;
 	private UserPropertyEditor userPropertyEditorMock;
 	private RegisteredUser student;;
-	
+
 	private DatePropertyEditor datePropertyEditorMock;
 	private CountryService countriesServiceMock;
 	private RefereeService refereeServiceMock;
@@ -163,79 +163,6 @@ public class UpdateApplicationFormControllerTest {
 	}
 
 	@Test
-	public void shouldSaveNewEmploymentPosition() throws ParseException {
-
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		applicationsServiceMock.save(form);
-		Language language = new Language();
-		language.setName("English");
-		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(language));
-		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(language);
-		EasyMock.replay(applicationsServiceMock, languageServiceMock);
-
-		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
-		positionDto.setPosition_employer("Mark");
-		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_language(2);
-		positionDto.setPosition_remit("cashier");
-		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_title("head of department");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		ModelAndView modelAndView = applicationController.addEmploymentPosition(positionDto, 2, null, mappingResult, new ModelMap());
-		Assert.assertEquals("private/pgStudents/form/components/employment_position_details", modelAndView.getViewName());
-		Assert.assertEquals("English", ((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getEmploymentPositions().get(0)
-				.getPosition_language().getName());
-		Assert.assertNull(modelAndView.getModel().get("add"));
-	}
-
-	@Test
-	public void shouldAddMessageIfEmploymentAdMessagePRovided() throws ParseException {
-
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		applicationsServiceMock.save(form);
-		EasyMock.expect(languageServiceMock.getAllLanguages()).andReturn(Arrays.asList(new Language()));
-		EasyMock.expect(languageServiceMock.getLanguageById(2)).andReturn(new Language());
-		EasyMock.replay(applicationsServiceMock, languageServiceMock);
-
-		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
-		positionDto.setPosition_employer("Mark");
-		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_language(2);
-		positionDto.setPosition_remit("cashier");
-		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_title("head of department");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		ModelAndView modelAndView = applicationController.addEmploymentPosition(positionDto, 2, "add", mappingResult, new ModelMap());
-
-		Assert.assertEquals("add", modelAndView.getModel().get("add"));
-	}
-
-	@Test
-	public void shouldNotSaveNewEmploymentPosition() {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock);
-		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
-		positionDto.setPosition_employer("");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		applicationController.addEmploymentPosition(positionDto, 2, null, mappingResult, new ModelMap());
-	}
-
-	@Test(expected = CannotUpdateApplicationException.class)
-	public void shouldNotSaveNewEmploymentpositionWhenAplicationIsSubmitted() {
-
-		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock);
-
-		com.zuehlke.pgadmissions.dto.EmploymentPosition positionDto = new com.zuehlke.pgadmissions.dto.EmploymentPosition();
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "funding");
-		applicationController.addEmploymentPosition(positionDto, 2, null, mappingResult, new ModelMap());
-	}
-
-	@Test
 	public void shouldGetRefereeDetailsFromService() {
 		Referee referee = new RefereeBuilder().id(1).toReferee();
 		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
@@ -283,8 +210,6 @@ public class UpdateApplicationFormControllerTest {
 		applicationController.editReferee(referee, null, errorsMock);
 		EasyMock.verify(refereeValidator);
 	}
-	
-	
 
 	@Test
 	public void shouldSaveRefereeDetailsIfNewAndValid() {
@@ -388,7 +313,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.expect(refereeServiceMock.processRefereeAndGetAsUser(referee)).andReturn(null);
 
 		EasyMock.replay(errorsMock, refereeServiceMock, refereeValidator);
-		
+
 		ModelAndView modelAndView = applicationController.editReferee(referee, "add", errorsMock);
 		assertEquals("private/pgStudents/form/components/references_details", modelAndView.getViewName());
 		ApplicationPageModel model = (ApplicationPageModel) modelAndView.getModel().get("model");

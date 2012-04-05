@@ -19,7 +19,7 @@
 		<intercept-url pattern="/register/**" 	access="permitAll" />
 		<intercept-url pattern="/addReferences/**" 	access="permitAll" />
 		<intercept-url pattern="/referee/register/**" 	access="permitAll" />
-		<intercept-url pattern="/referee/login/**" 	access="hasRole('REFEREE')" />
+		<intercept-url pattern="/referee/login/**" 	access="permitAll" />
 		<intercept-url pattern="/refereeRegistration/**" 	access="permitAll" />
 		<intercept-url pattern="/references/**" 	access="hasRole('REFEREE')" />
 		<intercept-url pattern="*/j_spring_security_check"	access="permitAll" />

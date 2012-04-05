@@ -73,12 +73,12 @@
                     	<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                    		
                     </#if>
 		            
-		            <input id="password" type="password" name="password" value="Password""/>
+		            <input id="password" type="password" name="password"/>
 		            <#if model.hasError('password')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('password').code /></span>                    		
                     </#if>
 		            
-		            <input id="confirmPassword" type="password" name="confirmPassword" value="Password"/>
+		            <input id="confirmPassword" type="password" name="confirmPassword" />
 		            <#if model.hasError('confirmPassword')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('confirmPassword').code /></span>                    		
                     </#if>

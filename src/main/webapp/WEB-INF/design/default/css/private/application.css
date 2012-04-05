@@ -30,10 +30,31 @@ section.folding form { background: #BBB; padding: 10px; }
 section.folding form > div { background: #FFF; border: 1px solid #999; margin-bottom: 2px; overflow: hidden; padding: 10px; }
 section.folding form h3 { margin-bottom: 1em; }
 section.folding form .row { line-height: 24px; margin-bottom: 2px; clear: left; }
-section.folding form .label { float: left; line-height: 1.2; width: 180px; }
-section.folding form .field { margin-left: 205px; }
+
+/* Label lenght increased by 195px; - edited by Manish */
+section.folding form .label {
+	float: left; 
+	line-height: 1.2; 
+	width: 180px; 
+}
+
+/* To align wiht lable, increasing the width : Edited by Manish*/
+section.folding form .field {
+	margin-left: 220px; 
+	padding: 1px 0;
+}
+
 section.folding form .hint { background: url(../../images/button_question.png) no-repeat; width: 20px; height: 20px; float: left; margin-right: 5px; }
 section.folding form label.label { font-weight: bold; }
+
+/* To avoid any nesting effect, implement this class where you need
+ * regular fields regardless of insdie or outside of a form element - Edited by Manish*/
+.plain-label { 
+	float: left; line-height: 
+	1.2; width: 195px; 
+	padding-top: 4px; 
+	font-weight: normal; 
+}
 
 section.folding form .field .max { width: 480px; }
 section.folding form .field .full { width: 240px; }

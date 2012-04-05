@@ -88,7 +88,7 @@
 		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
 		      	</form>
 		      	
-		      	<a href="/pgadmissions/login">&gt; Back</a>
+		      	<a href="/pgadmissions/login">&gt; Back to Login</a>
 		      	
 		    </section>
 		

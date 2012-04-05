@@ -47,7 +47,7 @@
 			        		<#else>
 			        			<p>Please upload your reference as a PDF document using the field below.</p>		              				          		
 			        		</#if>
-			        		<p>You can view ${model.referee.application.applicant.firstName}'s application <a href="<@spring.url '/references/application?activationCode=${model.referee.activationCode}' />" target="_blank">here</a></p>
+			        		<p>You can view ${model.referee.application.applicant.firstName}'s application <a href="<@spring.url '/application?view=view&id=${model.referee.application.id}' />" target="_blank">here</a></p>
 							<form id="documentUploadForm" method="POST" action="<@spring.url '/addReferences/submit'/>" enctype="multipart/form-data">
 					             <input type="hidden" name="refereeId" value="${model.referee.id?string("######")}"/>
 					            <div>

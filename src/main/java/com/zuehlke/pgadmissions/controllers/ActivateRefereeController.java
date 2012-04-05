@@ -37,7 +37,7 @@ public class ActivateRefereeController {
 		this.applicationPageModelBuilder = applicationPageModelBuilder;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value = "/login",method = RequestMethod.GET)
 	public ModelAndView getReferencesPage(@RequestParam String activationCode) {
 		Referee referee = refereeService.getRefereeByActivationCode(activationCode);
 		ApplicationPageModel model = new ApplicationPageModel();

@@ -57,17 +57,17 @@
 		      		<p>&gt; Register Today...</p>
 		            <input id="recordId" type="hidden" name="recordId" />
 		            
-		            <input id="firstname" type="text" name="firstname" value="${model.refereeUser.firstname!"First Name"}"/>
+		            <input id="firstname" type="text" name="firstname" value="${model.refereeUser.firstName!}"/>
 		            <#if model.hasError('firstname')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('firstname').code /></span>                    		
                     </#if>
 		            
-		            <input id="lastname" type="text" name="lastname" value="${model.refereeUser.lastname!"Last Name"}"/>
+		            <input id="lastname" type="text" name="lastname" value="${model.refereeUser.lastName!}"/>
 		            <#if model.hasError('lastname')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('lastname').code /></span>                    		
                     </#if>
 		            
-		            <input id="email" type="text" name="email" value="${model.refereeUser.email!"Email Address"}"/>
+		            <input id="email" type="text" name="email" value="${model.refereeUser.email!}"/>
 		            <#if model.hasError('email')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                    		
                     </#if>

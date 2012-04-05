@@ -206,7 +206,7 @@ public class RefereeServiceTest {
 	@Test
 	public void shouldCreateUserWithRefereeRoleIfRefereeDoesNotExist(){
 		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("emailemail@test.com").toReferee();
+		Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com").toReferee();
 		refereeService = new RefereeService(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock){
 			@Override
 			RegisteredUser newRegisteredUser() {
@@ -215,9 +215,11 @@ public class RefereeServiceTest {
 		};
 		EasyMock.expect(userServiceMock.getUserByEmail("emailemail@test.com")).andReturn(null);
 		userServiceMock.save(user);
-		EasyMock.replay(userServiceMock);
+		referee.setUser(user);
+		refereeDAOMock.save(referee);
+		EasyMock.replay(userServiceMock, refereeDAOMock);
 		RegisteredUser newUser = refereeService.processRefereeAndGetAsUser(referee);
-		EasyMock.verify(userServiceMock);
+		EasyMock.verify(refereeDAOMock,userServiceMock);
 		Assert.assertNotNull(newUser);
 		Assert.assertEquals(1, newUser.getRoles().size());
 		Assert.assertEquals("ref", newUser.getFirstName());

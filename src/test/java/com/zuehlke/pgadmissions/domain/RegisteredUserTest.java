@@ -181,4 +181,5 @@ public class RegisteredUserTest {
 		RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
 		assertTrue(user.isInRoleInProgram(Authority.SUPERADMINISTRATOR, program));
 	}
+	
 }

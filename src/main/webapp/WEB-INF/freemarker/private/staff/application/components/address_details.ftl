@@ -13,42 +13,6 @@
 	    
 	<div>
 	
-			<#if hasAddresses>
-				<table class="existing">
-			    	<colgroup>
-			        	<col style="width: 30px" />
-			            <col />
-			            <col style="width: 100px" />
-			            <col style="width: 100px" />
-			            <col style="width: 30px" />
-					</colgroup>
-					
-			        <thead>
-			        	<tr>
-			            	<th colspan="2">Address</th>
-			            	<th>Country</th>
-			            	<th></th>
-			                <th>&nbsp;</th>
-						</tr>
-			            
-					</thead>
-			        
-			        <tbody>
-			        	<#list model.applicationForm.addresses as address>
-				        	<tr>
-				            	<td><a class="row-arrow"  name="addressEditButton" id="address_${address.id?string('#######')}">-</a></td>
-				                <td>${address.location?html}</td>
-				                <td>${address.country.name?html}</td>
-				                <td></td>
-				                <input type="hidden" id="${address.id?string('#######')}_addressIdDP" value="${address.id?string('#######')}"/>
-                                <input type="hidden" id="${address.id?string('#######')}_locationDP" value="${address.location?html}"/>
-                                <input type="hidden" id="${address.id?string('#######')}_countryDP" value="${address.country.id?string('#######')}"/>
-							</tr>
-						</#list>
-					</tbody>
-				</table>
-        	</#if>
-
         	<form>
 				
 				<input type="hidden" id="addressId" name="addressId"/>
@@ -57,11 +21,10 @@
                   
                   	<!-- Address body -->
                   	<div class="row">
-                    	<span class="label">Location</span>
+                    	<span class="label">Current Address</span>
                     	<span class="hint"></span>
                     	<div class="field">
-                    	 <textarea readonly="readonly" id="addressLocation" class="max" rows="6" cols="80" 
-                                                    value="${(model.address.addressLocation?html)!}"></textarea>
+                    	 <textarea readonly="readonly" id="currentAddressLocation" class="max" rows="6" cols="80">${(model.address.currentAddressLocation?html)!}</textarea>
                     	</div>
                   	</div>
 
@@ -69,15 +32,38 @@
                   	<div class="row">
                     	<span class="label">Country</span>
 	                    <div class="field">
-	                       <select class="full" name="addressCountry" id="addressCountry"
+	                       <select class="full" name="currentAddressCountry" id="currentAddressCountry"
                                             disabled="disabled">
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id?string('#######')}" <#if model.address.addressCountry?? && model.address.addressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                                    <option value="${country.id?string('#######')}" <#if model.address.currentAddressCountry?? && model.address.currentAddressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
                                 </#list>
                             </select>
 						</div>
 					</div>
+					
+					                   <!-- Address body -->
+                    <div class="row">
+                        <span class="label">Contact Address</span>
+                        <span class="hint"></span>
+                        <div class="field">
+                         <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80">${(model.address.contactAddressLocation?html)!}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Country -->
+                    <div class="row">
+                        <span class="label">Country</span>
+                        <div class="field">
+                           <select class="full" name="contactAddressCountry" id="contactAddressCountry"
+                                            disabled="disabled">
+                            <option value="">Select...</option>
+                                <#list model.countries as country>
+                                    <option value="${country.id?string('#######')}" <#if model.address.contactAddressCountry?? && model.address.contactAddressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                                </#list>
+                            </select>
+                        </div>
+                    </div>
 					
 				</div>
 

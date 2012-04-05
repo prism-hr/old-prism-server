@@ -10,6 +10,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -30,10 +32,11 @@ import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 
+@RequestMapping("/update")
 @Controller
 public class EmploymentController {
 
-	static final String STUDENTS_EMPLOYMENT_DETAILS_VIEW = "/private/pgStudents/form/components/employment_position_details.ftl";
+	static final String STUDENTS_EMPLOYMENT_DETAILS_VIEW = "/private/pgStudents/form/components/employment_position_details";
 	private final EmploymentPositionService employmentPositionService;
 	private final LanguageService languageService;
 	private final CountryService countryService;
@@ -74,8 +77,9 @@ public class EmploymentController {
 		binder.registerCustomEditor(Country.class, countryPropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);		
 
+		
 	}
-	
+	@RequestMapping(value = "/getEmploymentPosition", method = RequestMethod.GET)
 	public String getEmploymentView() {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
@@ -84,6 +88,7 @@ public class EmploymentController {
 
 	}
 	
+	@RequestMapping(value = "/editEmploymentPosition", method = RequestMethod.POST)
 	public String editEmployment(EmploymentPosition employment, BindingResult result) {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();

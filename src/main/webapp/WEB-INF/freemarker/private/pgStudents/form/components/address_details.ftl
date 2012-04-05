@@ -27,8 +27,8 @@
 			        <thead>
 			        	<tr>
 			            	<th colspan="2">Address</th>
-			                <th>From</th>
-			                <th>To</th>
+			            	<th>Country</th>
+			            	<th></th>
 			                <th>&nbsp;</th>
 						</tr>
 			            
@@ -38,9 +38,9 @@
 			        	<#list model.applicationForm.addresses as address>
 				        	<tr>
 				            	<td><a class="row-arrow"  name="addressEditButton" id="address_${address.id?string('#######')}">-</a></td>
-				                <td>${address.location?html}, ${address.postCode?html}</td>
-				                <td>${address.startDate?string('dd-MMM-yyyy')}</td>
-				                <td>${(address.endDate?string('dd-MMM-yyyy'))!}</td>
+				                <td>${address.location?html}</td>
+				                <td>${address.country.name?html}</td>
+				                <td></td>
 				                <td>
 				                 <#if !model.applicationForm.isSubmitted()>
 				                  	<form method="Post" action="<@spring.url '/deleteentity/address'/>" style="padding:0">
@@ -48,16 +48,11 @@
 			                			<a name="deleteButton" class="button-delete">delete</a>
 			                		</form>
 			                		</#if>
-				        </td>
+				                </td>
 				                
 								<input type="hidden" id="${address.id?string('#######')}_addressIdDP" value="${address.id?string('#######')}"/>
 	                            <input type="hidden" id="${address.id?string('#######')}_locationDP" value="${address.location?html}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_postCodeDP" value="${address.postCode?html}"/>
 	                            <input type="hidden" id="${address.id?string('#######')}_countryDP" value="${address.country.id?string('#######')}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_startDateDP" value="${address.startDate?string('dd-MMM-yyyy')}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_endDateDP" value="${(address.endDate?string('dd-MMM-yyyy'))!}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_purposeDP" value="${address.purpose?html}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_contactAddressDP" value="${address.contactAddress?html}"/>
 				                
 							</tr>
 						</#list>
@@ -73,11 +68,6 @@
             	           <div class="row">
                                 <span class="invalid"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>
                            </div>                             
-                           </#if>
-                           <#if model.hasError('numberOfContactAddresses')>
-                           <div class="row">                           
-                                <span class="invalid"><@spring.message  model.result.getFieldError('numberOfContactAddresses').code /></span><br/>
-                           </div>                              
                            </#if>
             	
                 	<h3>Address</h3>
@@ -97,24 +87,6 @@
                       		    <textarea readonly="readonly" id="addressLocation" class="max" rows="6" cols="80" 
                                                     value="${(model.address.addressLocation?html)!}"></textarea>
                             </#if>
-                    	</div>
-                  	</div>
-
-                  	<!-- Postcode -->
-                  	<div class="row">
-                    	<span class="label">Postal Code<em>*</em></span>
-                    	<span class="hint"></span>
-                    	<div class="field">
-                    	<#if !model.applicationForm.isSubmitted()>
-                      		<input class="half" type="text" id="addressPostCode" 
-                      							name="addressPostCode" value="${(model.address.addressPostCode?html)!}" />
-                            <#if model.hasError('addressPostCode')>                           
-                            	<span class="invalid"><@spring.message  model.result.getFieldError('addressPostCode').code /></span>                           
-                            </#if>
-                        <#else>
-                            <input readonly="readonly" class="half" type="text" id="addressPostCode" 
-                                                name="addressPostCode" value="${(model.address.addressPostCode?html)!}" />
-                        </#if>                            
                     	</div>
                   	</div>
 
@@ -141,108 +113,6 @@
 					</div>
 					
 				</div>
-
-                <div>
-                	
-                	<h3>Residency Period</h3>
-                  
-                  	<!-- Residency period -->
-                  	<div class="row">
-                    	<span class="label">Dates<em>*</em></span>
-                    	<span class="hint"></span>
-                    	<div class="field">
-                      		<label>from 
-                      				<input class="half date" type="text" id="addressStartDate" name="addressStartDate" 
-                      						value="${(model.address.addressStartDate?string('dd-MMM-yyyy'))!}"
-                      						<#if model.applicationForm.isSubmitted()>
-                                                disabled="disabled"
-                                            </#if>>
-                      				</input>		
-                      		</label>
-                      		 
-                      		<label>to 
-                      			<input class="half date" type="text" id="addressEndDate" name="addressEndDate" 
-                      									value="${(model.address.addressEndDate?string('dd-MMM-yyyy'))!}"
-                      									<#if model.applicationForm.isSubmitted()>
-                                                            disabled="disabled"
-                                                        </#if>>
-                      			</input>						
-                      		</label>
-                      		
-                      		<#if model.hasError('addressStartDate')>
-                      			<p>                           
-                            		<span class="invalid"><@spring.message  model.result.getFieldError('addressStartDate').code /></span>
-                            	</p>                           
-                            </#if>
-                      		
-                      		
-                            <#if model.hasError('addressEndDate')>
-                            	<p>                           
-                            		<span class="invalid"><@spring.message  model.result.getFieldError('addressEndDate').code /></span>
-                            	</p>                           
-                            </#if>
-                      		
-                    	</div>
-                 	</div>
-
-                  	<!-- Purpose -->
-                  	<div class="row">
-                    	<span class="label">Purpose<em>*</em></span>
-                    	<span class="hint"></span>
-                    	<div class="field">
-                      	  	<select id="addressPurpose" name="addressPurpose" class="full" value="${model.address.addressPurpose!}"
-                      	  	 <#if model.applicationForm.isSubmitted()>
-                                                disabled="disabled"
-                                            </#if>>
-                        	<option value="">Select...</option>
-                        	<#list model.addressPurposes as purpose>
-                             	<option value="${purpose}"
-                             	<#if model.address.addressPurpose?? &&  model.address.addressPurpose == purpose >
-                                selected="selected"
-                                </#if> 
-                             	>${purpose.displayValue?html}</option>               
-                        	</#list>
-                      		</select>
-                            <#if model.hasError('addressPurpose')>                           
-                            	<span class="invalid"><@spring.message  model.result.getFieldError('addressPurpose').code /></span>                           
-                            </#if>
-                    	</div>
-                  	</div>
-
-                  	<!-- Supporting document 
-                  	<div class="row">
-                    	<span class="label">Supporting Document</span>
-                    	<span class="hint"></span>
-                    	<div class="field">
-                      		<input class="full" type="text" value="" />
-                      		<a class="button" href="#">Browse</a>
-                      		<a class="button" href="#">Upload</a>
-                      		<a class="button" href="#">Add a document</a>
-                    	</div>  
-                  	</div> -->
-                  	
-                </div>
-
-                <div>
-                	<!-- Is contact address? -->
-                  	<div class="row">
-                    	<span class="label">&nbsp;</span>
-                    	<div class="field">
-                      		<label>
-                      			<input type="checkbox" name="isCA" id="isCA"
-                      			<#if model.applicationForm.isSubmitted()>
-                                      disabled="disabled"
-                                </#if>
-                                <#if model.address.addressContactAddress?? && model.address.addressContactAddress == 'YES'>
-                                	checked="checked"                                
-                                </#if>
-                                >
-                      			</input> This is my contact address
-                      		</label>
-                      		<input type="hidden" id="addressContactAddress" value="${(model.address.addressContactAddress?html)!}"/>
-                    	</div>
-                  	</div>
-                </div>
 
                 <div class="buttons">
                  <#if !model.applicationForm.isSubmitted()>

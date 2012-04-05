@@ -21,8 +21,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
-import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -83,14 +81,7 @@ public class SubmitApplicationFormController {
 		appForm.setNumberOfAddresses(applicationForm.getAddresses().size());
 		appForm.setNumberOfReferees(applicationForm.getReferees().size());
 		appForm.setPersonalDetails(applicationForm.getPersonalDetails());
-		int numberOfContactAddresses = 0;
-		for (com.zuehlke.pgadmissions.domain.Address address : applicationForm.getAddresses()) {
-			if (address.getContactAddress() == AddressStatus.YES) {
-				numberOfContactAddresses ++;
-			}
-		}
 		
-		appForm.setNumberOfContactAddresses(numberOfContactAddresses);
 		appForm.setProgrammeDetails(applicationForm.getProgrammeDetails());
 		appForm.setSupportingDocuments(applicationForm.getSupportingDocuments());
 		
@@ -117,7 +108,6 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setReferrers(Referrer.values());
 			viewApplicationModel.setLanguages(languageService.getAllLanguages());
 			viewApplicationModel.setFundingTypes(FundingType.values());
-			viewApplicationModel.setAddressPurposes(AddressPurpose.values());
 			viewApplicationModel.setGenders(Gender.values());
 			viewApplicationModel.setPhoneTypes(PhoneType.values());
 			viewApplicationModel.setDocumentTypes(DocumentType.values());

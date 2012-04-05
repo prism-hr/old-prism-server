@@ -22,8 +22,6 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
-import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
-import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.dto.AdditionalInformation;
@@ -197,7 +195,6 @@ public class UpdateApplicationFormController {
 		model.setApplicationForm(applicationForm);
 		model.setResult(result);
 		model.setCountries(countryService.getAllCountries());
-		model.setAddressPurposes(AddressPurpose.values());
 
 		if (!result.hasErrors()) {
 			com.zuehlke.pgadmissions.domain.Address address;
@@ -209,12 +206,7 @@ public class UpdateApplicationFormController {
 
 			address.setApplication(application);
 			address.setLocation(addr.getAddressLocation());
-			address.setPostCode(addr.getAddressPostCode());
 			address.setCountry(countryService.getCountryById(addr.getAddressCountry()));
-			address.setPurpose(addr.getAddressPurpose());
-			address.setStartDate(addr.getAddressStartDate());
-			address.setEndDate(addr.getAddressEndDate());
-			address.setContactAddress(AddressStatus.fromString(addr.getAddressContactAddress()));
 
 			if (addr.getAddressId() == null) {
 				application.getAddresses().add(address);

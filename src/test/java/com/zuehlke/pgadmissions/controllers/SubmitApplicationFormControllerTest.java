@@ -96,12 +96,9 @@ public class SubmitApplicationFormControllerTest {
 		ApplicationFormDetails details = EasyMock.createMock(ApplicationFormDetails.class);
 		details.setNumberOfAddresses(0);
 		details.setNumberOfReferees(0);
-		details.setNumberOfContactAddresses(0);
 		details.setPersonalDetails(personalDetail);
 		details.setProgrammeDetails(programmeDetail);
 		EasyMock.expect(details.getNumberOfAddresses()).andReturn(1);
-		EasyMock.expect(details.getNumberOfContactAddresses()).andReturn(1);
-		EasyMock.expect(details.getNumberOfContactAddresses()).andReturn(1);
 		EasyMock.expect(details.getNumberOfReferees()).andReturn(2);
 		EasyMock.expect(details.getProgrammeDetails()).andReturn(programmeDetail);
 		EasyMock.expect(details.getProgrammeDetails()).andReturn(programmeDetail);

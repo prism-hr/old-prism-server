@@ -15,7 +15,7 @@ public class PrimaryStatusTest {
 	
 	@Test
 	public void shouldReturnNullWhenNullStringGiven() {
-		Assert.assertNull(AddressStatus.fromString(null));
+		Assert.assertNull(CheckedStatus.fromString(null));
 	}
 	
 	@Test

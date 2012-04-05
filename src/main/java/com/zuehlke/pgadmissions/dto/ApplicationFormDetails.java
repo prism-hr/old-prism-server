@@ -11,7 +11,6 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 public class ApplicationFormDetails {
 
 	private Integer numberOfAddresses;
-	private Integer numberOfContactAddresses;
 	private Integer numberOfReferees;
 	private PersonalDetail personalDetails;
 	private ProgrammeDetail programmeDetails;
@@ -24,14 +23,6 @@ public class ApplicationFormDetails {
 	
 	public void setNumberOfAddresses(Integer numberOfAddresses) {
 		this.numberOfAddresses = numberOfAddresses;
-	}
-	
-	public Integer getNumberOfContactAddresses() {
-		return numberOfContactAddresses;
-	}
-	
-	public void setNumberOfContactAddresses(Integer numberOfContactAddresses) {
-		this.numberOfContactAddresses = numberOfContactAddresses;
 	}
 	
 	public PersonalDetail getPersonalDetails() {

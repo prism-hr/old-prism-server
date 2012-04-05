@@ -23,14 +23,6 @@ public class ApplicationFormValidator implements Validator{
 			errors.rejectValue("numberOfAddresses", "user.addresses.notempty");
 		}
 
-		if (applicationFormDetails.getNumberOfContactAddresses() == 0) {
-			errors.rejectValue("numberOfContactAddresses", "user.contactAddresses.notempty");
-		}
-
-		if (applicationFormDetails.getNumberOfContactAddresses() > 1) {
-			errors.rejectValue("numberOfContactAddresses", "user.contactAddresses.notvalid");
-		}
-
 		if (applicationFormDetails.getNumberOfReferees() < 2) {
 			errors.rejectValue("numberOfReferees", "user.referees.notvalid");
 		}

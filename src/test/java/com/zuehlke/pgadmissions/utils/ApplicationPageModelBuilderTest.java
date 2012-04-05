@@ -30,7 +30,6 @@ import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
@@ -124,13 +123,6 @@ public class ApplicationPageModelBuilderTest {
 		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
 		assertEquals(FundingType.values().length, model.getFundingTypes().size());
 		assertTrue(model.getFundingTypes().containsAll(Arrays.asList(FundingType.values())));
-	}
-
-	@Test
-	public void shouldSetAllAddressPurposesOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
-		assertEquals(AddressPurpose.values().length, model.getAddressPurposes().size());
-		assertTrue(model.getAddressPurposes().containsAll(Arrays.asList(AddressPurpose.values())));
 	}
 
 	@Test

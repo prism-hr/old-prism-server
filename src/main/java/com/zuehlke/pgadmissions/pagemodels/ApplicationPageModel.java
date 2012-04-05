@@ -10,7 +10,6 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -21,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.dto.Funding;
-
 import com.zuehlke.pgadmissions.errors.FundingErrors;
 
 public class ApplicationPageModel extends PageModel {
@@ -48,7 +46,6 @@ public class ApplicationPageModel extends PageModel {
 	private String uploadErrorCode;
 	private String uploadTwoErrorCode;
 	private List<FundingType> fundingTypes = new LinkedList<FundingType>();
-	private List<AddressPurpose> addressPurposes = new LinkedList<AddressPurpose>();
 	
 	private FundingErrors fundingErrors;
 	private RegisteredUser refereeUser;
@@ -190,14 +187,6 @@ public class ApplicationPageModel extends PageModel {
 		return fundingTypes;
 	}
 
-	public void setAddressPurposes(AddressPurpose[] addressPurposes) {
-		this.addressPurposes.addAll(Arrays.asList(addressPurposes));
-	}
-	
-	public List<AddressPurpose> getAddressPurposes() {
-		return addressPurposes;
-	}
-	
 	public String getUploadTwoErrorCode() {
 		return uploadTwoErrorCode;
 	}

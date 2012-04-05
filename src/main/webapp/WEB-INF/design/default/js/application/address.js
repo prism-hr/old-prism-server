@@ -76,7 +76,6 @@ $(document).ready(function(){
 	});
 	
 	
-	  bindDatePickers();
 
 	//open/close
 	var $header  =$('#address-H2');

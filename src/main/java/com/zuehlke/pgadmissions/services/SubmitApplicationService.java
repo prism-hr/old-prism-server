@@ -109,7 +109,7 @@ public class SubmitApplicationService {
 				model.put("programme", form.getProgrammeDetails());
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
-				if(referee.getUser().isEnabled()){
+				if(referee.getUser()!=null && referee.getUser().isEnabled()){
 					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
 							"private/referees/mail/existing_user_referee_notification_email.ftl", model));
 				}

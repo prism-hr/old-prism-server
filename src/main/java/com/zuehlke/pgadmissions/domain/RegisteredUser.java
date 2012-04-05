@@ -36,6 +36,8 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private String password;
 	@Transient
 	private String confirmPassword;
+	@Transient
+	private Integer projectId;
 	private boolean enabled;
 	private boolean accountNonExpired;
 	private boolean accountNonLocked;
@@ -316,6 +318,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public void setConfirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
+	}
+
+	public Integer getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
 	}
 
 }

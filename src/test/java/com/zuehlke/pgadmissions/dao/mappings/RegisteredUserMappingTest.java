@@ -9,19 +9,34 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+
+import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
@@ -56,6 +71,62 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		assertFalse(reloadedUser.isEnabled());
 
 	}
+	
+
+	@Test
+	public void shouldLoadRegisteredUserWithReferee() throws ParseException {
+		
+		Referee referee = new RefereeBuilder().relationship("tutor").id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+		
+
+		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		
+		sessionFactory.getCurrentSession().save(admin1);
+		flushAndClearSession();
+		referee.setUser(admin1);
+
+		save(referee);
+
+		RegisteredUser reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, admin1.getId()));
+		
+		assertEquals(referee, reloadedUser.getReferee());
+		assertNotNull(referee.getUser());
+
+	}
+
+	@Test
+	public void shouldSaveAndLoadRegisteredUserWithReferee() {
+
+
+		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+
+		flushAndClearSession();
+		assertNull(admin1.getId());
+
+		sessionFactory.getCurrentSession().save(admin1);
+
+		Referee referee = new RefereeBuilder().relationship("tutor").firstname("ref").lastname("erre").email("ref@test.com").user(admin1).toReferee();
+		save(referee);
+		assertNotNull(admin1.getId());
+		Integer id = admin1.getId();
+		RegisteredUser reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id));
+		
+		assertSame(admin1, reloadedUser);
+
+		flushAndClearSession();
+
+		
+		reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id));
+		
+		assertNotSame(admin1, reloadedUser);
+		assertEquals(admin1, reloadedUser);
+
+		assertEquals("email", reloadedUser.getUsername());
+		Assert.assertNotNull(reloadedUser.getReferee());
+		Assert.assertTrue(reloadedUser.getReferee().equals(referee));
+	}
+	
+	
 
 	@Test
 	public void shouldSaveAndLoadUserWithProjectOriginallyAppliedTo() throws Exception {

@@ -1,19 +1,18 @@
 package com.zuehlke.pgadmissions.pagemodels;
 
-import com.zuehlke.pgadmissions.dto.RegistrationDTO;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public class RegisterPageModel extends PageModel{
 
-	private RegistrationDTO record;
+	private RegisteredUser record;
 	private String message;
 	private String url;
 	private Integer isSuggestedUser;
 
-	public RegistrationDTO getRecord() {
+	public RegisteredUser getRecord() {
 		return record;
 	}
-
-	public void setRecord(RegistrationDTO record) {
+	public void setRecord(RegisteredUser record) {
 		this.record = record;
 	}
 

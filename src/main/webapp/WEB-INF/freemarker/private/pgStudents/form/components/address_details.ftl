@@ -10,13 +10,14 @@
 	
         	<form>
 				
-				<input type="hidden" id="addressId" name="addressId"/>
+				<input type="hidden" id="currentAddressId" name="currentAddressId" value="${model.address.currentAddressId!}"/>
+				<input type="hidden" id="contactAddressId" name="contactAddressId" value="${model.address.contactAddressId!}"/>
             	<div>
-            	           <#if model.hasError('numberOfAddresses')>            
-            	           <div class="row">
-                                <span class="invalid"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>
-                           </div>                             
-                           </#if>
+            	    <#if model.hasError('numberOfAddresses')>            
+            	       <div class="row">
+                         <span class="invalid"><@spring.message  model.result.getFieldError('numberOfAddresses').code /></span><br/>
+                       </div>                             
+                    </#if>
             	
                 	<h3>Address</h3>
                   
@@ -26,14 +27,14 @@
                     	<span class="hint"></span>
                     	<div class="field">
                     	   <#if !model.applicationForm.isSubmitted()>
-                      		<textarea id="currentAddressLocation" class="max" rows="6" cols="80" >${(model.address.addressLocation?html)!}</textarea>
+                      		<textarea id="currentAddressLocation" class="max" rows="6" cols="80" >${(model.address.currentAddressLocation?html)!}</textarea>
 							
-                                <#if model.hasError('addressLocation')>                           
-                            	   <span class="invalid"><@spring.message  model.result.getFieldError('addressLocation').code /></span>                           
+                                <#if model.hasError('currentAddressLocation')>                           
+                            	   <span class="invalid"><@spring.message  model.result.getFieldError('currentAddressLocation').code /></span>                           
                                 </#if>
                             <#else>
                       		    <textarea readonly="readonly" id="currentAddressLocation" class="max" rows="6" cols="80" 
-                                                    value="${(model.address.addressLocation?html)!}"></textarea>
+                                                    value="${(model.address.currentAddressLocation?html)!}"></textarea>
                             </#if>
                     	</div>
                   	</div>
@@ -49,12 +50,12 @@
                             </#if>>
                             <option value="">Select...</option>
                             	<#list model.countries as country>
-                                	<option value="${country.id?string('#######')}" <#if model.address.addressCountry?? && model.address.addressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                                	<option value="${country.id?string('#######')}" <#if model.address.currentAddressCountry?? && model.address.currentAddressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
                             	</#list>
                             </select>
                             
-                            <#if model.hasError('addressCountry')>                           
-                            	<span class="invalid"><@spring.message  model.result.getFieldError('addressCountry').code /></span>                           
+                            <#if model.hasError('currentAddressCountry')>                           
+                            	<span class="invalid"><@spring.message  model.result.getFieldError('currentAddressCountry').code /></span>                           
                             </#if>
 	                      	
 						</div>
@@ -73,15 +74,20 @@
                     
                     <p></p>
                         
+                    <div class="row">
                         <div class="field">
                            <#if !model.applicationForm.isSubmitted()>
-                            <textarea id="contactAddressLocation" class="max" rows="6" cols="80" ></textarea>
+                            <textarea id="contactAddressLocation" class="max" rows="6" cols="80" >${(model.address.contactAddressLocation?html)!}</textarea>
+                           
+                           <#if model.hasError('contactAddressLocation')>                           
+                                   <span class="invalid"><@spring.message  model.result.getFieldError('contactAddressLocation').code /></span>                           
+                                </#if>
                             <#else>
                                 <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80" 
-                                                    value=""></textarea>
+                                                    value="${(model.address.contactAddressLocation?html)!}"></textarea>
                             </#if>
                         </div>
-                    
+                    </div>
                                         <!-- Country -->
                     <div class="row">
                         <span class="label">Country<em>*</em></span>
@@ -93,10 +99,12 @@
                             </#if>>
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id?string('#######')}" <#if model.address.addressCountry?? && model.address.addressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                                    <option value="${country.id?string('#######')}" <#if model.address.contactAddressCountry?? && model.address.contactAddressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
                                 </#list>
                             </select>
-                            
+                            <#if model.hasError('contactAddressCountry')>                           
+                                <span class="invalid"><@spring.message  model.result.getFieldError('contactAddressCountry').code /></span>                           
+                            </#if>
                         </div>
                     </div>
 					

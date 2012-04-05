@@ -21,33 +21,34 @@ import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 @Entity(name="APPLICATION_FORM_EMPLOYMENT_POSITION")
 @Access(AccessType.FIELD) 
 public class EmploymentPosition extends DomainObject<Integer>{
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 4492119755495402951L;
 
-
-	@Column(name="employer")
-	private String position_employer;
+	@Column(name="employer_name")
+	private String employerName;
 	
-	@Column(name="title")
-	private String position_title;
+	@Column(name="employer_address")
+	private String employerAddress;
 	
-	@Column(name="remit")
-	private String position_remit;
+	@ManyToOne
+	@JoinColumn(name="employer_country_id")
+	private Country employerCountry;
+	
+	private String position;
+	
+	private String remit;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="start_date")
-	private Date position_startDate;
+	private Date startDate;
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="end_date")
-	private Date position_endDate;
+	private Date endDate;
 	
 	@OneToOne
 	@JoinColumn(name = "language_id")
-	private Language position_language;
+	private Language language;
 	
 	@ManyToOne
 	@JoinColumn(name="application_form_id")
@@ -76,41 +77,41 @@ public class EmploymentPosition extends DomainObject<Integer>{
 	public void setApplication(ApplicationForm application) {
 		this.application = application;
 	}
-	public String getPosition_employer() {
-		return position_employer;
+	public String getEmployerName() {
+		return employerName;
 	}
-	public void setPosition_employer(String employer) {
-		this.position_employer = employer;
+	public void setEmployerName(String employer) {
+		this.employerName = employer;
 	}
-	public String getPosition_title() {
-		return position_title;
+	public String getPosition() {
+		return position;
 	}
-	public void setPosition_title(String title) {
-		this.position_title = title;
+	public void setPosition(String title) {
+		this.position = title;
 	}
-	public String getPosition_remit() {
-		return position_remit;
+	public String getRemit() {
+		return remit;
 	}
-	public void setPosition_remit(String remit) {
-		this.position_remit = remit;
+	public void setRemit(String remit) {
+		this.remit = remit;
 	}
-	public Date getPosition_startDate() {
-		return position_startDate;
+	public Date getStartDate() {
+		return startDate;
 	}
-	public void setPosition_startDate(Date startDate) {
-		this.position_startDate = startDate;
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
 	}
-	public Date getPosition_endDate() {
-		return position_endDate;
+	public Date getEndDate() {
+		return endDate;
 	}
-	public void setPosition_endDate(Date endDate) {
-		this.position_endDate = endDate;
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
-	public Language getPosition_language() {
-		return position_language;
+	public Language getLanguage() {
+		return language;
 	}
-	public void setPosition_language(Language language) {
-		this.position_language = language;
+	public void setLanguage(Language language) {
+		this.language = language;
 	}
 
 	public CheckedStatus getCompleted() {
@@ -119,6 +120,22 @@ public class EmploymentPosition extends DomainObject<Integer>{
 
 	public void setCompleted(CheckedStatus completed) {
 		this.completed = completed;
+	}
+
+	public String getEmployerAddress() {
+		return employerAddress;
+	}
+
+	public void setEmployerAddress(String employerAdress) {
+		this.employerAddress = employerAdress;
+	}
+
+	public Country getEmployerCountry() {
+		return employerCountry;
+	}
+
+	public void setEmployerCountry(Country employerCountry) {
+		this.employerCountry = employerCountry;
 	}
 
 

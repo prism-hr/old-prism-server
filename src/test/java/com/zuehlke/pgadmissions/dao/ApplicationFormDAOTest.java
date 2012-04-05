@@ -124,17 +124,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		ApplicationFormDAO applicationFormDAO = new ApplicationFormDAO(sessionFactory);
 		assertEquals(funding, applicationFormDAO.getFundingById(funding.getId()));
 	}
-	
-	@Test
-	public void shouldGetEmploymentpositionById() throws ParseException{
-		EmploymentPosition position = new EmploymentPositionBuilder().id(1).employer("eployer").remit("remit")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).isCompleted(CheckedStatus.YES)
-				.title("title").endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/10/10")).toEmploymentPosition();
-		sessionFactory.getCurrentSession().save(position);
-		flushAndClearSession();
-		ApplicationFormDAO applicationFormDAO = new ApplicationFormDAO(sessionFactory);
-		assertEquals(position, applicationFormDAO.getEmploymentById(position.getId()));
-	}
+
 	
 	@Test
 	public void shouldGetAddressById(){

@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.RegistrationDTO;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
@@ -57,18 +56,18 @@ public class RegistrationServiceTest {
 		EasyMock.expect(projectDAOMock.getProjectById(7)).andReturn(project);
 		EasyMock.replay(projectDAOMock);
 
-		RegistrationDTO recordDTO = new RegistrationDTO();
-		recordDTO.setFirstname("Mark");
-		recordDTO.setLastname("Euston");
-		recordDTO.setEmail("meuston@gmail.com");
-		recordDTO.setPassword("1234");
-		recordDTO.setConfirmPassword("1234");
-		recordDTO.setProjectId(7);
+		RegisteredUser record = new RegisteredUser();
+		record.setFirstName("Mark");
+		record.setLastName("Euston");
+		record.setEmail("meuston@gmail.com");
+		record.setPassword("1234");
+		record.setConfirmPassword("1234");
+		record.setProjectId(7);
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234")).andReturn("5678");
 		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("abc");
 		EasyMock.replay(encryptionUtilsMock);
 
-		RegisteredUser newUser = registrationService.createNewUser(recordDTO);
+		RegisteredUser newUser = registrationService.createNewUser(record);
 
 		assertEquals("meuston@gmail.com", newUser.getEmail());
 		assertEquals("Mark", newUser.getFirstName());
@@ -84,17 +83,17 @@ public class RegistrationServiceTest {
 	
 	@Test
 	public void shouldUpdateUser() {
-		RegistrationDTO recordDTO = new RegistrationDTO();
-		recordDTO.setFirstname("Mark");
-		recordDTO.setLastname("Euston");
-		recordDTO.setEmail("meuston@gmail.com");
-		recordDTO.setPassword("1234");
-		recordDTO.setConfirmPassword("1234");
+		RegisteredUser record = new RegisteredUser();
+		record.setFirstName("Mark");
+		record.setLastName("Euston");
+		record.setEmail("meuston@gmail.com");
+		record.setPassword("1234");
+		record.setConfirmPassword("1234");
 		EasyMock.expect(userDAOMock.get(2)).andReturn(new RegisteredUser());
 		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("121");
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234")).andReturn("1234");
 		EasyMock.replay(userDAOMock, encryptionUtilsMock);
-		RegisteredUser updateUser = registrationService.updateUser(recordDTO, 2);
+		RegisteredUser updateUser = registrationService.updateUser(record, 2);
 		Assert.assertEquals("Mark", updateUser.getFirstName());
 		Assert.assertEquals("Euston", updateUser.getLastName());
 		Assert.assertEquals("meuston@gmail.com", updateUser.getEmail());
@@ -109,17 +108,17 @@ public class RegistrationServiceTest {
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(role);
 		EasyMock.replay(roleDAOMock);
 
-		RegistrationDTO recordDTO = new RegistrationDTO();
-		recordDTO.setFirstname("Mark");
-		recordDTO.setLastname("Euston");
-		recordDTO.setEmail("meuston@gmail.com");
-		recordDTO.setPassword("1234");
-		recordDTO.setConfirmPassword("1234");
+		RegisteredUser record = new RegisteredUser();
+		record.setFirstName("Mark");
+		record.setLastName("Euston");
+		record.setEmail("meuston@gmail.com");
+		record.setPassword("1234");
+		record.setConfirmPassword("1234");
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234")).andReturn("5678");
 		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("abc");
 		EasyMock.replay(encryptionUtilsMock, projectDAOMock);
 
-		RegisteredUser newUser = registrationService.createNewUser(recordDTO);
+		RegisteredUser newUser = registrationService.createNewUser(record);
 		EasyMock.verify(projectDAOMock);
 		assertNull(newUser.getProjectOriginallyAppliedTo());
 
@@ -127,7 +126,7 @@ public class RegistrationServiceTest {
 
 	@Test
 	public void shouldSaveNewUserAndSendEmail() throws UnsupportedEncodingException {
-		final RegistrationDTO recordDTO = new RegistrationDTO();
+		final RegisteredUser record = new RegisteredUser();
 		final Map<String, Object> modelMap = new HashMap<String, Object>();
 
 		Program program = new ProgramBuilder()
@@ -140,8 +139,8 @@ public class RegistrationServiceTest {
 				javaMailSenderMock) {
 
 			@Override
-			public RegisteredUser createNewUser(RegistrationDTO record) {
-				if (record == recordDTO) {
+			public RegisteredUser createNewUser(RegisteredUser record) {
+				if (record == record) {
 					return newUser;
 				}
 				return null;
@@ -165,7 +164,7 @@ public class RegistrationServiceTest {
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
-		registrationService.generateAndSaveNewUser(recordDTO, null);
+		registrationService.generateAndSaveNewUser(record, null);
 
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		assertEquals(newUser, modelMap.get("user"));
@@ -175,15 +174,15 @@ public class RegistrationServiceTest {
 
 	@Test
 	public void shouldNotSendEmailIdSaveFails() {
-		final RegistrationDTO recordDTO = new RegistrationDTO();
-		recordDTO.setEmail("email@test.com");
+		final RegisteredUser record = new RegisteredUser();
+		record.setEmail("email@test.com");
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).toUser();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, projectDAOMock, mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock) {
 
 			@Override
-			public RegisteredUser createNewUser(RegistrationDTO record) {
-				if (record == recordDTO) {
+			public RegisteredUser createNewUser(RegisteredUser record) {
+				if (record == record) {
 					return newUser;
 				}
 				return null;
@@ -196,7 +195,7 @@ public class RegistrationServiceTest {
 
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		try {
-			registrationService.generateAndSaveNewUser(recordDTO, null);
+			registrationService.generateAndSaveNewUser(record, null);
 		} catch (RuntimeException e) {
 			// expected...ignore
 		}
@@ -207,7 +206,7 @@ public class RegistrationServiceTest {
 
 	@Test
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
-		final RegistrationDTO recordDTO = new RegistrationDTO();
+		final RegisteredUser record = new RegisteredUser();
 
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
 
@@ -215,8 +214,8 @@ public class RegistrationServiceTest {
 				javaMailSenderMock) {
 
 			@Override
-			public RegisteredUser createNewUser(RegistrationDTO record) {
-				if (record == recordDTO) {
+			public RegisteredUser createNewUser(RegisteredUser record) {
+				if (record == record) {
 					return newUser;
 				}
 				return null;
@@ -235,7 +234,7 @@ public class RegistrationServiceTest {
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
-		registrationService.generateAndSaveNewUser(recordDTO, null);
+		registrationService.generateAndSaveNewUser(record, null);
 
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 

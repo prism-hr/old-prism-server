@@ -11,12 +11,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.dto.RegistrationDTO;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.ApplicantRecordValidator;
+import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 
 @Controller
 @RequestMapping(value = { "/register" })
@@ -26,7 +25,7 @@ public class RegisterController {
 	private static final String REGISTER_INFO_VIEW_NAME = "public/register/register_info";
 	private static final String REGISTER_COMPLETE_VIEW_NAME = "/register/complete";
 	private final UserService userService;
-	private final ApplicantRecordValidator validator;
+	private final RegisterFormValidator validator;
 	private final RegistrationService registrationService;
 	private final ApplicationsService applicationsService;
 
@@ -35,7 +34,7 @@ public class RegisterController {
 	}
 
 	@Autowired
-	public RegisterController(ApplicantRecordValidator validator, UserService userService, RegistrationService registrationService,
+	public RegisterController(RegisterFormValidator validator, UserService userService, RegistrationService registrationService,
 			ApplicationsService applicationsService) {
 		this.validator = validator;
 		this.userService = userService;
@@ -46,11 +45,11 @@ public class RegisterController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getRegisterPage(@RequestParam (required=false) Integer userId) {
 		RegisterPageModel model = new RegisterPageModel();
-		RegistrationDTO record = new RegistrationDTO();;
+		RegisteredUser record = new RegisteredUser();
 		if (userId != null) {
 			RegisteredUser suggestedUser = userService.getUser(userId);
-			record.setFirstname(suggestedUser.getFirstName());
-			record.setLastname(suggestedUser.getLastName());
+			record.setFirstName(suggestedUser.getFirstName());
+			record.setLastName(suggestedUser.getLastName());
 			record.setEmail(suggestedUser.getEmail());
 			model.setIsSuggestedUser(userId);
 		}
@@ -60,7 +59,7 @@ public class RegisterController {
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
-	public ModelAndView submitRegistration(@ModelAttribute("record") RegistrationDTO record, @RequestParam (required=false) Integer isSuggestedUser, BindingResult errors) {
+	public ModelAndView submitRegistration(@ModelAttribute("record") RegisteredUser record, @RequestParam (required=false) Integer isSuggestedUser, BindingResult errors) {
 		validator.validate(record, errors);
 		if (isSuggestedUser != null) {
 			validator.shouldValidateSameEmail(false);
@@ -103,8 +102,8 @@ public class RegisterController {
 	}
 
 	@ModelAttribute("record")
-	public RegistrationDTO getApplicantRecord(Integer id) {
-		return new RegistrationDTO();
+	public RegisteredUser getApplicantRecord(Integer id) {
+		return new RegisteredUser();
 	}
 
 }

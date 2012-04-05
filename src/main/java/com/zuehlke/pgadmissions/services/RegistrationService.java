@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.RegistrationDTO;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
@@ -51,45 +50,41 @@ public class RegistrationService {
 
 	}
 
-	public RegisteredUser createNewUser(RegistrationDTO record) {
-		RegisteredUser user = new RegisteredUser();
-		user.setActivationCode(encryptionUtils.generateUUID());
-		user.setUsername(record.getEmail());
-		user.setFirstName(record.getFirstname());
-		user.setLastName(record.getLastname());
-		user.setEmail(record.getEmail());
-		user.setAccountNonExpired(true);
-		user.setAccountNonLocked(true);
-		user.setPassword(encryptionUtils.getMD5Hash(record.getPassword()));
-		user.setEnabled(false);
-		user.setCredentialsNonExpired(true);
+	public RegisteredUser createNewUser(RegisteredUser record) {
+		record.setActivationCode(encryptionUtils.generateUUID());
+		record.setAccountNonExpired(true);
+		record.setAccountNonLocked(true);
+		record.setUsername(record.getEmail());
+		record.setPassword(encryptionUtils.getMD5Hash(record.getPassword()));
+		record.setEnabled(false);
+		record.setCredentialsNonExpired(true);
 		if (record.getProjectId() != null) {
-			user.setProjectOriginallyAppliedTo(projectDAO.getProjectById(record.getProjectId()));
+			record.setProjectOriginallyAppliedTo(projectDAO.getProjectById(record.getProjectId()));
 		}
-		user.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
-		return user;
+		record.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
+		return record;
 	}
 	
 
-	public RegisteredUser updateUser(RegistrationDTO record, Integer isSuggestedUser) {
+	public RegisteredUser updateUser(RegisteredUser record, Integer isSuggestedUser) {
 		RegisteredUser suggestedUser = userDAO.get(isSuggestedUser);
 		suggestedUser.setActivationCode(encryptionUtils.generateUUID());
 		suggestedUser.setPassword(encryptionUtils.getMD5Hash(record.getPassword()));
 		suggestedUser.setUsername(record.getEmail());
-		suggestedUser.setFirstName(record.getFirstname());
-		suggestedUser.setLastName(record.getLastname());
+		suggestedUser.setFirstName(record.getFirstName());
+		suggestedUser.setLastName(record.getLastName());
 		suggestedUser.setEmail(record.getEmail());
 		return suggestedUser;
 	}
 
 	@Transactional
-	public void generateAndSaveNewUser(RegistrationDTO recordDTO, Integer isSuggestedUser) {
+	public void generateAndSaveNewUser(RegisteredUser record, Integer isSuggestedUser) {
 
 		RegisteredUser newUser;
 		if (isSuggestedUser != null) {
-			newUser = updateUser(recordDTO, isSuggestedUser);
+			newUser = updateUser(record, isSuggestedUser);
 		} else {
-			newUser = createNewUser(recordDTO);
+			newUser = createNewUser(record);
 		}
 		userDAO.save(newUser);
 	

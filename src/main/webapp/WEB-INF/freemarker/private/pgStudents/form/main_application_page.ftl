@@ -125,7 +125,7 @@
 			          			</section>
 			          
 			           			<section id="positionSection" class="folding yellow">
-			             			<#include "/private/pgStudents/form/components/employment_position_details.ftl"/>
+			             			
 			          			</section>
 			          
 			           			<section id="fundingSection" class="folding green">

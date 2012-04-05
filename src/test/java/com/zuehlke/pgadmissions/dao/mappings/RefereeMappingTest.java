@@ -151,7 +151,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadRefereeWithUser() throws Exception {
 		Reference reference = new ReferenceBuilder().toReference();
-		RegisteredUser user = new RegisteredUserBuilder().email("test@test.com").username("test@test.com").firstName("jane").lastName("u").password("123").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().email("testnewemail@onetwo.com").username("testnewemail@onetwo.com").firstName("jane").lastName("u").password("123").toUser();
 		
 		sessionFactory.getCurrentSession().save(user);
 		

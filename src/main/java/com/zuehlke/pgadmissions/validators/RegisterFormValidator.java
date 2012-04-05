@@ -10,27 +10,26 @@ import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.dto.RegistrationDTO;
 import com.zuehlke.pgadmissions.services.UserService;
 @Service
-public class ApplicantRecordValidator implements Validator {
+public class RegisterFormValidator implements Validator {
 
 	private UserService userService;
 	private boolean shouldValidateSameEmail;
 
-	ApplicantRecordValidator() {
+	RegisterFormValidator() {
 		this(null);
 	}
 
 	@Autowired
-	public ApplicantRecordValidator(UserService userService) {
+	public RegisterFormValidator(UserService userService) {
 		this.userService = userService;
 	}
 
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return RegistrationDTO.class.equals(clazz);
+		return RegisteredUser.class.equals(clazz);
 	}
 
 	public boolean shouldValidateSameEmail() {
@@ -43,27 +42,27 @@ public class ApplicantRecordValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", "record.firstname.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", "record.lastname.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "record.password.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword", "record.confirmPassword.notempty");
-		RegistrationDTO record = (RegistrationDTO) target;
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "user.firstName.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "user.lastName.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "user.password.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "confirmPassword", "user.confirmPassword.notempty");
+		RegisteredUser record = (RegisteredUser) target;
 		if(record.getConfirmPassword()!=null && record.getPassword() !=null && !record.getConfirmPassword().equals(record.getPassword())){
-			errors.rejectValue("password", "record.password.notmatch");
-			errors.rejectValue("confirmPassword", "record.confirmPassword.notmatch");
+			errors.rejectValue("password", "user.password.notmatch");
+			errors.rejectValue("confirmPassword", "user.confirmPassword.notmatch");
 		}
 		if(record.getPassword().length()<8){
-			errors.rejectValue("password", "record.password.notvalid");
+			errors.rejectValue("password", "user.password.notvalid");
 		}
 		if (shouldValidateSameEmail) {
 			List<RegisteredUser> allUsers = userService.getAllUsers();
 			for (RegisteredUser user : allUsers) {
 				if(user.getEmail().equals(record.getEmail()))
-					errors.rejectValue("email", "record.email.alreadyexists");
+					errors.rejectValue("email", "user.email.alreadyexists");
 			}
 		}
 		if (!EmailValidator.getInstance().isValid(record.getEmail())) {
-			errors.rejectValue("email", "record.email.invalid");
+			errors.rejectValue("email", "user.email.invalid");
 		}
 	}
 

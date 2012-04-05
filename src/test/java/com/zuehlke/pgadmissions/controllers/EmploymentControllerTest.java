@@ -21,18 +21,13 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -42,14 +37,11 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.LanguageService;
-import com.zuehlke.pgadmissions.services.EmploymentPositionService;
-import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 
 public class EmploymentControllerTest {
@@ -92,7 +84,7 @@ public class EmploymentControllerTest {
 
 	@Test
 	public void shouldReturnEmploymentView() {
-		assertEquals("/private/pgStudents/form/components/employment_position_details.ftl", controller.getEmploymentView());
+		assertEquals("/private/pgStudents/form/components/employment_position_details", controller.getEmploymentView());
 	}
 
 	@Test

@@ -1,9 +1,3 @@
-<#if model.applicationForm.addresses?has_content>
-	<#assign hasAddresses = true>
-<#else>
-	<#assign hasAddresses = false>
-</#if> 
- 
 <#import "/spring.ftl" as spring />
 
   	
@@ -14,52 +8,6 @@
 	
 	<div>
 	
-			<#if hasAddresses>
-				<table class="existing">
-			    	<colgroup>
-			        	<col style="width: 30px" />
-			            <col />
-			            <col style="width: 100px" />
-			            <col style="width: 100px" />
-			            <col style="width: 30px" />
-					</colgroup>
-					
-			        <thead>
-			        	<tr>
-			            	<th colspan="2">Address</th>
-			            	<th>Country</th>
-			            	<th></th>
-			                <th>&nbsp;</th>
-						</tr>
-			            
-					</thead>
-			        
-			        <tbody>
-			        	<#list model.applicationForm.addresses as address>
-				        	<tr>
-				            	<td><a class="row-arrow"  name="addressEditButton" id="address_${address.id?string('#######')}">-</a></td>
-				                <td>${address.location?html}</td>
-				                <td>${address.country.name?html}</td>
-				                <td></td>
-				                <td>
-				                 <#if !model.applicationForm.isSubmitted()>
-				                  	<form method="Post" action="<@spring.url '/deleteentity/address'/>" style="padding:0">
-			                			<input type="hidden" name="id" value="${address.id?string('#######')}"/>		                		
-			                			<a name="deleteButton" class="button-delete">delete</a>
-			                		</form>
-			                		</#if>
-				                </td>
-				                
-								<input type="hidden" id="${address.id?string('#######')}_addressIdDP" value="${address.id?string('#######')}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_locationDP" value="${address.location?html}"/>
-	                            <input type="hidden" id="${address.id?string('#######')}_countryDP" value="${address.country.id?string('#######')}"/>
-				                
-							</tr>
-						</#list>
-					</tbody>
-				</table>
-        	</#if>
-
         	<form>
 				
 				<input type="hidden" id="addressId" name="addressId"/>
@@ -74,17 +22,17 @@
                   
                   	<!-- Address body -->
                   	<div class="row">
-                    	<span class="label">Location<em>*</em></span>
+                    	<span class="label">Current Address<em>*</em></span>
                     	<span class="hint"></span>
                     	<div class="field">
                     	   <#if !model.applicationForm.isSubmitted()>
-                      		<textarea id="addressLocation" class="max" rows="6" cols="80" >${(model.address.addressLocation?html)!}</textarea>
+                      		<textarea id="currentAddressLocation" class="max" rows="6" cols="80" >${(model.address.addressLocation?html)!}</textarea>
 							
                                 <#if model.hasError('addressLocation')>                           
                             	   <span class="invalid"><@spring.message  model.result.getFieldError('addressLocation').code /></span>                           
                                 </#if>
                             <#else>
-                      		    <textarea readonly="readonly" id="addressLocation" class="max" rows="6" cols="80" 
+                      		    <textarea readonly="readonly" id="currentAddressLocation" class="max" rows="6" cols="80" 
                                                     value="${(model.address.addressLocation?html)!}"></textarea>
                             </#if>
                     	</div>
@@ -95,7 +43,7 @@
                     	<span class="label">Country<em>*</em></span>
 	                    <div class="field">
 	                      	
-	                      	<select class="full" name="addressCountry" id="addressCountry"
+	                      	<select class="full" name="currentAddressCountry" id="currentAddressCountry"
 	                      	<#if model.applicationForm.isSubmitted()>
                                             disabled="disabled"
                             </#if>>
@@ -111,6 +59,46 @@
 	                      	
 						</div>
 					</div>
+					
+					<!-- Address body -->
+                    <div class="row">
+                        <span class="label">Contact Address<em>*</em></span>
+                        <span class="hint"></span>
+                       
+                       <div class="field">
+                            <input type="checkbox" name="sameAddress" id="sameAddress"/>
+                            <span class="label">Is this the same as your current address?</span>
+                       </div>
+                    </div>
+                    
+                    <p></p>
+                        
+                        <div class="field">
+                           <#if !model.applicationForm.isSubmitted()>
+                            <textarea id="contactAddressLocation" class="max" rows="6" cols="80" ></textarea>
+                            <#else>
+                                <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80" 
+                                                    value=""></textarea>
+                            </#if>
+                        </div>
+                    
+                                        <!-- Country -->
+                    <div class="row">
+                        <span class="label">Country<em>*</em></span>
+                        <div class="field">
+                            
+                            <select class="full" name="contactAddressCountry" id="contactAddressCountry"
+                            <#if model.applicationForm.isSubmitted()>
+                                            disabled="disabled"
+                            </#if>>
+                            <option value="">Select...</option>
+                                <#list model.countries as country>
+                                    <option value="${country.id?string('#######')}" <#if model.address.addressCountry?? && model.address.addressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                                </#list>
+                            </select>
+                            
+                        </div>
+                    </div>
 					
 				</div>
 

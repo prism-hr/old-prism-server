@@ -29,8 +29,32 @@ public class AddressValidatorTest {
 	}
 	
 	@Test
-	public void shouldRejectIfLocationIsNull() {
-		address.setAddressLocation(null);
+	public void shouldRejectIfCurrentLocationIsNull() {
+		address.setCurrentAddressLocation(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
+		validator.validate(address, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+	
+	@Test
+	public void shouldRejectIfContactLocationIsNull() {
+		address.setContactAddressLocation(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
+		validator.validate(address, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+	
+	@Test
+	public void shouldRejectIfContactCountryIsNull() {
+		address.setContactAddressCountry(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
+		validator.validate(address, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+	
+	@Test
+	public void shouldRejectIfCurrentCountryIsNull() {
+		address.setCurrentAddressCountry(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		validator.validate(address, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -41,9 +65,9 @@ public class AddressValidatorTest {
 		validator = new AddressValidator();
 		
 		address = new Address();
-		address.setAddressContactAddress("YES");
-		address.setAddressCountry(2);
-		address.setAddressId(2);
-		address.setAddressLocation("London");
+		address.setContactAddressLocation("London");
+		address.setContactAddressCountry(3);
+		address.setCurrentAddressLocation("New York");
+		address.setCurrentAddressCountry(2);
 	}
 }

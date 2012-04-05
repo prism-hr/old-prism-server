@@ -3,41 +3,58 @@ package com.zuehlke.pgadmissions.dto;
 
 public class Address {
 
-	private String addressLocation;
-	private Integer addressCountry;
-	private Integer addressId;
+	private String currentAddressLocation;
+	private Integer currentAddressCountry;
+	private String contactAddressLocation;
+	private Integer contactAddressCountry;
+	private Integer currentAddressId;
+	private Integer contactAddressId;
 	
-	private String addressContactAddress;
-
-	public String getAddressLocation() {
-		return addressLocation;
+	public String getCurrentAddressLocation() {
+		return currentAddressLocation;
 	}
 	
-	public void setAddressLocation(String addressLocation) {
-		this.addressLocation = addressLocation;
+	public void setCurrentAddressLocation(String currentAddressLocation) {
+		this.currentAddressLocation = currentAddressLocation;
 	}
 	
-	public Integer getAddressCountry() {
-		return addressCountry;
+	public Integer getCurrentAddressCountry() {
+		return currentAddressCountry;
 	}
 	
-	public void setAddressCountry(Integer addressCountry) {
-		this.addressCountry = addressCountry;
+	public void setCurrentAddressCountry(Integer currentAddressCountry) {
+		this.currentAddressCountry = currentAddressCountry;
 	}
 	
-	public Integer getAddressId() {
-		return addressId;
+	public Integer getCurrentAddressId() {
+		return currentAddressId;
 	}
 	
-	public void setAddressId(Integer addressId) {
-		this.addressId = addressId;
+	public void setCurrentAddressId(Integer currentAddressId) {
+		this.currentAddressId = currentAddressId;
 	}
 	
-	public String getAddressContactAddress() {
-		return addressContactAddress;
+	public String getContactAddressLocation() {
+		return contactAddressLocation;
 	}
 	
-	public void setAddressContactAddress(String addressContactAddress) {
-		this.addressContactAddress = addressContactAddress;
+	public void setContactAddressLocation(String contactAddressLocation) {
+		this.contactAddressLocation = contactAddressLocation;
+	}
+	
+	public Integer getContactAddressCountry() {
+		return contactAddressCountry;
+	}
+	
+	public void setContactAddressCountry(Integer contactAddressCountry) {
+		this.contactAddressCountry = contactAddressCountry;
+	}
+	
+	public Integer getContactAddressId() {
+		return contactAddressId;
+	}
+	
+	public void setContactAddressId(Integer contactAddressId) {
+		this.contactAddressId = contactAddressId;
 	}
 }

@@ -148,21 +148,40 @@ public class UpdateApplicationFormController {
 		model.setCountries(countryService.getAllCountries());
 
 		if (!result.hasErrors()) {
-			com.zuehlke.pgadmissions.domain.Address address;
-			if (addr.getAddressId() == null) {
-				address = new com.zuehlke.pgadmissions.domain.Address();
+			//CURRENT ADDRESS
+			com.zuehlke.pgadmissions.domain.Address currentAddress;
+			if (addr.getCurrentAddressId() == null) {
+				currentAddress = new com.zuehlke.pgadmissions.domain.Address();
 			} else {
-				address = applicationService.getAddressById(addr.getAddressId());
+				currentAddress = applicationService.getAddressById(addr.getCurrentAddressId());
 			}
 
-			address.setApplication(application);
-			address.setLocation(addr.getAddressLocation());
-			address.setCountry(countryService.getCountryById(addr.getAddressCountry()));
+			currentAddress.setApplication(application);
+			currentAddress.setLocation(addr.getCurrentAddressLocation());
+			currentAddress.setCountry(countryService.getCountryById(addr.getCurrentAddressCountry()));
 
-			if (addr.getAddressId() == null) {
-				application.getAddresses().add(address);
+			if (addr.getCurrentAddressId() == null) {
+				application.getAddresses().add(currentAddress);
 			}
+			
+			//CONTACT ADDRESS
+			com.zuehlke.pgadmissions.domain.Address contactAddress;
+			if (addr.getCurrentAddressId() == null) {
+				contactAddress = new com.zuehlke.pgadmissions.domain.Address();
+			} else {
+				contactAddress = applicationService.getAddressById(addr.getContactAddressId());
+			}
+
+			contactAddress.setApplication(application);
+			contactAddress.setLocation(addr.getContactAddressLocation());
+			contactAddress.setCountry(countryService.getCountryById(addr.getContactAddressCountry()));
+
+			if (addr.getContactAddressId() == null) {
+				application.getAddresses().add(contactAddress);
+			}
+			
 			applicationService.save(application);
+			
 			model.setAddress(new Address());
 		} else {
 			model.setAddress(addr);

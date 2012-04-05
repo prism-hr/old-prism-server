@@ -26,7 +26,6 @@ import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.dto.AdditionalInformation;
 import com.zuehlke.pgadmissions.dto.Address;
-import com.zuehlke.pgadmissions.dto.EmploymentPosition;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -43,7 +42,6 @@ import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
 import com.zuehlke.pgadmissions.validators.AddressValidator;
-import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
 @Controller
@@ -51,7 +49,7 @@ import com.zuehlke.pgadmissions.validators.RefereeValidator;
 public class UpdateApplicationFormController {
 
 	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/address_details";
-	private static final String APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME = "private/pgStudents/form/components/employment_position_details";
+	
 	private static final String APPLICATON_REFEREEE_VIEW_NAME = "private/pgStudents/form/components/references_details";
 	private final ApplicationsService applicationService;
 	private final UserPropertyEditor userPropertyEditor;
@@ -130,54 +128,7 @@ public class UpdateApplicationFormController {
 		return new ModelAndView("private/pgStudents/form/components/additional_information", modelMap);
 	}
 
-	@RequestMapping(value = "/addEmploymentPosition", method = RequestMethod.POST)
-	public ModelAndView addEmploymentPosition(EmploymentPosition positionDto, @RequestParam Integer appId, @RequestParam(required = false) String add,
-			BindingResult result, ModelMap modelMap) {
-
-		ApplicationForm application = applicationService.getApplicationById(appId);
-
-		if (application.isSubmitted()) {
-			throw new CannotUpdateApplicationException();
-		}
-
-		ApplicationPageModel model = new ApplicationPageModel();
-		model.setUser(getCurrentUser());
-		ApplicationForm applicationForm = application;
-		model.setApplicationForm(applicationForm);
-		model.setResult(result);
-		model.setLanguages(languageService.getAllLanguages());
-
-		EmploymentPositionValidator positionValidator = new EmploymentPositionValidator();
-		positionValidator.validate(positionDto, result);
-		if (!result.hasErrors()) {
-			com.zuehlke.pgadmissions.domain.EmploymentPosition position;
-			if (positionDto.getPositionId() == null) {
-				position = new com.zuehlke.pgadmissions.domain.EmploymentPosition();
-			} else {
-				position = applicationService.getEmploymentPositionById(positionDto.getPositionId());
-			}
-			position.setPosition_employer(positionDto.getPosition_employer());
-			position.setPosition_endDate(positionDto.getPosition_endDate());
-			position.setPosition_language(languageService.getLanguageById(positionDto.getPosition_language()));
-			position.setPosition_remit(positionDto.getPosition_remit());
-			position.setPosition_startDate(positionDto.getPosition_startDate());
-			position.setPosition_title(positionDto.getPosition_title());
-			position.setCompleted(positionDto.getCompleted());
-			if (positionDto.getPositionId() == null) {
-				application.getEmploymentPositions().add(position);
-			}
-			applicationService.save(application);
-			model.setEmploymentPosition(new EmploymentPosition());
-		} else {
-			model.setEmploymentPosition(positionDto);
-		}
-		modelMap.put("model", model);
-		if (StringUtils.isNotBlank(add)) {
-			modelMap.put("add", "add");
-		}
-		return new ModelAndView(APPLICATION_EMPLOYMENT_POSITION_VIEW_NAME, modelMap);
-	}
-
+	
 	@RequestMapping(value = "/editAddress", method = RequestMethod.POST)
 	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer appId, @RequestParam(required = false) String add,
 			BindingResult result, ModelMap modelMap) {

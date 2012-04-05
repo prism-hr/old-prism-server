@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 
 @Controller
@@ -21,15 +22,17 @@ public class DeleteApplicationFormEntitiesController {
 
 	private final ApplicationsService applicationsService;
 	private final QualificationService qualificationService;
+	private final EmploymentPositionService employmentService;
 
 	DeleteApplicationFormEntitiesController() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public DeleteApplicationFormEntitiesController(ApplicationsService applicationsService, QualificationService qualificationService) {
+	public DeleteApplicationFormEntitiesController(ApplicationsService applicationsService, QualificationService qualificationService, EmploymentPositionService employmentService) {
 		this.applicationsService = applicationsService;
 		this.qualificationService = qualificationService;
+		this.employmentService = employmentService;
 
 	}
 
@@ -60,9 +63,9 @@ public class DeleteApplicationFormEntitiesController {
 
 	@RequestMapping(value = "/employment", method = RequestMethod.POST)
 	public ModelAndView deleteEmployment(@RequestParam Integer id) {
-		EmploymentPosition position = applicationsService.getEmploymentPositionById(id);
+		EmploymentPosition position = employmentService.getEmploymentPositionById(id);
 		Integer applicationFormId = position.getApplication().getId();
-		applicationsService.deleteEmployment(position);
+		employmentService.delete(position);
 		return new ModelAndView("redirect:/application", "id", applicationFormId);
 	}
 

@@ -3,15 +3,16 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class EmploymentPositionBuilder {
 	
-	private String employer;
+	private String employerName;
 	
-	private String title;
+	private String position;
 	
 	private String remit;
 	
@@ -27,12 +28,26 @@ public class EmploymentPositionBuilder {
 	
 	private CheckedStatus completed;
 	
-	public EmploymentPositionBuilder employer(String employer){
-		this.employer = employer;
+	private String employerAdress;
+	
+	private Country employerCountry;
+	
+	public EmploymentPositionBuilder employerAdress(String employerAdress){
+		this.employerAdress = employerAdress;
 		return this;
 	}
-	public EmploymentPositionBuilder title(String title){
-		this.title = title;
+	public EmploymentPositionBuilder employerCountry(Country employerCountry){
+		this.employerCountry = employerCountry;
+		return this;
+	}
+	
+	
+	public EmploymentPositionBuilder employerName(String employerName){
+		this.employerName = employerName;
+		return this;
+	}
+	public EmploymentPositionBuilder position(String title){
+		this.position = title;
 		return this;
 	}
 	public EmploymentPositionBuilder remit(String remit){
@@ -67,16 +82,18 @@ public class EmploymentPositionBuilder {
 		return this;
 	}
 	public EmploymentPosition toEmploymentPosition(){
-		EmploymentPosition position = new EmploymentPosition();
-		position.setApplication(application);
-		position.setPosition_employer(employer);
-		position.setPosition_endDate(endDate);
-		position.setPosition_language(language);
-		position.setPosition_remit(remit);
-		position.setPosition_startDate(startDate);
-		position.setPosition_title(title);
-		position.setCompleted(completed);
-		position.setId(id);
-		return position;
+		EmploymentPosition employment = new EmploymentPosition();
+		employment.setApplication(application);
+		employment.setEmployerName(employerName);
+		employment.setEmployerAddress(employerAdress);
+		employment.setEmployerCountry(employerCountry);
+		employment.setEndDate(endDate);
+		employment.setLanguage(language);
+		employment.setRemit(remit);
+		employment.setStartDate(startDate);
+		employment.setPosition(position);
+		employment.setCompleted(completed);
+		employment.setId(id);
+		return employment;
 	}
 }

@@ -1,13 +1,11 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.QualificationDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -16,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 
 public class DeleteApplicationFormEntitiesControllerTest {
@@ -24,6 +23,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	private DeleteApplicationFormEntitiesController controller;
 	private ApplicationForm applicationForm;
 	private QualificationService qualificationServiceMock;
+	private EmploymentPositionService employmentServiceMock;
 	@Test
 	public void shoulGetAddressFromServiceAndDelete(){
 		Address address = new Address();
@@ -68,11 +68,11 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		EmploymentPosition employment = new EmploymentPosition();
 		employment.setApplication(applicationForm);
 		employment.setId(1);
-		EasyMock.expect(serviceMock.getEmploymentPositionById(1)).andReturn(employment);
-		serviceMock.deleteEmployment(employment);
-		EasyMock.replay(serviceMock);
+		EasyMock.expect(employmentServiceMock.getEmploymentPositionById(1)).andReturn(employment);
+		employmentServiceMock.delete(employment);
+		EasyMock.replay(employmentServiceMock);
 		controller.deleteEmployment(1);
-		EasyMock.verify(serviceMock);
+		EasyMock.verify(employmentServiceMock);
 	}
 	
 	@Test
@@ -91,6 +91,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
 		serviceMock = EasyMock.createMock(ApplicationsService.class);
 		qualificationServiceMock = EasyMock.createMock(QualificationService.class);
-		controller = new DeleteApplicationFormEntitiesController(serviceMock, qualificationServiceMock);
+		employmentServiceMock = EasyMock.createMock(EmploymentPositionService.class);
+		controller = new DeleteApplicationFormEntitiesController(serviceMock, qualificationServiceMock, employmentServiceMock);
 	}
 }

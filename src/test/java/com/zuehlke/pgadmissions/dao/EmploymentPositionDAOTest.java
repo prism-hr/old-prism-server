@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.util.Date;
@@ -39,7 +40,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase{
 		application.setProject(project);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().isCompleted(CheckedStatus.YES).application(application).employer("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).title("rerew").toEmploymentPosition();		
+		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").isCompleted(CheckedStatus.YES).application(application).employerName("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();		
 		save(application, employmentPosition);
 		flushAndClearSession();
 		
@@ -49,6 +50,41 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 		assertNull(sessionFactory.getCurrentSession().get(EmploymentPosition.class, id));
 	}
+	
+	@Test
+	public void shouldSaveEmployemnt(){
+		ApplicationForm application = new ApplicationForm();
+		application.setProject(project);
+		application.setApplicant(user);
+		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		save(application);
+		flushAndClearSession();
+		
+		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").isCompleted(CheckedStatus.YES).application(application).employerName("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
+		
+		EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
+		dao.save(employmentPosition);
+		flushAndClearSession();
+		
+		assertEquals(employmentPosition, sessionFactory.getCurrentSession().get(EmploymentPosition.class, employmentPosition.getId()));
+	}
+
+	@Test
+	public void shouldGetEmploymentById(){
+		ApplicationForm application = new ApplicationForm();
+		application.setProject(project);
+		application.setApplicant(user);
+		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").isCompleted(CheckedStatus.YES).application(application).employerName("fr").endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
+		save(application, employmentPosition);
+		flushAndClearSession();
+		
+		EmploymentPositionDAO dao = new EmploymentPositionDAO(sessionFactory);
+		EmploymentPosition reloadedPosistion = dao.getEmploymentPositionById(employmentPosition.getId());
+		assertEquals(employmentPosition, reloadedPosistion);
+		
+	}
+	
 	
 	@Before
 	public void setup() {

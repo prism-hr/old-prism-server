@@ -12,11 +12,14 @@ $(document).ready(function(){
 	
 	$('#addressSaveAndAddButton').click(function(){
 		$.post("/pgadmissions/update/editAddress", { 
-			addressLocation: $("#addressLocation").val(),
-			addressCountry: $("#addressCountry").val(), 
+			currentAddressLocation: $("#currentAddressLocation").val(),
+			currentAddressCountry: $("#currentAddressCountry").val(), 
+			currentAddressId: $("#currentAddressId").val(),
+			contactAddressLocation: $("#contactAddressLocation").val(),
+			contactAddressCountry: $("#contactAddressCountry").val(), 
+			contactAddressId: $("#contactAddressId").val(),
 			id: $("#id").val(), 
 			appId: $("#appId").val(),
-			addressId: $("#addressId").val(),
 			add:"Add"
 		},
 		function(data) {
@@ -25,12 +28,15 @@ $(document).ready(function(){
 	});
 	
 	$('#addressSaveAndCloseButton').click(function(){
-		$.post("/pgadmissions/update/editAddress", { 
-			addressLocation: $("#addressLocation").val(),
-			addressCountry: $("#addressCountry").val(), 
+		$.post("/pgadmissions/update/editAddress", {
+			currentAddressLocation: $("#currentAddressLocation").val(),
+			currentAddressCountry: $("#currentAddressCountry").val(), 
+			currentAddressId: $("#currentAddressId").val(),
+			contactAddressLocation: $("#contactAddressLocation").val(),
+			contactAddressCountry: $("#contactAddressCountry").val(), 
+			contactAddressId: $("#contactAddressId").val(),
 			id: $("#id").val(), 
-			appId: $("#appId").val(),
-			addressId: $("#addressId").val()
+			appId: $("#appId").val()
 		},
 		function(data) {
 			$('#addressSection').html(data);
@@ -38,24 +44,18 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="addressCancelButton"]').click(function(){
-		$("#addressId").val("");
-		$("#addressLocation").val("");
-		$("#addressCountry").val("");
+		$("#currentAddressId").val("");
+		$("#currentAddressLocation").val("");
+		$("#currentAddressCountry").val("");
+		$("#contactAddressId").val("");
+		$("#contactAddressLocation").val("");
+		$("#contactAddressCountry").val("");
 		$("span[class='invalid']").each(function(){
 			$(this).hide();
 		});
 	});
 	
 	
-	$('a[name="addressEditButton"]').click(function(){
-
-		var id = this.id;
-		id = id.replace('address_', '');
-		$("#addressId").val($('#'+id+"_addressIdDP").val());
-		$("#addressLocation").val($('#'+id+"_locationDP").val());
-		$("#addressCountry").val($('#'+id+"_countryDP").val());
-	});
-
 	  bindDatePickers();
 
 	//open/close

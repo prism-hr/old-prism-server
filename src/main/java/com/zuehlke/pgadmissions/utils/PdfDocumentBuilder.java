@@ -191,7 +191,7 @@ public class PdfDocumentBuilder {
 		addGivenNationality(document, "Paternal Guardian Nationality", application.getPersonalDetails().getPaternalGuardianNationalities());
 
 		// language to be added
-		
+
 		document.add(new Paragraph("Residence", smallBoldFont));
 
 		if (application.getPersonalDetails().getResidenceCountry() == null) {
@@ -269,15 +269,22 @@ public class PdfDocumentBuilder {
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Address                                                                                                ", grayFont));
 
-		for (Address address : application.getAddresses()) {
-			document.add(new Paragraph("Location: "+address.getLocation()));
-			document.add(new Paragraph("Country: "+address.getCountry().getName()));
-
-			document.add(new Paragraph(" "));
-		}
-
 		if (application.getAddresses().isEmpty()) {
 			document.add(new Paragraph(createMessage("address information")));
+		} else {
+			Address currentAddress = application.getAddresses().get(0);
+			document.add(new Paragraph("Current Address", smallBoldFont));
+			document.add(new Paragraph("Location: "+currentAddress.getLocation()));
+			document.add(new Paragraph("Country: "+currentAddress.getCountry().getName()));
+
+			document.add(new Paragraph(" "));
+			
+			Address contactAddress = application.getAddresses().get(1);
+			document.add(new Paragraph("Contact Address", smallBoldFont));
+			document.add(new Paragraph("Location: "+contactAddress.getLocation()));
+			document.add(new Paragraph("Country: "+contactAddress.getCountry().getName()));
+
+			document.add(new Paragraph(" "));
 		}
 
 	}

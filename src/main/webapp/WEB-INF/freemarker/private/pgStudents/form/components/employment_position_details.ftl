@@ -70,66 +70,111 @@
         <form>
         	
         	<div>
+        		<!-- Country -->
+				<div class="row">
+                	<span class="label">Country<em>*</em></span>
+                    <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerCountry'/>"></span>
+                   	<div class="field">
+                    	<select class="full" id="position_country" name="position_country"
+                       		<#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
+                        	<option value="">Select...</option>
+                        	<#list countries as country>
+                         		<option value="${country.id?string('#######')}" <#if employmentPosition.employerCountry?? && employmentPosition.employerCountry.id == country.id> selected="selected"</#if>>${country.name}</option>
+                         	</#list>
+                     	 </select>						
+                    </div>
+                </div>
+            	<!-- Employer (company name) -->
+                <div class="row">
+                	<span class="label">Employer Name<em>*</em></span>
+                    <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerName'/>"></span>
+                    <div class="field">
+                    <#if !applicationForm.isSubmitted()>
+                    	<input class="full" type="text" id="position_employer_name" name="position_employer_name" 
+                    					value="${(employmentPosition.employerName?html)!}" placeholder="Provider of employment" />
+                       
+                    <#else>
+                        <input readonly="readonly" class="full" type="text" id="position_employer_name" name="position_employer_name" 
+                                        value="${(employmentPosition.employerName?html)!}" placeholder="Provider of employment" />
+                    </#if>    
+                   	</div>
+                </div>
                 
             	<!-- Employer (company name) -->
                 <div class="row">
-                	<span class="label">Employer<em>*</em></span>
-                    <span class="hint"></span>
+                	<span class="label">Employer Address<em>*</em></span>
+                    <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerAddress'/>"></span>
                     <div class="field">
-                    <#if !applicationForm.isSubmitted()>
-                    	<input class="full" type="text" id="position_employer" name="position_employer" 
-                    					value="${(employmentPosition.position_employer?html)!}" placeholder="Provider of employment" />
-                       
-                    <#else>
-                        <input readonly="readonly" class="full" type="text" id="position_employer" name="position_employer" 
-                                        value="${(employmentPosition.position_employer?html)!}" placeholder="Provider of employment" />
-                    </#if>    
+	                   <#if !applicationForm.isSubmitted()>
+                      	<textarea cols="70" rows="3" class="max" id="position_employer_address" 
+                      		name="position_employer_address" 
+                      		placeholder="Employer's address">${(employmentPosition.employerAddress?html)!}</textarea>
+							
+						
+						 <#else>
+						    <textarea readonly="readonly" cols="70" rows="3" class="max" id="position_employer_address" 
+                            name="position_employer_address" value="${(employmentPosition.employerAddress?html)!}" 
+                            placeholder="Employer's address"></textarea>  
+						 </#if>   
                    	</div>
                 </div>
                 
                 <!-- Position -->
                 <div class="row">
                 	<span class="label">Position<em>*</em></span>
-                    <span class="hint"></span>
+                     <span class="hint" data-desc="<@spring.message 'employmentDetails.position.position'/>"></span>
                     <div class="field">
                         <#if !applicationForm.isSubmitted()>
                     	<input class="full" type="text" id="position_title" name="position_title" 
-                    					value="${(employmentPosition.position_title?html)!}" placeholder="Title of position" />
+                    					value="${(employmentPosition.position?html)!}" placeholder="Title of position" />
                         
                         <#else>
                             <input readonly="readonly" class="full" type="text" id="position_title" name="position_title" 
-                                        value="${(employmentPosition.position_title?html)!}" placeholder="Title of position" />
+                                        value="${(employmentPosition.position?html)!}" placeholder="Title of position" />
                         </#if> 
                     </div>
                 </div>
                 
                 <!-- Remit (job description) -->
                 <div class="row">
-                    <span class="label">Remit<em>*</em></span>
-                    <span class="hint"></span>
+                    <span class="label">Description<em>*</em></span>
+                   <span class="hint" data-desc="<@spring.message 'employmentDetails.position.remit'/>"></span>
                     <div class="field">
                         <#if !applicationForm.isSubmitted()>
                       	<textarea cols="70" rows="3" class="max" id="position_remit" 
                       		name="position_remit" 
-                      		placeholder="Summary of responsibilities">${(employmentPosition.position_remit?html)!}</textarea>
+                      		placeholder="Summary of responsibilities">${(employmentPosition.remit?html)!}</textarea>
 							
 						
 						 <#else>
 						    <textarea readonly="readonly" cols="70" rows="3" class="max" id="position_remit" 
-                            name="position_remit" value="${(employmentPosition.position_remit?html)!}" 
+                            name="position_remit" value="${(employmentPosition.remit?html)!}" 
                             placeholder="Summary of responsibilities"></textarea>  
 						 </#if> 
 						 
                     </div>
              	</div>
-                
+                 <!-- Language -->
+                <div class="row">
+                    <span class="label">Language of work<em>*</em></span>
+                    <span class="hint" data-desc="<@spring.message 'employmentDetails.position.language'/>"></span>
+                    <div class="field">
+                      	<select class="full" id="position_language" name="position_language"
+                       		<#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
+                        	<option value="">Select...</option>
+                        	<#list languages as language>
+                         		<option value="${language.id?string('#######')}" <#if employmentPosition.language?? && employmentPosition.language.id == language.id> selected="selected"</#if>>${language.name}</option>
+                         	</#list>
+                     	 </select>						
+                    </div>
+               	</div>
                 <!-- Start date -->
                 <div class="row">
                     <span class="label">Start Date<em>*</em></span>
-                    <span class="hint"></span>
+                   <span class="hint" data-desc="<@spring.message 'employmentDetails.position.startDate'/>"></span>
                     <div class="field">
                       	<input class="half date" type="text" id="position_startDate" name="position_startDate" 
-                      			value="${(employmentPosition.position_startDate?string('dd-MMM-yyyy'))!}"
+                      			value="${(employmentPosition.startDate?string('dd-MMM-yyyy'))!}"
                       			<#if applicationForm.isSubmitted()>
                                           disabled="disabled"
                                 </#if>>
@@ -138,51 +183,30 @@
                     </div>
                 </div>
                 <div class="row">
-                       <label class="label">Is Completed<em>*</em></label>
-                       <span class="hint"></span>
-                       		<input type="checkbox" name="completedPositionCB" id="completedPositionCB"/
-                       		<#if employmentPosition?? && employmentPosition.completed?? &&  employmentPosition.completed =='YES'>
+                       <span class="label">Is this your current position?<em>*</em></span>
+                       <span class="hint" data-desc="<@spring.message 'employmentDetails.position.isOngoing'/>"></span>
+                       		<input type="checkbox" name="completedPositionCB" id="completedPositionCB"
+                       		<#if employmentPosition?? && employmentPosition.completed?? &&  employmentPosition.completed =='NO'>
                                           checked
-                                </#if>
+                              </#if>
                        		<#if applicationForm.isSubmitted()>
                                           disabled="disabled"
-                                </#if>>
+                              </#if>/>
                        		<input type="hidden" name="completedPosition" id="completedPosition"/>
                			 </div>
                 
                 <!-- End date -->
                 <div class="row">
                     <span class="label">End Date</span>
-                    <span class="hint"></span>
+                    <span class="hint" data-desc="<@spring.message 'employmentDetails.position.endDate'/>"></span>
                     <div class="field" id="endDateField">
                       	<input class="half date" type="hidden" id="position_endDate" name="position_endDate" 
-                      			value="${(employmentPosition.position_endDate?string('dd-MMM-yyyy'))!}"
+                      			value="${(employmentPosition.endDate?string('dd-MMM-yyyy'))!}"
                                           disabled="disabled">
                       	</input>		
                     </div>
 						
                	</div>
-                
-                <!-- Language -->
-                <div class="row">
-                    <span class="label">Language of work<em>*</em></span>
-                    <span class="hint"></span>
-                    <div class="field">
-                      <select class="full" id="position_language" name="position_language"
-                       <#if applicationForm.isSubmitted()>
-                                                disabled="disabled"
-                                            </#if>>
-                        <option value="">Select...</option>
-                         <#list languages as language>
-                         	<option value="${language.id?string('#######')}" <#if employmentPosition.position_language?? && employmentPosition.position_language == language.id> selected="selected"</#if>>${language.name}</option>
-                         </#list>
-                      </select>
-						
-                    </div>
-               	</div>
-                
-
-
 			</div>
 
 			<div class="buttons">

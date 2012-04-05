@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.dto.AdditionalInformation;
-import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -41,14 +40,11 @@ import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
-import com.zuehlke.pgadmissions.validators.AddressValidator;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
 @Controller
 @RequestMapping("/update")
 public class UpdateApplicationFormController {
-
-	private static final String APPLICATION_ADDRESS_APPLICANT_VIEW_NAME = "private/pgStudents/form/components/address_details";
 
 	private static final String APPLICATON_REFEREEE_VIEW_NAME = "private/pgStudents/form/components/references_details";
 	private final ApplicationsService applicationService;
@@ -128,73 +124,6 @@ public class UpdateApplicationFormController {
 		return new ModelAndView("private/pgStudents/form/components/additional_information", modelMap);
 	}
 
-
-	@RequestMapping(value = "/editAddress", method = RequestMethod.POST)
-	public ModelAndView editAddress(@ModelAttribute Address addr, @RequestParam Integer appId, @RequestParam(required = false) String add,
-			BindingResult result, ModelMap modelMap) {
-
-		ApplicationForm application = applicationService.getApplicationById(appId);
-		if (application.isSubmitted()) {
-			throw new CannotUpdateApplicationException();
-		}
-
-		AddressValidator addressValidator = new AddressValidator();
-		addressValidator.validate(addr, result);
-		ApplicationPageModel model = new ApplicationPageModel();
-		ApplicationForm applicationForm = application;
-		model.setUser(getCurrentUser());
-		model.setApplicationForm(applicationForm);
-		model.setResult(result);
-		model.setCountries(countryService.getAllCountries());
-
-		if (!result.hasErrors()) {
-			//CURRENT ADDRESS
-			com.zuehlke.pgadmissions.domain.Address currentAddress;
-			if (addr.getCurrentAddressId() == null) {
-				currentAddress = new com.zuehlke.pgadmissions.domain.Address();
-			} else {
-				currentAddress = applicationService.getAddressById(addr.getCurrentAddressId());
-			}
-
-			currentAddress.setApplication(application);
-			currentAddress.setLocation(addr.getCurrentAddressLocation());
-			currentAddress.setCountry(countryService.getCountryById(addr.getCurrentAddressCountry()));
-
-			if (addr.getCurrentAddressId() == null) {
-				application.getAddresses().add(currentAddress);
-			}
-
-			//CONTACT ADDRESS
-			com.zuehlke.pgadmissions.domain.Address contactAddress;
-			if (addr.getCurrentAddressId() == null) {
-				contactAddress = new com.zuehlke.pgadmissions.domain.Address();
-			} else {
-				contactAddress = applicationService.getAddressById(addr.getContactAddressId());
-			}
-
-			contactAddress.setApplication(application);
-			contactAddress.setLocation(addr.getContactAddressLocation());
-			contactAddress.setCountry(countryService.getCountryById(addr.getContactAddressCountry()));
-
-			if (addr.getContactAddressId() == null) {
-				application.getAddresses().add(contactAddress);
-			}
-
-			applicationService.save(application);
-		}
-		if (application.getAddresses().size() > 0) {
-			addr.setCurrentAddressId(application.getAddresses().get(0).getId());
-			addr.setContactAddressId(application.getAddresses().get(1).getId());
-		}
-		model.setAddress(addr);
-
-		modelMap.put("model", model);
-
-		if (StringUtils.isNotBlank(add)) {
-			modelMap.put("add", "add");
-		}
-		return new ModelAndView(APPLICATION_ADDRESS_APPLICANT_VIEW_NAME, modelMap);
-	}
 
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();

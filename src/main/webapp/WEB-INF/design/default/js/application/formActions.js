@@ -3,14 +3,20 @@ $(document).ready(function(){
 
 	$.get("/pgadmissions/update/getQualification",
 			{
-				applicationId:  $('#applicationId').val()		
-				
+				applicationId:  $('#applicationId').val()					
 			},
 			function(data) {
 				$('#qualificationsSection').html(data);
 			}
 	);
-
+	$.get("/pgadmissions/update/getEmploymentPosition",
+			{
+				applicationId:  $('#applicationId').val()					
+			},
+			function(data) {
+				$('#positionSection').html(data);
+			}
+	);
 	/*
 	 * Submit application form on click of submit button.
 	 */ 

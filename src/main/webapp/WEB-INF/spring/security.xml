@@ -19,13 +19,15 @@
 		<intercept-url pattern="/register/**" 	access="permitAll" />
 		<intercept-url pattern="/addReferences/**" 	access="permitAll" />
 		<intercept-url pattern="/referee/register/**" 	access="permitAll" />
-		<intercept-url pattern="/references/**" 	access="permitAll" />
+		<intercept-url pattern="/referee/login/**" 	access="hasRole('REFEREE')" />
+		<intercept-url pattern="/refereeRegistration/**" 	access="permitAll" />
+		<intercept-url pattern="/references/**" 	access="hasRole('REFEREE')" />
 		<intercept-url pattern="*/j_spring_security_check"	access="permitAll" />
 		<intercept-url pattern="/apply/**"	access="hasRole('APPLICANT')" />
 		<intercept-url pattern="/submit/**"    access="hasRole('APPLICANT')" />
 		<intercept-url pattern="/update/**"    access="hasRole('APPLICANT')" />
 		<intercept-url pattern="/reviewer/**"	access="hasAnyRole('ADMINISTRATOR','REVIEWER','APPROVER', 'SUPERADMINISTRATOR')" />
-		<intercept-url pattern="/**"		access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR')" />		
+		<intercept-url pattern="/**"		access="hasAnyRole('ADMINISTRATOR','REVIEWER', 'APPLICANT', 'APPROVER', 'SUPERADMINISTRATOR', 'REFEREE')" />		
 		<intercept-url pattern="/dwr/**" 	access="permitAll" />
 
 	</http>

@@ -13,15 +13,15 @@ public class EmploymentPositionTest {
 	@Test
 	public void shouldCreateEmploymentPosition(){
 		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().application(new ApplicationForm()).
-				employer("fr").endDate(new Date()).id(1).language(new Language()).remit("dfsfsd").startDate(new Date()).title("rerew").
+				employerName("fr").endDate(new Date()).id(1).language(new Language()).remit("dfsfsd").startDate(new Date()).position("rerew").
 				toEmploymentPosition();	
-		Assert.assertNotNull(employmentPosition.getPosition_employer());
-		Assert.assertNotNull(employmentPosition.getPosition_remit());
-		Assert.assertNotNull(employmentPosition.getPosition_title());
+		Assert.assertNotNull(employmentPosition.getEmployerName());
+		Assert.assertNotNull(employmentPosition.getRemit());
+		Assert.assertNotNull(employmentPosition.getPosition());
 		Assert.assertNotNull(employmentPosition.getApplication());
 		Assert.assertNotNull(employmentPosition.getId());
-		Assert.assertNotNull(employmentPosition.getPosition_endDate());
-		Assert.assertNotNull(employmentPosition.getPosition_language());
-		Assert.assertNotNull(employmentPosition.getPosition_startDate());
+		Assert.assertNotNull(employmentPosition.getEndDate());
+		Assert.assertNotNull(employmentPosition.getLanguage());
+		Assert.assertNotNull(employmentPosition.getStartDate());
 	}
 }

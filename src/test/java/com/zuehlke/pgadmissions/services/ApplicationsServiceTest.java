@@ -181,15 +181,7 @@ public class ApplicationsServiceTest{
 	}
 	
 	
-	@Test
-	public void shouldDelegateDeleteEmploymentToDAO(){
-		EmploymentPosition position = new EmploymentPosition();
-		position.setId(1);
-		employmentDAOMock.delete(position);
-		EasyMock.replay(employmentDAOMock);
-		applicationsService.deleteEmployment(position);
-		EasyMock.verify(employmentDAOMock);
-	}
+
 	
 	@Test
 	public void shouldDelegateDeleteRefereeToDAO(){
@@ -248,14 +240,6 @@ public class ApplicationsServiceTest{
 		Assert.assertEquals(address, applicationsService.getAddressById(23));
 	}
 	
-	@Test
-	public void shouldGetEmploymentPositionById() {
-		EmploymentPosition employment = EasyMock.createMock(EmploymentPosition.class);
-		EasyMock.expect(applicationFormDAOMock.getEmploymentById(23)).andReturn(employment);
-		
-		EasyMock.replay(employment, applicationFormDAOMock);
-		Assert.assertEquals(employment, applicationsService.getEmploymentPositionById(23));
-	}
 	
 	@Test
 	public void shouldCreateAndSaveNewApplicationForm(){

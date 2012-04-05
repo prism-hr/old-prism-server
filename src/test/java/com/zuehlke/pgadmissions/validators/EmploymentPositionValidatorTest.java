@@ -13,12 +13,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
+import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
-import com.zuehlke.pgadmissions.dto.EmploymentPosition;
+
 
 public class EmploymentPositionValidatorTest {
 
-	private EmploymentPosition positionDto;
+	private EmploymentPosition position;
 	private EmploymentPositionValidator positionValidator;
 	
 	@Test
@@ -27,13 +30,34 @@ public class EmploymentPositionValidatorTest {
 	}
 	
 	@Test
-	public void shouldRejectIfEmployerIsEmpty(){
-		positionDto.setPosition_employer(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		positionValidator.validate(positionDto, mappingResult);
+	public void shouldRejectIfEmployerAddressIsEmpty(){
+		position.setEmployerAddress(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_employer.notempty",mappingResult.getFieldError("position_employer").getCode());
+		Assert.assertEquals("position.position_employer_address.notempty",mappingResult.getFieldError("employerAddress").getCode());
 	}
+	
+	
+	@Test
+	public void shouldRejectIfEmployerCountryIsEmpty(){
+		position.setEmployerCountry(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("position.position_employer_country.notempty",mappingResult.getFieldError("employerCountry").getCode());
+	}
+	
+	
+	@Test
+	public void shouldRejectIfEmployerNameIsEmpty(){
+		position.setEmployerName(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("position.position_employer.notempty",mappingResult.getFieldError("employerName").getCode());
+	}
+	
 	
 	@Test
 	public void shouldRejectIfStartDateAndEndDateAreFutureDates(){
@@ -43,89 +67,92 @@ public class EmploymentPositionValidatorTest {
 		tomorrow = calendar.getTime();
 		calendar.add(Calendar.DATE, 2);
 		dayAfterTomorrow = calendar.getTime();
-		positionDto.setPosition_startDate(tomorrow);
-		positionDto.setPosition_endDate(dayAfterTomorrow);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		positionValidator.validate(positionDto, mappingResult);
+		position.setStartDate(tomorrow);
+		position.setEndDate(dayAfterTomorrow);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(2, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_startDate.future",mappingResult.getFieldError("position_startDate").getCode());
-		Assert.assertEquals("position.position_endDate.future",mappingResult.getFieldError("position_endDate").getCode());
+		Assert.assertEquals("position.position_startDate.future",mappingResult.getFieldError("startDate").getCode());
+		Assert.assertEquals("position.position_endDate.future",mappingResult.getFieldError("endDate").getCode());
 	}
 	
 	@Test
 	public void shouldRejectIfStartDateIsEmpty(){
-		positionDto.setPosition_startDate(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		positionValidator.validate(positionDto, mappingResult);
+		position.setStartDate(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_startDate.notempty",mappingResult.getFieldError("position_startDate").getCode());
+		Assert.assertEquals("position.position_startDate.notempty",mappingResult.getFieldError("startDate").getCode());
 	}
 	
 	@Test
 	public void shouldRejectIfEndDateIsNotSetForCompletedEmploymentPosition(){
-		positionDto.setPosition_endDate(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		positionValidator.validate(positionDto, mappingResult);
+		position.setEndDate(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_endDate.notempty",mappingResult.getFieldError("position_endDate").getCode());
+		Assert.assertEquals("position.position_endDate.notempty",mappingResult.getFieldError("endDate").getCode());
 	}
 	
 	@Test
 	public void shouldRejectIfEndDateIsSetForNotCompletedEmploymentPosition(){
-		positionDto.setCompleted(CheckedStatus.NO);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		positionValidator.validate(positionDto, mappingResult);
+		position.setCompleted(CheckedStatus.NO);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_endDate.empty",mappingResult.getFieldError("position_endDate").getCode());
+		Assert.assertEquals("position.position_endDate.empty",mappingResult.getFieldError("endDate").getCode());
 	}
 	
 	@Test
 	public void shouldRejectIfLanguageIsEmpty(){
-		positionDto.setPosition_language(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		positionValidator.validate(positionDto, mappingResult);
+		position.setLanguage(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_language.notempty",mappingResult.getFieldError("position_language").getCode());
+		Assert.assertEquals("position.position_language.notempty",mappingResult.getFieldError("language").getCode());
 	}
 	
 	@Test
 	public void shouldRejectIfRemitIsEmpty(){
-		positionDto.setPosition_remit(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		positionValidator.validate(positionDto, mappingResult);
+		position.setRemit(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_remit.notempty",mappingResult.getFieldError("position_remit").getCode());
+		Assert.assertEquals("position.position_remit.notempty",mappingResult.getFieldError("remit").getCode());
 	}
 	
 	@Test
-	public void shouldRejectIfTitleIsEmpty(){
-		positionDto.setPosition_title(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		positionValidator.validate(positionDto, mappingResult);
+	public void shouldRejectIfPositionIsEmpty(){
+		position.setPosition(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_title.notempty",mappingResult.getFieldError("position_title").getCode());
+		Assert.assertEquals("position.position_title.notempty",mappingResult.getFieldError("position").getCode());
 	}
 	
 	@Test
 	public void shouldRejectIfStartDateIsAfterEndDate() throws ParseException{
-		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(positionDto, "position");
-		positionValidator.validate(positionDto, mappingResult);
+		position.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+		position.setEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2009/08/06"));
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("position.position_startDate.notvalid",mappingResult.getFieldError("position_startDate").getCode());
+		Assert.assertEquals("position.position_startDate.notvalid",mappingResult.getFieldError("startDate").getCode());
 	}
 	
 	@Before
 	public void setup() throws ParseException{
 		
 		positionValidator = new EmploymentPositionValidator();
-		positionDto = new EmploymentPosition();
-		positionDto.setPosition_employer("Mark");
-		positionDto.setPosition_endDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_language(3);
-		positionDto.setPosition_remit("cashier");
-		positionDto.setCompleted(CheckedStatus.YES);
-		positionDto.setPosition_startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
-		positionDto.setPosition_title("head of department");}
+		position = new EmploymentPosition();
+		position.setEmployerName("Mark");
+		position.setEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+		position.setLanguage(new LanguageBuilder().id(3).toLanguage());
+		position.setRemit("cashier");
+		position.setCompleted(CheckedStatus.YES);
+		position.setStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2010/08/06"));
+		position.setPosition("head of department");
+		position.setEmployerAddress("address");
+		position.setEmployerCountry(new CountryBuilder().id(1).toCountry());
+	}
 }

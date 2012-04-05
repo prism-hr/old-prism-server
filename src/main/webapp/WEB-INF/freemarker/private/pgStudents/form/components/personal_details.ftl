@@ -46,7 +46,7 @@
 			        </div>                                
 			        </#if>
 					<div class="row">
-						<label class="label">First Name<em>*</em></label>
+						<label class="plain-label">First Name<em>*</em></label>
 						 <span class="hint" data-desc="<@spring.message 'personalDetails.firstname'/>"></span>
 						<div class="field">                    	
 								<input class="full" readonly="readonly" type="text" value="${(model.user.firstName?html)!}"  name="firstName" id="firstName"/>	          
@@ -54,7 +54,7 @@
 					 </div>
                  
 					<div class="row">
-						<label class="label">Last Name<em>*</em></label>
+						<label class="plain-label">Last Name<em>*</em></label>
 						<span class="hint" data-desc="<@spring.message 'personalDetails.lastname'/>"></span>
 						<div class="field">
 								<input class="full" readonly="readonly" type="text" value="${(model.user.lastName?html)!}"   name="lastName" id="lastName"/>	          
@@ -62,7 +62,7 @@
 					 </div>
                  
 					<div class="row">
-						<label class="label">Gender<em>*</em></label>
+						<label class="plain-label">Gender<em>*</em></label>
 						<span class="hint" data-desc="<@spring.message 'personalDetails.gender'/>"></span>
 						<div class="field">
 							  <#list model.genders as gender>
@@ -82,7 +82,7 @@
 					</div>
                 
 					<div class="row">
-						<label class="label">Date of Birth<em>*</em> </label>
+						<label class="plain-label">Date of Birth<em>*</em> </label>
 						<span class="hint" data-desc="<@spring.message 'personalDetails.dateOfBirth'/>"></span>
 						<div class="field">
 						<#if !model.applicationForm.isSubmitted()>
@@ -99,7 +99,7 @@
 			
               	<div>
                 	<div class="row">
-                  		<label class="label">Country of Birth<em>*</em></label>
+                  		<label class="plain-label">Country of Birth<em>*</em></label>
                     	<span class="hint" data-desc="<@spring.message 'personalDetails.countryOfBirth'/>"></span>
                     	<div class="field">
                       		<select class="full" name="country" id="country" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if> >
@@ -120,11 +120,12 @@
                 </div>
 
               	<div>    
+              		<strong>Nationality</strong>
 					<div class="row" id="existingCandidateNationalities">
                   	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
                   	  	<span name="existingCandidateNationality">
                   	  	 	<div class="row">
-                  	  	 		<label class="label">Nationality</label>
+                  	  	 		<label class="plain-label">My Nationality</label>
                   	  	 		
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
@@ -137,7 +138,7 @@
                   	</div>
             	    
                 	<div class="row">                    	
-                  		 <label class="label">Nationality
+                  		 <label class="plain-label">My Nationality
 						<#if !nationalityExist>
 							<em id="nationality-em">*</em>
 						</#if>
@@ -157,18 +158,14 @@
                 	</div>    
                   
 					<div class="row">
-						<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add nationality</a></div>
+						<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add Nationality</a></div>
 					</div>
         
-                </div>
-
-
-				<div>   	
             	    <div class="row" id="existingMaternalNationalities">
 						 <#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
 							<span>
 								<div class="row">
-									<label class="label">Maternal Guardian Nationality</label>    
+									<label class="plain-label">Mother's Nationality</label>    
 									<div class="field">
 										<label class="full">${nationality.country.name}</label>  
 										<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson?html}'/>
@@ -180,7 +177,7 @@
 					</div>
                   
                 	<div class="row">                     	
-                  		<label class="label">Maternal Guardian Nationality</label>
+                  		<label class="plain-label">Mother's Nationality</label>
                   		<span class="hint" data-desc="<@spring.message 'personalDetails.maternalGuardianNationality'/>"></span>           
 	                  	 <div class="field">
 	                     	 <select class="full" name="maternalNationalityCountry" id="maternalNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
@@ -193,18 +190,14 @@
                 	</div>
                   
                 	<div class="row">
-                  		<div class="field"><a class="button blue" id="addMaternalNationalityButton">Add nationality</a></div>
+                  		<div class="field"><a class="button blue" id="addMaternalNationalityButton">Add Nationality</a></div>
                   	</div>
                   	 
-                </div>
-              	
-              	
-              	<div>       
             	     <div class="row" id="existingPaternalNationalities">
 						<#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
 							<span>
 								<div class="row">
-									<label class="label">Paternal Guardian Nationality</label>    
+									<label class="plain-label">Father's Nationality</label>    
 									<div class="field">
 										<label class="full">${nationality.country.name?html}</label>  
 										<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson?html}'/>
@@ -215,7 +208,7 @@
 						</#list>
 					</div>
 					<div class="row">                      	
-						<label class="label">Paternal Guardian Nationality</label> 
+						<label class="plain-label">Father's Nationality</label> 
 						  <span class="hint" data-desc="<@spring.message 'personalDetails.paternalGuardianNationality'/>"></span>      
 	                  	 <div class="field">
 	                     	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
@@ -229,7 +222,7 @@
                 	                     
                   
                 	<div class="row">
-                  		<div class="field"><a class="button blue" id="addPaternalNationalityButton">Add nationality</a></div>
+                  		<div class="field"><a class="button blue" id="addPaternalNationalityButton">Add Nationality</a></div>
                   	</div>
                   	 
                 </div>
@@ -237,10 +230,10 @@
               	<div>
               	     <div class="row">
 						<label class="label">Language</label>
-						 <span class="hint" data-desc="<@spring.message 'personalDetails.language.section'/>"></span>                  
+						                   
 						<div class="row">
-                       <label class="label">Is English your first language<em>*</em></label>
-                       	<span class="hint"></span>
+                       <label class="plain-label">Is English your first language?<em>*</em></label>
+                       		<span class="hint" data-desc="<@spring.message 'personalDetails.language.section'/>"></span>
                        		<input type="checkbox" name="englishFirstLanguageCB" id="englishFirstLanguageCB"/
                        		<#if model.applicationForm.personalDetails.isEnglishCandidatesFirstLanguage()>
                                           checked
@@ -254,9 +247,9 @@
                 </div>
 
               	<div>
-                	<strong>Residence</strong>
+                	<strong>Country of Residence</strong>
                 	<div class="row">
-						<span class="label">Country<em>*</em></span>
+						<span class="plain-label">Country<em>*</em></span>
 							<span class="hint" data-desc="<@spring.message 'personalDetails.residence.country'/>"></span>        
 						<div class="field">
 							<select class="full" name="residenceCountry" id="residenceCountry" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
@@ -274,7 +267,7 @@
 							</#if>
 							</div>
 							<div class="row">
-							 <label class="label">Requires Visa<em>*</em></label>
+							 <label class="plain-label">Do you require Visa to study in the UK?<em>*</em></label>
                        		<span class="hint"></span>
                        		<input type="checkbox" name="requiresVisaCB" id="requiresVisaCB"/
                        			<#if model.applicationForm.personalDetails.isVisaRequired()>
@@ -290,21 +283,20 @@
 
               	<div>
                 	<strong>Contact Details</strong>
+                	
                 	<div class="row">
-                		<span class="label">Email<em>*</em></span>
+                		<span class="plain-label">Email<em>*</em></span>
                   		<span class="hint" data-desc="<@spring.message 'personalDetails.email'/>"></span> 
 	                    <div class="field">
 	                    		<input class="full" readonly="readonly" type="email" value="${(model.user.email?html)!}"  name="email" id="email" />	          
 	                    </div>
-                  </div>
-                </div>
-                
-              	<div>
-	              	 <div id="personal_details_phonenumbers"  class="row">
+					</div>
+	              	
+	              	<div id="personal_details_phonenumbers"  class="row">
 	                    <#list model.applicationForm.personalDetails.phoneNumbers! as phoneNumber>          
 							<span>
 	                  	  		<div class="row">
-	                  	  	 		<span class="label">Telephone</span>    
+	                  	  	 		<span class="plain-label">Telephone</span>    
 	                  				<div class="field">
 	                  					<label class="half"> ${phoneNumber.telephoneType.displayValue}</label>
 	                  					<label class="half"> ${phoneNumber.telephoneNumber?html}</label> 
@@ -315,44 +307,38 @@
 	                            <input type="hidden" name="phoneNumbers" value='${phoneNumber.asJson?html}'/>   
 	                  	  	</span>
 	                    </#list>
-	                  </div>
-              	
-              	
+					</div>
               	
                 	<div class="row">
-                		<span class="label">Telephone
+                		<span class="plain-label">Telephone
 	                		<#if !telephoneExist>
 	                			<em id="telephone-em">*</em>
 	                		</#if>
                 		</span>
-                    <span class="hint" data-desc="<@spring.message 'personalDetails.telephone'/>"></span>
-                   
-                    <div class="field">
-                    	<select class="half" id="phoneType" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
-                    	 <#list model.phoneTypes as phoneType >
-                      		<option value="${phoneType}">${phoneType.displayValue}</option>
-                      	</#list>
-                      </select>
-	                    <input type="text" placeholder="Number" id="phoneNumber" class="half" <#if model.applicationForm.isSubmitted()>readonly="readonly"</#if>/>
-                      <a id="addPhoneButton" class="button blue" style="width: 110px;">Add Phone</a>
-                    </div>
-                  </div>
+                    	<span class="hint" data-desc="<@spring.message 'personalDetails.telephone'/>"></span>
+                    	
+                    	<div class="field">
+                    		<select class="half" id="phoneType" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>>
+                    	 		<#list model.phoneTypes as phoneType >
+                      				<option value="${phoneType}">${phoneType.displayValue}</option>
+                      			</#list>
+                      		</select>
+	                    	<input type="text" placeholder="Number" id="phoneNumber" class="half" <#if model.applicationForm.isSubmitted()>readonly="readonly"</#if>/>
+                      		<a id="addPhoneButton" class="button blue" style="width: 110px;">Add Phone</a>
+                    	</div>
+                  	</div>
                   
-                </div>
-                
-              	<div>
-              	           
-               <div class="row">
-                  	<label class="label">Skype</label>
-                    <span class="hint" data-desc="<@spring.message 'personalDetails.skype'/>"></span>
-                    <div class="field">                    	
-                    <#if !model.applicationForm.isSubmitted()>
-                    	<input class="full" type="text" value="${(model.applicationForm.personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger"/>
-                    	<#else>
-                    		<input class="full" readonly="readonly" type="text" value="${(model.applicationForm.personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger" />	          
-                    	</#if>
-                    </div>
-                </div>
+               		<div class="row">
+                  		<label class="plain-label">Skype Name</label>
+                    	<span class="hint" data-desc="<@spring.message 'personalDetails.skype'/>"></span>
+                    	<div class="field">                    	
+                    		<#if !model.applicationForm.isSubmitted()>
+                    			<input class="full" type="text" value="${(model.applicationForm.personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger"/>
+                    		<#else>
+                    			<input class="full" readonly="readonly" type="text" value="${(model.applicationForm.personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger" />	          
+                    		</#if>
+                    	</div>
+                	</div>
                 </div>
       
               	<div class="buttons">

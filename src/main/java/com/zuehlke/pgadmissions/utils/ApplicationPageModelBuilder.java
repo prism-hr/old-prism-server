@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
+import com.zuehlke.pgadmissions.dto.Address;
 import com.zuehlke.pgadmissions.errors.ValidationErrorsUtil;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
@@ -51,7 +52,9 @@ public class ApplicationPageModelBuilder {
 			viewApplicationModel.setUser(currentUser);
 		}
 		viewApplicationModel.setApplicationForm(applicationForm);
-
+		if (applicationForm!= null) {
+			viewApplicationModel.setAddress(buildAddress(applicationForm));
+		}
 		viewApplicationModel.setUploadErrorCode(uploadErrorCode);
 		viewApplicationModel.setUploadTwoErrorCode(uploadTwoErrorCode);
 		viewApplicationModel.setCountries(countryService.getAllCountries());
@@ -81,8 +84,27 @@ public class ApplicationPageModelBuilder {
 				viewApplicationModel.setApplicationComments((applicationReviewService.getVisibleComments(applicationForm, currentUser)));
 			}
 		}
-		
+
 		viewApplicationModel.setFundingErrors(ValidationErrorsUtil.convertFundingErrors(fundingErrors));
 		return viewApplicationModel;
+	}
+
+	private Address buildAddress(ApplicationForm applicationForm) {
+		Address address = new Address();
+		if (applicationForm.getAddresses().size() > 0) {
+			com.zuehlke.pgadmissions.domain.Address currentAddress = applicationForm.getAddresses().get(0);
+			address.setCurrentAddressCountry(currentAddress.getCountry().getId());
+			address.setCurrentAddressId(currentAddress.getId());
+			address.setCurrentAddressLocation(currentAddress.getLocation());
+
+			com.zuehlke.pgadmissions.domain.Address contactAddress = applicationForm.getAddresses().get(1);
+			address.setContactAddressCountry(contactAddress.getCountry().getId());
+			address.setContactAddressId(contactAddress.getId());
+			address.setContactAddressLocation(contactAddress.getLocation());
+
+
+		}
+
+		return address;
 	}
 }

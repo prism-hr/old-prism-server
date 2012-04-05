@@ -109,8 +109,14 @@ public class SubmitApplicationService {
 				model.put("programme", form.getProgrammeDetails());
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
-						"private/referees/mail/referee_notification_email.ftl", model));
+				if(referee.getUser().isEnabled()){
+					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+							"private/referees/mail/existing_user_referee_notification_email.ftl", model));
+				}
+				else{
+					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+							"private/referees/mail/referee_notification_email.ftl", model));
+				}
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
 			}

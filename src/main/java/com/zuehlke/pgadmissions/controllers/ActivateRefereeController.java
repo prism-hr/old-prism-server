@@ -22,6 +22,7 @@ public class ActivateRefereeController {
 	private static final String ADD_REFERENCES_VIEW_NAME = "private/referees/upload_references";
 	private static final String REGISTER_REFEREE_VIEW_NAME = "private/referees/register_referee";
 	private static final String EXPIRED_VIEW_NAME = "private/referees/upload_references_expired";
+	private static final String ALREADY_REGISTERED = "private/referees/already_registered";
 	private static final String VIEW_APPLICATION_INTERNAL_VIEW_NAME = "private/referees/application/main_application_page";
 
 	private final RefereeService refereeService;
@@ -65,6 +66,9 @@ public class ActivateRefereeController {
 			ApplicationForm applicationForm = referee.getApplication();
 			if (applicationForm.isDecided()) {
 				return new ModelAndView(EXPIRED_VIEW_NAME);
+			}
+			if(refereeUser.isEnabled()){
+				return new ModelAndView(ALREADY_REGISTERED);
 			}
 			model.setApplicationForm(applicationForm);
 			model.setReferee(referee);

@@ -14,10 +14,13 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -105,6 +108,33 @@ public class ActivateRefereeControllerTest {
 		
 		assertEquals("private/referees/upload_references_expired", controller.getViewApplicationPageForReferee(activationCode).getViewName());
 	;
+	}
+	
+	@Test
+	public void shouldNotGetRegisterPageIfAlreadyRegistered(){
+		Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).toRole();
+		RegisteredUser refereeUserEnabled = new RegisteredUserBuilder().id(1).role(refereeRole).enabled(true).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
+		Referee referee = new RefereeBuilder().application(applicationForm).activationCode("123").id(1).firstname("bob").lastname("bobson").user(refereeUserEnabled).email("email@test.com").toReferee();
+		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("123")).andReturn(referee);
+		
+		EasyMock.replay(refereeServiceMock, applicationPageModelBuilderMock);
+		ModelAndView registerPage = controller.getRefereeRegisterPage(referee.getActivationCode());
+		assertEquals("private/referees/already_registered", registerPage.getViewName());
+		
+	}
+	@Test
+	public void shouldNotGetRegisterPageIfNotRegistered(){
+		Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).toRole();
+		RegisteredUser refereeUserDisabled = new RegisteredUserBuilder().id(1).role(refereeRole).enabled(false).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
+		Referee referee = new RefereeBuilder().application(applicationForm).activationCode("123").id(1).firstname("bob").lastname("bobson").user(refereeUserDisabled).email("email@test.com").toReferee();
+		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("123")).andReturn(referee);
+		
+		EasyMock.replay(refereeServiceMock, applicationPageModelBuilderMock);
+		ModelAndView registerPage = controller.getRefereeRegisterPage(referee.getActivationCode());
+		assertEquals("private/referees/register_referee", registerPage.getViewName());
+		
 	}
 	
 	@Before

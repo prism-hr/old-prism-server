@@ -33,8 +33,7 @@
                             	   <span class="invalid"><@spring.message  model.result.getFieldError('currentAddressLocation').code /></span>                           
                                 </#if>
                             <#else>
-                      		    <textarea readonly="readonly" id="currentAddressLocation" class="max" rows="6" cols="80" 
-                                                    value="${(model.address.currentAddressLocation?html)!}"></textarea>
+                      		    <textarea readonly="readonly" id="currentAddressLocation" class="max" rows="6" cols="80">${(model.address.currentAddressLocation?html)!}</textarea>
                             </#if>
                     	</div>
                   	</div>
@@ -83,8 +82,7 @@
                                    <span class="invalid"><@spring.message  model.result.getFieldError('contactAddressLocation').code /></span>                           
                                 </#if>
                             <#else>
-                                <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80" 
-                                                    value="${(model.address.contactAddressLocation?html)!}"></textarea>
+                                <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80">${(model.address.contactAddressLocation?html)!}</textarea>
                             </#if>
                         </div>
                     </div>

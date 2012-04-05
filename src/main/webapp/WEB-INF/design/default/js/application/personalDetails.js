@@ -52,7 +52,7 @@ $(document).ready(function(){
 		var html = ''+	
 			'<span>'+
 		  	'	<div class="row">'+
-		  	' 		<span class="label">Telephone</span> '+   
+		  	' 		<span class="plain-label">Telephone</span> '+   
 			'		<div class="field">'+
 			'			<label class="half">' +$('#phoneType option:selected').text() + '</label>'+
 			'			<label class="half">'+ $('#phoneNumber').val()+ '</label>'+ 
@@ -76,7 +76,7 @@ $(document).ready(function(){
 					
 			var html = '<span>' +
 	  	 	'<div class="row">'+
-	  	 	'	<label class="label">Nationality</label>'+
+	  	 	'	<label class="plain-label">My Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val() + '}' + "'/>" +
@@ -101,7 +101,7 @@ $(document).ready(function(){
 			
 			var html = '<span>' +
 	  	 	'<div class="row">'+
-	  	 	'	<label class="label">Maternal Guardian Nationality</label>'+
+	  	 	'	<label class="plain-label">Mother\'s Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val() + '}' + "'/>" +
@@ -123,7 +123,7 @@ $(document).ready(function(){
 		if( $('#paternalNationalityCountry option:selected').val()!= ''){
 			var html = '<span>' +
 	  	 	'<div class="row">'+
-	  	 	'	<label class="label">Paternal Guardian Nationality</label>'+
+	  	 	'	<label class="plain-label">Father\'s Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()   + '}' + "'/>" +

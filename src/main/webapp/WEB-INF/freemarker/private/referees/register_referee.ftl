@@ -55,19 +55,19 @@
 		    
 		    	<form method="post" action= "/pgadmissions/refereeRegistration/submit">
 		      		<p>&gt; Register Today...</p>
-		            <input id="recordId" type="hidden" name="recordId" value="${model.refereeUser.id?string('#######')!}"/>
+		            <input id="recordId" type="hidden" name="recordId"  value="${model.refereeUser.id?string('#######')!}" />
 		            
-		            <input id="firstName" type="text" name="firstName" value="${model.refereeUser.firstName!}"/>
+		            <input id="firstName" type="text" name="firstName" value="${model.refereeUser.firstName!}" readonly="readonly"/>
 		            <#if model.hasError('firstName')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
                     </#if>
 		            
-		            <input id="lastName" type="text" name="lastName" value="${model.refereeUser.lastName!}"/>
+		            <input id="lastName" type="text" name="lastName" value="${model.refereeUser.lastName!}" readonly="readonly"/>
 		            <#if model.hasError('lastName')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
                     </#if>
 		            
-		            <input id="email" type="text" name="email" value="${model.refereeUser.email!}"/>
+		            <input id="email" type="text" name="email" value="${model.refereeUser.email!}" readonly="readonly"/>
 		            <#if model.hasError('email')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                    		
                     </#if>
@@ -85,7 +85,7 @@
 		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
 		      	</form>
 		      	
-		      	<a href="/pgadmissions/login">&gt; Back</a>
+		      	<a href="pgadmissions/referee/login?activationCode=${model.refereeUser.referee.activationCode!}">&gt; Back</a>
 		      	
 		    </section>
 		

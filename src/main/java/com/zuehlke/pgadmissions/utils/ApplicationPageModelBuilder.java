@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
@@ -63,7 +62,6 @@ public class ApplicationPageModelBuilder {
 		viewApplicationModel.setPhoneTypes(PhoneType.values());
 		viewApplicationModel.setQualificationLevels(QualificationLevel.values());
 		viewApplicationModel.setFundingTypes(FundingType.values());
-		viewApplicationModel.setAddressPurposes(AddressPurpose.values());
 		viewApplicationModel.setDocumentTypes(DocumentType.values());
 		if (applicationForm != null && applicationForm.isCVUploaded()) {
 			viewApplicationModel.getDocumentTypes().remove(DocumentType.CV);

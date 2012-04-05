@@ -10,7 +10,6 @@ import static org.junit.Assert.assertTrue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 
 import junit.framework.Assert;
 
@@ -39,8 +38,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
-import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -149,8 +146,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		CountryService countriesService = new CountryService(new CountriesDAO(sessionFactory));
 		
-		Address address = new AddressBuilder().application(application).country(countriesService.getCountryById(2)).location("1 Main Street").postCode("NW2 456").location("london")
-				.purpose(AddressPurpose.EDUCATION).startDate(new Date()).endDate(new Date()).contactAddress(AddressStatus.NO).toAddress();
+		Address address = new AddressBuilder().application(application).country(countriesService.getCountryById(2)).location("london")
+				.toAddress();
 		application.setAddresses(Arrays.asList(address));
 
 		assertNull(application.getId());

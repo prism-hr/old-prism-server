@@ -31,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.Telephone;
-import com.zuehlke.pgadmissions.domain.enums.AddressStatus;
 
 public class PdfDocumentBuilder {
 
@@ -272,21 +271,8 @@ public class PdfDocumentBuilder {
 
 		for (Address address : application.getAddresses()) {
 			document.add(new Paragraph("Location: "+address.getLocation()));
-			document.add(new Paragraph("Postal Code: "+address.getPostCode()));
 			document.add(new Paragraph("Country: "+address.getCountry().getName()));
 
-			document.add(new Paragraph("Residency Period", smallBoldFont));
-			document.add(new Paragraph("From: "+address.getStartDate().toString()));
-			if (address.getEndDate() != null) {
-				document.add(new Paragraph("To: "+address.getEndDate().toString()));
-			} else {
-				document.add(new Paragraph(createMessage("end date")));
-			}
-
-			document.add(new Paragraph("Purpose: "+address.getPurpose().getDisplayValue()));
-			if (address.getContactAddress() == AddressStatus.YES) {
-				document.add(new Paragraph("This is my contact address."));
-			}
 			document.add(new Paragraph(" "));
 		}
 

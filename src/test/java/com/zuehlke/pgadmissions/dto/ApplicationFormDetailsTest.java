@@ -31,9 +31,9 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -62,22 +62,6 @@ public class ApplicationFormDetailsTest {
 	@Test
 	public void shouldRejectIfNoAddresses() {
 		appFormDetails.setNumberOfAddresses(0);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(appFormDetails, "applicationFormDetails");
-		validator.validate(appFormDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-	}
-	
-	@Test
-	public void shouldRejectIfNoContactAddresses() {
-		appFormDetails.setNumberOfContactAddresses(0);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(appFormDetails, "applicationFormDetails");
-		validator.validate(appFormDetails, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-	}
-	
-	@Test
-	public void shouldRejectIfMoreThanOneContactAddress() {
-		appFormDetails.setNumberOfContactAddresses(4);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(appFormDetails, "applicationFormDetails");
 		validator.validate(appFormDetails, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -137,7 +121,6 @@ public class ApplicationFormDetailsTest {
 		
 		appFormDetails = new ApplicationFormDetails();
 		appFormDetails.setNumberOfAddresses(1);
-		appFormDetails.setNumberOfContactAddresses(1);
 		appFormDetails.setNumberOfReferees(2);
 		List<Document> supportingDocuments = new ArrayList<Document>();
 		Document resume = new Document();

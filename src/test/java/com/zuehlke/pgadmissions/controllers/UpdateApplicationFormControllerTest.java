@@ -17,7 +17,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -27,11 +26,9 @@ import org.springframework.validation.DirectFieldBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -39,7 +36,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.AddressPurpose;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -58,9 +54,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.RefereeService;
-import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
-import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
 public class UpdateApplicationFormControllerTest {
@@ -97,19 +91,13 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock, countriesServiceMock);
 		Address address = new Address();
 		address.setAddressLocation("1, Main Street, London");
-		address.setAddressPostCode("NW2345");
-		address.setAddressPurpose(AddressPurpose.RESIDENCE);
 		address.setAddressCountry(6);
-		address.setAddressStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09"));
-		address.setAddressEndDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/10"));
 		address.setAddressContactAddress("YES");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 2, null, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());
 		com.zuehlke.pgadmissions.domain.Address addr = ((PageModel) modelAndView.getModel().get("model")).getApplicationForm().getAddresses().get(0);
 		Assert.assertEquals("1, Main Street, London", addr.getLocation());
-		Assert.assertEquals("NW2345", addr.getPostCode());
-		Assert.assertEquals("Residence", addr.getPurpose().getDisplayValue());
 		Assert.assertEquals("UK", addr.getCountry().getName());
 	}
 
@@ -126,11 +114,7 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock, countriesServiceMock);
 		Address address = new Address();
 		address.setAddressLocation("1, Main Street, London");
-		address.setAddressPostCode("NW2345");
-		address.setAddressPurpose(AddressPurpose.RESIDENCE);
 		address.setAddressCountry(6);
-		address.setAddressStartDate(new Date(2011, 11, 11));
-		address.setAddressEndDate(new Date(2012, 11, 11));
 		address.setAddressContactAddress("YES");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 2, "add", mappingResult, new ModelMap());
@@ -144,8 +128,6 @@ public class UpdateApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 		Address address = new Address();
 		address.setAddressLocation("");
-		address.setAddressStartDate(new Date());
-		address.setAddressEndDate(new Date());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
 		ModelAndView modelAndView = applicationController.editAddress(address, 2, null, mappingResult, new ModelMap());
 		Assert.assertEquals("private/pgStudents/form/components/address_details", modelAndView.getViewName());

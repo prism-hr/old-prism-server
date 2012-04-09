@@ -68,11 +68,14 @@
                        <div class="field">
                             <span class="label">Is this the same as your current address?</span>
                             <input type="checkbox" name="sameAddressCB" id="sameAddressCB"
+                            <#if model.address.sameAddress??>
+                                            checked="checked"
+                                        </#if> 
                             <#if model.applicationForm.isSubmitted()>
                                           disabled="disabled"
                                 </#if>
                             />
-                            <input type="hidden" name="sameAddress" id="sameAddress"/>
+                            <input type="hidden" name="sameAddress" id="sameAddress" value="${(model.address.sameAddress?html)!}"/>
                        </div>
                     </div>
                     
@@ -81,13 +84,21 @@
                     <div class="row">
                         <div class="field">
                            <#if !model.applicationForm.isSubmitted()>
-                            <textarea id="contactAddressLocation" class="max" rows="6" cols="80" >${(model.address.contactAddressLocation?html)!}</textarea>
+                            <textarea id="contactAddressLocation" class="max" rows="6" cols="80" 
+                            <#if model.address.sameAddress??>
+                                          disabled="disabled"
+                                </#if>
+                            >${(model.address.contactAddressLocation?html)!}</textarea>
                            
                            <#if model.hasError('contactAddressLocation')>                           
                                    <span class="invalid"><@spring.message  model.result.getFieldError('contactAddressLocation').code /></span>                           
                                 </#if>
                             <#else>
-                                <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80">${(model.address.contactAddressLocation?html)!}</textarea>
+                                <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80"
+                                <#if model.address.sameAddress??>
+                                          disabled="disabled"
+                                </#if>
+                                >${(model.address.contactAddressLocation?html)!}</textarea>
                             </#if>
                         </div>
                     </div>
@@ -97,7 +108,7 @@
                         <div class="field">
                             
                             <select class="full" name="contactAddressCountry" id="contactAddressCountry"
-                            <#if model.applicationForm.isSubmitted()>
+                            <#if model.applicationForm.isSubmitted() || model.address.sameAddress??>
                                             disabled="disabled"
                             </#if>>
                             <option value="">Select...</option>

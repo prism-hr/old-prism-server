@@ -9,6 +9,7 @@ public class Address {
 	private Integer contactAddressCountry;
 	private Integer currentAddressId;
 	private Integer contactAddressId;
+	private String sameAddress;
 	
 	public String getCurrentAddressLocation() {
 		return currentAddressLocation;
@@ -56,5 +57,13 @@ public class Address {
 	
 	public void setContactAddressId(Integer contactAddressId) {
 		this.contactAddressId = contactAddressId;
+	}
+	
+	public String getSameAddress() {
+		return sameAddress;
+	}
+	
+	public void setSameAddress(String sameAddress) {
+		this.sameAddress = sameAddress;
 	}
 }

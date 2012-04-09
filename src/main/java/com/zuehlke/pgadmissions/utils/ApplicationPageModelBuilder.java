@@ -101,6 +101,10 @@ public class ApplicationPageModelBuilder {
 			address.setContactAddressCountry(contactAddress.getCountry().getId());
 			address.setContactAddressId(contactAddress.getId());
 			address.setContactAddressLocation(contactAddress.getLocation());
+			if (currentAddress.getLocation().equals(contactAddress.getLocation()) 
+					&& currentAddress.getCountry().equals(contactAddress.getCountry())) {
+				address.setSameAddress("YES");
+			}
 
 
 		}

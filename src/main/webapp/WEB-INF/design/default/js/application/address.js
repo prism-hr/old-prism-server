@@ -1,8 +1,5 @@
 $(document).ready(function(){
 
-	$("#sameAddressCB").attr('checked', false);
-	$("#sameAddress").val("NO");
-
 	$('#addressCloseButton').click(function(){
 		$('#address-H2').trigger('click');
 		return false;
@@ -20,6 +17,7 @@ $(document).ready(function(){
 			contactAddressLocation: $("#contactAddressLocation").val(),
 			contactAddressCountry: $("#contactAddressCountry").val(), 
 			contactAddressId: $("#contactAddressId").val(),
+			sameAddress: $("#sameAddress").val(),
 			id: $("#id").val(), 
 			appId: $("#appId").val(),
 			add:"Add"
@@ -53,6 +51,7 @@ $(document).ready(function(){
 			contactAddressLocation: $("#contactAddressLocation").val(),
 			contactAddressCountry: $("#contactAddressCountry").val(), 
 			contactAddressId: $("#contactAddressId").val(),
+			sameAddress: $("#sameAddress").val(),
 			id: $("#id").val(), 
 			appId: $("#appId").val()
 		},

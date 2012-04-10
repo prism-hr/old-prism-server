@@ -133,10 +133,20 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Supervisor", smallBoldFont));
 			document.add(new Paragraph(" "));
 
-			PdfPTable table = new PdfPTable(3);
+			PdfPTable table = new PdfPTable(5);
 			table.setWidthPercentage(100.0f);
+			
+			PdfPCell c1 = new PdfPCell(new Phrase("Supervisor First Name", smallerBoldFont));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			c1.setBackgroundColor(grayColor);
+			table.addCell(c1);
+			
+			c1 = new PdfPCell(new Phrase("Supervisor Last Name", smallerBoldFont));
+			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			c1.setBackgroundColor(grayColor);
+			table.addCell(c1);
 
-			PdfPCell c1 = new PdfPCell(new Phrase("Supervisor Email", smallerBoldFont));
+			c1 = new PdfPCell(new Phrase("Supervisor Email", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
@@ -153,6 +163,8 @@ public class PdfDocumentBuilder {
 			table.setHeaderRows(1);
 
 			for (Supervisor supervisor : application.getProgrammeDetails().getSupervisors()) {
+				table.addCell(supervisor.getFirstname());
+				table.addCell(supervisor.getLastname());
 				table.addCell(supervisor.getEmail());
 				table.addCell(supervisor.getPrimarySupervisor().displayValue());
 				table.addCell(supervisor.getAwareSupervisor().displayValue());

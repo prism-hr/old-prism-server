@@ -68,7 +68,7 @@
 			<!-- Award type -->
             <div class="row">
               	<span class="label">Funding Type<em>*</em></span>
-                <span class="hint" data-desc="Tooltip demonstration."></span>
+                <span class="hint" data-desc="<@spring.message 'fundingDetails.award.type'/>"></span>
             	
             	<div class="field">
             		<select id="fundingType" name="fundingType" class="full"
@@ -92,14 +92,14 @@
             <!-- Award description -->
             <div class="row">
             	<span class="label">Description<em>*</em></span>
-                <span class="hint" data-desc="Tooltip demonstration."></span>
+                <span class="hint" data-desc="<@spring.message 'fundingDetails.award.description'/>"></span>
 				<div class="field">
-			    <#if !applicationForm.isSubmitted()>
-                	<input id="fundingDescription" name="fundingDescription" class="full" type="text" value="${(funding.description?html)!}" />
+			    <#if !applicationForm.isSubmitted()>		
+                	<textarea id="fundingDescription" name="fundingDescription" class="full">${(funding.description?html)!}</textarea>
             		<@spring.bind "funding.description" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
                   <#else>
-                    <input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${(funding.description?html)!}" />
+                    <textarea id="fundingDescription" name="fundingDescription" class="full" readonly="readonly">${(funding.description?html)!}</textarea>
                 </#if>
                 </div>
                 
@@ -108,7 +108,7 @@
             <!-- Value of award -->
             <div class="row">
               	<span class="label">Value of Award<em>*</em></span>
-                <span class="hint" data-desc="Tooltip demonstration."></span>
+                <span class="hint" data-desc="<@spring.message 'fundingDetails.award.value'/>"></span>
                 <div class="field">
                 <#if !applicationForm.isSubmitted()>
                 	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${(funding.value?html)!}" />
@@ -122,8 +122,8 @@
               
             <!-- Award date -->
             <div class="row">
-              	<span class="label" data-desc="Tooltip demonstration.">Award Date<em>*</em></span>
-                <span class="hint"></span>
+              	<span class="label">Award Date<em>*</em></span>
+                <span class="hint"  data-desc="<@spring.message 'fundingDetails.award.awardDate'/>"></span>
                 <div class="field">
                     <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(funding.awardDate?string('dd-MMM-yyyy'))!}"
                        <#if applicationForm.isSubmitted()>
@@ -139,8 +139,8 @@
            
      <!-- Attachment / supporting document -->
       		<div class="row">
-        		<span class="label">Supporting document (PDF)<em>*</em></span>
-        		<span class="hint" data-desc=""></span>
+        		<span class="label">Proof of award (PDF)<em>*</em></span>
+        		<span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
         		<div class="field" id="fundingUploadFields">        	
           			<input id="fundingDocument" class="full" type="file" name="file" value="" />					
 					<span id="fundingUploadedDocument" ><input type="hidden" id="document_SUPPORTING_FUNDING" value = "${(funding.document.id?string('######'))!}"/>

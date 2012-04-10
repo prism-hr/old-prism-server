@@ -109,7 +109,6 @@ public class QualificationController {
 		}
 		qualificationService.save(qualification);
 		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getId();
-
 			
 	}
 

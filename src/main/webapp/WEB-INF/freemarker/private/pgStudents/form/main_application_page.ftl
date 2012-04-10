@@ -130,8 +130,7 @@
 			             			
 			          			</section>
 			          
-			           			<section id="fundingSection" class="folding green">
-			             			<#include "/private/pgStudents/form/components/funding_details.ftl"/>
+			           			<section id="fundingSection" class="folding green">			             	
 			          			</section>
 			          
 			           			<section id="referencesSection" class="folding navy <#if model.hasError('numberOfReferees')>error</#if>">
@@ -196,7 +195,7 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/referee.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/documents.js'/>"></script>
-			<script type="text/javascript" src="<@spring.url '/design/default/js/application/additional_information.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/additional_information.js'/>"></script>
 		
 
 	</body>

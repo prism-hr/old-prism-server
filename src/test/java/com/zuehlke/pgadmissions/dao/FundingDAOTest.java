@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertNull;
 
 import java.util.Date;
@@ -49,6 +50,40 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 		fundingDAO.delete(funding);
 		flushAndClearSession();
 		assertNull(sessionFactory.getCurrentSession().get(Funding.class, id));
+	}
+	
+	@Test
+	public void shouldGetFundingById(){
+		ApplicationForm application = new ApplicationForm();
+		application.setProject(project);
+		application.setApplicant(user);
+		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432").toFunding();		
+		save(application, funding);
+		
+		
+		Integer id = funding.getId();
+		FundingDAO fundingDAO = new FundingDAO(sessionFactory);
+		Funding reloadedFunding = fundingDAO.getFundingById(id);
+		assertEquals(funding, reloadedFunding);
+	}
+	
+	@Test
+	public void shouldSaveFunding(){
+		ApplicationForm application = new ApplicationForm();
+		application.setProject(project);
+		application.setApplicant(user);
+		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		save(application);
+		flushAndClearSession();
+		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432").toFunding();		
+		FundingDAO fundingDAO = new FundingDAO(sessionFactory);
+		fundingDAO.save(funding);
+
+		flushAndClearSession();
+		Funding returnedFunding = (Funding) sessionFactory.getCurrentSession().get(Funding.class, funding.getId());
+		assertEquals(funding, returnedFunding);
+		
 	}
 	
 	@Before

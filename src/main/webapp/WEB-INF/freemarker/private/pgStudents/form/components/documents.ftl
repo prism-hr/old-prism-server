@@ -2,7 +2,7 @@
 <#assign htmlEscape = true in spring>
 <h2 id="documents-H2" class="empty">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
-    Documents
+    Documents<em>*</em>
 </h2>
 
 <div>      

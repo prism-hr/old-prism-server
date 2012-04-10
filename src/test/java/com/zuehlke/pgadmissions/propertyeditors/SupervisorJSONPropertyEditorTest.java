@@ -28,6 +28,13 @@ public class SupervisorJSONPropertyEditorTest {
 		assertEquals(expected.getPrimarySupervisor(), supervisor.getPrimarySupervisor());
 	}
 	
+	@Test	
+	public void shouldParseEmptyIdAsNull(){
+		editor.setAsText("{\"id\": \"\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"primarySupervisor\": \"YES\" , \"awareSupervisor\": \"YES\"}");		
+		Supervisor supervisor =   (Supervisor) editor.getValue();
+		assertNull (supervisor.getId());
+		
+	}
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldThrowIllegalArgumentExceptionIfAStringNotInTheRightFormat(){			
 		editor.setAsText("{email: 'test@gmail.com' primarySupervisor: 'YES' awareSupervisor: 'YES'}");		

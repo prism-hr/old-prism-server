@@ -308,22 +308,30 @@ public class PdfDocumentBuilder {
 
 	}
 
-	private void addQualificationSection(ApplicationForm application, Document document) throws DocumentException {
+	private void addQualificationSection(ApplicationForm application, Document document) throws DocumentException, IOException {
 		document.add(new Paragraph("Qualification                                                                                         ", grayFont));
 		if (application.getQualifications().isEmpty()) {
 			document.add(new Paragraph(createMessage("qualification information")));
 		} else {
 
 			for (Qualification qualification : application.getQualifications()) {
-				document.add(new Paragraph("Provider: " + qualification.getQualificationInstitution()));
-				document.add(new Paragraph("Subject: " + qualification.getQualificationSubject()));
+				document.add(new Paragraph("Institution: " + qualification.getQualificationInstitution()));
+				document.add(new Paragraph("Institution Country: " + qualification.getInstitutionCountry()));
+				document.add(new Paragraph("Title / subject: " + qualification.getQualificationSubject()));
 				document.add(new Paragraph("Start Date: " + qualification.getQualificationStartDate().toString()));
-				document.add(new Paragraph("Language: " + qualification.getQualificationLanguage().getName()));
+				document.add(new Paragraph("Has been awarded? " + qualification.getCompleted().displayValue()));
+				document.add(new Paragraph("Language of Study: " + qualification.getQualificationLanguage().getName()));
 				document.add(new Paragraph("Level: " + qualification.getQualificationLevel().getDisplayValue()));
 				document.add(new Paragraph("Type: " + qualification.getQualificationType()));
 				document.add(new Paragraph("Grade: " + qualification.getQualificationGrade()));
 				if (qualification.getQualificationAwardDate() != null) {
 					document.add(new Paragraph("Award Date: " + qualification.getQualificationAwardDate().toString()));
+				}
+				
+				if (qualification.getProofOfAward() != null) {
+					document.newPage();
+					document.add(new Paragraph("Proof of award(PDF)", boldFont));			
+					readPdf(document, qualification.getProofOfAward());
 				}
 
 				document.add(new Paragraph(" "));

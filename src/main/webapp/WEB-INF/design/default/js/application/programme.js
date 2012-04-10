@@ -11,8 +11,7 @@ $(document).ready(function(){
 	$('a[name="deleteSupervisor"]').click( function(event){
 		 event.preventDefault(); 
 		 if(confirm("Are you sure you want to delete the supervisor?")){
-//			 $(this).parent().parent().remove();
-			 $(this).parent("supervisor_span").remove();
+			 $(this).parent().parent().remove();
 		}
 	});
 	$("#supervisor_div").on("click", "a", function(){	

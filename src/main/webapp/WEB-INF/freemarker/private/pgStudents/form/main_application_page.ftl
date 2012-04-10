@@ -85,7 +85,7 @@
 				    	<div class="content-box">
 					        <div class="content-box-inner">
 								<#if globalMsg>
-					            	<p class="invalid">${model.message!}</p>
+					            	<span class="invalid">${model.message!}<p></p></span>
 					            </#if>
 								<div id="programme-details">
 			          

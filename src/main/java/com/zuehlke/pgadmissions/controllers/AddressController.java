@@ -82,7 +82,7 @@ public class AddressController {
 		model.setCountries(countryService.getAllCountries());
 
 		if (!result.hasErrors()) {
-			//CURRENT ADDRESS
+			//update current address
 			com.zuehlke.pgadmissions.domain.Address currentAddress;
 			if (addr.getCurrentAddressId() == null) {
 				currentAddress = new com.zuehlke.pgadmissions.domain.Address();
@@ -98,7 +98,7 @@ public class AddressController {
 				application.getAddresses().add(currentAddress);
 			}
 
-			//CONTACT ADDRESS
+			//update contact address
 			com.zuehlke.pgadmissions.domain.Address contactAddress;
 			if (addr.getCurrentAddressId() == null) {
 				contactAddress = new com.zuehlke.pgadmissions.domain.Address();

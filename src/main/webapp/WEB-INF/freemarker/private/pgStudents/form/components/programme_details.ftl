@@ -23,7 +23,7 @@
                 </div>                          
                 </#if>
                 <div class="row">
-                	<label class="plain-label">Programme</label>
+                	<label class="plain-label">Programme<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'programmeDetails.programme'/>"></span>
                     <div class="field">
                     	<input class="full" id="programmeName" name="programmeName" type="text" value="${model.applicationForm.project.program.title?html}" disabled="disabled" />

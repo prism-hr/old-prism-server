@@ -1,7 +1,5 @@
 package com.zuehlke.pgadmissions.domain;
 
-import java.util.List;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -10,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 
@@ -36,12 +33,9 @@ public class Referee extends DomainObject<Integer>{
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
 	
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "referee_id")
-	private List<Telephone> phoneNumbers ;
-	
-	
+	@Column(name = "phone")
+	private String phoneNumber;
+		
 	@Column(name = "skype")
 	private String messenger ;
 	
@@ -54,9 +48,6 @@ public class Referee extends DomainObject<Integer>{
 	@Column(name="lastname")
 	private String lastname;
 	
-	@Column(name="relationship")
-	private String relationship;
-	
 	@Column(name="job_employer")
 	private String jobEmployer;
 	
@@ -65,10 +56,7 @@ public class Referee extends DomainObject<Integer>{
 	
 	@Column(name="address_location")
 	private String addressLocation;
-	
-	@Column(name="address_postcode")
-	private String addressPostcode;
-	
+
 	@OneToOne
 	@JoinColumn(name = "country_id")
 	private Country addressCountry;
@@ -76,22 +64,7 @@ public class Referee extends DomainObject<Integer>{
 	@Column(name="email")
 	private String email;
 	
-	public List<Telephone> getPhoneNumbers() {
-		return phoneNumbers;
-	}
-	
-	public void setPhoneNumbers(List<Telephone> phoneNumbers) {
-		this.phoneNumbers = phoneNumbers;
-		if(phoneNumbers != null && !phoneNumbers.isEmpty()){
-			int size = phoneNumbers.size();
-			for (int i = size -1; i >= 0 ;i--){
-				Telephone telephone = phoneNumbers.get(i);
-				if(telephone == null){
-					phoneNumbers.remove(i);
-				}
-			}
-		}
-	}
+
 	
 	public ApplicationForm getApplication() {
 		return application;
@@ -117,13 +90,6 @@ public class Referee extends DomainObject<Integer>{
 		this.lastname = lastname;
 	}
 
-	public String getRelationship() {
-		return relationship;
-	}
-
-	public void setRelationship(String relationship) {
-		this.relationship = relationship;
-	}
 
 	public String getJobEmployer() {
 		return jobEmployer;
@@ -149,13 +115,6 @@ public class Referee extends DomainObject<Integer>{
 		this.addressLocation = addressLocation;
 	}
 
-	public String getAddressPostcode() {
-		return addressPostcode;
-	}
-
-	public void setAddressPostcode(String addressPostcode) {
-		this.addressPostcode = addressPostcode;
-	}
 
 	public Country getAddressCountry() {
 		return addressCountry;
@@ -224,6 +183,14 @@ public class Referee extends DomainObject<Integer>{
 
 	public void setUser(RegisteredUser user) {
 		this.user = user;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 }

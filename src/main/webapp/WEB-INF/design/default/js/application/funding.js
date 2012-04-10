@@ -23,7 +23,6 @@ $(document).ready(function(){
 	
 	
 	$('#fundingSaveAddButton').click(function(){
-
 		postFundingData('add');
 	});
 	

@@ -18,7 +18,6 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -27,13 +26,11 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
@@ -137,7 +134,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	
 	@Test
 	public void shouldGetRefereeById(){
-		Referee referee = new RefereeBuilder().firstname("mark").relationship("friend").lastname("marky").email("test@test.com").id(1).toReferee();
+		Referee referee = new RefereeBuilder().firstname("mark").lastname("marky").email("test@test.com").phoneNumber("hallihallo").id(1).toReferee();
 		sessionFactory.getCurrentSession().save(referee);
 		flushAndClearSession();
 		ApplicationFormDAO applicationFormDAO = new ApplicationFormDAO(sessionFactory);

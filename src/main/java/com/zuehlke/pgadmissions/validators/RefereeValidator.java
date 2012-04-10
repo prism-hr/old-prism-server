@@ -21,29 +21,15 @@ public class RefereeValidator implements Validator {
 		Referee referee = (Referee) target;
 		if (!EmailValidator.getInstance().isValid(referee.getEmail())) {
 			errors.rejectValue("email", "referee.email.invalid");
-		}
-		if((referee.getAddressCountry()==null) && ( referee.getAddressLocation()!=null && !referee.getAddressLocation().isEmpty() || referee.getAddressPostcode()!=null && !referee.getAddressPostcode().isEmpty() )){
-					errors.rejectValue("addressCountry", "referee.addressCountry.notempty");
-		}
-		if((referee.getAddressLocation() == null || referee.getAddressLocation().isEmpty() )  && (referee.getAddressCountry()!=null || referee.getAddressPostcode()!=null && !referee.getAddressPostcode().isEmpty())){
-			errors.rejectValue("addressLocation", "referee.addressLocation.notempty");
-		}
-		if((referee.getAddressPostcode() == null || referee.getAddressPostcode().isEmpty()) && (referee.getAddressLocation()!=null && !referee.getAddressLocation().isEmpty() || referee.getAddressLocation()!=null && !referee.getAddressLocation().isEmpty())){
-			errors.rejectValue("addressPostcode", "referee.addressPostcode.notempty");
-		}
-		if((referee.getJobEmployer()==null || referee.getJobEmployer().isEmpty()) && (referee.getJobTitle()!=null && !referee.getJobTitle().isEmpty())){
-			errors.rejectValue("jobEmployer", "referee.jobEmployer.notempty");
-		}
-		if((referee.getJobEmployer()!=null && !referee.getJobEmployer().isEmpty()) && (referee.getJobTitle()==null || referee.getJobTitle().isEmpty())){
-			errors.rejectValue("jobTitle", "referee.jobTitle.notempty");
-		}
-		if(referee.getPhoneNumbers()==null || referee.getPhoneNumbers().size() == 0){
-			errors.rejectValue("phoneNumbers", "referee.phoneNumbers.notempty");
-		}
+		}	
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressCountry", "referee.addressCountry.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "addressLocation", "referee.addressLocation.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobEmployer", "referee.jobEmployer.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "jobTitle", "referee.jobTitle.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", "referee.phoneNumber.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", "referee.firstname.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", "referee.lastname.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "relationship", "referee.relationship.notempty");
+		
 	}
-
 
 }

@@ -25,7 +25,6 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
-import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "APPLICATION_FORM")

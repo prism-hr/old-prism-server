@@ -364,7 +364,7 @@ public class PdfDocumentBuilder {
 			for (Referee reference : application.getReferees()) {
 				document.add(new Paragraph("First Name: " + reference.getFirstname()));
 				document.add(new Paragraph("Last Name: " + reference.getLastname()));
-				document.add(new Paragraph("Relationship: " + reference.getRelationship()));
+
 
 				document.add(new Paragraph("Position", smallBoldFont));
 				addCorrectOutputDependingOnNull(document, reference.getJobEmployer(), "Employer");
@@ -372,7 +372,7 @@ public class PdfDocumentBuilder {
 
 				document.add(new Paragraph("Address", smallBoldFont));
 				addCorrectOutputDependingOnNull(document, reference.getAddressLocation(), "Location");
-				addCorrectOutputDependingOnNull(document, reference.getAddressPostcode(), "Postal Code");
+
 				if (reference.getAddressCountry() != null) {
 					document.add(new Paragraph("Country: " + reference.getAddressCountry().getName()));
 				} else {
@@ -381,7 +381,7 @@ public class PdfDocumentBuilder {
 
 				document.add(new Paragraph("Contact Details", smallBoldFont));
 				document.add(new Paragraph("Email: " + reference.getEmail()));
-				addTelephones(application, document, reference.getPhoneNumbers());
+				document.add(new Paragraph("Phone: " + reference.getPhoneNumber()));				
 				addCorrectOutputDependingOnNull(document, reference.getMessenger(), "Skype");
 
 				document.add(new Paragraph(" "));
@@ -389,6 +389,8 @@ public class PdfDocumentBuilder {
 		}
 
 	}
+
+	
 
 	private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Additional Information                                                                        ", grayFont));
@@ -437,8 +439,7 @@ public class PdfDocumentBuilder {
 		for (Referee referee : application.getReferees()) {
 			if (referee.getReference() != null) {
 				document.newPage();
-				document.add(new Paragraph("Reference from " + referee.getFirstname() + " " + referee.getLastname(), boldFont));
-				document.add(new Paragraph("Relationship: " + referee.getRelationship(), boldFont));
+				document.add(new Paragraph("Reference from " + referee.getFirstname() + " " + referee.getLastname(), boldFont));			
 				readPdf(document, referee.getReference().getDocument());
 			}
 		}

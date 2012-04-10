@@ -26,6 +26,15 @@ $(document).ready(function(){
 				$('#fundingSection').html(data);
 			}
 	);
+	$.get("/pgadmissions/update/getReferee",
+			{
+				applicationId:  $('#applicationId').val()					
+			},
+			function(data) {
+				$('#referencesSection').html(data);
+			}
+	);
+
 	$.get("/pgadmissions/update/getDocuments",
 			{
 				applicationId:  $('#applicationId').val()					

@@ -10,7 +10,6 @@ import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 
@@ -52,18 +51,10 @@ public class RefereeValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.email.notempty", mappingResult.getFieldError("email").getCode());
 	}
+
 	
 	@Test
-	public void shouldRejectIfRelationshipIsEmpty() {
-		referee.setRelationship(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "relationship");
-		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.relationship.notempty", mappingResult.getFieldError("relationship").getCode());
-	}
-	
-	@Test
-	public void shouldRejectIfAddressLocationIsEmptyButAddressPostcodeAndCountryAreNot() {
+	public void shouldRejectIfAddressLocationIsEmpty() {
 		referee.setAddressLocation(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressLocation");
 		refereeValidator.validate(referee, mappingResult);
@@ -71,17 +62,9 @@ public class RefereeValidatorTest {
 		Assert.assertEquals("referee.addressLocation.notempty", mappingResult.getFieldError("addressLocation").getCode());
 	}
 	
-	@Test
-	public void shouldRejectIfAddressPostCodeIsEmptyButAddressLocationAndCountryAreNot() {
-		referee.setAddressPostcode(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressPostcode");
-		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.addressPostcode.notempty", mappingResult.getFieldError("addressPostcode").getCode());
-	}
 	
 	@Test
-	public void shouldRejectIfAddressCountryIsEmptyButAddressPostcodeAndLocationAreNot() {
+	public void shouldRejectIfAddressCountryIsEmpty() {
 		referee.setAddressCountry(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressCountry");
 		refereeValidator.validate(referee, mappingResult);
@@ -89,18 +72,9 @@ public class RefereeValidatorTest {
 		Assert.assertEquals("referee.addressCountry.notempty", mappingResult.getFieldError("addressCountry").getCode());
 	}
 	
+
 	@Test
-	public void shouldRejectIfAddressCountryAndAddressPostcodeAreEmptyButAddressLocationIsNot() {
-		referee.setAddressCountry(null);
-		referee.setAddressPostcode(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressCountry");
-		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.addressCountry.notempty", mappingResult.getFieldError("addressCountry").getCode());
-		Assert.assertEquals("referee.addressPostcode.notempty", mappingResult.getFieldError("addressPostcode").getCode());
-	}
-	@Test
-	public void shouldRejectIfJobEmployeeIsEmptyAndJobTitleIsNot() {
+	public void shouldRejectIfJobEmployeeIsEmpty() {
 		referee.setJobEmployer(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobEmployer");
 		refereeValidator.validate(referee, mappingResult);
@@ -108,45 +82,14 @@ public class RefereeValidatorTest {
 		Assert.assertEquals("referee.jobEmployer.notempty", mappingResult.getFieldError("jobEmployer").getCode());
 	}
 	@Test
-	public void shouldRejectIfJobTitleIsEmptyAndJobEmployeeIsNot() {
+	public void shouldRejectIfJobTitleIsEmpty() {
 		referee.setJobTitle(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobTitle");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.jobTitle.notempty", mappingResult.getFieldError("jobTitle").getCode());
-	}
-	@Test
-	public void shouldNotRejectIfJobFieldsareBothEmpty() {
-		referee.setJobTitle(null);
-		referee.setJobEmployer(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobTitle");
-		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-	}
-	
-	@Test
-	public void shouldNotRejectIfJobFieldsareBothSet() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "jobTitle");
-		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-	}
-	
-	@Test
-	public void shouldNotRejectIfAllAddressFieldsAreEmpty() {
-		referee.setAddressCountry(null);
-		referee.setAddressLocation(null);
-		referee.setAddressPostcode(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressCountry");
-		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-	}
-	@Test
-	public void shouldNotRejectIfAllAddressFieldsAreSet() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "addressCountry");
-		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(0, mappingResult.getErrorCount());
-	}
-
+	}	
+		
 	@Test
 	public void shouldRejectIfEmailNotValidEmail() {
 		referee.setEmail("nonvalidemail");
@@ -155,20 +98,21 @@ public class RefereeValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("referee.email.invalid", mappingResult.getFieldError("email").getCode());
 	}
+	
 	@Test
-	public void shouldRejectIfNoTelephones() {
-		referee.setPhoneNumbers(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumbers");
+	public void shouldRejectIfNoTelephone() {
+		referee.setPhoneNumber(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumber");
 		refereeValidator.validate(referee, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.phoneNumbers.notempty", mappingResult.getFieldError("phoneNumbers").getCode());
+		Assert.assertEquals("referee.phoneNumber.notempty", mappingResult.getFieldError("phoneNumber").getCode());
 	}
 	
 	@Before
 	public void setup(){
 		referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).email("email@test.com").firstname("bob")
-				.lastname("smith").addressCountry(new Country()).addressLocation("london").addressPostcode("postcode").jobEmployer("zuhlke").jobTitle("se")
-				.messenger("skypeAddress").phoneNumbers(new Telephone()).relationship("friend").toReferee();
+				.lastname("smith").addressCountry(new Country()).addressLocation("london").jobEmployer("zuhlke").jobTitle("se")
+				.messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
 		
 		refereeValidator = new RefereeValidator();
 	}

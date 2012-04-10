@@ -134,8 +134,7 @@
 			          			</section>
 			          
 			           			<section id="referencesSection" class="folding navy <#if model.hasError('numberOfReferees')>error</#if>">
-			           				<#include "/private/pgStudents/form/components/references_details.ftl"/>
-			          			</section>
+				          		</section>
 			          
 			          			<section id="documentSection" class="folding blue <#if model.uploadErrorCode?? || model.uploadTwoErrorCode?? || model.hasError('supportingDocuments') >error</#if>">							
 			          			</section>

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -13,19 +12,13 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.TelephoneBuilder;
-import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.Referrer;
-import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class RefereeDAOTest extends AutomaticRollbackTestCase {
@@ -52,16 +45,13 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 				.application(application)
 				.addressCountry(countriesDAO.getCountryById(1))
 				.addressLocation("sdfsdf")
-				.addressPostcode("fdsdf")
 				.email("errwe.fsd")
 				.firstname("sdsdf")
 				.jobEmployer("sdfsdf")
 				.jobTitle("fsdsd")
 				.lastname("fsdsdf")
-				.phoneNumbers(
-						new TelephoneBuilder().telephoneNumber("3223")
-								.telephoneType(PhoneType.HOME).toTelephone())
-				.relationship("ERWERWER").toReferee();
+				.phoneNumber("hallihallo")
+				.toReferee();
 		save(application, referee);
 		flushAndClearSession();
 
@@ -75,7 +65,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveReferee() throws ParseException {
 		Referee referee = new RefereeBuilder().email("email").firstname("name")
-				.lastname("last").relationship("rel").addressLocation("UK")
+				.lastname("last").addressLocation("UK").phoneNumber("hallihallo")
 				.toReferee();
 		flushAndClearSession();
 
@@ -87,7 +77,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldGetRefereeById() {
 		Referee referee = new RefereeBuilder().email("email").firstname("name")
-				.lastname("last").relationship("rel").addressLocation("UK")
+				.lastname("last").addressLocation("UK")	.phoneNumber("hallihallo")
 				.toReferee();
 
 		sessionFactory.getCurrentSession().save(referee);
@@ -101,7 +91,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldGetProgramByActivationCode() {
 		Referee referee = new RefereeBuilder().activationCode("abcde").email("email").firstname("name")
-				.lastname("last").relationship("rel").addressLocation("UK")
+				.lastname("last").addressLocation("UK").phoneNumber("hallihallo")
 				.toReferee();
 
 		sessionFactory.getCurrentSession().save(referee);

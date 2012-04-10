@@ -51,23 +51,22 @@ public class RefereeService {
 	public Referee getRefereeById(Integer id) {
 		return refereeDAO.getRefereeById(id);
 	}
-	
+
 	@Transactional
 	public void save(Referee referee) {
 		refereeDAO.save(referee);
 	}
-	
+
 	@Transactional
 	public Referee getRefereeByActivationCode(String activationCode) {
 		return refereeDAO.getRefereeByActivationCode(activationCode);
 	}
-	
-	@Transactional
+
 	public void saveReferenceAndSendMailNotifications(Referee referee) {
 		save(referee);
 		sendMailToApplicant(referee);
 		sendMailToAdministrators(referee);
-		
+
 	}
 
 	private void sendMailToAdministrators(Referee referee) {
@@ -89,7 +88,7 @@ public class RefereeService {
 				log.warn("error while sending email", e);
 			}
 		}
-		
+
 	}
 
 	private void sendMailToApplicant(Referee referee) {
@@ -110,9 +109,8 @@ public class RefereeService {
 			log.warn("error while sending email", e);
 		}
 
-		
 	}
-	
+
 	private String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
 		StringBuilder adminsMails = new StringBuilder();
 		for (RegisteredUser admin : administrators) {
@@ -134,42 +132,45 @@ public class RefereeService {
 		for (Referee referee : referees) {
 			processRefereeAndGetAsUser(referee);
 		}
-		
+
 	}
-	
+
 	public RegisteredUser processRefereeAndGetAsUser(Referee referee) {
-		 RegisteredUser user = userService.getUserByEmail(referee.getEmail());
-		 Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
-		 if(user!=null && !user.isInRole(Authority.REFEREE)) {
-			 user.getRoles().add(refereeRole);
-			 referee.setUser(user);
-			 refereeDAO.save(referee);
-		 }
-		 if(user==null){
-			 user = createAndSaveNewUserWithRefereeRole(referee, refereeRole);
-			 referee.setUser(user);
-			 refereeDAO.save(referee);
-		 }
+		RegisteredUser user = userService.getUserByEmail(referee.getEmail());
+		Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
+		if (user != null && !user.isInRole(Authority.REFEREE)) {
+			user.getRoles().add(refereeRole);
+			referee.setUser(user);
+			refereeDAO.save(referee);
+		}
+		if (user == null) {
+			user = createAndSaveNewUserWithRefereeRole(referee, refereeRole);
+			referee.setUser(user);
+			refereeDAO.save(referee);
+		}
 		return user;
 	}
 
-	private RegisteredUser createAndSaveNewUserWithRefereeRole(Referee referee,
-			Role refereeRole) {
-			RegisteredUser user;
-			user = newRegisteredUser();
-			user.setEmail(referee.getEmail());
-			user.setFirstName(referee.getFirstname());
-			user.setLastName(referee.getLastname());
-			user.setUsername(referee.getEmail());
-			user.getRoles().add(refereeRole);
-			userService.save(user);
+	private RegisteredUser createAndSaveNewUserWithRefereeRole(Referee referee, Role refereeRole) {
+		RegisteredUser user;
+		user = newRegisteredUser();
+		user.setEmail(referee.getEmail());
+		user.setFirstName(referee.getFirstname());
+		user.setLastName(referee.getLastname());
+		user.setUsername(referee.getEmail());
+		user.getRoles().add(refereeRole);
+		userService.save(user);
 		return user;
 	}
-	
-	RegisteredUser newRegisteredUser(){
+
+	RegisteredUser newRegisteredUser() {
 		return new RegisteredUser();
 	}
 
-	
+	@Transactional
+	public void delete(Referee referee) {
+		refereeDAO.delete(referee);
+		
+	}
 
 }

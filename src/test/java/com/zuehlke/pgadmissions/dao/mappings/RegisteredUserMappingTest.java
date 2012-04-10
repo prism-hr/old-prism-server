@@ -10,33 +10,23 @@ import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
-import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
@@ -76,7 +66,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldLoadRegisteredUserWithReferee() throws ParseException {
 		
-		Referee referee = new RefereeBuilder().relationship("tutor").id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").phoneNumber("hallihallo").toReferee();
 		
 
 		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
@@ -105,7 +95,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
 		sessionFactory.getCurrentSession().save(admin1);
 
-		Referee referee = new RefereeBuilder().relationship("tutor").firstname("ref").lastname("erre").email("ref@test.com").user(admin1).toReferee();
+		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("ref@test.com").user(admin1).phoneNumber("hallihallo").toReferee();
 		save(referee);
 		assertNotNull(admin1.getId());
 		Integer id = admin1.getId();

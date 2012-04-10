@@ -83,20 +83,6 @@ public class ApplicationsService {
 
 	}
 
-	@Transactional
-	public Referee getRefereeById(Integer id) {
-		return applicationFormDAO.getRefereeById(id);
-	}
-
-	public List<Qualification> getQualificationsByApplication(ApplicationForm applicationForm) {
-		return applicationFormDAO.getQualificationsByApplication(applicationForm);
-	}
-
-	public com.zuehlke.pgadmissions.domain.Funding getFundingById(Integer fundingId) {
-		return applicationFormDAO.getFundingById(fundingId);
-	}
-
-
 	public com.zuehlke.pgadmissions.domain.Address getAddressById(Integer addressId) {
 		return applicationFormDAO.getAdddressById(addressId);
 	}
@@ -107,11 +93,6 @@ public class ApplicationsService {
 		addressDAO.delete(address);
 	}
 	
-	@Transactional
-	public void deleteReferee(Referee referee) {
-		refereeDAO.delete(referee);		
-	}
-
 	@Transactional
 	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Project project) {
 

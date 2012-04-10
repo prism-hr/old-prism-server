@@ -259,8 +259,8 @@ public class UpdateApplicationFormControllerTest {
 		refereeValidator = EasyMock.createMock(RefereeValidator.class);
 
 		referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(1).toApplicationForm()).email("email@test.com").firstname("bob")
-				.lastname("smith").addressCountry(null).addressLocation("london").addressPostcode("postcode").jobEmployer("zuhlke").jobTitle("se")
-				.messenger("skypeAddress").phoneNumbers(new Telephone()).relationship("friend").toReferee();
+				.lastname("smith").addressCountry(null).addressLocation("london").jobEmployer("zuhlke").jobTitle("se")
+				.messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
 
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
 

@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.QualificationService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 
 public class DeleteApplicationFormEntitiesControllerTest {
 
@@ -27,6 +28,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	private QualificationService qualificationServiceMock;
 	private EmploymentPositionService employmentServiceMock;
 	private FundingService fundingServiceMock;
+	private RefereeService refereeServiceMock;
 	@Test
 	public void shoulGetAddressFromServiceAndDelete(){
 		Address address = new Address();
@@ -83,11 +85,12 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		Referee referee = new Referee();
 		referee.setApplication(applicationForm);
 		referee.setId(1);
-		EasyMock.expect(serviceMock.getRefereeById(1)).andReturn(referee);
-		serviceMock.deleteReferee(referee);
-		EasyMock.replay(serviceMock);
-		controller.deleteReferee(1);
-		EasyMock.verify(serviceMock);
+		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
+		refereeServiceMock.delete(referee);
+		EasyMock.replay(refereeServiceMock);
+		String viewName = controller.deleteReferee(1);
+		EasyMock.verify(refereeServiceMock);
+		assertEquals("redirect:/update/getReferee?applicationId=2&message=deleted",viewName);
 	}
 	@Before
 	public void setup(){
@@ -96,6 +99,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		qualificationServiceMock = EasyMock.createMock(QualificationService.class);
 		employmentServiceMock = EasyMock.createMock(EmploymentPositionService.class);
 		fundingServiceMock = EasyMock.createMock(FundingService.class);
-		controller = new DeleteApplicationFormEntitiesController(serviceMock, qualificationServiceMock, employmentServiceMock, fundingServiceMock);
+		refereeServiceMock = EasyMock.createMock(RefereeService.class);
+		controller = new DeleteApplicationFormEntitiesController(serviceMock, qualificationServiceMock, employmentServiceMock, fundingServiceMock, refereeServiceMock);
 	}
 }

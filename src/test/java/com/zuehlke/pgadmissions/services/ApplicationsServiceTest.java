@@ -46,9 +46,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
-
-
-public class ApplicationsServiceTest{
+public class ApplicationsServiceTest {
 
 	private RegisteredUser user;
 	private ApplicationFormDAO applicationFormDAOMock;
@@ -58,9 +56,9 @@ public class ApplicationsServiceTest{
 	private FundingDAO fundingDAOMock;
 	private EmploymentPositionDAO employmentDAOMock;
 	private RefereeDAO refereeDAOMock;
-	
+
 	@Test
-	public void shouldgetListOfApplicationsForApplicant(){
+	public void shouldgetListOfApplicationsForApplicant() {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicant(user)).andReturn(Arrays.asList(form));
 		EasyMock.replay(applicationFormDAOMock);
@@ -68,33 +66,26 @@ public class ApplicationsServiceTest{
 		Assert.assertTrue(visibleApplications.contains(form));
 		Assert.assertEquals(1, visibleApplications.size());
 	}
-	
+
 	@Test
-	public void shouldGetListOfQualificationsForApplication() throws ParseException{
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(4).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
-		Qualification qual = new QualificationBuilder().id(3).application(applicationForm).awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("").languageOfStudy(null).level(QualificationLevel.COLLEGE).subject("").startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").toQualification();
-		EasyMock.expect(applicationFormDAOMock.getQualificationsByApplication(applicationForm)).andReturn(Arrays.asList(qual));
-		EasyMock.replay(applicationFormDAOMock);
-		List<Qualification> qualifications = applicationsService.getQualificationsByApplication(applicationForm);
-		Assert.assertEquals(qual, qualifications.get(0));
-	}
-	
-	@Test
-	public void shouldGetListOfApplicationsForAssignedReviewer(){
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+	public void shouldGetListOfApplicationsForAssignedReviewer() {
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole())
+				.toUser();
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		reviewers.add(reviewer);
-		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).reviewers(reviewers).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).reviewers(reviewers).submissionStatus(SubmissionStatus.SUBMITTED)
+				.toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(reviewer);
 		Assert.assertEquals(1, visibleApplications.size());
 		Assert.assertTrue(visibleApplications.contains(underReviewForm));
 	}
-	
+
 	@Test
-	public void shouldNotGetListOfApplicationsForUnAssignedReviewer(){
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+	public void shouldNotGetListOfApplicationsForUnAssignedReviewer() {
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole())
+				.toUser();
 		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);
@@ -102,34 +93,40 @@ public class ApplicationsServiceTest{
 		Assert.assertEquals(0, visibleApplications.size());
 		Assert.assertFalse(visibleApplications.contains(underReviewForm));
 	}
-	
+
 	@Test
-	public void shouldNotGetListOfApplicationsForUnAssignedAdministrator(){
-		RegisteredUser administrator = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).project(new ProjectBuilder().program(new ProgramBuilder().toProgram()).toProject()).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+	public void shouldNotGetListOfApplicationsForUnAssignedAdministrator() {
+		RegisteredUser administrator = new RegisteredUserBuilder().id(2).username("tom")
+				.roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1)
+				.project(new ProjectBuilder().program(new ProgramBuilder().toProgram()).toProject()).submissionStatus(SubmissionStatus.SUBMITTED)
+				.toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(administrator);
 		Assert.assertEquals(0, visibleApplications.size());
 		Assert.assertFalse(visibleApplications.contains(underReviewForm));
 	}
-	
+
 	@Test
-	public void shouldGetListOfApplicationsForAssignedAdministrator(){
-		RegisteredUser administrator = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+	public void shouldGetListOfApplicationsForAssignedAdministrator() {
+		RegisteredUser administrator = new RegisteredUserBuilder().id(2).username("tom")
+				.roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		ProgramBuilder programBuilder = new ProgramBuilder();
 		programBuilder.administrators(administrator);
-		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).project(new ProjectBuilder().program(programBuilder.toProgram()).toProject()).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).project(new ProjectBuilder().program(programBuilder.toProgram()).toProject())
+				.submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(administrator);
 		Assert.assertEquals(1, visibleApplications.size());
 		Assert.assertTrue(visibleApplications.contains(underReviewForm));
 	}
-	
+
 	@Test
-	public void shouldGetListOfApplicationsForSuperAdministrator(){
-		RegisteredUser superAdministrator = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
+	public void shouldGetListOfApplicationsForSuperAdministrator() {
+		RegisteredUser superAdministrator = new RegisteredUserBuilder().id(2).username("tom")
+				.roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
 		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);
@@ -137,42 +134,30 @@ public class ApplicationsServiceTest{
 		Assert.assertEquals(1, visibleApplications.size());
 		Assert.assertTrue(visibleApplications.contains(underReviewForm));
 	}
-	
+
 	@Test
-	public void shouldGetMostRecentApplicationFirst() throws InterruptedException{
+	public void shouldGetMostRecentApplicationFirst() throws InterruptedException {
 		ApplicationForm app1 = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).appDate(new Date()).toApplicationForm();
 		Thread.sleep(1000);
 		ApplicationForm app2 = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED).appDate(new Date()).toApplicationForm();
-		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicant(user)).andReturn(Arrays.asList(app1,app2));
+		EasyMock.expect(applicationFormDAOMock.getApplicationsByApplicant(user)).andReturn(Arrays.asList(app1, app2));
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(user);
 		Assert.assertEquals(2, visibleApplications.size());
 		Assert.assertEquals(app2, visibleApplications.get(0));
 		Assert.assertEquals(app1, visibleApplications.get(1));
 	}
-	
+
 	@Test
-	public void shouldDelegateDeleteAddressToDAO(){
+	public void shouldDelegateDeleteAddressToDAO() {
 		Address address = new AddressBuilder().id(1).toAddress();
 		addressDAOMock.delete(address);
 		EasyMock.replay(addressDAOMock);
 		applicationsService.deleteAddress(address);
 		EasyMock.verify(addressDAOMock);
 	}
-	
 
-	
 	@Test
-	public void shouldDelegateDeleteRefereeToDAO(){
-		Referee referee = new Referee();
-		referee.setId(1);
-		refereeDAOMock.delete(referee);
-		EasyMock.replay(refereeDAOMock);
-		applicationsService.deleteReferee(referee);
-		EasyMock.verify(refereeDAOMock);
-	}
-	
-	@Test 
 	public void shouldDelegateApplicationSaveToDAO() {
 		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
 		applicationFormDAOMock.save(application);
@@ -180,55 +165,35 @@ public class ApplicationsServiceTest{
 		applicationsService.save(application);
 		EasyMock.verify(applicationFormDAOMock);
 	}
-	
+
 	@Test
 	public void shouldGetApplicationById() {
 		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
 		EasyMock.expect(applicationFormDAOMock.get(234)).andReturn(application);
-		
+
 		EasyMock.replay(application, applicationFormDAOMock);
 		Assert.assertEquals(application, applicationsService.getApplicationById(234));
 	}
-	
-	
-	
-	@Test 
-	public void shouldGetRefereeById() {
-		Referee referee = EasyMock.createMock(Referee.class);
-		EasyMock.expect(applicationFormDAOMock.getRefereeById(23)).andReturn(referee);
-		
-		EasyMock.replay(referee, applicationFormDAOMock);
-		Assert.assertEquals(referee, applicationsService.getRefereeById(23));
-	}
-	
-	@Test
-	public void shouldGetFundingById() {
-		Funding funding = EasyMock.createMock(Funding.class);
-		EasyMock.expect(applicationFormDAOMock.getFundingById(23)).andReturn(funding);
-		
-		EasyMock.replay(funding, applicationFormDAOMock);
-		Assert.assertEquals(funding, applicationsService.getFundingById(23));
-	}
-	
+
 	@Test
 	public void shouldGetAddressById() {
 		Address address = EasyMock.createMock(Address.class);
 		EasyMock.expect(applicationFormDAOMock.getAdddressById(23)).andReturn(address);
-		
+
 		EasyMock.replay(address, applicationFormDAOMock);
 		Assert.assertEquals(address, applicationsService.getAddressById(23));
 	}
-	
-	
+
 	@Test
-	public void shouldCreateAndSaveNewApplicationForm(){
+	public void shouldCreateAndSaveNewApplicationForm() {
 		Project project = new ProjectBuilder().id(1).toProject();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
 		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock, qualificationDAOMock, fundingDAOMock, employmentDAOMock, refereeDAOMock){
-			
+		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock, qualificationDAOMock, fundingDAOMock, employmentDAOMock,
+				refereeDAOMock) {
+
 			@Override
-			ApplicationForm newApplicationForm(){
+			ApplicationForm newApplicationForm() {
 				return newApplicationForm;
 			}
 		};
@@ -239,29 +204,28 @@ public class ApplicationsServiceTest{
 		assertSame(newApplicationForm, returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
 		assertEquals(project, returnedForm.getProject());
-		
+
 	}
-	
-	
+
 	@Before
-	public void setUp(){
+	public void setUp() {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		authenticationToken.setDetails(user);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
-		
+
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		addressDAOMock = EasyMock.createMock(AddressDAO.class);
 		qualificationDAOMock = EasyMock.createMock(QualificationDAO.class);
 		fundingDAOMock = EasyMock.createMock(FundingDAO.class);
 		employmentDAOMock = EasyMock.createMock(EmploymentPositionDAO.class);
 		refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
-		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock, qualificationDAOMock, fundingDAOMock, employmentDAOMock, refereeDAOMock);
+		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock, qualificationDAOMock, fundingDAOMock, employmentDAOMock,
+				refereeDAOMock);
 	}
 
-	
 	@After
 	public void tearDown() {
 		SecurityContextHolder.clearContext();

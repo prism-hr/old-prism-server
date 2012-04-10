@@ -135,12 +135,12 @@ public class PdfDocumentBuilder {
 
 			PdfPTable table = new PdfPTable(5);
 			table.setWidthPercentage(100.0f);
-			
+
 			PdfPCell c1 = new PdfPCell(new Phrase("Supervisor First Name", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
-			
+
 			c1 = new PdfPCell(new Phrase("Supervisor Last Name", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			c1.setBackgroundColor(grayColor);
@@ -203,9 +203,9 @@ public class PdfDocumentBuilder {
 
 		document.add(new Paragraph("Language", smallBoldFont));
 		if (application.getPersonalDetails().isEnglishCandidatesFirstLanguage()) {
-			document.add(new Paragraph("Is English your first language? Yes"));
+			document.add(new Paragraph("Is English your first language? Yes."));
 		} else {
-			document.add(new Paragraph("Is English your first language? No"));
+			document.add(new Paragraph("Is English your first language? No."));
 		}
 		document.add(new Paragraph("Residence", smallBoldFont));
 
@@ -214,11 +214,11 @@ public class PdfDocumentBuilder {
 		} else {
 			document.add(new Paragraph("Country: " + application.getPersonalDetails().getResidenceCountry().getName()));
 		}
-		
+
 		if (application.getPersonalDetails().isVisaRequired()) {
-			document.add(new Paragraph("Do you required visa to study in the UK? Yes"));
+			document.add(new Paragraph("Do you required visa to study in the UK? Yes."));
 		} else {
-			document.add(new Paragraph("Do you required visa to study in the UK? No"));
+			document.add(new Paragraph("Do you required visa to study in the UK? No."));
 		}
 
 		document.add(new Paragraph("Contact Details", smallBoldFont));
@@ -226,7 +226,7 @@ public class PdfDocumentBuilder {
 
 		addTelephones(application, document, application.getPersonalDetails().getPhoneNumbers());
 
-		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getMessenger(), "Skype");
+		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getMessenger(), "Skype Name");
 	}
 
 	private void addTelephones(ApplicationForm application, Document document, List<Telephone> phoneNumbers) throws DocumentException {
@@ -327,10 +327,10 @@ public class PdfDocumentBuilder {
 				if (qualification.getQualificationAwardDate() != null) {
 					document.add(new Paragraph("Award Date: " + qualification.getQualificationAwardDate().toString()));
 				}
-				
+
 				if (qualification.getProofOfAward() != null) {
 					document.newPage();
-					document.add(new Paragraph("Proof of award(PDF)", boldFont));			
+					document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));			
 					readPdf(document, qualification.getProofOfAward());
 				}
 
@@ -346,17 +346,24 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph(createMessage("employment information")));
 		} else {
 			for (EmploymentPosition employment : application.getEmploymentPositions()) {
-				document.add(new Paragraph("Employer: " + employment.getEmployerName()));
+				document.add(new Paragraph("Country: " + employment.getEmployerCountry().getName()));
+				document.add(new Paragraph("Employer Name: " + employment.getEmployerName()));
+				document.add(new Paragraph("Employer Address: " + employment.getEmployerAddress()));
 				document.add(new Paragraph("Position: " + employment.getPosition()));
-				document.add(new Paragraph("Remit: " + employment.getRemit()));
+				document.add(new Paragraph("Description: " + employment.getRemit()));
+				document.add(new Paragraph("Language of Work: " + employment.getLanguage().getName()));
 				document.add(new Paragraph("Start Date: " + employment.getStartDate().toString()));
+				if (employment.isCurrent()) {
+					document.add(new Paragraph("Is this your current position? Yes."));
+				} else {
+					document.add(new Paragraph("Is this your current position? No."));
+				}
 				if (employment.getEndDate() == null) {
 					document.add(new Paragraph(createMessage("end date")));
 				} else {
 					document.add(new Paragraph("End Date: " + employment.getEndDate().toString()));
 				}
 
-				document.add(new Paragraph("Language of Work: " + employment.getLanguage().getName()));
 
 				document.add(new Paragraph(" "));
 			}
@@ -364,7 +371,7 @@ public class PdfDocumentBuilder {
 
 	}
 
-	private void addFundingSection(ApplicationForm application, Document document) throws DocumentException {
+	private void addFundingSection(ApplicationForm application, Document document) throws DocumentException, IOException {
 		document.add(new Paragraph("Funding                                                                                                ", grayFont));
 
 		if (application.getFundings().isEmpty()) {
@@ -372,10 +379,14 @@ public class PdfDocumentBuilder {
 		} else {
 
 			for (Funding funding : application.getFundings()) {
-				document.add(new Paragraph("Type: " + funding.getType().getDisplayValue()));
+				document.add(new Paragraph("Funding Type: " + funding.getType().getDisplayValue()));
 				document.add(new Paragraph("Description:" + funding.getDescription()));
-				document.add(new Paragraph("Value: " + funding.getValue()));
+				document.add(new Paragraph("Value of Award: " + funding.getValue()));
 				document.add(new Paragraph("Award Date: " + funding.getAwardDate().toString()));
+				
+				document.newPage();
+				document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));			
+				readPdf(document, funding.getDocument());
 
 				document.add(new Paragraph(" "));
 			}
@@ -396,12 +407,10 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("Last Name: " + reference.getLastname()));
 
 
-				document.add(new Paragraph("Position", smallBoldFont));
 				addCorrectOutputDependingOnNull(document, reference.getJobEmployer(), "Employer");
-				addCorrectOutputDependingOnNull(document, reference.getJobTitle(), "Title");
+				addCorrectOutputDependingOnNull(document, reference.getJobTitle(), "Position");
 
-				document.add(new Paragraph("Address", smallBoldFont));
-				addCorrectOutputDependingOnNull(document, reference.getAddressLocation(), "Location");
+				addCorrectOutputDependingOnNull(document, reference.getAddressLocation(), "Address");
 
 				if (reference.getAddressCountry() != null) {
 					document.add(new Paragraph("Country: " + reference.getAddressCountry().getName()));
@@ -409,10 +418,9 @@ public class PdfDocumentBuilder {
 					document.add(new Paragraph(createMessage("country")));
 				}
 
-				document.add(new Paragraph("Contact Details", smallBoldFont));
 				document.add(new Paragraph("Email: " + reference.getEmail()));
-				document.add(new Paragraph("Phone: " + reference.getPhoneNumber()));				
-				addCorrectOutputDependingOnNull(document, reference.getMessenger(), "Skype");
+				document.add(new Paragraph("Telephone: " + reference.getPhoneNumber()));				
+				addCorrectOutputDependingOnNull(document, reference.getMessenger(), "Skype Name");
 
 				document.add(new Paragraph(" "));
 			}
@@ -420,7 +428,7 @@ public class PdfDocumentBuilder {
 
 	}
 
-	
+
 
 	private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Additional Information                                                                        ", grayFont));

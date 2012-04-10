@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -214,7 +213,7 @@ public class QualificationControllerTest {
 	}
 
 	@Before
-	public void setUp() throws ParseException {
+	public void setUp() {
 		languageServiceMock = EasyMock.createMock(LanguageService.class);
 		languagePropertyEditorMock = EasyMock.createMock(LanguagePropertyEditor.class);
 

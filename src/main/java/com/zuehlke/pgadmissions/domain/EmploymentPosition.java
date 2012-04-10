@@ -14,10 +14,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Type;
-
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
-
 @Entity(name="APPLICATION_FORM_EMPLOYMENT_POSITION")
 @Access(AccessType.FIELD) 
 public class EmploymentPosition extends DomainObject<Integer>{

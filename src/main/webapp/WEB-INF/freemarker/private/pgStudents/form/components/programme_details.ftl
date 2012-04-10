@@ -23,7 +23,7 @@
                 </div>                          
                 </#if>
                 <div class="row">
-                	<label class="label">Programme</label>
+                	<label class="plain-label">Programme</label>
                     <span class="hint" data-desc="<@spring.message 'programmeDetails.programme'/>"></span>
                     <div class="field">
                     	<input class="full" id="programmeName" name="programmeName" type="text" value="${model.applicationForm.project.program.title?html}" disabled="disabled" />
@@ -32,7 +32,7 @@
                   
 				<!-- Study option -->
                 <div class="row">
-                    <label class="label">Study Option<em>*</em></label>
+                    <label class="plain-label">Study Option<em>*</em></label>
                    <span class="hint" data-desc="<@spring.message 'programmeDetails.studyOption'/>"></span>
                     <div class="field">
                 		<select class="full" id="studyOption" name="studyOption" 
@@ -56,7 +56,7 @@
 
 				<!-- Project -->
 				<div class="row">
-                    <label class="label">Project</label>
+                    <label class="plain-label">Project</label>
                    <span class="hint" data-desc="<@spring.message 'programmeDetails.project'/>"></span>
                     <div class="field">
                 		<input class="full" id="projectName" name="projectName" type="text" value="${model.applicationForm.project.title?html}" disabled="disabled"/>
@@ -73,7 +73,7 @@
 			-->
             <div>
             	
-            	<label class="label">Supervision</label>
+            	<label class="plain-label">Supervision</label>
                  <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.supervisor'/>"></span>
                  
                  <div id="supervisor_div">
@@ -119,7 +119,7 @@
                 <input type="hidden" id="supervisorId" name="supervisorId"/>
                 
                 <div class="row">
-                <label class="label">Supervisor First Name<em>*</em></label>
+                <label class="plain-label">Supervisor First Name<em>*</em></label>
                  <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.firstname'/>"></span>
                     <div class="field">
                         <input class="full" type="text" placeholder="First Name" id="supervisorFirstname" name="supervisorFirstname"/>
@@ -127,7 +127,7 @@
                 </div>
                 
                 <div class="row">
-                    <label class="label">Supervisor Last Name<em>*</em></label>
+                    <label class="plain-label">Supervisor Last Name<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.lastname'/>"></span>
                     <div class="field"> 
                         <input class="full" type="text" placeholder="Last Name" id="supervisorLastname" name="supervisorLastname"/>
@@ -135,7 +135,7 @@
                 </div>
                 
                 <div class="row">
-                    <label class="label">Supervisor Email<em>*</em></label>
+                    <label class="plain-label">Supervisor Email<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.email'/>"></span>
                     <div class="field">
                         <input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
@@ -143,14 +143,14 @@
                 </div>
                 
                 <div class="row">
-                       <label class="label">Primary</label>
+                       <label class="plain-label">Primary</label>
                        <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.primarySupervisor'/>"></span>
                        <input type="checkbox" name="primarySupervisorCB" id="primarySupervisorCB"/>
                        <input type="hidden" name="primarySupervisor" id="primarySupervisor"/>
                 </div>
                 
                 <div class="row">
-                    <label class="label">Is supervisor aware of your application?</label>
+                    <label class="plain-label">Is supervisor aware of your application?</label>
                     <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.awareOfApplication'/>"></span>
                     <input type="checkbox" name="awareSupervisorCB" id="awareSupervisorCB"/>
                     <input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
@@ -163,7 +163,7 @@
             <div>
             	<!-- Start date -->
                 <div class="row">
-                	<label class="label">Start Date<em>*</em></label>
+                	<label class="plain-label">Start Date<em>*</em></label>
                    <span class="hint" data-desc="<@spring.message 'programmeDetails.startDate'/>"></span>
                     <input class="full date" type="text" id="startDate" name="startDate" value="${(model.applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}"
                     <#if model.applicationForm.isSubmitted()>
@@ -177,7 +177,7 @@
 
                 <!-- Referrer -->
                 <div class="row">
-                	<label class="label">Referrer<em>*</em></label>
+                	<label class="plain-label">Referrer<em>*</em></label>
                     <span class="hint" data-desc="<@spring.message 'programmeDetails.howDidYouFindUs'/>"></span>
                     <div class="field">
                     	<select class="full" id="referrer" name="referrer"

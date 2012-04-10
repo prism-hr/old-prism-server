@@ -232,6 +232,25 @@ public class RefereeServiceTest {
 		Assert.assertEquals(referee, refereeService.getRefereeById(23));
 	}
 	
+	@Test			
+	public void shouldDelegateDeleteToDAO(){
+		Referee referee = new RefereeBuilder().id(2).toReferee();
+		refereeDAOMock.delete(referee);
+		EasyMock.replay(refereeDAOMock);
+		refereeService.delete(referee);
+		EasyMock.verify(refereeDAOMock);
+	}
+	
+	@Test			
+	public void shouldDelegateSaveToDAO(){
+		Referee referee = new RefereeBuilder().id(2).toReferee();
+		refereeDAOMock.save(referee);
+		EasyMock.replay(refereeDAOMock);
+		refereeService.save(referee);
+		EasyMock.verify(refereeDAOMock);
+	}
+
+	
 	
 	
 }

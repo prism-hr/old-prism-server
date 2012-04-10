@@ -316,7 +316,7 @@ public class PdfDocumentBuilder {
 
 			for (Qualification qualification : application.getQualifications()) {
 				document.add(new Paragraph("Institution: " + qualification.getQualificationInstitution()));
-				document.add(new Paragraph("Institution Country: " + qualification.getInstitutionCountry()));
+				document.add(new Paragraph("Institution Country: " + qualification.getInstitutionCountry().getName()));
 				document.add(new Paragraph("Title / subject: " + qualification.getQualificationSubject()));
 				document.add(new Paragraph("Start Date: " + qualification.getQualificationStartDate().toString()));
 				document.add(new Paragraph("Has been awarded? " + qualification.getCompleted().displayValue()));

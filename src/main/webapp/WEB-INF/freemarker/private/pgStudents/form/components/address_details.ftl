@@ -68,7 +68,7 @@
                        <div class="field">
                             <span class="label">Is this the same as your current address?</span>
                             <input type="checkbox" name="sameAddressCB" id="sameAddressCB"
-                            <#if model.address.sameAddress??>
+                            <#if model.address.sameAddress?? && model.address.sameAddress == 'YES'>
                                             checked="checked"
                                         </#if> 
                             <#if model.applicationForm.isSubmitted()>
@@ -85,7 +85,7 @@
                         <div class="field">
                            <#if !model.applicationForm.isSubmitted()>
                             <textarea id="contactAddressLocation" class="max" rows="6" cols="80" 
-                            <#if model.address.sameAddress??>
+                            <#if model.address.sameAddress?? && model.address.sameAddress == 'YES'>
                                           disabled="disabled"
                                 </#if>
                             >${(model.address.contactAddressLocation?html)!}</textarea>
@@ -108,7 +108,7 @@
                         <div class="field">
                             
                             <select class="full" name="contactAddressCountry" id="contactAddressCountry"
-                            <#if model.applicationForm.isSubmitted() || model.address.sameAddress??>
+                            <#if model.applicationForm.isSubmitted() || (model.address.sameAddress?? && model.address.sameAddress == 'YES')>
                                             disabled="disabled"
                             </#if>>
                             <option value="">Select...</option>

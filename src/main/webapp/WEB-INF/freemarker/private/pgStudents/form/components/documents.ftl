@@ -10,7 +10,7 @@
 	   
 	  <div>
 			<div class="row">
-        		<span class="label">Personal Statement (PDF)<em>*</em></span>
+        		<span class="plain-label">Personal Statement (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.personalStatement'/>"></span>	 
         		<div class="field" id="psUploadFields">        	
           			<input id="psDocument" class="full" type="file" name="file" value="" />					
@@ -24,7 +24,7 @@
       		</div>
       		
       		 <div class="row">
-        		<span class="label">CV / resume (PDF)</span>
+        		<span class="plain-label">CV / resume (PDF)</span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.cv'/>"></span>
         		<div class="field" id="cvUploadFields">        	
           			<input id="cvDocument" class="full" type="file" name="file" value="" />					
@@ -38,7 +38,7 @@
       		</div>
 			
 			<div class="row">
-                <span class="label">Max file size is 10Mb.</span>
+                <span class="plain-label">Max file size is 10Mb.</span>
               
 			</div>
 		</div>

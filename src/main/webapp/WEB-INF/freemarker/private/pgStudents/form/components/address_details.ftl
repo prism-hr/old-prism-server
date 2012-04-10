@@ -23,7 +23,7 @@
                   
                   	<!-- Address body -->
                   	<div class="row">
-                    	<span class="label">Current Address<em>*</em></span>
+                    	<span class="plain-label">Current Address<em>*</em></span>
                     	<span class="hint"></span>
                     	<div class="field">
                     	   <#if !model.applicationForm.isSubmitted()>
@@ -40,7 +40,7 @@
 
                   	<!-- Country -->
                   	<div class="row">
-                    	<span class="label">Country<em>*</em></span>
+                    	<span class="plain-label">Country<em>*</em></span>
 	                    <div class="field">
 	                      	
 	                      	<select class="full" name="currentAddressCountry" id="currentAddressCountry"
@@ -62,7 +62,7 @@
 					
 					<!-- Address body -->
                     <div class="row">
-                        <span class="label">Contact Address<em>*</em></span>
+                        <span class="plain-label">Contact Address<em>*</em></span>
                         <span class="hint"></span>
                        
                        <div class="field">
@@ -104,7 +104,7 @@
                     </div>
                                         <!-- Country -->
                     <div class="row">
-                        <span class="label">Country<em>*</em></span>
+                        <span class="plain-label">Country<em>*</em></span>
                         <div class="field">
                             
                             <select class="full" name="contactAddressCountry" id="contactAddressCountry"
@@ -128,8 +128,7 @@
                  <#if !model.applicationForm.isSubmitted()>
                		<a class="button" type="button" id="addressCancelButton" name="addressCancelButton">Cancel</a>
                		<button class="blue" type="button" id="addressCloseButton" name="addressCloseButton">Close</button>
-                  	<button class="blue" type="button" id="addressSaveAndCloseButton" name="addressSaveAndCloseButton">Save and Close</button>
-                  	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save and Add</button>
+                  	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save</button>
                 <#else>
                     <a id="addressCloseButton" class="button blue">Close</a>  	
                 </#if>  	

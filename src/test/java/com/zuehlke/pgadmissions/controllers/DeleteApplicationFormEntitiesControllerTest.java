@@ -13,8 +13,10 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
+import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 
 public class DeleteApplicationFormEntitiesControllerTest {
@@ -24,6 +26,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	private ApplicationForm applicationForm;
 	private QualificationService qualificationServiceMock;
 	private EmploymentPositionService employmentServiceMock;
+	private FundingService fundingServiceMock;
 	@Test
 	public void shoulGetAddressFromServiceAndDelete(){
 		Address address = new Address();
@@ -47,20 +50,19 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		EasyMock.replay(qualificationServiceMock);
 		String viewName = controller.deleteQualification(1);		
 		EasyMock.verify(qualificationServiceMock);
-		assertEquals("redirect:/update/getQualification?applicationId=2",viewName);
+		assertEquals("redirect:/update/getQualification?applicationId=2&message=deleted",viewName);
 	}
 
-	
 	@Test
 	public void shoulGetFundingFromServiceAndDelete(){
-		Funding funding = new Funding();
-		funding.setApplication(applicationForm);
-		funding.setId(1);
-		EasyMock.expect(serviceMock.getFundingById(1)).andReturn(funding);
-		serviceMock.deleteFunding(funding);
-		EasyMock.replay(serviceMock);
-		controller.deleteFunding(1);
-		EasyMock.verify(serviceMock);
+		Funding funding = new FundingBuilder().id(1).application(applicationForm).toFunding();
+		
+		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(funding);
+		fundingServiceMock.delete(funding);
+		EasyMock.replay(fundingServiceMock);
+		String viewName = controller.deleteFunding(1);
+		EasyMock.verify(fundingServiceMock);
+		assertEquals("redirect:/update/getFunding?applicationId=2&message=deleted",viewName);
 	}
 	
 	@Test
@@ -73,7 +75,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		EasyMock.replay(employmentServiceMock);
 		String viewName = controller.deleteEmployment(1);
 		EasyMock.verify(employmentServiceMock);
-		assertEquals("redirect:/update/getEmploymentPosition?applicationId=2",viewName);
+		assertEquals("redirect:/update/getEmploymentPosition?applicationId=2&message=deleted",viewName);
 	}
 	
 	@Test
@@ -93,6 +95,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 		serviceMock = EasyMock.createMock(ApplicationsService.class);
 		qualificationServiceMock = EasyMock.createMock(QualificationService.class);
 		employmentServiceMock = EasyMock.createMock(EmploymentPositionService.class);
-		controller = new DeleteApplicationFormEntitiesController(serviceMock, qualificationServiceMock, employmentServiceMock);
+		fundingServiceMock = EasyMock.createMock(FundingService.class);
+		controller = new DeleteApplicationFormEntitiesController(serviceMock, qualificationServiceMock, employmentServiceMock, fundingServiceMock);
 	}
 }

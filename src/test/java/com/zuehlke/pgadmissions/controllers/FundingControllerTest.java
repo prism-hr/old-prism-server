@@ -1,11 +1,11 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Date;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
-import junit.framework.Assert;
+import java.text.ParseException;
+import java.util.Date;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -14,222 +14,198 @@ import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.DirectFieldBindingResult;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
-import com.zuehlke.pgadmissions.dto.Funding;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.pagemodels.PageModel;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-
+import com.zuehlke.pgadmissions.services.FundingService;
+import com.zuehlke.pgadmissions.validators.FundingValidator;
 
 public class FundingControllerTest {
 
-	private ApplicationsService applicationsServiceMock;
-	private FundingController fundingController;
-	private RegisteredUser student;
+	private RegisteredUser currentUser;
+
 	private DatePropertyEditor datePropertyEditorMock;
+	private ApplicationsService applicationsServiceMock;
+	private FundingValidator fundingValidatorMock;
 
-	@Test
-	public void shouldSaveNewFunding() throws IOException {
-
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
-
-		Funding funding = new Funding();
-		funding.setFundingType(FundingType.SCHOLARSHIP);
-		funding.setFundingDescription("my description");
-		funding.setFundingValue("2000");
-		funding.setFundingAwardDate(new Date());
-		funding.setFundingFile(new MultipartFile() {
-			
-			@Override
-			public void transferTo(File dest) throws IOException, IllegalStateException {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public boolean isEmpty() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public long getSize() {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-			
-			@Override
-			public String getOriginalFilename() {
-				return "test.pdf";
-			}
-			
-			@Override
-			public String getName() {
-				return "test";
-			}
-			
-			@Override
-			public InputStream getInputStream() throws IOException {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public String getContentType() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public byte[] getBytes() throws IOException {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		});
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = fundingController.addFunding(funding, 2, null, mappingResult, new ModelMap());
-		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
-		Assert.assertEquals(FundingType.SCHOLARSHIP, ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
-				.getFundings().get(0).getType());
-		Assert.assertNull(modelAndView.getModel().get("add"));
-	}
-
-	@Test
-	public void shouldAddMessageIdFundingAddParameterProvided() throws IOException {
-
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock);
-
-		Funding funding = new Funding();
-		funding.setFundingType(FundingType.SCHOLARSHIP);
-		funding.setFundingDescription("my description");
-		funding.setFundingValue("2000");
-		funding.setFundingAwardDate(new Date());
-		funding.setFundingFile(new MultipartFile() {
-			
-			@Override
-			public void transferTo(File dest) throws IOException, IllegalStateException {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public boolean isEmpty() {
-				// TODO Auto-generated method stub
-				return false;
-			}
-			
-			@Override
-			public long getSize() {
-				// TODO Auto-generated method stub
-				return 0;
-			}
-			
-			@Override
-			public String getOriginalFilename() {
-				return "test.pdf";
-			}
-			
-			@Override
-			public String getName() {
-				return "test";
-			}
-			
-			@Override
-			public InputStream getInputStream() throws IOException {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public String getContentType() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-			
-			@Override
-			public byte[] getBytes() throws IOException {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		});
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = fundingController.addFunding(funding, 2, "add", mappingResult, new ModelMap());
-		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
-		Assert.assertEquals(FundingType.SCHOLARSHIP, ((PageModel) modelAndView.getModel().get("model")).getApplicationForm()
-				.getFundings().get(0).getType());
-		Assert.assertEquals("add", modelAndView.getModel().get("fundingAdd"));
-	}
-
-	@Test
-	public void shouldNotSaveNewFunding() throws IOException {
-		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock);
-		Funding funding = new Funding();
-		funding.setFundingType(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		ModelAndView modelAndView = fundingController.addFunding(funding, 2, null, mappingResult, new ModelMap());
-		Assert.assertEquals("redirect:/application", modelAndView.getViewName());
-	}
+	private FundingService fundingServiceMock;
+	private FundingController controller;
+	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
+	private UsernamePasswordAuthenticationToken authenticationToken;
+	private DocumentPropertyEditor documentPropertyEditorMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
-	public void shouldNotSaveNewFundingWhenAplicationIsSubmitted() throws IOException {
+	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
+		Funding funding = new FundingBuilder().id(1)
+				.application(new ApplicationFormBuilder().id(5).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm()).toFunding();
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		EasyMock.replay(fundingServiceMock, errors);
+		controller.editFunding(funding, errors);
+		EasyMock.verify(fundingServiceMock);
 
-		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.SUBMITTED)
-				.toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(form);
-		EasyMock.replay(applicationsServiceMock);
-
-		Funding funding = new Funding();
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "funding");
-		fundingController.addFunding(funding, 2,null, mappingResult, new ModelMap());
 	}
-	
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
+		currentUser.getRoles().clear();
+		controller.editFunding(null, null);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
+		currentUser.getRoles().clear();
+		controller.getFundingView();
+	}
+
+	@Test
+	public void shouldReturnFundingView() {
+		assertEquals("/private/pgStudents/form/components/funding_details", controller.getFundingView());
+	}
+
+	@Test
+	public void shouldReturnAllFundingTypes() {
+
+		FundingType[] fundingTypes = controller.getFundingTypes();
+		assertArrayEquals(fundingTypes, FundingType.values());
+	}
+
+	@Test
+	public void shouldReturnApplicationForm() {
+		currentUser = EasyMock.createMock(RegisteredUser.class);
+		authenticationToken.setDetails(currentUser);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.replay(applicationsServiceMock, currentUser);
+		ApplicationForm returnedApplicationForm = controller.getApplicationForm(1);
+		assertEquals(applicationForm, returnedApplicationForm);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(null);
+		EasyMock.replay(applicationsServiceMock);
+		controller.getApplicationForm(1);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
+		currentUser = EasyMock.createMock(RegisteredUser.class);
+		authenticationToken.setDetails(currentUser);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
+		EasyMock.replay(applicationsServiceMock, currentUser);
+		controller.getApplicationForm(1);
+
+	}
+
 	@Test
 	public void shouldBindPropertyEditors() {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+		binderMock.setValidator(fundingValidatorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
+		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
+		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
 		EasyMock.replay(binderMock);
-		fundingController.registerPropertyEditors(binderMock);
+		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
 	}
-	
+
+	@Test
+	public void shouldGetFundingFromServiceIfIdProvided() {
+		Funding funding = new FundingBuilder().id(1).toFunding();
+		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(funding);
+		EasyMock.replay(fundingServiceMock);
+		Funding returnedFunding = controller.getFunding(1);
+		assertEquals(funding, returnedFunding);
+	}
+
+	@Test
+	public void shouldReturnNewFundingIfIdIsNull() {
+		Funding returnedFunding = controller.getFunding(null);
+		assertNull(returnedFunding.getId());
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundExceptionIfFundingDoesNotExist() {
+		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(null);
+		EasyMock.replay(fundingServiceMock);
+		controller.getFunding(1);
+
+	}
+
+	@Test
+	public void shouldReturnMessage() {
+		assertEquals("bob", controller.getMessage("bob"));
+
+	}
+
+	@Test
+	public void shouldSaveQulificationAndRedirectIfNoErrors() {
+		Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toFunding();
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errors.hasErrors()).andReturn(false);
+		fundingServiceMock.save(funding);
+		EasyMock.replay(fundingServiceMock, errors);
+		String view = controller.editFunding(funding, errors);
+		EasyMock.verify(fundingServiceMock);
+		assertEquals("redirect:/update/getFunding?applicationId=5", view);
+	}
+
+	@Test
+	public void shouldNotSaveAndReturnToViewIfErrors() {
+		Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toFunding();
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errors.hasErrors()).andReturn(true);
+
+		EasyMock.replay(fundingServiceMock, errors);
+		String view = controller.editFunding(funding, errors);
+		EasyMock.verify(fundingServiceMock);
+		assertEquals("/private/pgStudents/form/components/funding_details", view);
+	}
+
 	@Before
-	public void setUp(){
-		
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+	public void setUp() throws ParseException {
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-		fundingController = new FundingController(applicationsServiceMock, datePropertyEditorMock);
-		
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark")
-		.lastName("ham").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(student);
+
+		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
+
+		fundingValidatorMock = EasyMock.createMock(FundingValidator.class);
+		fundingServiceMock = EasyMock.createMock(FundingService.class);
+
+		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+
+		controller = new FundingController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, fundingValidatorMock,
+				fundingServiceMock, documentPropertyEditorMock);
+
+		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+
+		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		authenticationToken.setDetails(currentUser);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
-		}
-	
+
+	}
 
 	@After
 	public void tearDown() {

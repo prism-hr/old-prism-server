@@ -1,4 +1,4 @@
-<#if model.applicationForm.fundings?has_content>
+<#if applicationForm.fundings?has_content>
 	<#assign hasFundings = true>
 <#else>
 	<#assign hasFundings = false>
@@ -6,179 +6,177 @@
 
 <#import "/spring.ftl" as spring />
 
-	<h2 id="funding-H2" class="empty">
-		<span class="left"></span><span class="right"></span><span class="status"></span>
-			Funding
-	</h2>
+<h2 id="funding-H2" class="empty">
+	<span class="left"></span><span class="right"></span><span class="status"></span>
+		Funding
+</h2>
 
-	<div>
-	
-		<#if hasFundings>
-			<table class="existing">
-				
-				<colgroup>
-	            	<col style="width: 30px" />
-	                <col style="width: 120px" />
-	                <col style="width: 120px" />
-	                <col />
-	                <col style="width: 120px" />
-	                <col style="width: 30px" />
-	        	</colgroup>
-	            
-	            <thead>
-					<tr>
-	                	<th colspan="2">Funding Type</th>
-	                    <th>Description</th>
-	                    <th>Supporting Documentation</th>
-	                    <th>Award Date</th>
-	                    <th colspan="1">&nbsp;</th>
-					</tr>
-				</thead>
-	                
-				<tbody>
-				
-					<#list model.applicationForm.fundings as funding>		
-						<tr>
-		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id?string('#######')}">-</a></td>
-		                  	<td>${funding.type.displayValue}</td>
-		                  	<td>${funding.description}</td>
-		                  	<td ><a href="<@spring.url '/download'/>?documentId=${funding.document.id?string('#######')}">
-                            <#if funding.document.fileName?length <20 >${funding.document.fileName}<#else>${funding.document.fileName?substring(0,17)}...</#if></a></td>
-		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
-		                  	      <td>
-		                  	      	 <#if !model.applicationForm.isSubmitted()>
-				                  	<form method="Post" action="<@spring.url '/deleteentity/funding'/>" style="padding:0">
-			                			<input type="hidden" name="id" value="${funding.id?string('#######')}"/>		                		
-			                			<a name="deleteButton" class="button-delete">delete</a>
-			                		</form>
-			                		</#if>
-				        		</td>
-		                  	
-		                  	<!-- Non-rendering data -->
-							<input type="hidden" id="${funding.id?string('#######')}_fundingIdDP" value="${funding.id?string('#######')}"/>
-	                        <input type="hidden" id="${funding.id?string('#######')}_fundingTypeDP" value="${funding.type?html}"/>
-	                        <input type="hidden" id="${funding.id?string('#######')}_fundingValueDP" value="${funding.value?html}"/>
-	                        <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description?html}"/>
-	                        <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
-		                  	
-		                </tr>
-					</#list>				               
-				</tbody>
+<div>
+
+	<#if hasFundings>
+		<table class="existing">
 			
-			</table>
-        </#if>
-        <!-- Non-rendering data -->
-              
-		<form id="updateFunding" method="POST" action="<@spring.url '/updateFunding'/>" enctype="multipart/form-data">
-        <input type="hidden" id="fundingId" name="fundingId"/>
-        <input type="hidden" id="appIdFunding" name="appIdFunding" value="${model.applicationForm.id?string("######")}"/>
+			<colgroup>
+            	<col style="width: 30px" />
+                <col style="width: 120px" />
+                <col style="width: 120px" />
+                <col />
+                <col style="width: 120px" />
+                <col style="width: 30px" />
+        	</colgroup>
+            
+            <thead>
+				<tr>
+                	<th colspan="2">Funding Type</th>
+                    <th>Description</th>
+                    <th>Supporting Documentation</th>
+                    <th>Award Date</th>
+                    <th colspan="1">&nbsp;</th>
+				</tr>
+			</thead>
                 
-			<div>
-				<!-- Award type -->
-                <div class="row">
-                  	<span class="label">Funding Type<em>*</em></span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                	
-                	<div class="field">
-                		<select id="fundingType" name="fundingType" class="full" value="${model.funding.fundingType!}" 
-                		<#if model.applicationForm.isSubmitted()>
-                                                disabled="disabled"
-                                            </#if>>
-                        	<option value="">Select...</option>
-                        	<#list model.fundingTypes as type>
-                             	<option value="${type}"
-                             	<#if model.funding.fundingType?? && model.funding.fundingType == type>
-                                        selected="selected"
-                                        </#if>
-                             	>${type.displayValue}</option>               
-                        	</#list>
-                      	</select>
-                		<#if model.fundingErrors?? && model.fundingErrors.fundingType??>
-                        	<span class="invalid"><@spring.message model.fundingErrors.fundingType /></span>                           
-                        </#if>
-					</div>
+			<tbody>
+			
+				<#list applicationForm.fundings as existingFunding>		
+					<tr>
+	                  	<td><a class="row-arrow <#if funding.id?? && existingFunding.id==funding.id>open</#if>" id="funding_${existingFunding.id?string('#######')}" name ="editFundingLink">-</a></td>
+	                  	<td>${existingFunding.type.displayValue}</td>
+	                  	<td>${existingFunding.description}</td>
+	                  	<td ><a href="<@spring.url '/download'/>?documentId=${existingFunding.document.id?string('#######')}">
+                        <#if existingFunding.document.fileName?length <20 >${existingFunding.document.fileName}<#else>${existingFunding.document.fileName?substring(0,17)}...</#if></a></td>
+	                  	<td>${existingFunding.awardDate?string('dd-MMM-yyyy')}</td>
+	                  	 <td>
+	                  	     <#if !applicationForm.isSubmitted()>
+			                  		                		
+		                			<a name="deleteFundingButton" id="funding_${existingFunding.id?string('#######')}" class="button-delete">delete</a>
+		                		</form>
+		                	</#if>
+			        	</td>
+	                  	
+	                </tr>
+				</#list>				               
+			</tbody>
+		
+		</table>
+    </#if>
+    <!-- Non-rendering data -->
+          
+	<form >
+    <input type="hidden" id="fundingId" name="fundingId"/>    
+            
+		<div>
+			<!-- Award type -->
+            <div class="row">
+              	<span class="label">Funding Type<em>*</em></span>
+                <span class="hint" data-desc="<@spring.message 'fundingDetails.award.type'/>"></span>
+            	
+            	<div class="field">
+            		<select id="fundingType" name="fundingType" class="full"
+            		<#if applicationForm.isSubmitted()>
+                                            disabled="disabled"
+                                        </#if>>
+                    	<option value="">Select...</option>
+                    	<#list fundingTypes as type>
+                         	<option value="${type}"
+                         	<#if funding.type?? && funding.type == type>
+                                    selected="selected"
+                                    </#if>
+                         	>${type.displayValue}</option>               
+                    	</#list>
+                  	</select>
+            		<@spring.bind "funding.type" /> 
+                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 				</div>
-
-                <!-- Award description -->
-                <div class="row">
-                	<span class="label">Description<em>*</em></span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-					<div class="field">
-				    <#if !model.applicationForm.isSubmitted()>
-                    	<input id="fundingDescription" name="fundingDescription" class="full" type="text" value="${(model.funding.fundingDescription?html)!}" />
-	                    <#if model.fundingErrors?? && model.fundingErrors.fundingDescription??>                           
-	                    	<span class="invalid"><@spring.message model.fundingErrors.fundingDescription /></span>                           
-	                    </#if>
-                    <#else>
-                        <input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${(model.funding.fundingDescription?html)!}" />
-                    </#if>
-                    </div>
-                    
-				</div>
-                  
-                <!-- Value of award -->
-                <div class="row">
-                  	<span class="label">Value of Award<em>*</em></span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <div class="field">
-                    <#if !model.applicationForm.isSubmitted()>
-                    	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${(model.funding.fundingValue?html)!}" />
-	                    <#if model.fundingErrors?? && model.fundingErrors.fundingValue??>
-	                    	<span class="invalid"><@spring.message model.fundingErrors.fundingValue/></span>
-	                    </#if>
-                    <#else>
-                       <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${(model.funding.fundingValue?html)!}" />
-                    </#if>
-                    </div>
-				</div>
-                  
-                <!-- Award date -->
-                <div class="row">
-                  	<span class="label" data-desc="Tooltip demonstration.">Award Date<em>*</em></span>
-                    <span class="hint"></span>
-                    <div class="field">
-	                    <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}"
-	                       <#if model.applicationForm.isSubmitted()>
-                                                disabled="disabled"
-                                            </#if>>
-                                    </input>
-                    	<#if model.fundingErrors?? && model.fundingErrors.fundingAwardDate??>                           
-                    		<span class="invalid""><@spring.message model.fundingErrors.fundingAwardDate /></span>                           
-                    	</#if>
-                    </div>
-                    
-                </div>
-                
-                <input id="isFundingAdd" name="isFundingAdd" class="full" type="hidden" />
-               
-                <div class="row">
-                  	<span class="label">Supporting Document<em>*</em></span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <div class="field">
-                    	<input class="full" type="file" name="fundingFile" value=""  <#if model.applicationForm.submitted>disabled="disabled"</#if>/>   
-                    </div>	
-				</div>
-
 			</div>
 
-		<div class="buttons">
-        <#if !model.applicationForm.isSubmitted()>
-            	
-            	<a class="button" type="button" id="fundingCancelButton" name="fundingCancelButton">Cancel</a>
-            	<button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>
-				<button class="blue" type="submit" id="fundingSaveCloseButton" value="close">Save and Close</button>
-                <button class="blue" type="submit" id="fundingSaveAddButton" value="add">Save and Add</button>
-              <#else>
-                    <a id="fundingCloseButton" class="button blue">Close</a>  
-	   </#if>
-	   </div>
+            <!-- Award description -->
+            <div class="row">
+            	<span class="label">Description<em>*</em></span>
+                <span class="hint" data-desc="<@spring.message 'fundingDetails.award.description'/>"></span>
+				<div class="field">
+			    <#if !applicationForm.isSubmitted()>		
+                	<textarea id="fundingDescription" name="fundingDescription" class="full">${(funding.description?html)!}</textarea>
+            		<@spring.bind "funding.description" /> 
+                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
+                  <#else>
+                    <textarea id="fundingDescription" name="fundingDescription" class="full" readonly="readonly">${(funding.description?html)!}</textarea>
+                </#if>
+                </div>
+                
+			</div>
+              
+            <!-- Value of award -->
+            <div class="row">
+              	<span class="label">Value of Award<em>*</em></span>
+                <span class="hint" data-desc="<@spring.message 'fundingDetails.award.value'/>"></span>
+                <div class="field">
+                <#if !applicationForm.isSubmitted()>
+                	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${(funding.value?html)!}" />
+             		<@spring.bind "funding.value" /> 
+                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>     
+                <#else>
+                   <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${(funding.value?html)!}" />
+                </#if>
+                </div>
+			</div>
+              
+            <!-- Award date -->
+            <div class="row">
+              	<span class="label">Award Date<em>*</em></span>
+                <span class="hint"  data-desc="<@spring.message 'fundingDetails.award.awardDate'/>"></span>
+                <div class="field">
+                    <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(funding.awardDate?string('dd-MMM-yyyy'))!}"
+                       <#if applicationForm.isSubmitted()>
+                                            disabled="disabled"
+                                        </#if>>
+                                </input>
+              		<@spring.bind "funding.awardDate" /> 
+                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list> 
+                </div>
+                
+            </div>
+          
+           
+     <!-- Attachment / supporting document -->
+      		<div class="row">
+        		<span class="label">Proof of award (PDF)<em>*</em></span>
+        		<span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
+        		<div class="field" id="fundingUploadFields">        	
+          			<input id="fundingDocument" class="full" type="file" name="file" value="" />					
+					<span id="fundingUploadedDocument" ><input type="hidden" id="document_SUPPORTING_FUNDING" value = "${(funding.document.id?string('######'))!}"/>
+					 <@spring.bind "funding.document" /> 
+                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
+					<a href="<@spring.url '/download?documentId=${(funding.document.id?string("#######"))!}'/>">${(funding.document.fileName)!}</a></span>
+					<span id="fundingDocumentProgress" style="display: none;" ></span>					
+        		</div>  
+        		
+      		</div>
+        
 
-		</form>
-	</div>
+		</div>
+
+	<div class="buttons">
+    <#if !applicationForm.isSubmitted()>
+        	
+        	<a class="button" type="button" id="fundingCancelButton" name="fundingCancelButton">Cancel</a>
+        	<button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>
+			<button class="blue" type="button" id="fundingSaveCloseButton" value="close">Save and Close</button>
+            <button class="blue" type="button" id="fundingSaveAddButton" value="add">Save and Add</button>
+          <#else>
+                <a id="fundingCloseButton" class="button blue">Close</a>  
+   </#if>
+   </div>
+
+	</form>
+</div>
+
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>
 	
-<#if model.fundingErrors??>
-<#else >
+
+<@spring.bind "funding.*" /> 
+ 
+<#if !message?? || (!spring.status.errorMessages?has_content && (message=='close'))  >
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#funding-H2').trigger('click');

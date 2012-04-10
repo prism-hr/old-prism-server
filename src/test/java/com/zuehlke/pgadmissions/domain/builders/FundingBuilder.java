@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 
@@ -15,6 +16,14 @@ public class FundingBuilder {
 	private String value;
 	private Date awardDate;
 	private Integer id;
+	private Document document;
+	
+	
+
+	public FundingBuilder document(Document document) {
+		this.document = document;
+		return this;
+	}
 	
 	public FundingBuilder application(ApplicationForm application) {
 		this.application = application;
@@ -54,6 +63,7 @@ public class FundingBuilder {
 		funding.setValue(value);
 		funding.setDescription(description);
 		funding.setAwardDate(awardDate);
+		funding.setDocument(document);
 		return funding;
 	}
 	

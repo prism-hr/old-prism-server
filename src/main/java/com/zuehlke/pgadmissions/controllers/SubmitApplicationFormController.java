@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -97,7 +98,7 @@ public class SubmitApplicationFormController {
 			if (applicationForm!= null) {
 				viewApplicationModel.setAddress(buildAddress(applicationForm));
 			} 
-			viewApplicationModel.setFunding(new com.zuehlke.pgadmissions.dto.Funding());
+			viewApplicationModel.setFunding(new Funding());
 			viewApplicationModel.setQualification(new Qualification());
 			viewApplicationModel.setEmploymentPosition(new EmploymentPosition());
 			viewApplicationModel.setReferee(new Referee());

@@ -20,6 +20,7 @@ public class ProgrammeDetailsBuilder {
 	private Date startDate;
 	private Referrer referrer;
 	private List<Supervisor> supervisors = new ArrayList<Supervisor>();
+	private Supervisor primarySupervisor ;
 	
 	public ProgrammeDetailsBuilder id(Integer id) {
 		this.id = id;
@@ -43,6 +44,12 @@ public class ProgrammeDetailsBuilder {
 	
 	public ProgrammeDetailsBuilder startDate(Date startDate) {
 		this.startDate = startDate;
+		return this;
+	}
+	
+	
+	public ProgrammeDetailsBuilder primarySupervisor(Supervisor primarySupervisor) {
+		this.primarySupervisor = primarySupervisor;
 		return this;
 	}
 	
@@ -73,6 +80,7 @@ public class ProgrammeDetailsBuilder {
 		programmeDetails.setStartDate(startDate);
 		programmeDetails.setStudyOption(studyOption);
 		programmeDetails.getSupervisors().addAll(supervisors);
+		programmeDetails.setPrimarySupervisor(primarySupervisor);
 		return programmeDetails;
 	}
 	

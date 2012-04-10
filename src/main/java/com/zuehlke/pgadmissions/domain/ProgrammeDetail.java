@@ -65,6 +65,10 @@ public class ProgrammeDetail  extends DomainObject<Integer>{
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application = null;
 	
+	@OneToOne
+	@JoinColumn(name="primary_supervisor_id")
+	private Supervisor primarySupervisor ;
+	
 	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
 	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
 	@JoinColumn(name = "programme_detail_id")
@@ -133,5 +137,13 @@ public class ProgrammeDetail  extends DomainObject<Integer>{
 				}
 			}
 		}
+	}
+
+	public Supervisor getPrimarySupervisor() {
+		return primarySupervisor;
+	}
+
+	public void setPrimarySupervisor(Supervisor primarySupervisor) {
+		this.primarySupervisor = primarySupervisor;
 	}
 }

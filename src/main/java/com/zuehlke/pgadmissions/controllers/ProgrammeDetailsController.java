@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgrammeService;
+import com.zuehlke.pgadmissions.services.SupervisorService;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 
 @Controller
@@ -56,6 +58,7 @@ public class ProgrammeDetailsController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView editProgrammeDetails(@ModelAttribute("programmeDetails") ProgrammeDetail programmeDetails, BindingResult result) {
 		
+		
 		if (programmeDetails.getApplication() != null && programmeDetails.getApplication().isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
@@ -65,6 +68,7 @@ public class ProgrammeDetailsController {
 		}
 		
 		programmeDetailsValidator.validate(programmeDetails, result);
+		System.out.println("PRIMARY " + programmeDetails.getPrimarySupervisor());
 		if (!result.hasErrors()) {
 			programmeDetailsService.save(programmeDetails);
 		}

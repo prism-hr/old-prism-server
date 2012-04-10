@@ -129,19 +129,20 @@
          	</div>
          	
 			<div class="row">
-           <span class="label">Has been awarded?</span>
-           	<span class="hint" data-desc="<@spring.message 'education.qualifications.hasBeenAwarded'/>"></span>
-           		<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"
-           			<#if qualification.isQualificationCompleted()>
-                              checked
-                    </#if>
-           			<#if applicationForm.isSubmitted()>
-                              disabled="disabled"
-                    </#if>
-                    />
-           		<input type="hidden" name="currentQualification" id="currentQualification"/>
-   			 </div>
-        
+	           <span class="label">Has been awarded?</span>
+	           	<span class="hint" data-desc="<@spring.message 'education.qualifications.hasBeenAwarded'/>"></span>
+	           	 <div class="field">        
+	           		<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"
+	           			<#if qualification.isQualificationCompleted()>
+	                              checked
+	                    </#if>
+	           			<#if applicationForm.isSubmitted()>
+	                              disabled="disabled"
+	                    </#if>
+	                    />
+	           		<input type="hidden" name="currentQualification" id="currentQualification"/>
+	   			 </div>
+        	</div>
       		<!-- Language (in which programme was undertaken) -->
       		<div class="row">
         		<span class="label">Language of Study<em>*</em></span>
@@ -235,7 +236,7 @@
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
         		<div class="field" id="uploadFields">        	
           			<input id="proofOfAward" class="full" type="file" name="file" value="" />					
-					<span id="uploadedDocument" ><input type="hidden" id="profOfAwardId" value = "${(qualification.proofOfAward.id?string('######'))!}"/>
+					<span id="uploadedDocument" ><input type="hidden" id="document_PROOF_OF_AWARD" value = "${(qualification.proofOfAward.id?string('######'))!}"/>
 					<a href="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>">${(qualification.proofOfAward.fileName)!}</a></span>
 					<span id="progress" style="display: none;" ></span>					
         		</div>  

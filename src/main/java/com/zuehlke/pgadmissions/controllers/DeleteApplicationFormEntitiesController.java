@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
+import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.QualificationService;
 
 @Controller
@@ -23,16 +24,18 @@ public class DeleteApplicationFormEntitiesController {
 	private final ApplicationsService applicationsService;
 	private final QualificationService qualificationService;
 	private final EmploymentPositionService employmentService;
+	private final FundingService fundingService;
 
 	DeleteApplicationFormEntitiesController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public DeleteApplicationFormEntitiesController(ApplicationsService applicationsService, QualificationService qualificationService, EmploymentPositionService employmentService) {
+	public DeleteApplicationFormEntitiesController(ApplicationsService applicationsService, QualificationService qualificationService, EmploymentPositionService employmentService, FundingService fundingService) {
 		this.applicationsService = applicationsService;
 		this.qualificationService = qualificationService;
 		this.employmentService = employmentService;
+		this.fundingService = fundingService;
 
 	}
 
@@ -50,15 +53,15 @@ public class DeleteApplicationFormEntitiesController {
 		Integer applicationFormId = qualification.getApplication().getId();
 		qualificationService.delete(qualification);
 		
-		return "redirect:/update/getQualification?applicationId=" +applicationFormId;
+		return "redirect:/update/getQualification?applicationId=" +applicationFormId + "&message=deleted";
 	}
 	
 	@RequestMapping(value = "/funding", method = RequestMethod.POST)
-	public ModelAndView deleteFunding(@RequestParam Integer id) {
-		Funding funding = applicationsService.getFundingById(id);
+	public String deleteFunding(@RequestParam Integer id) {
+		Funding funding = fundingService.getFundingById(id);
 		Integer applicationFormId = funding.getApplication().getId();
-		applicationsService.deleteFunding(funding);
-		return new ModelAndView("redirect:/application", "id", applicationFormId);
+		fundingService.delete(funding);
+		return "redirect:/update/getFunding?applicationId=" +applicationFormId + "&message=deleted";
 	}
 
 	@RequestMapping(value = "/employment", method = RequestMethod.POST)
@@ -66,7 +69,8 @@ public class DeleteApplicationFormEntitiesController {
 		EmploymentPosition position = employmentService.getEmploymentPositionById(id);
 		Integer applicationFormId = position.getApplication().getId();
 		employmentService.delete(position);
-		return "redirect:/update/getEmploymentPosition?applicationId=" +applicationFormId;
+		return "redirect:/update/getEmploymentPosition?applicationId=" +applicationFormId 
+				 + "&message=deleted";
 	}
 
 	@RequestMapping(value = "/referee", method = RequestMethod.POST)

@@ -18,6 +18,14 @@ $(document).ready(function(){
 				$('#positionSection').html(data);
 			}
 	);
+	$.get("/pgadmissions/update/getFunding",
+			{
+				applicationId:  $('#applicationId').val()					
+			},
+			function(data) {
+				$('#fundingSection').html(data);
+			}
+	);
 
 	/*
 	 * Submit application form on click of submit button.

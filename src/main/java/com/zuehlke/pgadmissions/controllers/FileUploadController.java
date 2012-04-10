@@ -119,7 +119,7 @@ public class FileUploadController {
 	
 
 	@ModelAttribute
-	public Document getDocument(@RequestParam( value="file", required=false) MultipartFile multipartFile) throws IOException {		 
+	public Document getDocument(@RequestParam( value="file", required=false) MultipartFile multipartFile,@RequestParam( value="type", required=false) DocumentType documentType) throws IOException {		 
 		if(multipartFile == null){
 			return null;
 		}
@@ -127,7 +127,7 @@ public class FileUploadController {
 		document.setFileName(multipartFile.getOriginalFilename());
 		document.setContentType(multipartFile.getContentType());
 		document.setContent(multipartFile.getBytes());
-		document.setType(DocumentType.PROOF_OF_AWARD);
+		document.setType(documentType);
 		document.setUploadedBy((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails());
 		return document;
 	}

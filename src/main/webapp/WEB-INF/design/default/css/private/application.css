@@ -38,17 +38,23 @@ section.folding form .label {
 	width: 180px; 
 }
 
-/* To align wiht lable, increasing the width : Edited by Manish*/
+/* To align with label, increasing the width : Edited by Manish*/
 section.folding form .field {
-	margin-left: 220px; 
+	margin-left: 235px; 
 	padding: 1px 0;
 }
 
-section.folding form .hint { background: url(../../images/button_question.png) no-repeat; width: 20px; height: 20px; float: left; margin-right: 5px; }
+/* To align with label, increasing the width : Edited by Manish*/
+section.folding form .hint { 
+	background: url(../../images/button_question.png) 
+	no-repeat; width: 35px; height: 20px; 
+	float: left; margin-right: 5px; 
+}
+	
 section.folding form label.label { font-weight: bold; }
 
 /* To avoid any nesting effect, implement this class where you need
- * regular fields regardless of insdie or outside of a form element - Edited by Manish*/
+ * regular fields regardless of inside or outside of a form element - Edited by Manish*/
 .plain-label { 
 	float: left; line-height: 
 	1.2; width: 195px; 

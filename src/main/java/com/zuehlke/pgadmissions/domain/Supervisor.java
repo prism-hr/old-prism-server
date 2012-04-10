@@ -6,11 +6,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Entity(name="SUPERVISOR")
 @Access(AccessType.FIELD)
@@ -34,10 +34,6 @@ public class Supervisor extends DomainObject<Integer>{
 		return id;
 	}
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
-	@Column(name="primary_supervisor")
-	private CheckedStatus primarySupervisor;
-	
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AwareStatusEnumUserType")
 	@Column(name="aware_supervisor")
 	private AwareStatus awareSupervisor;
@@ -45,6 +41,9 @@ public class Supervisor extends DomainObject<Integer>{
 	private String email;
 	private String firstname;
 	private String lastname;
+	
+	@OneToOne(mappedBy="primarySupervisor")
+	private ProgrammeDetail programmeDetails ;
 	
 	public String getFirstname() {
 		return firstname;
@@ -70,19 +69,22 @@ public class Supervisor extends DomainObject<Integer>{
 		this.email = email;
 	}
 	
-	public CheckedStatus getPrimarySupervisor() {
-		return primarySupervisor;
-	}
-	
-	public void setPrimarySupervisor(CheckedStatus primarySupervisor) {
-		this.primarySupervisor = primarySupervisor;
-	}
-	
 	public AwareStatus getAwareSupervisor() {
 		return awareSupervisor;
 	}
 	
 	public void setAwareSupervisor(AwareStatus awareSupervisor) {
 		this.awareSupervisor = awareSupervisor;
+	}
+
+	public ProgrammeDetail getProgrammeDetails() {
+		if(programmeDetails == null){
+			return new ProgrammeDetail();
+		}
+		return programmeDetails;
+	}
+
+	public void setProgrammeDetails(ProgrammeDetail programmeDetails) {
+		this.programmeDetails = programmeDetails;
 	}
 }

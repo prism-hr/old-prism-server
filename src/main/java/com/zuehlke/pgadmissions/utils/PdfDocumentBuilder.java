@@ -154,7 +154,6 @@ public class PdfDocumentBuilder {
 
 			for (Supervisor supervisor : application.getProgrammeDetails().getSupervisors()) {
 				table.addCell(supervisor.getEmail());
-				table.addCell(supervisor.getPrimarySupervisor().displayValue());
 				table.addCell(supervisor.getAwareSupervisor().displayValue());
 			}
 

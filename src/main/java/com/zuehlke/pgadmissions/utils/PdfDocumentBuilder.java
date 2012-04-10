@@ -130,7 +130,20 @@ public class PdfDocumentBuilder {
 		if (application.getProgrammeDetails().getSupervisors().isEmpty()) {
 			document.add(new Paragraph(createMessage("supervisors information")));
 		} else {
-			document.add(new Paragraph("Supervisor", smallBoldFont));
+			
+			Supervisor primarySupervisor = application.getProgrammeDetails().getPrimarySupervisor();
+			if (primarySupervisor != null) {
+				document.add(new Paragraph("Remaining Supervisors", smallBoldFont));
+				document.add(new Paragraph("Supervisor First Name: "+ primarySupervisor.getFirstname()));
+				document.add(new Paragraph("Supervisor Last Name: " + primarySupervisor.getLastname()));
+				document.add(new Paragraph("Supervisor Email: " + primarySupervisor.getEmail()));
+				document.add(new Paragraph("Is primary supervisor? yes."));
+				document.add(new Paragraph("Is supervisor aware of your application? " + primarySupervisor.getAwareSupervisor().displayValue()));
+			} else {
+				createMessage("primary supervisor");
+			}
+			
+			document.add(new Paragraph("Remaining Supervisors", smallBoldFont));
 			document.add(new Paragraph(" "));
 
 			PdfPTable table = new PdfPTable(4);
@@ -197,9 +210,9 @@ public class PdfDocumentBuilder {
 
 		document.add(new Paragraph("Language", smallBoldFont));
 		if (application.getPersonalDetails().isEnglishCandidatesFirstLanguage()) {
-			document.add(new Paragraph("Is English your first language? Yes."));
+			document.add(new Paragraph("Is English your first language? yes."));
 		} else {
-			document.add(new Paragraph("Is English your first language? No."));
+			document.add(new Paragraph("Is English your first language? no."));
 		}
 		document.add(new Paragraph("Residence", smallBoldFont));
 
@@ -210,9 +223,9 @@ public class PdfDocumentBuilder {
 		}
 
 		if (application.getPersonalDetails().isVisaRequired()) {
-			document.add(new Paragraph("Do you required visa to study in the UK? Yes."));
+			document.add(new Paragraph("Do you required visa to study in the UK? yes."));
 		} else {
-			document.add(new Paragraph("Do you required visa to study in the UK? No."));
+			document.add(new Paragraph("Do you required visa to study in the UK? no."));
 		}
 
 		document.add(new Paragraph("Contact Details", smallBoldFont));
@@ -349,9 +362,9 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("Language of Work: " + employment.getLanguage().getName()));
 				document.add(new Paragraph("Start Date: " + employment.getStartDate().toString()));
 				if (employment.isCurrent()) {
-					document.add(new Paragraph("Is this your current position? Yes."));
+					document.add(new Paragraph("Is this your current position? yes."));
 				} else {
-					document.add(new Paragraph("Is this your current position? No."));
+					document.add(new Paragraph("Is this your current position? no."));
 				}
 				if (employment.getEndDate() == null) {
 					document.add(new Paragraph(createMessage("end date")));

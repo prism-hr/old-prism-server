@@ -201,14 +201,24 @@ public class PdfDocumentBuilder {
 		addGivenNationality(document, "Maternal Guardian Nationality", application.getPersonalDetails().getMaternalGuardianNationalities());
 		addGivenNationality(document, "Paternal Guardian Nationality", application.getPersonalDetails().getPaternalGuardianNationalities());
 
-		// language to be added
-
+		document.add(new Paragraph("Language", smallBoldFont));
+		if (application.getPersonalDetails().isEnglishCandidatesFirstLanguage()) {
+			document.add(new Paragraph("Is English your first language? Yes"));
+		} else {
+			document.add(new Paragraph("Is English your first language? No"));
+		}
 		document.add(new Paragraph("Residence", smallBoldFont));
 
 		if (application.getPersonalDetails().getResidenceCountry() == null) {
 			document.add(new Paragraph(createMessage("country")));
 		} else {
 			document.add(new Paragraph("Country: " + application.getPersonalDetails().getResidenceCountry().getName()));
+		}
+		
+		if (application.getPersonalDetails().isVisaRequired()) {
+			document.add(new Paragraph("Do you required visa to study in the UK? Yes"));
+		} else {
+			document.add(new Paragraph("Do you required visa to study in the UK? No"));
 		}
 
 		document.add(new Paragraph("Contact Details", smallBoldFont));

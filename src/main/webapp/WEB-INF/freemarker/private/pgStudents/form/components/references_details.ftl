@@ -87,7 +87,7 @@
 									<#list referee.phoneNumbers! as phoneNumber>
 										<span name="${referee.id?string('#######')}_hiddenPhones" style="display:none" >
 			                  	  		<div class="row">
-			                  	  	 		<span class="label">Telephone</span>    
+			                  	  	 		<span class="plain-label">Telephone</span>    
 			                  				<div class="field">
 			                  					<label class="half"> ${phoneNumber.telephoneType.displayValue?html}</label>
 			                  					<label id="multi-phone" class="half"> ${phoneNumber.telephoneNumber?html}</label> 
@@ -123,7 +123,7 @@
 	       		</#if>
                   		<!-- First name -->
                   		<div class="row">
-                    		<span class="label">First Name<em>*</em></span>
+                    		<span class="plain-label">First Name<em>*</em></span>
                     		<span class="hint"></span>
                     		<div class="field">
                     			<#if !model.applicationForm.isSubmitted()>
@@ -141,7 +141,7 @@
                 
                   		<!-- Last name -->
                   		<div class="row">
-                    		<span class="label">Last Name<em>*</em></span>
+                    		<span class="plain-label">Last Name<em>*</em></span>
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
@@ -157,7 +157,7 @@
                 
                   		<!-- Relationship name -->
                   		<div class="row">
-                    		<span class="label">Relationship<em>*</em></span>
+                    		<span class="plain-label">Relationship<em>*</em></span>
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
@@ -179,7 +179,7 @@
                 
                   		<!-- Employer / company name -->
                   		<div class="row">
-                    		<span class="label">Employer</span>
+                    		<span class="plain-label">Employer</span>
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
@@ -195,7 +195,7 @@
                 
                   		<!-- Position title -->
                   		<div class="row">
-                    		<span class="label">Title</span>
+                    		<span class="plain-label">Title</span>
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
@@ -217,7 +217,7 @@
                   
                   		<!-- Address body -->
                   		<div class="row">
-                    		<span class="label">Location</span>
+                    		<span class="plain-label">Location</span>
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
@@ -235,7 +235,7 @@
                 
                   		<!-- Postcode -->
                   		<div class="row">
-                    		<span class="label">Postal Code</span>
+                    		<span class="plain-label">Postal Code</span>
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
@@ -251,7 +251,7 @@
                 
                   		<!-- Country -->
                   		<div class="row">
-                    		<span class="label">Country</span>
+                    		<span class="plain-label">Country</span>
                     		<span class="hint"></span>
                     		<div class="field">
                     		<select class="full" name="ref_address_country" id="ref_address_country"
@@ -274,7 +274,7 @@
                 
                   		<!-- Email address -->
                   		<div class="row">
-                    		<span class="label">Email<em>*</em></span>
+                    		<span class="plain-label">Email<em>*</em></span>
                     		<span class="hint"></span>
                     		<div class="field">
                     		<#if !model.applicationForm.isSubmitted()>
@@ -294,7 +294,7 @@
                     			<#list model.referee.phoneNumbers! as phoneNumber>
                     			<span  name="phone_number_ref">
 		                  	  		<div class="row">
-		                  	  	 		<span class="label">Telephone</span>    
+		                  	  	 		<span class="plain-label">Telephone</span>    
 		                  				<div class="field">
 		                  					<label class="half"> ${phoneNumber.telephoneType.displayValue?html}</label>
 		                  					<label class="half"> ${phoneNumber.telephoneNumber?html}</label> 
@@ -308,7 +308,7 @@
                     		</div>
                   		
                   		<div class="row">
-                  		<span class="label">Telephone<em id="telephone-em">*</em></span>
+                  		<span class="plain-label">Telephone<em id="telephone-em">*</em></span>
                         <span class="hint"></span>
                     		
                     		<#if !model.applicationForm.isSubmitted()>
@@ -333,7 +333,7 @@
 	                  	<!-- Skype address -->
 	                  
 	                    <div class="row">
-                    		<span class="label">Skype</span>
+                    		<span class="plain-label">Skype Name</span>
                     		<span class="hint"></span>
                     		<div class="field">
                     			<#if !model.applicationForm.isSubmitted()>
@@ -345,6 +345,14 @@
                       			
                     		</div>
                   		</div>
+                  		
+                  		<!-- Add another button -->
+                  		<div class="row">
+                  			<div class="field">
+                  				<a id="addReferenceButton" class="button blue">Add Reference</a>
+                  			</div>
+                  		</div>
+                  		
                 	</div>
 					<#if model.applicationForm.isSubmitted()>
 						<div>
@@ -363,8 +371,7 @@
                 	 <#if !model.applicationForm.isSubmitted()>
                   		 <a class="button" type="button" id="refereeCancelButton" name="refereeCancelButton">Cancel</a>
                   		 <button class="blue" type="button" id="refereeCloseButton" name="refereeCloseButton">Close</button>
-                  		<button class="blue" type="button" value="close" id="refereeSaveButton">Save and Close</button>
-                  		<button class="blue" type="button" id="refereeSaveAndAddButton" value="add">Save and Add</button>
+                  		 <button class="blue" type="button" value="close" id="refereeSaveButton">Save</button>
                   	 <#else>
                         <a id="refereeCloseButton" class="button blue">Close</a>   
                     </#if> 	

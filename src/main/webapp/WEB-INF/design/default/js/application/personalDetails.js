@@ -240,16 +240,25 @@ $(document).ready(function(){
 		$("#existingCandidateNationalities").on("click", "a", function(){	
 			$(this).parent("div").parent("div").parent("span").remove();
 			
+			if ( $('#existingCandidateNationalities').children().length <= 1 ) {
+				$('#candidateNationalitiesLabel').remove();
+			}
 		});
 		
 		$("#existingMaternalNationalities").on("click", "a", function(){	
 			$(this).parent("div").parent("div").parent("span").remove();
 			
+			if ( $('#existingMaternalNationalities').children().length <= 1 ) {
+				$('#maternalNationalitiesLabel').remove();
+			}
 		});
 		
 		$("#existingPaternalNationalities").on("click", "a", function(){	
 			$(this).parent("div").parent("div").parent("span").remove();
 			
+			if ( $('#existingPaternalNationalities').children().length <= 1 ) {
+				$('#paternalNationalitiesLabel').remove();
+			}
 		});
 		
 	}

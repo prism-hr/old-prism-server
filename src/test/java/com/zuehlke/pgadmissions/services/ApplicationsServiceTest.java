@@ -160,27 +160,6 @@ public class ApplicationsServiceTest{
 		EasyMock.verify(addressDAOMock);
 	}
 	
-	@Test
-	public void shouldDelegateDeleteQaulificationToDAO(){
-		Qualification qual = new QualificationBuilder().id(1).toQualification();
-		qualificationDAOMock.delete(qual);
-		EasyMock.replay(qualificationDAOMock);
-		applicationsService.deleteQualification(qual);
-		EasyMock.verify(qualificationDAOMock);
-	}
-	
-	
-	@Test
-	public void shouldDelegateDeleteFundingToDAO(){
-		Funding funding = new Funding();
-		funding.setId(1);
-		fundingDAOMock.delete(funding);
-		EasyMock.replay(fundingDAOMock);
-		applicationsService.deleteFunding(funding);
-		EasyMock.verify(fundingDAOMock);
-	}
-	
-	
 
 	
 	@Test

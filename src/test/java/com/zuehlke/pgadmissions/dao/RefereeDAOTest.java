@@ -85,7 +85,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldGetProgramById() {
+	public void shouldGetRefereeById() {
 		Referee referee = new RefereeBuilder().email("email").firstname("name")
 				.lastname("last").relationship("rel").addressLocation("UK")
 				.toReferee();

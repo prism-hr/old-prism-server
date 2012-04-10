@@ -105,22 +105,7 @@ public class ApplicationsService {
 	@Transactional
 	public void deleteAddress(Address address) {
 		addressDAO.delete(address);
-
 	}
-
-	@Transactional
-	public void deleteQualification(Qualification qual) {
-		qualificationDAO.delete(qual);
-
-	}
-
-	@Transactional
-	public void deleteFunding(Funding funding) {
-		fundingDAO.delete(funding);
-
-	}
-
-
 	
 	@Transactional
 	public void deleteReferee(Referee referee) {

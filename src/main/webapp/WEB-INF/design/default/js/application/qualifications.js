@@ -98,10 +98,10 @@ $(document).ready(function(){
 	});
 		
 	$('#uploadFields').on('change','#proofOfAward', function(event){	
-		ajaxFileDelete();
+		ajaxProofOfAwardDelete();
 		$('#progress').html("uploading file...");
 		$('#proofOfAward').attr("readonly", "readonly");
-		ajaxFileUpload();
+		ajaxProofOfAwardUpload();
 		$('#proofOfAward').removeAttr("readonly");
 	});
 	
@@ -125,25 +125,26 @@ function postQualificationData(message){
 		applicationId:  $('#applicationId').val(),
 		application:  $('#applicationId').val(),
 		institutionCountry: $('#institutionCountry').val(),
-		proofOfAward: $('#profOfAwardId').val(),
+		proofOfAward: $('#document_PROOF_OF_AWARD').val(),
 		message:message
 	},
 	function(data) {
 		$('#qualificationsSection').html(data);
 	});
 }
-function ajaxFileDelete(){
+function ajaxProofOfAwardDelete(){
 	
 	if($('#profOfAwardId') && $('#profOfAwardId').val() && $('#profOfAwardId').val() != ''){
 		$.post("/pgadmissions/delete/asyncdelete",
 			{
-				documentId: $('#profOfAwardId').val()	
+				documentId: $('#profOfAwardId').val()
+				
 			}				
 		);
 
 	}
 }
-function ajaxFileUpload()
+function ajaxProofOfAwardUpload()
 {	
 	
 	$("#progress").ajaxStart(function(){
@@ -163,6 +164,7 @@ function ajaxFileUpload()
 			
 			fileElementId:'proofOfAward',	
 			dataType:'text',
+			data:{type:'PROOF_OF_AWARD'},
 			success: function (data)
 			{		
 				$('#uploadedDocument').html(data);

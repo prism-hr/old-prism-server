@@ -1,20 +1,18 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.multipart.MultipartFile;
@@ -159,19 +157,19 @@ public class FileUploadControllerTest {
 		EasyMock.expect(multipartFileMock.getBytes()).andReturn("lala".getBytes());
 		EasyMock.replay(multipartFileMock);
 
-		Document document  = controller.getDocument(multipartFileMock);
+		Document document  = controller.getDocument(multipartFileMock, DocumentType.SUPPORTING_FUNDING);
 		assertNull(document.getId());
 		assertEquals("filename", document.getFileName());
 		assertEquals("ContentType", document.getContentType());
 		assertEquals("lala", new String(document.getContent()));
-		assertEquals(DocumentType.PROOF_OF_AWARD, document.getType());
+		assertEquals(DocumentType.SUPPORTING_FUNDING, document.getType());
 		assertEquals(currentUser,document.getUploadedBy());
 		
 	}
 	
 	@Test
 	public void shouldReturnNullIfMultiPartFileIsNull() throws IOException{		
-		assertNull(controller.getDocument(null));		
+		assertNull(controller.getDocument(null, null));		
 	}
 	
 	@Test

@@ -67,7 +67,7 @@
 		<div>
 			<!-- Award type -->
             <div class="row">
-              	<span class="label">Funding Type<em>*</em></span>
+              	<span class="plain-label">Funding Type<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'fundingDetails.award.type'/>"></span>
             	
             	<div class="field">
@@ -91,7 +91,7 @@
 
             <!-- Award description -->
             <div class="row">
-            	<span class="label">Description<em>*</em></span>
+            	<span class="plain-label">Description<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'fundingDetails.award.description'/>"></span>
 				<div class="field">
 			    <#if !applicationForm.isSubmitted()>		
@@ -107,7 +107,7 @@
               
             <!-- Value of award -->
             <div class="row">
-              	<span class="label">Value of Award<em>*</em></span>
+              	<span class="plain-label">Value of Award<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'fundingDetails.award.value'/>"></span>
                 <div class="field">
                 <#if !applicationForm.isSubmitted()>
@@ -122,7 +122,7 @@
               
             <!-- Award date -->
             <div class="row">
-              	<span class="label">Award Date<em>*</em></span>
+              	<span class="plain-label">Award Date<em>*</em></span>
                 <span class="hint"  data-desc="<@spring.message 'fundingDetails.award.awardDate'/>"></span>
                 <div class="field">
                     <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(funding.awardDate?string('dd-MMM-yyyy'))!}"
@@ -139,7 +139,7 @@
            
      <!-- Attachment / supporting document -->
       		<div class="row">
-        		<span class="label">Proof of award (PDF)<em>*</em></span>
+        		<span class="plain-label">Proof of award (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
         		<div class="field" id="fundingUploadFields">        	
           			<input id="fundingDocument" class="full" type="file" name="file" value="" />					
@@ -151,7 +151,14 @@
         		</div>  
         		
       		</div>
-        
+      		
+      		
+      		<!-- Add another button -->
+            <div class="row">
+            	<div class="field">
+                	<a id="addFundingButton" class="button blue">Add Funding</a>
+                </div>
+            </div>
 
 		</div>
 
@@ -160,8 +167,7 @@
         	
         	<a class="button" type="button" id="fundingCancelButton" name="fundingCancelButton">Cancel</a>
         	<button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>
-			<button class="blue" type="button" id="fundingSaveCloseButton" value="close">Save and Close</button>
-            <button class="blue" type="button" id="fundingSaveAddButton" value="add">Save and Add</button>
+            <button class="blue" type="button" id="fundingSaveAddButton" value="add">Save</button>
   		<#else>
              <a id="fundingCloseButton" class="button blue">Close</a>  
    		</#if>

@@ -60,7 +60,7 @@
     	<div id="employmentForm">
     		<!-- Country -->
 			<div class="row">
-            	<span class="label">Country<em>*</em></span>
+            	<span class="plain-label">Country<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerCountry'/>"></span>
                	<div class="field">
                 	<select class="full" id="position_country" name="position_country"
@@ -76,7 +76,7 @@
             </div>
         	<!-- Employer (company name) -->
             <div class="row">
-            	<span class="label">Employer Name<em>*</em></span>
+            	<span class="plain-label">Employer Name<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerName'/>"></span>
                 <div class="field">
                 <#if !applicationForm.isSubmitted()>
@@ -94,7 +94,7 @@
             
         	<!-- Employer (company name) -->
             <div class="row">
-            	<span class="label">Employer Address<em>*</em></span>
+            	<span class="plain-label">Employer Address<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerAddress'/>"></span>
                 <div class="field">
                    <#if !applicationForm.isSubmitted()>
@@ -114,7 +114,7 @@
             
             <!-- Position -->
             <div class="row">
-            	<span class="label">Position<em>*</em></span>
+            	<span class="plain-label">Position<em>*</em></span>
                  <span class="hint" data-desc="<@spring.message 'employmentDetails.position.position'/>"></span>
                 <div class="field">
                     <#if !applicationForm.isSubmitted()>
@@ -129,7 +129,7 @@
             
             <!-- Remit (job description) -->
             <div class="row">
-                <span class="label">Description<em>*</em></span>
+                <span class="plain-label">Description<em>*</em></span>
                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.remit'/>"></span>
                 <div class="field">
                     <#if !applicationForm.isSubmitted()>
@@ -150,7 +150,7 @@
          	</div>
              <!-- Language -->
             <div class="row">
-                <span class="label">Language of work<em>*</em></span>
+                <span class="plain-label">Language of work<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.language'/>"></span>
                 <div class="field">
                   	<select class="full" id="position_language" name="position_language"
@@ -166,8 +166,8 @@
            	</div>
             <!-- Start date -->
             <div class="row">
-                <span class="label">Start Date<em>*</em></span>
-               <span class="hint" data-desc="<@spring.message 'employmentDetails.position.startDate'/>"></span>
+                <span class="plain-label">Start Date<em>*</em></span>
+                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.startDate'/>"></span>
                 <div class="field">
                   	<input class="half date" type="text" id="position_startDate" name="position_startDate" value="${(employmentPosition.startDate?string('dd-MMM-yyyy'))!}"  <#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>
                           
@@ -176,7 +176,7 @@
                 </div>
             </div>
             <div class="row">
-               <span class="label">Is this your current position?</span>
+               <span class="plain-label">Is this your current position?</span>
                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.isOngoing'/>"></span>
                <div class="field">
                		<input type="checkbox" name="current" id="current" 	<#if employmentPosition.current> checked ="checked"</#if><#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>                   		
@@ -184,7 +184,7 @@
             </div>
             <!-- End date -->
             <div class="row">
-                <span class="label">End Date</span>
+                <span class="plain-label">End Date</span>
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.endDate'/>"></span>
                 <div class="field" id="endDateField">
                   	<input class="half date" id="position_endDate" name="position_endDate" value="${(employmentPosition.endDate?string('dd-MMM-yyyy'))!}" <#if employmentPosition.current> disabled ="disabled"</#if>/>                  	
@@ -193,14 +193,21 @@
                 </div>
 					
            	</div>
+           	
+           	<!-- Add another button -->
+            <div class="row">
+            	<div class="field">
+                	<a id="addPosisionButton" class="button blue">Add Employment</a>
+                </div>
+            </div>
+           	
 		</div>
 
 		<div class="buttons">
 			<#if !applicationForm.isSubmitted()>
             	<a class="button" type="button" id="positionCancelButton" name="positionCancelButton">Cancel</a>
             	<button class="blue" type="button" id="positionCloseButton" name="positionCloseButton">Close</button>
-                <button class="blue" type="button" value="close" id="positionSaveAndCloseButton" name="positionSaveButton">Save and Close</button>
-                <button class="blue" type="button" value="add" id="positionSaveAndAddButton" name="positionSaveAndAddButton">Save and Add</button>
+                <button class="blue" type="button" value="add" id="positionSaveAndAddButton" name="positionSaveAndAddButton">Save</button>
             <#else>
                 <a id="positionCloseButton" class="button blue">Close</a>
             </#if>    

@@ -66,12 +66,7 @@ public class ApplicationPageModelBuilder {
 		viewApplicationModel.setQualificationLevels(QualificationLevel.values());
 		viewApplicationModel.setFundingTypes(FundingType.values());
 		viewApplicationModel.setDocumentTypes(DocumentType.values());
-		if (applicationForm != null && applicationForm.isCVUploaded()) {
-			viewApplicationModel.getDocumentTypes().remove(DocumentType.CV);
-		}
-		if (applicationForm != null && applicationForm.isPersonalStatementUploaded()) {
-			viewApplicationModel.getDocumentTypes().remove(DocumentType.PERSONAL_STATEMENT);
-		}
+
 		viewApplicationModel.setView(view);
 		if (view != null && view.equals("errors")) {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");

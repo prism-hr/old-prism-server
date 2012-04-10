@@ -46,13 +46,10 @@ public class FileDownloadController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void downloadApplicationDocument(@RequestParam("documentId") Integer documentId, HttpServletResponse response) throws IOException {
 		Document document = documentService.getDocumentById(documentId);
-		if (DocumentType.SUPPORTING_FUNDING != document.getType() && DocumentType.PROOF_OF_AWARD != document.getType()) {
-			if (DocumentType.REFERENCE == document.getType()
-					|| !((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails()).canSee(document.getApplicationForm())) {
-				throw new ResourceNotFoundException();
-			}
+		if (DocumentType.REFERENCE == document.getType()) {
+			throw new ResourceNotFoundException();
 		}
-		
+
 		sendDocument(response, document);
 	}
 

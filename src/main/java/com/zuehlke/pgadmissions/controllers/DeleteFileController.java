@@ -10,8 +10,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.DocumentService;
 
 @Controller
@@ -27,21 +25,6 @@ public class DeleteFileController {
 	@Autowired
 	public DeleteFileController(DocumentService documentService) {
 		this.documentService = documentService;
-
-	}
-
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView delete(@RequestParam("documentId") Integer documentId) {
-		Document document = documentService.getDocumentById(documentId);
-
-		if (document == null || !getCurrentUser().equals(document.getApplicationForm().getApplicant())) {
-			throw new ResourceNotFoundException();
-		}
-		if(document.getApplicationForm().isSubmitted()){
-			throw new CannotUpdateApplicationException();
-		}
-		documentService.delete(document);
-		return new ModelAndView("redirect:/application", "id", document.getApplicationForm().getId());
 
 	}
 

@@ -53,21 +53,5 @@ public class ApplicationFormTest {
 		assertFalse(applicationForm.isDecided());
 	}
 
-	@Test
-	public void shouldReturnTrueOnlyIfCVInSupportingDocuments() {
-		Document document = new DocumentBuilder().type(DocumentType.CV).toDocument();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
-		assertFalse(applicationForm.isCVUploaded());
-		applicationForm.getSupportingDocuments().add(document);
-		assertTrue(applicationForm.isCVUploaded());
-	}
 	
-	@Test
-	public void shouldReturnTrueOnlyIfCVIfPersonalStatementInDocuments() {
-		Document document = new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).toDocument();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
-		assertFalse(applicationForm.isPersonalStatementUploaded());
-		applicationForm.getSupportingDocuments().add(document);
-		assertTrue(applicationForm.isPersonalStatementUploaded());
-	}
 }

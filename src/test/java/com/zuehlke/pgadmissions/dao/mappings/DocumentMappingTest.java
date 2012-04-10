@@ -56,25 +56,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 		assertNotNull(reloadedDoc.getDateUploaded());
 	}
 	
-	@Test	
-	public void shouldSLoadDocumentWithApplicationForm(){
-		Document document = new Document();
-		document.setContent("s".getBytes());
-		document.setFileName("name.txt");
-		document.setContentType("bob");
-		document.setType(DocumentType.PERSONAL_STATEMENT);
-		document.setUploadedBy(applicant);
-		applicationForm.getSupportingDocuments().add(document);	
-		
-		sessionFactory.getCurrentSession().saveOrUpdate(applicationForm);
-		
-		flushAndClearSession();
-		
-		Document reloadedDoc = (Document) sessionFactory.getCurrentSession().get(Document.class, document.getId());
 
-		assertEquals(applicationForm, reloadedDoc.getApplicationForm());
-	}
-	
 	@Test	
 	public void shouldSLoadDocumentWithQualification() throws ParseException{
 		Document document = new Document();

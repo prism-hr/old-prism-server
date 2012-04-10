@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.Telephone;
 
 public class PdfDocumentBuilder {
 
-	private Font grayFont  = new Font(FontFamily.HELVETICA, 16, Font.BOLD | Font.UNDERLINE, BaseColor.DARK_GRAY);
+	private Font grayFont = new Font(FontFamily.HELVETICA, 16, Font.BOLD | Font.UNDERLINE, BaseColor.DARK_GRAY);
 	private static Font boldFont = new Font(FontFamily.HELVETICA, 16, Font.BOLD);
 	private static Font smallBoldFont = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
 	private static Font smallerBoldFont = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
@@ -47,8 +47,8 @@ public class PdfDocumentBuilder {
 
 	public void buildDocument(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
 
-		document.add(new Paragraph("Application id: "+application.getId(), boldFont));
-		document.add(new Paragraph("Applicant: "+application.getApplicant().getFirstName()+ " " + application.getApplicant().getLastName(), boldFont));
+		document.add(new Paragraph("Application id: " + application.getId(), boldFont));
+		document.add(new Paragraph("Applicant: " + application.getApplicant().getFirstName() + " " + application.getApplicant().getLastName(), boldFont));
 
 		addSectionSeparators(document);
 
@@ -99,18 +99,18 @@ public class PdfDocumentBuilder {
 		if (StringUtils.isBlank(fieldValue)) {
 			document.add(new Paragraph(createMessage(fieldLabel.toLowerCase())));
 		} else {
-			document.add(new Paragraph(fieldLabel+": "+fieldValue));
+			document.add(new Paragraph(fieldLabel + ": " + fieldValue));
 		}
 	}
 
 	private void addProgrammeSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Programme                                                                                          ", grayFont));
-		document.add(new Paragraph("Programme: "+application.getProject().getProgram().getTitle()));
+		document.add(new Paragraph("Programme: " + application.getProject().getProgram().getTitle()));
 
 		if (application.getProgrammeDetails().getStudyOption() == null) {
 			document.add(new Paragraph(createMessage("study option")));
 		} else {
-			document.add(new Paragraph("Study Option: "+application.getProgrammeDetails().getStudyOption().displayValue()));
+			document.add(new Paragraph("Study Option: " + application.getProgrammeDetails().getStudyOption().displayValue()));
 		}
 
 		addCorrectOutputDependingOnNull(document, application.getProject().getTitle(), "Project");
@@ -118,15 +118,14 @@ public class PdfDocumentBuilder {
 		if (application.getProgrammeDetails().getStartDate() == null) {
 			document.add(new Paragraph(createMessage("start date")));
 		} else {
-			document.add(new Paragraph("Start Date: "+ application.getProgrammeDetails().getStartDate().toString()));
+			document.add(new Paragraph("Start Date: " + application.getProgrammeDetails().getStartDate().toString()));
 		}
 
 		if (application.getProgrammeDetails().getReferrer() == null) {
 			document.add(new Paragraph(createMessage("referrer")));
 		} else {
-			document.add(new Paragraph("Referrer: "+application.getProgrammeDetails().getReferrer().displayValue()));
+			document.add(new Paragraph("Referrer: " + application.getProgrammeDetails().getReferrer().displayValue()));
 		}
-
 
 		if (application.getProgrammeDetails().getSupervisors().isEmpty()) {
 			document.add(new Paragraph(createMessage("supervisors information")));
@@ -135,7 +134,7 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph(" "));
 
 			PdfPTable table = new PdfPTable(3);
-			table.setWidthPercentage (100.0f);
+			table.setWidthPercentage(100.0f);
 
 			PdfPCell c1 = new PdfPCell(new Phrase("Supervisor Email", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -171,19 +170,19 @@ public class PdfDocumentBuilder {
 		if (application.getPersonalDetails().getGender() == null) {
 			document.add(new Paragraph(createMessage("gender")));
 		} else {
-			document.add(new Paragraph("Gender: "+ application.getPersonalDetails().getGender().getDisplayValue()));
+			document.add(new Paragraph("Gender: " + application.getPersonalDetails().getGender().getDisplayValue()));
 		}
 
 		if (application.getPersonalDetails().getDateOfBirth() == null) {
 			document.add(new Paragraph(createMessage("date of birth")));
 		} else {
-			document.add(new Paragraph("Date of Birth: "+ application.getPersonalDetails().getDateOfBirth().toString()));
+			document.add(new Paragraph("Date of Birth: " + application.getPersonalDetails().getDateOfBirth().toString()));
 		}
 
 		if (application.getPersonalDetails().getCountry() == null) {
 			document.add(new Paragraph(createMessage("country of birth")));
 		} else {
-			document.add(new Paragraph("Country of Birth: "+ application.getPersonalDetails().getCountry().getName()));
+			document.add(new Paragraph("Country of Birth: " + application.getPersonalDetails().getCountry().getName()));
 		}
 
 		addGivenNationality(document, "Nationality", application.getPersonalDetails().getCandidateNationalities());
@@ -197,9 +196,8 @@ public class PdfDocumentBuilder {
 		if (application.getPersonalDetails().getResidenceCountry() == null) {
 			document.add(new Paragraph(createMessage("country")));
 		} else {
-			document.add(new Paragraph("Country: "+ application.getPersonalDetails().getResidenceCountry().getName()));
+			document.add(new Paragraph("Country: " + application.getPersonalDetails().getResidenceCountry().getName()));
 		}
-
 
 		document.add(new Paragraph("Contact Details", smallBoldFont));
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getEmail(), "Email");
@@ -217,7 +215,7 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph(" "));
 
 			table = new PdfPTable(2);
-			table.setWidthPercentage (100.0f);
+			table.setWidthPercentage(100.0f);
 
 			c1 = new PdfPCell(new Phrase("Type", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -241,14 +239,13 @@ public class PdfDocumentBuilder {
 		}
 	}
 
-
 	private void addGivenNationality(Document document, String header, java.util.List<Nationality> nationalities) throws DocumentException {
 		document.add(new Paragraph(header, smallBoldFont));
 		if (nationalities.size() > 0) {
 			document.add(new Paragraph(" "));
 
 			PdfPTable table = new PdfPTable(1);
-			table.setWidthPercentage (100.0f);
+			table.setWidthPercentage(100.0f);
 
 			PdfPCell c1 = new PdfPCell(new Phrase("Nationality", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -274,15 +271,15 @@ public class PdfDocumentBuilder {
 		} else {
 			Address currentAddress = application.getAddresses().get(0);
 			document.add(new Paragraph("Current Address", smallBoldFont));
-			document.add(new Paragraph("Location: "+currentAddress.getLocation()));
-			document.add(new Paragraph("Country: "+currentAddress.getCountry().getName()));
+			document.add(new Paragraph("Location: " + currentAddress.getLocation()));
+			document.add(new Paragraph("Country: " + currentAddress.getCountry().getName()));
 
 			document.add(new Paragraph(" "));
-			
+
 			Address contactAddress = application.getAddresses().get(1);
 			document.add(new Paragraph("Contact Address", smallBoldFont));
-			document.add(new Paragraph("Location: "+contactAddress.getLocation()));
-			document.add(new Paragraph("Country: "+contactAddress.getCountry().getName()));
+			document.add(new Paragraph("Location: " + contactAddress.getLocation()));
+			document.add(new Paragraph("Country: " + contactAddress.getCountry().getName()));
 
 			document.add(new Paragraph(" "));
 		}
@@ -297,13 +294,13 @@ public class PdfDocumentBuilder {
 
 			for (Qualification qualification : application.getQualifications()) {
 				document.add(new Paragraph("Provider: " + qualification.getQualificationInstitution()));
-				document.add(new Paragraph("Subject: "+ qualification.getQualificationSubject()));
+				document.add(new Paragraph("Subject: " + qualification.getQualificationSubject()));
 				document.add(new Paragraph("Start Date: " + qualification.getQualificationStartDate().toString()));
-				document.add(new Paragraph("Language: "+ qualification.getQualificationLanguage().getName()));
+				document.add(new Paragraph("Language: " + qualification.getQualificationLanguage().getName()));
 				document.add(new Paragraph("Level: " + qualification.getQualificationLevel().getDisplayValue()));
 				document.add(new Paragraph("Type: " + qualification.getQualificationType()));
-				document.add(new Paragraph("Grade: " + qualification.getQualificationGrade()));				
-				if(qualification.getQualificationAwardDate() != null){
+				document.add(new Paragraph("Grade: " + qualification.getQualificationGrade()));
+				if (qualification.getQualificationAwardDate() != null) {
 					document.add(new Paragraph("Award Date: " + qualification.getQualificationAwardDate().toString()));
 				}
 
@@ -321,7 +318,7 @@ public class PdfDocumentBuilder {
 			for (EmploymentPosition employment : application.getEmploymentPositions()) {
 				document.add(new Paragraph("Employer: " + employment.getEmployerName()));
 				document.add(new Paragraph("Position: " + employment.getPosition()));
-				document.add(new Paragraph("Remit: " +  employment.getRemit()));
+				document.add(new Paragraph("Remit: " + employment.getRemit()));
 				document.add(new Paragraph("Start Date: " + employment.getStartDate().toString()));
 				if (employment.getEndDate() == null) {
 					document.add(new Paragraph(createMessage("end date")));
@@ -403,11 +400,28 @@ public class PdfDocumentBuilder {
 	}
 
 	private void addSupportingDocuments(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
-		for (com.zuehlke.pgadmissions.domain.Document doc : application.getSupportingDocuments()) {
+
+		com.zuehlke.pgadmissions.domain.Document doc = application.getCv();
+		if (doc != null) {
 			document.newPage();
 			document.add(new Paragraph(doc.getType().getDisplayValue(), smallBoldFont));
-			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg") || doc.getFileName().endsWith("png")
-					|| doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
+			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg")
+					|| doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
+				Image image = Image.getInstance(doc.getContent());
+				document.add(image);
+			} else if (doc.getFileName().endsWith(".txt")) {
+				String content = new String(doc.getContent());
+				document.add(new Chunk(content));
+			} else if (doc.getFileName().endsWith(".pdf")) {
+				readPdf(document, doc);
+			}
+		}
+		doc = application.getPersonalStatement();
+		if (doc != null) {
+			document.newPage();
+			document.add(new Paragraph(doc.getType().getDisplayValue(), smallBoldFont));
+			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg")
+					|| doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
 				Image image = Image.getInstance(doc.getContent());
 				document.add(image);
 			} else if (doc.getFileName().endsWith(".txt")) {
@@ -419,10 +433,9 @@ public class PdfDocumentBuilder {
 		}
 	}
 
-
 	private void addUploadedReferences(ApplicationForm application, Document document) throws IOException, DocumentException {
 		for (Referee referee : application.getReferees()) {
-			if (referee.getReference()!= null) {
+			if (referee.getReference() != null) {
 				document.newPage();
 				document.add(new Paragraph("Reference from " + referee.getFirstname() + " " + referee.getLastname(), boldFont));
 				document.add(new Paragraph("Relationship: " + referee.getRelationship(), boldFont));

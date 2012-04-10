@@ -137,8 +137,7 @@
 			           				<#include "/private/pgStudents/form/components/references_details.ftl"/>
 			          			</section>
 			          
-			          			<section class="folding blue <#if model.uploadErrorCode?? || model.uploadTwoErrorCode?? || model.hasError('supportingDocuments') >error</#if>">
-									<#include "/private/pgStudents/form/components/documents.ftl"/>
+			          			<section id="documentSection" class="folding blue <#if model.uploadErrorCode?? || model.uploadTwoErrorCode?? || model.hasError('supportingDocuments') >error</#if>">							
 			          			</section>
 			          
 			          			<section id="additionalInformationSection" class="folding lightblue">

@@ -29,10 +29,7 @@ public class Document extends DomainObject<Integer> {
 	@JoinColumn(name = "uploaded_by_id")
 	private RegisteredUser uploadedBy;
 	
-	@ManyToOne
-	@JoinColumn(name = "application_form_id")
-	private ApplicationForm applicationForm;
-	
+
 	@OneToOne(mappedBy="proofOfAward")	
 	private Qualification qualification;
 
@@ -104,14 +101,6 @@ public class Document extends DomainObject<Integer> {
 
 	public Date getDateUploaded() {
 		return dateUploaded;
-	}
-
-	public ApplicationForm getApplicationForm() {
-		return applicationForm;
-	}
-
-	public void setApplicationForm(ApplicationForm applicationForm) {
-		this.applicationForm = applicationForm;
 	}
 
 	public void setDateUploaded(Date dateUploaded) {

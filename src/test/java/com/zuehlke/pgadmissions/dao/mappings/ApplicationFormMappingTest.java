@@ -172,43 +172,26 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		Assert.assertTrue(reloadedApplication.getAddresses().contains(address));
 
 	}
-
 	@Test
-	public void shouldLoadApplicationFormWithSupportingDocuments() {
+	public void shouldLoadApplicationFormWithCVAndPersonalStatement() {
 
 		ApplicationForm application = new ApplicationForm();
 		application.setProject(project);
 		application.setApplicant(user);
-		Document doc1 = new DocumentBuilder().fileName("bob").type(DocumentType.CV).content("aaa!".getBytes()).toDocument();
-		Document doc2 = new DocumentBuilder().fileName("bob").type(DocumentType.PERSONAL_STATEMENT).content("aaa!".getBytes()).toDocument();
-		Document doc3 = new DocumentBuilder().fileName("bob").type(DocumentType.PERSONAL_STATEMENT).content("aaa!".getBytes()).toDocument();
-
-		application.setSupportingDocuments(Arrays.asList(doc1, doc2));
+		Document cv = new DocumentBuilder().fileName("bob").type(DocumentType.CV).content("aaa!".getBytes()).toDocument();
+		Document personalStatement = new DocumentBuilder().fileName("bob").type(DocumentType.PERSONAL_STATEMENT).content("aaa!".getBytes()).toDocument();
+		save(cv, personalStatement);
+		flushAndClearSession();
+		application.setCv(cv);
+		application.setPersonalStatement(personalStatement);
+		
 		sessionFactory.getCurrentSession().save(application);
-		assertNotNull(doc1.getId());
-		assertNotNull(doc2.getId());
 		flushAndClearSession();
+		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		assertEquals(2, reloadedApplication.getSupportingDocuments().size());
-		assertTrue(reloadedApplication.getSupportingDocuments().containsAll(Arrays.asList(doc1, doc2)));
-		Integer tobeRemovedId = doc2.getId();
-		reloadedApplication.getSupportingDocuments().remove(doc2);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedApplication);
-
-		flushAndClearSession();
-		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		assertEquals(1, reloadedApplication.getSupportingDocuments().size());
-		assertTrue(reloadedApplication.getSupportingDocuments().containsAll(Arrays.asList(doc1)));
-
-		reloadedApplication.getSupportingDocuments().add(doc3);
-		sessionFactory.getCurrentSession().saveOrUpdate(reloadedApplication);
-		flushAndClearSession();
 		
-		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		assertEquals(2, reloadedApplication.getSupportingDocuments().size());
-		assertTrue(reloadedApplication.getSupportingDocuments().containsAll(Arrays.asList(doc1, doc3)));
-		
-		assertNull(sessionFactory.getCurrentSession().get(Document.class, tobeRemovedId));
+		assertEquals(cv, reloadedApplication.getCv());
+		assertEquals(personalStatement, application.getPersonalStatement());
 	}
 
 	@Test

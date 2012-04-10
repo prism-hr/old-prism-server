@@ -83,71 +83,7 @@ public class FileUploadControllerTest {
 
 	}
 
-	@Test
-	public void shouldCreateDocumentFromFileInSynchronousUpload() throws IOException {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
-		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("filename");
-		EasyMock.expect(multipartFileMock.getContentType()).andReturn("ContentType");
-		EasyMock.expect(multipartFileMock.getBytes()).andReturn("lala".getBytes());
-		EasyMock.replay(multipartFileMock);
-
-		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		controller.uploadFile(applicationForm, multipartFileMock, null);
-
-		EasyMock.verify(applicationsServiceMock);
-		assertEquals(1, applicationForm.getSupportingDocuments().size());
-		Document document = applicationForm.getSupportingDocuments().get(0);
-		assertEquals("filename", document.getFileName());
-		assertEquals("ContentType", document.getContentType());
-		assertEquals("lala", new String(document.getContent()));
-		assertEquals(DocumentType.CV, document.getType());
-
-	}
-
-	@Test
-	public void shouldReturnCorrectModelAndView() throws IOException {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).toApplicationForm();
-		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
-		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("filename");
-		EasyMock.expect(multipartFileMock.getContentType()).andReturn("ContentType");
-		EasyMock.expect(multipartFileMock.getBytes()).andReturn("lala".getBytes());
-		EasyMock.replay(multipartFileMock);
-
-		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		ModelAndView modelAndView = controller.uploadFile(applicationForm, multipartFileMock, null);
-		assertEquals("redirect:/application", modelAndView.getViewName());
-		assertEquals(8, modelAndView.getModel().get("id"));
-	}
-
-	@Test
-	public void shouldValidateAndAddErrorsToModelIfExists() throws IOException {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).toApplicationForm();
-
-		MultipartFile multipartFileMock = EasyMock.createMock(MultipartFile.class);
-		EasyMock.expect(multipartFileMock.getOriginalFilename()).andReturn("filename");
-		EasyMock.expect(multipartFileMock.getContentType()).andReturn("ContentType");
-		EasyMock.expect(multipartFileMock.getBytes()).andReturn("lala".getBytes());
-		EasyMock.replay(multipartFileMock);
-
-		documentValidatorMock.validate(document, errors);
-		EasyMock.replay(documentValidatorMock);
-
-		EasyMock.expect(errors.hasFieldErrors("fileName")).andReturn(true);
-		FieldError fieldError = EasyMock.createMock(FieldError.class);
-		EasyMock.expect(fieldError.getCode()).andReturn("bob");
-		EasyMock.expect(errors.getFieldError("fileName")).andReturn(fieldError);
-		EasyMock.replay(fieldError, errors);
 	
-		EasyMock.replay(applicationsServiceMock);
-		ModelAndView modelAndView = controller.uploadFile(applicationForm, multipartFileMock, null);
-		assertEquals("redirect:/application", modelAndView.getViewName());
-		assertEquals(8, modelAndView.getModel().get("id"));
-		assertEquals("bob", modelAndView.getModel().get("uploadErrorCode"));
-		EasyMock.verify(applicationsServiceMock);
-	}
 	
 	@Test
 	public void shouldCreateDocumentFromFile() throws IOException{

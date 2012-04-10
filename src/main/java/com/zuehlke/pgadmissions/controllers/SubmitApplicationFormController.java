@@ -60,8 +60,8 @@ public class SubmitApplicationFormController {
 	}
 
 	@Autowired
-	public SubmitApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor, CountryService countryService, LanguageService languageService, SubmitApplicationService submitApplicationService
-			, RefereeService refereeService) {
+	public SubmitApplicationFormController(ApplicationsService applicationService, UserPropertyEditor userPropertyEditor, CountryService countryService,
+			LanguageService languageService, SubmitApplicationService submitApplicationService, RefereeService refereeService) {
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 		this.countryService = countryService;
@@ -69,7 +69,6 @@ public class SubmitApplicationFormController {
 		this.submitApplicationService = submitApplicationService;
 		this.refereeService = refereeService;
 	}
-
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView submitApplication(@ModelAttribute ApplicationFormDetails appForm, @RequestParam Integer applicationFormId, BindingResult result) {
@@ -84,7 +83,6 @@ public class SubmitApplicationFormController {
 		appForm.setPersonalDetails(applicationForm.getPersonalDetails());
 
 		appForm.setProgrammeDetails(applicationForm.getProgrammeDetails());
-		appForm.setSupportingDocuments(applicationForm.getSupportingDocuments());
 
 		ApplicationFormValidator validator = new ApplicationFormValidator();
 
@@ -95,9 +93,9 @@ public class SubmitApplicationFormController {
 			ApplicationPageModel viewApplicationModel = new ApplicationPageModel();
 
 			viewApplicationModel.setApplicationForm(applicationForm);
-			if (applicationForm!= null) {
+			if (applicationForm != null) {
 				viewApplicationModel.setAddress(buildAddress(applicationForm));
-			} 
+			}
 			viewApplicationModel.setFunding(new Funding());
 			viewApplicationModel.setQualification(new Qualification());
 			viewApplicationModel.setEmploymentPosition(new EmploymentPosition());
@@ -114,11 +112,11 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setGenders(Gender.values());
 			viewApplicationModel.setPhoneTypes(PhoneType.values());
 			viewApplicationModel.setDocumentTypes(DocumentType.values());
-			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME,"model", viewApplicationModel);
+			return new ModelAndView(VIEW_APPLICATION_APPLICANT_VIEW_NAME, "model", viewApplicationModel);
 
 		}
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		java.util.Date date= new java.util.Date();
+		java.util.Date date = new java.util.Date();
 		applicationForm.setSubmittedDate(new Timestamp(date.getTime()));
 		refereeService.processRefereesRoles(applicationForm.getReferees());
 		submitApplicationService.saveApplicationFormAndSendMailNotifications(applicationForm);
@@ -126,7 +124,6 @@ public class SubmitApplicationFormController {
 		return new ModelAndView("redirect:/applications?submissionSuccess=true");
 
 	}
-
 
 	private Address buildAddress(ApplicationForm applicationForm) {
 		Address address = new Address();
@@ -140,14 +137,14 @@ public class SubmitApplicationFormController {
 			address.setContactAddressCountry(contactAddress.getCountry().getId());
 			address.setContactAddressId(contactAddress.getId());
 			address.setContactAddressLocation(contactAddress.getLocation());
-			if (currentAddress.getLocation().equals(contactAddress.getLocation()) 
-					&& currentAddress.getCountry().equals(contactAddress.getCountry())) {
+			if (currentAddress.getLocation().equals(contactAddress.getLocation()) && currentAddress.getCountry().equals(contactAddress.getCountry())) {
 				address.setSameAddress("YES");
 			}
 		}
 
 		return address;
 	}
+
 	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(RegisteredUser.class, userPropertyEditor);
@@ -161,7 +158,7 @@ public class SubmitApplicationFormController {
 	private ApplicationForm getApplicationForm(Integer applicationFormId) {
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		ApplicationForm applicationForm = applicationService.getApplicationById(applicationFormId);
-		if(applicationForm == null || !user.canSee(applicationForm)){
+		if (applicationForm == null || !user.canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;

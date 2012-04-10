@@ -26,6 +26,14 @@ $(document).ready(function(){
 				$('#fundingSection').html(data);
 			}
 	);
+	$.get("/pgadmissions/update/getDocuments",
+			{
+				applicationId:  $('#applicationId').val()					
+			},
+			function(data) {
+				$('#documentSection').html(data);
+			}
+	);
 
 	/*
 	 * Submit application form on click of submit button.

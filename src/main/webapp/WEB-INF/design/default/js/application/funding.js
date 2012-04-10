@@ -103,16 +103,17 @@ function postFundingData(message){
 
 function fundingDocumentDelete(){
 	
-	if($('#fundingDocumentId') && $('#fundingDocumentId').val() && $('#fundingDocumentId').val() != ''){
+	if($('#document_SUPPORTING_FUNDING') && $('#document_SUPPORTING_FUNDING').val() && $('#document_SUPPORTING_FUNDING').val() != ''){
 		$.post("/pgadmissions/delete/asyncdelete",
 			{
-				documentId: $('#fundingDocumentId').val()
+				documentId: $('#document_SUPPORTING_FUNDING').val()
 				
 			}				
 		);
 
 	}
 }
+
 function fundingDocumentUpload()
 {	
 	

@@ -34,6 +34,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	private static final long serialVersionUID = -7671357234815343496L;
 
+	@ManyToOne
+	@JoinColumn(name = "cv_id")
+	private Document cv = null;
+	
+	@ManyToOne
+	@JoinColumn(name = "personal_statement_id")
+	private Document personalStatement = null;
+	
 	@Column(name="app_date_time", insertable = false)
 	@Generated(GenerationTime.INSERT)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -100,10 +108,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "application_form_id")
 	private List<Referee> referees = new ArrayList<Referee>();
 
-	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "application_form_id")	
-	private List<Document> supportingDocuments= new ArrayList<Document>();
 	
 	@Column(name="additional_information")
 	private String additionalInformation;
@@ -293,32 +297,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.programmeDetails = programmeDetails;
 	}
 
-	public List<Document> getSupportingDocuments() {
-		return supportingDocuments;
-	}
-
-	public void setSupportingDocuments(List<Document> supportingDocuments) {
-		this.supportingDocuments.clear();
-		this.supportingDocuments.addAll(supportingDocuments);
-	}
-
-	public boolean isCVUploaded() {
-		for (Document document : supportingDocuments) {
-			if(DocumentType.CV ==document.getType()){
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean isPersonalStatementUploaded() {
-		for (Document document : supportingDocuments) {
-			if(DocumentType.PERSONAL_STATEMENT ==document.getType()){
-				return true;
-			}
-		}
-		return false;
-	}
 	
 	public String getAdditionalInformation() {
 		return additionalInformation;
@@ -334,6 +312,22 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setSubmittedDate(Date submittedOn) {
 		this.submittedDate = submittedOn;
+	}
+
+	public Document getCv() {
+		return cv;
+	}
+
+	public void setCv(Document cv) {
+		this.cv = cv;
+	}
+
+	public Document getPersonalStatement() {
+		return personalStatement;
+	}
+
+	public void setPersonalStatement(Document personalStatement) {
+		this.personalStatement = personalStatement;
 	}
 }
 

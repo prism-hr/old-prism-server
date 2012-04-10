@@ -133,20 +133,6 @@ public class ApplicationPageModelBuilderTest {
 	}
 
 	@Test
-	public void shouldNotIncludeCVandPersonalStatementDocTypeIfAlreadyUploaded() {
-		Document cv = new DocumentBuilder().type(DocumentType.CV).toDocument();
-		Document statement = new DocumentBuilder().type(DocumentType.PERSONAL_STATEMENT).toDocument();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		applicationForm.getSupportingDocuments().addAll(Arrays.asList(cv, statement));
-
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
-
-		assertEquals(DocumentType.values().length - 2, model.getDocumentTypes().size());
-		assertFalse(model.getDocumentTypes().contains(DocumentType.CV));
-		assertFalse(model.getDocumentTypes().contains(DocumentType.PERSONAL_STATEMENT));
-	}
-
-	@Test
 	public void shouldAddUploadErrorCode() {
 		ApplicationPageModel model = builder.createAndPopulatePageModel(null, "hello.world", null, null, null);
 		assertEquals("hello.world", model.getUploadErrorCode());
@@ -248,9 +234,9 @@ public class ApplicationPageModelBuilderTest {
 
 	@Test
 	public void shouldNotFailIfNoCurrentUser() {
-		WebAuthenticationDetails webAuthenticationDetails = EasyMock.createMock(WebAuthenticationDetails.class);		
+		WebAuthenticationDetails webAuthenticationDetails = EasyMock.createMock(WebAuthenticationDetails.class);
 		authenticationToken.setDetails(webAuthenticationDetails);
-		
+
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
 		assertSame(applicationForm, model.getApplicationForm());

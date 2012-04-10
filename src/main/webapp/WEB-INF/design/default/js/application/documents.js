@@ -6,14 +6,21 @@ $(document).ready(function(){
 	});
 	
 	$('#documentsCancelButton').click(function(){
-		$("span[class='invalid']").each(function(){
-			$(this).hide();
-		});
+		$.get("/pgadmissions/update/getDocuments",
+				{
+					applicationId:  $('#applicationId').val(),
+					message: 'cancel'
+				},
+				function(data) {
+					$('#documentSection').html(data);
+				}
+		);
 	});
 	
-	$('a[name="deleteButton"]').click( function(){	
-		$(this).parent("form").submit();
+	$('#documentsSaveButton').click(function(){
+		postDocumentData('close');
 	});
+	
 
 	//open/close
 	var $header  =$('#documents-H2');
@@ -25,5 +32,128 @@ $(document).ready(function(){
 	  return false;
 	});
 	
+	$('#cvUploadFields').on('change','#cvDocument', function(event){	
+		cvDelete();
+		$('#cvDocumentProgress').html("uploading file...");
+		$('#cvDocument').attr("readonly", "readonly");
+		cvUpload();
+		$('#cvDocument').removeAttr("readonly");
+	});
+	
+	$('#psUploadFields').on('change','#psDocument', function(event){	
+		psDelete();
+		$('#psDocumentProgress').html("uploading file...");
+		$('#psDocument').attr("readonly", "readonly");
+		psUpload();
+		$('#psDocument').removeAttr("readonly");
+	});
+	
 	
 });
+
+
+function postDocumentData(message){
+	
+	$.post("/pgadmissions/update/editDocuments",
+		{ 	
+			applicationId:  $('#applicationId').val(),	
+			cv: $('#document_CV').val(),
+			personalStatement: $('#document_PERSONAL_STATEMENT').val(),
+			message:message
+		},
+		function(data) {
+			$('#documentSection').html(data);
+		}
+	);
+}
+
+
+
+function cvDelete(){
+	
+	if($('#document_CV') && $('#document_CV').val() && $('#document_CV').val() != ''){
+		$.post("/pgadmissions/delete/asyncdelete",
+			{
+				documentId: $('#document_CV').val()
+				
+			}				
+		);
+
+	}
+}
+
+function cvUpload()
+{	
+	
+	$("#cvDocumentProgress").ajaxStart(function(){
+		$(this).show();
+	})
+	.ajaxComplete(function(){
+		$(this).hide();
+		$('#cvDocumentProgress').html("");
+		
+	});
+
+	$.ajaxFileUpload
+	(
+		{
+			url:'/pgadmissions/documents/async',
+			secureuri:false,
+			
+			fileElementId:'cvDocument',	
+			dataType:'text',
+			data:{type:'CV'},
+			success: function (data)
+			{		
+				$('#cvUploadedDocument').html(data);
+				$('#cvUploadedDocument').show();
+				
+			}
+		}
+	)
+}
+
+
+function psDelete(){
+	
+	if($('#document_PERSONAL_STATEMENT') && $('#document_PERSONAL_STATEMENT').val() && $('#document_PERSONAL_STATEMENT').val() != ''){
+		$.post("/pgadmissions/delete/asyncdelete",
+			{
+				documentId: $('#document_PERSONAL_STATEMENT').val()
+				
+			}				
+		);
+
+	}
+}
+
+function psUpload()
+{	
+	
+	$("#psDocumentProgress").ajaxStart(function(){
+		$(this).show();
+	})
+	.ajaxComplete(function(){
+		$(this).hide();
+		$('#psDocumentProgress').html("");
+		
+	});
+
+	$.ajaxFileUpload
+	(
+		{
+			url:'/pgadmissions/documents/async',
+			secureuri:false,
+			
+			fileElementId:'psDocument',	
+			dataType:'text',
+			data:{type:'PERSONAL_STATEMENT'},
+			success: function (data)
+			{		
+				$('#psUploadedDocument').html(data);
+				$('#psUploadedDocument').show();
+				
+			}
+		}
+	)
+}

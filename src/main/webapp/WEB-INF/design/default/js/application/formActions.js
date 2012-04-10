@@ -43,7 +43,15 @@ $(document).ready(function(){
 				$('#documentSection').html(data);
 			}
 	);
-
+	
+	$.get("/pgadmissions/update/getAdditionalInformation",
+			{
+				applicationId:  $('#applicationId').val()					
+			},
+			function(data) {
+				$('#additionalInformationSection').html(data);
+			}
+	);
 	/*
 	 * Submit application form on click of submit button.
 	 */ 

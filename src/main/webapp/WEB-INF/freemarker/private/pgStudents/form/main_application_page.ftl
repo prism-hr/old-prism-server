@@ -140,7 +140,7 @@
 			          			</section>
 			          
 			          			<section id="additionalInformationSection" class="folding lightblue">
-			          				<#include "/private/pgStudents/form/components/additional_information.ftl"/>
+			          				
 			          			</section>
 
 			          			<hr/>

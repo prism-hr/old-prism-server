@@ -6,10 +6,9 @@ $(document).ready(function(){
 	});
 	
 	$('#informationSaveButton').click(function(){
-		$.post("/pgadmissions/update/addAdditionalInformation", { 
+		$.post("/pgadmissions/update/editAdditionalInformation", { 
 			additionalInformation: $("#additionalInformation").val(),
-			id: $("#id").val(), 
-			appId: $("#appId").val()
+			applicationId:  $('#applicationId').val()
 		},
 		
 		function(data) {
@@ -18,7 +17,15 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="informationCancelButton"]').click(function(){
-		$("#additionalInformation").val("");
+		$.get("/pgadmissions/update/getAdditionalInformatio",
+				{
+					applicationId:  $('#applicationId').val(),
+					message: 'cancel'
+				},
+				function(data) {
+					$('#additionalInformationSection').html(data);
+				}
+		);
 	});
 
 	//open/close

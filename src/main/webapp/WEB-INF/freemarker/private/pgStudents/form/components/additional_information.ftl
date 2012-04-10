@@ -1,41 +1,38 @@
-	<#import "/spring.ftl" as spring />
-	<h2 id="additional-H2" class="empty">
-    	<span class="left"></span><span class="right"></span><span class="status"></span>
-        Additional Information
-	</h2>
-    
-    <div>
-    	<form>
-              
-        	<!-- Free text field for info. -->
-            <div class="row">
-            <#if !model.applicationForm.isSubmitted()>
-            	<textarea id="additionalInformation" name="additionalInformation" class="max" rows="5" cols="90" >${(model.applicationForm.additionalInformation?html)!}</textarea>
-            	<#if model.hasError('additionalInformation')>                           
-                    <span class="invalid"><@spring.message  model.result.getFieldError('additionalInformation').code /></span><br/>
-                </#if>
-                <#else>
-                    <textarea readonly="readonly" id="additionalInformation" name="additionalInformation" class="max" rows="5" cols="90" >${(model.applicationForm.additionalInformation?html)!}</textarea>
-                </#if>
-			</div>
+<#import "/spring.ftl" as spring />
+<h2 id="additional-H2" class="empty">
+	<span class="left"></span><span class="right"></span><span class="status"></span>
+    Additional Information
+</h2>
 
-            <div class="buttons">
-            	<a class="button" id="informationCancelButton" name="informationCancelButton">Cancel</a>
-            	<button class="blue" type="button" id="additionalCloseButton">Close</button>
-                <button class="blue" type="button" id="informationSaveButton">Save</button>                
-			</div>
+<div>
+	<form>
+          
+    	<!-- Free text field for info. -->
+        <div class="row">
+       		<span class="plain-label">Additional information</span>
+    		<span class="hint" data-desc="<@spring.message 'additionalInformation.content'/>"></span>
+      		 <#if !applicationForm.isSubmitted()>
+        		<textarea id="additionalInformation" name="additionalInformation" class="max" rows="10" cols="80" >${(applicationForm.additionalInformation?html)!}</textarea>
+            <#else>
+                <textarea readonly="readonly" id="additionalInformation" name="additionalInformation" class="max" rows="10" cols=80" >${(applicationForm.additionalInformation?html)!}</textarea>
+            </#if>
+		</div>
 
-		</form>
-	</div>
+        <div class="buttons">
+        	<a class="button" id="informationCancelButton" name="informationCancelButton">Cancel</a>
+        	<button class="blue" type="button" id="additionalCloseButton">Close</button>
+            <button class="blue" type="button" id="informationSaveButton">Save</button>                
+		</div>
+
+	</form>
+</div>
+
+<script type="text/javascript" src="<@spring.url '/design/default/js/application/additional_information.js'/>"></script>
 	
-	<script type="text/javascript" src="<@spring.url '/design/default/js/application/additional_information.js'/>"></script>
-	
-<#if model.result?? && model.result.hasErrors()  >
-
-<#else >
+<#if !message?? >
 <script type="text/javascript">
 	$(document).ready(function(){
-		$('#additional-H2').trigger('click');
+		$('#documents-H2').trigger('click');
 	});
 </script>
 </#if>

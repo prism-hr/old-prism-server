@@ -24,6 +24,24 @@
 	<#assign telephoneExist = false>
 </#if>
 
+<#if model.applicationForm.personalDetails.candidateNationalities?has_content>
+    <#assign candidateNationalitiesExist = true/>
+<#else>
+    <#assign candidateNationalitiesExist = false>
+</#if>
+
+<#if model.applicationForm.personalDetails.maternalGuardianNationalities?has_content>
+    <#assign maternalNationalitiesExist = true/>
+<#else>
+    <#assign maternalNationalitiesExist = false>
+</#if>
+
+<#if model.applicationForm.personalDetails.paternalGuardianNationalities?has_content>
+    <#assign paternalNationalitiesExist = true/>
+<#else>
+    <#assign paternalNationalitiesExist = false>
+</#if>
+
 <#import "/spring.ftl" as spring />
 <input type="hidden" id="submissionStatus" value="${model.applicationForm.submissionStatus}"/>
 <#-- Personal Details Rendering -->
@@ -122,10 +140,12 @@
               	<div>    
               		<strong>Nationality</strong>
 					<div class="row" id="existingCandidateNationalities">
+					<#if candidateNationalitiesExist>
+                  	  	 <label class="plain-label" id="candidateNationalitiesLabel">My Nationality</label>
+                  	 </#if> 	 		
                   	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
                   	  	<span name="existingCandidateNationality">
                   	  	 	<div class="row">
-                  	  	 		<label class="plain-label">My Nationality</label>
                   	  	 		
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
@@ -162,6 +182,9 @@
 					</div>
         
             	    <div class="row" id="existingMaternalNationalities">
+            	     <#if maternalNationalitiesExist>
+                         <label class="plain-label" id="maternalNationalitiesLabel">Mother's Nationality</label>
+                     </#if> 
 						 <#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
 							<span>
 								<div class="row">
@@ -194,6 +217,9 @@
                   	</div>
                   	 
             	     <div class="row" id="existingPaternalNationalities">
+            	      <#if paternalNationalitiesExist>
+                         <label class="plain-label" id="paternalNationalitiesLabel">Father's Nationality</label>
+                     </#if> 
 						<#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
 							<span>
 								<div class="row">

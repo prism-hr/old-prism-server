@@ -69,10 +69,14 @@ $(document).ready(function(){
 	//candidate nationalities
 	$('#addCandidateNationalityButton').on("click", function(){
 		if( $('#candidateNationalityCountry option:selected').val()!= ''){
-					
+			
+			if ($('#candidateNationalitiesLabel').length == 0){
+				var candidNatHtml = '	<label class="plain-label" id="candidateNationalitiesLabel">My Nationality</label>';
+				$('#existingCandidateNationalities').prepend(candidNatHtml);
+			}
+			
 			var html = '<span>' +
 	  	 	'<div class="row">'+
-	  	 	'	<label class="plain-label">My Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val() + '}' + "'/>" +
@@ -95,9 +99,13 @@ $(document).ready(function(){
 	$('#addMaternalNationalityButton').on("click", function(){
 		if( $('#maternalNationalityCountry option:selected').val()!= ''){
 			
+			if ($('#maternalNationalitiesLabel').length == 0){
+				var motherNatHtml = '	<label class="plain-label" id="maternalNationalitiesLabel">Mother\'s Nationality</label>';
+				$('#existingMaternalNationalities').prepend(motherNatHtml);
+			}
+			
 			var html = '<span>' +
 	  	 	'<div class="row">'+
-	  	 	'	<label class="plain-label">Mother\'s Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val() + '}' + "'/>" +
@@ -117,9 +125,14 @@ $(document).ready(function(){
 	//paternal guardian nationalities
 	$('#addPaternalNationalityButton').on("click", function(){
 		if( $('#paternalNationalityCountry option:selected').val()!= ''){
+			
+			if ($('#paternalNationalitiesLabel').length == 0){
+				var fatherNatHtml = '	<label class="plain-label" id="paternalNationalitiesLabel">Father\'s Nationality</label>';
+				$('#existingPaternalNationalities').prepend(fatherNatHtml);
+			}
+			
 			var html = '<span>' +
 	  	 	'<div class="row">'+
-	  	 	'	<label class="plain-label">Father\'s Nationality</label>'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()   + '}' + "'/>" +

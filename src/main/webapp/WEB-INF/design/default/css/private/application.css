@@ -83,3 +83,29 @@ section.folding div.comment .previous ul li span { display: block; }
 #view-toolbar li.top a { background-image: url(../../images/float_up.png) }
 #view-toolbar li.pdf a { background-image: url(../../images/float_download.png) }
 #view-toolbar li.print a { background-image: url(../../images/float_print.png) }
+
+/* Dynamic Data Table */
+table.data-table { border-collapse: collapse; border-spacing: 0; }
+table.data-table td, table.data-table th { padding: 3px; text-align:left; } 
+table.data-table .odd td { background-color: #FFF; } 
+table.data-table .even td { background-color: #DDD; }
+table.data-table .deleteButton{
+	background-image: url("images/trash.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 24px;
+    overflow: hidden;
+    text-indent: 99px;
+    vertical-align: middle;
+    width: 24px;
+}
+table.data-table .editButton{
+	background-image: url("images/edit_grey.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 24px;
+    overflow: hidden;
+    text-indent: 99px;
+    vertical-align: middle;
+    width: 24px;
+}

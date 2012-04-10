@@ -28,7 +28,6 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Supervisor</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Document</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Language</value>
-	     		<value>com.zuehlke.pgadmissions.domain.Nationality</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

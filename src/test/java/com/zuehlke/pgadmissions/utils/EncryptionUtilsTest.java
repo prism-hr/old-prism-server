@@ -5,8 +5,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-import java.security.NoSuchAlgorithmException;
-
 import org.junit.Test;
 
 public class EncryptionUtilsTest {
@@ -20,7 +18,7 @@ public class EncryptionUtilsTest {
 
 	
 	@Test
-	public void shouldGenerate36CharacterString() throws NoSuchAlgorithmException{
+	public void shouldGenerate36CharacterString(){
 		EncryptionUtils encryptionUtils = new EncryptionUtils();
 		String randomString = encryptionUtils.generateUUID();		
 		assertNotNull(randomString);

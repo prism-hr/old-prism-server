@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
 
-import java.text.ParseException;
-
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -137,7 +135,7 @@ public class DocumentsControllerTest {
 	}
 
 	@Before
-	public void setUp() throws ParseException {
+	public void setUp() {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		documentSectionValidatorMock = EasyMock.createMock(DocumentSectionValidator.class);
 

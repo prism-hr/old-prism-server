@@ -7,7 +7,6 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.Telephone;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
@@ -26,9 +25,9 @@ public class PersonalDetailsBuilder {
 	private ApplicationForm applicationForm;
 	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();
 	private String messenger;
-	private List<Nationality> candiateNationalities = new ArrayList<Nationality>();
-	private List<Nationality> maternalGuardianNationalities= new ArrayList<Nationality>();
-	private List<Nationality> paternalGuardianNationalities= new ArrayList<Nationality>();
+	private List<Country> candiateNationalities = new ArrayList<Country>();
+	private List<Country> maternalGuardianNationalities= new ArrayList<Country>();
+	private List<Country> paternalGuardianNationalities= new ArrayList<Country>();
 	private CheckedStatus englishFirstLanguage;
 	private CheckedStatus requiresVisa;
 	
@@ -49,17 +48,17 @@ public class PersonalDetailsBuilder {
 	}
 	
 	
-	public PersonalDetailsBuilder paternalGuardianNationalities(Nationality... nationalities) {
-		this.maternalGuardianNationalities.addAll(Arrays.asList(nationalities));
-		return this;
-	}
-	
-	public PersonalDetailsBuilder maternalGuardianNationalities(Nationality... nationalities) {
+	public PersonalDetailsBuilder paternalGuardianNationalities(Country... nationalities) {
 		this.paternalGuardianNationalities.addAll(Arrays.asList(nationalities));
 		return this;
 	}
 	
-	public PersonalDetailsBuilder candiateNationalities(Nationality... nationalities) {
+	public PersonalDetailsBuilder maternalGuardianNationalities(Country... nationalities) {
+		this.maternalGuardianNationalities.addAll(Arrays.asList(nationalities));
+		return this;
+	}
+	
+	public PersonalDetailsBuilder candiateNationalities(Country... nationalities) {
 		this.candiateNationalities.addAll(Arrays.asList(nationalities));
 		return this;
 	}

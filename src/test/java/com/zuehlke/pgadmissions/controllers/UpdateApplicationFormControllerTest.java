@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -252,7 +251,7 @@ public class UpdateApplicationFormControllerTest {
 	}
 
 	@Before
-	public void setUp() throws ParseException {
+	public void setUp() {
 		languageServiceMock = EasyMock.createMock(LanguageService.class);
 		languagePropertyEditorMock = EasyMock.createMock(LanguagePropertyEditor.class);
 

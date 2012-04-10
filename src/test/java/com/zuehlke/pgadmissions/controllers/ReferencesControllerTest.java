@@ -43,7 +43,7 @@ public class ReferencesControllerTest {
 	private Document document;
 
 	@Test
-	public void shouldGetRefereeFromService() throws IOException {
+	public void shouldGetRefereeFromService() {
 		
 		Referee referee = new RefereeBuilder().id(1).toReferee();
 		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
@@ -54,7 +54,7 @@ public class ReferencesControllerTest {
 	}
 
 	@Test(expected=ResourceNotFoundException.class)
-	public void shoudThrowResourceNotFoundExceptionIfRefereeIsNull() throws IOException {
+	public void shoudThrowResourceNotFoundExceptionIfRefereeIsNull() {
 		
 		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(null);
 		EasyMock.replay(refereeServiceMock);
@@ -62,7 +62,7 @@ public class ReferencesControllerTest {
 	}
 	
 	@Test
-	public void shouldSetNewReferenceOnServiceIfNull() throws IOException {
+	public void shouldSetNewReferenceOnServiceIfNull() {
 		Referee referee = new RefereeBuilder().id(1).toReferee();
 		EasyMock.expect(refereeServiceMock.getRefereeById(1)).andReturn(referee);
 		EasyMock.replay(refereeServiceMock);

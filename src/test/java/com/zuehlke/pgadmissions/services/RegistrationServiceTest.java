@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +46,7 @@ public class RegistrationServiceTest {
 	private ProjectDAO projectDAOMock;
 
 	@Test
-	public void shouldCreateNewUserFromDTO() throws NoSuchAlgorithmException {
+	public void shouldCreateNewUserFromDTO() {
 		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).id(1).toRole();
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(role);
 		EasyMock.replay(roleDAOMock);
@@ -103,7 +102,7 @@ public class RegistrationServiceTest {
 	}
 
 	@Test
-	public void shouldCreateNewUserWithProjectNullIfNoIdGiven() throws NoSuchAlgorithmException {
+	public void shouldCreateNewUserWithProjectNullIfNoIdGiven(){
 		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).id(1).toRole();
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(role);
 		EasyMock.replay(roleDAOMock);

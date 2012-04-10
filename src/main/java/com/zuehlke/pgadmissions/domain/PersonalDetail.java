@@ -8,9 +8,12 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -18,7 +21,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
 
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -47,24 +49,17 @@ public class PersonalDetail extends DomainObject<Integer> {
 	@Column(name = "requires_visa")
 	private CheckedStatus requiresVisa;
 	
-	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "personal_details_id")
-	@Where(clause="nationality_type='CANDIDATE'")
-	private List<Nationality> candidateNationalities= new ArrayList<Nationality>();
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_country_id") })
+	private List<Country> candidateNationalities= new ArrayList<Country>();
 	
-	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "personal_details_id")
-	@Where(clause="nationality_type='MATERNAL_GUARDIAN'")
-	private List<Nationality> maternalGuardianNationalities= new ArrayList<Nationality>();
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "MATERNAL_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "maternal_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "maternal_country_id") })
+	private List<Country> maternalGuardianNationalities= new ArrayList<Country>();
 	
-	
-	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "personal_details_id")
-	@Where(clause="nationality_type='PATERNAL_GUARDIAN'")
-	private List<Nationality> paternalGuardianNationalities= new ArrayList<Nationality>();
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "PATERNAL_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "paternal_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "paternal_country_id") })
+	private List<Country> paternalGuardianNationalities= new ArrayList<Country>();
 	
 	@Column(name = "first_name")
 	private String firstName;
@@ -185,13 +180,13 @@ public class PersonalDetail extends DomainObject<Integer> {
 	}
 
 
-	public List<Nationality> getCandidateNationalities() {
+	public List<Country> getCandidateNationalities() {
 		return candidateNationalities;
 	}
 
-	public void setCandidateNationalities(List<Nationality> candiateNationalities) {
+	public void setCandidateNationalities(List<Country> candiateNationalities) {
 		this.candidateNationalities.clear();
-		for (Nationality nationality : candiateNationalities) {
+		for (Country nationality : candiateNationalities) {
 			if(nationality != null){
 				this.candidateNationalities.add(nationality);
 			}
@@ -199,26 +194,26 @@ public class PersonalDetail extends DomainObject<Integer> {
 		
 	}
 
-	public List<Nationality> getMaternalGuardianNationalities() {
+	public List<Country> getMaternalGuardianNationalities() {
 		return maternalGuardianNationalities;
 	}
 
-	public void setMaternalGuardianNationalities(List<Nationality> maternalGuardianNationalities) {
+	public void setMaternalGuardianNationalities(List<Country> maternalGuardianNationalities) {
 		this.maternalGuardianNationalities.clear();
-		for (Nationality nationality : maternalGuardianNationalities) {
+		for (Country nationality : maternalGuardianNationalities) {
 			if(nationality != null){
 				this.maternalGuardianNationalities.add(nationality);
 			}
 		}
 	}
 
-	public List<Nationality> getPaternalGuardianNationalities() {
+	public List<Country> getPaternalGuardianNationalities() {
 		return paternalGuardianNationalities;
 	}
 
-	public void setPaternalGuardianNationalities(List<Nationality> paternalGuardianNationalities) {
+	public void setPaternalGuardianNationalities(List<Country> paternalGuardianNationalities) {
 		this.paternalGuardianNationalities.clear();
-		for (Nationality nationality : paternalGuardianNationalities) {
+		for (Country nationality : paternalGuardianNationalities) {
 			if(nationality != null){
 				this.paternalGuardianNationalities.add(nationality);
 			}

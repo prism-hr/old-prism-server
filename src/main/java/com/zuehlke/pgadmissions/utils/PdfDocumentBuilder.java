@@ -24,9 +24,9 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
-import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -239,7 +239,7 @@ public class PdfDocumentBuilder {
 		}
 	}
 
-	private void addGivenNationality(Document document, String header, java.util.List<Nationality> nationalities) throws DocumentException {
+	private void addGivenNationality(Document document, String header, java.util.List<Country> nationalities) throws DocumentException {
 		document.add(new Paragraph(header, smallBoldFont));
 		if (nationalities.size() > 0) {
 			document.add(new Paragraph(" "));
@@ -252,8 +252,8 @@ public class PdfDocumentBuilder {
 			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
 
-			for (Nationality nationality : nationalities) {
-				table.addCell(nationality.getCountry().getName());
+			for (Country nationality : nationalities) {
+				table.addCell(nationality.getName());
 			}
 
 			document.add(table);

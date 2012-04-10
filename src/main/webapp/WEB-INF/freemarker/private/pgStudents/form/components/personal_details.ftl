@@ -147,8 +147,8 @@
                   	  	<span name="existingCandidateNationality">
                   	  	 	<div class="row">
                   				<div class="field">
-                  					<label class="full">${nationality.country.name}</label>  
-                  	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson?html}'/>
+                  					<label class="full">${nationality.name}</label>  
+                  	  				<input type="hidden" name="candidateNationalities" value='${nationality.id?html}'/>
 									<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
                   	  			</div>
                   	  		</div>
@@ -188,8 +188,8 @@
 							<span>
 								<div class="row">
 									<div class="field">
-										<label class="full">${nationality.country.name}</label>  
-										<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson?html}'/>
+										<label class="full">${nationality.name}</label>  
+										<input type="hidden" name="maternalGuardianNationalities" value='${nationality.id?html}'/>
 										<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
 									</div>
 								</div>            
@@ -222,8 +222,8 @@
 							<span>
 								<div class="row">
 									<div class="field">
-										<label class="full">${nationality.country.name?html}</label>  
-										<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson?html}'/>
+										<label class="full">${nationality.name?html}</label>  
+										<input type="hidden" name="paternalGuardianNationalities" value='${nationality.id?html}'/>
 										<#if !model.applicationForm.isSubmitted()><a class="button-delete">Delete</a></#if>
 									</div>
 								</div>            

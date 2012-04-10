@@ -79,7 +79,7 @@ $(document).ready(function(){
 	  	 	'<div class="row">'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val() + '}' + "'/>" +
+	  		"		<input type='hidden' name='candidateNationalities' value='" +$('#candidateNationalityCountry option:selected').val()+ "'/>" +
 	  		'		<a class="button-delete">Delete</a><br/>'+
 	  		'	</div>'+
 	  		'</div>'+
@@ -108,7 +108,7 @@ $(document).ready(function(){
 	  	 	'<div class="row">'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val() + '}' + "'/>" +
+	  		"		<input type='hidden' name='maternalGuardianNationalities' value='" +$('#maternalNationalityCountry option:selected').val() + "'/>" +
 	  		'		<a class="button-delete">Delete</a><br/>'+
 	  		'	</div>'+
 	  		'</div>'+
@@ -135,7 +135,7 @@ $(document).ready(function(){
 	  	 	'<div class="row">'+
 			'	<div class="field">'+
 			'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()   + '}' + "'/>" +
+	  		"		<input type='hidden' name='paternalGuardianNationalities' value='" +$('#paternalNationalityCountry option:selected').val() + "'/>" +
 	  		'		<a class="button-delete">Delete</a> <br/>'+
 	  		'	</div>'+
 	  		'</div>'+
@@ -161,7 +161,7 @@ $(document).ready(function(){
 		
 		//candidate nationalities
 		if( $('#candidateNationalityCountry option:selected').val()!= ''){
-			var html = 	"<span><input type='hidden' name='candidateNationalities' value='{" +'"type":"CANDIDATE", "country":' +$('#candidateNationalityCountry option:selected').val()  + '}' + "'/>" + '</span>';
+			var html = 	"<span><input type='hidden' name='candidateNationalities' value='" +$('#candidateNationalityCountry option:selected').val() + "'/>" + '</span>';
 				
 			
 			$('#existingCandidateNationalities').append(html);
@@ -170,8 +170,7 @@ $(document).ready(function(){
 
 		//maternal nationalities
 		if( $('#maternalNationalityCountry option:selected').val()!= ''){
-			var html = 	"<span><input type='hidden' name='maternalGuardianNationalities' value='{" +'"type":"MATERNAL_GUARDIAN", "country":' +$('#maternalNationalityCountry option:selected').val()  + 
-			'}' + "'/></span>";
+			var html = 	"<span><input type='hidden' name='maternalGuardianNationalities' value='"  +$('#maternalNationalityCountry option:selected').val() + "'/></span>";
 			
 			$('#existingMaternalNationalities').append(html);
 		}
@@ -179,8 +178,7 @@ $(document).ready(function(){
 		//paternal nationalities
 		if( $('#paternalNationalityCountry option:selected').val()!= ''){
 			
-			var html = 	"<span><input type='hidden' name='paternalGuardianNationalities' value='{" +'"type":"PATERNAL_GUARDIAN", "country":' +$('#paternalNationalityCountry option:selected').val()  +
-			'}' + "'/></span>";
+			var html = 	"<span><input type='hidden' name='paternalGuardianNationalities' value='{" +$('#paternalNationalityCountry option:selected').val() + "'/></span>";
 			
 			$('#existingPaternalNationalities').append(html);
 		}

@@ -65,6 +65,12 @@
 			
 			</div>
 
+			<#-- Supervisor Data Table: Include the following section for supervisor table! -->
+			<#--
+			<div>
+				<#include "/private/common/parts/supervisor_data_table.ftl"/>
+			</div>
+			-->
             <div>
             	
             	<label class="label">Supervision</label>
@@ -85,7 +91,8 @@
                   </#list>
                 </div>
                 
-                <#if !model.applicationForm.isSubmitted()>  
+                <#if !model.applicationForm.isSubmitted()>
+                
                 <!-- supervisor rows -->
                 <div class="row">
                 <label class="label">Supervisor First Name<em>*</em></label>

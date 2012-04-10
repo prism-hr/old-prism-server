@@ -54,7 +54,7 @@ public class AdditionalInformationControllerTest {
 
 	@Test
 	public void shouldReturnApplicationFormView() {
-		assertEquals("/private/pgStudents/form/components/additionalInformation", controller.getAdditionalInformationView());
+		assertEquals("/private/pgStudents/form/components/additional_information", controller.getAdditionalInformationView());
 	}
 
 	@Test

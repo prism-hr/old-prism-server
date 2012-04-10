@@ -17,9 +17,10 @@ public class SupervisorJSONPropertyEditorTest {
 
 	@Test	
 	public void shouldParseAndSetAsValue(){
-		editor.setAsText("{\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"primarySupervisor\": \"YES\" , \"awareSupervisor\": \"YES\"}");
-		Supervisor expected = new SupervisorBuilder().firstname("Mark").lastname("Johnson").email("test@gmail.com").awareSupervisor(AwareStatus.YES).primarySupervisor(CheckedStatus.YES).toSupervisor();
+		editor.setAsText("{\"id\": \"1\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"primarySupervisor\": \"YES\" , \"awareSupervisor\": \"YES\"}");
+		Supervisor expected = new SupervisorBuilder().id(1).firstname("Mark").lastname("Johnson").email("test@gmail.com").awareSupervisor(AwareStatus.YES).primarySupervisor(CheckedStatus.YES).toSupervisor();
 		Supervisor supervisor =   (Supervisor) editor.getValue();
+		assertEquals(expected.getId(), supervisor.getId());
 		assertEquals(expected.getFirstname(), supervisor.getFirstname());
 		assertEquals(expected.getLastname(), supervisor.getLastname());
 		assertEquals(expected.getEmail(), supervisor.getEmail());
@@ -51,8 +52,8 @@ public class SupervisorJSONPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnCorrectjsonString(){			
-		editor.setValue(new SupervisorBuilder().firstname("Mark").lastname("Johnson").email("test@gmail.com").awareSupervisor(AwareStatus.NO).primarySupervisor(CheckedStatus.NO).toSupervisor());
-		assertEquals("{\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\", \"primarySupervisor\": \"NO\", \"awareSupervisor\": \"NO\"}", editor.getAsText());
+		editor.setValue(new SupervisorBuilder().firstname("Mark").id(1).lastname("Johnson").email("test@gmail.com").awareSupervisor(AwareStatus.NO).primarySupervisor(CheckedStatus.NO).toSupervisor());
+		assertEquals("{\"id\": \"1\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\", \"primarySupervisor\": \"NO\", \"awareSupervisor\": \"NO\"}", editor.getAsText());
 	}
 	
 	@Before

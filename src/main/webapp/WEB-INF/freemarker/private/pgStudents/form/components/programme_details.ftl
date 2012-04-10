@@ -81,19 +81,43 @@
                           <div class="row">                          
                             <span class="invalid"><@spring.message  model.result.getFieldError('supervisors').code /></span>
                           </div>                             
-                    </#if>
+                     </#if>
+                    <table id="supervisors">
+                    <thead>
+            		<tr>
+              			<th >Name</th>
+                		<th>Email</th>
+                		<th>Primary</th>
+               			 <th>Aware</th>
+               			 <th>Action</th>
+               			 <th>&nbsp;</th>
+              		</tr>
+            </thead>
                    <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
                    <span name="supervisor_span">
-                         Name: ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!}, Email: ${supervisor.email?html}, Primary:${supervisor.primarySupervisor?html}, Is supervisor aware of your application:${supervisor.awareSupervisor?html} <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a></#if>
-                       <input type="hidden" name="supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "primarySupervisor":"${supervisor.primarySupervisor?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
-                       <p></p>
+                   	<tr>
+                         <td> ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} </td>
+                         <td> ${supervisor.email?html} </td> 
+                         <td> <input type="radio" name="primarySupervisor" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>/> </td>
+                         <td> ${supervisor.awareSupervisor?html} </td>
+                         <td> <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a> <a class="button-edit"  id="supervisor_${(supervisor.id?string('#######'))!}" name ="editSupervisorLink">edit</a></#if></td>
+                     </tr>
+                        <input type="hidden" id="${supervisor.id?string('#######')}_supervisorId" value="${(supervisor.id?string('#######'))!}"/>
+                        <input type="hidden" id="${supervisor.id?string('#######')}_firstname" value="${(supervisor.firstname?html)!}"/>
+                        <input type="hidden" id="${supervisor.id?string('#######')}_lastname" value="${(supervisor.lastname?html)!}"/>
+                        <input type="hidden" id="${supervisor.id?string('#######')}_email" value="${(supervisor.email?html)!}"/>
+                                   
+                       <input type="hidden" name="supervisors" value='{"id" :"${(supervisor.id?html)!}","firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "primarySupervisor":"${supervisor.primarySupervisor?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
                   </span>
                   </#list>
+                  </table>
                 </div>
                 
                 <#if !model.applicationForm.isSubmitted()>
                 
                 <!-- supervisor rows -->
+                <input type="hidden" id="supervisorId" name="supervisorId"/>
+                
                 <div class="row">
                 <label class="label">Supervisor First Name<em>*</em></label>
                  <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.firstname'/>"></span>
@@ -132,7 +156,7 @@
                     <input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
                 </div>      
                 
-                    <a id="addSupervisorButton" class="button" style="width: 110px;">Add Supervisor</a>
+                	<span class="supervisorAction"></span>       
                     </#if>
 			</div>
 			

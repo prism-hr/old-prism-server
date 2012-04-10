@@ -42,6 +42,7 @@ public class ActivateRefereeController {
 	public ModelAndView getReferencesPage(@RequestParam String activationCode) {
 		Referee referee = refereeService.getRefereeByActivationCode(activationCode);
 		ApplicationPageModel model = new ApplicationPageModel();
+		//check if current user can upload
 		if (referee == null || referee.getApplication() == null) {
 			throw new ResourceNotFoundException();
 		} else {

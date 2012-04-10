@@ -1,9 +1,5 @@
 $(document).ready(function(){
 
-	if($("#dateOfBirth").val() == ""){
-		$("#englishFirstLanguageCB").attr('checked', false);
-		$("#requiresVisaCB").attr('checked', false);
-	}
 	if($("#englishFirstLanguageCB").is(":checked")){
 		$("#englishFirstLanguage").val("YES");
 	}

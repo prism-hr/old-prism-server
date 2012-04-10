@@ -19,22 +19,16 @@ $(document).ready(function(){
 		);
 	});
 	
-	$("#phonenumbersref").on("click", "a", function(){	
-		$(this).parent("div").parent("div").parent("span").remove();
-		
-	});
+
 	
-	$("#messengersref").on("click", "a", function(){	
-		$(this).parent("div").parent("div").parent("span").remove();
-		
-	});
-	
-	$('#delBtn').on('click', function(){
-		$(this).parent("span").remove();
-	});
+
 	
 	$('#refereeSaveButton').click(function(){	
 		postRefereeData("close");
+	});
+	$('#addReferenceButton').click(function(){
+		postRefereeData("add");
+		
 	});
 
 	$('#refereeSaveAndAddButton').click(function(){

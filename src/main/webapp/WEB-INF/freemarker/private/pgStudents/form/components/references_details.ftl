@@ -76,7 +76,7 @@
 	   		<!-- First name -->
       		<div class="row">
         		<span class="plain-label">First Name<em>*</em></span>
-        		<span class="hint"></span>
+        		<span class="hint" data-desc="<@spring.message 'referee.firstname'/>"></span>
         		<div class="field">
         			<#if !applicationForm.isSubmitted()>
         				<input class="full" id="ref_firstname" name="ref_firstname" value="${(referee.firstname?html)!}"/>  
@@ -92,7 +92,7 @@
       		<!-- Last name -->
       		<div class="row">
         		<span class="plain-label">Last Name<em>*</em></span>
-        		<span class="hint"></span>
+        		<span class="hint" data-desc="<@spring.message 'referee.lastname'/>"></span>
         		<div class="field">
 	        		<#if !applicationForm.isSubmitted()>
 	        			<input class="full" id="ref_lastname" name="ref_lastname" value="${(referee.lastname?html)!}"/>	          
@@ -112,7 +112,7 @@
       		<!-- Employer / company name -->
       		<div class="row">
         		<span class="plain-label">Employer<em>*</em></span>
-        		<span class="hint"></span>
+        		<span class="hint" data-desc="<@spring.message 'referee.employer'/>"></span>
         		<div class="field">
         			<#if !applicationForm.isSubmitted()>
           				<input class="full" id="ref_employer" name="ref_employer" value="${(referee.jobEmployer?html)!}"/> 
@@ -127,7 +127,7 @@
       		<!-- Position title -->
       		<div class="row">
         		<span class="plain-label">Position<em>*</em></span>
-        		<span class="hint"></span>
+        		<span class="hint" data-desc="<@spring.message 'referee.position'/>"></span>
         		<div class="field">
         		<#if !applicationForm.isSubmitted()>
           			<input class="full" id="ref_position" name="ref_position" value="${(referee.jobTitle?html)!}"/>
@@ -146,7 +146,7 @@
       		<!-- Address body -->
       		<div class="row">
         		<span class="plain-label">Address<em>*</em></span>
-        		<span class="hint"></span>
+        		<span class="hint" data-desc="<@spring.message 'referee.address'/>"></span>
         		<div class="field">
         		<#if !applicationForm.isSubmitted()>
           			<textarea class="max" rows="6" cols="70" id="ref_address_location" 
@@ -164,7 +164,7 @@
       		<!-- Country -->
       		<div class="row">
         		<span class="plain-label">Country<em>*</em></span>
-        		<span class="hint"></span>
+        		 <span class="hint" data-desc="<@spring.message 'referee.country'/>"></span>
         		<div class="field">
         		<select class="full" name="ref_address_country" id="ref_address_country"
                 <#if applicationForm.isSubmitted()>
@@ -186,7 +186,7 @@
       		<!-- Email address -->
       		<div class="row">
         		<span class="plain-label">Email<em>*</em></span>
-        		<span class="hint"></span>
+        		 <span class="hint" data-desc="<@spring.message 'referee.email'/>"></span>
         		<div class="field">
         		<#if !applicationForm.isSubmitted()>
           			<input class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}"/> 
@@ -203,7 +203,7 @@
      		
             <div class="row">
         		<span class="plain-label">Telephone<em>*</em></span>
-        		<span class="hint"></span>
+				<span class="hint" data-desc="<@spring.message 'referee.telephone'/>"></span>
         		<div class="field">
         			<#if !applicationForm.isSubmitted()>
         			<input class="full" id="refPhoneNumber" name="refPhoneNumber" value="${(referee.phoneNumber?html)!}"/> 
@@ -220,7 +220,7 @@
           
             <div class="row">
         		<span class="plain-label">Skype Name</span>
-        		<span class="hint"></span>
+        		<span class="hint" data-desc="<@spring.message 'referee.skype'/>"></span>
         		<div class="field">
         			<#if !applicationForm.isSubmitted()>
         			<input class="full" id="ref_messenger" name="ref_messenger" value="${(referee.messenger?html)!}"/> 
@@ -244,10 +244,9 @@
 			<div>
           	            
           		<div class="row">
-                  	<label class="label">Reference</label>
-                    <span class="hint"></span>
+                  	<label class="label">Reference</label>                    
                     <div class="field" id="referenceUpdated">
-                    	
+                    
                     </div>
                 </div>
         	</div>

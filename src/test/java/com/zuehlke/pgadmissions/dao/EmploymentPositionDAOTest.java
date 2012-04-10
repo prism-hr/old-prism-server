@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase{

@@ -15,8 +15,8 @@ import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -132,7 +132,7 @@ public class ApplicationFormDetailsTest {
 		supportingDocuments.add(personalStatement);
 		appFormDetails.setSupportingDocuments(supportingDocuments);
 		
-		Nationality nationality = new Nationality();
+		Country nationality = new Country();
 		personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality).maternalGuardianNationalities(nationality).paternalGuardianNationalities(nationality).applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm()).country(new CountryBuilder().toCountry()).dateOfBirth(new Date()).email("email@test.com").firstName("bob")
 		.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith").residenceCountry(new CountryBuilder().toCountry()).toPersonalDetails();
 		appFormDetails.setPersonalDetails(personalDetails);

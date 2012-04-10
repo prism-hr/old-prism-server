@@ -6,9 +6,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
-import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class ApplicationFormTest {

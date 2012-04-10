@@ -4,7 +4,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.text.ParseException;
 import java.util.Date;
 
 import org.easymock.EasyMock;
@@ -183,7 +182,7 @@ public class FundingControllerTest {
 	}
 
 	@Before
-	public void setUp() throws ParseException {
+	public void setUp(){
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);

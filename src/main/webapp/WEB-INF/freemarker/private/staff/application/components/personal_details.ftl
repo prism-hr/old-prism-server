@@ -108,8 +108,8 @@
                   	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
                   	  	<span name="existingCandidateNationality">
                   				<div class="field">
-                  					<label class="full">${nationality.country.name}</label>  
-                  	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
+                  					<label class="full">${nationality.name}</label>  
+                  	  				<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
                   	  			</div>
                   	  	</span>                  		
                   	  </#list>
@@ -123,8 +123,8 @@
 	                 	<#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
 	                  	  	<span>
 	                  				<div class="field">
-	                  					<label class="full">${nationality.country.name}</label>  
-	                  	  				<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
+	                  					<label class="full">${nationality.name}</label>  
+	                  	  				<input type="hidden" name="maternalGuardianNationalities" value='${nationality.id}'/>
 	                  	  			</div>
 	                  	  	</span>
 	                  	  </#list>
@@ -145,8 +145,8 @@
 	              		<#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
 	                  	  	<span>
 	                  				<div class="field">
-	                  					<label class="full">${nationality.country.name}</label>  
-	                  	  				<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
+	                  					<label class="full">${nationality.name}</label>  
+	                  	  				<input type="hidden" name="paternalGuardianNationalities" value='${nationality.id}'/>
 	                  	  			</div>
 	                  	  	</span>
 	              	 	</#list>

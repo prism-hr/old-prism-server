@@ -16,7 +16,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
-import com.zuehlke.pgadmissions.domain.Nationality;
 import com.zuehlke.pgadmissions.domain.PersonalDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Telephone;
@@ -29,7 +28,6 @@ import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.NationalityJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.PhoneNumberJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
@@ -49,17 +47,16 @@ public class PersonalDetailsController {
 	private final PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor;
 	private final LanguageService languageService;
 	private final LanguagePropertyEditor languagePropertyEditor;
-	private final NationalityJSONPropertyEditor nationalityJSONPropertyEditor;
 
 	PersonalDetailsController() {
-		this(null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public PersonalDetailsController(PersonalDetailsService personalDetailsService, CountryService countryService, LanguageService languageService,
 			ApplicationFormPropertyEditor applicationFormPropertyEditor, CountryPropertyEditor countryPropertyEditor,
 			LanguagePropertyEditor languagePropertyEditor, DatePropertyEditor datePropertyEditor, PersonalDetailValidator personalDetailValidator,
-			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor, NationalityJSONPropertyEditor nationalityJSONPropertyEditor) {
+			PhoneNumberJSONPropertyEditor phoneNumberJSONPropertyEditor) {
 		this.personalDetailsService = personalDetailsService;
 		this.countryService = countryService;
 		this.languageService = languageService;
@@ -69,7 +66,6 @@ public class PersonalDetailsController {
 		this.datePropertyEditor = datePropertyEditor;
 		this.personalDetailValidator = personalDetailValidator;
 		this.phoneNumberJSONPropertyEditor = phoneNumberJSONPropertyEditor;
-		this.nationalityJSONPropertyEditor = nationalityJSONPropertyEditor;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -134,7 +130,6 @@ public class PersonalDetailsController {
 		binder.registerCustomEditor(Language.class, languagePropertyEditor);
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(Telephone.class, phoneNumberJSONPropertyEditor);
-		binder.registerCustomEditor(Nationality.class, nationalityJSONPropertyEditor);
 	}
 
 }

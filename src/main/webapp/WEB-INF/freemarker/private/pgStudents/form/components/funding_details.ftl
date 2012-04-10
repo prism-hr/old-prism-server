@@ -156,15 +156,15 @@
 		</div>
 
 	<div class="buttons">
-    <#if !applicationForm.isSubmitted()>
+		<#if !applicationForm.isSubmitted()>
         	
         	<a class="button" type="button" id="fundingCancelButton" name="fundingCancelButton">Cancel</a>
         	<button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>
 			<button class="blue" type="button" id="fundingSaveCloseButton" value="close">Save and Close</button>
             <button class="blue" type="button" id="fundingSaveAddButton" value="add">Save and Add</button>
-          <#else>
-                <a id="fundingCloseButton" class="button blue">Close</a>  
-   </#if>
+  		<#else>
+             <a id="fundingCloseButton" class="button blue">Close</a>  
+   		</#if>
    </div>
 
 	</form>

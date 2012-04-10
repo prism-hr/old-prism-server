@@ -98,16 +98,18 @@
                    	<tr>
                          <td> ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} </td>
                          <td> ${supervisor.email?html} </td> 
-                         <td> <input type="radio" name="primarySupervisor" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>/> </td>
+                         <td> <input type="radio" name="primarySupervisor" value="${(supervisor.id?string('#######'))!}" <#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>/> </td>
                          <td> ${supervisor.awareSupervisor?html} </td>
-                         <td> <#if !model.applicationForm.isSubmitted()><a class="button-delete">delete</a> <a class="button-edit"  id="supervisor_${(supervisor.id?string('#######'))!}" name ="editSupervisorLink">edit</a></#if></td>
+                         <td> <#if !model.applicationForm.isSubmitted()><a class="button-delete" name="deleteSupervisor" >delete</a> <a class="button-edit"  id="supervisor_${(supervisor.id?string('#######'))!}" name ="editSupervisorLink">edit</a></#if></td>
                      </tr>
-                        <input type="hidden" id="${supervisor.id?string('#######')}_supervisorId" value="${(supervisor.id?string('#######'))!}"/>
-                        <input type="hidden" id="${supervisor.id?string('#######')}_firstname" value="${(supervisor.firstname?html)!}"/>
-                        <input type="hidden" id="${supervisor.id?string('#######')}_lastname" value="${(supervisor.lastname?html)!}"/>
-                        <input type="hidden" id="${supervisor.id?string('#######')}_email" value="${(supervisor.email?html)!}"/>
+                        <input type="hidden" id="${(supervisor.id?string('#######'))!}_supervisorId" value="${(supervisor.id?string('#######'))!}"/>
+                        <input type="hidden" id="${(supervisor.id?string('#######'))!}_firstname" value="${(supervisor.firstname?html)!}"/>
+                        <input type="hidden" id="${(supervisor.id?string('#######'))!}_lastname" value="${(supervisor.lastname?html)!}"/>
+                        <input type="hidden" id="${(supervisor.id?string('#######'))!}_email" value="${(supervisor.email?html)!}"/>
+                        <input type="hidden" id="${(supervisor.id?string('#######'))!}_aware" value="${(supervisor.primarySupervisor?html)!}"/>
+                        <input type="hidden" id="${(supervisor.id?string('#######'))!}_primary" value="${(supervisor.awareSupervisor?html)!}"/>
                                    
-                       <input type="hidden" name="supervisors" value='{"id" :"${(supervisor.id?html)!}","firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "primarySupervisor":"${supervisor.primarySupervisor?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
+                       <input type="hidden" name="supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
                   </span>
                   </#list>
                   </table>
@@ -143,13 +145,6 @@
                 </div>
                 
                 <div class="row">
-                       <label class="plain-label">Primary</label>
-                       <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.primarySupervisor'/>"></span>
-                       <input type="checkbox" name="primarySupervisorCB" id="primarySupervisorCB"/>
-                       <input type="hidden" name="primarySupervisor" id="primarySupervisor"/>
-                </div>
-                
-                <div class="row">
                     <label class="plain-label">Is supervisor aware of your application?</label>
                     <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.awareOfApplication'/>"></span>
                     <input type="checkbox" name="awareSupervisorCB" id="awareSupervisorCB"/>
@@ -157,6 +152,8 @@
                 </div>      
                 
                 	<span class="supervisorAction"></span>       
+                	<a id="updateSupervisorButton" class="button" style="width: 110px;">Update Supervisor</a>
+                	<a id="addSupervisorButton" class="button" style="width: 110px;">Add Supervisor</a>
                     </#if>
 			</div>
 			

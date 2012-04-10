@@ -8,7 +8,6 @@ public class SupervisorBuilder {
 
 	private Integer id;
 	private AwareStatus awareSupervisor;
-	private CheckedStatus primarySupervisor;
 	private String email;
 	private String firstname;
 	private String lastname;
@@ -23,11 +22,6 @@ public class SupervisorBuilder {
 		return this;
 	}
 	
-	public SupervisorBuilder primarySupervisor(CheckedStatus primarySupervisor) {
-		this.primarySupervisor = primarySupervisor;
-		return this;
-	}
-
 	public SupervisorBuilder email(String email) {
 		this.email = email;
 		return this;
@@ -50,7 +44,6 @@ public class SupervisorBuilder {
 		supervisor.setFirstname(firstname);
 		supervisor.setLastname(lastname);
 		supervisor.setAwareSupervisor(awareSupervisor);
-		supervisor.setPrimarySupervisor(primarySupervisor);
 		return supervisor;
 	}
 }

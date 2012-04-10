@@ -10,6 +10,7 @@ import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Component
 public class ProgrammeDetailsValidator implements Validator {

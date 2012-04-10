@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 
 @Service
 public class ProgrammeService {

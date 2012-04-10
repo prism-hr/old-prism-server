@@ -133,7 +133,7 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Supervisor", smallBoldFont));
 			document.add(new Paragraph(" "));
 
-			PdfPTable table = new PdfPTable(5);
+			PdfPTable table = new PdfPTable(4);
 			table.setWidthPercentage(100.0f);
 
 			PdfPCell c1 = new PdfPCell(new Phrase("Supervisor First Name", smallerBoldFont));
@@ -147,11 +147,6 @@ public class PdfDocumentBuilder {
 			table.addCell(c1);
 
 			c1 = new PdfPCell(new Phrase("Supervisor Email", smallerBoldFont));
-			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			c1.setBackgroundColor(grayColor);
-			table.addCell(c1);
-
-			c1 = new PdfPCell(new Phrase("Is primary supervisor?", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
@@ -331,6 +326,7 @@ public class PdfDocumentBuilder {
 					document.newPage();
 					document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));			
 					readPdf(document, qualification.getProofOfAward());
+					document.newPage();
 				}
 
 				document.add(new Paragraph(" "));
@@ -386,6 +382,7 @@ public class PdfDocumentBuilder {
 				document.newPage();
 				document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));			
 				readPdf(document, funding.getDocument());
+				document.newPage();
 
 				document.add(new Paragraph(" "));
 			}

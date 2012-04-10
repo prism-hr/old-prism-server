@@ -107,12 +107,10 @@
                   	  <label class="label">Nationality</label>    
                   	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
                   	  	<span name="existingCandidateNationality">
-                  	  	 	<div class="row">
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson}'/>
                   	  			</div>
-                  	  		</div>
                   	  	</span>                  		
                   	  </#list>
                 
@@ -124,12 +122,10 @@
 	                  	<label class="label">Maternal Guardian Nationality</label>    
 	                 	<#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
 	                  	  	<span>
-	                  	  		<div class="row">
 	                  				<div class="field">
 	                  					<label class="full">${nationality.country.name}</label>  
 	                  	  				<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson}'/>
 	                  	  			</div>
-	                  	  		</div>            
 	                  	  	</span>
 	                  	  </#list>
 	                  <#else>
@@ -148,12 +144,10 @@
 	                  	<label class="label">Paternal Guardian Nationality</label>    
 	              		<#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
 	                  	  	<span>
-	                  	  		<div class="row">
 	                  				<div class="field">
 	                  					<label class="full">${nationality.country.name}</label>  
 	                  	  				<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson}'/>
 	                  	  			</div>
-	                  	  		</div>            
 	                  	  	</span>
 	              	 	</#list>
               	 	<#else>

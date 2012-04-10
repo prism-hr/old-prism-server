@@ -146,7 +146,6 @@
                   	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
                   	  	<span name="existingCandidateNationality">
                   	  	 	<div class="row">
-                  	  	 		
                   				<div class="field">
                   					<label class="full">${nationality.country.name}</label>  
                   	  				<input type="hidden" name="candidateNationalities" value='${nationality.asJson?html}'/>
@@ -188,7 +187,6 @@
 						 <#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
 							<span>
 								<div class="row">
-									<label class="plain-label">Mother's Nationality</label>    
 									<div class="field">
 										<label class="full">${nationality.country.name}</label>  
 										<input type="hidden" name="maternalGuardianNationalities" value='${nationality.asJson?html}'/>
@@ -223,7 +221,6 @@
 						<#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
 							<span>
 								<div class="row">
-									<label class="plain-label">Father's Nationality</label>    
 									<div class="field">
 										<label class="full">${nationality.country.name?html}</label>  
 										<input type="hidden" name="paternalGuardianNationalities" value='${nationality.asJson?html}'/>

@@ -166,7 +166,6 @@ public class PdfDocumentBuilder {
 				table.addCell(supervisor.getFirstname());
 				table.addCell(supervisor.getLastname());
 				table.addCell(supervisor.getEmail());
-				table.addCell(supervisor.getPrimarySupervisor().displayValue());
 				table.addCell(supervisor.getAwareSupervisor().displayValue());
 			}
 

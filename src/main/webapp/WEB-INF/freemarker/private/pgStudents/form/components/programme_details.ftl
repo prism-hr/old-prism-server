@@ -73,7 +73,7 @@
 			-->
             <div>
             	
-            	<label class="plain-label">Supervision</label>
+            	<label class="group-heading-label">Supervision</label>
                  <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.supervisor'/>"></span>
                  
                  <div id="supervisor_div">

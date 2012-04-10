@@ -52,7 +52,7 @@ public class ApplicationPageModelBuilder {
 			viewApplicationModel.setUser(currentUser);
 		}
 		viewApplicationModel.setApplicationForm(applicationForm);
-		if (applicationForm!= null) {
+		if (applicationForm != null) {
 			viewApplicationModel.setAddress(buildAddress(applicationForm));
 		}
 		viewApplicationModel.setUploadErrorCode(uploadErrorCode);
@@ -91,16 +91,15 @@ public class ApplicationPageModelBuilder {
 			address.setCurrentAddressCountry(currentAddress.getCountry().getId());
 			address.setCurrentAddressId(currentAddress.getId());
 			address.setCurrentAddressLocation(currentAddress.getLocation());
-
-			com.zuehlke.pgadmissions.domain.Address contactAddress = applicationForm.getAddresses().get(1);
-			address.setContactAddressCountry(contactAddress.getCountry().getId());
-			address.setContactAddressId(contactAddress.getId());
-			address.setContactAddressLocation(contactAddress.getLocation());
-			if (currentAddress.getLocation().equals(contactAddress.getLocation()) 
-					&& currentAddress.getCountry().equals(contactAddress.getCountry())) {
-				address.setSameAddress("YES");
+			if (applicationForm.getAddresses().size() > 1) {
+				com.zuehlke.pgadmissions.domain.Address contactAddress = applicationForm.getAddresses().get(1);
+				address.setContactAddressCountry(contactAddress.getCountry().getId());
+				address.setContactAddressId(contactAddress.getId());
+				address.setContactAddressLocation(contactAddress.getLocation());
+				if (currentAddress.getLocation().equals(contactAddress.getLocation()) && currentAddress.getCountry().equals(contactAddress.getCountry())) {
+					address.setSameAddress("YES");
+				}
 			}
-
 
 		}
 

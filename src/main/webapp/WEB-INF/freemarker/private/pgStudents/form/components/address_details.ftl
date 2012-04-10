@@ -10,8 +10,8 @@
 	
         	<form>
 				
-				<input type="hidden" id="currentAddressId" name="currentAddressId" value="${model.address.currentAddressId!}"/>
-				<input type="hidden" id="contactAddressId" name="contactAddressId" value="${model.address.contactAddressId!}"/>
+				<input type="hidden" id="currentAddressId" name="currentAddressId" value="${(model.address.currentAddressId?string("######"))!}"/>
+				<input type="hidden" id="contactAddressId" name="contactAddressId" value="${(model.address.contactAddressId?string("######"))!}"/>
             	<div>
             	    <#if model.hasError('numberOfAddresses')>            
             	       <div class="row">

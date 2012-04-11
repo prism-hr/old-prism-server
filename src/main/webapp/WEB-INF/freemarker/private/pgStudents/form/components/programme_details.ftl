@@ -87,7 +87,6 @@
             		<tr>
               			<th >Name</th>
                 		<th>Email</th>
-                		<th>Primary</th>
                			 <th>Aware</th>
                			 <th>Action</th>
                			 <th>&nbsp;</th>
@@ -98,7 +97,6 @@
                    	<tr>
                          <td> ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} </td>
                          <td> ${supervisor.email?html} </td> 
-                         <td> <input type="radio" name="primarySupervisor" value="${(supervisor.id?string('#######'))!}" <#if model.applicationForm.programmeDetails.programmeDetailsPrimarySupervisor?? && model.applicationForm.programmeDetails.programmeDetailsPrimarySupervisor.id == supervisor.id>checked="checked"</#if><#if model.applicationForm.isSubmitted()>disabled="disabled"</#if>/> </td>
                          <td> ${supervisor.awareSupervisor?html} </td>
                          <td> <#if !model.applicationForm.isSubmitted()><a class="button-delete" name="deleteSupervisor" >delete</a> <a class="button-edit"  id="supervisor_${(supervisor.id?string('#######'))!}" name ="editSupervisorLink">edit</a></#if></td>
                      </tr>
@@ -106,17 +104,13 @@
                         <input type="hidden" id="${(supervisor.id?string('#######'))!}_firstname" name = "sFN" value="${(supervisor.firstname?html)!}"/>
                         <input type="hidden" id="${(supervisor.id?string('#######'))!}_lastname" name = "sLN" value="${(supervisor.lastname?html)!}"/>
                         <input type="hidden" id="${(supervisor.id?string('#######'))!}_email" name = "sEM"  value="${(supervisor.email?html)!}"/>
-                        <input type="hidden" id="${(supervisor.id?string('#######'))!}_aware" name = "sAS" value="${(supervisor.primarySupervisor?html)!}"/>
-                        <input type="hidden" id="${(supervisor.id?string('#######'))!}_primary" name = "sPS" value="${(supervisor.awareSupervisor?html)!}"/>
+                        <input type="hidden" id="${(supervisor.id?string('#######'))!}_aware" name = "sAS" value="${(supervisor.awareSupervisor?html)!}"/>
                                    
-                       <input type="hidden" name="supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
+                       <input type="hidden" name="supervisors" value='{"id" :"${(supervisor.id?html)!}","firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
                   </span>
                   </#list>
                   </table>
                 </div>
-                <#if model.hasError('programmeDetailsPrimarySupervisor')>                            
-                          <span class="invalid"><@spring.message  model.result.getFieldError('programmeDetailsPrimarySupervisor').code /></span>                           
-                </#if>
                 
                 <#if !model.applicationForm.isSubmitted()>
                 

@@ -12,7 +12,8 @@ $(document).ready(function(){
 		$("#currentQualification").val("NO");
 		$("#qualificationAwardDate").val("");
 		$("#qualificationAwardDate").attr("disabled", "disabled");
-			
+		$("#proofOfAward").val("");
+		$("#proofOfAward").attr("disabled", "disabled");	
 	}
 	
 	$('#qualificationsCloseButton').click(function(){
@@ -25,10 +26,15 @@ $(document).ready(function(){
 			$("#currentQualification").val("NO");
 			$("#qualificationAwardDate").val("");
 			$("#qualificationAwardDate").attr("disabled", "disabled");
+			$("#proofOfAward").val("");
+			$("#proofOfAward").attr("disabled", "disabled");	
+
 		} else {		
 		
 			$("#currentQualification").val("YES");
-			$("#qualificationAwardDate").removeAttr("disabled", "disabled");		
+			$("#qualificationAwardDate").removeAttr("disabled", "disabled");	
+			$("#proofOfAward").removeAttr("disabled", "disabled");
+
 			bindDatePickers();
 		}
 	

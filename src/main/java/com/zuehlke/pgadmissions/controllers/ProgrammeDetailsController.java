@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgrammeService;
+import com.zuehlke.pgadmissions.services.SupervisorService;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 
 @Controller
@@ -39,7 +40,7 @@ public class ProgrammeDetailsController {
 	private final DatePropertyEditor datePropertyEditor;
 	private final ProgrammeDetailsValidator programmeDetailsValidator;
 	private final SupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
-	private final SupervisorPropertyEditor supervisorPropertEditor;
+	private final SupervisorService supervisorService;
 	
 	ProgrammeDetailsController() {
 		this(null, null, null, null, null, null);
@@ -48,13 +49,13 @@ public class ProgrammeDetailsController {
 	@Autowired
 	public ProgrammeDetailsController(ProgrammeService programmeDetailsService,	
 			ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor,
-			ProgrammeDetailsValidator programmeDetailsValidator, SupervisorJSONPropertyEditor supervisorJSONPropertyEditor, SupervisorPropertyEditor supervisorPropertEditor) {
+			ProgrammeDetailsValidator programmeDetailsValidator, SupervisorJSONPropertyEditor supervisorJSONPropertyEditor, SupervisorService supervisorService) {
 		this.programmeDetailsService = programmeDetailsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
 		this.programmeDetailsValidator = programmeDetailsValidator;
 		this.supervisorJSONPropertyEditor = supervisorJSONPropertyEditor;
-		this.supervisorPropertEditor = supervisorPropertEditor;
+		this.supervisorService = supervisorService;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
@@ -70,8 +71,12 @@ public class ProgrammeDetailsController {
 		}
 		
 		programmeDetailsValidator.validate(programmeDetails, result);
-		System.out.println("PRIMARY " + programmeDetails.getProgrammeDetailsPrimarySupervisor());
-		if (!result.hasErrors()) {
+		if(programmeDetails.getPrimarySupervisorId()!=null) {
+			Supervisor supervisor = supervisorService.getSupervisorWithId(programmeDetails.getPrimarySupervisorId());
+			if(supervisor!=null)
+			programmeDetails.setProgrammeDetailsPrimarySupervisor(supervisor);
+		}
+		if (!result.hasErrors() || programmeDetails.getProgrammeDetailsPrimarySupervisor()!=null) {
 			programmeDetailsService.save(programmeDetails);
 		}
 		
@@ -114,7 +119,6 @@ public class ProgrammeDetailsController {
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
-		binder.registerCustomEditor(Supervisor.class, supervisorPropertEditor);
 		binder.registerCustomEditor(Supervisor.class, supervisorJSONPropertyEditor);
 	}
 

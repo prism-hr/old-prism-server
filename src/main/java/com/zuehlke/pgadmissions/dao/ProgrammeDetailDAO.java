@@ -4,7 +4,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 
 @Repository
@@ -21,11 +21,11 @@ public class ProgrammeDetailDAO {
 	}
 
 
-	public ProgrammeDetail getProgrammeDetailWithId(Integer id) {
-		return (ProgrammeDetail) sessionFactory.getCurrentSession().get(ProgrammeDetail.class, id);
+	public ProgrammeDetails getProgrammeDetailWithId(Integer id) {
+		return (ProgrammeDetails) sessionFactory.getCurrentSession().get(ProgrammeDetails.class, id);
 	}
 
-	public void save(ProgrammeDetail pd) {
+	public void save(ProgrammeDetails pd) {
 		sessionFactory.getCurrentSession().saveOrUpdate(pd);
 	}
 

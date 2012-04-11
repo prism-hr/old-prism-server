@@ -19,12 +19,12 @@ import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
-import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.errors.FundingErrors;
 
 public class ApplicationPageModel extends PageModel {
 
-	private Address address = new Address();
+	private AddressSectionDTO address = new AddressSectionDTO();
 	private Funding funding = new Funding();
 	private Qualification qualification = new Qualification();
 	private EmploymentPosition employmentPosition =new EmploymentPosition();
@@ -54,11 +54,11 @@ public class ApplicationPageModel extends PageModel {
 		return applicationForm;
 	}
 
-	public Address getAddress() {
+	public AddressSectionDTO getAddress() {
 		return address;
 	}
 
-	public void setAddress(Address address) {
+	public void setAddress(AddressSectionDTO address) {
 		this.address = address;
 	}
 

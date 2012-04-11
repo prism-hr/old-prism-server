@@ -33,7 +33,17 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm> {
 
 	private static final long serialVersionUID = -7671357234815343496L;
-
+	
+	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "current_address_id")
+	private Address currentAddress;
+	
+	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "contact_address_id")
+	private Address contactAddress;
+	
 	@ManyToOne
 	@JoinColumn(name = "cv_id")
 	private Document cv = null;
@@ -70,7 +80,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	private PersonalDetails personalDetails;
 
 	@OneToOne(mappedBy = "application")
-	private ProgrammeDetail programmeDetails;
+	private ProgrammeDetails programmeDetails;
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.SubmissionStatusEnumUserType")
 	@Column(name = "submission_status")
@@ -280,14 +290,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.personalDetails = personalDetails;
 	}
 
-	public ProgrammeDetail getProgrammeDetails() {
+	public ProgrammeDetails getProgrammeDetails() {
 		if (programmeDetails == null) {
-			return new ProgrammeDetail();
+			return new ProgrammeDetails();
 		}
 		return programmeDetails;
 	}
 
-	public void setProgrammeDetails(ProgrammeDetail programmeDetails) {
+	public void setProgrammeDetails(ProgrammeDetails programmeDetails) {
 		this.programmeDetails = programmeDetails;
 	}
 
@@ -325,5 +335,21 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setPersonalStatement(Document personalStatement) {
 		this.personalStatement = personalStatement;
+	}
+
+	public Address getCurrentAddress() {
+		return currentAddress;
+	}
+
+	public void setCurrentAddress(Address currentAddress) {
+		this.currentAddress = currentAddress;
+	}
+
+	public Address getContactAddress() {
+		return contactAddress;
+	}
+
+	public void setContactAddress(Address contactAddress) {
+		this.contactAddress = contactAddress;
 	}
 }

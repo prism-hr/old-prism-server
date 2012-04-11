@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
@@ -23,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
 @Entity(name = "APPLICATION_FORM_PROGRAMME_DETAIL")
 @Access(AccessType.FIELD)
-public class ProgrammeDetail extends DomainObject<Integer> {
+public class ProgrammeDetails extends DomainObject<Integer> {
 
 	/**
 	 * 
@@ -43,7 +44,6 @@ public class ProgrammeDetail extends DomainObject<Integer> {
 		return id;
 	}
 
-	
 	@Column(name = "programme_name")
 	private String programmeName;
 
@@ -65,8 +65,7 @@ public class ProgrammeDetail extends DomainObject<Integer> {
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application = null;
 
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST,
-			javax.persistence.CascadeType.REMOVE })
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "programme_detail_id")
 	private List<Supervisor> supervisors = new ArrayList<Supervisor>();

@@ -13,7 +13,7 @@ public class ProgrammeDetailTest {
 
 	@Test
 	public void shouldCreateProgrammeDetail(){
-		ProgrammeDetail programmeDetail = new ProgrammeDetailsBuilder().id(1)
+		ProgrammeDetails programmeDetail = new ProgrammeDetailsBuilder().id(1)
 				.applicationForm(new ApplicationForm()).programmeName("programme")
 				.referrer(Referrer.OPTION_1).startDate(new Date()).studyOption(StudyOption.FULL_TIME)
 				.supervisors(new Supervisor()).projectName("projectName").toProgrammeDetails();

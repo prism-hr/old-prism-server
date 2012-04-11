@@ -65,6 +65,7 @@ public class PersonalDetails extends DomainObject<Integer> {
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.GenderEnumUserType")
 	private Gender gender;
+	
 	private String email;
 
 	@Column(name = "date_of_birth")

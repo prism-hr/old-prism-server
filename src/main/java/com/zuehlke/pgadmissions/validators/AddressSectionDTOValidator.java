@@ -1,16 +1,18 @@
 package com.zuehlke.pgadmissions.validators;
 
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 
-public class AddressValidator implements Validator {
+@Component
+public class AddressSectionDTOValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return Address.class.equals(clazz);
+		return AddressSectionDTO.class.equals(clazz);
 	}
 
 	@Override

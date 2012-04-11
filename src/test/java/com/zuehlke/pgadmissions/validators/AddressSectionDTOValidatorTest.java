@@ -7,18 +7,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
-import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 
 
 
-public class AddressValidatorTest {
+public class AddressSectionDTOValidatorTest {
 
-	private AddressValidator validator;
-	private Address address;
+	private AddressSectionDTOValidator validator;
+	private AddressSectionDTO address;
 
 	@Test
 	public void shouldSupportAddress() {
-		assertTrue(validator.supports(Address.class));
+		assertTrue(validator.supports(AddressSectionDTO.class));
 	}
 	
 	@Test
@@ -62,12 +63,12 @@ public class AddressValidatorTest {
 	
 	@Before
 	public void setup(){
-		validator = new AddressValidator();
+		validator = new AddressSectionDTOValidator();
 		
-		address = new Address();
+		address = new AddressSectionDTO();
 		address.setContactAddressLocation("London");
-		address.setContactAddressCountry(3);
+		address.setContactAddressCountry(new Country());
 		address.setCurrentAddressLocation("New York");
-		address.setCurrentAddressCountry(2);
+		address.setCurrentAddressCountry(new Country());
 	}
 }

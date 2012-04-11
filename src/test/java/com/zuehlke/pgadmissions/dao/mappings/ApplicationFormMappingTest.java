@@ -96,8 +96,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().save(application);
 		flushAndClearSession();
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country2).requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
-				.applicationForm(application).toPersonalDetails();
+				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country2).requiresVisa(true)
+				.englishFirstLanguage(true).phoneNumber("abc").applicationForm(application).toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
 		flushAndClearSession();
@@ -144,34 +144,28 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setProject(project);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		CountryService countriesService = new CountryService(new CountriesDAO(sessionFactory));
-		
-		Address address = new AddressBuilder().application(application).country(countriesService.getCountryById(2)).location("london")
-				.toAddress();
-		application.setAddresses(Arrays.asList(address));
 
-		assertNull(application.getId());
-
-		sessionFactory.getCurrentSession().save(application);
-
-		assertNotNull(application.getId());
-		Integer id = application.getId();
-		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
-		assertSame(application, reloadedApplication);
-
+		save(application);
 		flushAndClearSession();
 
-		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
-		assertNotSame(application, reloadedApplication);
-		assertEquals(application, reloadedApplication);
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 
-		assertEquals(user, reloadedApplication.getApplicant());
-		assertEquals(project, reloadedApplication.getProject());
-		assertEquals(SubmissionStatus.SUBMITTED, reloadedApplication.getSubmissionStatus());
-		Assert.assertEquals(1, reloadedApplication.getAddresses().size());
-		Assert.assertTrue(reloadedApplication.getAddresses().contains(address));
+		Address addressOne = new AddressBuilder().country(countriesDAO.getAllCountries().get(0)).location("london").toAddress();
+		Address addressTwo = new AddressBuilder().country(countriesDAO.getAllCountries().get(0)).location("london").toAddress();
 
+		application.setCurrentAddress(addressOne);
+		application.setContactAddress(addressTwo);
+		
+		save(application);
+		assertNotNull(addressOne.getId());
+		assertNotNull(addressTwo.getId());
+		flushAndClearSession();
+		
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertEquals(addressOne, reloadedApplication.getCurrentAddress());
+		assertEquals(addressTwo, reloadedApplication.getContactAddress());
 	}
+
 	@Test
 	public void shouldLoadApplicationFormWithCVAndPersonalStatement() {
 
@@ -184,12 +178,12 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		application.setCv(cv);
 		application.setPersonalStatement(personalStatement);
-		
+
 		sessionFactory.getCurrentSession().save(application);
 		flushAndClearSession();
-		
+
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		
+
 		assertEquals(cv, reloadedApplication.getCv());
 		assertEquals(personalStatement, application.getPersonalStatement());
 	}
@@ -228,12 +222,14 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		// flushAndClearSession();
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
-				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
-		Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").isCompleted(CheckedStatus.YES)
-				.institution("").languageOfStudy(languageDAO.getLanguageById(2)).level(QualificationLevel.COLLEGE).subject("")
-				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
+		Qualification qualification1 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("").institution("")
+				.languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES)
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0))
+				.toQualification();
+		Qualification qualification2 = new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
+				.isCompleted(CheckedStatus.YES).institution("").languageOfStudy(languageDAO.getLanguageById(2)).level(QualificationLevel.COLLEGE).subject("")
+				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0))
+				.toQualification();
 
 		application.getQualifications().addAll(Arrays.asList(qualification1, qualification2));
 

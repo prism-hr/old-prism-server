@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -63,7 +63,7 @@ public class RefereeServiceTest {
 		Project project = new ProjectBuilder().program(program).toProject();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).referees(referee).id(2).project(project).toApplicationForm();
 		referee.setApplication(form);
-		ProgrammeDetail programmeDetails = new ProgrammeDetail();	
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		refereeDAOMock.save(referee);
@@ -120,7 +120,7 @@ public class RefereeServiceTest {
 		Project project = new ProjectBuilder().program(program).toProject();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).referees(referee).id(2).project(project).toApplicationForm();
 		referee.setApplication(form);
-		ProgrammeDetail programmeDetails = new ProgrammeDetail();	
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		refereeDAOMock.save(referee);

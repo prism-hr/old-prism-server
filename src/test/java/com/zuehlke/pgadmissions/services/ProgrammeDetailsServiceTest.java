@@ -7,17 +7,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ProgrammeDetailDAO;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 
 
-public class ProgrammeServiceTest {
+public class ProgrammeDetailsServiceTest {
 	
 	private ProgrammeDetailDAO programmeDetailDAOMock;
-	private ProgrammeService programmeService;
+	private ProgrammeDetailsService programmeService;
 
 	@Test
 	public void shouldGetProgrammeById() {
-		ProgrammeDetail program = EasyMock.createMock(ProgrammeDetail.class);
+		ProgrammeDetails program = EasyMock.createMock(ProgrammeDetails.class);
 		program.setId(2);
 		EasyMock.expect(programmeDetailDAOMock.getProgrammeDetailWithId(2)).andReturn(program);
 		EasyMock.replay(program, programmeDetailDAOMock);
@@ -26,7 +26,7 @@ public class ProgrammeServiceTest {
 	
 	@Test
 	public void shouldDelegateSaveToDAO() {
-		ProgrammeDetail program = EasyMock.createMock(ProgrammeDetail.class);
+		ProgrammeDetails program = EasyMock.createMock(ProgrammeDetails.class);
 		programmeDetailDAOMock.save(program);
 		EasyMock.replay(programmeDetailDAOMock);
 		programmeService.save(program);
@@ -37,6 +37,6 @@ public class ProgrammeServiceTest {
 	@Before
 	public void setUp() {
 		programmeDetailDAOMock = EasyMock.createMock(ProgrammeDetailDAO.class);
-		programmeService = new ProgrammeService(programmeDetailDAOMock);
+		programmeService = new ProgrammeDetailsService(programmeDetailDAOMock);
 	}
 }

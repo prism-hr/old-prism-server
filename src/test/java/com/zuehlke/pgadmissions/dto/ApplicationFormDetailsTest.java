@@ -18,7 +18,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -44,7 +44,7 @@ public class ApplicationFormDetailsTest {
 	private ApplicationFormValidator validator;
 	private ApplicationFormDetails appFormDetails;
 	private PersonalDetails personalDetails;
-	private ProgrammeDetail programmeDetails;
+	private ProgrammeDetails programmeDetails;
 
 	@Test
 	public void shouldSupportAppFormDetails() {

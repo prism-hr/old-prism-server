@@ -26,7 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -65,7 +65,7 @@ public class SubmitApplicationFormControllerTest {
 	@Test
 	@Ignore
 	public void shouldLoadApplicationFormByIdAndChangeSubmissionStatusToSubmittedAndSetTheCurrentTimeStampToSubmitDate() {
-		ProgrammeDetail programmeDetail = EasyMock.createMock(ProgrammeDetail.class);
+		ProgrammeDetails programmeDetail = EasyMock.createMock(ProgrammeDetails.class);
 		EasyMock.expect(programmeDetail.getSupervisors()).andReturn(new ArrayList<Supervisor>());
 		EasyMock.expect(programmeDetail.getProgrammeName()).andReturn("test");
 		EasyMock.expect(programmeDetail.getProjectName()).andReturn("test");

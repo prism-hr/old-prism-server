@@ -110,15 +110,13 @@
 					            <hr/>
 								<input type="hidden" id="applicationId" name="applicationId" value="${model.applicationForm.id?string("######")}"/>
 					          	<section id="programmeDetailsSection" class="folding violet <#if model.hasError('programmeDetails')>error</#if>">					          	
-					          		<#include "/private/pgStudents/form/components/programme_details.ftl"/>
-					          	</section>
+								</section>
 			          
 			          			<section id="personalDetailsSection" class="folding purple <#if model.hasError('personalDetails')>error</#if>">
 			             		</section>
 			          
 			          			<!-- Address -->			          			
-			          			<section id="addressSection" class="folding red <#if model.hasError('numberOfContactAddresses') || model.hasError('numberOfAddresses')>error</#if>">
-			             			<#include "/private/pgStudents/form/components/address_details.ftl"/>
+			          			<section id="addressSection" class="folding red <#if model.hasError('numberOfContactAddresses') || model.hasError('numberOfAddresses')>error</#if>">			             			
 			          			</section>
 			          
 			           			<section id="qualificationsSection" class="folding orange">

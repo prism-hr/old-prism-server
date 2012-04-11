@@ -133,7 +133,7 @@ public class ApplicationFormDetailsTest {
 		
 		Country nationality = new Country();
 		personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality).maternalGuardianNationalities(nationality).paternalGuardianNationalities(nationality).applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm()).country(new CountryBuilder().toCountry()).dateOfBirth(new Date()).email("email@test.com").firstName("bob")
-		.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith").residenceCountry(new CountryBuilder().toCountry()).toPersonalDetails();
+		.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith").residenceCountry(new CountryBuilder().toCountry()).phoneNumber("abc").toPersonalDetails();
 		appFormDetails.setPersonalDetails(personalDetails);
 		
 		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();

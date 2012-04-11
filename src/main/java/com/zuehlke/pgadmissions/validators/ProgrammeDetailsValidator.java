@@ -32,10 +32,6 @@ public class ProgrammeDetailsValidator implements Validator {
 				"user.programmeReferrer.notempty");
 
 		ProgrammeDetail programmeDetail = (ProgrammeDetail) target;
-		if(programmeDetail.getProgrammeDetailsPrimarySupervisor()==null){
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeDetailsPrimarySupervisor",
-					"programmeDetails.programmeDetailsPrimarySupervisor.notempty");
-		}
 		List<Supervisor> supervisors = programmeDetail.getSupervisors();
 		for (int i = 0; i < supervisors.size(); i++) {
 			if (!EmailValidator.getInstance().isValid(

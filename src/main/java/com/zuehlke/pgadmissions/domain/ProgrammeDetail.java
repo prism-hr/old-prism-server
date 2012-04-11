@@ -15,7 +15,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
@@ -45,8 +44,6 @@ public class ProgrammeDetail extends DomainObject<Integer> {
 	}
 
 	
-	@Transient
-	private Integer primarySupervisorId;
 	@Column(name = "programme_name")
 	private String programmeName;
 
@@ -67,10 +64,6 @@ public class ProgrammeDetail extends DomainObject<Integer> {
 	@OneToOne
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application = null;
-
-	@OneToOne
-	@JoinColumn(name = "primary_supervisor_id")
-	private Supervisor programmeDetailsPrimarySupervisor;
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST,
 			javax.persistence.CascadeType.REMOVE })
@@ -143,26 +136,4 @@ public class ProgrammeDetail extends DomainObject<Integer> {
 		}
 	}
 
-	public boolean isSupervisorPrimary(Supervisor supervisor) {
-		if (this.programmeDetailsPrimarySupervisor != null)
-			return programmeDetailsPrimarySupervisor.equals(supervisor);
-		return false;
-	}
-
-	public Supervisor getProgrammeDetailsPrimarySupervisor() {
-		return programmeDetailsPrimarySupervisor;
-	}
-
-	public void setProgrammeDetailsPrimarySupervisor(
-			Supervisor primarySupervisor) {
-		this.programmeDetailsPrimarySupervisor = primarySupervisor;
-	}
-
-	public Integer getPrimarySupervisorId() {
-		return primarySupervisorId;
-	}
-
-	public void setPrimarySupervisorId(Integer primarySupervisorId) {
-		this.primarySupervisorId = primarySupervisorId;
-	}
 }

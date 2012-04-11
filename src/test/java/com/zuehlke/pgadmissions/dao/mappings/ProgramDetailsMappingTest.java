@@ -62,7 +62,7 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(programmeDetails, reloadedDetails);
 
 		assertEquals(programmeDetails.getApplication(), reloadedDetails.getApplication());
-		assertNotNull(reloadedDetails.getPrimarySupervisor());
+		assertNotNull(reloadedDetails.getProgrammeDetailsPrimarySupervisor());
 
 	}
 

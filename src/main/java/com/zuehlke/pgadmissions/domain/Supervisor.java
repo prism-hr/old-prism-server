@@ -12,10 +12,10 @@ import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
 
-@Entity(name="SUPERVISOR")
+@Entity(name = "SUPERVISOR")
 @Access(AccessType.FIELD)
-public class Supervisor extends DomainObject<Integer>{
-	
+public class Supervisor extends DomainObject<Integer> {
+
 	/**
 	 * 
 	 */
@@ -33,18 +33,18 @@ public class Supervisor extends DomainObject<Integer>{
 	public Integer getId() {
 		return id;
 	}
-	
+
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AwareStatusEnumUserType")
-	@Column(name="aware_supervisor")
+	@Column(name = "aware_supervisor")
 	private AwareStatus awareSupervisor;
-	
+
 	private String email;
 	private String firstname;
 	private String lastname;
-	
-	@OneToOne(mappedBy="primarySupervisor")
-	private ProgrammeDetail programmeDetails ;
-	
+
+	@OneToOne(mappedBy = "programmeDetailsPrimarySupervisor")
+	private ProgrammeDetail programmeDetails;
+
 	public String getFirstname() {
 		return firstname;
 	}
@@ -64,21 +64,21 @@ public class Supervisor extends DomainObject<Integer>{
 	public String getEmail() {
 		return email;
 	}
-	
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
+
 	public AwareStatus getAwareSupervisor() {
 		return awareSupervisor;
 	}
-	
+
 	public void setAwareSupervisor(AwareStatus awareSupervisor) {
 		this.awareSupervisor = awareSupervisor;
 	}
 
 	public ProgrammeDetail getProgrammeDetails() {
-		if(programmeDetails == null){
+		if (programmeDetails == null) {
 			return new ProgrammeDetail();
 		}
 		return programmeDetails;
@@ -87,4 +87,5 @@ public class Supervisor extends DomainObject<Integer>{
 	public void setProgrammeDetails(ProgrammeDetail programmeDetails) {
 		this.programmeDetails = programmeDetails;
 	}
+
 }

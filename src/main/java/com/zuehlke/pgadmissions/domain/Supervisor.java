@@ -42,8 +42,6 @@ public class Supervisor extends DomainObject<Integer> {
 	private String firstname;
 	private String lastname;
 
-	@OneToOne(mappedBy = "programmeDetailsPrimarySupervisor")
-	private ProgrammeDetail programmeDetails;
 
 	public String getFirstname() {
 		return firstname;
@@ -75,17 +73,6 @@ public class Supervisor extends DomainObject<Integer> {
 
 	public void setAwareSupervisor(AwareStatus awareSupervisor) {
 		this.awareSupervisor = awareSupervisor;
-	}
-
-	public ProgrammeDetail getProgrammeDetails() {
-		if (programmeDetails == null) {
-			return new ProgrammeDetail();
-		}
-		return programmeDetails;
-	}
-
-	public void setProgrammeDetails(ProgrammeDetail programmeDetails) {
-		this.programmeDetails = programmeDetails;
 	}
 
 }

@@ -49,7 +49,7 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 
 		ProgrammeDetail programmeDetails = new ProgrammeDetailsBuilder().programmeName("test").projectName("project")
 				.startDate(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980")).studyOption(StudyOption.FULL_TIME).referrer(Referrer.OPTION_1)
-				.primarySupervisor(supervisor).supervisors(supervisor).toProgrammeDetails();
+				.supervisors(supervisor).toProgrammeDetails();
 
 		sessionFactory.getCurrentSession().save(programmeDetails);
 		flushAndClearSession();
@@ -62,7 +62,6 @@ public class ProgramDetailsMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(programmeDetails, reloadedDetails);
 
 		assertEquals(programmeDetails.getApplication(), reloadedDetails.getApplication());
-		assertNotNull(reloadedDetails.getProgrammeDetailsPrimarySupervisor());
 
 	}
 

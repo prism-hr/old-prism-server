@@ -125,7 +125,7 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Referrer: " + application.getProgrammeDetails().getReferrer().displayValue()));
 		}
 
-		Supervisor primarySupervisor = application.getProgrammeDetails().getPrimarySupervisor();
+		Supervisor primarySupervisor = application.getProgrammeDetails().getProgrammeDetailsPrimarySupervisor();
 		if (application.getProgrammeDetails().getSupervisors().isEmpty() && primarySupervisor == null) {
 			document.add(new Paragraph(createMessage("supervisors information")));
 		} else {

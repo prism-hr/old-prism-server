@@ -21,11 +21,10 @@ import org.hibernate.annotations.Type;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
+@Entity(name = "APPLICATION_FORM_PROGRAMME_DETAIL")
+@Access(AccessType.FIELD)
+public class ProgrammeDetail extends DomainObject<Integer> {
 
-@Entity(name="APPLICATION_FORM_PROGRAMME_DETAIL")
-@Access(AccessType.FIELD) 
-public class ProgrammeDetail  extends DomainObject<Integer>{
-	
 	/**
 	 * 
 	 */
@@ -43,107 +42,115 @@ public class ProgrammeDetail  extends DomainObject<Integer>{
 	public Integer getId() {
 		return id;
 	}
-	
-	@Column(name="programme_name")
+
+	@Column(name = "programme_name")
 	private String programmeName;
-	
-	@Column(name="study_option")
+
+	@Column(name = "study_option")
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.StudyOptionEnumUserType")
 	private StudyOption studyOption;
-	
-	@Column(name="project_name")
+
+	@Column(name = "project_name")
 	private String projectName;
-	
+
 	@Temporal(value = TemporalType.DATE)
-	@Column(name="start_date")
+	@Column(name = "start_date")
 	private Date startDate;
-	
+
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ReferrerEnumUserType")
 	private Referrer referrer;
-	
+
 	@OneToOne
-	@JoinColumn(name="application_form_id")
+	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application = null;
-	
+
 	@OneToOne
-	@JoinColumn(name="primary_supervisor_id")
-	private Supervisor primarySupervisor ;
-	
-	@OneToMany(cascade={javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE})
-	@org.hibernate.annotations.Cascade( {org.hibernate.annotations.CascadeType.SAVE_UPDATE})
+	@JoinColumn(name = "primary_supervisor_id")
+	private Supervisor programmeDetailsPrimarySupervisor;
+
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST,
+			javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "programme_detail_id")
 	private List<Supervisor> supervisors = new ArrayList<Supervisor>();
-	
+
 	public String getProgrammeName() {
 		return programmeName;
 	}
-	
+
 	public void setProgrammeName(String programmeName) {
 		this.programmeName = programmeName;
 	}
-	
+
 	public String getProjectName() {
 		return projectName;
 	}
-	
+
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
 	}
-	
+
 	public Date getStartDate() {
 		return startDate;
 	}
-	
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
-	
+
 	public Referrer getReferrer() {
 		return referrer;
 	}
-	
+
 	public void setReferrer(Referrer referrer) {
 		this.referrer = referrer;
 	}
-	
+
 	public StudyOption getStudyOption() {
 		return studyOption;
 	}
-	
+
 	public void setStudyOption(StudyOption studyOption) {
 		this.studyOption = studyOption;
 	}
-	
+
 	public ApplicationForm getApplication() {
 		return application;
 	}
-	
+
 	public void setApplication(ApplicationForm application) {
 		this.application = application;
 	}
-	
+
 	public List<Supervisor> getSupervisors() {
 		return supervisors;
 	}
-	
+
 	public void setSupervisors(List<Supervisor> supervisors) {
 		this.supervisors = supervisors;
-		if(supervisors != null && !supervisors.isEmpty()){
+		if (supervisors != null && !supervisors.isEmpty()) {
 			int size = supervisors.size();
-			for (int i = size -1; i >= 0 ;i--){
+			for (int i = size - 1; i >= 0; i--) {
 				Supervisor supervisor = supervisors.get(i);
-				if(supervisor == null){
+				if (supervisor == null) {
 					supervisors.remove(i);
 				}
 			}
 		}
 	}
 
-	public Supervisor getPrimarySupervisor() {
-		return primarySupervisor;
+	public boolean isSupervisorPrimary(Supervisor supervisor) {
+		if (this.programmeDetailsPrimarySupervisor != null)
+			return programmeDetailsPrimarySupervisor.equals(supervisor);
+		return false;
 	}
 
-	public void setPrimarySupervisor(Supervisor primarySupervisor) {
-		this.primarySupervisor = primarySupervisor;
+	public Supervisor getProgrammeDetailsPrimarySupervisor() {
+		return programmeDetailsPrimarySupervisor;
+	}
+
+	public void setProgrammeDetailsPrimarySupervisor(
+			Supervisor primarySupervisor) {
+		this.programmeDetailsPrimarySupervisor = primarySupervisor;
 	}
 }

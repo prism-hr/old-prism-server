@@ -30,7 +30,9 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorJSONPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgrammeService;
+import com.zuehlke.pgadmissions.services.SupervisorService;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 
 public class ProgrammeDetailsControllerTest {
@@ -42,6 +44,7 @@ public class ProgrammeDetailsControllerTest {
 	private DatePropertyEditor datePropertyEditorMock;
 	private ProgrammeDetailsValidator programmeDetailsValidatorMock;
 	private SupervisorJSONPropertyEditor supervisorJSONPropertyEditorMock;
+	private SupervisorPropertyEditor supervisorPropertEditorMock;
 
 	@Test
 	public void shouldBindPropertyEditors() {
@@ -49,6 +52,7 @@ public class ProgrammeDetailsControllerTest {
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		binderMock.registerCustomEditor(Supervisor.class, supervisorJSONPropertyEditorMock);
+		binderMock.registerCustomEditor(Supervisor.class, supervisorPropertEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
@@ -79,7 +83,7 @@ public class ProgrammeDetailsControllerTest {
 		final ProgrammeDetail programmeDetails = new ProgrammeDetailsBuilder().id(1).toProgrammeDetails();
 
 		controller = new ProgrammeDetailsController(programmeDetailsServiceMock, applicationFormPropertyEditorMock,
-				datePropertyEditorMock, programmeDetailsValidatorMock, supervisorJSONPropertyEditorMock) {
+				datePropertyEditorMock, programmeDetailsValidatorMock, supervisorJSONPropertyEditorMock, supervisorPropertEditorMock) {
 			@Override
 			ProgrammeDetail newProgrammeDetail() {
 				return programmeDetails;
@@ -198,6 +202,7 @@ public class ProgrammeDetailsControllerTest {
 
 	@Before
 	public void setup() {
+		supervisorPropertEditorMock = EasyMock.createMock(SupervisorPropertyEditor.class);
 
 		programmeDetailsServiceMock = EasyMock.createMock(ProgrammeService.class);
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
@@ -205,7 +210,7 @@ public class ProgrammeDetailsControllerTest {
 		programmeDetailsValidatorMock = EasyMock.createMock(ProgrammeDetailsValidator.class);
 		supervisorJSONPropertyEditorMock = EasyMock.createMock(SupervisorJSONPropertyEditor.class);
 		controller = new ProgrammeDetailsController(programmeDetailsServiceMock, applicationFormPropertyEditorMock,
-				datePropertyEditorMock, programmeDetailsValidatorMock, supervisorJSONPropertyEditorMock);
+				datePropertyEditorMock, programmeDetailsValidatorMock, supervisorJSONPropertyEditorMock,supervisorPropertEditorMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);

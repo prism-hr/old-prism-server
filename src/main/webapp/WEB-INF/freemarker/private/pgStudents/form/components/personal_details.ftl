@@ -103,6 +103,9 @@
 			</div>
 		
           	<div>
+          		<div class="row">
+          			<label class="label">Nationality</label>
+          		</div>
             	<div class="row">
               		<label class="plain-label">Country of Birth<em>*</em></label>
                 	<span class="hint" data-desc="<@spring.message 'personalDetails.countryOfBirth'/>"></span>
@@ -235,9 +238,9 @@
           	<div>
           	     <div class="row">
 					<label class="label">Language</label>
-					                   
-					<div class="row">
-                   <label class="plain-label">Is English your first language?<em>*</em></label>
+				</div>	                   
+				<div class="row">
+                    	<label class="plain-label">Is English your first language?<em>*</em></label>
                    		<span class="hint" data-desc="<@spring.message 'personalDetails.language.section'/>"></span>
                    		<input type="checkbox" name="englishFirstLanguageCB" id="englishFirstLanguageCB"
                    			<#if personalDetails.isEnglishFirstLanguage()>
@@ -247,14 +250,16 @@
                                       disabled="disabled"
                             </#if>
                            />
-           			 </div>
-				</div>                              
+           		</div>
+				                              
             </div>
 
           	<div>
-            	<strong>Residence</strong>
+          		<div class="row">
+            		<label class="label">Residence</label>
+            	</div>
             	<div class="row">
-					<span class="plain-label">Country<em>*</em></span>
+					<span class="plain-label">Country of Residence<em>*</em></span>
 						<span class="hint" data-desc="<@spring.message 'personalDetails.residence.country'/>"></span>        
 					<div class="field">
 						<select class="full" name="residenceCountry" id="residenceCountry" <#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
@@ -271,7 +276,7 @@
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>			
 						</div>
 						<div class="row">
-						 <label class="plain-label">Do you require Visa to study in the UK?<em>*</em></label>
+						 <label class="plain-label">Do you require visa to study in the UK?<em>*</em></label>
                    		<span class="hint"></span>
                    		<input type="checkbox" name="requiresVisaCB" id="requiresVisaCB"
                    			<#if personalDetails.isRequiresVisa()>
@@ -286,7 +291,9 @@
             </div>
 
           	<div>
-            	<strong>Contact Details</strong>
+          		<div class="row">
+            		<label class="label">Contact Details</label>
+            	</div>
             	
             	<div class="row">
             		<span class="plain-label">Email<em>*</em></span>

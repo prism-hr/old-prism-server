@@ -72,7 +72,7 @@ section.folding form label.label { font-weight: bold; }
 section.folding form .field .max { width: 480px; }
 section.folding form .field .full { width: 240px; }
 section.folding form .field .half { width: 120px; }
-section.folding form .field label { display: inline-block; margin-right: 1em; min-width: 60px; }
+section.folding form .field label { display: inline-block; margin-right: 1em; min-width: 48px; }
 
 section.folding div.add { padding: 10px 5px; text-align: left; }
 section.folding form div.buttons { background: #DDD; border-width: 1px 0 0; margin: 8px -10px -10px; }

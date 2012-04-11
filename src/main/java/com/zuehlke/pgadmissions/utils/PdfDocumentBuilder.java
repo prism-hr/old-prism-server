@@ -227,42 +227,8 @@ public class PdfDocumentBuilder {
 
 		document.add(new Paragraph("Contact Details", smallBoldFont));
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getEmail(), "Email");
-
-		addTelephones(application, document);
-
+		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getPhoneNumber(), "Telephone");
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getMessenger(), "Skype Name");
-	}
-
-	private void addTelephones(ApplicationForm application, Document document) throws DocumentException {
-		PdfPTable table;
-		PdfPCell c1;
-		document.add(new Paragraph("Telephone", smallBoldFont));
-		if (application.getPersonalDetails().getPhoneNumber() != null) {
-			document.add(new Paragraph(" "));
-
-			table = new PdfPTable(2);
-			table.setWidthPercentage(100.0f);
-
-			c1 = new PdfPCell(new Phrase("Type", smallerBoldFont));
-			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			c1.setBackgroundColor(grayColor);
-			table.addCell(c1);
-
-			c1 = new PdfPCell(new Phrase("Number", smallerBoldFont));
-			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
-			c1.setBackgroundColor(grayColor);
-			table.addCell(c1);
-			table.setHeaderRows(1);
-
-		
-			table.addCell("");
-			table.addCell(application.getPersonalDetails().getPhoneNumber());
-	
-
-			document.add(table);
-		} else {
-			document.add(new Paragraph(createMessage("telephone")));
-		}
 	}
 
 	private void addGivenNationality(Document document, String header, java.util.List<Country> nationalities) throws DocumentException {

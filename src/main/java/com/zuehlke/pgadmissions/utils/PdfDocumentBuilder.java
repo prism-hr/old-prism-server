@@ -127,11 +127,10 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Referrer: " + application.getProgrammeDetails().getReferrer().displayValue()));
 		}
 
-		if (application.getProgrammeDetails().getSupervisors().isEmpty()) {
+		Supervisor primarySupervisor = application.getProgrammeDetails().getPrimarySupervisor();
+		if (application.getProgrammeDetails().getSupervisors().isEmpty() && primarySupervisor == null) {
 			document.add(new Paragraph(createMessage("supervisors information")));
 		} else {
-			
-			Supervisor primarySupervisor = application.getProgrammeDetails().getPrimarySupervisor();
 			if (primarySupervisor != null) {
 				document.add(new Paragraph("Remaining Supervisors", smallBoldFont));
 				document.add(new Paragraph("Supervisor First Name: "+ primarySupervisor.getFirstname()));
@@ -140,7 +139,7 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("Is primary supervisor? yes."));
 				document.add(new Paragraph("Is supervisor aware of your application? " + primarySupervisor.getAwareSupervisor().displayValue()));
 			} else {
-				createMessage("primary supervisor");
+				document.add(new Paragraph(createMessage("primary supervisor")));
 			}
 			
 			document.add(new Paragraph("Remaining Supervisors", smallBoldFont));

@@ -1,7 +1,5 @@
 $(document).ready(function(){
-	
-//	$("span[class='supervisorAction']").html('<a id="addSupervisorButton" class="button" style="width: 110px;">Add Supervisor</a>');
-	
+	$("#addSupervisorButton").show();
 	$("#awareSupervisorCB").attr('checked', false);
 	$("#primarySupervisorCB").attr('checked', false);
 	$("#primarySupervisor").val("NO");
@@ -15,16 +13,18 @@ $(document).ready(function(){
 		}
 	});
 //	$("#supervisor_div").on("click", "a", function(){	
-//		$(this).parent("span").remove();
-//		
+//		if(confirm("Are you sure you want to delete the supervisor?")){
+//			$(this).parent("span").remove();
+//		}
+	
 //	});
 	
 	
 	
 	
 	$('a[name="editSupervisorLink"]').click(function(){
-//		$("span[class='supervisorAction']").html('');
-//		$("span[class='supervisorAction']").html('<a id="updateSupervisorButton" class="button" style="width: 110px;">Update Supervisor</a>');
+		$("#addSupervisorButton").hide();
+		$("#updateSupervisorButton").show();
 		var id = this.id;
 		id = id.replace('supervisor_', '');
 		$("#supervisorId").val(id);
@@ -43,6 +43,8 @@ $(document).ready(function(){
 	
 	
 	$('#programmeCancelButton').click(function(){
+		$("#addSupervisorButton").show();
+		$("#updateSupervisorButton").hide();
 		$.get("/pgadmissions/update/getProgrammeDetails",
 				{
 					applicationId:  $('#applicationId').val()					
@@ -64,16 +66,31 @@ $(document).ready(function(){
 	
 	$('#programmeSaveButton').on("click",function(){
 		postProgrammeData('close');
+		var postData = {
+			programmeName: $("#programmeName").val(),
+			projectName: $("#projectName").val(), 
+			studyOption: $("#studyOption").val(), 
+			startDate: $("#startDate").val(),
+			referrer: $("#referrer").val(),
+			application: $("#appId1").val(),
+			programmeDetailsId: $("#programmeDetailsId").val(),
+			supervisors: ""
+		};
+		
+		$.post( "/pgadmissions/programme" ,$.param(postData) +"&" + $('[input[name="supervisors"]').serialize(),
+		function(data) {
+			$('#programmeDetailsSection').html(data);
+		});
 	});
 	
 	$('#addSupervisorButton').on('click', function(){
 		if( $('#supervisorEmail').val() && $('#supervisorEmail').val() !="Email address" ){
 			
 		
-		$('#supervisor_div').append('<span name="supervisor_span">'+ 
-					"<tr><td>" + escape($('#supervisorFirstname').val())+" "+ escape($('#supervisorLastname').val())+"</td><td>"+
-					escape($('#supervisorEmail').val())+ "</td><td><td> <input type=\"radio\" name=\"primarySupervisor\" value=\""+$('#supervisorId').val()+"\"/> </td><td>" + escape($('#awareSupervisor').val()) +'</td><td><a class="button-delete"  name="deleteSupervisor">delete</a>  <a class="button-edit" name ="editUnsavedSupervisor">edit</a></td></tr>'+
-					'<input type="hidden" name="supervisors" value=' +"'" + '{"id":"' +  escape($('#supervisorId').val())+ '","firstname":"' +  escape($('#supervisorFirstname').val())+ '","lastname":"' +  escape($('#supervisorLastname').val())+ '","email":"' +  escape($('#supervisorEmail').val()) +  '", "awareSupervisor":"' + escape($('#awareSupervisor').val()) + '"} ' + "'" + "/>"									
+		$('table.data-table tbody').append('<span name="supervisor_span">'+ 
+					"<tr><td>" + $('#supervisorFirstname').val()+" "+ $('#supervisorLastname').val()+"</td><td>"+
+					$('#supervisorEmail').val()+ "</td><td>" + $('#awareSupervisor').val() +'</td><td><a class="button-delete"  name="deleteSupervisor">delete</a> </td></tr>'+
+					'<input type="hidden" name="supervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $('#awareSupervisor').val() + '"} ' + "'" + "/>"									
 					+'<br/></span>');
 		 $("input[name='sFN']").val($('#supervisorFirstname').val());
 		 $("input[name='sLN']").val($('#supervisorLastname').val());
@@ -83,21 +100,6 @@ $(document).ready(function(){
 		 $('#supervisorFirstname').val('');
 		 $('#supervisorLastname').val('');
 		 $('#supervisorEmail').val('');
-		}
-	});
-	
-	$('a[name="editUnsavedSupervisor"]').click(function(){
-//		$("span[class='supervisorAction']").html('');
-//		$("span[class='supervisorAction']").html('<a id="updateSupervisorButton" class="button" style="width: 110px;">Update Supervisor</a>');
-		$("#supervisorFirstname").val($("input[name='sFN']").val());
-		$("#supervisorLastname").val($("input[name='sLN']").val());
-		$("#supervisorEmail").val($("input[name='sEM']").val());
-		if ($("input[name='sEM']").val() =='YES'){
-			$("#awareSupervisorCB").attr('checked', true);
-			$("#awareSupervisor").val("YES");
-		} else {
-			$("#awareSupervisorCB").attr('checked', false);
-			$("#awareSupervisor").val("NO");
 		}
 	});
 	

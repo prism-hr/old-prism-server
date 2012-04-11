@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Type;
 
@@ -43,6 +44,9 @@ public class ProgrammeDetail extends DomainObject<Integer> {
 		return id;
 	}
 
+	
+	@Transient
+	private Integer primarySupervisorId;
 	@Column(name = "programme_name")
 	private String programmeName;
 
@@ -152,5 +156,13 @@ public class ProgrammeDetail extends DomainObject<Integer> {
 	public void setProgrammeDetailsPrimarySupervisor(
 			Supervisor primarySupervisor) {
 		this.programmeDetailsPrimarySupervisor = primarySupervisor;
+	}
+
+	public Integer getPrimarySupervisorId() {
+		return primarySupervisorId;
+	}
+
+	public void setPrimarySupervisorId(Integer primarySupervisorId) {
+		this.primarySupervisorId = primarySupervisorId;
 	}
 }

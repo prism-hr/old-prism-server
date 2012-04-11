@@ -16,7 +16,7 @@ public class SupervisorJSONPropertyEditorTest {
 
 	@Test	
 	public void shouldParseAndSetAsValue(){
-		editor.setAsText("{\"id\": \"1\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"awareSupervisor\": \"YES\"}");
+		editor.setAsText("{\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"awareSupervisor\": \"YES\"}");
 		Supervisor expected = new SupervisorBuilder().id(1).firstname("Mark").lastname("Johnson").email("test@gmail.com").awareSupervisor(AwareStatus.YES).toSupervisor();
 		Supervisor supervisor =   (Supervisor) editor.getValue();
 		assertEquals(expected.getFirstname(), supervisor.getFirstname());
@@ -27,7 +27,7 @@ public class SupervisorJSONPropertyEditorTest {
 	
 	@Test	
 	public void shouldParseEmptyIdAsNull(){
-		editor.setAsText("{\"id\": \"\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"primarySupervisor\": \"YES\" , \"awareSupervisor\": \"YES\"}");		
+		editor.setAsText("{\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"primarySupervisor\": \"YES\" , \"awareSupervisor\": \"YES\"}");		
 		Supervisor supervisor =   (Supervisor) editor.getValue();
 		assertNull (supervisor.getId());
 		
@@ -57,7 +57,7 @@ public class SupervisorJSONPropertyEditorTest {
 	@Test	
 	public void shouldReturnCorrectjsonString(){			
 		editor.setValue(new SupervisorBuilder().firstname("Mark").id(1).lastname("Johnson").email("test@gmail.com").awareSupervisor(AwareStatus.NO).toSupervisor());
-		assertEquals("{\"id\": \"1\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\", \"awareSupervisor\": \"NO\"}", editor.getAsText());
+		assertEquals("{\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\", \"awareSupervisor\": \"NO\"}", editor.getAsText());
 	}
 	
 	@Before

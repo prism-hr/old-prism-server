@@ -140,7 +140,7 @@ public class ApplicationFormDetailsTest {
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).role(role).toUser();
 		Supervisor supervisor = new SupervisorBuilder().firstname("Mark").lastname("Johnson").email("mark@gmail.com").awareSupervisor(AwareStatus.YES).toSupervisor();
 		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(currentUser).toApplicationForm();
-		programmeDetails = new ProgrammeDetailsBuilder().id(5).supervisors(supervisor).programmeName("programmeName").referrer(Referrer.OPTION_1).startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06")).applicationForm(form).studyOption(StudyOption.FULL_TIME).toProgrammeDetails();
+		programmeDetails = new ProgrammeDetailsBuilder().primarySupervisor(supervisor).id(5).supervisors(supervisor).programmeName("programmeName").referrer(Referrer.OPTION_1).startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06")).applicationForm(form).studyOption(StudyOption.FULL_TIME).toProgrammeDetails();
 		appFormDetails.setProgrammeDetails(programmeDetails);
 	}
 }

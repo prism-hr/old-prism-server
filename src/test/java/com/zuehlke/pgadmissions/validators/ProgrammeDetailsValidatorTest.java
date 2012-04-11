@@ -47,6 +47,15 @@ public class ProgrammeDetailsValidatorTest {
 		Assert.assertEquals("user.programmeName.notempty", mappingResult.getFieldError("programmeName").getCode());
 	}
 	@Test
+	public void shouldRejectIfNoPrimarySupervisor() {
+		programmeDetail.setProgrammeDetailsPrimarySupervisor(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "programmeDetailsPrimarySupervisor");
+		programmeDetailsValidator.validate(programmeDetail, mappingResult);
+		System.out.println(mappingResult.getAllErrors());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("programmeDetails.programmeDetailsPrimarySupervisor.notempty", mappingResult.getFieldError("programmeDetailsPrimarySupervisor").getCode());
+	}
+	@Test
 	public void shouldRejectIfStudyOptionIsEmpty() {
 		programmeDetail.setStudyOption(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "studyOption");
@@ -119,7 +128,7 @@ public class ProgrammeDetailsValidatorTest {
 		Supervisor supervisor = new SupervisorBuilder().firstname("Mark").lastname("Johnson").email("mark@gmail.com").awareSupervisor(AwareStatus.YES).toSupervisor();
 		ApplicationForm form = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(currentUser).toApplicationForm();
 		
-		programmeDetail = new ProgrammeDetailsBuilder().id(5).supervisors(supervisor).programmeName("programmeName").referrer(Referrer.OPTION_1).startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06")).applicationForm(form).studyOption(StudyOption.FULL_TIME).toProgrammeDetails();
+		programmeDetail = new ProgrammeDetailsBuilder().primarySupervisor(supervisor).id(5).supervisors(supervisor).programmeName("programmeName").referrer(Referrer.OPTION_1).startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06")).applicationForm(form).studyOption(StudyOption.FULL_TIME).toProgrammeDetails();
 		programmeDetailsValidator = new ProgrammeDetailsValidator();
 	}
 }

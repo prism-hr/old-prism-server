@@ -11,9 +11,10 @@
         	<form>		
 				
             	<div>            	 
-            	
-                	<h3>Address</h3>
-                  
+            		<div class="row">
+          				<label class="label">Address</label>
+          			</div>
+                  	
                   	<!-- Address body -->
                   	<div class="row">
                     	<span class="plain-label">Current Address<em>*</em></span>
@@ -47,7 +48,8 @@
                 				<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>                	
 						</div>
 					</div>
-					
+				</div> 
+				<div>	
 					<!-- Address body -->
                     <div class="row">
                         <span class="plain-label">Contact Address<em>*</em></span>

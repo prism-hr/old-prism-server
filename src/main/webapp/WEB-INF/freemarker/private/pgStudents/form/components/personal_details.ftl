@@ -140,7 +140,7 @@
               	</div>
         	    
             	<div class="row">                    	
-              		 <label class="plain-label">My Nationality
+              		 <label class="plain-label" id="my-nationality">My Nationality
 					<#if !nationalityExist>
 						<em id="nationality-em">*</em>
 					</#if>
@@ -180,7 +180,7 @@
 				</div>
               
             	<div class="row">                     	
-              		<label class="plain-label">Mother's Nationality</label>
+              		<label class="plain-label" id="maternal-nationality">Mother's Nationality</label>
               		<span class="hint" data-desc="<@spring.message 'personalDetails.maternalGuardianNationality'/>"></span>           
                   	 <div class="field">
                      	 <select class="full" name="maternalNationalityCountry" id="maternalNationalityCountry" <#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
@@ -213,7 +213,7 @@
 					</#list>
 				</div>
 				<div class="row">                      	
-					<label class="plain-label">Father's Nationality</label> 
+					<label class="plain-label" id="paternal-nationality">Father's Nationality</label> 
 					  <span class="hint" data-desc="<@spring.message 'personalDetails.paternalGuardianNationality'/>"></span>      
                   	 <div class="field">
                      	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry" <#if applicationForm.isSubmitted()>disabled="disabled"</#if>>

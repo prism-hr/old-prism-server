@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -20,7 +21,7 @@ import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
 import com.zuehlke.pgadmissions.services.SupervisorService;
 
 @Controller
-@RequestMapping("/programme/updateSupervisor")
+@RequestMapping("/programme/supervisors")
 public class UpdateSupervisorController {
 
 	private final ProgrammeDetailsService programmeDetailsService;
@@ -36,17 +37,17 @@ public class UpdateSupervisorController {
 		this.supervisorService = supervisorService;
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(value = "/updateSupervisor",method = RequestMethod.POST)
 	public String editSupervisor(@ModelAttribute("programmeDetails") ProgrammeDetails programmeDetails, 
 			@ModelAttribute("supervisor") Supervisor supervisor, BindingResult result) {
 		
 		if (programmeDetails.getApplication() != null && programmeDetails.getApplication().isSubmitted()) {
 			throw new CannotUpdateApplicationException();
 		}
-		
+		if(!result.hasErrors()){
 //		//supervisor validation 
-		supervisorService.save(supervisor);
-		
+			supervisorService.save(supervisor);
+		}
 		if (programmeDetails.getApplication() != null) {
 			programmeDetails.getApplication().setProgrammeDetails(programmeDetails);
 		}

@@ -63,6 +63,7 @@ $(document).ready(function(){
 		}
 	});
 	
+	//use the same logic for save programme details and add supervisor
 	
 	$('#programmeSaveButton').on("click",function(){
 		postProgrammeData('close');
@@ -82,10 +83,38 @@ $(document).ready(function(){
 			$('#programmeDetailsSection').html(data);
 		});
 	});
+	function validateEmail(email) { 
+	    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA	-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	    return re.test(email);
+	} 
 	
 	$('#addSupervisorButton').on('click', function(){
-		if( $('#supervisorEmail').val() && $('#supervisorEmail').val() !="Email address" ){
+		if( $('#supervisorFirstname').val() ==""  || $('#supervisorFirstname').val() =="First Name" ){
+			$("span[name='superFirstname']").html('First name cannot be empty');
+			$("span[name='superFirstname']").show();
+
+		}
+		if( $('#supervisorLastname').val() ==""  || $('#supervisorLastname').val() =="Last Name" ){
+			$("span[name='superLastname']").html('Last name cannot be empty');
+			$("span[name='superLastname']").show();
+
+		}
+		if( $('#supervisorEmail').val() ==""  || $('#supervisorEmail').val() =="Email address" || !validateEmail($('#supervisorEmail').val())){
+			$("span[name='superEmail']").html('Email is not valid');
+			$("span[name='superEmail']").show();
+
+		}
+		if( $('#supervisorEmail').val() && $('#supervisorEmail').val() !="Email address" &&
+				$('#supervisorFirstname').val() && $('#supervisorFirstname').val() !="First Name"&&
+				$('#supervisorLastname').val() && $('#supervisorLastname').val() !="Last Name"){
 			
+		
+			$("span[name='superFirstname']").html('');
+			$("span[name='superFirstname']").hide();
+			$("span[name='superLastname']").html('');
+			$("span[name='superLastname']").hide();
+			$("span[name='superEmail']").html('');
+			$("span[name='superEmail']").hide();
 		
 		$('table.data-table tbody').append('<span name="supervisor_span">'+ 
 					"<tr><td>" + $('#supervisorFirstname').val()+" "+ $('#supervisorLastname').val()+"</td><td>"+
@@ -104,7 +133,7 @@ $(document).ready(function(){
 	});
 	
 	$('#updateSupervisorButton').on('click', function(){
-		$.post("/pgadmissions/programme/updateSupervisor",
+		$.post("/pgadmissions/programme/supervisors/updateSupervisor",
 				{ 
 					firstname: $("#supervisorFirstname").val(),
 					lastname: $("#supervisorLastname").val(), 

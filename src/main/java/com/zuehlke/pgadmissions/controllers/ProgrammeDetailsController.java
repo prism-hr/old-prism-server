@@ -1,12 +1,14 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,9 +28,7 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorJSONPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgrammeService;
-import com.zuehlke.pgadmissions.services.SupervisorService;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 
 @Controller
@@ -40,22 +40,20 @@ public class ProgrammeDetailsController {
 	private final DatePropertyEditor datePropertyEditor;
 	private final ProgrammeDetailsValidator programmeDetailsValidator;
 	private final SupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
-	private final SupervisorService supervisorService;
 	
 	ProgrammeDetailsController() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null);
 	}
 	
 	@Autowired
 	public ProgrammeDetailsController(ProgrammeService programmeDetailsService,	
 			ApplicationFormPropertyEditor applicationFormPropertyEditor, DatePropertyEditor datePropertyEditor,
-			ProgrammeDetailsValidator programmeDetailsValidator, SupervisorJSONPropertyEditor supervisorJSONPropertyEditor, SupervisorService supervisorService) {
+			ProgrammeDetailsValidator programmeDetailsValidator, SupervisorJSONPropertyEditor supervisorJSONPropertyEditor) {
 		this.programmeDetailsService = programmeDetailsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
 		this.programmeDetailsValidator = programmeDetailsValidator;
 		this.supervisorJSONPropertyEditor = supervisorJSONPropertyEditor;
-		this.supervisorService = supervisorService;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
@@ -71,12 +69,8 @@ public class ProgrammeDetailsController {
 		}
 		
 		programmeDetailsValidator.validate(programmeDetails, result);
-		if(programmeDetails.getPrimarySupervisorId()!=null) {
-			Supervisor supervisor = supervisorService.getSupervisorWithId(programmeDetails.getPrimarySupervisorId());
-			if(supervisor!=null)
-			programmeDetails.setProgrammeDetailsPrimarySupervisor(supervisor);
-		}
-		if (!result.hasErrors() || programmeDetails.getProgrammeDetailsPrimarySupervisor()!=null) {
+		
+		if (!result.hasErrors()) {
 			programmeDetailsService.save(programmeDetails);
 		}
 		
@@ -93,7 +87,7 @@ public class ProgrammeDetailsController {
 
 		return new ModelAndView("private/pgStudents/form/components/programme_details", "model", applicationPageModel);
 	}
-	
+
 	@ModelAttribute("programmeDetails")
 	public ProgrammeDetail getProgrammeDetails(Integer programmeDetailsId) {
 		if (programmeDetailsId == null) {

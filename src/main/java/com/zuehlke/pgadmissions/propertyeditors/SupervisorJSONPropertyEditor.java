@@ -31,6 +31,9 @@ public class SupervisorJSONPropertyEditor extends PropertyEditorSupport {
 			supervisor.setEmail((String) properties.get("email"));
 			supervisor.setAwareSupervisor(AwareStatus
 					.valueOf((String) properties.get("awareSupervisor")));
+			if (StringUtils.isNotBlank((String) properties.get("id"))) {
+							supervisor.setId(Integer.parseInt((String) properties.get("id")));
+			}
 
 			setValue(supervisor);
 		} catch (IOException e) {
@@ -44,7 +47,8 @@ public class SupervisorJSONPropertyEditor extends PropertyEditorSupport {
 			return null;
 		}
 		Supervisor supervisor = (Supervisor) getValue();
-		return "{\"firstname\": \""
+		return "{\"id\": \""
+				+ supervisor.getId() + "\",\"firstname\": \""
 				+ supervisor.getFirstname() + "\",\"lastname\": \""
 				+ supervisor.getLastname() + "\",\"email\": \""
 				+ supervisor.getEmail() + "\", \"awareSupervisor\": \""

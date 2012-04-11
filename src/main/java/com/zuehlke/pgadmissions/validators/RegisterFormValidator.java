@@ -51,9 +51,11 @@ public class RegisterFormValidator implements Validator {
 			errors.rejectValue("password", "user.password.notmatch");
 			errors.rejectValue("confirmPassword", "user.confirmPassword.notmatch");
 		}
+
 		if(record.getPassword().length()<8){
 			errors.rejectValue("password", "user.password.notvalid");
 		}
+
 		if (shouldValidateSameEmail) {
 			List<RegisteredUser> allUsers = userService.getAllUsers();
 			for (RegisteredUser user : allUsers) {

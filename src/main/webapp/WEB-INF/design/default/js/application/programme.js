@@ -73,7 +73,7 @@ $(document).ready(function(){
 		
 		var primarySupervisor =  $("input[name='primarySupervisor']:checked").val();
 		if(primarySupervisor){
-			postData.programmeDetailsPrimarySupervisor = primarySupervisor;
+			postData.primarySupervisorId = primarySupervisor;
 		}
 		
 		$.post( "/pgadmissions/programme" ,$.param(postData) +"&" + $('[input[name="supervisors"]').serialize(),
@@ -89,7 +89,7 @@ $(document).ready(function(){
 		$('#supervisor_div').append('<span name="supervisor_span">'+ 
 					"<tr><td>" + escape($('#supervisorFirstname').val())+" "+ escape($('#supervisorLastname').val())+"</td><td>"+
 					escape($('#supervisorEmail').val())+ "</td><td><td> <input type=\"radio\" name=\"primarySupervisor\" value=\""+$('#supervisorId').val()+"\"/> </td><td>" + escape($('#awareSupervisor').val()) +'</td><td><a class="button-delete"  name="deleteSupervisor">delete</a>  <a class="button-edit" name ="editUnsavedSupervisor">edit</a></td></tr>'+
-					'<input type="hidden" name="supervisors" value=' +"'" + '{"id":"' +  escape($('#supervisorId').val())+ '","firstname":"' +  escape($('#supervisorFirstname').val())+ '","lastname":"' +  escape($('#supervisorLastname').val())+ '","email":"' +  escape($('#supervisorEmail').val()) +  '", "awareSupervisor":"' + escape($('#awareSupervisor').val()) + '"} ' + "'" + "/>"									
+					'<input type="hidden" name="supervisors" value=' +"'" + '{"firstname":"' +  escape($('#supervisorFirstname').val())+ '","lastname":"' +  escape($('#supervisorLastname').val())+ '","email":"' +  escape($('#supervisorEmail').val()) +  '", "awareSupervisor":"' + escape($('#awareSupervisor').val()) + '"} ' + "'" + "/>"									
 					+'<br/></span>');
 		 $("input[name='sFN']").val($('#supervisorFirstname').val());
 		 $("input[name='sLN']").val($('#supervisorLastname').val());

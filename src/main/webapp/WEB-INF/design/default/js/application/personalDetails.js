@@ -8,11 +8,14 @@ $(document).ready(function(){
 	});
 	
 	$('#personalDetailsCancelButton').click(function(){
-		$("#englishFirstLanguageCB").attr('checked', false);
-		$("#requiresVisaCB").attr('checked', false);
-		$("span[class='invalid']").each(function(){
-			$(this).hide();
-		});
+		$.get("/pgadmissions/update/getPersonalDetails",
+				{
+					applicationId:  $('#applicationId').val()					
+				},
+				function(data) {
+					$('#personalDetailsSection').html(data);
+				}
+		);
 	});
 	
 

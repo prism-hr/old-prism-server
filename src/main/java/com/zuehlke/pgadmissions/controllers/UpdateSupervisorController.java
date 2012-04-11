@@ -9,21 +9,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.services.ProgrammeService;
+import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
 import com.zuehlke.pgadmissions.services.SupervisorService;
 
 @Controller
 @RequestMapping("/programme/updateSupervisor")
 public class UpdateSupervisorController {
 
-	private final ProgrammeService programmeDetailsService;
+	private final ProgrammeDetailsService programmeDetailsService;
 	private final SupervisorService supervisorService;
 	
 	UpdateSupervisorController() {
@@ -31,13 +31,13 @@ public class UpdateSupervisorController {
 	}
 	
 	@Autowired
-	public UpdateSupervisorController(ProgrammeService programmeDetailsService, SupervisorService supervisorService) {
+	public UpdateSupervisorController(ProgrammeDetailsService programmeDetailsService, SupervisorService supervisorService) {
 		this.programmeDetailsService = programmeDetailsService;
 		this.supervisorService = supervisorService;
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView editSupervisor(@ModelAttribute("programmeDetails") ProgrammeDetail programmeDetails, 
+	public String editSupervisor(@ModelAttribute("programmeDetails") ProgrammeDetails programmeDetails, 
 			@ModelAttribute("supervisor") Supervisor supervisor, BindingResult result) {
 		
 		if (programmeDetails.getApplication() != null && programmeDetails.getApplication().isSubmitted()) {
@@ -50,22 +50,15 @@ public class UpdateSupervisorController {
 		if (programmeDetails.getApplication() != null) {
 			programmeDetails.getApplication().setProgrammeDetails(programmeDetails);
 		}
-		
-		ApplicationPageModel applicationPageModel = new ApplicationPageModel();
-		applicationPageModel.setApplicationForm(programmeDetails.getApplication());
-		applicationPageModel.setResult(result);
-		applicationPageModel.setStudyOptions(StudyOption.values());
-		applicationPageModel.setReferrers(Referrer.values());
-
-		return new ModelAndView("private/pgStudents/form/components/programme_details", "model", applicationPageModel);
+		return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getId();
 	}
 	
 	@ModelAttribute("programmeDetails")
-	public ProgrammeDetail getProgrammeDetails(Integer programmeDetailsId) {
+	public ProgrammeDetails getProgrammeDetails(Integer programmeDetailsId) {
 		if (programmeDetailsId == null) {
 			return newProgrammeDetail();
 		}
-		ProgrammeDetail programmeDetails = programmeDetailsService.getProgrammeDetailsById(programmeDetailsId);
+		ProgrammeDetails programmeDetails = programmeDetailsService.getProgrammeDetailsById(programmeDetailsId);
 		if (programmeDetails == null) {
 			throw new ResourceNotFoundException();
 		}
@@ -82,8 +75,8 @@ public class UpdateSupervisorController {
 		return supervisor;
 	}
 	
-	ProgrammeDetail newProgrammeDetail() {
-		return new ProgrammeDetail();
+	ProgrammeDetails newProgrammeDetail() {
+		return new ProgrammeDetails();
 	}
 	
 }

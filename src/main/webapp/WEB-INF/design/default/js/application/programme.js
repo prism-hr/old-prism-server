@@ -43,11 +43,14 @@ $(document).ready(function(){
 	
 	
 	$('#programmeCancelButton').click(function(){
-//		$("span[class='supervisorAction']").html('');
-//		$("span[class='supervisorAction']").html('<a id="addSupervisorButton" class="button" style="width: 110px;">Add Supervisor</a>');
-		$("span[class='invalid']").each(function(){
-			$(this).hide();
-		});
+		$.get("/pgadmissions/update/getProgrammeDetails",
+				{
+					applicationId:  $('#applicationId').val()					
+				},
+				function(data) {
+					$('#programmeDetailsSection').html(data);
+				}
+		);
 	});
 	
 	$("input[name*='awareSupervisorCB']").click(function() {
@@ -60,21 +63,7 @@ $(document).ready(function(){
 	
 	
 	$('#programmeSaveButton').on("click",function(){
-		var postData = {
-			programmeName: $("#programmeName").val(),
-			projectName: $("#projectName").val(), 
-			studyOption: $("#studyOption").val(), 
-			startDate: $("#startDate").val(),
-			referrer: $("#referrer").val(),
-			application: $("#appId1").val(),
-			programmeDetailsId: $("#programmeDetailsId").val(),
-			supervisors: ""
-		};
-		
-		$.post( "/pgadmissions/programme" ,$.param(postData) +"&" + $('[input[name="supervisors"]').serialize(),
-		function(data) {
-			$('#programmeDetailsSection').html(data);
-		});
+		postProgrammeData('close');
 	});
 	
 	$('#addSupervisorButton').on('click', function(){
@@ -148,3 +137,28 @@ $(document).ready(function(){
 		
 
 });
+
+function postProgrammeData(message){
+	var postData = {
+			programmeName: $("#programmeName").val(),
+			projectName: $("#projectName").val(), 
+			studyOption: $("#studyOption").val(), 
+			startDate: $("#startDate").val(),
+			referrer: $("#referrer").val(),
+			application: $("#appId1").val(),
+			programmeDetailsId: $("#programmeDetailsId").val(),
+			application: $('#applicationId').val(),
+			applicationId: $('#applicationId').val(),
+			supervisors: ""
+		};
+		
+		var primarySupervisor =  $("input[name='primarySupervisor']:checked").val();
+		if(primarySupervisor){
+			postData.primarySupervisorId = primarySupervisor;
+		}
+		
+		$.post( "/pgadmissions/update/editProgrammeDetails" ,$.param(postData) +"&" + $('[input[name="supervisors"]').serialize(),
+		function(data) {
+			$('#programmeDetailsSection').html(data);
+		});
+}

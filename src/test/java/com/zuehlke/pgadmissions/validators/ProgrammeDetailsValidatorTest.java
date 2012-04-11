@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -30,11 +30,11 @@ import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 public class ProgrammeDetailsValidatorTest {
 
 	private ProgrammeDetailsValidator programmeDetailsValidator;
-	private ProgrammeDetail programmeDetail;
+	private ProgrammeDetails programmeDetail;
 	
 	@Test
 	public void shouldSupportProgrammeDetails() {
-		assertTrue(programmeDetailsValidator.supports(ProgrammeDetail.class));
+		assertTrue(programmeDetailsValidator.supports(ProgrammeDetails.class));
 	}
 	
 	@Test
@@ -42,16 +42,18 @@ public class ProgrammeDetailsValidatorTest {
 		programmeDetail.setProgrammeName(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "programmeName");
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		System.out.println(mappingResult.getAllErrors());
+		
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.programmeName.notempty", mappingResult.getFieldError("programmeName").getCode());
 	}
+
+
 	@Test
 	public void shouldRejectIfStudyOptionIsEmpty() {
 		programmeDetail.setStudyOption(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "studyOption");
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		System.out.println(mappingResult.getAllErrors());
+
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.studyOption.notempty", mappingResult.getFieldError("studyOption").getCode());
 	}
@@ -60,7 +62,7 @@ public class ProgrammeDetailsValidatorTest {
 		programmeDetail.setStartDate(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		System.out.println(mappingResult.getAllErrors());
+
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.programmeStartDate.notempty", mappingResult.getFieldError("startDate").getCode());
 	}
@@ -69,7 +71,7 @@ public class ProgrammeDetailsValidatorTest {
 		programmeDetail.setReferrer(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "referrer");
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		System.out.println(mappingResult.getAllErrors());
+
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.programmeReferrer.notempty", mappingResult.getFieldError("referrer").getCode());
 	}
@@ -78,7 +80,7 @@ public class ProgrammeDetailsValidatorTest {
 		programmeDetail.getSupervisors().get(0).setFirstname(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "supervisors");
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		System.out.println(mappingResult.getAllErrors());
+
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("programmeDetails.firstname.notempty", mappingResult.getFieldError("supervisors").getCode());
 	}
@@ -87,7 +89,7 @@ public class ProgrammeDetailsValidatorTest {
 		programmeDetail.getSupervisors().get(0).setLastname(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "supervisors");
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		System.out.println(mappingResult.getAllErrors());
+
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("programmeDetails.lastname.notempty", mappingResult.getFieldError("supervisors").getCode());
 	}
@@ -96,7 +98,7 @@ public class ProgrammeDetailsValidatorTest {
 		programmeDetail.getSupervisors().get(0).setEmail("");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "supervisors");
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		System.out.println(mappingResult.getAllErrors());
+
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("programmeDetails.email.invalid", mappingResult.getFieldError("supervisors").getCode());
 	}
@@ -106,7 +108,7 @@ public class ProgrammeDetailsValidatorTest {
 		programmeDetail.getSupervisors().get(0).setEmail("");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "supervisors");
 		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-		System.out.println(mappingResult.getAllErrors());
+	
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("programmeDetails.email.invalid", mappingResult.getFieldError("supervisors").getCode());
 	}

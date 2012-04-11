@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
@@ -64,8 +64,8 @@ public class ProgrammeDetailsBuilder {
 		return this;
 	}
 	
-	public ProgrammeDetail toProgrammeDetails(){
-		ProgrammeDetail programmeDetails = new ProgrammeDetail();
+	public ProgrammeDetails toProgrammeDetails(){
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(id);
 		programmeDetails.setApplication(applicationForm);
 		programmeDetails.setProjectName(projectName);

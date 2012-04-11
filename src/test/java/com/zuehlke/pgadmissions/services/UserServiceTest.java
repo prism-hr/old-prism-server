@@ -29,7 +29,7 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -213,7 +213,7 @@ public class UserServiceTest {
 		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).project(project).toApplicationForm();
 		Referee referee = new RefereeBuilder().application(form).toReferee();
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referee(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
-		ProgrammeDetail programmeDetails = new ProgrammeDetail();	
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		userService.save(refereeUser);
@@ -255,7 +255,7 @@ public class UserServiceTest {
 		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).project(project).toApplicationForm();
 		Referee referee = new RefereeBuilder().application(form).toReferee();
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referee(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
-		ProgrammeDetail programmeDetails = new ProgrammeDetail();	
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		userService.save(refereeUser);

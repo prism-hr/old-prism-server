@@ -1,5 +1,13 @@
 $(document).ready(function(){	
 	
+	$.get("/pgadmissions/update/getProgrammeDetails",
+			{
+				applicationId:  $('#applicationId').val()					
+			},
+			function(data) {
+				$('#programmeDetailsSection').html(data);
+			}
+	);
 	$.get("/pgadmissions/update/getPersonalDetails",
 			{
 				applicationId:  $('#applicationId').val()					
@@ -8,7 +16,14 @@ $(document).ready(function(){
 				$('#personalDetailsSection').html(data);
 			}
 	);
-	
+	$.get("/pgadmissions/update/getAddress",
+			{
+				applicationId:  $('#applicationId').val()					
+			},
+			function(data) {
+				$('#addressSection').html(data);
+			}
+	);
 	$.get("/pgadmissions/update/getQualification",
 			{
 				applicationId:  $('#applicationId').val()					

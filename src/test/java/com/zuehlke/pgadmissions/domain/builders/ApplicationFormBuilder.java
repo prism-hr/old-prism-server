@@ -18,7 +18,13 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
+import cucumber.annotation.lu.a;
+
 public class ApplicationFormBuilder {
+
+	private Address currentAddress;
+
+	private Address contactAddress;
 
 	private Integer id;
 
@@ -51,6 +57,14 @@ public class ApplicationFormBuilder {
 
 	private Document personalStatement = null;
 
+	public ApplicationFormBuilder contactAddress(Address contactAddress) {
+		this.contactAddress = contactAddress;
+		return this;
+	}
+	public ApplicationFormBuilder currentAddress(Address currentAddress) {
+		this.currentAddress = currentAddress;
+		return this;
+	}
 	public ApplicationFormBuilder personalStatement(Document personalStatement) {
 		this.personalStatement = personalStatement;
 		return this;
@@ -170,6 +184,8 @@ public class ApplicationFormBuilder {
 		application.getFundings().addAll(fundings);
 		application.setCv(cv);
 		application.setPersonalStatement(personalStatement);
+		application.setContactAddress(contactAddress);
+		application.setCurrentAddress(currentAddress);
 		return application;
 	}
 }

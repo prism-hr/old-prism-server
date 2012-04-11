@@ -4,74 +4,54 @@ $(document).ready(function(){
 		$('#address-H2').trigger('click');
 		return false;
 	});
-	
-	$('a[name="deleteButton"]').click( function(){	
-		$(this).parent("form").submit();
+	$('#currentAddressLocation').change(function(){
+		
+		if(isSame()){
+
+			$('#contactAddressLocation').val($('#currentAddressLocation').val());
+		}
+	});
+
+	$('#currentAddressCountry').change(function(){
+		
+		if(isSame()){
+
+			$('#contactAddressCountry').val($('#currentAddressCountry').val());
+		}
 	});
 	
 	$('#addressSaveAndAddButton').click(function(){
-		$.post("/pgadmissions/editAddress", { 
-			currentAddressLocation: $("#currentAddressLocation").val(),
-			currentAddressCountry: $("#currentAddressCountry").val(), 
-			currentAddressId: $("#currentAddressId").val(),
-			contactAddressLocation: $("#contactAddressLocation").val(),
-			contactAddressCountry: $("#contactAddressCountry").val(), 
-			contactAddressId: $("#contactAddressId").val(),
-			sameAddress: $("#sameAddress").val(),
-			id: $("#id").val(), 
-			appId: $("#appId").val(),
-			add:"Add"
-		},
-		function(data) {
-			$('#addressSection').html(data);
-		});
+		postAddressData("close");
 	});
 	
-	$("input[name*='sameAddressCB']").click(function() {
-		if ($("#sameAddress").val() =='YES'){
-			$("#sameAddress").val("NO");
-			$("#contactAddressLocation").val("");
-			$("#contactAddressCountry").val("");
-			$("#contactAddressLocation").removeAttr('disabled');
-			$("#contactAddressCountry").removeAttr('disabled');
-		} else {		
-			$("#sameAddress").val("YES");
+	$("#sameAddressCB").click(function() {
+		
+		if (isSame()){
 			$("#contactAddressLocation").val($("#currentAddressLocation").val());
 			$("#contactAddressCountry").val($("#currentAddressCountry").val());
 			$("#contactAddressLocation").attr('disabled','disabled');
 			$("#contactAddressCountry").attr('disabled','disabled');
+
+			
+		} else {		
+			$("#contactAddressLocation").val("");
+			$("#contactAddressCountry").val("");
+			$("#contactAddressLocation").removeAttr('disabled');
+			$("#contactAddressCountry").removeAttr('disabled');
+		
 		}
 	});
 	
-	$('#addressSaveAndCloseButton').click(function(){
-		$.post("/pgadmissions/editAddress", {
-			currentAddressLocation: $("#currentAddressLocation").val(),
-			currentAddressCountry: $("#currentAddressCountry").val(), 
-			currentAddressId: $("#currentAddressId").val(),
-			contactAddressLocation: $("#contactAddressLocation").val(),
-			contactAddressCountry: $("#contactAddressCountry").val(), 
-			contactAddressId: $("#contactAddressId").val(),
-			sameAddress: $("#sameAddress").val(),
-			id: $("#id").val(), 
-			appId: $("#appId").val()
-		},
-		function(data) {
-			$('#addressSection').html(data);
-		});
-	});
-	
+
 	$('a[name="addressCancelButton"]').click(function(){
-		$("#currentAddressId").val("");
-		$("#currentAddressLocation").val("");
-		$("#currentAddressCountry").val("");
-		$("#contactAddressId").val("");
-		$("#contactAddressLocation").val("");
-		$("#contactAddressCountry").val("");
-		$("#sameAddressCB").attr('checked', false);
-		$("#sameAddress").val("NO");
-		$("span[class='invalid']").each(function(){
-			$(this).hide();
-		});
+		$.get("/pgadmissions/update/getAddress",
+				{
+					applicationId:  $('#applicationId').val()					
+				},
+				function(data) {
+					$('#addressSection').html(data);
+				}
+		);
 	});
 	
 	
@@ -88,3 +68,25 @@ $(document).ready(function(){
 		
 		
 });
+
+function postAddressData(message){
+	$.post("/pgadmissions/update/editAddress", { 
+		currentAddressLocation: $("#currentAddressLocation").val(),
+		currentAddressCountry: $("#currentAddressCountry").val(),
+		contactAddressLocation: $("#contactAddressLocation").val(),
+		contactAddressCountry: $("#contactAddressCountry").val(),
+		applicationId:  $('#applicationId').val(),
+		message:message
+	},
+	function(data) {
+		$('#addressSection').html(data);
+	});
+}
+
+function isSame(){
+	var same = false;
+	if ($('#sameAddressCB:checked').val() !== undefined) {
+		same = true;
+	}
+	return same;
+}

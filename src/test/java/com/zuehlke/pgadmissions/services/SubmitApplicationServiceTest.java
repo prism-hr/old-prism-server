@@ -13,7 +13,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -57,7 +57,7 @@ public class SubmitApplicationServiceTest {
 		Project project = new ProjectBuilder().program(program).toProject();
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).referees(referee1, referee2).id(2).project(project).toApplicationForm();
-		ProgrammeDetail programmeDetails = new ProgrammeDetail();	
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		applicationsServiceMock.save(form);
@@ -102,7 +102,7 @@ public class SubmitApplicationServiceTest {
 		Project project = new ProjectBuilder().program(program).toProject();
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).referees(referee1, referee2).id(2).project(project).toApplicationForm();
-		ProgrammeDetail programmeDetails = new ProgrammeDetail();	
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		
@@ -151,7 +151,7 @@ public class SubmitApplicationServiceTest {
 		Project project = new ProjectBuilder().program(program).toProject();
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).referees(referee1, referee2).id(2).project(project).toApplicationForm();
-		ProgrammeDetail programmeDetails = new ProgrammeDetail();	
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		applicationsServiceMock.save(form);

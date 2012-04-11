@@ -16,11 +16,11 @@ public class Address extends DomainObject<Integer>{
 
 	private static final long serialVersionUID = 2746228908173552617L;
 
-	@ManyToOne
+	@OneToOne
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application = null;
 
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "country_id")
 	private Country country;
 	

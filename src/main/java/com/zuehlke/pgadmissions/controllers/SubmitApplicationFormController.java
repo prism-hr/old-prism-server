@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
-import com.zuehlke.pgadmissions.dto.Address;
+import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.dto.ApplicationFormDetails;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -125,9 +125,9 @@ public class SubmitApplicationFormController {
 
 	}
 
-	private Address buildAddress(ApplicationForm applicationForm) {
-		Address address = new Address();
-		if (applicationForm.getAddresses().size() > 0) {
+	private AddressSectionDTO buildAddress(ApplicationForm applicationForm) {
+		AddressSectionDTO address = new AddressSectionDTO();
+	/*	if (applicationForm.getAddresses().size() > 0) {
 			com.zuehlke.pgadmissions.domain.Address currentAddress = applicationForm.getAddresses().get(0);
 			address.setCurrentAddressCountry(currentAddress.getCountry().getId());
 			address.setCurrentAddressId(currentAddress.getId());
@@ -140,7 +140,7 @@ public class SubmitApplicationFormController {
 			if (currentAddress.getLocation().equals(contactAddress.getLocation()) && currentAddress.getCountry().equals(contactAddress.getCountry())) {
 				address.setSameAddress("YES");
 			}
-		}
+		}*/
 
 		return address;
 	}

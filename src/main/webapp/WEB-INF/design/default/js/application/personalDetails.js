@@ -28,25 +28,24 @@ $(document).ready(function(){
 				$('#existingCandidateNationalities').prepend(candidNatHtml);
 			}
 			
-			var html = '<span>' +
-	  	 	'<div class="row">'+
+			var html = 
+	  	 	
 			'	<div class="field">'+
 			'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='candidateNationalities' value='" +$('#candidateNationalityCountry option:selected').val()+ "'/>" +
 	  		'		<a class="button-delete">Delete</a><br/>'+
-	  		'	</div>'+
-	  		'</div>'+
-	  	'</span> ';
+	  		'	</div>';
 			
 			$('#existingCandidateNationalities').append(html);
 			
 			$('#candidateNationalityCountry').val("");
 			
 			$('#nationality-em').remove();
+			$('#my-nationality').replaceWith('<label class="plain-label" id="my-nationality-lb"></label>');
+			$('#my-nationality-lb').html("");
 		}
 		
 	});
-	
 	
 	//maternal guardian nationalities
 	$('#addMaternalNationalityButton').on("click", function(){
@@ -57,20 +56,20 @@ $(document).ready(function(){
 				$('#existingMaternalNationalities').prepend(motherNatHtml);
 			}
 			
-			var html = '<span>' +
-	  	 	'<div class="row">'+
+			var html = 
 			'	<div class="field">'+
 			'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='maternalGuardianNationalities' value='" +$('#maternalNationalityCountry option:selected').val() + "'/>" +
 	  		'		<a class="button-delete">Delete</a><br/>'+
-	  		'	</div>'+
-	  		'</div>'+
-	  	'</span> ';
+	  		'	</div>';
 			
 			
 			$('#existingMaternalNationalities').append(html);
 			
 			$('#maternalNationalityCountry').val("");
+			$('#maternal-nationality').replaceWith('<label class="plain-label" id="maternal-nationality-lb"></label>');
+			$('#maternal-nationality-lb').html("");
+
 		}
 		
 	});
@@ -84,19 +83,20 @@ $(document).ready(function(){
 				$('#existingPaternalNationalities').prepend(fatherNatHtml);
 			}
 			
-			var html = '<span>' +
-	  	 	'<div class="row">'+
+			var html = 
 			'	<div class="field">'+
 			'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='paternalGuardianNationalities' value='" +$('#paternalNationalityCountry option:selected').val() + "'/>" +
 	  		'		<a class="button-delete">Delete</a> <br/>'+
-	  		'	</div>'+
-	  		'</div>'+
-	  	'</span> ';
+	  		'	</div>';
 			
 			
 			$('#existingPaternalNationalities').append(html);
 			$('#paternalNationalityCountry').val("");
+			
+			$('#paternal-nationality').replaceWith('<label class="plain-label" id="paternal-nationality-lb"></label>');
+			$('#paternal-nationality-lb').html("");
+
 		}
 	});
 	
@@ -116,26 +116,29 @@ $(document).ready(function(){
 	if($('#submissionStatus').val()=="UNSUBMITTED"){
 		
 		$("#existingCandidateNationalities").on("click", "a", function(){	
-			$(this).parent("div").parent("div").parent("span").remove();
+			$(this).parent("div").remove();
 			
 			if ( $('#existingCandidateNationalities').children().length <= 1 ) {
 				$('#candidateNationalitiesLabel').remove();
+				$('#my-nationality-lb').html("My Nationality");	
 			}
 		});
 		
 		$("#existingMaternalNationalities").on("click", "a", function(){	
-			$(this).parent("div").parent("div").parent("span").remove();
+			$(this).parent("div").remove();
 			
 			if ( $('#existingMaternalNationalities').children().length <= 1 ) {
 				$('#maternalNationalitiesLabel').remove();
+				$('#maternal-nationality-lb').html("Mother's Nationality");
 			}
 		});
 		
 		$("#existingPaternalNationalities").on("click", "a", function(){	
-			$(this).parent("div").parent("div").parent("span").remove();
+			$(this).parent("div").remove();
 			
 			if ( $('#existingPaternalNationalities').children().length <= 1 ) {
 				$('#paternalNationalitiesLabel').remove();
+				$('#paternal-nationality-lb').html("Father's Nationality");
 			}
 		});
 		
@@ -229,4 +232,5 @@ function postPersonalDetailsData(message){
 			    $('#personalDetailsSection').html(data);
 			  }
 	);
+	
 }

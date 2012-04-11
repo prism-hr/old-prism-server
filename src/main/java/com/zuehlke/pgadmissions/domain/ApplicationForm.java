@@ -67,7 +67,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	private Project project;
 
 	@OneToOne(mappedBy = "application")
-	private PersonalDetail personalDetails;
+	private PersonalDetails personalDetails;
 
 	@OneToOne(mappedBy = "application")
 	private ProgrammeDetail programmeDetails;
@@ -269,14 +269,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.referees = referees;
 	}
 
-	public PersonalDetail getPersonalDetails() {
+	public PersonalDetails getPersonalDetails() {
 		if (personalDetails == null) {
-			return new PersonalDetail();
+			return new PersonalDetails();
 		}
 		return personalDetails;
 	}
 
-	public void setPersonalDetails(PersonalDetail personalDetails) {
+	public void setPersonalDetails(PersonalDetails personalDetails) {
 		this.personalDetails = personalDetails;
 	}
 

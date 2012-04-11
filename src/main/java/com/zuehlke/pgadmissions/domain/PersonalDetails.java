@@ -15,39 +15,35 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 
 @Entity(name = "APPLICATION_FORM_PERSONAL_DETAIL")
 @Access(AccessType.FIELD)
 
-public class PersonalDetail extends DomainObject<Integer> {
+public class PersonalDetails extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = 6549850558507667533L;
 	
 	@Column(name = "skype")
 	private String messenger;
 	
-	@OneToMany(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "personal_detail_id")
-	private List<Telephone> phoneNumbers=  new ArrayList<Telephone>();
-
+	@Column(name = "phone")
+	private String phoneNumber;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	
 	@Column(name = "english_first_language")
-	private CheckedStatus englishFirstLanguage;
+	private boolean englishFirstLanguage;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+
 	@Column(name = "requires_visa")
-	private CheckedStatus requiresVisa;
+	private boolean requiresVisa;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_country_id") })
@@ -165,20 +161,6 @@ public class PersonalDetail extends DomainObject<Integer> {
 		this.email = email;
 	}
 	
-	public List<Telephone> getPhoneNumbers() {
-		return phoneNumbers;
-	}
-
-	public void setPhoneNumbers(List<Telephone> phoneNumbers) {
-		this.phoneNumbers.clear();
-		for (Telephone telephone : phoneNumbers) {
-			if(telephone != null){
-				this.phoneNumbers.add(telephone);
-			}
-		}
-		
-	}
-
 
 	public List<Country> getCandidateNationalities() {
 		return candidateNationalities;
@@ -225,36 +207,34 @@ public class PersonalDetail extends DomainObject<Integer> {
 	}
 
 	public void setMessenger(String messenger) {
+		if(StringUtils.isBlank(messenger)){
+			this.messenger = null;
+		}
 		this.messenger = messenger;
 	}
 	
-	public boolean isEnglishCandidatesFirstLanguage(){
-		if(englishFirstLanguage == null){
-			return false;
-		}
-		return englishFirstLanguage.equals(CheckedStatus.YES);
+
+	public String getPhoneNumber() {
+		return phoneNumber;
 	}
 
-	public boolean isVisaRequired(){
-		if(requiresVisa == null){
-			return false;
-		}
-		return requiresVisa.equals(CheckedStatus.YES);
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
-	
-	public CheckedStatus getEnglishFirstLanguage() {
+
+	public boolean isEnglishFirstLanguage() {
 		return englishFirstLanguage;
 	}
 
-	public void setEnglishFirstLanguage(CheckedStatus englishFirstLanguage) {
+	public void setEnglishFirstLanguage(boolean englishFirstLanguage) {
 		this.englishFirstLanguage = englishFirstLanguage;
 	}
 
-	public CheckedStatus getRequiresVisa() {
+	public boolean isRequiresVisa() {
 		return requiresVisa;
 	}
 
-	public void setRequiresVisa(CheckedStatus requiresVisa) {
+	public void setRequiresVisa(boolean requiresVisa) {
 		this.requiresVisa = requiresVisa;
 	}
 

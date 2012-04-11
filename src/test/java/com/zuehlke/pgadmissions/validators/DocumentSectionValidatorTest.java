@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import junit.framework.Assert;
 
 import org.junit.Before;

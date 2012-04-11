@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 
+@Deprecated
 public class PageModel {
 
 	private List<ObjectError> errorObjs;

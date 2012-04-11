@@ -7,9 +7,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
-import com.zuehlke.pgadmissions.domain.Telephone;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 
 public class PersonalDetailsBuilder {
@@ -23,55 +21,56 @@ public class PersonalDetailsBuilder {
 	private Country country;
 	private Country residenceCountry;
 	private ApplicationForm applicationForm;
-	private List<Telephone> phoneNumbers = new ArrayList<Telephone>();
+	
 	private String messenger;
 	private List<Country> candiateNationalities = new ArrayList<Country>();
-	private List<Country> maternalGuardianNationalities= new ArrayList<Country>();
-	private List<Country> paternalGuardianNationalities= new ArrayList<Country>();
-	private CheckedStatus englishFirstLanguage;
-	private CheckedStatus requiresVisa;
-	
+	private List<Country> maternalGuardianNationalities = new ArrayList<Country>();
+	private List<Country> paternalGuardianNationalities = new ArrayList<Country>();
+	private boolean englishFirstLanguage;
+	private boolean requiresVisa;
+	private String phoneNumber;
+
+	public PersonalDetailsBuilder phoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+		return this;
+	}
 
 	public PersonalDetailsBuilder id(Integer id) {
 		this.id = id;
 		return this;
 	}
-	
-	public PersonalDetailsBuilder englishFirstLanguage(CheckedStatus englishFirstLanguage) {
+
+	public PersonalDetailsBuilder englishFirstLanguage(boolean englishFirstLanguage) {
 		this.englishFirstLanguage = englishFirstLanguage;
 		return this;
 	}
-	
-	public PersonalDetailsBuilder requiresVisa(CheckedStatus requiresVisa) {
+
+	public PersonalDetailsBuilder requiresVisa(boolean requiresVisa) {
 		this.requiresVisa = requiresVisa;
 		return this;
 	}
-	
-	
+
 	public PersonalDetailsBuilder paternalGuardianNationalities(Country... nationalities) {
 		this.paternalGuardianNationalities.addAll(Arrays.asList(nationalities));
 		return this;
 	}
-	
+
 	public PersonalDetailsBuilder maternalGuardianNationalities(Country... nationalities) {
 		this.maternalGuardianNationalities.addAll(Arrays.asList(nationalities));
 		return this;
 	}
-	
+
 	public PersonalDetailsBuilder candiateNationalities(Country... nationalities) {
 		this.candiateNationalities.addAll(Arrays.asList(nationalities));
 		return this;
 	}
 
-	public PersonalDetailsBuilder phoneNumbers(Telephone... phoneNumbers) {
-		this.phoneNumbers.addAll(Arrays.asList(phoneNumbers));
-		return this;
-	}
-	
+
 	public PersonalDetailsBuilder messengers(String messenger) {
 		this.messenger = messenger;
 		return this;
 	}
+
 	public PersonalDetailsBuilder firstName(String firstName) {
 		this.firstName = firstName;
 		return this;
@@ -107,14 +106,13 @@ public class PersonalDetailsBuilder {
 		return this;
 	}
 
-
 	public PersonalDetailsBuilder applicationForm(ApplicationForm applicationForm) {
 		this.applicationForm = applicationForm;
 		return this;
 	}
 
-	public PersonalDetail toPersonalDetails() {
-		PersonalDetail personalDetails = new PersonalDetail();
+	public PersonalDetails toPersonalDetails() {
+		PersonalDetails personalDetails = new PersonalDetails();
 		personalDetails.setId(id);
 		personalDetails.setApplication(applicationForm);
 		personalDetails.setCountry(country);
@@ -123,14 +121,14 @@ public class PersonalDetailsBuilder {
 		personalDetails.setFirstName(firstName);
 		personalDetails.setGender(gender);
 		personalDetails.setLastName(lastName);
-		personalDetails.setResidenceCountry(residenceCountry);
-		personalDetails.setPhoneNumbers(phoneNumbers);
+		personalDetails.setResidenceCountry(residenceCountry);		
 		personalDetails.setMaternalGuardianNationalities(maternalGuardianNationalities);
 		personalDetails.setPaternalGuardianNationalities(paternalGuardianNationalities);
 		personalDetails.setCandidateNationalities(candiateNationalities);
 		personalDetails.setMessenger(messenger);
 		personalDetails.setEnglishFirstLanguage(englishFirstLanguage);
 		personalDetails.setRequiresVisa(requiresVisa);
+		personalDetails.setPhoneNumber(phoneNumber);
 		return personalDetails;
 	}
 }

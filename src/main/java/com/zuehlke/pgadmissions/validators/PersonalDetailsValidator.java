@@ -9,28 +9,29 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 
 @Component
-public class PersonalDetailValidator implements Validator {
+public class PersonalDetailsValidator implements Validator {
 
 	@Override
 	public boolean supports(Class<?> clazz) {
-		return clazz.isAssignableFrom(PersonalDetail.class);
+		return clazz.isAssignableFrom(PersonalDetails.class);
 	}
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		PersonalDetail personalDetail = (PersonalDetail) target;
+		PersonalDetails personalDetail = (PersonalDetails) target;
 		Date today = new Date();
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstName", "personalDetails.firstName.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastName", "personalDetails.lastName.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gender", "personalDetails.gender.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "email", "personalDetails.email.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "phoneNumber", "personalDetails.phoneNumber.notempty");
 		
 		validateCandidateNationalities(target, errors);
 		
-		if (!errors.hasFieldErrors("email") && !EmailValidator.getInstance().isValid(((PersonalDetail)target).getEmail())) {
+		if (!errors.hasFieldErrors("email") && !EmailValidator.getInstance().isValid(((PersonalDetails)target).getEmail())) {
 			errors.rejectValue("email", "personalDetails.email.invalid");
 		}
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "country", "personalDetails.country.notempty");
@@ -45,7 +46,7 @@ public class PersonalDetailValidator implements Validator {
 	}
 
 	private void validateCandidateNationalities(Object target, Errors errors) {
-		if(((PersonalDetail)target).getCandidateNationalities().isEmpty()){
+		if(((PersonalDetails)target).getCandidateNationalities().isEmpty()){
 			errors.rejectValue("candidateNationalities", "personalDetails.candidateNationalities.notempty");
 		}
 	}

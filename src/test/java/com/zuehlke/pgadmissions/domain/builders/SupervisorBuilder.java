@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class SupervisorBuilder {
 

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-
 import org.junit.Assert;
 import org.junit.Test;
 

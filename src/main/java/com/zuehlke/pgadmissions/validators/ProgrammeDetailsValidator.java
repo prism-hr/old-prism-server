@@ -22,22 +22,32 @@ public class ProgrammeDetailsValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName", "user.programmeName.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption", "user.studyOption.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "user.programmeStartDate.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "referrer", "user.programmeReferrer.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeName",
+				"user.programmeName.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "studyOption",
+				"user.studyOption.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate",
+				"user.programmeStartDate.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "referrer",
+				"user.programmeReferrer.notempty");
 
 		ProgrammeDetail programmeDetail = (ProgrammeDetail) target;
 		List<Supervisor> supervisors = programmeDetail.getSupervisors();
 		for (int i = 0; i < supervisors.size(); i++) {
-			if (!EmailValidator.getInstance().isValid(supervisors.get(i).getEmail())) {
-				errors.rejectValue("supervisors", "programmeDetails.email.invalid");
+			if (!EmailValidator.getInstance().isValid(
+					supervisors.get(i).getEmail())) {
+				errors.rejectValue("supervisors",
+						"programmeDetails.email.invalid");
 			}
-			if (supervisors.get(i).getFirstname() == "" || supervisors.get(i).getFirstname() == null) {
-				errors.rejectValue("supervisors", "programmeDetails.firstname.notempty");
+			if (supervisors.get(i).getFirstname() == ""
+					|| supervisors.get(i).getFirstname() == null) {
+				errors.rejectValue("supervisors",
+						"programmeDetails.firstname.notempty");
 			}
-			if (supervisors.get(i).getLastname() == "" || supervisors.get(i).getLastname() == null) {
-				errors.rejectValue("supervisors", "programmeDetails.lastname.notempty");
+			if (supervisors.get(i).getLastname() == ""
+					|| supervisors.get(i).getLastname() == null) {
+				errors.rejectValue("supervisors",
+						"programmeDetails.lastname.notempty");
 			}
 		}
 	}

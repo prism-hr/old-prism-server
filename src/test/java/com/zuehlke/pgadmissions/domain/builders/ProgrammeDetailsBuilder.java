@@ -80,7 +80,7 @@ public class ProgrammeDetailsBuilder {
 		programmeDetails.setStartDate(startDate);
 		programmeDetails.setStudyOption(studyOption);
 		programmeDetails.getSupervisors().addAll(supervisors);
-		programmeDetails.setPrimarySupervisor(primarySupervisor);
+		programmeDetails.setProgrammeDetailsPrimarySupervisor(primarySupervisor);
 		return programmeDetails;
 	}
 	

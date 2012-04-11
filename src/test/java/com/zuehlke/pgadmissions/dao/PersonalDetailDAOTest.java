@@ -12,7 +12,7 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -22,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 
 public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
@@ -39,9 +38,9 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldGetPersonalDetailsById() throws ParseException {
-		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country)
-				.englishFirstLanguage(CheckedStatus.NO).requiresVisa(CheckedStatus.NO)
+				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
 				.applicationForm(applicationForm).toPersonalDetails();
 		sessionFactory.getCurrentSession().save(personalDetails);
 		
@@ -55,8 +54,8 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSavePersonalDetails() throws ParseException {
 		PersonalDetailDAO personalDetailDAO = new PersonalDetailDAO(sessionFactory);
-		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.englishFirstLanguage(CheckedStatus.NO).requiresVisa(CheckedStatus.NO)
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
+				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
 				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country)
 				.applicationForm(applicationForm).toPersonalDetails();
 		

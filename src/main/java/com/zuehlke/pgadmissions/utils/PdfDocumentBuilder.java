@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.utils;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -30,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Supervisor;
-import com.zuehlke.pgadmissions.domain.Telephone;
 
 public class PdfDocumentBuilder {
 
@@ -208,7 +206,7 @@ public class PdfDocumentBuilder {
 		addGivenNationality(document, "Paternal Guardian Nationality", application.getPersonalDetails().getPaternalGuardianNationalities());
 
 		document.add(new Paragraph("Language", smallBoldFont));
-		if (application.getPersonalDetails().isEnglishCandidatesFirstLanguage()) {
+		if (application.getPersonalDetails().isEnglishFirstLanguage()) {
 			document.add(new Paragraph("Is English your first language? yes."));
 		} else {
 			document.add(new Paragraph("Is English your first language? no."));
@@ -221,7 +219,7 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Country: " + application.getPersonalDetails().getResidenceCountry().getName()));
 		}
 
-		if (application.getPersonalDetails().isVisaRequired()) {
+		if (application.getPersonalDetails().isRequiresVisa()) {
 			document.add(new Paragraph("Do you required visa to study in the UK? yes."));
 		} else {
 			document.add(new Paragraph("Do you required visa to study in the UK? no."));
@@ -230,16 +228,16 @@ public class PdfDocumentBuilder {
 		document.add(new Paragraph("Contact Details", smallBoldFont));
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getEmail(), "Email");
 
-		addTelephones(application, document, application.getPersonalDetails().getPhoneNumbers());
+		addTelephones(application, document);
 
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getMessenger(), "Skype Name");
 	}
 
-	private void addTelephones(ApplicationForm application, Document document, List<Telephone> phoneNumbers) throws DocumentException {
+	private void addTelephones(ApplicationForm application, Document document) throws DocumentException {
 		PdfPTable table;
 		PdfPCell c1;
 		document.add(new Paragraph("Telephone", smallBoldFont));
-		if (application.getPersonalDetails().getPhoneNumbers().size() > 0) {
+		if (application.getPersonalDetails().getPhoneNumber() != null) {
 			document.add(new Paragraph(" "));
 
 			table = new PdfPTable(2);
@@ -256,10 +254,10 @@ public class PdfDocumentBuilder {
 			table.addCell(c1);
 			table.setHeaderRows(1);
 
-			for (Telephone telephone : phoneNumbers) {
-				table.addCell(telephone.getTelephoneType().getDisplayValue());
-				table.addCell(telephone.getTelephoneNumber());
-			}
+		
+			table.addCell("");
+			table.addCell(application.getPersonalDetails().getPhoneNumber());
+	
 
 			document.add(table);
 		} else {

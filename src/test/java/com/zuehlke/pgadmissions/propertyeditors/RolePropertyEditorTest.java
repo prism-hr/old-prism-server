@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.propertyeditors;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 import org.easymock.EasyMock;
 import org.junit.Before;

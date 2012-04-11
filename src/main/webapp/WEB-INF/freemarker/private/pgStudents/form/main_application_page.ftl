@@ -114,8 +114,7 @@
 					          	</section>
 			          
 			          			<section id="personalDetailsSection" class="folding purple <#if model.hasError('personalDetails')>error</#if>">
-			             			<#include "/private/pgStudents/form/components/personal_details.ftl"/>
-			          			</section>
+			             		</section>
 			          
 			          			<!-- Address -->			          			
 			          			<section id="addressSection" class="folding red <#if model.hasError('numberOfContactAddresses') || model.hasError('numberOfAddresses')>error</#if>">

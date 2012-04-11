@@ -1,6 +1,13 @@
 $(document).ready(function(){	
 	
-	
+	$.get("/pgadmissions/update/getPersonalDetails",
+			{
+				applicationId:  $('#applicationId').val()					
+			},
+			function(data) {
+				$('#personalDetailsSection').html(data);
+			}
+	);
 	
 	$.get("/pgadmissions/update/getQualification",
 			{

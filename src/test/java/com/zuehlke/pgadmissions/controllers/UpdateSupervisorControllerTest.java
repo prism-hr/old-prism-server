@@ -1,16 +1,10 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import javax.jws.soap.SOAPBinding.ParameterStyle;
-import javax.swing.JTable.PrintMode;
-
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -20,18 +14,12 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgrammeService;
 import com.zuehlke.pgadmissions.services.SupervisorService;
-import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 
 public class UpdateSupervisorControllerTest {
 

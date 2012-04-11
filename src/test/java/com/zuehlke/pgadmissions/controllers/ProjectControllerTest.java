@@ -15,8 +15,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ProjectDAO;
-import com.zuehlke.pgadmissions.pagemodels.MainPageModel;
 import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.pagemodels.MainPageModel;
 
 public class ProjectControllerTest {
 	

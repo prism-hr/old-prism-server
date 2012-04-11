@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -95,9 +95,9 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		sessionFactory.getCurrentSession().save(application);
 		flushAndClearSession();
-		PersonalDetail personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
-				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country2).englishFirstLanguage(CheckedStatus.YES)
-				.requiresVisa(CheckedStatus.NO).applicationForm(application).toPersonalDetails();
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country1).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
+				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country2).requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
+				.applicationForm(application).toPersonalDetails();
 
 		sessionFactory.getCurrentSession().save(personalDetails);
 		flushAndClearSession();

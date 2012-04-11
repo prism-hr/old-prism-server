@@ -6,7 +6,7 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 
 public class PersonalDetailsServiceTest {
@@ -16,11 +16,11 @@ public class PersonalDetailsServiceTest {
 		PersonalDetailDAO personalDetailDAOMock = EasyMock.createMock(PersonalDetailDAO.class);
 		PersonalDetailsService detailsService = new PersonalDetailsService(personalDetailDAOMock);
 		
-		PersonalDetail personalDetails = new PersonalDetailsBuilder().id(1).toPersonalDetails();
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).toPersonalDetails();
 		EasyMock.expect(personalDetailDAOMock.getPersonalDetailsById(1)).andReturn(personalDetails);
 		EasyMock.replay(personalDetailDAOMock);
 		
-		PersonalDetail details = detailsService.getPersonalDetailsById(1);
+		PersonalDetails details = detailsService.getPersonalDetailsById(1);
 		assertEquals(personalDetails, details);
 		
 	}
@@ -30,7 +30,7 @@ public class PersonalDetailsServiceTest {
 		PersonalDetailDAO personalDetailDAOMock = EasyMock.createMock(PersonalDetailDAO.class);
 		PersonalDetailsService detailsService = new PersonalDetailsService(personalDetailDAOMock);
 		
-		PersonalDetail personalDetails = new PersonalDetailsBuilder().id(1).toPersonalDetails();
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).toPersonalDetails();
 		personalDetailDAOMock.save(personalDetails);
 		EasyMock.replay(personalDetailDAOMock);
 		

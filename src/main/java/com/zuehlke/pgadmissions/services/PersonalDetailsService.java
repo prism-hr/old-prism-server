@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.PersonalDetailDAO;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 
 @Service
 public class PersonalDetailsService {
@@ -22,12 +22,12 @@ public class PersonalDetailsService {
 
 	}
 
-	public PersonalDetail getPersonalDetailsById(Integer id) {
+	public PersonalDetails getPersonalDetailsById(Integer id) {
 		return personalDetailDAO.getPersonalDetailsById(id);
 	}
 	
 	@Transactional
-	public void save(PersonalDetail personalDetails) {
+	public void save(PersonalDetails personalDetails) {
 		personalDetailDAO.save(personalDetails);
 		
 	}

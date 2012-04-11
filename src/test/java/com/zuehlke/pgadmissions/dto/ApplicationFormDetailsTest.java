@@ -17,7 +17,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -31,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
@@ -44,7 +43,7 @@ public class ApplicationFormDetailsTest {
 
 	private ApplicationFormValidator validator;
 	private ApplicationFormDetails appFormDetails;
-	private PersonalDetail personalDetails;
+	private PersonalDetails personalDetails;
 	private ProgrammeDetail programmeDetails;
 
 	@Test

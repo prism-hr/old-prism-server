@@ -4,7 +4,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 
 @Repository
 public class PersonalDetailDAO {
@@ -20,12 +20,12 @@ public class PersonalDetailDAO {
 	}
 	
 
-	public void save(PersonalDetail personalDetails) {
+	public void save(PersonalDetails personalDetails) {
 		sessionFactory.getCurrentSession().saveOrUpdate(personalDetails);
 	}
 	
-	public PersonalDetail getPersonalDetailsById(Integer id) {
-		return (PersonalDetail) sessionFactory.getCurrentSession().get(PersonalDetail.class, id);
+	public PersonalDetails getPersonalDetailsById(Integer id) {
+		return (PersonalDetails) sessionFactory.getCurrentSession().get(PersonalDetails.class, id);
 	}
 
 }

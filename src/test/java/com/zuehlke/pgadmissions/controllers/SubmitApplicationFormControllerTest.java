@@ -25,10 +25,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 import com.zuehlke.pgadmissions.domain.Referee;
-
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -75,7 +74,7 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.expect(programmeDetail.getStudyOption()).andReturn(StudyOption.FULL_TIME);
 		EasyMock.replay(programmeDetail);
 		
-		PersonalDetail personalDetail = EasyMock.createMock(PersonalDetail.class);
+		PersonalDetails personalDetail = EasyMock.createMock(PersonalDetails.class);
 		EasyMock.replay(personalDetail);
 		
 		ApplicationForm appForm = EasyMock.createMock(ApplicationForm.class);

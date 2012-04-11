@@ -12,20 +12,20 @@ import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 
-public class PersonalDetailValidatorTest {
+public class PersonalDetailsValidatorTest {
 
-	private PersonalDetail personalDetails;
-	private PersonalDetailValidator personalDetailValidator;
+	private PersonalDetails personalDetails;
+	private PersonalDetailsValidator personalDetailValidator;
 
 	@Test
 	public void shouldSupportPersonalDetail() {
-		assertTrue(personalDetailValidator.supports(PersonalDetail.class));
+		assertTrue(personalDetailValidator.supports(PersonalDetails.class));
 	}
 
 	@Test
@@ -130,14 +130,21 @@ public class PersonalDetailValidatorTest {
 		Assert.assertEquals("personalDetails.dateOfBirth.future", mappingResult.getFieldError("dateOfBirth").getCode());
 	}
 	
-	
+	@Test
+	public void shouldRejectIfPhoneNumberIsEmpty() {
+		personalDetails.setPhoneNumber(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "phoneNumber");
+		personalDetailValidator.validate(personalDetails, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("personalDetails.phoneNumber.notempty", mappingResult.getFieldError("phoneNumber").getCode());
+	}
 	
 	@Before
 	public void setup(){
 		Country nationality = new Country();
 		personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality).maternalGuardianNationalities(nationality).paternalGuardianNationalities(nationality).applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm()).country(new CountryBuilder().toCountry()).dateOfBirth(new Date()).email("email@test.com").firstName("bob")
-		.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith").residenceCountry(new CountryBuilder().toCountry()).toPersonalDetails();
+		.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith").residenceCountry(new CountryBuilder().toCountry()).phoneNumber("abc").toPersonalDetails();
 		
-		personalDetailValidator = new PersonalDetailValidator();
+		personalDetailValidator = new PersonalDetailsValidator();
 	}
 }

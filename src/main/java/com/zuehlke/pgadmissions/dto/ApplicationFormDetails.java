@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.PersonalDetail;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetail;
 
 
@@ -12,7 +12,7 @@ public class ApplicationFormDetails {
 
 	private Integer numberOfAddresses;
 	private Integer numberOfReferees;
-	private PersonalDetail personalDetails;
+	private PersonalDetails personalDetails;
 	private ProgrammeDetail programmeDetails;
 	private List<Document> supportingDocuments= new ArrayList<Document>();
 
@@ -25,11 +25,11 @@ public class ApplicationFormDetails {
 		this.numberOfAddresses = numberOfAddresses;
 	}
 	
-	public PersonalDetail getPersonalDetails() {
+	public PersonalDetails getPersonalDetails() {
 		return personalDetails;
 	}
 	
-	public void setPersonalDetails(PersonalDetail personalDetails) {
+	public void setPersonalDetails(PersonalDetails personalDetails) {
 		this.personalDetails = personalDetails;
 	}
 

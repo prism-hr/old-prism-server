@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.easymock.EasyMock;
 import org.junit.Before;

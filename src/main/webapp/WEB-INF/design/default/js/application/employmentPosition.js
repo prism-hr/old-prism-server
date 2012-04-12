@@ -96,8 +96,8 @@ function postEmploymentData(message){
 		employerName: $("#position_employer_name").val(),
 		employerAddress: $("#position_employer_address").val(),
 		current: current,
-		application: $("#appId").val(),
-		applicationId: $("#appId").val(),		 
+		application: $("#applicationId").val(),
+		applicationId: $("#applicationId").val(),		 
 		employmentId: $("#positionId").val(), 
 		message:message
 	},

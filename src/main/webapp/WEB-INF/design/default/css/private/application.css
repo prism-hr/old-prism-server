@@ -47,8 +47,8 @@ section.folding form .field {
 /* To align with label, increasing the width : Edited by Manish*/
 section.folding form .hint { 
 	background: url(../../images/button_question.png) 
-	no-repeat; width: 35px; height: 20px; 
-	float: left; margin-right: 5px; 
+	no-repeat; width: 25px; height: 20px; 
+	float: left; margin-left: 10px; 
 }
 	
 section.folding form label.label { font-weight: bold; }

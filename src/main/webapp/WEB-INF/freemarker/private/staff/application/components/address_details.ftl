@@ -33,7 +33,9 @@
 	                    <div class="field">${(applicationForm.currentAddress.country.name?html)!}               
 						</div>
 					</div>
+				</div>
 					
+				<div>	
 					                   <!-- Address body -->
                     <div class="row">
                         <span class="label">Contact Address</span>    

@@ -54,6 +54,24 @@
                 		${applicationForm.project.title?html}
                     </div>
 				</div>
+				
+				<!-- Start date -->
+                <div class="row">
+                    <label class="label">Start Date</label>
+                   <div class="field">
+                    ${(applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}</div>
+                </div>
+
+                <!-- Referrer -->
+                <div class="row">
+                    <label class="label">How did you find us?</label>
+                   
+                    <div class="field">
+                        <#if applicationForm.programmeDetails?? && applicationForm.programmeDetails.referrer??>                    
+                        ${applicationForm.programmeDetails.referrer.freeVal}
+                        </#if>                    
+                    </div>
+                </div>
 			
 			</div>
 
@@ -64,7 +82,7 @@
 		            	  	 <label class="label">Supervision</label>
 		            	  	
 		            	   <div class="field">
-		            	       Name: ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!}, Email :${supervisor.email?html}, Supervisor is aware of the application:${supervisor.awareSupervisor?html}
+		            	       Name: ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!}, Email :${supervisor.email?html}, Is this supervisor aware of the application? ${supervisor.awareSupervisor?html}
 		            	       <br/>
 		            	   </div>
 		            	 </div>
@@ -77,27 +95,6 @@
 		             	</div>
             	  	</#if>
                   
-			</div>
-
-            <div>
-            	<!-- Start date -->
-                <div class="row">
-                	<label class="label">Start Date</label>
-                   <div class="field">
-                    ${(applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}</div>
-                </div>
-
-                <!-- Referrer -->
-                <div class="row">
-                	<label class="label">Referrer</label>
-                   
-                    <div class="field">
-                        <#if applicationForm.programmeDetails?? && applicationForm.programmeDetails.referrer??>                    
-						${applicationForm.programmeDetails.referrer.freeVal}
-						</#if>                    
-					</div>
-				</div>
-
 			</div>
 
             <div class="buttons">

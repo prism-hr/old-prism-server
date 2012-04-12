@@ -47,16 +47,17 @@
 				                  	
 				                  	     
                                 <input type="hidden" id="${qualification.id?string('#######')}_qualificationIdDP" value="${qualification.id?string('#######')}"/>
-                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionDP" value="${(qualification.qualificationInstitution?html)!}"/> 
-                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationSubjectDP" value="${(qualification.qualificationSubject?html)!}"/> 
-                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/> 
-                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationLanguageDP" value="${qualification.qualificationLanguage.id!}"/> 
-                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationLevelDP" value="${(qualification.qualificationLevel?html)!}"/> 
+                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionCountryDP" value="${(qualification.institutionCountry.name?html)!}"/>
+                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionDP" value="${(qualification.qualificationInstitution?html)!}"/>
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationTypeDP" value="${(qualification.qualificationType?html)!}"/> 
+                                <input type="hidden" id="${qualification.id?string('#######')}_qualificationSubjectDP" value="${(qualification.qualificationSubject?html)!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationLanguageDP" value="${qualification.qualificationLanguage.name!}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/>
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationCompletedDP" value="${(qualification.completed?html)!}"/>  
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${(qualification.qualificationGrade?html)!}"/> 
-                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationScoreDP" value="${(qualification.qualificationScore?html)!}"/> 
-                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
-								<input type="hidden"  id="${qualification.id?string('#######')}_qualificationCompleted" value="${qualification.completed}"/> 
+                                <input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/>
+                                <input type="hidden" id="${qualification.id?string('#######')}_qualdocname" value="${(qualification.proofOfAward.fileName)!}"/>
+                                <input type="hidden" id="${qualification.id?string('#######')}_qualdocurl" value="/pgadmissions/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}"/> 
 										                  
 						</tr>
 							</#list>
@@ -73,56 +74,59 @@
 	              	<div>
 	                  
 	                  	<!-- Provider -->
+	                  	<div class="row">
+                            <span class="label">Institution Country</span>
+                          
+                            <div class="field" id="qualificationInstitutionCountry">&nbsp; </div>
+                        </div>
+	                  	
 	                	<div class="row">
-		                  	<span class="label">Provider</span>
+		                  	<span class="label">Institution / Provider Name</span>
 		                  
-		                    <div class="field">&nbsp; </div>
+		                    <div class="field" id="qualificationInstitution">&nbsp; </div>
 	                  	</div>
 	                  
-	                  	<!-- Name (of programme) -->
+	                  	<!-- Type -->
 	                	<div class="row">
-		                  	<span class="label">Programme</span>
+		                  	<span class="label">QualificationType</span>
 		
-		                    <div class="field">&nbsp; </div>
+		                    <div class="field" id="qualificationType">&nbsp; </div>
 	             		</div>
+	             		
+	             		<!-- Title / Subject -->
+                        <div class="row">
+                            <span class="label">Title / Subject</span>
+
+                        <div class="field" id="qualificationSubject">&nbsp; </div>
+                        </div>
+	             		
+	             		<!-- Language (in which programme was undertaken) -->
+                        <div class="row">
+                            <span class="label">Language of Study</span>
+
+                        <div class="field" id="qualificationLanguage">&nbsp; </div>
+                        </div>
 	                  
 	                  	<!-- Start date -->
 	                	<div class="row">
 		                  	<span class="label">Start Date</span>
 		 
-		                    <div class="field">&nbsp; </div>
+		                    <div class="field" id="qualificationStartDate">&nbsp; </div>
 	                 	</div>
-	                 	
 	                 	<div class="row">
-                       <span class="label">Is Completed</span>                  	
-               			 <div class="field">&nbsp; </div>
+                            <span class="label">Has this qualification been awarded?</span>                  	
+               			      <div class="field" id="qualificationCompleted">&nbsp; </div>
 	                	</div>
-                  		<!-- Language (in which programme was undertaken) -->
-                  		<div class="row">
-                    		<span class="label">Language of Study</span>
-
-                    	<div class="field">&nbsp; </div>
-                  		</div>
-                  
-                  		<!-- Qualification level -->
-	                  	<div class="row">
-	                    	<span class="label">Level</span>
-	                    	
-	                    	<div class="field">&nbsp; </div>
-	                  	</div>
-
-                  		<!-- Qualification type -->
-                  		<div class="row">
-                    		<span class="label">Type</span>
-                    
-                    		<div class="field">&nbsp; </div>
-                  		</div>
-
+	                 </div>
+	                 
+	                 <div>
+	                 	
+                  		
                   		<!-- Qualification grade -->
                   		<div class="row">
-                    		<span class="label">Grade</span>
+                    		<span class="label">Grade / Result /GPA</span>
 
-                    		<div class="field">&nbsp; </div>
+                    		<div class="field" id="qualificationGrade">&nbsp; </div>
                   		</div>
 
     
@@ -131,16 +135,14 @@
                   		<div class="row">
                     		<span class="label">Award Date</span>
                     	
-                    		<div class="field">&nbsp; </div>
+                    		<div class="field" id="qualificationAwardDate">&nbsp; </div>
                   		</div>
 
-                  		<!-- Attachment / supporting document 
+                  		<!-- Attachment / supporting document  -->
                   		<div class="row">
-                    		<span class="label">Supporting Document</span>
-                    		<span class="hint" data-desc="Tooltip demonstration."></span>
-                    		<div class="field">
-                    		</div>  
-                  		</div> -->
+                    		<span class="label">Proof of award (PDF)</span>
+                    		<div class="field" id="qualificationProofOfAward">&nbsp; </div>  
+                  		</div>
 	                
 	                </div>
 
@@ -151,5 +153,5 @@
 			  </form>
 		</div>
 		
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/qualifications.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/qualifications.js'/>"></script>
  

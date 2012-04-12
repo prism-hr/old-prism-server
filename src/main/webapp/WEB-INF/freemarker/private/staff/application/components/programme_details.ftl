@@ -1,10 +1,10 @@
-<#if model.applicationForm.project?has_content>
+<#if applicationForm.project?has_content>
 	<#assign hasProject = true>
 <#else>
 	<#assign hasProject = false>
 </#if>
 
-<#if model.programme?has_content>
+<#if programme?has_content>
 	<#assign hasProgramme = true>
 <#else>
 	<#assign hasProgramme = false>
@@ -29,19 +29,19 @@
             	<!-- Programme name (disabled) -->
                 <div class="row">
                 	<label class="label">Programme</label>
-                    <span class="hint" title="Tooltip demonstration."></span>
+                  
                     <div class="field">
-                    	${model.applicationForm.project.program.title?html}
+                    	${applicationForm.project.program.title?html}
                     </div>
 				</div>
                   
 				<!-- Study option -->
                 <div class="row">
                     <label class="label">Study Option</label>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
+
                     <div class="field">
-                    <#if model.applicationForm.programmeDetails?? && model.applicationForm.programmeDetails.studyOption??>
-                    	${model.applicationForm.programmeDetails.studyOption.freeVal}
+                    <#if applicationForm.programmeDetails?? && applicationForm.programmeDetails.studyOption??>
+                    	${applicationForm.programmeDetails.studyOption.freeVal}
                     </#if>
                     </div>
 				</div>
@@ -49,20 +49,20 @@
 				<!-- Project -->
 				<div class="row">
                     <label class="label">Project</label>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
+
                     <div class="field">
-                		${model.applicationForm.project.title?html}
+                		${applicationForm.project.title?html}
                     </div>
 				</div>
 			
 			</div>
 
             <div>	
-            		<#if model.applicationForm.programmeDetails.supervisors?? && (model.applicationForm.programmeDetails.supervisors?size > 0) > 
-	            	  <#list model.applicationForm.programmeDetails.supervisors! as supervisor>
+            		<#if applicationForm.programmeDetails.supervisors?? && (applicationForm.programmeDetails.supervisors?size > 0) > 
+	            	  <#list applicationForm.programmeDetails.supervisors! as supervisor>
 		            	  <div class="row">
 		            	  	 <label class="label">Supervision</label>
-		            	  	 <span class="hint" data-desc="Tooltip demonstration."></span>
+		            	  	
 		            	   <div class="field">
 		            	       Name: ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!}, Email :${supervisor.email?html}, Supervisor is aware of the application:${supervisor.awareSupervisor?html}
 		            	       <br/>
@@ -72,7 +72,7 @@
             	  	<#else>
             	  	  	<div class="row">
 		            	  	<label class="label">Supervision</label>
-		            	  	<span class="hint" data-desc="Tooltip demonstration."></span>
+		            	  
 		            	   <div class="field"> - </div>
 		             	</div>
             	  	</#if>
@@ -83,17 +83,17 @@
             	<!-- Start date -->
                 <div class="row">
                 	<label class="label">Start Date</label>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                    ${(model.applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}
+                   <div class="field">
+                    ${(applicationForm.programmeDetails.startDate?string('dd-MMM-yyyy'))!}</div>
                 </div>
 
                 <!-- Referrer -->
                 <div class="row">
                 	<label class="label">Referrer</label>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
+                   
                     <div class="field">
-                        <#if model.applicationForm.programmeDetails?? && model.applicationForm.programmeDetails.referrer??>                    
-						${model.applicationForm.programmeDetails.referrer.freeVal}
+                        <#if applicationForm.programmeDetails?? && applicationForm.programmeDetails.referrer??>                    
+						${applicationForm.programmeDetails.referrer.freeVal}
 						</#if>                    
 					</div>
 				</div>

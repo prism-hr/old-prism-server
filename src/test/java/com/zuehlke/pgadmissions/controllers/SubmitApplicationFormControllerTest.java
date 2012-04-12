@@ -44,21 +44,28 @@ public class SubmitApplicationFormControllerTest {
 	private UsernamePasswordAuthenticationToken authenticationToken;
 
 	private ApplicationFormValidator applicationFormValidatorMock;
-	
+
 	@Test
 	public void shouldReturnCurrentUser() {
-		assertEquals(student,applicationController.getUser());
-	}
-	@Test
-	public void shouldReturnApplicationViewOnGet() {
-		String view = applicationController.getApplicationView();
-		assertEquals("/private/pgStudents/form/main_application_page", view);
+		assertEquals(student, applicationController.getUser());
 	}
 
 	@Test
+	public void shouldReturnStudenApplicationViewOnGetForApplicant() {
+		String view = applicationController.getApplicationView();
+		assertEquals("/private/pgStudents/form/main_application_page", view);
+	}
+	@Test
+	public void shouldReturnStudenApplicationViewOnGetForNonApplicant() {
+		RegisteredUser otherUser = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		authenticationToken.setDetails(otherUser);
+		String view = applicationController.getApplicationView();
+		assertEquals("/private/staff/application/main_application_page", view);
+	}
+	@Test
 	public void shouldReturnToApplicationViewIfErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).toApplicationForm();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(submitApplicationServiceMock, errorsMock);
 		String view = applicationController.submitApplication(applicationForm, errorsMock);
@@ -69,7 +76,7 @@ public class SubmitApplicationFormControllerTest {
 	@Test
 	public void shouldChangeStatusToSubmittedAndSaveIfNoErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).toApplicationForm();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		submitApplicationServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
 		EasyMock.replay(submitApplicationServiceMock, errorsMock);
@@ -83,7 +90,7 @@ public class SubmitApplicationFormControllerTest {
 	@Test
 	public void shouldRedirectToAppsViewWithMessageIfNoErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).toApplicationForm();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		submitApplicationServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
 		EasyMock.replay(submitApplicationServiceMock, errorsMock);
@@ -94,7 +101,7 @@ public class SubmitApplicationFormControllerTest {
 	@Test
 	public void shouldProcessRefereesRoleIfNoErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).toApplicationForm();
 		List<Referee> referees = Arrays.asList(new RefereeBuilder().id(1).toReferee(), new RefereeBuilder().id(2).toReferee());
 		applicationForm.setReferees(referees);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
@@ -129,12 +136,9 @@ public class SubmitApplicationFormControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfSubmitterNotFormApplicant() {
 		RegisteredUser otherApplicant = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(
-				new ApplicationFormBuilder().submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(student).toApplicationForm());
-		EasyMock.replay(applicationsServiceMock);
-
 		authenticationToken.setDetails(otherApplicant);
-		applicationController.getApplicationForm(2);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).toApplicationForm();
+		applicationController.submitApplication(applicationForm, null);
 
 	}
 
@@ -147,10 +151,20 @@ public class SubmitApplicationFormControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowSubmitExceptionIfApplicationIsAlreadySubmitted() {
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(
-				new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm());
-		EasyMock.replay(applicationsServiceMock);
-		applicationController.getApplicationForm(2);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		applicationController.submitApplication(applicationForm, null);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowSubmitExceptionIfUserCannotSeeApplicationForm() {
+		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+		authenticationToken.setDetails(userMock);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getApplicationById(3)).andReturn(applicationForm);
+		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
+		EasyMock.replay(applicationsServiceMock, userMock);
+
+		applicationController.getApplicationForm(3);
 	}
 
 	@Before

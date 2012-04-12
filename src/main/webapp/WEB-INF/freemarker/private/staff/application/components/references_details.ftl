@@ -1,4 +1,4 @@
-<#if model.applicationForm.referees?has_content>
+<#if applicationForm.referees?has_content>
 	<#assign hasReferees = true>
 <#else>
 	<#assign hasReferees = false>
@@ -35,7 +35,7 @@
 	                	</thead>
 	                	
 	                	<tbody>
-	                		<#list model.applicationForm.referees as referee>
+	                		<#list applicationForm.referees as referee>
 			                  	<tr>
 				                    <td><a class="row-arrow" name="refereeEditButton" id="referee_${referee.id?string('#######')}">-</a></td>
 				                    <td>${(referee.firstname?html)!}</td>
@@ -93,28 +93,21 @@
                   		<!-- First name -->
                   		<div class="row">
                     		<span class="label">First Name</span>
-                    		<span class="hint"></span>
-                    		<div class="field">
-                    		  <input readonly="readonly" class="full" id="ref_firstname" name="ref_firstname" value="${(model.referee.firstname?html)!}"/>
-                    		</div>
+                    	
+                    		<div class="field">&nbsp; </div>
                   		</div>
                 
                   		<!-- Last name -->
                   		<div class="row">
                     		<span class="label">Last Name</span>
-                    		<span class="hint"></span>
-                    		<div class="field">
-                    		<input readonly="readonly" class="full" id="ref_lastname" name="ref_lastname" value="${(model.referee.lastname?html)!}"/>
-							</div>
+             
+                    		<div class="field">&nbsp; </div>
                   		</div>
                 
                   		<!-- Relationship name -->
                   		<div class="row">
                     		<span class="label">Relationship</span>
-                    		<span class="hint"></span>
-                    		<div class="field">
-                    		<input readonly="readonly" class="full" id="ref_relationship" name="ref_relationship" value="${(model.referee.relationship?html)!}"/>
-                    		</div>
+<div class="field">&nbsp; </div>
                   		</div>
                 	
                 	</div>
@@ -126,19 +119,15 @@
                   		<!-- Employer / company name -->
                   		<div class="row">
                     		<span class="label">Employer</span>
-                    		<span class="hint"></span>
-                    		<div class="field">
-                    		<input readonly="readonly" class="full" id="ref_employer" name="ref_employer" value="${(model.referee.jobEmployer?html)!}"/>
-                    		</div>
+
+                    		<div class="field">&nbsp; </div>
                   		</div>
                 
                   		<!-- Position title -->
                   		<div class="row">
                     		<span class="label">Title</span>
-                    		<span class="hint"></span>
-                    		<div class="field">
-                    		<input readonly="readonly" class="full" id="ref_position" name="ref_position" value="${(model.referee.jobTitle?html)!}"/>
-                    		</div>
+
+                    		<div class="field">&nbsp; </div>
                   		</div>
                   		
                 	</div>
@@ -150,35 +139,16 @@
                   		<!-- Address body -->
                   		<div class="row">
                     		<span class="label">Location</span>
-                    		<span class="hint"></span>
-                    		<div class="field">
-                    		<textarea readonly="readonly" class="max" rows="6" cols="70" id="ref_address_location" 
-                                    name="ref_address_location" value="${(model.referee.addressLocation?html)!}"></textarea>
-                    		</div>
+         
+                    		<div class="field">&nbsp; </div>
                   		</div>
                 
-                  		<!-- Postcode -->
-                  		<div class="row">
-                    		<span class="label">Postal Code</span>
-                    		<span class="hint"></span>
-                    		<div class="field">
-                    		<input readonly="readonly" class="half" id="ref_address_postcode" name="ref_address_postcode" value="${(model.referee.addressPostcode?html)!}"/>
-                    		</div>
-                  		</div>
+           
                 
                   		<!-- Country -->
                   		<div class="row">
                     		<span class="label">Country</span>
-                    		<span class="hint"></span>
-                    		<div class="field">
-                    		  <select class="full" name="ref_address_country" id="ref_address_country"
-                                            disabled="disabled">
-                            <option value="">Select...</option>
-                                <#list model.countries as country>
-                                    <option value="${country.id?string('#######')}" <#if model.referee.addressCountry?? && model.referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
-                                </#list>
-                            </select>
-                    		</div>
+<div class="field">&nbsp; </div>
                   		</div>
                 	
                 	</div>
@@ -190,33 +160,22 @@
                   		<!-- Email address -->
                   		<div class="row">
                     		<span class="label">Email</span>
-                    		<span class="hint"></span>
-                    		<div class="field">
-                    		<input readonly="readonly" class="full" type="email" id="ref_email" name="ref_email" value="${(model.referee.email?html)!}"/>
-                    		</div>
+                  
+                    		<div class="field">&nbsp; </div>
                   		</div>
 
                   		<!-- Telephone -->
                   		<div class="row">
                   		    <span class="label">Telephone</span>
-                  		    <span class="hint"></span>
-                    		<div class="field" id="phonenumbersref">
-                    			<#list model.referee.phoneNumbers! as phoneNumber>
-                    				<p>
-                   		 				${phoneNumber.telephoneType.displayValue} 
-                   		 				${phoneNumber.telephoneNumber?html}								
-									</p>	
-		                      	</#list>
-                    		</div>
+                  		
+                    		<div class="field">&nbsp; </div>
                   		</div>
 
 	                  	<!-- Skype address -->
 	                  	<div class="row">
                     		<span class="label">Skype</span>
-                    		<span class="hint"></span>
-                    		<div class="field">
-                    		<input readonly="readonly" class="full" type="email" id="ref_messenger" name="ref_messenger" value="${(model.referee.messenger?html)!}"/>
-                    		</div>
+                    		
+                    		<div class="field">&nbsp; </div>
                   		</div>
                   		
                 	</div>
@@ -224,7 +183,7 @@
 	                  	            
 	                  		<div class="row">
 			                  	<label class="label">Reference</label>
-			                    <span class="hint"></span>
+			                  
 			                    <div class="field" id="referenceDocument">			                    	
 			                    </div>     
 		                    </div>		              

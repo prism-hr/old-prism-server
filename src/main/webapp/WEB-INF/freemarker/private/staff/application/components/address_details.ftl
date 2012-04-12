@@ -1,4 +1,4 @@
-<#if model.applicationForm.addresses?has_content>
+<#if applicationForm.addresses?has_content>
 	<#assign hasAddresses = true>
 <#else>
 	<#assign hasAddresses = false>
@@ -22,32 +22,23 @@
                   	<!-- Address body -->
                   	<div class="row">
                     	<span class="label">Current Address</span>
-                    	<span class="hint"></span>
                     	<div class="field">
-                    	 <textarea readonly="readonly" id="currentAddressLocation" class="max" rows="6" cols="80">${(model.address.currentAddressLocation?html)!}</textarea>
+                    	 ${(applicationForm.currentAddress.location?html)!}
                     	</div>
                   	</div>
 
                   	<!-- Country -->
                   	<div class="row">
                     	<span class="label">Country</span>
-	                    <div class="field">
-	                       <select class="full" name="currentAddressCountry" id="currentAddressCountry"
-                                            disabled="disabled">
-                            <option value="">Select...</option>
-                                <#list model.countries as country>
-                                    <option value="${country.id?string('#######')}" <#if model.address.currentAddressCountry?? && model.address.currentAddressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
-                                </#list>
-                            </select>
+	                    <div class="field">${(applicationForm.currentAddress.country.name?html)!}               
 						</div>
 					</div>
 					
 					                   <!-- Address body -->
                     <div class="row">
-                        <span class="label">Contact Address</span>
-                        <span class="hint"></span>
+                        <span class="label">Contact Address</span>    
                         <div class="field">
-                         <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80">${(model.address.contactAddressLocation?html)!}</textarea>
+                      ${(applicationForm.contactAddress.location?html)!}	
                         </div>
                     </div>
 
@@ -55,13 +46,7 @@
                     <div class="row">
                         <span class="label">Country</span>
                         <div class="field">
-                           <select class="full" name="contactAddressCountry" id="contactAddressCountry"
-                                            disabled="disabled">
-                            <option value="">Select...</option>
-                                <#list model.countries as country>
-                                    <option value="${country.id?string('#######')}" <#if model.address.contactAddressCountry?? && model.address.contactAddressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
-                                </#list>
-                            </select>
+                        	${(applicationForm.contactAddress.country.name?html)!}                          
                         </div>
                     </div>
 					

@@ -99,13 +99,12 @@
              
                     		<div class="field" id="ref_lastname">&nbsp; </div>
                   		</div>
+                  	</div>	
                 
 
 
                 	<div>
                   
-                  		<p><strong>Position</strong></p>
-                
                   		<!-- Employer / company name -->
                   		<div class="row">
                     		<span class="label">Employer</span>
@@ -123,11 +122,11 @@
 
                 	<div>
                 	
-                  		<p><strong>Address</strong></p>
+                  		<p><strong>Contact Details</strong></p>
                   
                   		<!-- Address body -->
                   		<div class="row">
-                    		<span class="label">Location</span>
+                    		<span class="label">Address</span>
          
                     		<div class="field" id="ref_address_location">&nbsp; </div>
                   		</div>

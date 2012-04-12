@@ -368,6 +368,7 @@ public class PdfDocumentBuilder {
 				addCorrectOutputDependingOnNull(document, reference.getJobEmployer(), "Employer");
 				addCorrectOutputDependingOnNull(document, reference.getJobTitle(), "Position");
 
+				document.add(new Paragraph("Contact Details", smallBoldFont));
 				addCorrectOutputDependingOnNull(document, reference.getAddressLocation(), "Address");
 
 				if (reference.getAddressCountry() != null) {
@@ -376,6 +377,7 @@ public class PdfDocumentBuilder {
 					document.add(new Paragraph(createMessage("country")));
 				}
 
+				document.add(new Paragraph("Contact Details", smallBoldFont));
 				document.add(new Paragraph("Email: " + reference.getEmail()));
 				document.add(new Paragraph("Telephone: " + reference.getPhoneNumber()));
 				addCorrectOutputDependingOnNull(document, reference.getMessenger(), "Skype Name");

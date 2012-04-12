@@ -1,0 +1,56 @@
+          <form>
+          
+          	<h1>Edit programme users and remove from programme role(s)</h1>
+            <p>Please use the form below to edit a user access and/or roles on the programme.</p>
+            
+            <br>
+            
+            <div class="row programme">
+              <label>Select programme</label>
+              <select>
+                <option>LoLo EngD</option>
+              </select>
+            </div>
+            
+            <hr>
+            
+          	<!-- Left side -->
+          	<div class="left-column">
+            
+              <div class="row">
+                <label>First name</label>
+                <input type="text" name="firstname" />
+              </div>
+              
+              <div class="row">
+                <label>Surname</label>
+                <input type="text" name="surname" />
+              </div>
+              
+              <div class="row">
+                <label>Email address</label>
+                <input type="text" name="email" />
+              </div>
+              
+            </div>
+
+						<!-- Right side -->
+						<div class="right-column">
+            
+              <div class="row">
+                <label>Role(s) in application process</label>
+                <select multiple size="4">
+                  <option>Administrator</option>
+                  <option>Approver</option>
+                  <option>Interviewer</option>
+                  <option>Reviewer</option>
+                </select>
+              </div>
+            
+              <div class="buttons">
+	              <button class="red">Remove user</button>
+	              <button>Update user</button>
+              </div>
+              
+            </div>
+          </form>

@@ -1,0 +1,2 @@
+ALTER TABLE APPLICATION_FORM DROP FOREIGN KEY reviewer_user_fk, DROP COLUMN reviewer_user_id;
+

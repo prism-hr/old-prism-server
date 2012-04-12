@@ -39,7 +39,7 @@ public class SubmitApplicationService {
 	@Transactional
 	public void saveApplicationFormAndSendMailNotifications(ApplicationForm form) {
 		applicationService.save(form);
-		sendMailToReferees(form);
+		sendMailToAllReferees(form);
 		sendMailToApplicant(form);
 		sendMailToAdmins(form);
 	}
@@ -55,8 +55,7 @@ public class SubmitApplicationService {
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted",
-						"private/staff/admin/mail/application_submit_confirmation.ftl", model));
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted", "private/staff/admin/mail/application_submit_confirmation.ftl", model));
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
 			}
@@ -74,8 +73,7 @@ public class SubmitApplicationService {
 			model.put("application", form);
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted",
-					"private/pgStudents/mail/application_submit_confirmation.ftl", model));
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted", "private/pgStudents/mail/application_submit_confirmation.ftl", model));
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}
@@ -109,14 +107,34 @@ public class SubmitApplicationService {
 				model.put("programme", form.getProgrammeDetails());
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
-				if(referee.getUser()!=null && referee.getUser().isEnabled()){
-					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
-							"private/referees/mail/existing_user_referee_notification_email.ftl", model));
+				if (referee.getUser() != null && referee.getUser().isEnabled()) {
+					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification", "private/referees/mail/existing_user_referee_notification_email.ftl", model));
+				} else {
+					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification", "private/referees/mail/referee_notification_email.ftl", model));
 				}
-				else{
-					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
-							"private/referees/mail/referee_notification_email.ftl", model));
-				}
+			} catch (Throwable e) {
+				log.warn("error while sending email", e);
+			}
+		}
+
+	}
+
+	// temporarily send same mail to all referees
+	public void sendMailToAllReferees(ApplicationForm form) {
+
+		List<Referee> referees = form.getReferees();
+		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
+		for (Referee referee : referees) {
+			try {
+				Map<String, Object> model = new HashMap<String, Object>();
+				model.put("referee", referee);
+				model.put("adminsEmails", adminsEmails);
+				model.put("applicant", form.getApplicant());
+				model.put("programme", form.getProgrammeDetails());
+				model.put("host", Environment.getInstance().getApplicationHostName());
+				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification", "private/referees/mail/referee_notification_email.ftl", model));
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
 			}

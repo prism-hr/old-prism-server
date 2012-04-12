@@ -124,10 +124,8 @@
         		<tr>
           			<th >Name</th>
             		<th>Email</th>
-            		<th>Primary</th>
            			 <th>Aware</th>
            			 <th>Action</th>
-           			 <th>&nbsp;</th>
           		</tr>
         </thead>
         <tbody>
@@ -163,8 +161,8 @@
              <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.firstname'/>"></span>
                 <div class="field">
                     <input class="full" type="text" placeholder="First Name" id="supervisorFirstname" name="supervisorFirstname"/>
-                </div>
                 <span class="invalid" name="superFirstname" style="display:none;"></span>
+                </div>
             </div>
             
             <div class="row">
@@ -172,8 +170,8 @@
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.lastname'/>"></span>
                 <div class="field"> 
                     <input class="full" type="text" placeholder="Last Name" id="supervisorLastname" name="supervisorLastname"/>
-                </div>
                 <span class="invalid" name="superLastname" style="display:none;"></span>
+                </div>
             </div>
             
             <div class="row">
@@ -181,8 +179,8 @@
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.email'/>"></span>
                 <div class="field">
                     <input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
+                	<span class="invalid" name="superEmail" style="display:none;" ></span>
                 </div>
-                <span class="invalid" name="superEmail" style="display:none;" ></span>
             </div>
             
             <div class="row">

@@ -30,9 +30,9 @@ public class ProgrammeDetailsValidator implements Validator {
 
 		List<Supervisor> supervisors = programmeDetail.getSupervisors();
 		for (int i = 0; i < supervisors.size(); i++) {
-			if (!EmailValidator.getInstance().isValid(supervisors.get(i).getEmail())) {
-				errors.rejectValue("supervisors", "programmeDetails.email.invalid");
-			}
+//			if (!EmailValidator.getInstance().isValid(supervisors.get(i).getEmail())) {
+//				errors.rejectValue("supervisors", "programmeDetails.email.invalid");
+//			}
 			if (supervisors.get(i).getFirstname() == "" || supervisors.get(i).getFirstname() == null) {
 				errors.rejectValue("supervisors", "programmeDetails.firstname.notempty");
 			}

@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 
 public class RefereeControllerTest {
@@ -49,6 +50,7 @@ public class RefereeControllerTest {
 	private CountryPropertyEditor countryPropertyEditor;
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
 	private RefereeValidator refereeValidatorMock;
+	private EncryptionUtils encryptionUtilsMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -194,10 +196,11 @@ public class RefereeControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		countryPropertyEditor = EasyMock.createMock(CountryPropertyEditor.class);
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
+		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
 
 		refereeValidatorMock = EasyMock.createMock(RefereeValidator.class);
 
-		controller = new RefereeController(refereeServiceMock, countriesServiceMock, applicationsServiceMock, countryPropertyEditor, applicationFormPropertyEditorMock, refereeValidatorMock);
+		controller = new RefereeController(refereeServiceMock, countriesServiceMock, applicationsServiceMock, countryPropertyEditor, applicationFormPropertyEditorMock, refereeValidatorMock, encryptionUtilsMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();

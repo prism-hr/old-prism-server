@@ -202,11 +202,13 @@
 
         <div class="buttons">
         
-        	<a class="button blue" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</a>
         	<#if !applicationForm.isSubmitted()>
         		<button type="reset" id="programmeCancelButton" name="programmeCancelButton" value="cancel">Cancel</button>
-            	<a class="button blue" id="programmeSaveButton">Save</a>
             </#if>    
+        	<a class="button blue" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</a>
+        	<#if !applicationForm.isSubmitted()>
+            	<a class="button blue" id="programmeSaveButton">Save</a>
+            </#if>  	
 		</div>
 
 	</form>

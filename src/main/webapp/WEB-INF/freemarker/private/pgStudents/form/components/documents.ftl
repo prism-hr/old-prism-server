@@ -47,11 +47,13 @@
 
 		<div class="buttons">
 			
-            <button class="blue" id="documentsCloseButton" value="close">Close</button> 
             <#if !applicationForm.submitted>
             	<button type="reset" id="documentsCancelButton" value="cancel">Cancel</button>
-                <button type="button" class="blue" id="documentsSaveButton" value="close">Save</button> 
             </#if>             
+            <button class="blue" id="documentsCloseButton" value="close">Close</button>
+            <#if !applicationForm.submitted> 
+                <button type="button" class="blue" id="documentsSaveButton" value="close">Save</button>
+            </#if>      
 		</div>
 
 

@@ -131,7 +131,7 @@
                      <td> ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} </td>
                      <td> ${supervisor.email?html} </td>
                      <td> ${supervisor.awareSupervisor?html} </td>
-                     <td> <#if !applicationForm.isSubmitted()><a class="button-delete" name="deleteSupervisor" >delete</a> <a class="button-edit"  id="supervisor_${(supervisor.id?string('#######'))!}" name ="editSupervisorLink">edit</a></#if></td>
+                     <td> <#if !applicationForm.isSubmitted()><a class="button-delete" name="deleteSupervisor" id="supervisorDelete_${(supervisor.id?string('#######'))!}">delete</a> <a class="button-edit"  id="supervisor_${(supervisor.id?string('#######'))!}" name ="editSupervisorLink">edit</a></#if></td>
                  </tr>
                     <input type="hidden" id="${(supervisor.id?string('#######'))!}_supervisorId" name = "sId" value="${(supervisor.id?string('#######'))!}"/>
                     <input type="hidden" id="${(supervisor.id?string('#######'))!}_firstname" name = "sFN" value="${(supervisor.firstname?html)!}"/>
@@ -139,7 +139,7 @@
                     <input type="hidden" id="${(supervisor.id?string('#######'))!}_email" name = "sEM"  value="${(supervisor.email?html)!}"/>
                     <input type="hidden" id="${(supervisor.id?string('#######'))!}_aware" name = "sAS" value="${(supervisor.primarySupervisor?html)!}"/>                    
                                
-                   <input type="hidden" name="supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
+                   <input type="hidden" name="supervisors" id="${(supervisor.id?string('#######'))!}_supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
               </span>
               </#list>
                </tbody>

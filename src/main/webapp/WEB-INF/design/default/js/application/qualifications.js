@@ -70,7 +70,8 @@ $(document).ready(function(){
 				{
 					applicationId:  $('#applicationId').val(),
 					qualificationId: id,
-					message: 'edit'
+					message: 'edit',					
+					cacheBreaker: new Date().getTime()
 				},
 				function(data) {
 					$('#qualificationsSection').html(data);
@@ -82,7 +83,8 @@ $(document).ready(function(){
 		$.get("/pgadmissions/update/getQualification",
 				{
 					applicationId:  $('#applicationId').val(),
-					message: 'cancel'
+					message: 'cancel',					
+					cacheBreaker: new Date().getTime()
 				},
 				function(data) {
 					$('#qualificationsSection').html(data);

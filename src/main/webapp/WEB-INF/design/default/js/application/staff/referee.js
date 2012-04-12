@@ -13,7 +13,7 @@ $('a[name="refereeEditButton"]').click(function(){
 	var id = this.id;
 	id = id.replace('referee_', '');
 
-	$("#refereeId").html($('#'+id+"_refereeId").val());
+	$("#refereeId").val($('#'+id+"_refereeId").val());
 	$("#ref_firstname").html($('#'+id+"_firstname").val());
 	$("#ref_lastname").html($('#'+id+"_lastname").val());
 	$("#ref_employer").html($('#'+id+"_jobEmployer").val());

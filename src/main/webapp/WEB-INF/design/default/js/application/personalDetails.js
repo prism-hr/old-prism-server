@@ -10,7 +10,8 @@ $(document).ready(function(){
 	$('#personalDetailsCancelButton').click(function(){
 		$.get("/pgadmissions/update/getPersonalDetails",
 				{
-					applicationId:  $('#applicationId').val()					
+					applicationId:  $('#applicationId').val(),					
+					cacheBreaker: new Date().getTime()					
 				},
 				function(data) {
 					$('#personalDetailsSection').html(data);

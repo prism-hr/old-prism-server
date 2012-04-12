@@ -37,7 +37,8 @@ $(document).ready(function(){
 		$.get("/pgadmissions/update/getReferee",
 				{
 					applicationId:  $('#applicationId').val(),
-					message: 'cancel'
+					message: 'cancel',					
+					cacheBreaker: new Date().getTime()
 				},
 				function(data) {
 					$('#referencesSection').html(data);
@@ -52,7 +53,8 @@ $(document).ready(function(){
 				{
 					applicationId:  $('#applicationId').val(),
 					refereeId: id,
-					message: 'edit'
+					message: 'edit',					
+					cacheBreaker: new Date().getTime()
 				},
 				function(data) {
 					$('#referencesSection').html(data);

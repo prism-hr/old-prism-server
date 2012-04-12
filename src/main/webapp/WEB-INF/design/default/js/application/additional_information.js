@@ -21,7 +21,8 @@ $(document).ready(function(){
 		$.get("/pgadmissions/update/getAdditionalInformation",
 				{
 					applicationId:  $('#applicationId').val(),
-					message: 'cancel'
+					message: 'cancel',					
+					cacheBreaker: new Date().getTime() 
 				},
 				function(data) {
 					$('#additionalInformationSection').html(data);

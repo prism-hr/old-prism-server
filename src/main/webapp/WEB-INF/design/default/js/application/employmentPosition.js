@@ -43,7 +43,8 @@ $(document).ready(function(){
 			{
 				applicationId:  $('#applicationId').val(), 
 				employmentId: id,
-				message: 'edit'
+				message: 'edit',					
+				cacheBreaker: new Date().getTime()
 			},
 			function(data) {								
 				$('#positionSection').html(data);
@@ -55,7 +56,8 @@ $(document).ready(function(){
 		$.get("/pgadmissions/update/getEmploymentPosition",
 			{
 				applicationId:  $('#applicationId').val(),
-				message: 'cancel'
+				message: 'cancel',					
+				cacheBreaker: new Date().getTime()
 			},
 			function(data) {
 				$('#positionSection').html(data);

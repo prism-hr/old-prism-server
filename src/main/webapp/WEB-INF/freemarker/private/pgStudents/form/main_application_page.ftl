@@ -1,3 +1,4 @@
+<!DOCTYPE HTML>
 <#-- Assignments -->
 <#import "/spring.ftl" as spring />
 <#if user.isInRole('APPLICANT')>
@@ -51,8 +52,6 @@
 </#if>
 <#-- Personal Details Rendering -->
 
-<!DOCTYPE HTML>
-
 <html>
 	<head>
 	
@@ -61,7 +60,7 @@
 		
 		<!-- Styles for Application Page -->		
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
-		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>	
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/field_controls.css' />"/>
 		
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/additional_information.css' />"/>
@@ -98,14 +97,15 @@
 		<input type="hidden" id="addressError" value="<#if currentAddressError || contactAddressError>true<#else>false</#if>"/>
 		<input type="hidden" id="personalStatementError" value="${personalStatementError?string}"/>
 		<input type="hidden" id="refereesError" value="${refereesError?string}"/>
+		
 		<div id="wrapper">
 			
-				 <#include "/private/common/global_header.ftl"/>
+			 <#include "/private/common/global_header.ftl"/>
 				
 			  <!-- Middle. -->
 			  <div id="middle">
 			  		
-			  		<#include "/private/common/parts/nav_with_user_info.ftl"/>
+				<#include "/private/common/parts/nav_with_user_info.ftl"/>
 			    
 			  		<!-- Main content area. -->
 			    	<article id="content" role="main">
@@ -117,10 +117,10 @@
                     </div>
 			    	
 			    	<!-- FLOATING TOOLBAR -->
-                  <ul id="view-toolbar">
-                    <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-                    <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
-                  </ul>
+                  	<ul id="view-toolbar">
+                    	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
+                   		 <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
+                  	</ul>
 			      
 			      		<!-- content box -->
 				    	<div class="content-box">
@@ -130,22 +130,21 @@
 									<span class="invalid">Some required fields are missing, please review your application form.<p></p></span>
 								</#if>
 								       
-								<div id="programme-details">
-			          
+								<div id="programme-details">			          
 						          	<div class="row">
 						            	<label>Programme</label>
-						              <input disabled size="109" value="${applicationForm.project.program.code} - ${applicationForm.project.program.title}" />
+						              	<input disabled size="109" value="${applicationForm.project.program.code} - ${applicationForm.project.program.title}" />
 						            </div>
 						            
 						          	<div class="row half">
 						            	<label>Application Number</label>
-						              <input id="applicationNumber" disabled size="20" value="${applicationForm.id?string("######")}" />
+						             	 <input id="applicationNumber" disabled size="20" value="${applicationForm.id?string("######")}" />
 						            </div>
 						            <#if applicationForm.isSubmitted()>
-						          	<div class="row">
+						          		<div class="row">
 						            	<label>Date Submitted</label>
-						              <input id="applicationNumber" disabled size="20" value="${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}" />
-						            </div>
+						              		<input id="applicationNumber" disabled size="20" value="${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}" />
+						            	</div>
 						            </#if>
 				            
 					          	</div>
@@ -154,7 +153,7 @@
 								<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/>
 								
 				
-					          	<section id="programmeDetailsSection" class="folding violet <@spring.bind 'applicationForm.programmeDetails' />	<#if spring.status.errorMessages?has_content >error</#if>">					          	
+					          	<section id="programmeDetailsSection" class="folding violet<#if programDetailsError >error</#if>">					          	
 								</section>
 			          
 			          			<section id="personalDetailsSection" class="folding purple <#if personalDetailsError>error</#if>">
@@ -195,15 +194,13 @@
 			          				
 			          				
 			          			
-			          				<#if !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>
-			             			
+			          				<#if !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>	             			
 			             			
 			             			
 			             				<form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
-			          	      				<input type="hidden" id="applicationFormId" name="applicationId" 
-			          	      									value="${applicationForm.id?string("######")}"/>
-			          	      										<a class="button" href="<@spring.url '/applications'/>">Close</a>
-			          	      										<button id="submitButton" type="submit" class="blue">Submit</button>
+			          	      				<input type="hidden" id="applicationFormId" name="applicationId" 	value="${applicationForm.id?string("######")}"/>
+		          	      					<a class="button" href="<@spring.url '/applications'/>">Close</a>
+		          	      					<button id="submitButton" type="submit" class="blue">Submit</button>
 										</form>
 									<#else>
 										<a class="button" href="<@spring.url '/applications'/>">Close</a>
@@ -229,14 +226,7 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>	
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>		
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/address.js'/>"></script>		
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/referee.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/documents.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/additional_information.js'/>"></script>
-		
+	
 
 	</body>
 	

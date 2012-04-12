@@ -7,9 +7,10 @@ $(document).ready(function(){
 	
 
 	$('a[name="positionEditButton"]').click(function(){
-			var id = this.id;
+		var id = this.id;
 		id = id.replace('position_', '');
-		$("#positionId").html($('#'+id+"_positionId").val());
+	
+		$("#positionId").val($('#'+id+"_positionId").val());
 		$("#emp_country").html($('#'+id+"_employerCountry").val());
 		$("#emp_name").html($('#'+id+"_employerName").val());
 		$("#emp_address").html($('#'+id+"_employerAddress").val());

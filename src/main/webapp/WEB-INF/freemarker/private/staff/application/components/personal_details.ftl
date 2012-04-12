@@ -9,7 +9,7 @@
 
 <#if applicationForm.hasComments()>
 	
-	<#assign comCount = applicationComments?size>
+	<#assign comCount = applicationForm.applicationComments?size>
 <#else> 
 	<#assign comCount = 0 >
 </#if>
@@ -214,7 +214,7 @@
 		                	<div class="previous">
 		                    	<strong>Previous comments</strong>
 		                    	 <ul>
-		                    	<#list applicationComments as comment>
+		                    	<#list applicationForm.applicationComments as comment>
 									<li>
 										<strong>${comment.user.username?html}</strong>
 										<span>${comment.comment?html}</span>

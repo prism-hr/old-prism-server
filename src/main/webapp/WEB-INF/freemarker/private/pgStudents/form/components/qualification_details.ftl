@@ -124,8 +124,7 @@
                 	 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
    					<#else>
    					  	<input readonly="readonly" id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering" value="${(qualification.qualificationSubject?html)!}"/>
-   					</#if>
-   					
+   					</#if>   					
                 </div>
      		</div>
 		
@@ -169,13 +168,13 @@
 	           	 <div class="field">        
 	           		<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"
 	           			<#if qualification.isQualificationCompleted()>
-	                              checked
+	                              checked ='checked'
 	                    </#if>
 	           			<#if applicationForm.isSubmitted()>
 	                              disabled="disabled"
 	                    </#if>
 	                    />
-	           		<input type="hidden" name="currentQualification" id="currentQualification"/>
+	           			<input type="hidden" name="currentQualification" id="currentQualification"/>
 	   			 </div>
         	</div>
 		
@@ -188,13 +187,13 @@
         		<span class="plain-label">Grade / Result / GPA<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.grade'/>"></span>
         		<div class="field">
-        		<#if !applicationForm.isSubmitted()>
-          			<input id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction" value="${(qualification.qualificationGrade?html)!}"/>
-					<@spring.bind "qualification.qualificationGrade" /> 
-                	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-        		<#else>
-        			  <input readonly="readonly" id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction" value="${(qualification.qualificationGrade?html)!}"/>
-        		</#if>
+	        		<#if !applicationForm.isSubmitted()>
+	          			<input id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction" value="${(qualification.qualificationGrade?html)!}"/>
+						<@spring.bind "qualification.qualificationGrade" /> 
+	                	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+	        		<#else>
+	        			  <input readonly="readonly" id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction" value="${(qualification.qualificationGrade?html)!}"/>
+	        		</#if>
         		</div>
       		</div>
       		
@@ -204,7 +203,8 @@
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.awardDate'/>"></span>
 				
         		<div class="field" id="awardDateField">
-        			<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}" disabled="disabled">
+        			<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"
+        				 <#if !qualification.isQualificationCompleted()>disabled="disabled"</#if>>
                 	</input>
                	 	<@spring.bind "qualification.qualificationAwardDate" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
@@ -217,13 +217,14 @@
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
         		<div class="field" id="uploadFields">         		       	
           			<input id="proofOfAward" class="full" type="file" name="file" value=""  <#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>					
-					<span id="uploadedDocument" ><input type="hidden" id="document_PROOF_OF_AWARD" value = "${(qualification.proofOfAward.id?string('######'))!}"/>
-					<#if qualification.proofOfAward??> 
-					<a href="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>">${(qualification.proofOfAward.fileName)!}</a></span>
-					</#if>
+					<span id="qualUploadedDocument" >
+						<input type="hidden" id="document_PROOF_OF_AWARD" value = "${(qualification.proofOfAward.id?string('######'))!}"/>
+						<#if qualification.proofOfAward??> 
+							<a href="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>">${(qualification.proofOfAward.fileName)!}</a>
+						</#if>
+					</span>
 					<span id="progress" style="display: none;" ></span>					
-        		</div>  
-        		
+        		</div>          		
       		</div>
       		
       		<!-- Add another button -->
@@ -237,15 +238,14 @@
 		</div>
 		
     	<div class="buttons">
-    	<#if !applicationForm.isSubmitted()>
-        	<a class="button" id="qualificationCancelButton" name="qualificationCancelButton">Cancel</a>
-        	<button class="blue" type="button" id="qualificationsCloseButton" name="qualificationsCloseButton">Close</button>
-            <button id="qualificationsSaveButton" class="blue" type="button" value="add">Save</button>
-         <#else>
-              <a id="qualificationsCloseButton" class="button blue">Close</a>   
-        </#if>  
+	    	<#if !applicationForm.isSubmitted()>
+	        	<a class="button" id="qualificationCancelButton" name="qualificationCancelButton">Cancel</a>
+	        	<button class="blue" type="button" id="qualificationsCloseButton" name="qualificationsCloseButton">Close</button>
+	            <button id="qualificationsSaveButton" class="blue" type="button" value="add">Save</button>
+	         <#else>
+	              <a id="qualificationsCloseButton" class="button blue">Close</a>   
+	        </#if>  
         </div>
-
   </form>
 </div>
 

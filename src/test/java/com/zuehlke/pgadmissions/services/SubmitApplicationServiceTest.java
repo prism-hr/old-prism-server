@@ -159,7 +159,7 @@ public class SubmitApplicationServiceTest {
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Referee Notification"),EasyMock.eq("private/referees/mail/existing_user_referee_notification_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Referee Notification"),EasyMock.eq("private/referees/mail/referee_notification_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));

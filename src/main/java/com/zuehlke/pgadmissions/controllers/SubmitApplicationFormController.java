@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -30,6 +31,7 @@ public class SubmitApplicationFormController {
 
 	private final ApplicationsService applicationService;
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "/private/pgStudents/form/main_application_page";
+	private static final String VIEW_APPLICATION_STAFF_VIEW_NAME = "/private/staff/application/main_application_page";
 	private final SubmitApplicationService submitApplicationService;
 	private final RefereeService refereeService;
 	private final ApplicationFormValidator applicationFormValidator;
@@ -48,6 +50,10 @@ public class SubmitApplicationFormController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result) {
+		if(!getCurrentUser().equals(applicationForm.getApplicant()) || applicationForm.isSubmitted() ){
+			throw new ResourceNotFoundException();
+		}
+			
 		if(result.hasErrors()){
 			return VIEW_APPLICATION_APPLICANT_VIEW_NAME;			
 		}
@@ -61,7 +67,7 @@ public class SubmitApplicationFormController {
 	@ModelAttribute
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
 		ApplicationForm applicationForm = applicationService.getApplicationById(applicationId);
-		if(applicationForm == null || applicationForm.isSubmitted() ||!getCurrentUser().equals(applicationForm.getApplicant()) ){
+		if(applicationForm == null || !getCurrentUser().canSee(applicationForm) ){
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;
@@ -80,7 +86,10 @@ public class SubmitApplicationFormController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String getApplicationView() {
+		if(getCurrentUser().isInRole(Authority.APPLICANT)){
 		return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
+		}
+		return VIEW_APPLICATION_STAFF_VIEW_NAME;
 	}
 
 	@ModelAttribute("user")

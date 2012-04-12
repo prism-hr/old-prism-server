@@ -1,15 +1,15 @@
 <#-- Assignments -->
 
-<#if model.view??>
-	<#assign viewType = model.view>
+<#if view??>
+	<#assign viewType = view>
 <#else>
 	<#assign viewType = 'open'>
 </#if>
 <#assign prevComments = "false">
 
-<#if model.applicationForm.hasComments()>
+<#if applicationForm.hasComments()>
 	
-	<#assign comCount = model.applicationComments?size>
+	<#assign comCount = applicationComments?size>
 <#else> 
 	<#assign comCount = 0 >
 </#if>
@@ -25,7 +25,7 @@
     <div id="personal-details-section" class="open">
 		<form method="post" method = "GET">
                 <input type ="hidden" id="view-type-personal-form" value="${viewType}"/>
-                <input type="hidden" name="id" value="${model.applicationForm.id?string("######")}"/>
+                <input type="hidden" name="id" value="${applicationForm.id?string("######")}"/>
                 <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
               	
               	<!-- Basic Details -->
@@ -34,27 +34,27 @@
 					<div class="row">
                   		<label class="label">First Name</label>
                     	<div class="field">
-                    		${(model.applicationForm.personalDetails.firstName?html)!}
+                    		${(applicationForm.personalDetails.firstName?html)!}
                     	</div>
                     </div>
 
                 	<div class="row">
 	                  	<label class="label">Last Name</label>
     	                <div class="field">
-        	            	${(model.applicationForm.personalDetails.lastName?html)!}
+        	            	${(applicationForm.personalDetails.lastName?html)!}
             	        </div>
                  	</div>
 
                 	<div class="row">
                   		<label class="label">Gender</label>
                     	<div class="field">
-                      		${(model.applicationForm.personalDetails.gender?html)!}
+                      		${(applicationForm.personalDetails.gender?html)!}
                     	</div>
                   	</div>
                 	
                 	<div class="row">
                   		<label class="label">Date of Birth</label>
-                    	<div class="field">${(model.applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}</div>
+                    	<div class="field">${(applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}</div>
                   	</div>
                 
                 </div>
@@ -65,13 +65,13 @@
                 	<div class="row">
                   		<label class="label">Country of Birth</label>
                     	<div class="field">
-                    		${(model.applicationForm.personalDetails.country.name?html)!}
+                    		${(applicationForm.personalDetails.country.name?html)!}
                     	</div>
                   	</div>
               	     <div class="row">
 						<label class="label">Requires Visa</label>
 						<div class="field">
-							<#if model.applicationForm.personalDetails.requiresVisa>
+							<#if applicationForm.personalDetails.requiresVisa>
                     		Yes
                     		<#else>
                     		No
@@ -86,7 +86,7 @@
               	     <div class="row">
 						<label class="label">Is English first language</label>
 						<div class="field">
-                    		<#if model.applicationForm.personalDetails.englishFirstLanguage>
+                    		<#if applicationForm.personalDetails.englishFirstLanguage>
                     		Yes
                     		<#else>
                     		No
@@ -102,7 +102,7 @@
                 	<div class="row">
                   		<span class="label">Country</span>
                     	<div class="field">
-                      		${(model.applicationForm.personalDetails.residenceCountry.name?html)!}
+                      		${(applicationForm.personalDetails.residenceCountry.name?html)!}
                     	</div>
                   	</div>
                   	
@@ -113,7 +113,7 @@
 
              
                   	  <label class="label">Nationality</label>    
-                  	  <#list model.applicationForm.personalDetails.candidateNationalities as nationality >
+                  	  <#list applicationForm.personalDetails.candidateNationalities as nationality >
                   	  	<span name="existingCandidateNationality">
                   				<div class="field">
                   					<label class="full">${nationality.name}</label>  
@@ -126,9 +126,9 @@
                  
                  <!--Maternal guardian nationality -->
                  <div>
-	                 <#if (model.applicationForm.personalDetails.maternalGuardianNationalities?size > 0)>
+	                 <#if (applicationForm.personalDetails.maternalGuardianNationalities?size > 0)>
 	                  	<label class="label">Maternal Guardian Nationality</label>    
-	                 	<#list model.applicationForm.personalDetails.maternalGuardianNationalities as nationality >
+	                 	<#list applicationForm.personalDetails.maternalGuardianNationalities as nationality >
 	                  	  	<span>
 	                  				<div class="field">
 	                  					<label class="full">${nationality.name}</label>  
@@ -148,9 +148,9 @@
                  
                   <!--Paternal guardian nationality -->
                  <div>
-                 	<#if (model.applicationForm.personalDetails.paternalGuardianNationalities?size > 0)>
+                 	<#if (applicationForm.personalDetails.paternalGuardianNationalities?size > 0)>
 	                  	<label class="label">Paternal Guardian Nationality</label>    
-	              		<#list model.applicationForm.personalDetails.paternalGuardianNationalities as nationality >
+	              		<#list applicationForm.personalDetails.paternalGuardianNationalities as nationality >
 	                  	  	<span>
 	                  				<div class="field">
 	                  					<label class="full">${nationality.name}</label>  
@@ -180,7 +180,7 @@
                 	<div class="row">
                 		<span class="label">Email</span>
                     	<div class="field">
-	                    	${(model.applicationForm.personalDetails.email?html)!}
+	                    	${(applicationForm.personalDetails.email?html)!}
                     	</div>
                   	</div>
                 
@@ -190,7 +190,7 @@
               		<div class="row">
                 		<span class="label">Telephone</span>
                     	<div class="field">
-	                    	${(model.applicationForm.personalDetails.phoneNumber?html)!}
+	                    	${(applicationForm.personalDetails.phoneNumber?html)!}
                     	</div>
                   	</div>
                  </div>
@@ -200,13 +200,13 @@
               		<div class="row">
                 		<span class="label">Skype</span>
                     	<div class="field">
-	                    	${(model.applicationForm.personalDetails.messenger?html)!}
+	                    	${(applicationForm.personalDetails.messenger?html)!}
                     	</div>
                   	</div>
                  </div>
 
               	<div class="buttons" id="show-comment-button-div">
-              		<#if model.user??>
+              		<#if user??>
                 		<a class="button blue comment-open" id="comment-button">Comments</a>
                 	</#if>
                 	 <a id="personalDetailsCloseButton"class="button blue">Close</a>
@@ -214,19 +214,19 @@
 
 		</form>
 		
-		<#if model.user??>
+		<#if user??>
 			<form id="commentForm" action= "/pgadmissions/comments/submit" method="POST">
 			
 			    <!-- Comment Sectiton -->
 	                
 	            <div class="comment">
 	               	
-	                   <#if model.applicationForm.hasComments()>
+	                   <#if applicationForm.hasComments()>
 		                   	<#assign prevComments = "true">
 		                	<div class="previous">
 		                    	<strong>Previous comments</strong>
 		                    	 <ul>
-		                    	<#list model.applicationComments as comment>
+		                    	<#list applicationComments as comment>
 									<li>
 										<strong>${comment.user.username?html}</strong>
 										<span>${comment.comment?html}</span>
@@ -242,7 +242,7 @@
 	            </div>
 			
 				
-				<input type ="hidden" name="id" value="${model.applicationForm.id?string("######")}"/>
+				<input type ="hidden" name="id" value="${applicationForm.id?string("######")}"/>
 				<input type ="hidden" id="view-type-comment-form" value="${viewType}"/>
 				<input type ="hidden" id="prev-comment-div" value="${comCount}"/>
 				<input id="commentField" type="hidden" name="comment" value=""/>

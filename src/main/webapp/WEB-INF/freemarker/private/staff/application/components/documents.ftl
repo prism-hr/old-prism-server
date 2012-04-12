@@ -10,18 +10,16 @@
 		<form>
             <div>
 				<div class="row">
-	        		<span class="plain-label">Personal Statement (PDF)<em>*</em></span>
-	        		<span class="hint" data-desc="<@spring.message 'supportingDocuments.personalStatement'/>"></span>	 
-	        		<a href="<@spring.url '/download?documentId=${(model.applicationForm.personalStatement.id?string("#######"))!}'/>">${(model.applicationForm.personalStatement.fileName)!}</a></span>						
+	        		<span class="plain-label">Personal Statement</span>	        	
+	        		<a href="<@spring.url '/download?documentId=${(applicationForm.personalStatement.id?string("#######"))!}'/>">${(applicationForm.personalStatement.fileName)!}</a></span>						
 	        	</div>  
         		
       		
       		
 	      		 <div class="row">
-	        		<span class="plain-label">CV / resume (PDF)<em>*</em></span>
-	        		<span class="hint" data-desc="<@spring.message 'supportingDocuments.cv'/>"></span>   	       	
+	        		<span class="plain-label">CV / resume</span>       	       	
 	          		
-					<a href="<@spring.url '/download?documentId=${(model.applicationForm.cv.id?string("#######"))!}'/>">${(model.applicationForm.cv.fileName)!}</a></span>		
+					<a href="<@spring.url '/download?documentId=${(applicationForm.cv.id?string("#######"))!}'/>">${(applicationForm.cv.fileName)!}</a></span>		
 	        		
 	      		</div>
       		</div>

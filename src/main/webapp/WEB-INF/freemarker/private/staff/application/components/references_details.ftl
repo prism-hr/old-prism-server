@@ -47,12 +47,13 @@
 					                 </td>
                                     <input type="hidden" id="${referee.id?string('#######')}_refereeId" value="${referee.id?string('#######')}"/>
                                     <input type="hidden" id="${referee.id?string('#######')}_firstname" value="${(referee.firstname?html)!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_lastname" value="${(referee.lastname?html)!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_relationship" value="${(referee.relationship?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_phone" value="${(referee.phoneNumber?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_messenger" value="${(referee.phoneNumber?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_lastname" value="${(referee.lastname?html)!}"/>                                    
                                     <input type="hidden" id="${referee.id?string('#######')}_jobEmployer" value="${(referee.jobEmployer?html)!}"/>
                                     <input type="hidden" id="${referee.id?string('#######')}_jobTitle" value="${(referee.jobTitle?html)!}"/>
                                     <input type="hidden" id="${referee.id?string('#######')}_addressLocation" value="${(referee.addressLocation?html)!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_addressPostcode" value="${(referee.addressPostcode?html)!}"/>
+                                    
                                     <input type="hidden" id="${referee.id?string('#######')}_addressCountry" <#if referee.addressCountry??> value="${(referee.addressCountry.id?html)!}" </#if>/>
                                      <input type="hidden" id="${referee.id?string('#######')}_lastUpdated" value="<#if referee.hasProvidedReference() > 
 			                    		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
@@ -94,23 +95,17 @@
                   		<div class="row">
                     		<span class="label">First Name</span>
                     	
-                    		<div class="field">&nbsp; </div>
+                    		<div class="field" id="ref_firstname">&nbsp; </div>
                   		</div>
                 
                   		<!-- Last name -->
                   		<div class="row">
                     		<span class="label">Last Name</span>
              
-                    		<div class="field">&nbsp; </div>
+                    		<div class="field" id="ref_lastname">&nbsp; </div>
                   		</div>
                 
-                  		<!-- Relationship name -->
-                  		<div class="row">
-                    		<span class="label">Relationship</span>
-<div class="field">&nbsp; </div>
-                  		</div>
-                	
-                	</div>
+
 
                 	<div>
                   
@@ -120,15 +115,14 @@
                   		<div class="row">
                     		<span class="label">Employer</span>
 
-                    		<div class="field">&nbsp; </div>
+                    		<div class="field" id="ref_employer">&nbsp; </div>
                   		</div>
                 
                   		<!-- Position title -->
                   		<div class="row">
-                    		<span class="label">Title</span>
+                    		<span class="label">Position</span>
 
-                    		<div class="field">&nbsp; </div>
-                  		</div>
+ref_position                  		</div>
                   		
                 	</div>
 
@@ -148,7 +142,7 @@
                   		<!-- Country -->
                   		<div class="row">
                     		<span class="label">Country</span>
-<div class="field">&nbsp; </div>
+						<div class="field">&nbsp; </div>
                   		</div>
                 	
                 	</div>
@@ -202,4 +196,4 @@
 				</form>
             
             </div>
-            <script type="text/javascript" src="<@spring.url '/design/default/js/application/referee.js'/>"></script>
+            <script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/referee.js'/>"></script>

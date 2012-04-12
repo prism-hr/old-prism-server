@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring />
-<#assign errorCode = RequestParameters.errorCode />
+<#assign errorCode = RequestParameters.errorCode! />
 <#assign htmlEscape = true in spring>
 <h2 id="documents-H2" class="empty">
 	<span class="left"></span><span class="right"></span><span class="status"></span>

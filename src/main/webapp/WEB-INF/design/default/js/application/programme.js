@@ -4,14 +4,8 @@ $(document).ready(function(){
 	$("#primarySupervisorCB").attr('checked', false);
 	$("#primarySupervisor").val("NO");
 	$("#awareSupervisor").val("NO");
+	var unsavedSupervisors = 0;
 	
-	
-//	$('a[name="deleteSupervisor"]').click( function(event){
-//		 event.preventDefault(); 
-//		 if(confirm("Are you sure you want to delete the supervisor?")){
-//			 $(this).parent().parent().remove();
-//		}
-//	});
 	
 	$("#supervisor_div").on("click", "a[name=\"deleteSupervisor\"]", function(){	
 		if(confirm("Are you sure you want to delete the supervisor?")){
@@ -27,16 +21,14 @@ $(document).ready(function(){
 	
 	});
 	$("#supervisor_div").on("click", "a[name=\"editSupervisorLink\"]", function(){
-		$("#addSupervisorButton").hide();
-		$("#updateSupervisorButton").show();
-		$(this).parent("span").remove();
-		$(this).parent().parent().remove();
-		if($("input[name='sId']").val()==null){
-			alert("here");
-			$("#supervisorFirstname").val($("input[name='sFN']").val());
-			$("#supervisorLastname").val($("input[name='sLN']").val());
-			$("#supervisorEmail").val($("input[name='sEM']").val());
-			if ($("input[name='sEM']").val() =='YES'){
+		
+		var id = this.id;
+		if(id.indexOf("us_") != -1){
+			id = id.replace('us_', '');
+			$("#supervisorFirstname").val($('#us_'+id+"firstname").val());
+			$("#supervisorLastname").val($('#us_'+id+"lastname").val());
+			$("#supervisorEmail").val($('#us_'+id+"email").val());
+			if ($('#us_'+id+'_aware').val() =='YES'){
 				$("#awareSupervisorCB").attr('checked', true);
 				$("#awareSupervisor").val("YES");
 			} else {
@@ -45,7 +37,6 @@ $(document).ready(function(){
  			}
 		}
 		else{
-			var id = this.id;
 			id = id.replace('supervisor_', '');
 			$("#supervisorId").val(id);
 			$('#'+id+"_supervisors").val('');
@@ -60,29 +51,11 @@ $(document).ready(function(){
 				$("#awareSupervisor").val("NO");
 			}
 		}
+			$("#addSupervisorButton").hide();
+			$("#updateSupervisorButton").show();
+			$(this).parent("span").remove();
+			$(this).parent().parent().remove();
 	});
-	
-	
-//	
-//	$('a[name="editSupervisorLink"]').click(function(){
-//		$("#addSupervisorButton").hide();
-//		$("#updateSupervisorButton").show();
-//		var id = this.id;
-//		id = id.replace('supervisor_', '');
-//		$("#supervisorId").val(id);
-//		$("#supervisorFirstname").val($('#'+id+"_firstname").val());
-//		$("#supervisorLastname").val($('#'+id+"_lastname").val());
-//		$("#supervisorEmail").val($('#'+id+"_email").val());
-//		if ($('#'+id+'_aware').val() =='YES'){
-//			$("#awareSupervisorCB").attr('checked', true);
-//			$("#awareSupervisor").val("YES");
-//		} else {
-//			$("#awareSupervisorCB").attr('checked', false);
-//			$("#awareSupervisor").val("NO");
-//		}
-//	});
-	
-	
 	
 	$('#programmeCancelButton').click(function(){
 		$("#addSupervisorButton").show();
@@ -105,7 +78,6 @@ $(document).ready(function(){
 		}
 	});
 	
-	//use the same logic for save programme details and add supervisor
 	
 	$('#programmeSaveButton').on("click",function(){
 		postProgrammeData('close');
@@ -142,14 +114,18 @@ $(document).ready(function(){
 			$("span[name='superLastname']").hide();
 			$("span[name='superEmail']").html('');
 			$("span[name='superEmail']").hide();
-		
+			unsavedSupervisors++;
 		$('table.data-table tbody').append('<span name="supervisor_span">'+ 
 					'<tr>' +
 					'<td>' + $('#supervisorFirstname').val()+' '+ $('#supervisorLastname').val()+'</td>' +
 					'<td>'+ $('#supervisorEmail').val()+ '</td>' +
 					'<td>' + $('#awareSupervisor').val() +'</td>'+
-					'<td><a class=\"button-delete\"  name=\"deleteSupervisor\">delete</a> <a class=\"button-edit\"  name=\"editSupervisorLink\">edit</a> </td>' +
+					'<td><a class=\"button-delete\"  name=\"deleteSupervisor\">delete</a> <a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a> </td>' +
 					'</tr>'+
+					'<input type="hidden" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
+					'<input type="hidden" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
+					'<input type="hidden" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
+					'<input type="hidden" id="us_'+unsavedSupervisors+'aware" value="' + $('#awareSupervisor').val()+'"/>'	+								
 					'<input type="hidden" name="supervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $('#awareSupervisor').val() + '"} ' + "'" + "/>"	+								
 					'</span>');
 		
@@ -194,10 +170,21 @@ $(document).ready(function(){
 			$("span[name='superEmail']").hide();
 			
 			$('table.data-table tbody').append('<span name="supervisor_span">'+ 
-					"<tr><td>" + $('#supervisorFirstname').val()+" "+ $('#supervisorLastname').val()+"</td><td>"+
-					$('#supervisorEmail').val()+ "</td><td>" + $('#awareSupervisor').val() +'</td><td><a class="button-delete"  name="deleteSupervisor">delete</a> <a class="button-edit"  name="editSupervisorLink">edit</a> </td></tr>'+
-					'<input type="hidden" name="supervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $('#awareSupervisor').val() + '"} ' + "'" + "/>"									
-					+'<br/></span>');
+					'<tr>' +
+					'<td id="us_'+unsavedSupervisors+'firstname">' + $('#supervisorFirstname').val()+' '+ $('#supervisorLastname').val()+'</td>' +
+					'<td id="us_'+unsavedSupervisors+'email">'+ $('#supervisorEmail').val()+ '</td>' +
+					'<td id="us_'+unsavedSupervisors+'aware">' + $('#awareSupervisor').val() +'</td>'+
+					'<td><a class=\"button-delete\"  name=\"deleteSupervisor\">delete</a> <a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a> </td>' +
+					'</tr>'+
+					'<input type="hidden" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
+					'<input type="hidden" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
+					'<input type="hidden" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
+					'<input type="hidden" id="us_'+unsavedSupervisors+'aware" value="' + $('#awareSupervisor').val()+'"/>'	+								
+					
+					'<input type="hidden" name="supervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $('#awareSupervisor').val() + '"} ' + "'" + "/>"	+								
+					'</span>');
+		
+		
 			$("input[name='sFN']").val($('#supervisorFirstname').val());
 			$("input[name='sLN']").val($('#supervisorLastname').val());
 			$("input[name='sEM']").val($('#supervisorEmail').val());

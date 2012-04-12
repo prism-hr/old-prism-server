@@ -5,66 +5,22 @@ $(document).ready(function(){
 		return false;
 	});
 	
-	$('a[name="deleteButton"]').click( function(){	
-		$(this).parent("form").submit();
-	});
-	
-	$('#fundingSaveCloseButton').click(function(){
-		$.post("/pgadmissions/update/addFunding", { 
-			fundingType: $("#fundingType").val(),
-			fundingDescription: $("#fundingDescription").val(), 
-			fundingValue: $("#fundingValue").val(), 
-			fundingAwardDate: $("#fundingAwardDate").val(), 
-			id: $("#id").val(), 
-			appId: $("#appId").val(),
-			fundingId: $("#fundingId").val()
-		},
-		
-		function(data) {
-			$('#fundingSection').html(data);
-		});
-	});
-	
-	$('#fundingSaveAddButton').click(function(){
-		$.post("/pgadmissions/update/addFunding", { 
-			fundingType: $("#fundingType").val(),
-			fundingDescription: $("#fundingDescription").val(), 
-			fundingValue: $("#fundingValue").val(), 
-			fundingAwardDate: $("#fundingAwardDate").val(), 
-			id: $("#id").val(), 
-			appId: $("#appId").val(),
-			fundingId: $("#fundingId").val(),
-			add:"add"
-		},
-		
-		function(data) {
-			$('#fundingSection').html(data);
-		});
-	});
+
+
 
 	$('a[name="fundingEditButton"]').click(function(){
+		alert("click");
 		var id = this.id;
 		id = id.replace('funding_', '');
-		$("#fundingId").val($('#'+id+"_fundingIdDP").val());
-		$("#fundingType").val($('#'+id+"_fundingTypeDP").val());
-		$("#fundingValue").val($('#'+id+"_fundingValueDP").val());
-		$("#fundingDescription").val($('#'+id+"_fundingDescriptionDP").val());
-		$("#fundingAwardDate").val($('#'+id+"_fundingAwardDateDP").val());
+		$("#fundingId").html($('#'+id+"_fundingIdDP").val());
+		$("#fundingType").html($('#'+id+"_fundingTypeDP").val());
+		$("#fundingValue").html($('#'+id+"_fundingValueDP").val());
+		$("#fundingDescription").html($('#'+id+"_fundingDescriptionDP").val());
+		$("#fundingAwardDate").html($('#'+id+"_fundingAwardDateDP").val());
+		$("#proofOfAward").html('<a href="' + $('#'+id+"_docurl").val() + '">' +  $('#'+id+"_docname").val() + '</a>');
 	});
 	
-	$('a[name="fundingCancelButton"]').click(function(){
-		$("#fundingId").val("");
-		$("#fundingType").val("");
-		$("#fundingValue").val("");
-		$("#fundingDescription").val("");
-		$("#fundingAwardDate").val("");
-		$("span[class='invalid']").each(function(){
-			$(this).html("");
-		});
-		
-	});
-	
-	  bindDatePickers();
+
 
 		//open/close
 		var $header  =$('#funding-H2');

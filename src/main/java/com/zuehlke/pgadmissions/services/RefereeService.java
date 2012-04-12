@@ -52,7 +52,6 @@ public class RefereeService {
 		return refereeDAO.getRefereeById(id);
 	}
 
-	@Transactional
 	public void save(Referee referee) {
 		refereeDAO.save(referee);
 	}
@@ -62,6 +61,7 @@ public class RefereeService {
 		return refereeDAO.getRefereeByActivationCode(activationCode);
 	}
 
+	@Transactional
 	public void saveReferenceAndSendMailNotifications(Referee referee) {
 		save(referee);
 		sendMailToApplicant(referee);

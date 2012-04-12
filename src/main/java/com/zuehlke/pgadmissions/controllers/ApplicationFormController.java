@@ -44,7 +44,7 @@ public class ApplicationFormController {
 		Project proj = projectDAO.getProjectById(project);
 		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, proj);
 
-		return new ModelAndView("redirect:/application", "id", applicationForm.getId());
+		return new ModelAndView("redirect:/application", "applicationId", applicationForm.getId());
 
 	}
 

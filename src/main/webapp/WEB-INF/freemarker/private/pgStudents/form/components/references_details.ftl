@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring />
-<#assign errorCode = RequestParameters.errorCode />
+<#assign errorCode = RequestParameters.errorCode! />
 <#if applicationForm.referees?has_content>
 	<#assign hasReferees = true>
 <#else>

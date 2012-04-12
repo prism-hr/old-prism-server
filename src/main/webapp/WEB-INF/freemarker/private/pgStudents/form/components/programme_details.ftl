@@ -1,6 +1,6 @@
 <#-- Assignments -->
 <#import "/spring.ftl" as spring />
-<#assign errorCode = RequestParameters.errorCode />
+<#assign errorCode = RequestParameters.errorCode! />
 <#-- Programme Details Rendering -->
 
 

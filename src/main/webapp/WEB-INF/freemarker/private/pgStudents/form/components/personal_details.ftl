@@ -1,5 +1,5 @@
 <#-- Assignments -->
-<#assign errorCode = RequestParameters.errorCode />
+<#assign errorCode = RequestParameters.errorCode! />
 <#if personalDetails?has_content>
 	<#assign hasPersonalDetails = true>
 <#else>

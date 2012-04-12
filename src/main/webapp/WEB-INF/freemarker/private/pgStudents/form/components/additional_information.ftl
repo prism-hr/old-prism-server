@@ -29,10 +29,8 @@
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/additional_information.js'/>"></script>
 	
-<#if !message?? >
 <script type="text/javascript">
 	$(document).ready(function(){
-		$('#documents-H2').trigger('click');
+		$('#additional-H2').trigger('click');
 	});
 </script>
-</#if>

@@ -1,4 +1,5 @@
 $(document).ready(function(){	
+
 	
 	$.get("/pgadmissions/update/getProgrammeDetails",
 			{
@@ -98,13 +99,7 @@ $(document).ready(function(){
 	 * Keep the view state of the form open or close depending on the user role.
 	 */
 	$(window).load(function(){
-		if($("input#form-display-state").val() == "close"){
-			// close everything
-			$('section.folding:not(.error) > div').removeClass("open").hide();
-			$('section.folding:not(.error) > h2').removeClass("open");
-			
-
-		}
+		
 		
 		// To make uncompleted functionalities disable.
 		$(".disabledEle").attr("disabled", "disabled");
@@ -176,3 +171,13 @@ $(document).ready(function(){
 
 
 });
+
+function closeSections(){
+	if($("input#form-display-state").val() == "close"){
+		// close everything
+		$('section.folding:not(.error) > div').removeClass("open").hide();
+		$('section.folding:not(.error) > h2').removeClass("open");
+		
+
+	}
+}

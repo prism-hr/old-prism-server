@@ -92,7 +92,7 @@ public class RegisterController {
 		String redirectView = "redirect:";
 		if (user.getProjectOriginallyAppliedTo() != null) {
 			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProjectOriginallyAppliedTo());
-			redirectView = redirectView + "/application?id=" + newApplicationForm.getId();
+			redirectView = redirectView + "/application?applicationId=" + newApplicationForm.getId();
 		} else {
 			redirectView = redirectView + "/applications";
 		}

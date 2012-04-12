@@ -125,7 +125,7 @@ public class RegisterControllerTest {
 		EasyMock.replay(registrationServiceMock, applicationsServiceMock);
 		ModelAndView modelAndView = registerController.activateAccountSubmit(activationCode);		
 		EasyMock.verify(registrationServiceMock);
-		assertEquals("redirect:/application?id=21", modelAndView.getViewName());		
+		assertEquals("redirect:/application?applicationId=21", modelAndView.getViewName());		
 		assertTrue(user.isEnabled());
 	}
 	

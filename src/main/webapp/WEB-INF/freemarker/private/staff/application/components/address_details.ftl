@@ -36,7 +36,7 @@
                                             disabled="disabled">
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id?string('#######')}" <#if model.address.currentAddressCountry?? && model.address.currentAddressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                                    <option value="${country.id?string('#######')}" <#if model.address.currentAddressCountry?? && model.address.currentAddressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
                                 </#list>
                             </select>
 						</div>
@@ -59,7 +59,7 @@
                                             disabled="disabled">
                             <option value="">Select...</option>
                                 <#list model.countries as country>
-                                    <option value="${country.id?string('#######')}" <#if model.address.contactAddressCountry?? && model.address.contactAddressCountry == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                                    <option value="${country.id?string('#######')}" <#if model.address.contactAddressCountry?? && model.address.contactAddressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
                                 </#list>
                             </select>
                         </div>

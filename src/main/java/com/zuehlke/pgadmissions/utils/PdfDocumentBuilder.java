@@ -125,7 +125,6 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Referrer: " + application.getProgrammeDetails().getReferrer().displayValue()));
 		}
 
-
 		if (application.getProgrammeDetails().getSupervisors().isEmpty()) {
 			document.add(new Paragraph(createMessage("supervisors information")));
 		} else {
@@ -247,17 +246,17 @@ public class PdfDocumentBuilder {
 	private void addAddressSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Address                                                                                                ", grayFont));
 
-		if (application.getAddresses().isEmpty()) {
-			document.add(new Paragraph(createMessage("address information")));
-		} else {
-			Address currentAddress = application.getAddresses().get(0);
+		Address currentAddress = application.getCurrentAddress();
+		if (currentAddress != null) {
 			document.add(new Paragraph("Current Address", smallBoldFont));
 			document.add(new Paragraph("Location: " + currentAddress.getLocation()));
 			document.add(new Paragraph("Country: " + currentAddress.getCountry().getName()));
 
 			document.add(new Paragraph(" "));
+		}
 
-			Address contactAddress = application.getAddresses().get(1);
+		Address contactAddress = application.getContactAddress();
+		if (contactAddress != null) {
 			document.add(new Paragraph("Contact Address", smallBoldFont));
 			document.add(new Paragraph("Location: " + contactAddress.getLocation()));
 			document.add(new Paragraph("Country: " + contactAddress.getCountry().getName()));
@@ -289,7 +288,7 @@ public class PdfDocumentBuilder {
 
 				if (qualification.getProofOfAward() != null) {
 					document.newPage();
-					document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));			
+					document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));
 					readPdf(document, qualification.getProofOfAward());
 					document.newPage();
 				}
@@ -324,7 +323,6 @@ public class PdfDocumentBuilder {
 					document.add(new Paragraph("End Date: " + employment.getEndDate().toString()));
 				}
 
-
 				document.add(new Paragraph(" "));
 			}
 		}
@@ -343,9 +341,9 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("Description:" + funding.getDescription()));
 				document.add(new Paragraph("Value of Award: " + funding.getValue()));
 				document.add(new Paragraph("Award Date: " + funding.getAwardDate().toString()));
-				
+
 				document.newPage();
-				document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));			
+				document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));
 				readPdf(document, funding.getDocument());
 				document.newPage();
 
@@ -367,7 +365,6 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("First Name: " + reference.getFirstname()));
 				document.add(new Paragraph("Last Name: " + reference.getLastname()));
 
-
 				addCorrectOutputDependingOnNull(document, reference.getJobEmployer(), "Employer");
 				addCorrectOutputDependingOnNull(document, reference.getJobTitle(), "Position");
 
@@ -380,7 +377,7 @@ public class PdfDocumentBuilder {
 				}
 
 				document.add(new Paragraph("Email: " + reference.getEmail()));
-				document.add(new Paragraph("Telephone: " + reference.getPhoneNumber()));				
+				document.add(new Paragraph("Telephone: " + reference.getPhoneNumber()));
 				addCorrectOutputDependingOnNull(document, reference.getMessenger(), "Skype Name");
 
 				document.add(new Paragraph(" "));
@@ -388,8 +385,6 @@ public class PdfDocumentBuilder {
 		}
 
 	}
-
-
 
 	private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Additional Information                                                                        ", grayFont));
@@ -438,7 +433,7 @@ public class PdfDocumentBuilder {
 		for (Referee referee : application.getReferees()) {
 			if (referee.getReference() != null) {
 				document.newPage();
-				document.add(new Paragraph("Reference from " + referee.getFirstname() + " " + referee.getLastname(), boldFont));			
+				document.add(new Paragraph("Reference from " + referee.getFirstname() + " " + referee.getLastname(), boldFont));
 				readPdf(document, referee.getReference().getDocument());
 			}
 		}

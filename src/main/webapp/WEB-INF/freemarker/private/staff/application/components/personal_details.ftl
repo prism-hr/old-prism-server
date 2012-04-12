@@ -71,7 +71,11 @@
               	     <div class="row">
 						<label class="label">Requires Visa</label>
 						<div class="field">
-                    		${(model.applicationForm.personalDetails.requiresVisa?html)!}
+							<#if model.applicationForm.personalDetails.requiresVisa>
+                    		Yes
+                    		<#else>
+                    		No
+                    		</#if>
                     	</div>
 					</div>                              
                   	
@@ -82,7 +86,11 @@
               	     <div class="row">
 						<label class="label">Is English first language</label>
 						<div class="field">
-                    		${(model.applicationForm.personalDetails.englishFirstLanguage?html)!}
+                    		<#if model.applicationForm.personalDetails.englishFirstLanguage>
+                    		Yes
+                    		<#else>
+                    		No
+                    		</#if>
                     	</div>
 					</div>                              
                 </div>
@@ -178,34 +186,24 @@
                 
                 </div>
                 
-              	<div>
-                	<#if (model.applicationForm.personalDetails.phoneNumbers?size > 0)>
-                	 	 <#list model.applicationForm.personalDetails.phoneNumbers! as phoneNumber>          
-							<span>
-	                  	  		<div class="row">
-	                  	  	 		<span class="label">Telephone</span>    
-	                  				<div class="field">  ${phoneNumber.telephoneType.displayValue} ${phoneNumber.telephoneNumber} </div>                  	  			
-	                  	  		</div>                                
-	                  	  	</span>
-                   	 	</#list>
-                	<#else>
-	                	<span>
-	              	  		<div class="row">
-	              	  	 		<span class="label">Telephone</span>    
-	              				<div class="field">-</div>                  	  			
-	              	  		</div>                                
-	              	  	</span>
-                	</#if>
-                </div>
+          		<div>
+              		<div class="row">
+                		<span class="label">Telephone</span>
+                    	<div class="field">
+	                    	${(model.applicationForm.personalDetails.phoneNumber?html)!}
+                    	</div>
+                  	</div>
+                 </div>
+
                 
               	<div>
-              	<div class="row">
+              		<div class="row">
                 		<span class="label">Skype</span>
                     	<div class="field">
 	                    	${(model.applicationForm.personalDetails.messenger?html)!}
                     	</div>
                   	</div>
-                  	</div>
+                 </div>
 
               	<div class="buttons" id="show-comment-button-div">
               		<#if model.user??>

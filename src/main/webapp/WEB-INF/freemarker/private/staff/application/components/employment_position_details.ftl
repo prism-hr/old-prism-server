@@ -106,10 +106,10 @@
                     </div>
                 </div>
                 <div class="row">
-                       <label class="label">Is Completed</label>
+                       <label class="label">Current position</label>
                 <span class="hint" data-desc="Tooltip demonstration."></span>
                        		<input type="checkbox" name="completedPositionCB" id="completedPositionCB"/
-                       		<#if model.employmentPosition.isEmploymentPositionCompleted()>
+                       		<#if model.employmentPosition.current>
                                           checked
                                 </#if>
                                           disabled="disabled">

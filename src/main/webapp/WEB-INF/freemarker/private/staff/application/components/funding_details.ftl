@@ -21,7 +21,7 @@
 	                <col style="width: 120px" />
 	                <col />
 	                <col style="width: 120px" />
-	                <col style="width: 30px" />
+
 	        	</colgroup>
 	            
 	            <thead>
@@ -29,7 +29,7 @@
 	                	<th colspan="2">Funding Type</th>
 	                    <th>Description</th>
 	                    <th>Award Date</th>
-	                    <th colspan="1">&nbsp;</th>
+	                  
 					</tr>
 				</thead>
 	                
@@ -46,6 +46,8 @@
                             <input type="hidden" id="${funding.id?string('#######')}_fundingValueDP" value="${funding.value?html}"/>
                             <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description?html}"/>
                             <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
+                            <input type="hidden" id="${funding.id?string('#######')}_docname" value="${(funding.document.fileName)!}"/>
+                            <input type="hidden" id="${funding.id?string('#######')}_docurl" value="/pgadmissions/download?documentId=${(funding.document.id?string("#######"))!}"/>
 		                </tr>
 					</#list>				               
 				</tbody>
@@ -61,27 +63,34 @@
 				<!-- Award type -->
                 <div class="row">
                   	<span class="label">Funding Type</span>             
-                	 <div class="field">&nbsp; </div>
+                	 <div class="field" id="fundingType">&nbsp; </div>
 				</div>
 
                 <!-- Award description -->
                 <div class="row">
-                	<span class="label">Description</span>
-                  					 <div class="field">&nbsp; </div>
+                	<span class="label" >Description</span>
+                  					 <div class="field" id="fundingDescription">&nbsp; </div>
 				</div>
                   
                 <!-- Value of award -->
                 <div class="row">
                   	<span class="label">Value of Award</span>
 
-                 <div class="field">&nbsp; </div>
+                 <div class="field"  id="fundingValue">&nbsp; </div>
 				</div>
                   
                 <!-- Award date -->
                 <div class="row">
                                     	<span class="label">Award Date</span>
                     
-                     <div class="field">&nbsp; </div>
+                     <div class="field" id="fundingAwardDate">&nbsp; </div>
+                </div>
+                
+                  <!-- Award date -->
+                <div class="row">
+                                    	<span class="label">Proof of award</span>
+                    
+                     <div class="field" id="proofOfAward">&nbsp; </div>
                 </div>
                 
                 <!--  
@@ -101,4 +110,4 @@
 		</form>
 	</div>
 
-	<script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>
+	<script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/funding.js'/>"></script>

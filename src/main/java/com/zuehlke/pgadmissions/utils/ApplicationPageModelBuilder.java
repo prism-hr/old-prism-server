@@ -86,21 +86,21 @@ public class ApplicationPageModelBuilder {
 
 	private AddressSectionDTO buildAddress(ApplicationForm applicationForm) {
 		AddressSectionDTO address = new AddressSectionDTO();
-		if (applicationForm.getAddresses().size() > 0) {
-			com.zuehlke.pgadmissions.domain.Address currentAddress = applicationForm.getAddresses().get(0);
+
+		com.zuehlke.pgadmissions.domain.Address currentAddress = applicationForm.getCurrentAddress();
+		if (currentAddress != null) {
 			address.setCurrentAddressCountry(currentAddress.getCountry());
 
 			address.setCurrentAddressLocation(currentAddress.getLocation());
-			if (applicationForm.getAddresses().size() > 1) {
-				com.zuehlke.pgadmissions.domain.Address contactAddress = applicationForm.getAddresses().get(1);
-				address.setContactAddressCountry(contactAddress.getCountry());
+		}
+		com.zuehlke.pgadmissions.domain.Address contactAddress = applicationForm.getContactAddress();
+		if(contactAddress != null){
+		address.setContactAddressCountry(contactAddress.getCountry());
 
-				address.setContactAddressLocation(contactAddress.getLocation());
-				if (currentAddress.getLocation().equals(contactAddress.getLocation()) && currentAddress.getCountry().equals(contactAddress.getCountry())) {
-					address.setSameAddress(true);
-				}
-			}
-
+		address.setContactAddressLocation(contactAddress.getLocation());
+		}
+		if (currentAddress != null && contactAddress != null && currentAddress.getLocation().equals(contactAddress.getLocation()) && currentAddress.getCountry().equals(contactAddress.getCountry())) {
+			address.setSameAddress(true);
 		}
 
 		return address;

@@ -11,6 +11,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -22,6 +24,10 @@ import cucumber.annotation.lu.a;
 
 public class ApplicationFormBuilder {
 
+	private ProgrammeDetails programmeDetails;
+	
+	private PersonalDetails personalDetails;
+	
 	private Address currentAddress;
 
 	private Address contactAddress;
@@ -50,13 +56,23 @@ public class ApplicationFormBuilder {
 
 	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
 
-	private List<Address> addresses = new ArrayList<Address>();
 	private List<Funding> fundings = new ArrayList<Funding>();
 
 	private Document cv = null;
 
 	private Document personalStatement = null;
 
+	public ApplicationFormBuilder personalDetails(PersonalDetails personalDetails) {
+		this.personalDetails = personalDetails;
+		return this;
+	}
+	
+	
+	public ApplicationFormBuilder programmeDetails(ProgrammeDetails programmeDetails) {
+		this.programmeDetails = programmeDetails;
+		return this;
+	}
+	
 	public ApplicationFormBuilder contactAddress(Address contactAddress) {
 		this.contactAddress = contactAddress;
 		return this;
@@ -128,12 +144,7 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
-	public ApplicationFormBuilder addresses(Address... addresses) {
-		for (Address address : addresses) {
-			this.addresses.add(address);
-		}
-		return this;
-	}
+
 
 	public ApplicationFormBuilder approvedSatus(ApprovalStatus approved) {
 		this.approved = approved;
@@ -180,12 +191,13 @@ public class ApplicationFormBuilder {
 		application.setSubmissionStatus(submissionStatus);
 		application.setApplicationTimestamp(appDate);
 		application.getQualifications().addAll(qualifications);
-		application.getAddresses().addAll(addresses);
+		application.setProgrammeDetails(programmeDetails);
 		application.getFundings().addAll(fundings);
 		application.setCv(cv);
 		application.setPersonalStatement(personalStatement);
 		application.setContactAddress(contactAddress);
 		application.setCurrentAddress(currentAddress);
+		application.setPersonalDetails(personalDetails);
 		return application;
 	}
 }

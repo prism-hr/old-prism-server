@@ -200,6 +200,12 @@ public class PersonalDetailsControllerTest {
 		assertEquals("bob", controller.getMessage("bob"));
 
 	}
+	
+	@Test
+	public void shouldReturnErrorCode() {
+		assertEquals("bob", controller.getErrorCode("bob"));
+
+	}
 
 	@Test
 	public void shouldSaveQulificationAndRedirectIfNoErrors() {

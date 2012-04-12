@@ -1,4 +1,4 @@
-<#if model.applicationForm.fundings?has_content>
+<#if applicationForm.fundings?has_content>
 	<#assign hasFundings = true>
 <#else>
 	<#assign hasFundings = false>
@@ -35,7 +35,7 @@
 	                
 				<tbody>
 				
-					<#list model.applicationForm.fundings as funding>		
+					<#list applicationForm.fundings as funding>		
 						<tr>
 		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id?string('#######')}">-</a></td>
 		                  	<td>${funding.type.displayValue}</td>
@@ -60,50 +60,28 @@
 			<div>
 				<!-- Award type -->
                 <div class="row">
-                  	<span class="label">Funding Type</span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                	
-                	<div class="field">
-                	<select id="fundingType" name="fundingType" class="full" value="${(model.funding.fundingType?html)!}" 
-                                                disabled="disabled">
-                            <option value="">Select...</option>
-                            <#list model.fundingTypes as type>
-                                <option value="${type}"
-                                <#if model.funding.fundingType?? && model.funding == type>
-                                        selected="selected"
-                                        </#if>
-                                >${type.displayValue}</option>               
-                            </#list>
-                        </select>
-					</div>
+                  	<span class="label">Funding Type</span>             
+                	 <div class="field">&nbsp; </div>
 				</div>
 
                 <!-- Award description -->
                 <div class="row">
                 	<span class="label">Description</span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-					<div class="field">
-					<input id="fundingDescription" name="fundingDescription" readonly="readonly" class="full" type="text" value="${(model.funding.fundingDescription?html)!}" />
-					</div>
+                  					 <div class="field">&nbsp; </div>
 				</div>
                   
                 <!-- Value of award -->
                 <div class="row">
                   	<span class="label">Value of Award</span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <div class="field">
-                    <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${(model.funding.fundingValue?html)!}" />
-					</div>
+
+                 <div class="field">&nbsp; </div>
 				</div>
                   
                 <!-- Award date -->
                 <div class="row">
-                  	<span class="label" data-desc="Tooltip demonstration.">Award Date</span>
-                    <span class="hint"></span>
-                    <div class="field">
-                     <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(model.funding.fundingAwardDate?string('dd-MMM-yyyy'))!}"
-                                                disabled="disabled"/>
-					</div>
+                                    	<span class="label">Award Date</span>
+                    
+                     <div class="field">&nbsp; </div>
                 </div>
                 
                 <!--  

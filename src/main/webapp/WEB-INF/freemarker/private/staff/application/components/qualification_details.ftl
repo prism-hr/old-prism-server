@@ -1,4 +1,4 @@
-<#if model.applicationForm.qualifications?has_content>
+<#if applicationForm.qualifications?has_content>
 	<#assign hasQualifications = true>
 <#else>
 	<#assign hasQualifications = false>
@@ -37,7 +37,7 @@
 		                
 		                <tbody>
 		                
-		                	<#list model.applicationForm.qualifications as qualification>
+		                	<#list applicationForm.qualifications as qualification>
 			                	<tr>
 				                  	<td><a class="row-arrow" id="qualification_${qualification.id?string('#######')}" name ="editQualificationLink">-</a></td>
 				                  	<td>${qualification.qualificationType}</td>
@@ -58,7 +58,7 @@
                                 <input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/> 
 								<input type="hidden"  id="${qualification.id?string('#######')}_qualificationCompleted" value="${qualification.completed}"/> 
 										                  
-</tr>
+						</tr>
 							</#list>
 										
 		                </tbody>
@@ -75,99 +75,54 @@
 	                  	<!-- Provider -->
 	                	<div class="row">
 		                  	<span class="label">Provider</span>
-		                    <span class="hint" data-desc="Tooltip demonstration."></span>
-		                    <div class="field">
-		                     <input readonly="readonly" id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL" 
-                                                                value="${(model.qualification.qualificationInstitution?html)!}" />
-		                    </div>
+		                  
+		                    <div class="field">&nbsp; </div>
 	                  	</div>
 	                  
 	                  	<!-- Name (of programme) -->
 	                	<div class="row">
 		                  	<span class="label">Programme</span>
-		                    <span class="hint" data-desc="Tooltip demonstration."></span>
-		                    <div class="field">
-		                    <input readonly="readonly" id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering" 
-                                                                value="${(model.qualification.qualificationSubject?html)!}"/>
-		                    </div>
+		
+		                    <div class="field">&nbsp; </div>
 	             		</div>
 	                  
 	                  	<!-- Start date -->
 	                	<div class="row">
 		                  	<span class="label">Start Date</span>
-		                    <span class="hint" data-desc="Tooltip demonstration."></span>
-		                    <div class="field">
-		                    <input id="qualificationStartDate" class="half date" type="text" 
-                                                                value="${(model.qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}" 
-                                            disabled="disabled">
-                            </input>
-		                    </div>
+		 
+		                    <div class="field">&nbsp; </div>
 	                 	</div>
 	                 	
 	                 	<div class="row">
-                       <label class="label">Is Completed</label>
-                         <span class="hint" data-desc="Tooltip demonstration."></span>
-                       		<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"/
-                       		<#if model.qualification.isQualificationCompleted()>
-                                          checked
-                                </#if>
-                                          disabled="disabled">
-                            <input type="hidden" name="currentQualification" id="currentQualification"/>
-               			
-               			 </div>
-	                
+                       <span class="label">Is Completed</span>                  	
+               			 <div class="field">&nbsp; </div>
+	                	</div>
                   		<!-- Language (in which programme was undertaken) -->
                   		<div class="row">
                     		<span class="label">Language of Study</span>
-                    		<span class="hint" data-desc="Tooltip demonstration."></span>
-                    		<div class="field">
-                    		  <select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${(model.qualification.qualificationLanguage?html)!}"
-                                                disabled="disabled">
-                                <option value="">Select...</option>
-                                    <#list model.languages as language>
-                                        <option value="${language.id?string('#######')}"  <#if model.qualification.qualificationLanguage?? && model.qualification.qualificationLanguage == language.id> selected="selected"</#if>>${language.name}</option>
-                                    </#list>
-                                </select>
-                    		</div>
+
+                    	<div class="field">&nbsp; </div>
                   		</div>
                   
                   		<!-- Qualification level -->
 	                  	<div class="row">
 	                    	<span class="label">Level</span>
-	                    	<span class="hint" data-desc="Tooltip demonstration."></span>
-	                    	<div class="field">
-	                    	  <select name="qualificationLevel" id="qualificationLevel" value="${(model.qualification.qualificationLevel?html)!}"
-                                                disabled="disabled">
-                                     <option value="">Select...</option>
-                                     <#list model.qualificationLevels as level>
-                                         <option value="${level}"
-                                         <#if model.qualification.qualificationLevel?? &&  model.qualification.qualificationLevel == level >
-                                        selected="selected"
-                                        </#if>
-                                >${level.displayValue}</option>               
-                                    </#list>
-                                </select>
-	                    	</div>
+	                    	
+	                    	<div class="field">&nbsp; </div>
 	                  	</div>
 
                   		<!-- Qualification type -->
                   		<div class="row">
                     		<span class="label">Type</span>
-                    		<span class="hint" data-desc="Tooltip demonstration."></span>
-                    		<div class="field">
-                    		 <input readonly="readonly" id="qualificationType" class="full" type="text" 
-                                                                value="${(model.qualification.qualificationType?html)!}"/>
-                    		</div>
+                    
+                    		<div class="field">&nbsp; </div>
                   		</div>
 
                   		<!-- Qualification grade -->
                   		<div class="row">
                     		<span class="label">Grade</span>
-                    		<span class="hint" data-desc="Tooltip demonstration."></span>
-                    		<div class="field">
-                    		 <input readonly="readonly" id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction"
-                                                                value="${(model.qualification.qualificationGrade?html)!}"/>
-                    		</div>
+
+                    		<div class="field">&nbsp; </div>
                   		</div>
 
     
@@ -175,13 +130,8 @@
                   		<!-- Award date -->
                   		<div class="row">
                     		<span class="label">Award Date</span>
-                    		<span class="hint" data-desc="Tooltip demonstration."></span>
-                    		<div class="field">
-                    		<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" 
-                                                value="${(model.qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"
-                                            disabled="disabled">
-                            </input>
-                    		</div>
+                    	
+                    		<div class="field">&nbsp; </div>
                   		</div>
 
                   		<!-- Attachment / supporting document 

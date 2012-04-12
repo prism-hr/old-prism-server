@@ -1,6 +1,6 @@
 <#-- Assignments -->
 
-<#if model.user.isInRole('APPLICANT')>
+<#if user.isInRole('APPLICANT')>
 	<#assign formDisplayState = "close"/>
 <#else>
 	<#assign formDisplayState = "open"/>
@@ -76,7 +76,7 @@
 			    <!-- "Tools" -->
                 <div id="tools">
                     <ul class="left">
-                        <li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print Page</a></li>
+                        <li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>">Print Page</a></li>
                     </ul>
     
                 <ul class="right">
@@ -89,7 +89,7 @@
 			      <!-- FLOATING TOOLBAR -->
 		          <ul id="view-toolbar">
 		          	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-		          	<li class="print"><a href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
+		          	<li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
 		          </ul>
 			      
 			      
@@ -101,18 +101,18 @@
 			          
 				          	<div class="row">
 				            	<label>Programme</label>
-				              <input disabled size="109" value="${model.applicationForm.project.program.code} - ${model.applicationForm.project.program.title}" />
+				              <input disabled size="109" value="${applicationForm.project.program.code} - ${applicationForm.project.program.title}" />
 				            </div>
 				            
 				          	<div class="row half">
 				            	<label>Application Number</label>
-				              <input id="applicationNumber" disabled size="20" value="${model.applicationForm.id?string("######")}" />
+				              <input id="applicationNumber" disabled size="20" value="${applicationForm.id?string("######")}" />
 				            </div>
 				            
-				              <#if model.applicationForm.isSubmitted()>
+				              <#if applicationForm.isSubmitted()>
 						          	<div class="row">
 						            	<label>Date Submitted</label>
-						              <input id="applicationNumber" disabled size="20" value="${(model.applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}" />
+						              <input id="applicationNumber" disabled size="20" value="${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}" />
 						            </div>
 						     </#if>
 				        <!--    
@@ -165,10 +165,10 @@
 			          <hr />
 			          
 			          <a class="button" href="<@spring.url '/applications'/>">Close</a>
-			          <#if !model.applicationForm.isSubmitted() && model.user.isInRole('APPLICANT')>
+			          <#if !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>
 			             <a id="submitButton" class="button">Submit</a>
 			             <form id="submitApplicationForm" action="<@spring.url "/apply/submit"/>" method="POST">
-			          	      <input type="hidden" id="applicationFormId" name="applicationForm" value="${model.applicationForm.id?string("######")}"/>
+			          	      <input type="hidden" id="applicationFormId" name="applicationForm" value="${applicationForm.id?string("######")}"/>
 			             </form>
 			    	 </#if>
 			    	 <p></p>

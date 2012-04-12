@@ -93,10 +93,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToMany(mappedBy = "application")
 	private List<ApplicationReview> applicationComments = new ArrayList<ApplicationReview>();
 
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "application_form_id")
-	private List<Address> addresses = new ArrayList<Address>();
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -243,13 +239,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return applicationComments != null && !applicationComments.isEmpty();
 	}
 
-	public List<Address> getAddresses() {
-		return addresses;
-	}
 
-	public void setAddresses(List<Address> addresses) {
-		this.addresses = addresses;
-	}
 
 	public boolean hasQualifications() {
 		return !qualifications.isEmpty();

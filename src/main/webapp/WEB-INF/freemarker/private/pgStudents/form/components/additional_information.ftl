@@ -22,12 +22,13 @@
 		</div>
 
         <div class="buttons">
-        	<button class="blue" type="button" id="additionalCloseButton">Close</button>
         	<#if !applicationForm.isSubmitted()>
 	        	<a class="button" id="informationCancelButton" name="informationCancelButton">Cancel</a>
-	        
-	            <button class="blue" type="button" id="informationSaveButton">Save</button>
             </#if>                
+        	<button class="blue" type="button" id="additionalCloseButton">Close</button>
+	        <#if !applicationForm.isSubmitted()>
+	            <button class="blue" type="button" id="informationSaveButton">Save</button>
+	         </#if>   
 		</div>
 		
 	</form>

@@ -41,7 +41,6 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 		
 	</head>
@@ -92,18 +91,18 @@
 			          
 				          	<div class="row">
 				            	<label>Programme</label>
-				              <input disabled size="109" value="${model.applicationForm.project.program.code} - ${model.applicationForm.project.program.title}" />
+				              <input disabled size="109" value="${applicationForm.project.program.code} - ${applicationForm.project.program.title}" />
 				            </div>
 				            
 				          	<div class="row half">
 				            	<label>Application Number</label>
-				              <input id="applicationNumber" disabled size="20" value="${model.applicationForm.id?string("######")}" />
+				              <input id="applicationNumber" disabled size="20" value="${applicationForm.id?string("######")}" />
 				            </div>
 				               
-						     <#if model.applicationForm.isSubmitted()>
+						     <#if applicationForm.isSubmitted()>
 						          	<div class="row">
 						            	<label>Date Submitted</label>
-						              <input id="applicationNumber" disabled size="20" value="${(model.applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}" />
+						              <input id="applicationNumber" disabled size="20" value="${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}" />
 						            </div>
 						    </#if>
 				        <!--    
@@ -153,7 +152,6 @@
 			          
 			          <hr />
 			          
-			          <a class="button" href="<@spring.url '/references?activationCode=${RequestParameters.activationCode}'/>">Back</a>
 			         
 			        </div><!-- .content-box-inner -->
 			      </div><!-- .content-box -->
@@ -167,13 +165,12 @@
 		</div>
 		<!-- Scripts -->
 			
-		<script type='text/javascript' language="javascript" src="<@spring.url '/dwr/engine.js'/>"></script>
-	    <script type='text/javascript' language="javascript" src="<@spring.url '/dwr/util.js'/>"></script>
+
 			
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
+
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 	</body>
 </html>

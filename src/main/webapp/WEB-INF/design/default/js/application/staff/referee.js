@@ -9,21 +9,21 @@ $(document).ready(function(){
 	
 	
 $('a[name="refereeEditButton"]').click(function(){
-	alert('click');
-	//var id = this.id;
+
+	var id = this.id;
 	id = id.replace('referee_', '');
-	//alert('id:' +  id);
-	$("#refereeId").val($('#'+id+"_refereeId").val());
+
+	$("#refereeId").html($('#'+id+"_refereeId").val());
 	$("#ref_firstname").html($('#'+id+"_firstname").val());
-	$("#ref_lastname").val($('#'+id+"_lastname").val());
-	$("#ref_employer").val($('#'+id+"_jobEmployer").val());
-	$("#ref_position").val($('#'+id+"_jobTitle").val());
-	$("#ref_messenger").val($('#'+id+"_messenger").val());
-	$("#ref_phone").val($('#'+id+"_phone").val());
-	$("#ref_address_location").val($('#'+id+"_addressLocation").val());
+	$("#ref_lastname").html($('#'+id+"_lastname").val());
+	$("#ref_employer").html($('#'+id+"_jobEmployer").val());
+	$("#ref_position").html($('#'+id+"_jobTitle").val());
+	$("#ref_messenger").html($('#'+id+"_messenger").val() + "&nbsp;");
+	$("#ref_phone").html($('#'+id+"_phone").val());
+	$("#ref_address_location").html($('#'+id+"_addressLocation").val());
 	
-	$("#ref_address_country").val($('#'+id+"_addressCountry").val());
-	$("#ref_email").val($('#'+id+"_email").val());
+	$("#ref_address_country").html($('#'+id+"_addressCountry").val());
+	$("#ref_email").html($('#'+id+"_email").val());
 	
 	if($("#referenceUpdated")){
 		$("#referenceUpdated").html($('#'+id+"_lastUpdated").val());
@@ -35,13 +35,6 @@ $('a[name="refereeEditButton"]').click(function(){
 		}else{
 			$("#referenceDocument").html( $('#'+id+"_reference_document_name").val());
 		}
-	}
-
-	var $multiPhone = $('#multi-phone').text();
-	//alert("The value is "+ $multiPhone);
-	
-	if($multiPhone != ""){
-		$('#telephone-em').remove();
 	}
 	
 });

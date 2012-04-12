@@ -12,12 +12,12 @@
 				
             	<div>            	 
             		<div class="row">
-          				<label class="label">Address</label>
+          				<label class="label">Current Address</label>
           			</div>
                   	
                   	<!-- Address body -->
                   	<div class="row">
-                    	<span class="plain-label">Current Address<em>*</em></span>
+                    	<span class="plain-label">Address<em>*</em></span>
                     	<span class="hint"></span>
                     	<div class="field">
                     	   <#if !applicationForm.isSubmitted()>
@@ -33,6 +33,7 @@
                   	<!-- Country -->
                   	<div class="row">
                     	<span class="plain-label">Country<em>*</em></span>
+                    	<span class="hint"></span>
 	                    <div class="field">
 	                      	
 	                      	<select class="full" name="currentAddressCountry" id="currentAddressCountry"
@@ -50,13 +51,17 @@
 					</div>
 				</div> 
 				<div>	
+					<div class="row">
+          				<label class="label">Contact Address</label>
+          			</div>
+				
 					<!-- Address body -->
-                    <div class="row">
-                        <span class="plain-label">Contact Address<em>*</em></span>
+					<div class="row">
+						<span class="plain-label">Is this the same as your current address?</span>
                         <span class="hint"></span>
                        
                        <div class="field">
-                            <span class="label">Is this the same as your current address?</span>
+                            
                             <input type="checkbox" name="sameAddressCB" id="sameAddressCB"
                             <#if addressSectionDTO.sameAddress>
                                             checked="checked"
@@ -66,11 +71,14 @@
                                 </#if>
                             />                           
                        </div>
-                    </div>
+					</div>
                     
                     <p></p>
                         
                     <div class="row">
+                    	<span class="plain-label">Address<em>*</em></span>
+                        <span class="hint"></span>
+                    
                         <div class="field">
                            <#if !applicationForm.isSubmitted()>
                             <textarea id="contactAddressLocation" class="max" rows="6" cols="80" 
@@ -90,9 +98,10 @@
                             </#if>
                         </div>
                     </div>
-                                        <!-- Country -->
+                    <!-- Country -->
                     <div class="row">
                         <span class="plain-label">Country<em>*</em></span>
+                        <span class="hint"></span>
                         <div class="field">
                             
                             <select class="full" name="contactAddressCountry" id="contactAddressCountry"

@@ -122,13 +122,13 @@ public class PdfDocumentBuilder {
 		if (application.getProgrammeDetails().getReferrer() == null) {
 			document.add(new Paragraph(createMessage("referrer")));
 		} else {
-			document.add(new Paragraph("Referrer: " + application.getProgrammeDetails().getReferrer().displayValue()));
+			document.add(new Paragraph("How did you find us? " + application.getProgrammeDetails().getReferrer().displayValue()));
 		}
 
 		if (application.getProgrammeDetails().getSupervisors().isEmpty()) {
 			document.add(new Paragraph(createMessage("supervisors information")));
 		} else {
-			document.add(new Paragraph("Remaining Supervisors", smallBoldFont));
+			document.add(new Paragraph("Supervisors", smallBoldFont));
 			document.add(new Paragraph(" "));
 
 			PdfPTable table = new PdfPTable(4);
@@ -149,7 +149,7 @@ public class PdfDocumentBuilder {
 			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
 
-			c1 = new PdfPCell(new Phrase("Is supervisor aware of your application?", smallerBoldFont));
+			c1 = new PdfPCell(new Phrase("Is this supervisor aware of your application?", smallerBoldFont));
 			c1.setHorizontalAlignment(Element.ALIGN_CENTER);
 			c1.setBackgroundColor(grayColor);
 			table.addCell(c1);
@@ -183,13 +183,14 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Date of Birth: " + application.getPersonalDetails().getDateOfBirth().toString()));
 		}
 
+		document.add(new Paragraph("Nationality", smallBoldFont));
 		if (application.getPersonalDetails().getCountry() == null) {
 			document.add(new Paragraph(createMessage("country of birth")));
 		} else {
 			document.add(new Paragraph("Country of Birth: " + application.getPersonalDetails().getCountry().getName()));
 		}
 
-		addGivenNationality(document, "Nationality", application.getPersonalDetails().getCandidateNationalities());
+		addGivenNationality(document, "My Nationality", application.getPersonalDetails().getCandidateNationalities());
 		addGivenNationality(document, "Maternal Guardian Nationality", application.getPersonalDetails().getMaternalGuardianNationalities());
 		addGivenNationality(document, "Paternal Guardian Nationality", application.getPersonalDetails().getPaternalGuardianNationalities());
 
@@ -202,15 +203,15 @@ public class PdfDocumentBuilder {
 		document.add(new Paragraph("Residence", smallBoldFont));
 
 		if (application.getPersonalDetails().getResidenceCountry() == null) {
-			document.add(new Paragraph(createMessage("country")));
+			document.add(new Paragraph(createMessage("country of residence")));
 		} else {
-			document.add(new Paragraph("Country: " + application.getPersonalDetails().getResidenceCountry().getName()));
+			document.add(new Paragraph("Country of Residence: " + application.getPersonalDetails().getResidenceCountry().getName()));
 		}
 
 		if (application.getPersonalDetails().isRequiresVisa()) {
-			document.add(new Paragraph("Do you required visa to study in the UK? yes."));
+			document.add(new Paragraph("Do you require visa to study in the UK? yes."));
 		} else {
-			document.add(new Paragraph("Do you required visa to study in the UK? no."));
+			document.add(new Paragraph("Do you require visa to study in the UK? no."));
 		}
 
 		document.add(new Paragraph("Contact Details", smallBoldFont));
@@ -249,7 +250,7 @@ public class PdfDocumentBuilder {
 		Address currentAddress = application.getCurrentAddress();
 		if (currentAddress != null) {
 			document.add(new Paragraph("Current Address", smallBoldFont));
-			document.add(new Paragraph("Location: " + currentAddress.getLocation()));
+			document.add(new Paragraph("Address: " + currentAddress.getLocation()));
 			document.add(new Paragraph("Country: " + currentAddress.getCountry().getName()));
 
 			document.add(new Paragraph(" "));
@@ -258,7 +259,7 @@ public class PdfDocumentBuilder {
 		Address contactAddress = application.getContactAddress();
 		if (contactAddress != null) {
 			document.add(new Paragraph("Contact Address", smallBoldFont));
-			document.add(new Paragraph("Location: " + contactAddress.getLocation()));
+			document.add(new Paragraph("Address: " + contactAddress.getLocation()));
 			document.add(new Paragraph("Country: " + contactAddress.getCountry().getName()));
 
 			document.add(new Paragraph(" "));
@@ -273,14 +274,14 @@ public class PdfDocumentBuilder {
 		} else {
 
 			for (Qualification qualification : application.getQualifications()) {
-				document.add(new Paragraph("Institution: " + qualification.getQualificationInstitution()));
 				document.add(new Paragraph("Institution Country: " + qualification.getInstitutionCountry().getName()));
-				document.add(new Paragraph("Title / subject: " + qualification.getQualificationSubject()));
-				document.add(new Paragraph("Start Date: " + qualification.getQualificationStartDate().toString()));
-				document.add(new Paragraph("Has been awarded? " + qualification.getCompleted().displayValue()));
+				document.add(new Paragraph("Institution / Provider Name: " + qualification.getQualificationInstitution()));
+				document.add(new Paragraph("Qualification Type: " + qualification.getQualificationType()));
+				document.add(new Paragraph("Title / Subject: " + qualification.getQualificationSubject()));
 				document.add(new Paragraph("Language of Study: " + qualification.getQualificationLanguage().getName()));
-				document.add(new Paragraph("Type: " + qualification.getQualificationType()));
-				document.add(new Paragraph("Grade: " + qualification.getQualificationGrade()));
+				document.add(new Paragraph("Start Date: " + qualification.getQualificationStartDate().toString()));
+				document.add(new Paragraph("Has this qualification been awarded? " + qualification.getCompleted().displayValue()));
+				document.add(new Paragraph("Grade / Result / GPA: " + qualification.getQualificationGrade()));
 				if (qualification.getQualificationAwardDate() != null) {
 					document.add(new Paragraph("Award Date: " + qualification.getQualificationAwardDate().toString()));
 				}
@@ -308,8 +309,8 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("Employer Name: " + employment.getEmployerName()));
 				document.add(new Paragraph("Employer Address: " + employment.getEmployerAddress()));
 				document.add(new Paragraph("Position: " + employment.getPosition()));
-				document.add(new Paragraph("Description: " + employment.getRemit()));
-				document.add(new Paragraph("Language of Work: " + employment.getLanguage().getName()));
+				document.add(new Paragraph("Roles and Resposibilities: " + employment.getRemit()));
+				document.add(new Paragraph("Language of work: " + employment.getLanguage().getName()));
 				document.add(new Paragraph("Start Date: " + employment.getStartDate().toString()));
 				if (employment.isCurrent()) {
 					document.add(new Paragraph("Is this your current position? yes."));

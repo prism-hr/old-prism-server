@@ -87,14 +87,11 @@ public class ActivateRefereeControllerTest {
 		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode(activationCode)).andReturn(referee);
 	
 
-		ApplicationPageModel model = new ApplicationPageModel();
-		EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, null, null, null, null)).andReturn(model);
-		
-		EasyMock.replay(refereeServiceMock, applicationPageModelBuilderMock);
+		EasyMock.replay(refereeServiceMock);
 		
 		ModelAndView modelAndView = controller.getViewApplicationPageForReferee(activationCode);
 		assertEquals("private/referees/application/main_application_page", modelAndView.getViewName());
-		assertEquals(model, modelAndView.getModel().get("model"));
+		assertEquals(applicationForm, modelAndView.getModel().get("applicationForm"));
 	}
 	
 	@Test
@@ -104,7 +101,7 @@ public class ActivateRefereeControllerTest {
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
 		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode(activationCode)).andReturn(referee);
 		
-		EasyMock.replay(refereeServiceMock, applicationPageModelBuilderMock);
+		EasyMock.replay(refereeServiceMock);
 		
 		assertEquals("private/referees/upload_references_expired", controller.getViewApplicationPageForReferee(activationCode).getViewName());
 	;

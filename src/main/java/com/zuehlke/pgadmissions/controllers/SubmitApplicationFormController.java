@@ -87,8 +87,9 @@ public class SubmitApplicationFormController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String getApplicationView() {
 		if(getCurrentUser().isInRole(Authority.APPLICANT)){
-		return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
+			return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
 		}
+		
 		return VIEW_APPLICATION_STAFF_VIEW_NAME;
 	}
 

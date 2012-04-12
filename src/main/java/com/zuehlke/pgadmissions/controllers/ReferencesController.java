@@ -73,7 +73,8 @@ public class ReferencesController {
 			return new ModelAndView(ADD_REFERENCES_VIEW_NAME, "model", model);
 		}
 		referee.getReference().setDocument(document);
-		refereeService.saveReferenceAndSendMailNotifications(referee);
+		refereeService.save(referee);
+		//refereeService.saveReferenceAndSendMailNotifications(referee);
 		return new ModelAndView("redirect:/addReferences/referenceuploaded");
 
 	}

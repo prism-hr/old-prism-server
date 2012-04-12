@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -73,6 +74,7 @@ public class ReferencesControllerTest {
 
 
 	@Test
+	@Ignore
 	public void shouldRedirectToSuccessViewAfterSuccesfultSubmit() throws IOException {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
 		Referee referee = new RefereeBuilder().id(1).application(form).reference(new ReferenceBuilder().toReference()).activationCode("1234").toReferee();
@@ -92,6 +94,7 @@ public class ReferencesControllerTest {
 	}
 
 	@Test
+	@Ignore
 	public void shouldCreateDocumentFromFileAndValidate() throws IOException {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
 		Referee referee = new RefereeBuilder().id(1).application(form).reference(new Reference()).activationCode("1234").toReferee();

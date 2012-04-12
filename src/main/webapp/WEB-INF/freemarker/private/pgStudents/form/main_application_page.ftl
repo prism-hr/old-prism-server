@@ -203,7 +203,7 @@
 			          	      				<input type="hidden" id="applicationFormId" name="applicationId" 
 			          	      									value="${applicationForm.id?string("######")}"/>
 			          	      										<a class="button" href="<@spring.url '/applications'/>">Close</a>
-			          	      										<button id="submitButton" type="submit" class="button">Submit</button>
+			          	      										<button id="submitButton" type="submit" class="blue">Submit</button>
 										</form>
 									<#else>
 										<a class="button" href="<@spring.url '/applications'/>">Close</a>

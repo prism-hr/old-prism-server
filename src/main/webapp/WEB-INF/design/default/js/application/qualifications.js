@@ -115,7 +115,6 @@ $(document).ready(function(){
 });
 
 function postQualificationData(message){
-
 	$.post("/pgadmissions/update/editQualification", {  
 		qualificationSubject: $("#qualificationSubject").val(), 
 		qualificationInstitution: $("#qualificationInstitution").val(), 
@@ -172,8 +171,8 @@ function ajaxProofOfAwardUpload()
 			data:{type:'PROOF_OF_AWARD'},
 			success: function (data)
 			{		
-				$('#uploadedDocument').html(data);
-				$('#uploadedDocument').show();
+				$('#qualUploadedDocument').html(data);
+				$('#qualUploadedDocument').show();
 				
 			}
 		}

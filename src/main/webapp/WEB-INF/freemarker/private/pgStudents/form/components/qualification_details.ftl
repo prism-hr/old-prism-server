@@ -1,3 +1,4 @@
+<#assign errorCode = RequestParameters.errorCode! />
 <#if applicationForm.qualifications?has_content>
 	<#assign hasQualifications = true>
 <#else>
@@ -214,22 +215,25 @@
       		<div class="row">
         		<span class="plain-label">Proof of award (PDF)</span>
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
-        		<div class="field" id="uploadFields">        	
-          			<input id="proofOfAward" class="full" type="file" name="file" value="" />					
+        		<div class="field" id="uploadFields">         		       	
+          			<input id="proofOfAward" class="full" type="file" name="file" value=""  <#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>					
 					<span id="uploadedDocument" ><input type="hidden" id="document_PROOF_OF_AWARD" value = "${(qualification.proofOfAward.id?string('######'))!}"/>
+					<#if qualification.proofOfAward??> 
 					<a href="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>">${(qualification.proofOfAward.fileName)!}</a></span>
+					</#if>
 					<span id="progress" style="display: none;" ></span>					
         		</div>  
         		
       		</div>
       		
       		<!-- Add another button -->
-            <div class="row">
-            	<div class="field">
-                	<a id="addQualificationButton" class="button blue">Add Qualification</a>
-                </div>
-            </div>
-		
+      		<#if !applicationForm.isSubmitted()>
+	            <div class="row">
+	            	<div class="field">
+	                	<a id="addQualificationButton" class="button blue">Add Qualification</a>
+	                </div>
+	            </div>
+			</#if>
 		</div>
 		
     	<div class="buttons">
@@ -249,7 +253,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/qualifications.js'/>"></script>		
  <@spring.bind "qualification.*" /> 
  
-<#if !message?? || (!spring.status.errorMessages?has_content && (message=='close'))  >
+<#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#qualifications-H2').trigger('click');

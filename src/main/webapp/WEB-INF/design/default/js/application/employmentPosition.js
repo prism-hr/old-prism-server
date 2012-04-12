@@ -32,7 +32,7 @@ $(document).ready(function(){
 		postEmploymentData('close');
 	});
 
-	$('#positionSaveAndAddButton').click(function(){
+	$('#addPosisionButton').click(function(){
 		postEmploymentData('add');
 	});
 

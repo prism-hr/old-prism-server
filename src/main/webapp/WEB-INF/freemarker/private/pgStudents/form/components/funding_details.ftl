@@ -1,3 +1,4 @@
+<#assign errorCode = RequestParameters.errorCode! />
 <#if applicationForm.fundings?has_content>
 	<#assign hasFundings = true>
 <#else>
@@ -142,7 +143,7 @@
         		<span class="plain-label">Proof of award (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
         		<div class="field" id="fundingUploadFields">        	
-          			<input id="fundingDocument" class="full" type="file" name="file" value="" />					
+          			<input id="fundingDocument" class="full" type="file" name="file" value="" <#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>					
 					<span id="fundingUploadedDocument" ><input type="hidden" id="document_SUPPORTING_FUNDING" value = "${(funding.document.id?string('######'))!}"/>
 					 <@spring.bind "funding.document" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
@@ -152,14 +153,14 @@
         		
       		</div>
       		
-      		
-      		<!-- Add another button -->
-            <div class="row">
-            	<div class="field">
-                	<a id="addFundingButton" class="button blue">Add Funding</a>
-                </div>
-            </div>
-
+      		<#if !applicationForm.isSubmitted()>
+	      		<!-- Add another button -->
+	            <div class="row">
+	            	<div class="field">
+	                	<a id="addFundingButton" class="button blue">Add Funding</a>
+	                </div>
+	            </div>
+			</#if>
 		</div>
 
 	<div class="buttons">
@@ -167,7 +168,7 @@
         	
         	<a class="button" type="button" id="fundingCancelButton" name="fundingCancelButton">Cancel</a>
         	<button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>
-            <button class="blue" type="button" id="fundingSaveAddButton" value="add">Save</button>
+            <button class="blue" type="button" id="fundingSaveCloseButton" value="close">Save</button>
   		<#else>
              <a id="fundingCloseButton" class="button blue">Close</a>  
    		</#if>
@@ -182,7 +183,7 @@
 
 <@spring.bind "funding.*" /> 
  
-<#if !message?? || (!spring.status.errorMessages?has_content && (message=='close'))  >
+<#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>	
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#funding-H2').trigger('click');

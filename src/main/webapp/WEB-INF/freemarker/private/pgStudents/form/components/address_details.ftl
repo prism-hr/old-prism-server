@@ -142,7 +142,7 @@
 
 <@spring.bind "addressSectionDTO.*" /> 
  
-<#if errorCode=='false' && (!message?? || (!spring.status.errorMessages?has_content && (message=='close')))>
+<#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#address-H2').trigger('click');

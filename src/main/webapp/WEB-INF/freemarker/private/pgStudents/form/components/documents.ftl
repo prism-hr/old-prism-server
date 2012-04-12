@@ -19,7 +19,7 @@
         		<span class="plain-label">Personal Statement (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.personalStatement'/>"></span>	 
         		<div class="field" id="psUploadFields">        	
-          			<input id="psDocument" class="full" type="file" name="file" value="" />					
+          			<input id="psDocument" class="full" type="file" name="file" value="" <#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>					
 					<span id="psUploadedDocument" ><input type="hidden" id="document_PERSONAL_STATEMENT" value = "${(applicationForm.personalStatement.id?string('######'))!}"/>
 					<@spring.bind "applicationForm.personalStatement" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
@@ -33,7 +33,7 @@
         		<span class="plain-label">CV / resume (PDF)</span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.cv'/>"></span>
         		<div class="field" id="cvUploadFields">        	
-          			<input id="cvDocument" class="full" type="file" name="file" value="" />					
+          			<input id="cvDocument" class="full" type="file" name="file" value="" <#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>					
 					<span id="cvUploadedDocument" ><input type="hidden" id="document_CV" value = "${(applicationForm.cv.id?string('######'))!}"/>
 					<@spring.bind "applicationForm.cv" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
@@ -50,9 +50,10 @@
 		</div>
 
 		<div class="buttons">
-			<button type="reset" id="documentsCancelButton" value="cancel">Cancel</button>
+			
             <button class="blue" id="documentsCloseButton" value="close">Close</button> 
             <#if !applicationForm.submitted>
+            	<button type="reset" id="documentsCancelButton" value="cancel">Cancel</button>
                 <button type="button" class="blue" id="documentsSaveButton" value="close">Save</button> 
             </#if>             
 		</div>
@@ -64,7 +65,7 @@
 	
 <@spring.bind "applicationForm.*" /> 
  
-<#if errorCode=='false' && (!message?? || (!spring.status.errorMessages?has_content && (message=='close')))>
+<#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>	
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#documents-H2').trigger('click');

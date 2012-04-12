@@ -8,7 +8,8 @@ $(document).ready(function(){
 	$('#informationSaveButton').click(function(){
 		$.post("/pgadmissions/update/editAdditionalInformation", { 
 			additionalInformation: $("#additionalInformation").val(),
-			applicationId:  $('#applicationId').val()
+			applicationId:  $('#applicationId').val(),
+			message:'close'
 		},
 		
 		function(data) {
@@ -17,7 +18,7 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="informationCancelButton"]').click(function(){
-		$.get("/pgadmissions/update/getAdditionalInformatio",
+		$.get("/pgadmissions/update/getAdditionalInformation",
 				{
 					applicationId:  $('#applicationId').val(),
 					message: 'cancel'

@@ -23,7 +23,7 @@ $(document).ready(function(){
 	
 
 	
-	$('#refereeSaveButton').click(function(){	
+	$('#refereeSaveAndCloseButton').click(function(){	
 		postRefereeData("close");
 	});
 	$('#addReferenceButton').click(function(){
@@ -31,10 +31,7 @@ $(document).ready(function(){
 		
 	});
 
-	$('#refereeSaveAndAddButton').click(function(){
-		postRefereeData("add");
-		
-	});
+
 	
 	$('a[name="refereeCancelButton"]').click(function(){
 		$.get("/pgadmissions/update/getReferee",

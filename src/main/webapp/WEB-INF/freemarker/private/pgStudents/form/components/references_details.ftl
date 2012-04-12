@@ -244,32 +244,38 @@
           			
         		</div>
       		</div>
-      		
+		<#if applicationForm.isSubmitted()>
+		</div>
+		<div>
+			<div>
+          	            
+          		<div class="row">
+                  	<span class="label">Reference</span>                    
+                    <div class="field" id="referenceUpdated">
+                    	<#if referee.hasProvidedReference()>
+                    		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
+                    	<#elseif referee.id??>
+                    		Not provided
+                    	</#if>
+                    </div>
+                </div>
+        	</div>
+		</#if>
+		<#if !applicationForm.isSubmitted()>
       		<!-- Add another button -->
       		<div class="row">
       			<div class="field">
       				<a id="addReferenceButton" class="button blue">Add Reference</a>
       			</div>
       		</div>
-      		
+      	</#if>		
     	</div>
-		<#if applicationForm.isSubmitted()>
-			<div>
-          	            
-          		<div class="row">
-                  	<label class="label">Reference</label>                    
-                    <div class="field" id="referenceUpdated">
-                    
-                    </div>
-                </div>
-        	</div>
-		</#if>
-
+		
     	<div class="buttons">
     	 <#if !applicationForm.isSubmitted()>
       		 <a class="button" type="button" id="refereeCancelButton" name="refereeCancelButton">Cancel</a>
       		 <button class="blue" type="button" id="refereeCloseButton" name="refereeCloseButton">Close</button>
-      		 <button class="blue" type="button" value="close" id="refereeSaveButton">Save</button>
+      		 <button class="blue" type="button" value="close" id="refereeSaveAndCloseButton">Save</button>
       	 <#else>
             <a id="refereeCloseButton" class="button blue">Close</a>   
         </#if> 	
@@ -283,7 +289,7 @@
             
  <@spring.bind "referee.*" /> 
  
-<#if errorCode=='false' && (!message?? || (!spring.status.errorMessages?has_content && (message=='close')))>
+<#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>	
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#referee-H2').trigger('click');

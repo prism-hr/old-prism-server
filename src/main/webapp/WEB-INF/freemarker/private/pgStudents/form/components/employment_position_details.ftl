@@ -1,3 +1,4 @@
+<#assign errorCode = RequestParameters.errorCode! />
 <#if applicationForm.employmentPositions?has_content>
 	<#assign hasEmploymentPositions = true>
 <#else>
@@ -193,21 +194,21 @@
                 </div>
 					
            	</div>
-           	
-           	<!-- Add another button -->
-            <div class="row">
-            	<div class="field">
-                	<a id="addPosisionButton" class="button blue">Add Employment</a>
-                </div>
-            </div>
-           	
+			<#if !applicationForm.isSubmitted()>
+	           	<!-- Add another button -->
+	            <div class="row">
+	            	<div class="field">
+	                	<a id="addPosisionButton" class="button blue">Add Employment</a>
+	                </div>
+	            </div>
+           	</#if>
 		</div>
 
 		<div class="buttons">
 			<#if !applicationForm.isSubmitted()>
             	<a class="button" type="button" id="positionCancelButton" name="positionCancelButton">Cancel</a>
             	<button class="blue" type="button" id="positionCloseButton" name="positionCloseButton">Close</button>
-                <button class="blue" type="button" value="add" id="positionSaveAndAddButton" name="positionSaveAndAddButton">Save</button>
+                <button class="blue" type="button" value="add" id="positionSaveAndCloseButton" name="positionSaveAndCloseButton">Save</button>
             <#else>
                 <a id="positionCloseButton" class="button blue">Close</a>
             </#if>    
@@ -219,7 +220,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/employmentPosition.js'/>"></script>
  <@spring.bind "employmentPosition.*" /> 
  
-<#if !message?? || (!spring.status.errorMessages?has_content && (message=='close'))  >
+<#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>	
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#position-H2').trigger('click');

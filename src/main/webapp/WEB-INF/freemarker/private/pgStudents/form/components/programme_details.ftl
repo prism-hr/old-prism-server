@@ -199,10 +199,11 @@
        
 
         <div class="buttons">
-        	<button type="reset" id="programmeCancelButton" name="programmeCancelButton" value="cancel">Cancel</button>
+        
         	<a class="button blue" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</a>
         	<#if !applicationForm.isSubmitted()>
-            <a class="button blue" id="programmeSaveButton">Save</a>
+        		<button type="reset" id="programmeCancelButton" name="programmeCancelButton" value="cancel">Cancel</button>
+            	<a class="button blue" id="programmeSaveButton">Save</a>
             </#if>    
 		</div>
 
@@ -212,7 +213,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>
 <@spring.bind "programmeDetails.*" />
 
-<#if errorCode=='false' && !spring.status.errorMessages?has_content>
+<#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#programme-H2').trigger('click');

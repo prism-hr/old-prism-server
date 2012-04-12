@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<#assign errorCode = RequestParameters.errorCode! />
 <h2 id="additional-H2" class="empty">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
     Additional Information
@@ -21,18 +22,23 @@
 		</div>
 
         <div class="buttons">
-        	<a class="button" id="informationCancelButton" name="informationCancelButton">Cancel</a>
         	<button class="blue" type="button" id="additionalCloseButton">Close</button>
-            <button class="blue" type="button" id="informationSaveButton">Save</button>                
+        	<#if !applicationForm.isSubmitted()>
+	        	<a class="button" id="informationCancelButton" name="informationCancelButton">Cancel</a>
+	        
+	            <button class="blue" type="button" id="informationSaveButton">Save</button>
+            </#if>                
 		</div>
 
 	</form>
 </div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/additional_information.js'/>"></script>
-	
+ <@spring.bind "applicationForm.*" /> 
+<#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>	
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#additional-H2').trigger('click');
 	});
 </script>
+</#if>

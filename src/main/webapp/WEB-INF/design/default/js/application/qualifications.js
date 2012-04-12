@@ -55,11 +55,11 @@ $(document).ready(function(){
 	});
 	
 	
-	$('#qualificationsSaveButton').click(function(){
+	$('#addQualificationButton').click(function(){
 		postQualificationData('add');
 	});
 	
-	$('#qualificationSaveCloseButton').click(function(){
+	$('#qualificationsSaveButton').click(function(){
 		postQualificationData('close');
 	});
 	

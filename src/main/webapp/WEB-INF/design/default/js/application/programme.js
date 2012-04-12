@@ -109,21 +109,6 @@ $(document).ready(function(){
 	
 	$('#programmeSaveButton').on("click",function(){
 		postProgrammeData('close');
-		var postData = {
-			programmeName: $("#programmeName").val(),
-			projectName: $("#projectName").val(), 
-			studyOption: $("#studyOption").val(), 
-			startDate: $("#startDate").val(),
-			referrer: $("#referrer").val(),
-			application: $("#appId1").val(),
-			programmeDetailsId: $("#programmeDetailsId").val(),
-			supervisors: ""
-		};
-		
-		$.post( "/pgadmissions/programme" ,$.param(postData) +"&" + $('[input[name="supervisors"]').serialize(),
-		function(data) {
-			$('#programmeDetailsSection').html(data);
-		});
 	});
 	function validateEmail(email) { 
 	    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA	-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -273,7 +258,9 @@ function postProgrammeData(message){
 			programmeDetailsId: $("#programmeDetailsId").val(),
 			application: $('#applicationId').val(),
 			applicationId: $('#applicationId').val(),
-			supervisors: ""
+			supervisors: "",
+			message: message
+				
 		};
 		
 		$.post( "/pgadmissions/update/editProgrammeDetails" ,$.param(postData) +"&" + $('[input[name="supervisors"]').serialize(),

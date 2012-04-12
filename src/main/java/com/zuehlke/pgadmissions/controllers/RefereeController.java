@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.validators.RefereeValidator;
 @RequestMapping("/update")
 @Controller
@@ -39,20 +40,22 @@ public class RefereeController {
 	private final CountryPropertyEditor countryPropertyEditor;
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final RefereeValidator refereeValidator;
+	private final EncryptionUtils encryptionUtils;
 
 	RefereeController() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public RefereeController(RefereeService refereeService, CountryService countryService, ApplicationsService applicationsService,
-			CountryPropertyEditor countryPropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator) {
+			CountryPropertyEditor countryPropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor, RefereeValidator refereeValidator, EncryptionUtils encryptionUtils) {
 		this.refereeService = refereeService;
 		this.countryService = countryService;
 		this.applicationsService = applicationsService;
 		this.countryPropertyEditor = countryPropertyEditor;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.refereeValidator = refereeValidator;
+		this.encryptionUtils = encryptionUtils;
 	}
 
 	@RequestMapping(value = "/editReferee", method = RequestMethod.POST)
@@ -67,6 +70,7 @@ public class RefereeController {
 		if(result.hasErrors()){
 			return STUDENTS_FORM_REFEREES_VIEW;
 		}
+		referee.setActivationCode(encryptionUtils.generateUUID());
 		refereeService.save(referee);
 		return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getId();
 			

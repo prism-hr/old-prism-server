@@ -129,7 +129,7 @@
             
             <!-- Remit (job description) -->
             <div class="row">
-                <span class="plain-label">Description<em>*</em></span>
+                <span class="plain-label">Roles and Responsibilities<em>*</em></span>
                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.remit'/>"></span>
                 <div class="field">
                     <#if !applicationForm.isSubmitted()>

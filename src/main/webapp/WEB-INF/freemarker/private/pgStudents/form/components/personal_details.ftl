@@ -146,6 +146,7 @@
               	  </#list>
               	</div>
         	    
+
             	<div class="row">                    	
               		 <label class="plain-label" id="my-nationality">My Nationality
 					<#if !nationalityExist>
@@ -168,6 +169,7 @@
 				<div class="row">
 					<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add Nationality</a></div>
 				</div>
+
     
         	    <div class="row" id="existingMaternalNationalities">
         	     <#if maternalNationalitiesExist>
@@ -186,6 +188,7 @@
 					 </#list>
 				</div>
               
+              
             	<div class="row">                     	
               		<label class="plain-label" id="maternal-nationality">Mother's Nationality</label>
               		<span class="hint" data-desc="<@spring.message 'personalDetails.maternalGuardianNationality'/>"></span>           
@@ -202,6 +205,7 @@
             	<div class="row">
               		<div class="field"><a class="button blue" id="addMaternalNationalityButton">Add Nationality</a></div>
               	</div>
+
               	 
         	     <div class="row" id="existingPaternalNationalities">
         	      <#if paternalNationalitiesExist>
@@ -220,6 +224,7 @@
 					</#list>
 				</div>
 				
+
 				<div class="row">                      	
 					<label class="plain-label" id="paternal-nationality">Father's Nationality</label> 
 					  <span class="hint" data-desc="<@spring.message 'personalDetails.paternalGuardianNationality'/>"></span>      
@@ -247,7 +252,8 @@
 				<div class="row">
                     	<label class="plain-label">Is English your first language?<em>*</em></label>
                    		<span class="hint" data-desc="<@spring.message 'personalDetails.language.section'/>"></span>
-                   		<input type="checkbox" name="englishFirstLanguageCB" id="englishFirstLanguageCB"
+                   		<div class="field">
+                   			<input type="checkbox" name="englishFirstLanguageCB" id="englishFirstLanguageCB"
                    			<#if personalDetails.isEnglishFirstLanguage()>
                                       checked="checked"
                             </#if>
@@ -255,6 +261,7 @@
                                       disabled="disabled"
                             </#if>
                            />
+                        </div>
            		</div>
 				                              
             </div>
@@ -283,14 +290,16 @@
 						<div class="row">
 						 <label class="plain-label">Do you require visa to study in the UK?<em>*</em></label>
                    		<span class="hint"></span>
-                   		<input type="checkbox" name="requiresVisaCB" id="requiresVisaCB"
+                   		<div class="field">
+                   			<input type="checkbox" name="requiresVisaCB" id="requiresVisaCB"
                    			<#if personalDetails.isRequiresVisa()>
                                       checked="checked"
                             </#if>
                    			<#if applicationForm.isSubmitted()>
                                       disabled="disabled"
                             </#if>/>
-                   		<input type="hidden" name="requiresVisa" id="requiresVisa"/>
+                   			<input type="hidden" name="requiresVisa" id="requiresVisa"/>
+                   		</div>
 					</div>
 				</div>
             </div>

@@ -67,13 +67,15 @@
             <div class="row">
             	<label class="plain-label">Start Date<em>*</em></label>
                <span class="hint" data-desc="<@spring.message 'programmeDetails.startDate'/>"></span>
-                <input class="full date" type="text" id="startDate" name="startDate" value="${(programmeDetails.startDate?string('dd-MMM-yyyy'))!}"
-                <#if applicationForm.isSubmitted()>
-                    disabled="disabled"
+               <div class="field">
+                	<input class="full date" type="text" id="startDate" name="startDate" value="${(programmeDetails.startDate?string('dd-MMM-yyyy'))!}"
+                	<#if applicationForm.isSubmitted()>
+                    	disabled="disabled"
                     </#if>>
-                </input> 
-                <@spring.bind "programmeDetails.startDate" /> 
-                <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                	</input> 
+                	<@spring.bind "programmeDetails.startDate" /> 
+                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                </div>
             </div>
 
             <!-- Referrer -->
@@ -186,8 +188,10 @@
             <div class="row">
                 <label class="plain-label">Is this supervisor aware of your application?</label>
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.awareOfApplication'/>"></span>
-                <input type="checkbox" name="awareSupervisorCB" id="awareSupervisorCB"/>
-                <input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
+                <div class="field">
+                	<input type="checkbox" name="awareSupervisorCB" id="awareSupervisorCB"/>
+                	<input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
+                </div>
             </div>      
             
             	<span class="supervisorAction"></span>       

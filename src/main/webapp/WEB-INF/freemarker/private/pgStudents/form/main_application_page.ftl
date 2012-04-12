@@ -1,5 +1,5 @@
 <#-- Assignments -->
-
+<#import "/spring.ftl" as spring />
 <#if user.isInRole('APPLICANT')>
 	<#assign formDisplayState = "close"/>
 <#else>
@@ -11,11 +11,48 @@
 <#else>
 	<#assign globalMsg = false/>
 </#if>
+<!---- validation errors -->
+ <@spring.bind "applicationForm.programmeDetails" />
+<#if spring.status.errorMessages?has_content >
+	<#assign programDetailsError = true/>
+<#else>
+	<#assign programDetailsError = false/>
+</#if>
+<@spring.bind "applicationForm.personalDetails" />
+<#if spring.status.errorMessages?has_content >
+	<#assign personalDetailsError = true/>
+<#else>
+	<#assign personalDetailsError = false/>
+</#if>
+<@spring.bind "applicationForm.currentAddress" />
+<#if spring.status.errorMessages?has_content >
+	<#assign currentAddressError = true/>
+<#else>
+	<#assign currentAddressError = false/>
+</#if>
+<@spring.bind "applicationForm.contactAddress" />
+<#if spring.status.errorMessages?has_content >
+	<#assign contactAddressError = true/>
+<#else>
+	<#assign contactAddressError = false/>
+</#if>
 
+<@spring.bind "applicationForm.personalStatement" />
+<#if spring.status.errorMessages?has_content >
+	<#assign personalStatementError = true/>
+<#else>
+	<#assign personalStatementError = false/>
+</#if>
+<@spring.bind "applicationForm.referees" />
+<#if spring.status.errorMessages?has_content >
+	<#assign refereesError = true/>
+<#else>
+	<#assign refereesError = false/>
+</#if>
 <#-- Personal Details Rendering -->
 
 <!DOCTYPE HTML>
-<#import "/spring.ftl" as spring />
+
 <html>
 	<head>
 	
@@ -56,16 +93,15 @@
 	<!--[if (gte IE 9)|!(IE)]><!-->
 	<body>
 	<!--<![endif]-->
-
+		<input type="hidden" id="programDetailsError" value="${programDetailsError?string}"/>
+		<input type="hidden" id="personalDetailsError" value="${personalDetailsError?string}"/>
+		<input type="hidden" id="addressError" value="<#if currentAddressError || contactAddressError>true<#else>false</#if>"/>
+		<input type="hidden" id="personalStatementError" value="${personalStatementError?string}"/>
+		<input type="hidden" id="refereesError" value="${refereesError?string}"/>
 		<div id="wrapper">
 			
-			  <#include "/private/common/global_header.ftl"/>
-				<@spring.bind "applicationForm.personalDetails" />
-				<#if spring.status.errorMessages?has_content >
-					<input type="hidden" id="personalDetailsError" value="true"/>
-				<#else>
-					<input type="hidden" id="personalDetailsError" value="false"/>
-				</#if>
+				 <#include "/private/common/global_header.ftl"/>
+				
 			  <!-- Middle. -->
 			  <div id="middle">
 			  		
@@ -121,11 +157,11 @@
 					          	<section id="programmeDetailsSection" class="folding violet <@spring.bind 'applicationForm.programmeDetails' />	<#if spring.status.errorMessages?has_content >error</#if>">					          	
 								</section>
 			          
-			          			<section id="personalDetailsSection" class="folding purple <@spring.bind 'applicationForm.personalDetails' />	<#if spring.status.errorMessages?has_content >error</#if>">
+			          			<section id="personalDetailsSection" class="folding purple <#if personalDetailsError>error</#if>">
 			             		</section>
 			          
 			          			<!-- Address -->			          			
-			          			<section id="addressSection" class="folding red ">			             			
+			          			<section id="addressSection" class="folding red <#if currentAddressError || contactAddressError>error</#if>">			             			
 			          			</section>
 			          
 			           			<section id="qualificationsSection" class="folding orange">
@@ -139,10 +175,10 @@
 			           			<section id="fundingSection" class="folding green">			             	
 			          			</section>
 			          
-			           			<section id="referencesSection" class="folding navy ">
+			           			<section id="referencesSection" class="folding navy <#if refereesError> error</#if>">
 				          		</section>
 			          
-			          			<section id="documentSection" class="folding blue >							
+			          			<section id="documentSection" class="folding blue <#if personalStatementError>error</#if>">							
 			          			</section>
 			          
 			          			<section id="additionalInformationSection" class="folding lightblue">

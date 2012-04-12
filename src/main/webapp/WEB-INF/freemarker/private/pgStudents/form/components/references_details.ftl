@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<#assign errorCode = RequestParameters.errorCode />
 <#if applicationForm.referees?has_content>
 	<#assign hasReferees = true>
 <#else>
@@ -72,7 +73,11 @@
   	<form>
     
     	<div>
-    
+        	<#if errorCode?? && errorCode =="true">
+				<div class="row">              	
+					<span class="invalid">Please provide details of at least three referees.<p></p></span>
+			     </div>            	
+			</#if>
 	   		<!-- First name -->
       		<div class="row">
         		<span class="plain-label">First Name<em>*</em></span>
@@ -270,7 +275,7 @@
             
  <@spring.bind "referee.*" /> 
  
-<#if !message?? || (!spring.status.errorMessages?has_content && (message=='close'))  >
+<#if errorCode=='false' && (!message?? || (!spring.status.errorMessages?has_content && (message=='close')))>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#referee-H2').trigger('click');

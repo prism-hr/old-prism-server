@@ -1,5 +1,5 @@
 <#-- Assignments -->
-
+<#assign errorCode = RequestParameters.errorCode />
 <#if personalDetails?has_content>
 	<#assign hasPersonalDetails = true>
 <#else>
@@ -53,7 +53,9 @@
             <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
           	<div>
 				<#if errorCode?? && errorCode=="true">
-				<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
+					<div class="row">              	
+						<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
+				     </div>            	
 				</#if>
 				<div class="row">
 					<label class="plain-label">First Name<em>*</em></label>
@@ -349,7 +351,7 @@
 
 <@spring.bind "personalDetails.*" /> 
  
-<#if !message?? || (!spring.status.errorMessages?has_content && (message=='close'))  >
+<#if errorCode=='false' && (!message?? || (!spring.status.errorMessages?has_content && (message=='close')))>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#personalDetails-H2').trigger('click');

@@ -1,4 +1,5 @@
 <#import "/spring.ftl" as spring />
+<#assign errorCode = RequestParameters.errorCode />
 <#assign htmlEscape = true in spring>
 <h2 id="documents-H2" class="empty">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
@@ -9,6 +10,11 @@
 	<form> 
 	   
 	  <div>
+ 			<#if errorCode?? && errorCode=="true">
+				<div class="row">              	
+					<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
+			     </div>            	
+			</#if>
 			<div class="row">
         		<span class="plain-label">Personal Statement (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.personalStatement'/>"></span>	 
@@ -24,7 +30,7 @@
       		</div>
       		
       		 <div class="row">
-        		<span class="plain-label">CV / resume (PDF)<em>*</em></span>
+        		<span class="plain-label">CV / resume (PDF)</span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.cv'/>"></span>
         		<div class="field" id="cvUploadFields">        	
           			<input id="cvDocument" class="full" type="file" name="file" value="" />					
@@ -58,7 +64,7 @@
 	
 <@spring.bind "applicationForm.*" /> 
  
-<#if !message?? || (!spring.status.errorMessages?has_content && (message=='close'))  >
+<#if errorCode=='false' && (!message?? || (!spring.status.errorMessages?has_content && (message=='close')))>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#documents-H2').trigger('click');

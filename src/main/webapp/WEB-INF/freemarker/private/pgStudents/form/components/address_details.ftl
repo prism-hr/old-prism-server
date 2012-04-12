@@ -1,5 +1,5 @@
 <#import "/spring.ftl" as spring />
-
+<#assign errorCode = RequestParameters.errorCode />
   	
 	<h2 id="address-H2" class="empty">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
@@ -8,9 +8,14 @@
 	
 	<div>
 	
-        	<form>		
+        	<form>	
 				
-            	<div>            	 
+            	<div>
+	            	<#if errorCode?? && errorCode =="true">
+						<div class="row">              	
+							<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
+					     </div>            	
+					</#if>            	 
             		<div class="row">
           				<label class="label">Current Address</label>
           			</div>
@@ -137,7 +142,7 @@
 
 <@spring.bind "addressSectionDTO.*" /> 
  
-<#if !message?? || (!spring.status.errorMessages?has_content && (message=='close'))  >
+<#if errorCode=='false' && (!message?? || (!spring.status.errorMessages?has_content && (message=='close')))>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#address-H2').trigger('click');

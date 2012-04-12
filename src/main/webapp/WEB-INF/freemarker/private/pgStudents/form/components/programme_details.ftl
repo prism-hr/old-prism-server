@@ -1,6 +1,6 @@
 <#-- Assignments -->
 <#import "/spring.ftl" as spring />
-
+<#assign errorCode = RequestParameters.errorCode />
 <#-- Programme Details Rendering -->
 
 
@@ -11,10 +11,14 @@
 
 <div>
 	<form>
-        
+
         <input type="hidden" name="programmeDetailsId" id="programmeDetailsId" value="${(programmeDetails.id?string("######"))!}"/>
 		<div>
-        	
+    		<#if errorCode?? && errorCode =="true">
+				<div class="row">              	
+					<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
+			     </div>            	
+			</#if>
         	<!-- Programme name (disabled) -->
             <div class="row">
             	<label class="plain-label">Programme<em>*</em></label>
@@ -206,10 +210,9 @@
 </div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>
+<@spring.bind "programmeDetails.*" />
 
-<@spring.bind "programmeDetails.*" /> 
- 
-<#if !message?? || (!spring.status.errorMessages?has_content && (message=='close'))  >
+<#if errorCode=='false' && !spring.status.errorMessages?has_content>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#programme-H2').trigger('click');

@@ -2,7 +2,8 @@ $(document).ready(function(){
 	
 	$.get("/pgadmissions/update/getProgrammeDetails",
 			{
-				applicationId:  $('#applicationId').val()					
+				applicationId:  $('#applicationId').val(),
+				errorCode: $('#programDetailsError').val()
 			},
 			function(data) {
 				$('#programmeDetailsSection').html(data);
@@ -19,7 +20,8 @@ $(document).ready(function(){
 	);
 	$.get("/pgadmissions/update/getAddress",
 			{
-				applicationId:  $('#applicationId').val()					
+				applicationId:  $('#applicationId').val(),				
+				errorCode: $('#addressError').val()
 			},
 			function(data) {
 				$('#addressSection').html(data);
@@ -51,7 +53,8 @@ $(document).ready(function(){
 	);
 	$.get("/pgadmissions/update/getReferee",
 			{
-				applicationId:  $('#applicationId').val()					
+				applicationId:  $('#applicationId').val(),
+				errorCode: $('#refereesError').val()
 			},
 			function(data) {
 				$('#referencesSection').html(data);
@@ -60,7 +63,8 @@ $(document).ready(function(){
 
 	$.get("/pgadmissions/update/getDocuments",
 			{
-				applicationId:  $('#applicationId').val()					
+				applicationId:  $('#applicationId').val(),
+				errorCode: $('#personalStatementError').val()
 			},
 			function(data) {
 				$('#documentSection').html(data);

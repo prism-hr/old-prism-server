@@ -17,6 +17,8 @@ import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 
 public class ApplicationFormValidatorTest {
 
@@ -36,10 +38,26 @@ public class ApplicationFormValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.programmeDetails.incomplete", mappingResult.getFieldError("programmeDetails").getCode());
 	}
-
+	@Test
+	public void shouldRejectIfProgrammeDetailsSectionNotSaved() {
+		applicationForm.setProgrammeDetails(new ProgrammeDetails());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+		validator.validate(applicationForm, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("user.programmeDetails.incomplete", mappingResult.getFieldError("programmeDetails").getCode());
+	}
 	@Test
 	public void shouldRejectIfPersonalDetailsSectionMissing() {
 		applicationForm.setPersonalDetails(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+		validator.validate(applicationForm, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("user.personalDetails.incomplete", mappingResult.getFieldError("personalDetails").getCode());
+
+	}
+	@Test
+	public void shouldRejectIfPersonalDetailsSectionNotSaved() {
+		applicationForm.setPersonalDetails(new PersonalDetails());
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
 		validator.validate(applicationForm, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -89,7 +107,7 @@ public class ApplicationFormValidatorTest {
 	@Before
 	public void setup() throws ParseException {
 		validator = new ApplicationFormValidator();
-		applicationForm = new ApplicationFormBuilder().programmeDetails(new ProgrammeDetails()).personalDetails(new PersonalDetails())
+		applicationForm = new ApplicationFormBuilder().programmeDetails(new ProgrammeDetailsBuilder().id(2).toProgrammeDetails()).personalDetails(new PersonalDetailsBuilder().id(1).toPersonalDetails())
 				.currentAddress(new Address()).contactAddress(new Address()).referees(new Referee(), new Referee(), new Referee()).personalStatement(new Document()).toApplicationForm();
 	}
 

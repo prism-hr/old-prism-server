@@ -27,14 +27,11 @@ public class AddressDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldDeleteAddress(){
-		ApplicationForm application = new ApplicationForm();
-		application.setProject(project);
-		application.setApplicant(user);
-		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+	
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Country countryById = countriesDAO.getCountryById(1);
-		Address address = new AddressBuilder().application(application).country(countryById).location("1 Main Street").toAddress();
-		save(application, address);
+		Address address = new AddressBuilder().country(countryById).location("1 Main Street").toAddress();
+		save( address);
 		flushAndClearSession();
 		
 		Integer id = address.getId();

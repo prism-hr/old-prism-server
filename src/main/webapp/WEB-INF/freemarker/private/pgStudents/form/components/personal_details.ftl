@@ -52,7 +52,9 @@
 			<input type="hidden" name="id" id="personalDetailsId" value="${(personalDetails.id?string("######"))!}"/>			
             <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
           	<div>
-		
+				<#if errorCode?? && errorCode=="true">
+				<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
+				</#if>
 				<div class="row">
 					<label class="plain-label">First Name<em>*</em></label>
 					 <span class="hint" data-desc="<@spring.message 'personalDetails.firstname'/>"></span>

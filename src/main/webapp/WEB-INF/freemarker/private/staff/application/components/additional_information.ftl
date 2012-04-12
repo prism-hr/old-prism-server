@@ -9,11 +9,9 @@
               
         	<!-- Free text field for info. -->
             <div class="row">
-            <span class="plain-label">Additional information</span>
-            <span class="hint" data-desc="<@spring.message 'additionalInformation.content'/>"></span>
-                <textarea readonly="readonly" id="additionalInformation" name="additionalInformation" class="max" rows="10" cols="80" >${(model.applicationForm.additionalInformation?html)!}</textarea>
+    	        <span class="plain-label">Additional information</span>
+				<div class="field">${(applicationForm.additionalInformation?html)!}</div>
 			</div>
-
             <div class="buttons">
                 <button class="blue" id="additionalCloseButton" type="button">Close</button>
 			</div>

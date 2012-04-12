@@ -10,7 +10,8 @@ $(document).ready(function(){
 	);
 	$.get("/pgadmissions/update/getPersonalDetails",
 			{
-				applicationId:  $('#applicationId').val()					
+				applicationId:  $('#applicationId').val(),
+				errorCode: $('#personalDetailsError').val()
 			},
 			function(data) {
 				$('#personalDetailsSection').html(data);

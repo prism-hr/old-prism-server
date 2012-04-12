@@ -155,5 +155,10 @@ public class PersonalDetailsController {
 	public RegisteredUser getUser() {		
 		return getCurrentUser();
 	}
+	
+	@ModelAttribute("errorCode")
+	public String getErrorCode(String errorCode) {	
+		return errorCode;
+	}
 
 }

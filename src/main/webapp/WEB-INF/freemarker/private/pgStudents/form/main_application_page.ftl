@@ -1,12 +1,12 @@
 <#-- Assignments -->
 
-<#if model.user.isInRole('APPLICANT')>
+<#if user.isInRole('APPLICANT')>
 	<#assign formDisplayState = "close"/>
 <#else>
 	<#assign formDisplayState = "open"/>
 </#if>
 
-<#if model.message?has_content>
+<#if message?has_content>
 	<#assign globalMsg = true/>
 <#else>
 	<#assign globalMsg = false/>
@@ -60,7 +60,12 @@
 		<div id="wrapper">
 			
 			  <#include "/private/common/global_header.ftl"/>
-			  
+				<@spring.bind "applicationForm.personalDetails" />
+				<#if spring.status.errorMessages?has_content >
+					<input type="hidden" id="personalDetailsError" value="true"/>
+				<#else>
+					<input type="hidden" id="personalDetailsError" value="false"/>
+				</#if>
 			  <!-- Middle. -->
 			  <div id="middle">
 			  		
@@ -71,52 +76,56 @@
 			    	
 			    	<div id="tools">
                         <ul class="left">
-                            <li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>">Print Page</a></li>
+                            <li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>">Print Page</a></li>
                         </ul>
                     </div>
 			    	
 			    	<!-- FLOATING TOOLBAR -->
                   <ul id="view-toolbar">
                     <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-                    <li class="print"><a href="<@spring.url '/print?applicationFormId=${model.applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
+                    <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
                   </ul>
 			      
 			      		<!-- content box -->
 				    	<div class="content-box">
 					        <div class="content-box-inner">
-								<#if globalMsg>
-					            	<span class="invalid">${model.message!}<p></p></span>
-					            </#if>
+								<@spring.bind "applicationForm.*" />
+								<#if spring.status.errorMessages?has_content  >
+									<span class="invalid">Some required fields are missing, please review your application form.<p></p></span>
+								</#if>
+								       
 								<div id="programme-details">
 			          
 						          	<div class="row">
 						            	<label>Programme</label>
-						              <input disabled size="109" value="${model.applicationForm.project.program.code} - ${model.applicationForm.project.program.title}" />
+						              <input disabled size="109" value="${applicationForm.project.program.code} - ${applicationForm.project.program.title}" />
 						            </div>
 						            
 						          	<div class="row half">
 						            	<label>Application Number</label>
-						              <input id="applicationNumber" disabled size="20" value="${model.applicationForm.id?string("######")}" />
+						              <input id="applicationNumber" disabled size="20" value="${applicationForm.id?string("######")}" />
 						            </div>
-						            <#if model.applicationForm.isSubmitted()>
+						            <#if applicationForm.isSubmitted()>
 						          	<div class="row">
 						            	<label>Date Submitted</label>
-						              <input id="applicationNumber" disabled size="20" value="${(model.applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}" />
+						              <input id="applicationNumber" disabled size="20" value="${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}" />
 						            </div>
 						            </#if>
 				            
 					          	</div>
 			          
 					            <hr/>
-								<input type="hidden" id="applicationId" name="applicationId" value="${model.applicationForm.id?string("######")}"/>
-					          	<section id="programmeDetailsSection" class="folding violet <#if model.hasError('programmeDetails')>error</#if>">					          	
+								<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/>
+								
+				
+					          	<section id="programmeDetailsSection" class="folding violet <@spring.bind 'applicationForm.programmeDetails' />	<#if spring.status.errorMessages?has_content >error</#if>">					          	
 								</section>
 			          
-			          			<section id="personalDetailsSection" class="folding purple <#if model.hasError('personalDetails')>error</#if>">
+			          			<section id="personalDetailsSection" class="folding purple <@spring.bind 'applicationForm.personalDetails' />	<#if spring.status.errorMessages?has_content >error</#if>">
 			             		</section>
 			          
 			          			<!-- Address -->			          			
-			          			<section id="addressSection" class="folding red <#if model.hasError('numberOfContactAddresses') || model.hasError('numberOfAddresses')>error</#if>">			             			
+			          			<section id="addressSection" class="folding red ">			             			
 			          			</section>
 			          
 			           			<section id="qualificationsSection" class="folding orange">
@@ -130,10 +139,10 @@
 			           			<section id="fundingSection" class="folding green">			             	
 			          			</section>
 			          
-			           			<section id="referencesSection" class="folding navy <#if model.hasError('numberOfReferees')>error</#if>">
+			           			<section id="referencesSection" class="folding navy ">
 				          		</section>
 			          
-			          			<section id="documentSection" class="folding blue <#if model.uploadErrorCode?? || model.uploadTwoErrorCode?? || model.hasError('supportingDocuments') >error</#if>">							
+			          			<section id="documentSection" class="folding blue >							
 			          			</section>
 			          
 			          			<section id="additionalInformationSection" class="folding lightblue">
@@ -150,13 +159,13 @@
 			          				
 			          				
 			          			
-			          				<#if !model.applicationForm.isSubmitted() && model.user.isInRole('APPLICANT')>
+			          				<#if !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>
 			             			
 			             			
 			             			
 			             				<form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
-			          	      				<input type="hidden" id="applicationFormId" name="applicationFormId" 
-			          	      									value="${model.applicationForm.id?string("######")}"/>
+			          	      				<input type="hidden" id="applicationFormId" name="applicationId" 
+			          	      									value="${applicationForm.id?string("######")}"/>
 			          	      										<a class="button" href="<@spring.url '/applications'/>">Close</a>
 			          	      										<button id="submitButton" type="submit" class="button">Submit</button>
 										</form>

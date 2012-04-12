@@ -6,7 +6,6 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -29,17 +28,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	private EmploymentPositionService employmentServiceMock;
 	private FundingService fundingServiceMock;
 	private RefereeService refereeServiceMock;
-	@Test
-	public void shoulGetAddressFromServiceAndDelete(){
-		Address address = new Address();
-		address.setApplication(applicationForm);
-		address.setId(1);
-		EasyMock.expect(serviceMock.getAddressById(1)).andReturn(address);
-		serviceMock.deleteAddress(address);
-		EasyMock.replay(serviceMock);
-		controller.deleteAddress(1);
-		EasyMock.verify(serviceMock);
-	}
+
 
 	
 	@Test

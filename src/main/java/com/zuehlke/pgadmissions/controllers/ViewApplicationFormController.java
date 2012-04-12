@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
 
 @Controller
-@RequestMapping(value = { "application" })
+@RequestMapping(value = { "applicationinternal" })
 public class ViewApplicationFormController {
 
 	private static final String VIEW_APPLICATION_INTERNAL_VIEW_NAME = "private/staff/application/main_application_page";

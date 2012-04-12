@@ -43,13 +43,7 @@ public class DeleteApplicationFormEntitiesController {
 
 	}
 
-	@RequestMapping(value = "/address", method = RequestMethod.POST)
-	public ModelAndView deleteAddress(@RequestParam Integer id) {
-		Address addressById = applicationsService.getAddressById(id);
-		Integer applicationFormId = addressById.getApplication().getId();
-		applicationsService.deleteAddress(addressById);
-		return new ModelAndView("redirect:/application", "id", applicationFormId);
-	}
+
 
 	@RequestMapping(value = "/qualification", method = RequestMethod.POST)
 	public String deleteQualification(@RequestParam Integer id) {

@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
@@ -38,7 +37,6 @@ public class ApplicationPageModel extends PageModel {
 	private List<Gender> genders = new LinkedList<Gender>();
 	private List<PhoneType> phoneTypes = new LinkedList<PhoneType>();
 	private List<DocumentType> documentTypes = new LinkedList<DocumentType>();
-	private List<QualificationLevel> qualificationLevels = new LinkedList<QualificationLevel>();
 
 	private List<StudyOption> studyOptions = new LinkedList<StudyOption>();
 	private List<Referrer> referrers = new LinkedList<Referrer>();
@@ -170,14 +168,6 @@ public class ApplicationPageModel extends PageModel {
 
 	public void setUploadErrorCode(String uploadErrorCode) {
 		this.uploadErrorCode = uploadErrorCode;
-	}
-
-	public List<QualificationLevel> getQualificationLevels() {
-		return qualificationLevels;
-	}
-	
-	public void setQualificationLevels(QualificationLevel[] qualificationLevels) {
-		this.qualificationLevels.addAll(Arrays.asList(qualificationLevels));
 	}
 
 	public void setFundingTypes(FundingType[] fundingTypes) {

@@ -119,7 +119,6 @@ function postQualificationData(message){
 	$.post("/pgadmissions/update/editQualification", {  
 		qualificationSubject: $("#qualificationSubject").val(), 
 		qualificationInstitution: $("#qualificationInstitution").val(), 
-		qualificationLevel: $("#qualificationLevel").val(),
 		qualificationType: $("#qualificationType").val(),
 		qualificationGrade: $("#qualificationGrade").val(),
 		qualificationScore: $("#qualificationScore").val(),

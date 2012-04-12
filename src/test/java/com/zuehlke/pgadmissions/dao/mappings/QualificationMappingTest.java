@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
-import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
 public class QualificationMappingTest extends AutomaticRollbackTestCase{
 
@@ -47,7 +46,7 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Qualification qualification = new QualificationBuilder().id(3)
 				.awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2001/02/02")).grade("").institution("")
-				.languageOfStudy(languageDAO.getLanguageById(1)).level(QualificationLevel.COLLEGE).subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
+				.languageOfStudy(languageDAO.getLanguageById(1)).subject("").isCompleted(CheckedStatus.YES).proofOfAward(document)
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/09/09")).type("").institutionCountry(countriesDAO.getAllCountries().get(0)).toQualification();
 
 		sessionFactory.getCurrentSession().save(qualification);
@@ -69,7 +68,6 @@ public class QualificationMappingTest extends AutomaticRollbackTestCase{
 		assertEquals(qualification.getQualificationInstitution(), qualificationDetails.getQualificationInstitution());
 		assertEquals(qualification.getInstitutionCountry(), qualificationDetails.getInstitutionCountry());
 		assertEquals(qualification.getQualificationLanguage(),	qualificationDetails.getQualificationLanguage());
-		assertEquals(qualification.getQualificationLevel(), qualificationDetails.getQualificationLevel());
 		assertEquals(qualification.getQualificationSubject(), qualificationDetails.getQualificationSubject());		
 		assertEquals(qualification.getQualificationStartDate(), qualificationDetails.getQualificationStartDate());
 		assertEquals(qualification.getQualificationType(), qualificationDetails.getQualificationType());

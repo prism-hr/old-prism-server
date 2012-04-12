@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
-import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	
@@ -198,7 +197,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		
 		LanguageDAO languageDAO = new LanguageDAO(sessionFactory);
 		qualification1.setQualificationLanguage(languageDAO.getLanguageById(1));
-		qualification1.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualification1.setQualificationSubject("");		
 		qualification1.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
 		qualification1.setQualificationType("");
@@ -210,7 +208,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		qualification2.setQualificationGrade("");
 		qualification2.setQualificationInstitution("");
 		qualification2.setQualificationLanguage(languageDAO.getLanguageById(1));
-		qualification2.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualification2.setQualificationSubject("");		
 		qualification2.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/02/02"));
 		qualification2.setQualificationType("");

@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
@@ -140,12 +139,6 @@ public class QualificationController {
 		return countryService.getAllCountries();
 	}
 	
-	@ModelAttribute("qualificationLevels")
-	public QualificationLevel[] getQualificationLevels() {
-		return QualificationLevel.values();
-	}
-
-
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {		
 		ApplicationForm application = applicationService.getApplicationById(applicationId);

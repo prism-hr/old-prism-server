@@ -8,14 +8,12 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
-import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
 public class QualificationBuilder {
 
 	private String q_name_of_programme;
 	private String q_institution;
 	private Language q_language_of_study;
-	private QualificationLevel q_level;
 	private String q_type;
 	private String q_grade;	
 	private Date q_start_date;
@@ -69,11 +67,6 @@ public class QualificationBuilder {
 		return this;
 	}
 
-	
-	public QualificationBuilder level(QualificationLevel q_level) {
-		this.q_level = q_level;
-		return this;
-	}
 	public QualificationBuilder type(String q_type) {
 		this.q_type = q_type;
 		return this;
@@ -95,7 +88,6 @@ public class QualificationBuilder {
 		qualification.setQualificationGrade(q_grade);
 		qualification.setQualificationInstitution(q_institution);
 		qualification.setQualificationLanguage(q_language_of_study);
-		qualification.setQualificationLevel(q_level);
 		qualification.setQualificationSubject(q_name_of_programme);
 		qualification.setQualificationStartDate(q_start_date);
 		qualification.setQualificationType(q_type);

@@ -27,7 +27,6 @@ import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -104,7 +103,6 @@ public class SubmitApplicationFormController {
 			viewApplicationModel.setResult(result);
 			viewApplicationModel.setUser(user);
 			viewApplicationModel.setCountries(countryService.getAllCountries());
-			viewApplicationModel.setQualificationLevels(QualificationLevel.values());
 			viewApplicationModel.setStudyOptions(StudyOption.values());
 			viewApplicationModel.setReferrers(Referrer.values());
 			viewApplicationModel.setLanguages(languageService.getAllLanguages());

@@ -32,7 +32,6 @@ import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.PhoneType;
-import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
@@ -106,13 +105,6 @@ public class ApplicationPageModelBuilderTest {
 		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
 		assertEquals(PhoneType.values().length, model.getPhoneTypes().size());
 		assertTrue(model.getPhoneTypes().containsAll(Arrays.asList(PhoneType.values())));
-	}
-
-	@Test
-	public void shouldSetAllQaulificationLevelsOnModel() {
-		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, null, null, null);
-		assertEquals(QualificationLevel.values().length, model.getQualificationLevels().size());
-		assertTrue(model.getQualificationLevels().containsAll(Arrays.asList(QualificationLevel.values())));
 	}
 
 	@Test

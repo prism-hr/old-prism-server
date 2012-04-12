@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -32,7 +31,6 @@ import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -107,12 +105,6 @@ public class QualificationControllerTest {
 		EasyMock.replay(countriesServiceMock);
 		List<Country> allCountries = controller.getAllCountries();
 		assertSame(countryList, allCountries);
-	}
-
-	@Test
-	public void shouldReturnAllQualificationLevels() {
-		QualificationLevel[] qualificationLevels = controller.getQualificationLevels();
-		assertArrayEquals(qualificationLevels, QualificationLevel.values());
 	}
 
 	@Test

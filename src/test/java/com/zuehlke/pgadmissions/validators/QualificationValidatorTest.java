@@ -16,7 +16,6 @@ import org.springframework.validation.DirectFieldBindingResult;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
-import com.zuehlke.pgadmissions.domain.enums.QualificationLevel;
 
 public class QualificationValidatorTest {
 	
@@ -69,15 +68,7 @@ public class QualificationValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("qualification.language_of_study.notempty",mappingResult.getFieldError("qualificationLanguage").getCode());
 	}
-	@Test
-	public void shouldRejectIfLevelIsEmpty(){
-		qualification.setQualificationLevel(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(qualification, "qualification");
-		qualificationValidator.validate(qualification, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("qualification.level.notempty",mappingResult.getFieldError("qualificationLevel").getCode());
-	}
-	
+
 	@Test
 	public void shouldRejectIfStartDateAndEndDateAreFutureDates(){
 		Date tomorrow, dayAfterTomorrow;
@@ -133,7 +124,6 @@ public class QualificationValidatorTest {
 		qualification.setQualificationInstitution("UCL");
 		qualification.setInstitutionCountry(new Country());
 		qualification.setQualificationLanguage(new LanguageBuilder().id(1).toLanguage());
-		qualification.setQualificationLevel(QualificationLevel.COLLEGE);
 		qualification.setQualificationSubject("CS");		
 		qualification.setQualificationStartDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06"));
 		qualification.setQualificationType("degree");	}

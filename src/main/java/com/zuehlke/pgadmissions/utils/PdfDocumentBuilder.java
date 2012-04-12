@@ -280,7 +280,6 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("Start Date: " + qualification.getQualificationStartDate().toString()));
 				document.add(new Paragraph("Has been awarded? " + qualification.getCompleted().displayValue()));
 				document.add(new Paragraph("Language of Study: " + qualification.getQualificationLanguage().getName()));
-				document.add(new Paragraph("Level: " + qualification.getQualificationLevel().getDisplayValue()));
 				document.add(new Paragraph("Type: " + qualification.getQualificationType()));
 				document.add(new Paragraph("Grade: " + qualification.getQualificationGrade()));
 				if (qualification.getQualificationAwardDate() != null) {

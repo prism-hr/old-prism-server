@@ -232,33 +232,6 @@
 		
 		</div>
 		
-      	<div>
-      
-      		<!-- Qualification level -->
-          	<div class="row">
-            	<span class="plain-label">Level<em>*</em></span>
-            	<span class="hint" data-desc="<@spring.message 'education.qualifications.qualificationLevel'/>"></span>
-            	<div class="field">
-            		<select name="qualificationLevel" id="qualificationLevel" value="${qualification.qualificationLevel!}"
-            			<#if applicationForm.isSubmitted()>
-                     		disabled="disabled"
-                     	</#if>>
-            			 <option value="">Select...</option>
-            			 <#list qualificationLevels as level>
-                 			<option value="${level}"
-                 			<#if qualification.qualificationLevel?? &&  qualification.qualificationLevel == level >
-                            	selected="selected"
-                            </#if>
-                    		>${level.displayValue?html}</option>               
-            			</#list>
-          			</select>
-					<@spring.bind "qualification.qualificationLevel" /> 
-                	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-            	</div>
-          	</div>
-          	
-        </div>
-
     	<div class="buttons">
     	<#if !applicationForm.isSubmitted()>
         	<a class="button" id="qualificationCancelButton" name="qualificationCancelButton">Cancel</a>

@@ -19,7 +19,7 @@
         		<span class="plain-label">Personal Statement (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.personalStatement'/>"></span>	 
         		<div class="field" id="psUploadFields">        	
-          			<input id="psDocument" class="full" type="file" name="file" value="" <#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>					
+            			<input id="psDocument" class="full" type="file" name="file" value="" <#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>					
 					<span id="psUploadedDocument" ><input type="hidden" id="document_PERSONAL_STATEMENT" value = "${(applicationForm.personalStatement.id?string('######'))!}"/>
 					<@spring.bind "applicationForm.personalStatement" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
@@ -43,10 +43,6 @@
         		
       		</div>
 			
-			<div class="row">
-                <span class="plain-label">Max file size is 10Mb.</span>
-              
-			</div>
 		</div>
 
 		<div class="buttons">
@@ -57,6 +53,7 @@
                 <button type="button" class="blue" id="documentsSaveButton" value="close">Save</button> 
             </#if>             
 		</div>
+
 
 	</form>
 </div>

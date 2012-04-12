@@ -1,8 +1,6 @@
 $(document).ready(function(){
 	$("#addSupervisorButton").show();
 	$("#awareSupervisorCB").attr('checked', false);
-	$("#primarySupervisorCB").attr('checked', false);
-	$("#primarySupervisor").val("NO");
 	$("#awareSupervisor").val("NO");
 	var unsavedSupervisors = 0;
 	
@@ -28,7 +26,7 @@ $(document).ready(function(){
 			$("#supervisorFirstname").val($('#us_'+id+"firstname").val());
 			$("#supervisorLastname").val($('#us_'+id+"lastname").val());
 			$("#supervisorEmail").val($('#us_'+id+"email").val());
-			if ($('#us_'+id+'_aware').val() =='YES'){
+			if ($('#us_'+id+'aware').val() =='YES'){
 				$("#awareSupervisorCB").attr('checked', true);
 				$("#awareSupervisor").val("YES");
 			} else {
@@ -140,6 +138,8 @@ $(document).ready(function(){
 		 $('#supervisorFirstname').val('');
 		 $('#supervisorLastname').val('');
 		 $('#supervisorEmail').val('');
+		 $("#awareSupervisorCB").attr('checked', false);
+		 $("#awareSupervisor").val("NO");
 		}
 	});
 	
@@ -195,6 +195,8 @@ $(document).ready(function(){
 			$('#supervisorLastname').val('');
 			$('#supervisorEmail').val('');
 		}
+		$("#awareSupervisorCB").attr('checked', false);
+		$("#awareSupervisor").val("NO");
 	});
 	
 //	$('#updateSupervisorButton').on('click', function(){

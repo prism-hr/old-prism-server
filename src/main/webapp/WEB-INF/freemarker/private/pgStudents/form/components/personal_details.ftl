@@ -146,7 +146,6 @@
               	  </#list>
               	</div>
         	    
-        	    <#if !applicationForm.isSubmitted()>
             	<div class="row">                    	
               		 <label class="plain-label" id="my-nationality">My Nationality
 					<#if !nationalityExist>
@@ -155,7 +154,7 @@
 					</label>      
 					<span class="hint" data-desc="<@spring.message 'personalDetails.nationality'/>"></span>    
 					<div class="field">
-						 <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry">
+						 <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry"<#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
 							<option value="">Select...</option>
 							<#list countries as country>
 							  <option value="${country.id?string('#######')}">${country.name}</option>               
@@ -169,7 +168,6 @@
 				<div class="row">
 					<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add Nationality</a></div>
 				</div>
-            	</#if>   
     
         	    <div class="row" id="existingMaternalNationalities">
         	     <#if maternalNationalitiesExist>
@@ -188,12 +186,11 @@
 					 </#list>
 				</div>
               
-                <#if !applicationForm.isSubmitted()>
             	<div class="row">                     	
               		<label class="plain-label" id="maternal-nationality">Mother's Nationality</label>
               		<span class="hint" data-desc="<@spring.message 'personalDetails.maternalGuardianNationality'/>"></span>           
                   	 <div class="field">
-                     	 <select class="full" name="maternalNationalityCountry" id="maternalNationalityCountry">
+                     	 <select class="full" name="maternalNationalityCountry" id="maternalNationalityCountry"<#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
                       		<option value="">Select...</option>
                         	<#list countries as country>
                               <option value="${country.id?string('#######')}">${country.name}</option>               
@@ -205,7 +202,6 @@
             	<div class="row">
               		<div class="field"><a class="button blue" id="addMaternalNationalityButton">Add Nationality</a></div>
               	</div>
-              	</#if>
               	 
         	     <div class="row" id="existingPaternalNationalities">
         	      <#if paternalNationalitiesExist>
@@ -224,12 +220,11 @@
 					</#list>
 				</div>
 				
-				<#if !applicationForm.isSubmitted()>
 				<div class="row">                      	
 					<label class="plain-label" id="paternal-nationality">Father's Nationality</label> 
 					  <span class="hint" data-desc="<@spring.message 'personalDetails.paternalGuardianNationality'/>"></span>      
                   	 <div class="field">
-                     	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry">
+                     	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry" <#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
                       		<option value="">Select...</option>
                         	<#list countries as country>
                               <option value="${country.id?string('#######')}">${country.name?html}</option>               
@@ -242,7 +237,6 @@
             	<div class="row">
               		<div class="field"><a class="button blue" id="addPaternalNationalityButton">Add Nationality</a></div>
               	</div>
-              	</#if>
               	 
             </div>
           	

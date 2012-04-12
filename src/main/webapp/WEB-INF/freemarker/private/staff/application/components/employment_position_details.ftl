@@ -91,7 +91,7 @@
                 </div>
                 <!-- Position -->
                 <div class="row">
-                	<span class="label">Description</span>
+                	<span class="label">Roles and Responsibilities</span>
        
               		<div class="field" id="emp_description">&nbsp; </div>
                 </div>
@@ -107,7 +107,7 @@
                                      <div class="field" id="emp_startDate">&nbsp; </div>
                 </div>
                 <div class="row">
-                       <span class="label">Current position</span>
+                       <span class="label">Is this your current position?</span>
     
                                       <div class="field" id="emp_current">&nbsp; </div>
                		

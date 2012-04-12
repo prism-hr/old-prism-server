@@ -17,11 +17,11 @@
 				
 				<input type="hidden" id="addressId" name="addressId"/>
             	<div>
-                	<h3>Address</h3>
+                	<h3>Current Address</h3>
                   
                   	<!-- Address body -->
                   	<div class="row">
-                    	<span class="label">Current Address</span>
+                    	<span class="label">Address</span>
                     	<div class="field">
                     	 ${(applicationForm.currentAddress.location?html)!}
                     	</div>
@@ -37,8 +37,9 @@
 					
 				<div>	
 					                   <!-- Address body -->
+					<h3>Contact Address</h3>
                     <div class="row">
-                        <span class="label">Contact Address</span>    
+                        <span class="label">Address</span>    
                         <div class="field">
                       ${(applicationForm.contactAddress.location?html)!}	
                         </div>

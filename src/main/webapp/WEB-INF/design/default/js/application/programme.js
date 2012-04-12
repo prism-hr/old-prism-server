@@ -62,7 +62,8 @@ $(document).ready(function(){
 		$("#updateSupervisorButton").hide();
 		$.get("/pgadmissions/update/getProgrammeDetails",
 				{
-					applicationId:  $('#applicationId').val()					
+					applicationId:  $('#applicationId').val(),					
+					cacheBreaker: new Date().getTime()					
 				},
 				function(data) {
 					$('#programmeDetailsSection').html(data);

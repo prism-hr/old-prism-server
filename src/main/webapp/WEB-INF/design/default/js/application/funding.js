@@ -37,7 +37,8 @@ $(document).ready(function(){
 				{
 					applicationId:  $('#applicationId').val(),
 					fundingId: id,
-					message: 'edit'
+					message: 'edit',					
+					cacheBreaker: new Date().getTime()
 				},
 				function(data) {
 					$('#fundingSection').html(data);
@@ -49,7 +50,8 @@ $(document).ready(function(){
 		$.get("/pgadmissions/update/getFunding",
 				{
 					applicationId:  $('#applicationId').val(),
-					message: 'cancel'
+					message: 'cancel',					
+					cacheBreaker: new Date().getTime()
 				},
 				function(data) {
 					$('#fundingSection').html(data);

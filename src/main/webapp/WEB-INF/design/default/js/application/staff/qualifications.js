@@ -8,7 +8,7 @@ $(document).ready(function(){
 	$('a[name="editQualificationLink"]').click(function(){
 		var id = this.id;
 		id = id.replace('qualification_', '');
-		$('#qualificationId').html($('#'+id+'_qualificationIdDP').val());
+		$('#qualificationId').val($('#'+id+'_qualificationIdDP').val());
 		$('#qualificationInstitutionCountry').html($('#'+id+'_qualificationInstitutionCountryDP').val());
 		$('#qualificationInstitution').html($('#'+id+'_qualificationInstitutionDP').val());
 		$('#qualificationType').html($('#'+id+'_qualificationTypeDP').val());

@@ -11,7 +11,7 @@ $(document).ready(function(){
 	$('a[name="fundingEditButton"]').click(function(){
 		var id = this.id;
 		id = id.replace('funding_', '');
-		$("#fundingId").html($('#'+id+"_fundingIdDP").val());
+		$("#fundingId").val($('#'+id+"_fundingIdDP").val());
 		$("#fundingType").html($('#'+id+"_fundingTypeDP").val());
 		$("#fundingValue").html($('#'+id+"_fundingValueDP").val());
 		$("#fundingDescription").html($('#'+id+"_fundingDescriptionDP").val());

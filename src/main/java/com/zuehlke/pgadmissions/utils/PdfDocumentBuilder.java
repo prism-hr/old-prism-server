@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -28,7 +29,9 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class PdfDocumentBuilder {
 
@@ -73,8 +76,9 @@ public class PdfDocumentBuilder {
 		addFundingSection(application, document);
 
 		addSectionSeparators(document);
-
+		
 		addReferencesSection(application, document);
+
 
 		addSectionSeparators(document);
 
@@ -85,8 +89,10 @@ public class PdfDocumentBuilder {
 		addSupportingDocuments(application, document);
 
 		addSectionSeparators(document);
-
-		addUploadedReferences(application, document);
+		if(!((RegisteredUser)SecurityContextHolder.getContext().getAuthentication().getDetails()).isInRole(Authority.APPLICANT)){
+			addUploadedReferences(application, document);
+		}
+	
 	}
 
 	private void addSectionSeparators(Document document) throws DocumentException {

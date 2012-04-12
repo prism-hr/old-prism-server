@@ -46,7 +46,8 @@ $(document).ready(function(){
 	$('a[name="addressCancelButton"]').click(function(){
 		$.get("/pgadmissions/update/getAddress",
 				{
-					applicationId:  $('#applicationId').val()					
+					applicationId:  $('#applicationId').val(),					
+					cacheBreaker: new Date().getTime()					
 				},
 				function(data) {
 					$('#addressSection').html(data);

@@ -148,6 +148,9 @@
 
     	<div>
     	     
+			<div class="row">
+          		<label class="label">Contact Details</label>
+          	</div> 
       		<!-- Address body -->
       		<div class="row">
         		<span class="plain-label">Address<em>*</em></span>
@@ -188,6 +191,11 @@
     	</div>
 
     	<div>
+    	
+    		<div class="row">
+          		<label class="label">Contact Details</label>
+          	</div> 
+    		
       		<!-- Email address -->
       		<div class="row">
         		<span class="plain-label">Email<em>*</em></span>

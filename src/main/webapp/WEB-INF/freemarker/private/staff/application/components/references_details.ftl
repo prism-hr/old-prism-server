@@ -48,13 +48,17 @@
                                     <input type="hidden" id="${referee.id?string('#######')}_refereeId" value="${referee.id?string('#######')}"/>
                                     <input type="hidden" id="${referee.id?string('#######')}_firstname" value="${(referee.firstname?html)!}"/>
                                     <input type="hidden" id="${referee.id?string('#######')}_phone" value="${(referee.phoneNumber?html)!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_messenger" value="${(referee.phoneNumber?html)!}"/>
+                                    <#if referee.messenger??>
+                                    <input type="hidden" id="${referee.id?string('#######')}_messenger" value="${(referee.messenger?html)!}"/>
+                                    <#else>
+                                    <input type="hidden" id="${referee.id?string('#######')}_messenger" value=" "/>
+                                    </#if>
                                     <input type="hidden" id="${referee.id?string('#######')}_lastname" value="${(referee.lastname?html)!}"/>                                    
                                     <input type="hidden" id="${referee.id?string('#######')}_jobEmployer" value="${(referee.jobEmployer?html)!}"/>
                                     <input type="hidden" id="${referee.id?string('#######')}_jobTitle" value="${(referee.jobTitle?html)!}"/>
                                     <input type="hidden" id="${referee.id?string('#######')}_addressLocation" value="${(referee.addressLocation?html)!}"/>
                                     
-                                    <input type="hidden" id="${referee.id?string('#######')}_addressCountry" <#if referee.addressCountry??> value="${(referee.addressCountry.id?html)!}" </#if>/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_addressCountry" <#if referee.addressCountry??> value="${(referee.addressCountry.name?html)!}" </#if>/>
                                      <input type="hidden" id="${referee.id?string('#######')}_lastUpdated" value="<#if referee.hasProvidedReference() > 
 			                    		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
 			                    	<#else>
@@ -64,19 +68,10 @@
 			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_url" value="<#if referee.hasProvidedReference() && referee.reference.document?? >
 			                    	 	<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/></#if>"
 			                    	 />
-			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName?html}<#else>No document uploaded</#if></#if>" />
+			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName?html}</#if><#else>No document uploaded</#if>" />
                                     <input type="hidden" id="${referee.id?string('#######')}_email" value="${(referee.email?html)!}"/>
 									
-									<#list referee.phoneNumbers! as phoneNumber>
-									<span name="${referee.id?string('#######')}_hiddenPhones" style="display:none" >
-                   		 				${phoneNumber.telephoneType.displayValue!}
-		                        		${(phoneNumber.telephoneNumber?html)!}
-											<input class="half" type="hidden" placeholder="Number" name="phoneNumbers" 
-		                      			value='{"type" :"${phoneNumber.telephoneType?html}", "number":"${phoneNumber.telephoneNumber?html}"}' />
-		                      				</span>
-									</#list>
 									
-									<input type="hidden" id="${referee.id?string('#######')}_messenger" value="${(referee.messenger?html)!}"/>   
 
 			                  	</tr>
 		                  	</#list>
@@ -121,9 +116,9 @@
                   		<!-- Position title -->
                   		<div class="row">
                     		<span class="label">Position</span>
-
-ref_position                  		</div>
-                  		
+			
+                 			<div class="field" id="ref_position">&nbsp; </div>
+                  		</div>
                 	</div>
 
                 	<div>
@@ -134,7 +129,7 @@ ref_position                  		</div>
                   		<div class="row">
                     		<span class="label">Location</span>
          
-                    		<div class="field">&nbsp; </div>
+                    		<div class="field" id="ref_address_location">&nbsp; </div>
                   		</div>
                 
            
@@ -142,7 +137,7 @@ ref_position                  		</div>
                   		<!-- Country -->
                   		<div class="row">
                     		<span class="label">Country</span>
-						<div class="field">&nbsp; </div>
+							<div class="field" id="ref_address_country">&nbsp; </div>
                   		</div>
                 	
                 	</div>
@@ -155,40 +150,38 @@ ref_position                  		</div>
                   		<div class="row">
                     		<span class="label">Email</span>
                   
-                    		<div class="field">&nbsp; </div>
+                    		<div class="field" id="ref_email">&nbsp; </div>
                   		</div>
 
                   		<!-- Telephone -->
                   		<div class="row">
                   		    <span class="label">Telephone</span>
                   		
-                    		<div class="field">&nbsp; </div>
+                    		<div class="field"  id="ref_phone">&nbsp; </div>
                   		</div>
 
 	                  	<!-- Skype address -->
 	                  	<div class="row">
                     		<span class="label">Skype</span>
                     		
-                    		<div class="field">&nbsp; </div>
+                    		<div class="field" id="ref_messenger">&nbsp; </div>
                   		</div>
                   		
                 	</div>
 						<div>
-	                  	            
+	                  	     <p><strong>Reference</strong></p>      
 	                  		<div class="row">
-			                  	<label class="label">Reference</label>
+			                  	<span class="label">Document</span>
 			                  
-			                    <div class="field" id="referenceDocument">			                    	
-			                    </div>     
+			                    <div class="field" id="referenceDocument">	&nbsp; </div>
 		                    </div>		              
 		                    <div class="row">			        
-		                    	<span class="label"></span>	                   		          
-			                   <div class="field" id="referenceUpdated">
-			                    	
-			                    </div>
+		                    	<span class="label">Uploaded date</span>	                   		          
+			                   <div class="field" id="referenceUpdated">&nbsp; </div>
 		                    </div>
 		               
 	                	</div>
+	                	
                 	<div class="buttons">
                   		<button class="blue" type="button" value="close" id="refereeCloseButton">Close</button>
                 	</div>

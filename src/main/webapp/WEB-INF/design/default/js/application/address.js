@@ -55,7 +55,7 @@ $(document).ready(function(){
 		);
 	});
 	
-	
+	addToolTips();
 
 	//open/close
 	var $header  =$('#address-H2');

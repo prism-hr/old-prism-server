@@ -20,7 +20,7 @@ $(document).ready(function(){
 	$('#documentsSaveButton').click(function(){
 		postDocumentData('close');
 	});
-	
+	addToolTips();
 
 	//open/close
 	var $header  =$('#documents-H2');

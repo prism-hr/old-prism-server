@@ -85,8 +85,7 @@
                                 <p>Not yet assigned.</p>
                        </#if>
 		            </div>
-		        <#if model.applicationForm.isReviewable()  && (model.user.isInRole('ADMINISTRATOR')||model.user.isInRole('REVIEWER') )>
-					<form  action="<@spring.url '/reviewer/reviewerSuccess'/>" method = "POST">		                    
+		       <#if model.applicationForm.isReviewable()  && (model.user.isInRole('SUPERADMINISTRATOR')|| model.user.isInProgramme(model.applicationForm.project.program))>	<form  action="<@spring.url '/reviewer/reviewerSuccess'/>" method = "POST">		                    
 			            <input type="hidden" name="id" value="${model.applicationForm.id?string("######")}"/>
 			          	<div class="row">
 			            	<label>Assign Reviewer</label>
@@ -111,7 +110,7 @@
 			        <br />
   				</#if> 
 
-				<#if model.applicationForm.isReviewable() && (model.user.isInRole('ADMINISTRATOR')|| model.user.isInRole('APPROVER')) >
+		<#if model.applicationForm.isReviewable()  && (model.user.isInRole('SUPERADMINISTRATOR')|| model.user.isInProgramme(model.applicationForm.project.program))>
 					<form id="approvalForm" action="<@spring.url '/approveOrReject'/>" method = "POST">
 						<input type="hidden" name="id" value="${model.applicationForm.id?string("######")!}"/>
 			          	<div class="row">

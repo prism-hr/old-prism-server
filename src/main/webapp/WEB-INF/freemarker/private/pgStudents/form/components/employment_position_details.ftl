@@ -30,6 +30,7 @@
                     <th>From</th>
                     <th>To</th>
                     <th>&nbsp;</th>
+                    <th id="last-col">&nbsp;</th>
                 </tr>
 			</thead>
             
@@ -37,15 +38,25 @@
             
             	<#list applicationForm.employmentPositions as position>
 	            	<tr>
-	                    <td><a class="row-arrow <#if employmentPosition.id?? && position.id==employmentPosition.id>open</#if>" name="positionEditButton" id="position_${position.id?string('#######')}">-</a></td>
+	                    <td><a class="row-arrow 
+	                    	<#if employmentPosition.id?? && position.id==employmentPosition.id>open</#if>" 
+	                    	name="positionEditButton" id="position_${position.id?string('#######')}">-</a></td>
 	                    <td>${(position.position?html)!}</td>
 	                    <td>${(position.startDate?string('dd-MMM-yyyy'))!}</td>
 	                    <td>${(position.endDate?string('dd-MMM-yyyy'))!}</td>
-	                     <td>
-	                     	 <#if !applicationForm.isSubmitted()>			                		
-		                			<a name="deleteEmploymentButton" id="position_${position.id?string('#######')}" class="button-delete">delete</a>
-		                		</#if>
-			        		</td>                 
+	                     
+	                    <#if !applicationForm.isSubmitted()>
+	                    	<td>		                		
+		                		<a name="positionEditButton" id="position_${position.id?string('#######')}" class="button-edit">delete</a>
+		                	</td>
+	                    	<td>		                		
+		                		<a name="deleteEmploymentButton" id="position_${position.id?string('#######')}" class="button-delete">delete</a>
+		                	</td>
+		            
+						<#else>
+		                	<td></td><td></td>		                		
+		                </#if>
+			        	                 
 					
 	                </tr>
 	            </#list>

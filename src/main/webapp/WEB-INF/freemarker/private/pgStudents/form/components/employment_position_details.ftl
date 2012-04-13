@@ -47,7 +47,7 @@
 	                     
 	                    <#if !applicationForm.isSubmitted()>
 	                    	<td>		                		
-		                		<a name="positionEditButton" id="position_${position.id?string('#######')}" class="button-edit">delete</a>
+		                		<a name="positionEditButton" id="position_${position.id?string('#######')}" class="button-edit">edit</a>
 		                	</td>
 	                    	<td>		                		
 		                		<a name="deleteEmploymentButton" id="position_${position.id?string('#######')}" class="button-delete">delete</a>

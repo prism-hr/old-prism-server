@@ -33,7 +33,7 @@
                 <th>Awarding Body</th>
                 <th>Date Completed</th>
                 <th>&nbsp;</th>
-                <th>&nbsp;</th>
+                <th id="last-col">&nbsp;</th>
               </tr>
             </thead>
             
@@ -57,7 +57,9 @@
 	                  	  	   </td>
 	                  	  	   <td>
 		                			<a name="deleteQualificationButton" id="qualification_${existingQualification.id?string('#######')}" class="button-delete">delete</a>
-		                	   </td>		                		
+		                	   </td>
+		                	<#else>
+		                		<td></td><td></td>		                		
 		                	</#if>
 			        		
                   	</tr>

@@ -73,7 +73,7 @@
 					            <div class="row">
                                     <label class="label">First Name<em>*</em></label>
                                             <div class="field">
-                                                <input class="full" type="text" <#if newUserFirstName??> value="${newUserFirstName?html}"</#if>  name="newUserFirstName" id="newUserFirstName"/>
+                                                <input class="full" type="text" <#if newUserFirstName??> value="${newUserFirstName}"</#if>  name="newUserFirstName" id="newUserFirstName"/>
                                <#if result?? && result.getFieldError('newUserFirstName')??>
                                    <p class="invalid"><@spring.message  result.getFieldError('newUserFirstName').code /></p>
                                </#if>      
@@ -83,7 +83,7 @@
                                 <div class="row">
                                     <label class="label">Last Name<em>*</em></label>
                                     <div class="field">
-                                        <input class="full" type="text" <#if newUserLastName??> value="${newUserLastName?html}"</#if>  name="newUserLastName" id="newUserLastName"/>
+                                        <input class="full" type="text" <#if newUserLastName??> value="${newUserLastName}"</#if>  name="newUserLastName" id="newUserLastName"/>
                                          <#if result?? && result.getFieldError('newUserLastName')??>
                                             <p class="invalid"><@spring.message  result.getFieldError('newUserLastName').code /></p>
                                         </#if> 
@@ -93,7 +93,7 @@
                                  <div class="row">
                                     <label class="label">Email<em>*</em></label>
                                             <div class="field">
-                                                <input class="full" type="text" <#if newUserEmail??> value="${newUserEmail?html}"</#if>  name="newUserEmail" id="newUserEmail"/>
+                                                <input class="full" type="text" <#if newUserEmail??> value="${newUserEmail}"</#if>  name="newUserEmail" id="newUserEmail"/>
                                                 <#if result?? && result.getFieldError('newUserEmail')??>
                                                     <p class="invalid"><@spring.message  result.getFieldError('newUserEmail').code /></p>
                                                 </#if> 

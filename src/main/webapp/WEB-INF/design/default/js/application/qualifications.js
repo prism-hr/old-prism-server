@@ -13,7 +13,7 @@ $(document).ready(function(){
 		$("#qualificationAwardDate").val("");
 		$("#qualificationAwardDate").attr("disabled", "disabled");
 		$("#proofOfAward").val("");
-		$("#proofOfAward").attr("disabled", "disabled");	
+		$("#proofOfAward").attr("disabled", "disabled");
 	}
 	
 	$('#qualificationsCloseButton').click(function(){
@@ -27,14 +27,21 @@ $(document).ready(function(){
 			$("#qualificationAwardDate").val("");
 			$("#qualificationAwardDate").attr("disabled", "disabled");
 			$("#proofOfAward").val("");
-			$("#proofOfAward").attr("disabled", "disabled");	
+			$("#proofOfAward").attr("disabled", "disabled");
+			$("#quali-grad-id").text("Expected Grade / Result / GPA").append('<em>*</em>');
+			$("#quali-award-date-lb").text("Award Date");
+			$("#quali-proof-of-award-lb").text("Proof of award (PDF)");
 
+			
 		} else {		
 		
 			$("#currentQualification").val("YES");
 			$("#qualificationAwardDate").removeAttr("disabled", "disabled");	
 			$("#proofOfAward").removeAttr("disabled", "disabled");
-
+			$("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
+			$("#quali-award-date-lb").append('<em>*</em>');
+			$("#quali-proof-of-award-lb").append('<em>*</em>');
+			
 			bindDatePickers();
 		}
 	

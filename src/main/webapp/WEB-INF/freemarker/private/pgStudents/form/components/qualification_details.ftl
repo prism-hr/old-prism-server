@@ -196,7 +196,7 @@
       		
       		<!-- Qualification grade -->
       		<div class="row">
-        		<span class="plain-label">Grade / Result / GPA<em>*</em></span>
+        		<span id="quali-grad-id" class="plain-label">Expected Grade / Result / GPA<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.grade'/>"></span>
         		<div class="field">
 	        		<#if !applicationForm.isSubmitted()>
@@ -211,7 +211,7 @@
       		
       		<!-- Award date -->
       		<div class="row">
-        		<span class="plain-label">Award Date</span>
+        		<span id="quali-award-date-lb" class="plain-label">Award Date</span>
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.awardDate'/>"></span>
 				
         		<div class="field" id="awardDateField">
@@ -225,7 +225,7 @@
 
       		<!-- Attachment / supporting document -->
       		<div class="row">
-        		<span class="plain-label">Proof of award (PDF)</span>
+        		<span id="quali-proof-of-award-lb" class="plain-label">Proof of award (PDF)</span>
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
         		<div class="field" id="uploadFields">         		       	
           			<input id="proofOfAward" class="full" type="file" name="file" value=""  <#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>					

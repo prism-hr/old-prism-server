@@ -2,6 +2,8 @@
 
 /* Programme ----------------------------------------------------------------------------------------- */
 
+section.folding.violet > div, section.folding.violet table.existing, section.folding.violet div.buttons { background: #E5DBEC; border-color: #8D5AA1; }
+section.folding.violet form { background: #F2EDF6; }
 section.folding.violet h2, section.folding.violet div.add a.button {
 	background: rgb(148,97,168); /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */

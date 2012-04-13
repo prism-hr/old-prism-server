@@ -1,9 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
-
-import java.text.ParseException;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -102,10 +99,23 @@ public class ApplicationFormValidatorTest {
 		validator.validate(applicationForm, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("documents.section.invalid", mappingResult.getFieldError("personalStatement").getCode());
-
 	}
+	
+	@Test
+	public void shouldRejectIfTooMuchAddtionalInfo() {
+		StringBuilder addnInfo = new StringBuilder();
+		for (int i = 0; i <=5000; i++) {
+			addnInfo.append("a");
+		}
+		
+		applicationForm.setAdditionalInformation(addnInfo.toString());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+		validator.validate(applicationForm, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+	
 	@Before
-	public void setup() throws ParseException {
+	public void setup() {
 		validator = new ApplicationFormValidator();
 		applicationForm = new ApplicationFormBuilder().programmeDetails(new ProgrammeDetailsBuilder().id(2).toProgrammeDetails()).personalDetails(new PersonalDetailsBuilder().id(1).toPersonalDetails())
 				.currentAddress(new Address()).contactAddress(new Address()).referees(new Referee(), new Referee(), new Referee()).personalStatement(new Document()).toApplicationForm();

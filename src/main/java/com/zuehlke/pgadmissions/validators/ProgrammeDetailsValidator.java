@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.List;
 
-import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;

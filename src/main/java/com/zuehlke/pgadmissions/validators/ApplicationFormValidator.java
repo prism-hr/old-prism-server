@@ -35,6 +35,12 @@ public class ApplicationFormValidator implements Validator{
 		if(applicationForm.getReferees().size() < 3){
 			errors.rejectValue("referees", "user.referees.notvalid");
 		}
+		
+		if (applicationForm.getAdditionalInformation() != null ) {
+			if (applicationForm.getAdditionalInformation().length() > 5000) {
+				errors.rejectValue("additionalInformation", "user.additionalInformation.notvalid");
+			}
+		}
 	
 	}
 }

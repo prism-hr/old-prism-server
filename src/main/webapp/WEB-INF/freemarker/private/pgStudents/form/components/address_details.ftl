@@ -1,7 +1,7 @@
 <#import "/spring.ftl" as spring />
 <#assign errorCode = RequestParameters.errorCode! />
   	
-	<h2 id="address-H2" class="empty">
+	<h2 id="address-H2" class="empty open">
 		<span class="left"></span><span class="right"></span><span class="status"></span>
 	    Address<em>*</em>	    
 	</h2>
@@ -23,7 +23,7 @@
                   	<!-- Address body -->
                   	<div class="row">
                     	<span class="plain-label">Address<em>*</em></span>
-                    	<span class="hint"></span>
+                    	<span class="hint" data-desc="<@spring.message 'addressDetails.currentAddress.address'/>"></span>	
                     	<div class="field">
                     	   <#if !applicationForm.isSubmitted()>
                       		<textarea id="currentAddressLocation" class="max" rows="6" cols="80" maxlength='2000'>${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
@@ -38,7 +38,7 @@
                   	<!-- Country -->
                   	<div class="row">
                     	<span class="plain-label">Country<em>*</em></span>
-                    	<span class="hint"></span>
+                    	<span class="hint" data-desc="<@spring.message 'addressDetails.CurrentAddress.country'/>"></span>	
 	                    <div class="field">
 	                      	
 	                      	<select class="full" name="currentAddressCountry" id="currentAddressCountry"
@@ -63,7 +63,7 @@
 					<!-- Address body -->
 					<div class="row">
 						<span class="plain-label">Is this the same as your current address?</span>
-                        <span class="hint"></span>
+                      	<span class="hint" data-desc="<@spring.message 'addressDetails.ContactAddress.sameAsCurrentAddress'/>"></span>	
                        
                        <div class="field">
                             
@@ -82,7 +82,8 @@
                         
                     <div class="row">
                     	<span class="plain-label">Address<em>*</em></span>
-                        <span class="hint"></span>
+                       	<span class="hint" data-desc="<@spring.message 'addressDetails.ContactAddress.address'/>"></span>	
+                       
                     
                         <div class="field">
                            <#if !applicationForm.isSubmitted()>
@@ -106,7 +107,7 @@
                     <!-- Country -->
                     <div class="row">
                         <span class="plain-label">Country<em>*</em></span>
-                        <span class="hint"></span>
+                         	<span class="hint" data-desc="<@spring.message 'addressDetails.ContactAddress.country'/>"></span>	
                         <div class="field">
                             
                             <select class="full" name="contactAddressCountry" id="contactAddressCountry"

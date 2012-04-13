@@ -31,7 +31,7 @@ $(document).ready(function(){
 				}
 		);
 	});
-
+	addToolTips();
 	//open/close
 	var $header  =$('#additional-H2');
 	var $content = $header.next('div');

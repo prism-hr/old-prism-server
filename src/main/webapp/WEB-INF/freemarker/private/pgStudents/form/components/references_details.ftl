@@ -5,7 +5,7 @@
 <#else>
 	<#assign hasReferees = false>
 </#if> 
-<h2 id="referee-H2" class="empty">
+<h2 id="referee-H2" class="empty open">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
 	References<em>*</em>
 </h2>

@@ -4,7 +4,7 @@
 <#-- Programme Details Rendering -->
 
 
-<h2 id="programme-H2" class="tick open">
+<h2 id="programme-H2" class="open ">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
 	Programme<em>*</em>
 </h2>

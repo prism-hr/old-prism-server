@@ -41,7 +41,7 @@
 <input type="hidden" id="submissionStatus" value="${applicationForm.submissionStatus}"/>
 <#-- Personal Details Rendering -->
 <!-- Personal details -->
-<h2 id="personalDetails-H2">
+<h2 id="personalDetails-H2" class="open">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
 	Personal Details<em>*</em>
 </h2>

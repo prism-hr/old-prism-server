@@ -119,12 +119,19 @@ $(document).ready(function(){
 			$("span[name='superLastname']").hide();
 			$("span[name='superEmail']").html('');
 			$("span[name='superEmail']").hide();
+			var aware = "";
+			if($('#awareSupervisor').val() =="YES"){
+				aware = "Yes";
+			}
+			else{
+				aware = "No";
+			}
 			unsavedSupervisors++;
 			$('table.data-table tbody').append(
 					'<tr>' +
 					'<td >' + $('#supervisorFirstname').val()+' '+ $('#supervisorLastname').val()+'</td>' +
 					'<td >'+ $('#supervisorEmail').val()+ '</td>' +
-					'<td >' + $('#awareSupervisor').val() +'</td>'+
+					'<td >' + aware +'</td>'+
 					'<td><a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> <a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a> </td>' +
 					'</tr>'+
 					'<input type="hidden" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
@@ -175,12 +182,19 @@ $(document).ready(function(){
 			$("span[name='superLastname']").hide();
 			$("span[name='superEmail']").html('');
 			$("span[name='superEmail']").hide();
+			var aware = "";
+			if($('#awareSupervisor').val() =="YES"){
+				aware = "Yes";
+			}
+			else{
+				aware = "No";
+			}
 			
 			$('table.data-table tbody').append(
 					'<tr>' +
 					'<td>' + $('#supervisorFirstname').val()+' '+ $('#supervisorLastname').val()+'</td>' +
 					'<td>'+ $('#supervisorEmail').val()+ '</td>' +
-					'<td>' + $('#awareSupervisor').val() +'</td>'+
+					'<td>' + aware +'</td>'+
 					'<td><a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> <a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a> </td>' +
 					'</tr>'+
 					'<input type="hidden" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								

@@ -14,7 +14,7 @@
     		<span class="hint" data-desc="<@spring.message 'additionalInformation.content'/>"></span>
     		<div class="field">
       		 <#if !applicationForm.isSubmitted()>
-        		<textarea id="additionalInformation" name="additionalInformation" class="max" rows="6" cols="80" >${(applicationForm.additionalInformation?html)!}</textarea>
+        		<textarea id="additionalInformation" name="additionalInformation" class="max" rows="6" cols="80" maxlength='5000'>${(applicationForm.additionalInformation?html)!}</textarea>
             <#else>
                 <textarea readonly="readonly" id="additionalInformation" name="additionalInformation" class="max" rows="10" cols=80" >${(applicationForm.additionalInformation?html)!}</textarea>
             </#if>

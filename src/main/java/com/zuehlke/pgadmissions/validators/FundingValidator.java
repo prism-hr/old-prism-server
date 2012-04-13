@@ -29,6 +29,12 @@ public class FundingValidator implements Validator {
 		if (fund.getAwardDate() != null && fund.getAwardDate().after(today)) {
 			errors.rejectValue("awardDate", "funding.fundingAwardDate.future");
 		}
+		
+		if (fund.getDescription() != null) {
+			if (fund.getDescription().length() > 2000) {
+				errors.rejectValue("description", "user.fundingDescriptLength.exceeded");
+			}
+		}
 
 	}
 

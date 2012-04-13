@@ -2,8 +2,8 @@
 
 /* Personal details ---------------------------------------------------------------------------------- */
 
-section.folding.lightblue > div, section.folding.lightblue table.existing, section.folding.lightblue div.buttons { background: #99D1E8; border-color: #53A2C3; }
-section.folding.lightblue form { background: #CCE4E7; padding: 10px; }
+section.folding.lightblue > div, section.folding.lightblue table.existing, section.folding.lightblue div.buttons { background: #CCE4E7; border-color: #53A2C3; }
+section.folding.lightblue form { background: #EAF2F7; padding: 10px; }
 section.folding.lightblue h2, section.folding.lightblue div.add a.button {
 	background: rgb(151,191,223); /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */

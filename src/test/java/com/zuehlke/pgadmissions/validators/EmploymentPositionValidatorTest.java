@@ -139,6 +139,31 @@ public class EmploymentPositionValidatorTest {
 		Assert.assertEquals("position.position_startDate.notvalid",mappingResult.getFieldError("startDate").getCode());
 	}
 	
+	@Test
+	public void shouldRejectifEmployerAddressTooLong() {
+		StringBuilder employerAddressLoc = new StringBuilder();
+		for (int i = 0; i <=1000; i++) {
+			employerAddressLoc.append("a");
+		}
+		position.setEmployerAddress(employerAddressLoc.toString());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+	
+	@Test
+	public void shouldRejectIfJobDescriptionTooLong() {
+		StringBuilder jobDescription = new StringBuilder();
+		for (int i = 0; i <=2000; i++) {
+			jobDescription.append("a");
+		}
+		
+		position.setRemit(jobDescription.toString());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(position, "position");
+		positionValidator.validate(position, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+	
 	@Before
 	public void setup() throws ParseException{
 		

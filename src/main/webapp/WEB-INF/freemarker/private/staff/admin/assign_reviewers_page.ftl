@@ -45,7 +45,7 @@
 		        </ul>
 		        
 		        <div class="user">
-		           ${model.user.firstName} ${model.user.lastName} 
+		           ${model.user.firstName?html} ${model.user.lastName?html} 
 		          <a class="button user-logout" href="<@spring.url '/j_spring_security_logout'/>">Logout</a>
 		        </div>
 		      </nav>
@@ -78,7 +78,7 @@
 		               <#if model.applicationForm.isUnderReview()>
 		                    <table>
                             <#list model.applicationForm.reviewers as reviewer>
-                                <td>- ${reviewer.firstName} ${reviewer.lastName}</td><tr>
+                                <td>- ${reviewer.firstName?html} ${reviewer.lastName?html}</td><tr>
                             </#list>
                             </table>
                        <#else>
@@ -92,7 +92,7 @@
 			            	<select name="reviewers" multiple="multiple">
 					        
 						        <#list model.reviewers as reviewer>
-						            <option value="${reviewer.id?string("######")}">${reviewer.firstName} ${reviewer.lastName}</option>               
+						            <option value="${reviewer.id?string("######")}">${reviewer.firstName?html} ${reviewer.lastName?html}</option>               
 						        </#list>
 				             <select>
 						        

@@ -32,10 +32,10 @@
 		    	</td>
 		    	<td width="500">
 		      		<h1 style="font-size: 12pt;">
-		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName},</font>
+		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName?html},</font>
 		      		</h1>		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been suggested as a new user for the UCL portal in the role(s): ${newUserRoles} for ${programString} by ${suggestingUser.firstName} ${suggestingUser.lastName}. Please click below to accept this role.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been suggested as a new user for the UCL portal in the role(s): ${newUserRoles} for ${programString} by ${suggestingUser.firstName?html} ${suggestingUser.lastName?html}. Please click below to accept this role.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

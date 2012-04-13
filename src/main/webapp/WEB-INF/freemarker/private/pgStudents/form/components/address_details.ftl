@@ -26,7 +26,7 @@
                     	<span class="hint"></span>
                     	<div class="field">
                     	   <#if !applicationForm.isSubmitted()>
-                      		<textarea id="currentAddressLocation" class="max" rows="6" cols="80" >${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
+                      		<textarea id="currentAddressLocation" class="max" rows="6" cols="80" maxlength='2000'>${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
                       			<@spring.bind "addressSectionDTO.currentAddressLocation" /> 
                 				<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
 				             <#else>
@@ -86,7 +86,7 @@
                     
                         <div class="field">
                            <#if !applicationForm.isSubmitted()>
-                            <textarea id="contactAddressLocation" class="max" rows="6" cols="80" 
+                            <textarea id="contactAddressLocation" class="max" rows="6" cols="80" maxlength='2000'
                             <#if addressSectionDTO.sameAddress>
                                           disabled="disabled"
                                 </#if>

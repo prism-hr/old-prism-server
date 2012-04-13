@@ -1,4 +1,6 @@
 $(document).ready(function(){
+	
+	limitTextArea();
 
 	$('#addressCloseButton').click(function(){
 		$('#address-H2').trigger('click');

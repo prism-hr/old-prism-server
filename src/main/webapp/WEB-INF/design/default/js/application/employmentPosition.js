@@ -1,6 +1,7 @@
 $(document).ready(function(){
 
-
+	limitTextArea();
+	
 	$('#current').click(function() {
 		if ($('#current:checked').val() !== undefined) {
 			$('#position_endDate').attr("disabled", "disabled");

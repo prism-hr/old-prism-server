@@ -1,5 +1,7 @@
 $(document).ready(function(){
 	
+	limitTextArea();
+	
 	$('#refereeCloseButton').click(function(){
 		$('#referee-H2').trigger('click');
 		return false;

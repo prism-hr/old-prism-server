@@ -99,7 +99,7 @@
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerAddress'/>"></span>
                 <div class="field">
                    <#if !applicationForm.isSubmitted()>
-                  		<textarea cols="70" rows="3" class="max" id="position_employer_address" 
+                  		<textarea cols="70" rows="3" class="max" maxlength='1000' id="position_employer_address" 
                   		name="position_employer_address" 
                   		placeholder="Employer's address">${(employmentPosition.employerAddress?html)!}</textarea>
 						
@@ -134,7 +134,7 @@
                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.remit'/>"></span>
                 <div class="field">
                     <#if !applicationForm.isSubmitted()>
-                  	<textarea cols="70" rows="3" class="max" id="position_remit" 
+                  	<textarea cols="70" rows="3" class="max" maxlength='2000' id="position_remit" 
                   		name="position_remit" 
                   		placeholder="Summary of responsibilities">${(employmentPosition.remit?html)!}</textarea>
                   		

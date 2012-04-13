@@ -22,8 +22,17 @@ section.folding footer { background: #DDD; border-top: 1px solid #999; padding: 
 
 section.folding table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%; }
 section.folding table.existing th { background: url(../../images/bg_table_head.png) repeat-x; text-align: left; }
-section.folding table.existing td { background: url(../../images/bg_table_row.jpg) repeat-x; text-align: left; }
-section.folding table.existing td, section.folding table.existing th { line-height: 25px; padding: 0 3px; vertical-align: middle; }
+/*  Temp Fix: Modified to accomodate backgournd for long strings : Manish */
+section.folding table.existing td { 
+	background: url("../../images/bg_table_row.jpg") repeat-x scroll left bottom #E6E8E7;
+	/* background: url(../../images/bg_table_row.jpg) repeat-x; text-align: left; */ 
+}
+
+/*  Modified to accomodate long strings : Manish */
+section.folding table.existing td, section.folding table.existing th { 
+	line-height: 25px; padding: 0 3px; 
+	vertical-align: text-top; 
+}
 
 section.folding form { background: #BBB; padding: 10px; }
 .old-ie section.folding form { *display: inline-block; } /* fixes unsightly space at the bottom of a folding section. */

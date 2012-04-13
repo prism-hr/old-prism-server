@@ -196,7 +196,7 @@
             </div>
             <!-- End date -->
             <div class="row">
-                <span class="plain-label">End Date</span>
+                <span id="posi-end-date-lb" class="plain-label">End Date<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.endDate'/>"></span>
                 <div class="field" id="endDateField">
                   	<input class="half date" id="position_endDate" name="position_endDate" value="${(employmentPosition.endDate?string('dd-MMM-yyyy'))!}" <#if employmentPosition.current> disabled ="disabled"</#if>/>                  	

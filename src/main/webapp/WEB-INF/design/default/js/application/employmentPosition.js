@@ -4,12 +4,13 @@ $(document).ready(function(){
 	
 	$('#current').click(function() {
 		if ($('#current:checked').val() !== undefined) {
+			$("#posi-end-date-lb").text("End Date");
 			$('#position_endDate').attr("disabled", "disabled");
 		}else{
 			$('#position_endDate').removeAttr("disabled");
+			$("#posi-end-date-lb").text("End Date").append('<em>*</em>');
 		}
 	});
-	
 	
 	$('#positionCloseButton').click(function(){
 		$('#position-H2').trigger('click');

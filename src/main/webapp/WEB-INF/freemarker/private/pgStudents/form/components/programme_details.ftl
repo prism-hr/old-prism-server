@@ -134,7 +134,7 @@
                	<tr>
                      <td> ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} </td>
                      <td> ${supervisor.email?html} </td>
-                     <td> ${supervisor.awareSupervisor?html} </td>
+                     <td><#if supervisor.awareSupervisor == "YES"> Yes <#else> No </#if></td>
                      <td> <#if !applicationForm.isSubmitted()><a class="button-delete" name="deleteSupervisor" id="supervisorDelete_${(supervisor.id?string('#######'))!}">delete</a> <a class="button-edit"  id="supervisor_${(supervisor.id?string('#######'))!}" name ="editSupervisorLink">edit</a></#if></td>
                  </tr>
                     <input type="hidden" id="${(supervisor.id?string('#######'))!}_supervisorId" name = "sId" value="${(supervisor.id?string('#######'))!}"/>

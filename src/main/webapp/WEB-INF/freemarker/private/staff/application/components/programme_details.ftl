@@ -82,7 +82,7 @@
 		            	  	 <label class="label">Supervision</label>
 		            	  	
 		            	   <div class="field">
-		            	       Name: ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!}, Email :${supervisor.email?html}, Is this supervisor aware of the application? ${supervisor.awareSupervisor?html}
+		            	       Name: ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!}, Email :${supervisor.email?html}, Is this supervisor aware of the application? <#if supervisor.awareSupervisor == "YES"> Yes <#else> No </#if>
 		            	       <br/>
 		            	   </div>
 		            	 </div>

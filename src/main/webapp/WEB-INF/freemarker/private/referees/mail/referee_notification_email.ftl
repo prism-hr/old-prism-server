@@ -32,10 +32,10 @@
 		    	</td>
 		    	<td width="500">
 		      		<h1 style="font-size: 12pt;">
-		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${referee.firstname},</font>
+		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${referee.firstname?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated as a referee by ${applicant.firstName} ${applicant.lastName} who is currently applying to the UCL Faculty to join the Postgraduate research Programme in ${programme.programmeName}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated as a referee by ${applicant.firstName?html} ${applicant.lastName?html} who is currently applying to the UCL Faculty to join the Postgraduate research Programme in ${programme.programmeName}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We would be most grateful for your comments on this candidate. To submit your reference, you first need to register via the link below:</font>

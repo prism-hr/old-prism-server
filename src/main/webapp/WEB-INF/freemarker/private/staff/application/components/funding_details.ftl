@@ -46,7 +46,7 @@
                             <input type="hidden" id="${funding.id?string('#######')}_fundingValueDP" value="${funding.value?html}"/>
                             <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description?html}"/>
                             <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
-                            <input type="hidden" id="${funding.id?string('#######')}_docname" value="${(funding.document.fileName)!}"/>
+                            <input type="hidden" id="${funding.id?string('#######')}_docname" value="${(funding.document.fileName?html)!}"/>
                             <input type="hidden" id="${funding.id?string('#######')}_docurl" value="/pgadmissions/download?documentId=${(funding.document.id?string("#######"))!}"/>
 		                </tr>
 					</#list>				               

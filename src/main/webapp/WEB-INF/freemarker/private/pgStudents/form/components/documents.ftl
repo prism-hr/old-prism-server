@@ -23,7 +23,7 @@
 					<span id="psUploadedDocument" ><input type="hidden" id="document_PERSONAL_STATEMENT" value = "${(applicationForm.personalStatement.id?string('######'))!}"/>
 					<@spring.bind "applicationForm.personalStatement" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
-					<a href="<@spring.url '/download?documentId=${(applicationForm.personalStatement.id?string("#######"))!}'/>">${(applicationForm.personalStatement.fileName)!}</a></span>
+					<a href="<@spring.url '/download?documentId=${(applicationForm.personalStatement.id?string("#######"))!}'/>">${(applicationForm.personalStatement.fileName?html)!}</a></span>
 					<span id="psDocumentProgress" style="display: none;" ></span>					
         		</div>  
         		

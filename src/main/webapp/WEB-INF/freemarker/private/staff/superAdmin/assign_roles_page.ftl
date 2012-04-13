@@ -75,7 +75,7 @@
 						                			<#if selectedUser?? && selectedUser.id == user.id >
 													 selected = "selected"
 													</#if>
-						                			>${user.firstName} ${user.lastName}</option>      
+						                			>${user.firstName?html} ${user.lastName?html}</option>      
 												</#list>
 					                		</select>
 					              	</div>
@@ -124,8 +124,8 @@
 		            			<tbody>
 		            				<#list usersInRoles as userInRole>
 			              				<tr>
-			                				<td scope="col">${userInRole.email}</td>
-						                	<td scope="col">${userInRole.firstName} ${userInRole.lastName}</td>
+			                				<td scope="col">${userInRole.email?html}</td>
+						                	<td scope="col">${userInRole.firstName?html} ${userInRole.lastName?html}</td>
 						                	<td scope="col">${userInRole.getAuthoritiesForProgramAsString(selectedProgram)}</td>
 			                				<td scope="col"><a href="<@spring.url '/manageUsers/showPage?programId=${selectedProgram.id?string("#######")}&userId=${userInRole.id?string("#######")}'/>">Edit</a> / <a href="#" name="removeuser" id="remove_${userInRole.id?string("#######")}">Remove</a></td>
 			              				</tr>

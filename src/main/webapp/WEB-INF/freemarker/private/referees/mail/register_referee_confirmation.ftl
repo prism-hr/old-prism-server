@@ -32,13 +32,13 @@
 		    	</td>
 		    	<td width="500">
 		      		<h1 style="font-size: 12pt;">
-		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${referee.firstName},</font>
+		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${referee.firstName?html},</font>
 		      		</h1>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been successfuly registered with the system. </font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You can provide referees for the applicant ${applicant.firstName} ${applicant.lastName} anytime by clicking the following link and logging in.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You can provide referees for the applicant ${applicant.firstName?html} ${applicant.lastName?html} anytime by clicking the following link and logging in.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

@@ -232,7 +232,7 @@
 					<span id="qualUploadedDocument" >
 						<input type="hidden" id="document_PROOF_OF_AWARD" value = "${(qualification.proofOfAward.id?string('######'))!}"/>
 						<#if qualification.proofOfAward??> 
-							<a href="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>">${(qualification.proofOfAward.fileName)!}</a>
+							<a href="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>">${(qualification.proofOfAward.fileName?html)!}</a>
 						</#if>
 					</span>
 					<span id="progress" style="display: none;" ></span>					

@@ -127,7 +127,7 @@
 					        <div class="content-box-inner">
 								<@spring.bind "applicationForm.*" />
 								<#if spring.status.errorMessages?has_content  >
-									<span class="invalid">Some required fields are missing, please review your application form.<p></p></span>
+									<span class="invalid-submit">Some required fields are missing, please review your application form.<p></p></span>
 								</#if>
 								       
 								<div id="programme-details">			          
@@ -153,7 +153,7 @@
 								<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/>
 								
 				
-					          	<section id="programmeDetailsSection" class="folding violet<#if programDetailsError >error</#if>">					          	
+					          	<section id="programmeDetailsSection" class="folding violet <#if programDetailsError >error</#if>">					          	
 								</section>
 			          
 			          			<section id="personalDetailsSection" class="folding purple <#if personalDetailsError>error</#if>">

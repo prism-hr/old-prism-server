@@ -30,6 +30,11 @@ public class RefereeValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "firstname", "referee.firstname.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "lastname", "referee.lastname.notempty");
 		
+		if (referee.getAddressLocation() != null) {
+			if (referee.getAddressLocation().length() > 200) {
+				errors.rejectValue("addressLocation", "user.refereeAddressLength.exceeded");
+			}
+		}
 	}
 
 }

@@ -108,6 +108,18 @@ public class RefereeValidatorTest {
 		Assert.assertEquals("referee.phoneNumber.notempty", mappingResult.getFieldError("phoneNumber").getCode());
 	}
 	
+	@Test
+	public void shouldRejectIfAddressTooLong() {
+		StringBuilder addressLoc = new StringBuilder();
+		for (int i = 0; i <=200; i++) {
+			addressLoc.append("a");
+		}
+		referee.setAddressLocation(addressLoc.toString());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "phoneNumber");
+		refereeValidator.validate(referee, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+	
 	@Before
 	public void setup(){
 		referee = new RefereeBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).email("email@test.com").firstname("bob")

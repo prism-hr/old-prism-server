@@ -28,11 +28,17 @@ section.folding table.existing td {
 	/* background: url(../../images/bg_table_row.jpg) repeat-x; text-align: left; */ 
 }
 
-/*  Modified to accomodate long strings : Manish */
+/*  Modified to acomodate long strings : Manish */
 section.folding table.existing td, section.folding table.existing th { 
 	line-height: 25px; padding: 0 3px; 
 	vertical-align: text-top; 
 }
+
+/* Used to control the width of the last col in an existing table */
+#last-col{
+	width: 30px;
+}
+
 
 section.folding form { background: #BBB; padding: 10px; }
 .old-ie section.folding form { *display: inline-block; } /* fixes unsightly space at the bottom of a folding section. */

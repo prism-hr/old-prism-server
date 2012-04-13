@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import org.apache.commons.lang.StringUtils;
+
 
 
 @Entity(name="APPLICATION_FORM_REFEREE")
@@ -174,7 +176,12 @@ public class Referee extends DomainObject<Integer>{
 	}
 
 	public void setMessenger(String messenger) {
-		this.messenger = messenger;
+		if(StringUtils.isBlank(messenger)){
+			this.messenger = null;
+		}
+		else {
+			this.messenger = messenger;
+		}
 	}
 
 	public RegisteredUser getUser() {

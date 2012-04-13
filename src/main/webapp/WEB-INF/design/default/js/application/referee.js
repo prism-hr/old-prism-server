@@ -62,7 +62,7 @@ $(document).ready(function(){
 		);
 	});
 	
-
+	addToolTips();
 	
 	// To make uncompleted functionalities disable.
 	$(".disabledEle").attr("disabled", "disabled");

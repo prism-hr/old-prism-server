@@ -149,7 +149,7 @@ $(document).ready(function(){
 	}
 	
 	bindDatePicker('#dateOfBirth');
-
+	addToolTips();
 		//open/close
 	var $header  = $('#personalDetails-H2');
 	var $content = $header.next('div');

@@ -200,4 +200,25 @@ public class RegisteredUserTest {
 		assertTrue(user.isInRoleInProgram(Authority.SUPERADMINISTRATOR, program));
 	}
 	
+	@Test
+	public void shouldReturnTrueIfUserIsAdminAndBelongsToAProgramme(){
+		RegisteredUser user = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).administrators(user).toProgram();
+		assertTrue(user.isAdminOrReviewerInProgramme(program));
+	}
+	@Test
+	public void shouldReturnTrueIfUserIsReviewerAndBelongsToAProgramme(){
+		RegisteredUser user = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).reviewers(user).toProgram();
+		assertTrue(user.isAdminOrReviewerInProgramme(program));
+	}
+	@Test
+	public void shouldReturnFalseIfUserIsReviewerButDoesNotBelongToTheProgramme(){
+		RegisteredUser user = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		assertFalse(user.isAdminOrReviewerInProgramme(program));
+	}
+	
+
+	
 }

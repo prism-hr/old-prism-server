@@ -336,5 +336,12 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public void setProjectId(Integer projectId) {
 		this.projectId = projectId;
 	}
+	public boolean isAdminOrReviewerInProgramme(Program program){
+		if(program.getAdministrators().contains(this) || program.getReviewers().contains(this)){
+			return true;
+		}
+		return false;
+	}
 
+	
 }

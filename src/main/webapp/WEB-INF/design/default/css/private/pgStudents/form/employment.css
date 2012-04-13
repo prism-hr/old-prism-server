@@ -3,7 +3,7 @@
 /* Employment ---------------------------------------------------------------------------------------- */
 
 section.folding.yellow > div, section.folding.yellow table.existing, section.folding.yellow div.buttons { border-color: #F9CB54; }
-section.folding.yellow form { background: #FFFAA1; padding: 10px; }
+section.folding.yellow form { background: #FFFAF1; padding: 10px; }
 section.folding.yellow table.existing, section.folding.yellow div.buttons { background: #FFF4E1; }
 section.folding.yellow h2, section.folding.yellow div.add a.button {
 	background: rgb(253,185,51); /* Old browsers */

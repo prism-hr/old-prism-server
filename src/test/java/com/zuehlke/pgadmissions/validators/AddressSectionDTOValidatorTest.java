@@ -61,6 +61,30 @@ public class AddressSectionDTOValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 	}
 	
+	@Test
+	public void shouldRejectIfCurrentAddressTooLong() {
+		StringBuilder currentAddressLoc = new StringBuilder();
+		for (int i = 0; i <=2000; i++) {
+			currentAddressLoc.append("a");
+		}
+		address.setCurrentAddressLocation(currentAddressLoc.toString());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
+		validator.validate(address, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+	
+	@Test
+	public void shouldRejectIfContactAddressTooLong() {
+		StringBuilder contactAddressLoc = new StringBuilder();
+		for (int i = 0; i <=2000; i++) {
+			contactAddressLoc.append("a");
+		}
+		address.setContactAddressLocation(contactAddressLoc.toString());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(address, "address");
+		validator.validate(address, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+	
 	@Before
 	public void setup(){
 		validator = new AddressSectionDTOValidator();

@@ -21,5 +21,19 @@ public class AddressSectionDTOValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddressCountry", "user.country.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddressLocation", "user.location.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddressCountry", "user.country.notempty");
+
+		AddressSectionDTO address = (AddressSectionDTO) target;
+
+		if (address.getCurrentAddressLocation() != null) {
+			if (address.getCurrentAddressLocation().length() > 2000) {
+				errors.rejectValue("currentAddressLocation", "user.addressLength.exceeded");
+			}
+		}
+
+		if (address.getContactAddressLocation() != null) {
+			if (address.getContactAddressLocation().length() > 2000) {
+				errors.rejectValue("contactAddressLocation", "user.addressLength.exceeded");
+			}
+		}
 	}
 }

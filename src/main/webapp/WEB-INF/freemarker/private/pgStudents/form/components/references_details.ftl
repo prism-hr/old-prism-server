@@ -153,7 +153,7 @@
     	<div>
     	     
 			<div class="row">
-          		<label class="label">Contact Details</label>
+          		<label class="label">Address</label>
           	</div> 
       		<!-- Address body -->
       		<div class="row">

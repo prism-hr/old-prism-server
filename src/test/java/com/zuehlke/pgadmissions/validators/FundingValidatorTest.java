@@ -90,7 +90,18 @@ public class FundingValidatorTest {
 		Assert.assertEquals("funding.fundingAwardDate.future", mappingResult.getFieldError("awardDate").getCode());
 	}
 	
-	
+	@Test
+	public void shouldRejectIfDescriptionTooLong() {
+		StringBuilder fundDescription = new StringBuilder();
+		for (int i = 0; i <=2000; i++) {
+			fundDescription.append("a");
+		}
+		
+		funding.setDescription(fundDescription.toString());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(funding, "awardDate");
+		validator.validate(funding, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
 	
 	@Before
 	public void setup() throws ParseException{

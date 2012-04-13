@@ -161,7 +161,7 @@
         		<span class="hint" data-desc="<@spring.message 'referee.address'/>"></span>
         		<div class="field">
         		<#if !applicationForm.isSubmitted()>
-          			<textarea class="max" rows="6" cols="70" id="ref_address_location" 
+          			<textarea class="max" rows="6" cols="70" maxlength='200' id="ref_address_location" 
           				name="ref_address_location">${(referee.addressLocation?html)!}</textarea> 
           				 <@spring.bind "referee.addressLocation" /> 
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>           		

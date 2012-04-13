@@ -1,5 +1,6 @@
 $(document).ready(function(){
 	
+	limitTextArea();
 	
 	$('#fundingCloseButton').click(function(){
 		$('#funding-H2').trigger('click');

@@ -1,5 +1,7 @@
 $(document).ready(function(){
 	
+	limitTextArea();
+	
 	$('#additionalCloseButton').click(function(){
 		$('#additional-H2').trigger('click');
 		return false;

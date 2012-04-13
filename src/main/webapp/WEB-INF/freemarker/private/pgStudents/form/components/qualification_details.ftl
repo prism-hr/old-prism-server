@@ -33,6 +33,7 @@
                 <th>Awarding Body</th>
                 <th>Date Completed</th>
                 <th>&nbsp;</th>
+                <th>&nbsp;</th>
               </tr>
             </thead>
             
@@ -40,16 +41,25 @@
             
             	<#list applicationForm.qualifications as existingQualification>
                 	<tr>
-	                  	<td><a class="row-arrow <#if qualification.id?? && existingQualification.id==qualification.id>open</#if>" id="qualification_${existingQualification.id?string('#######')}" name ="editQualificationLink">-</a></td>
+	                  	<td><a class="row-arrow 
+	                  		<#if qualification.id?? && existingQualification.id==qualification.id>open</#if>" 
+	                  		id="qualification_${existingQualification.id?string('#######')}" 
+	                  		name ="editQualificationLink">-</a>
+	                  	</td>
 	                  	<td>${(existingQualification.qualificationType?html)!}</td>
 	                  	<td>${(existingQualification.qualificationGrade?html)!}</td>
 	                  	<td>${(existingQualification.qualificationInstitution?html)!}</td>
 	                  	<td>${(existingQualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
-	                  	  <td>
-	                  	  	   <#if !applicationForm.isSubmitted()>
-		                			<a name="deleteQualificationButton" id="qualification_${existingQualification.id?string('#######')}" class="button-delete">delete</a>		                		
-		                		</#if>
-			        		</td>
+	                  	  
+	                  	  	<#if !applicationForm.isSubmitted()>
+	                  	  	   <td>
+	                  	  	   		<a name="editQualificationLink" id="qualification_${existingQualification.id?string('#######')}" class="button-edit">delete</a>
+	                  	  	   </td>
+	                  	  	   <td>
+		                			<a name="deleteQualificationButton" id="qualification_${existingQualification.id?string('#######')}" class="button-delete">delete</a>
+		                	   </td>		                		
+		                	</#if>
+			        		
                   	</tr>
 				</#list>
 							
@@ -124,7 +134,7 @@
                 	 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
    					<#else>
    					  	<input readonly="readonly" id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering" value="${(qualification.qualificationSubject?html)!}"/>
-   					</#if>   					
+   					</#if>					
                 </div>
      		</div>
 		
@@ -168,13 +178,13 @@
 	           	 <div class="field">        
 	           		<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"
 	           			<#if qualification.isQualificationCompleted()>
-	                              checked ='checked'
+									checked ='checked'
 	                    </#if>
 	           			<#if applicationForm.isSubmitted()>
 	                              disabled="disabled"
 	                    </#if>
 	                    />
-	           			<input type="hidden" name="currentQualification" id="currentQualification"/>
+	           		<input type="hidden" name="currentQualification" id="currentQualification"/>
 	   			 </div>
         	</div>
 		

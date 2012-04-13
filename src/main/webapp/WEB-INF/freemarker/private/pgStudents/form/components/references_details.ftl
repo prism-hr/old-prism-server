@@ -40,6 +40,7 @@
                     	<th>Responded</th>
                     <#else>
                     	<th>&nbsp;</th>
+                    	<th id="last-col">&nbsp;</th>
                     </#if>
                     
               	</tr>
@@ -58,6 +59,9 @@
 		                    	<#if existingReferee.hasProvidedReference() >Yes<#else>No</#if>
 		                    </td>
 	                    <#else>
+		                    <td>
+		                    	<a name="editRefereeLink" id="referee_${existingReferee.id?string('#######')}" class="button-edit">edit</a>
+				        	</td>
 		                    <td>
 		                    	<a name="deleteRefereeButton" id="referee_${existingReferee.id?string('#######')}" class="button-delete">delete</a>
 				        	</td>

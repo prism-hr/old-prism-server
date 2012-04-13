@@ -33,6 +33,7 @@
                     <th>Supporting Documentation</th>
                     <th>Award Date</th>
                     <th colspan="1">&nbsp;</th>
+                    <th id="last-col">&nbsp;</th>
 				</tr>
 			</thead>
                 
@@ -46,13 +47,17 @@
 	                  	<td ><a href="<@spring.url '/download'/>?documentId=${existingFunding.document.id?string('#######')}">
                         <#if existingFunding.document.fileName?length <20 >${existingFunding.document.fileName}<#else>${existingFunding.document.fileName?substring(0,17)}...</#if></a></td>
 	                  	<td>${existingFunding.awardDate?string('dd-MMM-yyyy')}</td>
-	                  	 <td>
 	                  	     <#if !applicationForm.isSubmitted()>
-			                  		                		
+								<td>				                  		                		
+		                			<a name="editFundingLink" id="funding_${existingFunding.id?string('#######')}" class="button-edit">edit</a>
+		                		</td>
+		                		<td>
 		                			<a name="deleteFundingButton" id="funding_${existingFunding.id?string('#######')}" class="button-delete">delete</a>
-		                		</form>
+		                		</td>
+		                	<#else>
+		                		<td></td><td></td>		                		
 		                	</#if>
-			        	</td>
+
 	                  	
 	                </tr>
 				</#list>				               

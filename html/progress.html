@@ -1,0 +1,177 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Shell template</title>
+
+<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+<link type="text/css" rel="stylesheet" href="css/private/global_private.css" />
+<link type="text/css" rel="stylesheet" href="css/private/application.css" />
+<link type="text/css" rel="stylesheet" href="css/private/application-progress.css" />
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+
+<body>
+
+<div id="wrapper">
+
+  <!-- Header. -->
+  <div id="header">
+    <p>Postgraduate Research Admissions Tool</p>
+  </div>
+  
+  <!-- Middle. -->
+  <div id="middle">
+  
+    <header>
+
+      <!-- App logo and tagline -->
+      <div class="logo"><img src="images/ph_logo_app.png" alt="" /></div>
+
+      <div class="tagline">Your Gateway to Research Opportunities</div>
+
+      <!-- Main tabbed menu -->
+      <nav>
+        <ul>
+          <li><a href="#">My account</a></li>    
+          <li class="current"><a href="#">My applications <span class="indicator blue">1</span></a></li>    
+          <li><a href="#">Messages</a></li>    
+          <li><a href="#">Help</a></li>    
+        </ul>
+        
+        <div class="user">
+          Jonathan Smith
+          <a class="button user-logout">Logout</a>
+        </div>
+      </nav>
+      
+    </header>
+    
+    
+    <!-- Main content area. -->
+    <article id="content" role="main">
+      
+      <!-- "Tools" -->
+      <div id="tools">
+        <ul class="left">
+          <li class="icon-pdf"><a href="#">Generate PDF</a></li>
+          <li class="icon-print"><a href="#">Print Page</a></li>
+        </ul>
+        <ul class="right">
+          <li class="current icon-progress"><a href="#">Progress</a></li>
+          <li class="icon-application"><a href="#">View Application</a></li>
+        </ul>
+      </div>
+          
+      <!-- content box -->
+      <div class="content-box">
+        <div class="content-box-inner">
+
+          <div id="programme-details">
+          
+            <div class="row">
+              <label>Programme Name</label>
+              <input disabled size="109" value="W3P7 - Some Study On Some Course" />
+            </div>
+            
+            <div class="row half">
+              <label>Application Number</label>
+              <input disabled size="20" value="3273334B" />
+            </div>
+
+            <div class="row half">
+              <label>Submission deadline</label>
+              <input disabled size="20" value="01/08/2011" />
+            </div>
+          </div>
+          
+          <hr />
+
+					<div id="progress">
+
+						<ul class="key">
+            	<li><img src="images/circle_attention.png" alt="" /> Attention</li>
+            	<li><img src="images/circle_stopped.png" alt="" /> Stopped</li>
+            	<li><img src="images/circle_in_progress.png" alt="" /> In Progress</li>
+            	<li><img src="images/circle_complete.png" alt="" /> Completed</li>
+            </ul>
+                                
+          	<div class="row complete">
+            	<div class="bar">
+                <strong>Application started</strong>
+                All sections commenced
+                <span class="more">More...</span>
+                <span class="icon"></span>
+              </div>
+              <div class="information">
+              	content in here
+              </div>
+            </div>
+          
+          	<div class="row attention">
+            	<div class="bar">
+                <strong>Application form started</strong>
+                All sections saved and form submitted
+                <span class="more">More...</span>
+                <span class="icon"></span>
+              </div>
+              <div class="information">
+              	content in here
+              </div>
+            </div>
+          
+          	<div class="row progress">
+            	<div class="bar">
+                <strong>Interview invitation received</strong>
+                from Bob Smith
+                <span class="more">More...</span>
+                <span class="icon"></span>
+              </div>
+              <div class="information">
+              	content in here
+              </div>
+            </div>
+          
+          	<div class="row stopped">
+            	<div class="bar">
+                <strong>Application under review</strong>
+                Admissions committee review
+                <span class="more">More...</span>
+                <span class="icon"></span>
+              </div>
+              <div class="information">
+              	content in here
+              </div>
+            </div>
+          
+          </div><!-- #feedback -->
+
+        </div><!-- .content-box-inner -->
+      </div><!-- .content-box -->
+      
+    </article>
+    
+  </div>
+  
+  <!-- Footer. -->
+  <div id="footer">
+    <ul>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms &amp; conditions</a></li>
+      <li><a href="#">Contact us</a></li>
+      <li><a href="#">Glossary</a></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Scripts -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/libraries.js"></script>
+<script type="text/javascript" src="js/script.js"></script>
+</body>
+</html>

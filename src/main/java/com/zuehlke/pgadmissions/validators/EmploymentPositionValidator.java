@@ -29,6 +29,19 @@ public class EmploymentPositionValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "startDate", "position.position_startDate.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "language", "position.position_language.notempty");
 		EmploymentPosition position = (EmploymentPosition) target;
+		
+		if (position.getEmployerAddress() != null) {
+			if (position.getEmployerAddress().length() > 1000) {
+				errors.rejectValue("employerAddress", "user.employerAddressLength.exceeded");
+			}
+		}
+		
+		if (position.getRemit() != null) {
+			if (position.getRemit().length() > 2000) {
+				errors.rejectValue("remit", "user.jobDescriptLength.exceeded");
+			}
+		}
+		
 		String startDate = position.getStartDate() == null ? "" : position.getStartDate().toString();
 		String endDate = position.getEndDate() == null ? "" : position.getEndDate().toString();
 		if (StringUtils.isNotBlank(startDate) && position.getStartDate().after(today)) {

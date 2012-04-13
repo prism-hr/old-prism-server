@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
@@ -48,7 +49,11 @@ public class Supervisor extends DomainObject<Integer> {
 	}
 
 	public void setFirstname(String firstname) {
-		this.firstname = firstname;
+		if(StringUtils.isBlank(firstname)){
+			this.firstname = null;
+		}else {
+			this.firstname = firstname;
+		}
 	}
 
 	public String getLastname() {
@@ -56,7 +61,12 @@ public class Supervisor extends DomainObject<Integer> {
 	}
 
 	public void setLastname(String lastname) {
-		this.lastname = lastname;
+		if(StringUtils.isBlank(lastname)){
+			this.lastname = null;
+		}
+		else {
+			this.lastname = lastname;
+		}
 	}
 
 	public String getEmail() {
@@ -64,7 +74,12 @@ public class Supervisor extends DomainObject<Integer> {
 	}
 
 	public void setEmail(String email) {
-		this.email = email;
+		if(StringUtils.isBlank(email)){
+			this.email = null;
+		}
+		else {
+			this.email = email;
+		}
 	}
 
 	public AwareStatus getAwareSupervisor() {

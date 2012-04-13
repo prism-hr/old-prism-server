@@ -11,6 +11,9 @@ import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.bind.ServletRequestBindingException;
 
 import com.itextpdf.text.Document;
@@ -19,7 +22,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+
+import cucumber.annotation.After;
 
 
 public class PrintControllerTest {
@@ -95,5 +101,16 @@ public class PrintControllerTest {
 	public void setUp() {
 		applicationSevice = EasyMock.createMock(ApplicationsService.class);
 		controller = new PrintController(applicationSevice);
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).toUser();
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+
+		authenticationToken.setDetails(currentUser);
+		SecurityContextImpl secContext = new SecurityContextImpl();
+		secContext.setAuthentication(authenticationToken);
+		SecurityContextHolder.setContext(secContext);
+	}
+	@After
+	public void tearDown(){
+		SecurityContextHolder.clearContext();
 	}
 }

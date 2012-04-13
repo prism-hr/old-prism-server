@@ -167,7 +167,7 @@
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>           		
                 	<#else>
                 	   <textarea readonly="readonly" class="max" rows="6" cols="70" id="ref_address_location" 
-                        name="ref_address_location" value="${(referee.addressLocation?html)!}"></textarea>
+                        name="ref_address_location" >${(referee.addressLocation?html)!}</textarea>
                 	</#if> 
         		</div>
       		</div>

@@ -18,16 +18,18 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="deleteEmploymentButton"]').click( function(){	
-		var id = $(this).attr("id").replace("position_", "");
-		$.post("/pgadmissions/deleteentity/employment",
-				{
-					id: id	
-				}, 				
-				function(data) {
-					$('#positionSection').html(data);
-				}	
-				
-			);
+		if(confirm("Delete employment record. Are you sure?")){
+			var id = $(this).attr("id").replace("position_", "");
+			$.post("/pgadmissions/deleteentity/employment",
+					{
+						id: id	
+					}, 				
+					function(data) {
+						$('#positionSection').html(data);
+					}	
+					
+				);
+		}
 	});
 	
 	$('#positionSaveAndCloseButton').click(function(){

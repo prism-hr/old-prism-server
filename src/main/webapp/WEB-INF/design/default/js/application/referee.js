@@ -8,17 +8,19 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="deleteRefereeButton"]').click( function(){	
-			var id = $(this).attr("id").replace("referee_", "");
-			$.post("/pgadmissions/deleteentity/referee",
-			{
-				id: id	
-			}, 
-			
-			function(data) {
-				$('#referencesSection').html(data);
-			}	
+		if(confirm("Delete reference record. Are you sure?")){
+				var id = $(this).attr("id").replace("referee_", "");
+				$.post("/pgadmissions/deleteentity/referee",
+				{
+					id: id	
+				}, 
 				
-		);
+				function(data) {
+					$('#referencesSection').html(data);
+				}	
+					
+			);
+		}
 	});
 	
 

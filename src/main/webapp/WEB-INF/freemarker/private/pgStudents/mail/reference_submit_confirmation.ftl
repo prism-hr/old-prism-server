@@ -39,7 +39,7 @@
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&id=${application.id?string("######")}">View your application</a>
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View your application</a>
 			      		</font>
 			      	</p>
 			      	<p>

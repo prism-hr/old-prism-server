@@ -61,7 +61,7 @@ $(document).ready(function(){
 	});
 	
 	bindDatePicker('#fundingAwardDate');
-
+	addToolTips();
 	// open/close
 	var $header  =$('#funding-H2');
 	var $content = $header.next('div');

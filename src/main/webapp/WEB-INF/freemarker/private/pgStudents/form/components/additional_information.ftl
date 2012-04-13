@@ -1,6 +1,6 @@
 <#import "/spring.ftl" as spring />
 <#assign errorCode = RequestParameters.errorCode! />
-<h2 id="additional-H2" class="empty">
+<h2 id="additional-H2" class="empty open">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
     Additional Information
 </h2>

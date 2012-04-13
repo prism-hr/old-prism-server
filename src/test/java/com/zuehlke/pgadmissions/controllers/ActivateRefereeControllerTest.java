@@ -26,6 +26,8 @@ import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
 
+import cucumber.annotation.After;
+
 public class ActivateRefereeControllerTest {
 
 	private RefereeService refereeServiceMock;
@@ -147,6 +149,11 @@ public class ActivateRefereeControllerTest {
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
+	}
+	
+	@After
+	public void tearDown(){
+		SecurityContextHolder.clearContext();
 	}
 	
 }

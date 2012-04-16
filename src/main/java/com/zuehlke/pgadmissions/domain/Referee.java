@@ -23,7 +23,7 @@ public class Referee extends DomainObject<Integer>{
 	
 	@ManyToOne
 	@JoinColumn(name = "registered_user_id")
-	private RegisteredUser user = null;
+	private RegisteredUser user;
 	
 	@OneToOne(orphanRemoval=true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })

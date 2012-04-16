@@ -1,35 +1,25 @@
 package com.zuehlke.pgadmissions.dto;
 
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public class UpdateUserForProgramWithRolesDTO {
 	
-	private Program setProgram;
-	private RegisteredUser setUser;
-	private NewRolesDTO newSetRolesDTO;
+	private Integer selectedProgramId;
+	private Integer selectedUserId;
 	
-	public Program getSetProgram() {
-		return setProgram;
+	public Integer getSelectedProgramId() {
+		return selectedProgramId;
 	}
 	
-	public void setSetProgram(Program setProgram) {
-		this.setProgram = setProgram;
+	public void setSelectedProgramId(Integer selectedProgramId) {
+		this.selectedProgramId = selectedProgramId;
 	}
 	
-	public RegisteredUser getSetUser() {
-		return setUser;
+	public Integer getSelectedUserId() {
+		return selectedUserId;
 	}
 	
-	public void setSetUser(RegisteredUser setUser) {
-		this.setUser = setUser;
+	public void setSelectedUserId(Integer selectedUserId) {
+		this.selectedUserId = selectedUserId;
 	}
 	
-	public NewRolesDTO getNewSetRolesDTO() {
-		return newSetRolesDTO;
-	}
-	
-	public void setNewSetRolesDTO(NewRolesDTO newSetRolesDTO) {
-		this.newSetRolesDTO = newSetRolesDTO;
-	}
 }

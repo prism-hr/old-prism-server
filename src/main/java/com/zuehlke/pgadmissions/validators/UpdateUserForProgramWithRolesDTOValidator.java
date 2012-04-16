@@ -17,8 +17,7 @@ public class UpdateUserForProgramWithRolesDTOValidator implements Validator {
 
 	@Override
 	public void validate(Object target, Errors errors) {
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "setProgram", "selectedProgram.existingAdminUser.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "setUser", "selectedUser.existingAdminUser.notempty");
-		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "newSetRolesDTO", "selectedRoles.existingAdminUser.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedProgramId", "selectedProgram.existingAdminUser.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "selectedUserId", "selectedUser.existingAdminUser.notempty");
 	}
 }

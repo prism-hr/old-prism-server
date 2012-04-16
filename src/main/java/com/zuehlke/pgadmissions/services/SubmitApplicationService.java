@@ -39,7 +39,7 @@ public class SubmitApplicationService {
 	@Transactional
 	public void saveApplicationFormAndSendMailNotifications(ApplicationForm form) {
 		applicationService.save(form);
-		sendMailToAllReferees(form);
+		sendMailToReferees(form);
 		sendMailToApplicant(form);
 		sendMailToAdmins(form);
 	}

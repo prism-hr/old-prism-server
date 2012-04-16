@@ -59,8 +59,8 @@
 												>${program.title}</option>               
 	                                		</#list>
 				              		</select>
-				              		<#if result?? && result.getFieldError('selectedProgramId')??>
-                                            <p class="invalid"><@spring.message  result.getFieldError('selectedProgramId').code /></p>
+				              		<#if result?? && result.getFieldError('selectedProgram')??>
+                                            <p class="invalid"><@spring.message  result.getFieldError('selectedProgram').code /></p>
                                     </#if>
 			            		</div>
 								<!-- // EXISTING USERS -->
@@ -81,8 +81,8 @@
 						                			>${user.firstName?html} ${user.lastName?html}</option>      
 												</#list>
 					                		</select>
-					                	<#if result?? && result.getFieldError('selectedUserId')??>
-                                            <p class="invalid"><@spring.message  result.getFieldError('selectedUserId').code /></p>
+					                	<#if result?? && result.getFieldError('selectedUser')??>
+                                            <p class="invalid"><@spring.message  result.getFieldError('selectedUser').code /></p>
                                         </#if>
 					              	</div>
 					              	<div class="row">

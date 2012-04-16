@@ -7,6 +7,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
+import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.dto.UpdateUserForProgramWithRolesDTO;
 
 
@@ -29,7 +31,7 @@ public class UpdateUserForProgramWithRolesDTOValidatorTest {
 	
 	@Test
 	public void shouldRejectIfNoSelectedProgram() {
-		dto.setSelectedProgramId(null);
+		dto.setSelectedProgram(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(dto, "existingAdminUser");
 		validator.validate(dto, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -37,7 +39,7 @@ public class UpdateUserForProgramWithRolesDTOValidatorTest {
 	
 	@Test
 	public void shouldRejectIfNoSelectedUser() {
-		dto.setSelectedUserId(null);
+		dto.setSelectedUser(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(dto, "existingAdminUser");
 		validator.validate(dto, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
@@ -47,7 +49,7 @@ public class UpdateUserForProgramWithRolesDTOValidatorTest {
 	public void setup() {
 		validator = new UpdateUserForProgramWithRolesDTOValidator();
 		dto = new UpdateUserForProgramWithRolesDTO();
-		dto.setSelectedProgramId(3);
-		dto.setSelectedUserId(5);
+		dto.setSelectedProgram(new Program());
+		dto.setSelectedUser(new RegisteredUser());
 	}
 }

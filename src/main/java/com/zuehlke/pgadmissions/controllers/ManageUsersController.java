@@ -267,13 +267,8 @@ public class ManageUsersController {
 			@ModelAttribute("selectedProgram") Program selectedProgram, @ModelAttribute NewRolesDTO newRolesDTO, ModelMap modelMap) {
 
 		UpdateUserForProgramWithRolesDTO dto = new UpdateUserForProgramWithRolesDTO();
-		
-		
-		Integer prgId = selectedProgram == null? null : selectedProgram.getId();
-		dto.setSelectedProgramId(prgId);
-	
-		Integer usrId = selectedUser == null? null : selectedUser.getId();
-		dto.setSelectedUserId(usrId);
+		dto.setSelectedProgram(selectedProgram);
+		dto.setSelectedUser(selectedUser);
 		
 		UpdateUserForProgramWithRolesDTOValidator validator = new UpdateUserForProgramWithRolesDTOValidator();
 		BindingResult result = new DirectFieldBindingResult(dto, "dto");

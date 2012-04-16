@@ -363,6 +363,19 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public void setCurrentReferee(Referee currentReferee) {
 		this.currentReferee = currentReferee;
 	}
+	
+	public boolean isRefereeOfApplicationForm(ApplicationForm form){
+		return this.isInRole(Authority.REFEREE) && hasRefereesInApplicationForm(form);
+	}
+	
+	public boolean hasRefereesInApplicationForm(ApplicationForm form){
+		for (Referee referee : referees) {
+			if(referee.getApplication()!=null && referee.getApplication().equals(form)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	
 }

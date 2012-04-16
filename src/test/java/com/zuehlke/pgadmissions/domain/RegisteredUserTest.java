@@ -219,6 +219,30 @@ public class RegisteredUserTest {
 		assertFalse(user.isAdminOrReviewerInProgramme(program));
 	}
 	
+	@Test
+	public void shouldReturnTrueIfHasRefereesInApplicationForm(){
+		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
+		Referee referee1 = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail1@test.com").application(form).toReferee();
+		Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").toReferee();
+		Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").toReferee();
+		
+		RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee1, referee2, referee3).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		
+		assertTrue(user.hasRefereesInApplicationForm(form));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfDoesntHaveRefereesInApplicationForm(){
+		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
+		Referee referee1 = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail1@test.com").toReferee();
+		Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").toReferee();
+		Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").toReferee();
+		
+		RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee1, referee2, referee3).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		
+		assertFalse(user.hasRefereesInApplicationForm(form));
+	}
+	
 
 	
 }

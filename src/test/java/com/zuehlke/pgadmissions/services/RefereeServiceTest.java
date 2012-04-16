@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.junit.Assert.*;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -247,6 +249,20 @@ public class RefereeServiceTest {
 		EasyMock.replay(referee, refereeDAOMock);
 		
 		Assert.assertEquals(referee, refereeService.getRefereeById(23));
+	}
+	
+	@Test
+	public void shouldGetRefereeByUserAndApplication(){
+		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
+		Referee referee1 = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail1@test.com").application(form).toReferee();
+		Referee referee2 = new RefereeBuilder().id(2).firstname("ref").lastname("erre").email("emailemail2@test.com").toReferee();
+		Referee referee3 = new RefereeBuilder().id(3).firstname("ref").lastname("erre").email("emailemail3@test.com").toReferee();
+		
+		RegisteredUser user = new RegisteredUserBuilder().referees(referee1, referee2, referee3).id(1).toUser();
+		
+		Referee referee = refereeService.getRefereeByUserAndApplication(user, form);
+		
+		assertEquals(referee1, referee);
 	}
 	
 	@Test			

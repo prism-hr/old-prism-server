@@ -42,7 +42,7 @@
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/referee/login?activationCode=${(referee.activationCode)!}">Add Reference</a>
+			      			<a href="${host}/pgadmissions/referee/register?activationCode=${referee.activationCode!}">Register</a>
 			      		</font>
 			      	</p>
 			      	<p>

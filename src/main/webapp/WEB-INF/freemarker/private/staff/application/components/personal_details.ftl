@@ -209,12 +209,12 @@
 	                
 	            <div class="comment">
 	               	
-	                   <#if applicationForm.hasComments()>
+	                   <#if applicationForm.hasComments() && user??>
 		                   	<#assign prevComments = "true">
 		                	<div class="previous">
 		                    	<strong>Previous comments</strong>
 		                    	 <ul>
-		                    	<#list applicationForm.applicationComments as comment>
+		                    	<#list applicationForm.getVisibleComments(user) as comment>
 									<li>
 										<strong>${comment.user.username?html}</strong>
 										<span>${comment.comment?html}</span>

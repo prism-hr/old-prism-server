@@ -99,7 +99,6 @@ public class SubmitApplicationFormControllerTest {
 		assertEquals("redirect:/applications?submissionSuccess=true", view);
 	}
 	
-	@Ignore
 	@Test
 	public void shouldProcessRefereesRoleIfNoErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);

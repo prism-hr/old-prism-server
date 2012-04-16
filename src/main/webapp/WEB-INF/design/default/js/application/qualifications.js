@@ -47,18 +47,20 @@ $(document).ready(function(){
 	
 	});
 	
-	$('a[name="deleteQualificationButton"]').click( function(){	
-		var id = $(this).attr("id").replace("qualification_", "");
-		$.post("/pgadmissions/deleteentity/qualification",
-				{
-					id: id	
-				}, 
-				
-				function(data) {
-					$('#qualificationsSection').html(data);
-				}	
-				
-			);
+	$('a[name="deleteQualificationButton"]').click( function(){
+		if(confirm("Delete qualification record. Are you sure?")){
+			var id = $(this).attr("id").replace("qualification_", "");
+			$.post("/pgadmissions/deleteentity/qualification",
+					{
+						id: id	
+					}, 
+					
+					function(data) {
+						$('#qualificationsSection').html(data);
+					}	
+					
+				);
+		}
 	});
 	
 	

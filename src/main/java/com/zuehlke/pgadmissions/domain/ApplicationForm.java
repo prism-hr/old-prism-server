@@ -26,6 +26,7 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "APPLICATION_FORM")
@@ -341,5 +342,17 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setContactAddress(Address contactAddress) {
 		this.contactAddress = contactAddress;
+	}
+	
+	public List<ApplicationReview> getVisibleComments(RegisteredUser user) {
+		List<ApplicationReview> visibleComments = new ArrayList<ApplicationReview>();	
+		for (ApplicationReview comment : applicationComments) {
+			if (comment.getUser().isInRole(Authority.REVIEWER) && (!comment.getUser().equals(user))) {
+				continue;
+			} else {
+				visibleComments.add(comment);
+			}
+		}
+		return visibleComments;
 	}
 }

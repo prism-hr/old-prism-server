@@ -49,10 +49,10 @@
 	                  	<td>${existingFunding.awardDate?string('dd-MMM-yyyy')}</td>
 	                  	     <#if !applicationForm.isSubmitted()>
 								<td>				                  		                		
-		                			<a name="editFundingLink" id="funding_${existingFunding.id?string('#######')}" class="button-edit">edit</a>
+		                			<a name="editFundingLink" data-desc="Edit" id="funding_${existingFunding.id?string('#######')}" class="button-edit button-hint">edit</a>
 		                		</td>
 		                		<td>
-		                			<a name="deleteFundingButton" id="funding_${existingFunding.id?string('#######')}" class="button-delete">delete</a>
+		                			<a name="deleteFundingButton" data-desc="Delete" id="funding_${existingFunding.id?string('#######')}" class="button-delete button-hint">delete</a>
 		                		</td>
 		                	<#else>
 		                		<td></td><td></td>		                		

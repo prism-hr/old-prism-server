@@ -126,7 +126,7 @@ public class RefereeService {
 	}
 
 	public RegisteredUser getRefereeIfAlreadyRegistered(Referee referee) {
-		return userService.getUserByEmail(referee.getEmail());
+		return userService.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
 	}
 
 	@Transactional
@@ -138,20 +138,27 @@ public class RefereeService {
 	}
 
 	public RegisteredUser processRefereeAndGetAsUser(Referee referee) {
-		RegisteredUser user = userService.getUserByEmail(referee.getEmail());
+		RegisteredUser user = userService.getUserByEmailIncludingDisabledAccounts(referee.getEmail());
 		Role refereeRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
-		if (user != null && !user.isInRole(Authority.REFEREE)) {
+		if (userExists(user) && !isUserReferee(user)) {
 			user.getRoles().add(refereeRole);
-			referee.setUser(user);
-			save(referee);
 		}
-		if (user == null) {
+		if (!userExists(user)) {
 			user = createAndSaveNewUserWithRefereeRole(referee, refereeRole);
-			referee.setUser(user);
-			save(referee);
 		}
+		referee.setUser(user);
+		save(referee);
 		return user;
 	}
+
+	private boolean userExists(RegisteredUser user) {
+		return user != null;
+	}
+
+	private boolean isUserReferee(RegisteredUser user) {
+		return user.isInRole(Authority.REFEREE);
+	}
+
 
 	private RegisteredUser createAndSaveNewUserWithRefereeRole(Referee referee, Role refereeRole) {
 		RegisteredUser user;

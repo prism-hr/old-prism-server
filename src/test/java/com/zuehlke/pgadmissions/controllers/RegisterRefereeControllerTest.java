@@ -32,7 +32,7 @@ public class RegisterRefereeControllerTest {
 	public void shouldSaveRefereeAndEnableAccountIfNoErrors() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).toApplicationForm();
 		Referee referee = new RefereeBuilder().firstname("f").lastname("l").email("e@test.com").application(application).toReferee();
-		RegisteredUser user = new RegisteredUserBuilder().firstName("f").referee(referee).lastName("l").email("e@test.com").password("123").username("u").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().firstName("f").referees(referee).lastName("l").email("e@test.com").password("123").username("u").toUser();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);		
 		
 	}
@@ -48,7 +48,7 @@ public class RegisterRefereeControllerTest {
 	public void shouldGetRefereeFromServiceIfIdAndIsMappedToAnApplicationRefereeProvided() {
 		ApplicationForm application = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).id(1).toApplicationForm();
 		Referee referee = new RefereeBuilder().firstname("f").lastname("l").email("e@test.com").application(application).toReferee();
-		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("f").referee(referee).lastName("l").email("e@test.com").username("u").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("f").referees(referee).lastName("l").email("e@test.com").username("u").toUser();
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 		RegisteredUser returnedUser = registerRefereeController.getReferee(1);
@@ -59,7 +59,7 @@ public class RegisterRefereeControllerTest {
 	public void shouldThrowResoureNotFoundExceptionIfRefereeDoesNotExists() {
 		ApplicationForm application = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).id(1).toApplicationForm();
 		Referee referee = new RefereeBuilder().firstname("f").lastname("l").email("e@test.com").application(application).toReferee();
-		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("f").referee(referee).lastName("l").email("e@test.com").username("u").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("f").referees(referee).lastName("l").email("e@test.com").username("u").toUser();
 		registerRefereeController.getReferee(user.getId());
 	}
 	

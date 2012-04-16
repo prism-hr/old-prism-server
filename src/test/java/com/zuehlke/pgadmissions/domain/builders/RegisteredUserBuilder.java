@@ -25,7 +25,7 @@ public class RegisteredUserBuilder {
 	private boolean credentialsNonExpired = true;
 	private String activationCode;
 	private Project projectOriginallyAppliedTo;
-	private Referee referee;
+	private List<Referee> referees = new ArrayList<Referee>();
 
 	private List<Role> roles = new ArrayList<Role>();	
 	private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
@@ -48,13 +48,13 @@ public class RegisteredUserBuilder {
 		return this;
 	} 
 	
+	public RegisteredUserBuilder referees(Referee...referees) {
+		this.referees.addAll(Arrays.asList(referees));
+		return this;
+	} 
+	
 	public RegisteredUserBuilder projectOriginallyAppliedTo(Project projectOriginallyAppliedTo) {
 		this.projectOriginallyAppliedTo = projectOriginallyAppliedTo;
-		return this;
-	}
-	
-	public RegisteredUserBuilder referee(Referee referee) {
-		this.referee = referee;
 		return this;
 	}
 	
@@ -150,7 +150,7 @@ public class RegisteredUserBuilder {
 		user.setProgramsOfWhichApprover(programsOfWhichApprover);
 		user.setProgramsOfWhichReviewer(programsOfWhichReviewer);
 		user.setConfirmPassword(confirmPassword);
-		user.setReferee(referee);
+		user.setReferees(referees);
 		return user;
 	}
 

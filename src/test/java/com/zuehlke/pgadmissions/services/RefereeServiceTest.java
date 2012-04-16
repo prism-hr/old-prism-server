@@ -154,7 +154,7 @@ public class RefereeServiceTest {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
 		userServiceMock.save(reviewer);
 		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
-		EasyMock.expect(userServiceMock.getUserByEmail("email@test.com")).andReturn(reviewer);
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(reviewer);
 		EasyMock.replay(userServiceMock);
 		RegisteredUser existedReferee = refereeService.getRefereeIfAlreadyRegistered(referee);
 		Assert.assertNotNull(existedReferee);
@@ -166,7 +166,7 @@ public class RefereeServiceTest {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
 		userServiceMock.save(reviewer);
 		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("otherrefemail@test.com").toReferee();
-		EasyMock.expect(userServiceMock.getUserByEmail("otherrefemail@test.com")).andReturn(null);
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("otherrefemail@test.com")).andReturn(null);
 		EasyMock.replay(userServiceMock);
 		RegisteredUser existedReferee = refereeService.getRefereeIfAlreadyRegistered(referee);
 		Assert.assertNull(existedReferee);
@@ -178,7 +178,7 @@ public class RefereeServiceTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(1).role(reviewerRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
 		userServiceMock.save(user);
 		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
-		EasyMock.expect(userServiceMock.getUserByEmail("email@test.com")).andReturn(user);
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(user);
 		userServiceMock.save(user);
 		EasyMock.replay(userServiceMock);
 		RegisteredUser existedReferee = refereeService.processRefereeAndGetAsUser(referee);
@@ -194,7 +194,7 @@ public class RefereeServiceTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(1).roles(reviewerRole,adminRole, approverRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
 		userServiceMock.save(user);
 		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
-		EasyMock.expect(userServiceMock.getUserByEmail("email@test.com")).andReturn(user);
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(user);
 		userServiceMock.save(user);
 		EasyMock.replay(userServiceMock);
 		RegisteredUser existedReferee = refereeService.processRefereeAndGetAsUser(referee);
@@ -208,7 +208,7 @@ public class RefereeServiceTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(3).role(refereeRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
 		userServiceMock.save(user);
 		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
-		EasyMock.expect(userServiceMock.getUserByEmail("email@test.com")).andReturn(user);
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("email@test.com")).andReturn(user);
 		userServiceMock.save(user);
 		EasyMock.replay(userServiceMock);
 		RegisteredUser existedReferee = refereeService.processRefereeAndGetAsUser(referee);
@@ -226,7 +226,7 @@ public class RefereeServiceTest {
 				return user;
 			}
 		};
-		EasyMock.expect(userServiceMock.getUserByEmail("emailemail@test.com")).andReturn(null);
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("emailemail@test.com")).andReturn(null);
 		userServiceMock.save(user);
 		referee.setUser(user);
 		refereeDAOMock.save(referee);

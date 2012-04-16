@@ -156,7 +156,7 @@
                   	</div>
                   	
                   	<div class="row">
-                        <span class="label">Do you require visa to study in the UK?</span>
+                        <span class="label">Do you require a visa to study in the UK?</span>
                         <div class="field">
                             <#if applicationForm.personalDetails.requiresVisa>
                             Yes

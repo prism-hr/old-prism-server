@@ -215,9 +215,9 @@ public class PdfDocumentBuilder {
 		}
 
 		if (application.getPersonalDetails().isRequiresVisa()) {
-			document.add(new Paragraph("Do you require visa to study in the UK? yes."));
+			document.add(new Paragraph("Do you require a visa to study in the UK? yes."));
 		} else {
-			document.add(new Paragraph("Do you require visa to study in the UK? no."));
+			document.add(new Paragraph("Do you require a visa to study in the UK? no."));
 		}
 
 		document.add(new Paragraph("Contact Details", smallBoldFont));

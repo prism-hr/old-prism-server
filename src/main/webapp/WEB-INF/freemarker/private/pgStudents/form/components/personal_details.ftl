@@ -288,7 +288,7 @@
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>			
 						</div>
 						<div class="row">
-						 <label class="plain-label">Do you require visa to study in the UK?<em>*</em></label>
+						 <label class="plain-label">Do you require a visa to study in the UK?<em>*</em></label>
                    		<span class="hint"></span>
                    		<div class="field">
                    			<input type="checkbox" name="requiresVisaCB" id="requiresVisaCB"

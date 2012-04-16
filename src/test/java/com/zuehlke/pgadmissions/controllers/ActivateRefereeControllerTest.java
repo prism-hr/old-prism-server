@@ -23,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
 
@@ -34,6 +35,7 @@ public class ActivateRefereeControllerTest {
 	private ActivateRefereeController controller;
 	private RegisteredUser currentUser;
 	private ApplicationPageModelBuilder applicationPageModelBuilderMock;
+	private ApplicationsService applicationServiceMock;
 
 	@Test
 	public void shouldReturnReferencesPageIfLinkIsCorrect(){
@@ -140,7 +142,8 @@ public class ActivateRefereeControllerTest {
 	public void setup() {
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		applicationPageModelBuilderMock = EasyMock.createMock(ApplicationPageModelBuilder.class);
-		controller = new ActivateRefereeController(refereeServiceMock, applicationPageModelBuilderMock);
+		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+		controller = new ActivateRefereeController(refereeServiceMock, applicationPageModelBuilderMock, applicationServiceMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);

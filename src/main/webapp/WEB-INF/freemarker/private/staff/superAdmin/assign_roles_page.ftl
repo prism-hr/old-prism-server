@@ -59,6 +59,9 @@
 												>${program.title}</option>               
 	                                		</#list>
 				              		</select>
+				              		<#if result?? && result.getFieldError('setProgram')??>
+                                            <p class="invalid"><@spring.message  result.getFieldError('setProgram').code /></p>
+                                    </#if>
 			            		</div>
 								<!-- // EXISTING USERS -->
 											
@@ -78,6 +81,9 @@
 						                			>${user.firstName?html} ${user.lastName?html}</option>      
 												</#list>
 					                		</select>
+					                	<#if result?? && result.getFieldError('setUser')??>
+                                            <p class="invalid"><@spring.message  result.getFieldError('setUser').code /></p>
+                                        </#if>
 					              	</div>
 					              	<div class="row">
 					                	or <a href="/pgadmissions/manageUsers/createNewUser">add a new user</a>

@@ -8,8 +8,8 @@
 	<!-- Main tabbed menu -->
 	<nav>
 		<ul>
-			<li><a href="#">My account</a></li>			
-			<li class="current"><a href="<@spring.url '/applications'/>">My applications </a></li>    
+			<li><a href="#">My Account</a></li>			
+			<li class="current"><a href="<@spring.url '/applications'/>">My Applications </a></li>    
 			<li><a href="#">Messages</a></li>    
 			<li><a href="#">Help</a></li>    
 		</ul>

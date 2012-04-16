@@ -49,7 +49,7 @@
         	<tbody>
         		<#list applicationForm.referees as existingReferee>
                   	<tr>
-	                    <td><a class="row-arrow <#if referee.id?? && existingReferee.id==referee.id>open</#if>" id="referee_${existingReferee.id?string('#######')}" name ="editRefereeLink">-</a></td>
+	                    <td><a class="row-arrow">-</a></td>
 	                    <td>${(existingReferee.firstname?html)!}</td>
 	                    <td>${(existingReferee.lastname?html)!}</td>
 	                    <td>${(existingReferee.jobTitle?html)!}</td>

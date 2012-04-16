@@ -41,7 +41,7 @@
 			
 				<#list applicationForm.fundings as existingFunding>		
 					<tr>
-	                  	<td><a class="row-arrow <#if funding.id?? && existingFunding.id==funding.id>open</#if>" id="funding_${existingFunding.id?string('#######')}" name ="editFundingLink">-</a></td>
+	                  	<td><a class="row-arrow">-</a></td>
 	                  	<td>${existingFunding.type.displayValue}</td>
 	                  	<td>${existingFunding.description}</td>
 	                  	<td ><a href="<@spring.url '/download'/>?documentId=${existingFunding.document.id?string('#######')}">

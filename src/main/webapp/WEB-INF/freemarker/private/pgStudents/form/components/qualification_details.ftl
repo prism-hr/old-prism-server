@@ -41,10 +41,7 @@
             
             	<#list applicationForm.qualifications as existingQualification>
                 	<tr>
-	                  	<td><a class="row-arrow 
-	                  		<#if qualification.id?? && existingQualification.id==qualification.id>open</#if>" 
-	                  		id="qualification_${existingQualification.id?string('#######')}" 
-	                  		name ="editQualificationLink">-</a>
+	                  	<td><a class="row-arrow">-</a>
 	                  	</td>
 	                  	<td>${(existingQualification.qualificationType?html)!}</td>
 	                  	<td>${(existingQualification.qualificationGrade?html)!}</td>

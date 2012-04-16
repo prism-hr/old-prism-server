@@ -38,9 +38,7 @@
             
             	<#list applicationForm.employmentPositions as position>
 	            	<tr>
-	                    <td><a class="row-arrow 
-	                    	<#if employmentPosition.id?? && position.id==employmentPosition.id>open</#if>" 
-	                    	name="positionEditButton" id="position_${position.id?string('#######')}">-</a></td>
+	                    <td><a class="row-arrow">-</a></td>
 	                    <td>${(position.position?html)!}</td>
 	                    <td>${(position.startDate?string('dd-MMM-yyyy'))!}</td>
 	                    <td>${(position.endDate?string('dd-MMM-yyyy'))!}</td>

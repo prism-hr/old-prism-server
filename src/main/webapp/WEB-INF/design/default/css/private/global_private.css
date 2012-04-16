@@ -167,9 +167,10 @@ color: red; display: inline-block; margin-left: 10px; padding-left: 24px;
 /*IE 7*/ zoom: 1; *display: inline;}
 
 span.invalid-submit { 
-	color:red; padding-bottom:10px; line-height:24px; padding-left: 24px;
-	background: url("../../images/button_exclaim.png") no-repeat scroll 0 0.2em transparent;
+	color:red; padding-bottom:10px; line-height:46px; padding-left: 48px;
+	background: url("../../images/submit_error.png") no-repeat scroll 0 0.2em transparent;
 	display: inline-block; /*IE 7*/ zoom: 1; *display: inline;
+	width:805px;
 }
 
 input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin: -1px; }

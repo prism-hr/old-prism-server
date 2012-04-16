@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,7 +15,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.StringUtils;
@@ -46,7 +46,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private boolean credentialsNonExpired;
 	private String activationCode;
 	
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@OneToMany(fetch=FetchType.EAGER, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "registered_user_id")
 	private List<Referee> referees = new ArrayList<Referee>();
@@ -221,8 +221,10 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		if (isInRole(Authority.REFEREE)) {
 			List<Referee> referees = applicationForm.getReferees();
 			for (Referee referee : referees) {
-				if(referee.getUser().equals(this) || (this.getReferees().contains(referee))){
-					return true;
+				if(referee.getUser()!=null){
+					if(referee.getUser().equals(this) || (this.getReferees().contains(referee))){
+						return true;
+					}
 				}
 			}
 		}

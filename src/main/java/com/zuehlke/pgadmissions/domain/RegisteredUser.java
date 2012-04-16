@@ -38,14 +38,18 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private String confirmPassword;
 	@Transient
 	private Integer projectId;
+	@Transient
+	private Referee currentReferee;
 	private boolean enabled;
 	private boolean accountNonExpired;
 	private boolean accountNonLocked;
 	private boolean credentialsNonExpired;
 	private String activationCode;
 	
-	@OneToOne(mappedBy="user")
-	private Referee referee;
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "registered_user_id")
+	private List<Referee> referees = new ArrayList<Referee>();
 	
 	@ManyToOne
 	@JoinColumn(name = "originally_project_id")
@@ -217,18 +221,19 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		if (isInRole(Authority.REFEREE)) {
 			List<Referee> referees = applicationForm.getReferees();
 			for (Referee referee : referees) {
-				if(referee.getUser().equals(this) || (this.getReferee().equals(referee))){
+				if(referee.getUser().equals(this) || (this.getReferees().contains(referee))){
 					return true;
 				}
 			}
 		}
-
+		
 		if(this.equals(applicationForm.getApplicant())){
 			return true;
 		}
 		
 		return false;
 	}
+	
 
 	public String getActivationCode() {
 		return activationCode;
@@ -319,14 +324,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return null;
 	}
 
-	public Referee getReferee() {
-		return referee;
-	}
-
-	public void setReferee(Referee referee) {
-		this.referee = referee;
-	}
-
 	public String getConfirmPassword() {
 		return confirmPassword;
 	}
@@ -347,6 +344,22 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return true;
 		}
 		return false;
+	}
+
+	public List<Referee> getReferees() {
+		return referees;
+	}
+
+	public void setReferees(List<Referee> referees) {
+		this.referees = referees;
+	}
+
+	public Referee getCurrentReferee() {
+		return currentReferee;
+	}
+
+	public void setCurrentReferee(Referee currentReferee) {
+		this.currentReferee = currentReferee;
 	}
 
 	

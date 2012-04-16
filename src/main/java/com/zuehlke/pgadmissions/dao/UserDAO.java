@@ -92,5 +92,10 @@ public class UserDAO {
 		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("enabled", true))
 		.add(Restrictions.eq("email", email)).uniqueResult();
 	}
+	
+	public RegisteredUser getUserByEmailIncludingDisabledAccounts(String email) {
+		return (RegisteredUser) sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+				.add(Restrictions.eq("email", email)).uniqueResult();
+	}
 
 }

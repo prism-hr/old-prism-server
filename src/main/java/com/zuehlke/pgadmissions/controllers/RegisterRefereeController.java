@@ -66,7 +66,7 @@ public class RegisterRefereeController {
 	@ModelAttribute
 	public RegisteredUser getReferee(@RequestParam Integer recordId) {
 		RegisteredUser referee = userService.getUser(recordId);
-		if (referee == null || referee.getReferee() == null) {
+		if (referee == null || referee.getReferees() == null) {
 			throw new ResourceNotFoundException();
 		}
 		return referee;

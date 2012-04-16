@@ -59,8 +59,8 @@ public class SubmitApplicationFormController {
 		}
 		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		applicationForm.setSubmittedDate(new Date());
-		submitApplicationService.saveApplicationFormAndSendMailNotifications(applicationForm);
 		refereeService.processRefereesRoles(applicationForm.getReferees());
+		submitApplicationService.saveApplicationFormAndSendMailNotifications(applicationForm);
 		return "redirect:/applications?submissionSuccess=true";
 	}
 

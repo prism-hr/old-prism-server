@@ -108,8 +108,10 @@ public class SubmitApplicationService {
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
 				if (referee.getUser() != null && referee.getUser().isEnabled()) {
+					System.out.println("Sending Existing user email : " + referee.getUser().getEmail());
 					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification", "private/referees/mail/existing_user_referee_notification_email.ftl", model));
 				} else {
+					System.out.println("Sending New user email : " + referee.getEmail());
 					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification", "private/referees/mail/referee_notification_email.ftl", model));
 				}
 			} catch (Throwable e) {

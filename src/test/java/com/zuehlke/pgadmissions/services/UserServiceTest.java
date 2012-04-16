@@ -212,7 +212,8 @@ public class UserServiceTest {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("applicant").lastName("hen").email("applicant@test.com").toUser();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).project(project).toApplicationForm();
 		Referee referee = new RefereeBuilder().application(form).toReferee();
-		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referee(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referees(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
+		refereeUser.setCurrentReferee(referee);
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
@@ -254,7 +255,8 @@ public class UserServiceTest {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("applicant").lastName("hen").email("applicant@test.com").toUser();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).project(project).toApplicationForm();
 		Referee referee = new RefereeBuilder().application(form).toReferee();
-		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referee(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referees(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
+		refereeUser.setCurrentReferee(referee);
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);

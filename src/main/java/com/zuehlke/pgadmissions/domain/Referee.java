@@ -21,7 +21,7 @@ public class Referee extends DomainObject<Integer>{
 
 	private static final long serialVersionUID = 4591043630090924738L;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "registered_user_id")
 	private RegisteredUser user = null;
 	

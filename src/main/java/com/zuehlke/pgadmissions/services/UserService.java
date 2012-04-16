@@ -118,6 +118,11 @@ public class UserService {
 		return userDAO.getUserByEmail(email);
 		
 	}
+	
+	public RegisteredUser getUserByEmailIncludingDisabledAccounts(String email) {
+		return userDAO.getUserByEmailIncludingDisabledAccounts(email);
+		
+	}
 
 	@Transactional 
 	public void saveAndEmailRegisterConfirmationToReferee(RegisteredUser referee) {
@@ -127,8 +132,8 @@ public class UserService {
 
 	private void sendMailToReferee(RegisteredUser referee) {
 		try {
-			RegisteredUser applicant = referee.getReferee().getApplication().getApplicant();
-			List<RegisteredUser> administrators = referee.getReferee().getApplication().getProject().getProgram().getAdministrators();
+			RegisteredUser applicant = referee.getCurrentReferee().getApplication().getApplicant();
+			List<RegisteredUser> administrators = referee.getCurrentReferee().getApplication().getProject().getProgram().getAdministrators();
 			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("referee", referee);

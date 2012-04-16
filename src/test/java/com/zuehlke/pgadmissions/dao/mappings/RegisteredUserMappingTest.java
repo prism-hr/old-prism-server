@@ -64,23 +64,26 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	
 
 	@Test
-	public void shouldLoadRegisteredUserWithReferee() throws ParseException {
+	public void shouldLoadRegisteredUserWithReferees() throws ParseException {
 		
-		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").phoneNumber("hallihallo").toReferee();
+		Referee referee1 = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").phoneNumber("hallihallo").toReferee();
+		Referee referee2 = new RefereeBuilder().id(5).firstname("ref1").lastname("erre1").email("ref1@test.com").phoneNumber("hallihallo").toReferee();
 		
 
 		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
 		
 		sessionFactory.getCurrentSession().save(admin1);
 		flushAndClearSession();
-		referee.setUser(admin1);
+		referee1.setUser(admin1);
+		referee2.setUser(admin1);
 
-		save(referee);
+		save(referee1, referee2);
 
 		RegisteredUser reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, admin1.getId()));
 		
-		assertEquals(referee, reloadedUser.getReferee());
-		assertNotNull(referee.getUser());
+		assertTrue(reloadedUser.getReferees().contains(referee1));
+		assertTrue(reloadedUser.getReferees().contains(referee2));
+		assertNotNull(referee1.getUser());
 
 	}
 
@@ -112,8 +115,8 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(admin1, reloadedUser);
 
 		assertEquals("email", reloadedUser.getUsername());
-		Assert.assertNotNull(reloadedUser.getReferee());
-		Assert.assertTrue(reloadedUser.getReferee().equals(referee));
+		Assert.assertNotNull(reloadedUser.getReferees());
+		Assert.assertTrue(reloadedUser.getReferees().contains(referee));
 	}
 	
 	

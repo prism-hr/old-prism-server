@@ -38,7 +38,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been successfuly registered with the system. </font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You can provide referees for the applicant ${applicant.firstName?html} ${applicant.lastName?html} anytime by clicking the following link and logging in.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You can provide references anytime by clicking the following link and logging in.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

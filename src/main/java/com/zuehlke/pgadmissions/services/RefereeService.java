@@ -51,7 +51,8 @@ public class RefereeService {
 	public Referee getRefereeById(Integer id) {
 		return refereeDAO.getRefereeById(id);
 	}
-
+	
+	@Transactional
 	public void save(Referee referee) {
 		refereeDAO.save(referee);
 	}
@@ -128,6 +129,7 @@ public class RefereeService {
 		return userService.getUserByEmail(referee.getEmail());
 	}
 
+	@Transactional
 	public void processRefereesRoles(List<Referee> referees) {
 		for (Referee referee : referees) {
 			processRefereeAndGetAsUser(referee);
@@ -141,12 +143,12 @@ public class RefereeService {
 		if (user != null && !user.isInRole(Authority.REFEREE)) {
 			user.getRoles().add(refereeRole);
 			referee.setUser(user);
-			refereeDAO.save(referee);
+			save(referee);
 		}
 		if (user == null) {
 			user = createAndSaveNewUserWithRefereeRole(referee, refereeRole);
 			referee.setUser(user);
-			refereeDAO.save(referee);
+			save(referee);
 		}
 		return user;
 	}

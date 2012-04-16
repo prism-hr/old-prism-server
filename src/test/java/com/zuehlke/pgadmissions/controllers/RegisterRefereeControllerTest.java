@@ -66,7 +66,7 @@ public class RegisterRefereeControllerTest {
 	@Test
 	public void shouldSaveRefereeIfValid(){
 		RegisteredUser referee = new RegisteredUserBuilder().id(1).email("email").firstName("first").username("email").lastName("last").confirmPassword("12345678").password("12345678").toUser();
-		userServiceMock.saveAndEmailReferee(referee);
+		userServiceMock.saveAndEmailRegisterConfirmationToReferee(referee);
 		EasyMock.replay(userServiceMock);
 		BindingResult errors = EasyMock.createMock(BindingResult.class);		
 		registerRefereeController.submitRefereeAndGetLoginPage(referee, errors);

@@ -93,18 +93,18 @@
 			          
 				          	<div class="row">
 				            	<label>Programme</label>
-				              <input disabled size="109" value="${applicationForm.project.program.code} - ${applicationForm.project.program.title}" />
+				                ${applicationForm.project.program.code} - ${applicationForm.project.program.title}
 				            </div>
 				            
-				          	<div class="row half">
+				          	<div class="row">
 				            	<label>Application Number</label>
-				              <input id="applicationNumber" disabled size="20" value="${applicationForm.id?string("######")}" />
+				                ${applicationForm.id?string("######")}
 				            </div>
 				            
 				              <#if applicationForm.isSubmitted()>
 						          	<div class="row">
 						            	<label>Date Submitted</label>
-						              <input id="applicationNumber" disabled size="20" value="${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}" />
+						                ${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}
 						            </div>
 						     </#if>
 				        <!--    

@@ -182,4 +182,17 @@ public class RefereeService {
 		
 	}
 
+	@Transactional
+	public Referee getRefereeByUserAndApplication(RegisteredUser user,
+			ApplicationForm form) {
+		Referee matchedReferee = null;
+		List<Referee> referees = user.getReferees();
+		for (Referee referee : referees) {
+			if (referee.getApplication()!=null && referee.getApplication().equals(form)){
+				matchedReferee = referee;
+			}
+		}
+		return matchedReferee;
+	}
+
 }

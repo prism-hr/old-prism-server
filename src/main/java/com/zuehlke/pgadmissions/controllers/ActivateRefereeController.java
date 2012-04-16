@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,8 +11,10 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
 
@@ -27,15 +30,17 @@ public class ActivateRefereeController {
 
 	private final RefereeService refereeService;
 	private final ApplicationPageModelBuilder applicationPageModelBuilder;
+	private final ApplicationsService applicationsService;
 
 	ActivateRefereeController() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public ActivateRefereeController(RefereeService refereeService, ApplicationPageModelBuilder applicationPageModelBuilder) {
+	public ActivateRefereeController(RefereeService refereeService, ApplicationPageModelBuilder applicationPageModelBuilder, ApplicationsService applicationsService) {
 		this.refereeService = refereeService;
 		this.applicationPageModelBuilder = applicationPageModelBuilder;
+		this.applicationsService = applicationsService;
 	}
 
 	@RequestMapping(value = "/login",method = RequestMethod.GET)
@@ -54,6 +59,28 @@ public class ActivateRefereeController {
 			model.setReferee(referee);
 		}
 		return new ModelAndView(ADD_REFERENCES_VIEW_NAME, "model", model);
+	}
+	
+	@RequestMapping(value = "/addReferences",method = RequestMethod.GET)
+	public ModelAndView getUploadReferencesPage(@RequestParam Integer applicationFormId) {
+		ApplicationForm form = applicationsService.getApplicationById(applicationFormId);
+		ApplicationPageModel model = new ApplicationPageModel();
+		RegisteredUser user = getCurrentUser();
+		if (form == null || form.isDecided() || !user.isInRole(Authority.REFEREE)) {
+			throw new ResourceNotFoundException();
+		} else {
+			if (form.isDecided()) {
+				return new ModelAndView(EXPIRED_VIEW_NAME);
+			}
+			model.setApplicationForm(form);
+			Referee referee = refereeService.getRefereeByUserAndApplication(user, form);
+			model.setReferee(referee);
+		}
+		return new ModelAndView(ADD_REFERENCES_VIEW_NAME, "model", model);
+	}
+	
+	private RegisteredUser getCurrentUser() {
+		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 	}
 	
 	@RequestMapping(value = "/register",method = RequestMethod.GET)

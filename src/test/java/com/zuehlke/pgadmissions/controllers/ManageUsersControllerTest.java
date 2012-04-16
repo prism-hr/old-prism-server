@@ -304,7 +304,7 @@ public class ManageUsersControllerTest {
 		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();
 		userServiceMock.save(selectedUser);
 		EasyMock.replay(userServiceMock);
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), new NewRolesDTO());
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), new NewRolesDTO(), new ModelMap());
 		EasyMock.verify(userServiceMock);
 	}
 
@@ -314,7 +314,7 @@ public class ManageUsersControllerTest {
 		Role role = new RoleBuilder().id(1).authorityEnum(Authority.ADMINISTRATOR).toRole();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
 		newRolesDTO.getNewRoles().add(role);		
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO, new ModelMap());
 		assertTrue(selectedUser.isInRole(Authority.ADMINISTRATOR));
 	}	
 	
@@ -324,7 +324,7 @@ public class ManageUsersControllerTest {
 		Role role = new RoleBuilder().id(1).authorityEnum(Authority.APPROVER).toRole();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
 		newRolesDTO.getNewRoles().add(role);		
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO, new ModelMap());
 		assertTrue(selectedUser.isInRole(Authority.APPROVER));
 	}
 
@@ -334,7 +334,7 @@ public class ManageUsersControllerTest {
 		Role role = new RoleBuilder().id(1).authorityEnum(Authority.REVIEWER).toRole();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
 		newRolesDTO.getNewRoles().add(role);		
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO, new ModelMap());
 		assertTrue(selectedUser.isInRole(Authority.REVIEWER));
 	}
 	
@@ -344,7 +344,7 @@ public class ManageUsersControllerTest {
 		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
 		newRolesDTO.getNewRoles().add(role);		
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO, new ModelMap());
 		assertTrue(selectedUser.isInRole(Authority.SUPERADMINISTRATOR));
 	}
 	
@@ -356,7 +356,7 @@ public class ManageUsersControllerTest {
 		RegisteredUser selectedUser = new RegisteredUserBuilder().role(role).id(1).toUser();		
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
 
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO, new ModelMap());
 		assertFalse(selectedUser.isInRole(Authority.SUPERADMINISTRATOR));
 	}
 	
@@ -368,7 +368,7 @@ public class ManageUsersControllerTest {
 		RegisteredUser selectedUser = new RegisteredUserBuilder().role(role).id(1).toUser();		
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
 
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, new Program(), newRolesDTO, new ModelMap());
 		assertTrue(selectedUser.isInRole(Authority.SUPERADMINISTRATOR));
 	}
 	
@@ -379,7 +379,7 @@ public class ManageUsersControllerTest {
 		Role role = new RoleBuilder().id(1).authorityEnum(Authority.ADMINISTRATOR).toRole();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
 		newRolesDTO.getNewRoles().add(role);		
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
 		assertTrue(selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram));
 	}
 	
@@ -390,7 +390,7 @@ public class ManageUsersControllerTest {
 		Role role = new RoleBuilder().id(1).authorityEnum(Authority.APPROVER).toRole();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
 		newRolesDTO.getNewRoles().add(role);		
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
 		assertTrue(selectedUser.getProgramsOfWhichApprover().contains(selectedProgram));
 	}
 	
@@ -402,7 +402,7 @@ public class ManageUsersControllerTest {
 		Role role = new RoleBuilder().id(1).authorityEnum(Authority.REVIEWER).toRole();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
 		newRolesDTO.getNewRoles().add(role);		
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
 		assertTrue(selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram));
 	}
 	
@@ -412,7 +412,7 @@ public class ManageUsersControllerTest {
 		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
 		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichAdministrator(selectedProgram).id(1).toUser();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
 		assertFalse(selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram));
 	}
 	
@@ -421,7 +421,7 @@ public class ManageUsersControllerTest {
 		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
 		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichApprover(selectedProgram).id(1).toUser();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
 		assertFalse(selectedUser.getProgramsOfWhichApprover().contains(selectedProgram));
 	}
 	
@@ -431,7 +431,7 @@ public class ManageUsersControllerTest {
 		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
 		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichReviewer(selectedProgram).id(1).toUser();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO);
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
 		assertFalse(selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram));
 	}
 	
@@ -440,7 +440,7 @@ public class ManageUsersControllerTest {
 		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
 		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichReviewer(selectedProgram).id(1).toUser();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		assertEquals("redirect:/manageUsers/showPage?programId=1", manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO));
+		assertEquals("redirect:/manageUsers/showPage?programId=1", manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap()).getViewName());
 	
 	}
 	@Before

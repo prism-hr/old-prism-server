@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.validation.BindingResult;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -15,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.RefereePropertyEditor;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -27,6 +29,7 @@ public class RegisterRefereeControllerTest {
 	private RefereeService refereeServiceMock;
 	private RegisterFormValidator validator;
 	private EncryptionUtils encryptionUtils;
+	private RefereePropertyEditor refereePropertyEditorMock;
 	
 	@Test
 	public void shouldSaveRefereeAndEnableAccountIfNoErrors() {
@@ -80,7 +83,8 @@ public class RegisterRefereeControllerTest {
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		validator = EasyMock.createMock(RegisterFormValidator.class);
 		encryptionUtils = EasyMock.createMock(EncryptionUtils.class);
-		registerRefereeController = new RegisterRefereeController(userServiceMock, refereeServiceMock, validator, encryptionUtils);
+		refereePropertyEditorMock = EasyMock.createMock(RefereePropertyEditor.class);
+		registerRefereeController = new RegisterRefereeController(userServiceMock, refereeServiceMock, validator, encryptionUtils, refereePropertyEditorMock);
 		
 	}
 }

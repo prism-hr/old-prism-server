@@ -81,7 +81,7 @@
 		            <#if model.hasError('confirmPassword')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('confirmPassword').code /></span>                    		
                     </#if>
-		             <input id="currentReferee" type="hidden" name="currentReferee" value="${model.referee}"/>
+		             <input id="currentReferee" type="hidden" name="currentReferee" value="${model.referee.id?string('#######')}"/>
 		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
 		      	</form>
 		      	

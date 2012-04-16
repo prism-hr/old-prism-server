@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Date;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.RefereePropertyEditor;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
@@ -29,28 +35,33 @@ public class RegisterRefereeController {
 	private static final String REGISTER_REFEREE_VIEW_NAME = "private/referees/register_referee";
 	private static final String REGISTER_COMPLETE_VIEW_NAME = "/register/complete";
 	private final EncryptionUtils encryptionUtils;
+	private final RefereePropertyEditor refereeproperrtyEditor;
 
 	RegisterRefereeController(){
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 	
-	@InitBinder(value="referee")
+	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {
 		binder.setValidator(validator);
+		binder.registerCustomEditor(Referee.class, refereeproperrtyEditor);
 	}
 	
 	@Autowired
 	public RegisterRefereeController(UserService userService, RefereeService refereeService,
-			RegisterFormValidator validator, EncryptionUtils encryptionUtils){
+			RegisterFormValidator validator, EncryptionUtils encryptionUtils, RefereePropertyEditor refereeproperrtyEditor){
 		this.userService = userService;
 		this.refereeService = refereeService;
 		this.validator = validator;
 		this.encryptionUtils = encryptionUtils;
+		this.refereeproperrtyEditor = refereeproperrtyEditor;
 	}
 
 	@RequestMapping(value = "/submit",method = RequestMethod.POST)
 	public String submitRefereeAndGetLoginPage(@Valid RegisteredUser referee, BindingResult result) {
 		if(result.hasErrors()){
+			System.out.println("Errors " + result.getAllErrors());
+			//show errors - model undefined
 			return REGISTER_REFEREE_VIEW_NAME;
 		}
 		referee.setPassword(encryptionUtils.getMD5Hash(referee.getPassword()));

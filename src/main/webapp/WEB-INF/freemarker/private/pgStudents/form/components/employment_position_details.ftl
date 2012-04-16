@@ -43,11 +43,11 @@
 	                    <td>${(position.startDate?string('dd-MMM-yyyy'))!}</td>
 	                    <td>${(position.endDate?string('dd-MMM-yyyy'))!}</td>
 	                     
-	                    <#if !applicationForm.isSubmitted()>
 	                    	<td>		                		
 		                		<a name="positionEditButton" data-desc="Edit" 
 		                				id="position_${position.id?string('#######')}" class="button-edit button-hint">edit</a>
 		                	</td>
+	                    <#if !applicationForm.isSubmitted()>
 	                    	<td>		                		
 		                		<a name="deleteEmploymentButton" data-desc="Delete" 
 		                				id="position_${position.id?string('#######')}" class="button-delete button-hint">delete</a>

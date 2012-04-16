@@ -32,6 +32,7 @@
 		                    <th>Awarding Body</th>
 		                    <th>Date Completed</th>
 		                    <th>&nbsp;</th>
+		                    <th id="last-col">&nbsp;</th>
 		                  </tr>
 		                </thead>
 		                
@@ -39,11 +40,14 @@
 		                
 		                	<#list applicationForm.qualifications as qualification>
 			                	<tr>
-				                  	<td><a class="row-arrow" id="qualification_${qualification.id?string('#######')}" name ="editQualificationLink">-</a></td>
+				                  	<td><a class="row-arrow">-</a></td>
 				                  	<td>${qualification.qualificationType}</td>
 				                  	<td>${qualification.qualificationGrade?html}</td>
 				                  	<td>${qualification.qualificationInstitution?html}</td>
 				                  	<td>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
+				                  	<td>
+                                    <a name="editQualificationLink" data-desc="Edit" id="qualification_${qualification.id?string('#######')}" class="button-edit button-hint">edit</a>
+                                    </td>
 				                  	
 				                  	     
                                 <input type="hidden" id="${qualification.id?string('#######')}_qualificationIdDP" value="${qualification.id?string('#######')}"/>

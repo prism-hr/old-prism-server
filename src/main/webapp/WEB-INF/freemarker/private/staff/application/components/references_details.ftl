@@ -21,7 +21,6 @@
 		                  	<col style="width: 160px" />
 		                  	<col style="width: 260px" />
 		                  	<col />
-		                  	<col style="width: 30px" />
 	                	</colgroup>
 	                
 	                	<thead>
@@ -30,14 +29,14 @@
 			                    <th>Surname</th>
 			                    <th>Job Title</th>
 			                    <th>Email</th>
-			                    <th>Reference</th>
+			                    <th>Responded</th>
 		                  	</tr>
 	                	</thead>
 	                	
 	                	<tbody>
 	                		<#list applicationForm.referees as referee>
 			                  	<tr>
-				                    <td><a class="row-arrow" name="refereeEditButton" id="referee_${referee.id?string('#######')}">-</a></td>
+				                    <td><a class="row-arrow">-</a></td>
 				                    <td>${(referee.firstname?html)!}</td>
 				                    <td>${(referee.lastname?html)!}</td>
 				                    <td>${(referee.jobTitle?html)!}</td>
@@ -70,7 +69,7 @@
 			                    	 />
 			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName?html}</#if><#else>No document uploaded</#if>" />
                                     <input type="hidden" id="${referee.id?string('#######')}_email" value="${(referee.email?html)!}"/>
-									
+									<td><a name="refereeEditButton" data-desc="Edit" id="referee_${referee.id?string('#######')}" class="button-edit button-hint">edit</a></td>
 									
 
 			                  	</tr>

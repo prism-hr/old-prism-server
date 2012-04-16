@@ -60,10 +60,10 @@
 		                    </td>
 	                    <#else>
 		                    <td>
-		                    	<a name="editRefereeLink" id="referee_${existingReferee.id?string('#######')}" class="button-edit">edit</a>
+		                    	<a name="editRefereeLink" data-desc="Edit" id="referee_${existingReferee.id?string('#######')}" class="button-edit button-hint">edit</a>
 				        	</td>
 		                    <td>
-		                    	<a name="deleteRefereeButton" id="referee_${existingReferee.id?string('#######')}" class="button-delete">delete</a>
+		                    	<a name="deleteRefereeButton" data-desc="Delete" id="referee_${existingReferee.id?string('#######')}" class="button-delete button-hint">delete</a>
 				        	</td>
 	                     </#if>    
               	</#list>

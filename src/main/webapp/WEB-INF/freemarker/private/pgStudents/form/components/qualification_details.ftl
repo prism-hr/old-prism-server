@@ -53,10 +53,10 @@
 	                  	  
 	                  	  	<#if !applicationForm.isSubmitted()>
 	                  	  	   <td>
-	                  	  	   		<a name="editQualificationLink" id="qualification_${existingQualification.id?string('#######')}" class="button-edit">edit</a>
+	                  	  	   		<a name="editQualificationLink" data-desc="Edit" id="qualification_${existingQualification.id?string('#######')}" class="button-edit button-hint">edit</a>
 	                  	  	   </td>
 	                  	  	   <td>
-		                			<a name="deleteQualificationButton" id="qualification_${existingQualification.id?string('#######')}" class="button-delete">delete</a>
+		                			<a name="deleteQualificationButton" data-desc="Delete" id="qualification_${existingQualification.id?string('#######')}" class="button-delete button-hint">delete</a>
 		                	   </td>
 		                	<#else>
 		                		<td></td><td></td>		                		

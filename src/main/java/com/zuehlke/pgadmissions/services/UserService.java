@@ -119,7 +119,8 @@ public class UserService {
 		
 	}
 
-	public void saveAndEmailReferee(RegisteredUser referee) {
+	@Transactional 
+	public void saveAndEmailRegisterConfirmationToReferee(RegisteredUser referee) {
 		save(referee);
 		sendMailToReferee(referee);
 	}

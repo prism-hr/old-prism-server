@@ -227,7 +227,7 @@ public class UserServiceTest {
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock);
 	
 		
-		userService.saveAndEmailReferee(refereeUser);
+		userService.saveAndEmailRegisterConfirmationToReferee(refereeUser);
 		EasyMock.verify(mimeMessagePreparatorFactoryMock, mailsenderMock);
 	}
 	
@@ -238,7 +238,7 @@ public class UserServiceTest {
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock);
 		try {
-			userService.saveAndEmailReferee(null);
+			userService.saveAndEmailRegisterConfirmationToReferee(null);
 		} catch (RuntimeException e) {
 			// expected...ignore
 		}
@@ -268,7 +268,7 @@ public class UserServiceTest {
 		mailsenderMock.send(preparatorMock1);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock);
-		userService.saveAndEmailReferee(refereeUser);
+		userService.saveAndEmailRegisterConfirmationToReferee(refereeUser);
 
 		EasyMock.verify(mimeMessagePreparatorFactoryMock);
 

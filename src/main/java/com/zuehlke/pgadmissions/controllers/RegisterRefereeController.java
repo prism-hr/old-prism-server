@@ -58,7 +58,7 @@ public class RegisterRefereeController {
 		referee.setAccountNonExpired(true);
 		referee.setAccountNonLocked(true);
 		referee.setCredentialsNonExpired(true);
-		userService.saveAndEmailReferee(referee);
+		userService.saveAndEmailRegisterConfirmationToReferee(referee);
 		return "redirect:" + REGISTER_COMPLETE_VIEW_NAME;
 
 	}

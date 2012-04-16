@@ -7,6 +7,7 @@ import javax.mail.internet.InternetAddress;
 
 import junit.framework.Assert;
 
+import org.directwebremoting.annotations.Auth;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -183,6 +184,22 @@ public class RefereeServiceTest {
 		RegisteredUser existedReferee = refereeService.processRefereeAndGetAsUser(referee);
 		Assert.assertNotNull(existedReferee);
 		Assert.assertEquals(2, existedReferee.getRoles().size());
+	}
+	
+	@Test
+	public void shouldAddRefereeRoleIfUserExistsAndIsApproverReviewerAdmin(){
+		Role reviewerRole = new RoleBuilder().id(1).authorityEnum(Authority.REVIEWER).toRole();
+		Role adminRole = new RoleBuilder().id(2).authorityEnum(Authority.ADMINISTRATOR).toRole();
+		Role approverRole = new RoleBuilder().id(3).authorityEnum(Authority.APPROVER).toRole();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).roles(reviewerRole,adminRole, approverRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		userServiceMock.save(user);
+		Referee referee = new RefereeBuilder().firstname("ref").lastname("erre").email("email@test.com").toReferee();
+		EasyMock.expect(userServiceMock.getUserByEmail("email@test.com")).andReturn(user);
+		userServiceMock.save(user);
+		EasyMock.replay(userServiceMock);
+		RegisteredUser existedReferee = refereeService.processRefereeAndGetAsUser(referee);
+		Assert.assertNotNull(existedReferee);
+		Assert.assertEquals(4, existedReferee.getRoles().size());
 	}
 	
 	@Test

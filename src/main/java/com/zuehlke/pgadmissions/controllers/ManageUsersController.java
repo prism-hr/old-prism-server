@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -73,6 +72,13 @@ public class ManageUsersController {
 	@RequestMapping(method = RequestMethod.GET, value = "/showPage")
 	public String getUsersPage(@ModelAttribute("selectedProgram") Program program, ModelMap modelMap) {
 
+		putUserInRolesInternal(program, modelMap);
+
+		return ROLES_PAGE_VIEW_NAME;
+
+	}
+
+	private void putUserInRolesInternal(Program program, ModelMap modelMap) {
 		RegisteredUser user = getCurrentUser();
 
 		if (!(user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMINISTRATOR))) {
@@ -84,9 +90,6 @@ public class ManageUsersController {
 		} else {
 			modelMap.put("usersInRoles", new ArrayList<RegisteredUser>());
 		}
-
-		return ROLES_PAGE_VIEW_NAME;
-
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/createNewUser")
@@ -136,7 +139,7 @@ public class ManageUsersController {
 			isNewUser = true;
 			potentiallyNewUser = createNewRegisteredUser(adminUser);
 		}
-		String view = updateSelectedUserInternal(potentiallyNewUser, selectedProgram, newRolesDTO, null);
+		String view = updateSelectedUserInternal(potentiallyNewUser, selectedProgram, newRolesDTO);
 		if (isNewUser) {
 			try {
 				Map<String, Object> model = modelMap();
@@ -264,24 +267,28 @@ public class ManageUsersController {
 			@ModelAttribute("selectedProgram") Program selectedProgram, @ModelAttribute NewRolesDTO newRolesDTO, ModelMap modelMap) {
 
 		UpdateUserForProgramWithRolesDTO dto = new UpdateUserForProgramWithRolesDTO();
-		dto.setSetProgram(selectedProgram);
-		dto.setSetUser(selectedUser);
-		dto.setNewSetRolesDTO(newRolesDTO);
-
+		
+		
+		Integer prgId = selectedProgram == null? null : selectedProgram.getId();
+		dto.setSelectedProgramId(prgId);
+	
+		Integer usrId = selectedUser == null? null : selectedUser.getId();
+		dto.setSelectedUserId(usrId);
+		
 		UpdateUserForProgramWithRolesDTOValidator validator = new UpdateUserForProgramWithRolesDTOValidator();
 		BindingResult result = new DirectFieldBindingResult(dto, "dto");
 		validator.validate(dto, result);
-		modelMap.put("result", result);
-		System.out.println("!!!!!!!!!!!!!!!!!!!! " + result.getErrorCount());
-		for (FieldError error : result.getFieldErrors()) {
-			System.out.println("!!!!!" + error.getField());
+		
+		if (result.hasErrors()) {
+			modelMap.put("result", result);
+			putUserInRolesInternal(selectedProgram, modelMap);
+			return new ModelAndView(ROLES_PAGE_VIEW_NAME, modelMap);
 		}
 		
-		return new ModelAndView(updateSelectedUserInternal(selectedUser, selectedProgram, newRolesDTO, result), modelMap);
+		return new ModelAndView(updateSelectedUserInternal(selectedUser, selectedProgram, newRolesDTO), modelMap);
 	}
 
-	private String updateSelectedUserInternal(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO, BindingResult result) {
-		if (result == null || !result.hasErrors()) {
+	private String updateSelectedUserInternal(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
 			if(getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)){
 				removeFromSuperadminRoleIfRequired(selectedUser, newRolesDTO);
 			}
@@ -293,7 +300,6 @@ public class ManageUsersController {
 			addOrRemoveFromProgramsOfWhichApproverIfRequired(selectedUser, selectedProgram, newRolesDTO);
 			addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newRolesDTO);
 			userService.save(selectedUser);
-		}
 		String id = "";
 		if (selectedProgram != null && selectedProgram.getId() != null) {
 			id = Integer.toString(selectedProgram.getId());

@@ -19,8 +19,11 @@
 				<colgroup>
 	            	<col style="width: 30px" />
 	                <col style="width: 120px" />
+	                <col style="width: 120px" />
+	                
 	                <col />
 	                <col style="width: 120px" />
+	                <col style="width: 30px" />
 
 	        	</colgroup>
 	            
@@ -29,6 +32,8 @@
 	                	<th colspan="2">Funding Type</th>
 	                    <th>Description</th>
 	                    <th>Award Date</th>
+	                    <th colspan="1">&nbsp;</th>
+                        <th id="last-col">&nbsp;</th>
 	                  
 					</tr>
 				</thead>
@@ -37,7 +42,7 @@
 				
 					<#list applicationForm.fundings as funding>		
 						<tr>
-		                  	<td><a class="row-arrow" name="fundingEditButton" id="funding_${funding.id?string('#######')}">-</a></td>
+		                  	<td><a class="row-arrow">-</a></td>
 		                  	<td>${funding.type.displayValue}</td>
 		                  	<td>${funding.description?html}</td>
 		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
@@ -48,6 +53,7 @@
                             <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
                             <input type="hidden" id="${funding.id?string('#######')}_docname" value="${(funding.document.fileName?html)!}"/>
                             <input type="hidden" id="${funding.id?string('#######')}_docurl" value="/pgadmissions/download?documentId=${(funding.document.id?string("#######"))!}"/>
+                            <td><a name="fundingEditButton" data-desc="Edit" id="funding_${funding.id?string('#######')}" class="button-edit button-hint">edit</a></td>
 		                </tr>
 					</#list>				               
 				</tbody>

@@ -48,10 +48,10 @@
 	                  	<td>${(existingQualification.qualificationInstitution?html)!}</td>
 	                  	<td>${(existingQualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
 	                  	  
-	                  	  	<#if !applicationForm.isSubmitted()>
 	                  	  	   <td>
 	                  	  	   		<a name="editQualificationLink" data-desc="Edit" id="qualification_${existingQualification.id?string('#######')}" class="button-edit button-hint">edit</a>
 	                  	  	   </td>
+	                  	  	<#if !applicationForm.isSubmitted()>
 	                  	  	   <td>
 		                			<a name="deleteQualificationButton" data-desc="Delete" id="qualification_${existingQualification.id?string('#######')}" class="button-delete button-hint">delete</a>
 		                	   </td>

@@ -20,6 +20,7 @@
 	                <col />
 	                <col style="width: 140px" />
 	                <col style="width: 140px" />
+	                <col style="width: 30px" />
 
 				</colgroup>
 	            
@@ -28,6 +29,8 @@
 	                	<th colspan="2">Position</th>
 	                    <th>From</th>
 	                    <th>To</th>
+	                    <th>&nbsp;</th>
+                        <th id="last-col">&nbsp;</th>
 	           
 	                </tr>
 				</thead>
@@ -36,7 +39,7 @@
 	            
 	            	<#list applicationForm.employmentPositions as position>
 		            	<tr>
-		                    <td><a class="row-arrow" name="positionEditButton" id="position_${position.id?string('#######')}">-</a></td>
+		                    <td><a class="row-arrow">-</a></td>
 		                    <td>${position.position!}</td>
 		                    <td>${(position.startDate?string('dd-MMM-yyyy'))!}</td>
 		                    <td>${(position.endDate?string('dd-MMM-yyyy'))!}</td>
@@ -51,7 +54,11 @@
                             
                             <input type="hidden" id="${position.id?string('#######')}_positionStartDate" value="${(position.startDate?string('dd-MMM-yyyy'))!}"/>
                             <input type="hidden" id="${position.id?string('#######')}_positionEndDate" value="${(position.endDate?string('dd-MMM-yyyy'))!}"/>
-		               		<input type="hidden" id="${position.id?string('#######')}_positionCurrent" value="<#if position.current>Yes<#else>No</#if>"/> 
+		               		<input type="hidden" id="${position.id?string('#######')}_positionCurrent" value="<#if position.current>Yes<#else>No</#if>"/>
+		               		<td>
+		               		<a name="positionEditButton" data-desc="Edit" 
+                                        id="position_${position.id?string('#######')}" class="button-edit button-hint">edit</a>
+                            </td>             
 						
 		                </tr>
 		            </#list>

@@ -56,12 +56,14 @@
 	                    <td>${(existingReferee.email?html)!}</td>
 	                     <#if applicationForm.isSubmitted()>
 		                    <td>
-		                    	<#if existingReferee.hasProvidedReference() >Yes<#else>No</#if>
+		                    	<#if existingReferee.hasProvidedReference() >Yes
+		                    	<#else>No
+		                    	</#if>
 		                    </td>
-	                    <#else>
 		                    <td>
 		                    	<a name="editRefereeLink" data-desc="Edit" id="referee_${existingReferee.id?string('#######')}" class="button-edit button-hint">edit</a>
 				        	</td>
+				        	<#if !applicationForm.isSubmitted()>
 		                    <td>
 		                    	<a name="deleteRefereeButton" data-desc="Delete" id="referee_${existingReferee.id?string('#######')}" class="button-delete button-hint">delete</a>
 				        	</td>

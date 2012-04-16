@@ -47,11 +47,11 @@
 	                  	<td ><a href="<@spring.url '/download'/>?documentId=${existingFunding.document.id?string('#######')}">
                         <#if existingFunding.document.fileName?length <20 >${existingFunding.document.fileName}<#else>${existingFunding.document.fileName?substring(0,17)}...</#if></a></td>
 	                  	<td>${existingFunding.awardDate?string('dd-MMM-yyyy')}</td>
-	                  	     <#if !applicationForm.isSubmitted()>
 								<td>				                  		                		
 		                			<a name="editFundingLink" data-desc="Edit" id="funding_${existingFunding.id?string('#######')}" class="button-edit button-hint">edit</a>
 		                		</td>
 		                		<td>
+	                  	     <#if !applicationForm.isSubmitted()>
 		                			<a name="deleteFundingButton" data-desc="Delete" id="funding_${existingFunding.id?string('#######')}" class="button-delete button-hint">delete</a>
 		                		</td>
 		                	<#else>

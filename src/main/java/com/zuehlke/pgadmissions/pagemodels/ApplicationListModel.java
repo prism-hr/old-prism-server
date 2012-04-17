@@ -25,4 +25,7 @@ public class ApplicationListModel extends PageModel{
 		this.message = message;
 	}
 	
+	public boolean hasApplications(){
+		return !applications.isEmpty();
+	}
 }

@@ -62,7 +62,7 @@
 		                    </td>	
 		                 </#if>
 		                    <td>
-		                    	<a name="editRefereeLink" data-desc="Edit" id="referee_${existingReferee.id?string('#######')}" class="button-edit button-hint">edit</a>
+		                    	<a name="editRefereeLink" <#if !applicationForm.isSubmitted()>data-desc="Edit" <#else>data-desc="Show"</#if> id="referee_${existingReferee.id?string('#######')}" class="button-edit button-hint">edit</a>
 				        	</td>
 				        	<#if (!applicationForm.isSubmitted())>
 		                    <td>

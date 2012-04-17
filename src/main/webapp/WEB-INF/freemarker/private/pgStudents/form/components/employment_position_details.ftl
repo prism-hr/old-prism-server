@@ -44,7 +44,7 @@
 	                    <td>${(position.endDate?string('dd-MMM-yyyy'))!}</td>
 	                     
 	                    	<td>		                		
-		                		<a name="positionEditButton" data-desc="Edit" 
+		                		<a name="positionEditButton" <#if !applicationForm.isSubmitted()>data-desc="Edit" <#else>data-desc="Show"</#if>
 		                				id="position_${position.id?string('#######')}" class="button-edit button-hint">edit</a>
 		                	</td>
 	                    <#if !applicationForm.isSubmitted()>

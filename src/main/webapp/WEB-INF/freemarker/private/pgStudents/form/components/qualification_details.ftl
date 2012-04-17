@@ -49,7 +49,7 @@
 	                  	<td>${(existingQualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
 	                  	  
 	                  	  	   <td>
-	                  	  	   		<a name="editQualificationLink" data-desc="Edit" id="qualification_${existingQualification.id?string('#######')}" class="button-edit button-hint">edit</a>
+	                  	  	   		<a name="editQualificationLink" <#if !applicationForm.isSubmitted()>data-desc="Edit" <#else>data-desc="Show"</#if> id="qualification_${existingQualification.id?string('#######')}" class="button-edit button-hint">edit</a>
 	                  	  	   </td>
 	                  	  	<#if !applicationForm.isSubmitted()>
 	                  	  	   <td>

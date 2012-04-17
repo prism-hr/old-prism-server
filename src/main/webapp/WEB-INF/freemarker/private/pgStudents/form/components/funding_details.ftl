@@ -48,7 +48,7 @@
                         <#if existingFunding.document.fileName?length <20 >${existingFunding.document.fileName}<#else>${existingFunding.document.fileName?substring(0,17)}...</#if></a></td>
 	                  	<td>${existingFunding.awardDate?string('dd-MMM-yyyy')}</td>
 								<td>				                  		                		
-		                			<a name="editFundingLink" data-desc="Edit" id="funding_${existingFunding.id?string('#######')}" class="button-edit button-hint">edit</a>
+		                			<a name="editFundingLink" <#if !applicationForm.isSubmitted()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_${existingFunding.id?string('#######')}" class="button-edit button-hint">edit</a>
 		                		</td>
 		                		<td>
 	                  	     <#if !applicationForm.isSubmitted()>

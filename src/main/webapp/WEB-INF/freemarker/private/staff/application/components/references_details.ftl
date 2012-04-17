@@ -69,7 +69,7 @@
 			                    	 />
 			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName?html}</#if><#else>No document uploaded</#if>" />
                                     <input type="hidden" id="${referee.id?string('#######')}_email" value="${(referee.email?html)!}"/>
-									<td><a name="refereeEditButton" data-desc="Edit" id="referee_${referee.id?string('#######')}" class="button-edit button-hint">edit</a></td>
+									<td><a name="refereeEditButton" data-desc="Show" id="referee_${referee.id?string('#######')}" class="button-edit button-hint">edit</a></td>
 									
 
 			                  	</tr>

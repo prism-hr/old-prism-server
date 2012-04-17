@@ -56,7 +56,7 @@
                             <input type="hidden" id="${position.id?string('#######')}_positionEndDate" value="${(position.endDate?string('dd-MMM-yyyy'))!}"/>
 		               		<input type="hidden" id="${position.id?string('#######')}_positionCurrent" value="<#if position.current>Yes<#else>No</#if>"/>
 		               		<td>
-		               		<a name="positionEditButton" data-desc="Edit" 
+		               		<a name="positionEditButton" data-desc="Show" 
                                         id="position_${position.id?string('#######')}" class="button-edit button-hint">edit</a>
                             </td>             
 						

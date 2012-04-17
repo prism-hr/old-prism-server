@@ -53,7 +53,7 @@
                             <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
                             <input type="hidden" id="${funding.id?string('#######')}_docname" value="${(funding.document.fileName?html)!}"/>
                             <input type="hidden" id="${funding.id?string('#######')}_docurl" value="/pgadmissions/download?documentId=${(funding.document.id?string("#######"))!}"/>
-                            <td><a name="fundingEditButton" data-desc="Edit" id="funding_${funding.id?string('#######')}" class="button-edit button-hint">edit</a></td>
+                            <td><a name="fundingEditButton" data-desc="Show" id="funding_${funding.id?string('#######')}" class="button-edit button-hint">edit</a></td>
 		                </tr>
 					</#list>				               
 				</tbody>

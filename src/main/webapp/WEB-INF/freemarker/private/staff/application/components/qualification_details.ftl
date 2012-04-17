@@ -46,7 +46,7 @@
 				                  	<td>${qualification.qualificationInstitution?html}</td>
 				                  	<td>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
 				                  	<td>
-                                    <a name="editQualificationLink" data-desc="Edit" id="qualification_${qualification.id?string('#######')}" class="button-edit button-hint">edit</a>
+                                    <a name="editQualificationLink" data-desc="Show" id="qualification_${qualification.id?string('#######')}" class="button-edit button-hint">edit</a>
                                     </td>
 				                  	
 				                  	     

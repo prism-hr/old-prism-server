@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -113,6 +114,7 @@ public class ActivateRefereeControllerTest {
 	
 	@Test
 	public void shouldNotGetRegisterPageIfAlreadyRegistered(){
+		ModelMap modelMap = new ModelMap();
 		Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).toRole();
 		RegisteredUser refereeUserEnabled = new RegisteredUserBuilder().id(1).role(refereeRole).enabled(true).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
@@ -120,12 +122,13 @@ public class ActivateRefereeControllerTest {
 		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("123")).andReturn(referee);
 		
 		EasyMock.replay(refereeServiceMock, applicationPageModelBuilderMock);
-		ModelAndView registerPage = controller.getRefereeRegisterPage(referee.getActivationCode());
+		ModelAndView registerPage = controller.getRefereeRegisterPage(referee.getActivationCode(), modelMap);
 		assertEquals("private/referees/already_registered", registerPage.getViewName());
 		
 	}
 	@Test
 	public void shouldNotGetRegisterPageIfNotRegistered(){
+		ModelMap modelMap = new ModelMap();
 		Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).toRole();
 		RegisteredUser refereeUserDisabled = new RegisteredUserBuilder().id(1).role(refereeRole).enabled(false).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
@@ -133,7 +136,7 @@ public class ActivateRefereeControllerTest {
 		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("123")).andReturn(referee);
 		
 		EasyMock.replay(refereeServiceMock, applicationPageModelBuilderMock);
-		ModelAndView registerPage = controller.getRefereeRegisterPage(referee.getActivationCode());
+		ModelAndView registerPage = controller.getRefereeRegisterPage(referee.getActivationCode(), modelMap);
 		assertEquals("private/referees/register_referee", registerPage.getViewName());
 		
 	}

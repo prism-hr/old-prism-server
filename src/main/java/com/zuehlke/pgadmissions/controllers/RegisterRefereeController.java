@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -39,7 +41,7 @@ public class RegisterRefereeController {
 	
 	@InitBinder
 	public void registerPropertyEditors(WebDataBinder binder) {
-		binder.setValidator(validator);
+//		binder.setValidator(validator);
 		binder.registerCustomEditor(Referee.class, refereeproperrtyEditor);
 	}
 	
@@ -54,11 +56,12 @@ public class RegisterRefereeController {
 	}
 
 	@RequestMapping(value = "/submit",method = RequestMethod.POST)
-	public String submitRefereeAndGetLoginPage(@Valid RegisteredUser referee, BindingResult result) {
+	public ModelAndView submitRefereeAndGetLoginPage(@ModelAttribute RegisteredUser referee, BindingResult result, ModelMap modelMap) {
+		validator.validate(referee, result);
 		if(result.hasErrors()){
-			System.out.println("Errors " + result.getAllErrors());
-			//show errors - model undefined
-			return REGISTER_REFEREE_VIEW_NAME;
+			modelMap.put("referee", referee);
+			modelMap.put("result", result);
+			return new ModelAndView(REGISTER_REFEREE_VIEW_NAME, modelMap);
 		}
 		referee.setPassword(encryptionUtils.getMD5Hash(referee.getPassword()));
 		referee.setEnabled(true);
@@ -66,7 +69,7 @@ public class RegisterRefereeController {
 		referee.setAccountNonLocked(true);
 		referee.setCredentialsNonExpired(true);
 		userService.saveAndEmailRegisterConfirmationToReferee(referee);
-		return "redirect:" + REGISTER_COMPLETE_VIEW_NAME;
+		return  new ModelAndView("redirect:" + REGISTER_COMPLETE_VIEW_NAME);
 
 	}
 	

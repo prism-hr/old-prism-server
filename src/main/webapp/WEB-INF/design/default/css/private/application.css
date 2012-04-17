@@ -80,7 +80,8 @@ section.folding form label.label { font-weight: bold; }
 .group-heading-label { 
 	float: left; line-height: 
 	1.2; width: 195px; 
-	font-weight: bold; 
+	font-weight: bold;
+	padding-top: 2px; 
 }
 
 
@@ -114,7 +115,7 @@ section.folding div.comment .previous ul li span { display: block; }
 
 /* Dynamic Data Table */
 table.data-table { border-collapse: collapse; border-spacing: 0; }
-table.data-table td, table.data-table th { padding: 3px; text-align:left; } 
+table.data-table td, table.data-table th { padding: 4px 3px 3px; text-align:left; } 
 table.data-table .odd td { background-color: #FFF; } 
 table.data-table .even td { background-color: #DDD; }
 table.data-table .deleteButton{

@@ -355,4 +355,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 		return visibleComments;
 	}
+	
+	public boolean shouldOpenFirstSection() {
+		return this.programmeDetails == null && this.personalDetails == null 
+		&& this.currentAddress == null && this.contactAddress == null 
+		&& this.qualifications.isEmpty() && this.employmentPositions.isEmpty()
+		&& this.fundings.isEmpty() && this.referees.isEmpty() 
+		&& this.personalStatement == null && this.cv == null
+		&& StringUtils.isBlank(this.additionalInformation);
+	}
 }

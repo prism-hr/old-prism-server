@@ -68,7 +68,7 @@
     <!-- Non-rendering data -->
           
 	<form >
-    <input type="hidden" id="fundingId" name="fundingId"/>    
+    <input type="hidden" id="fundingId" name="fundingId" value="${(funding.id?string('#######'))!}"/>    
             
 		<div>
 			<!-- Award type -->

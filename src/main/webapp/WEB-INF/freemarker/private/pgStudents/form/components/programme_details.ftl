@@ -217,7 +217,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>
 <@spring.bind "programmeDetails.*" />
 
-<#if (applicationForm.isSubmitted() || (message?? && message='close'))>
+<#if (applicationForm.isSubmitted() || (message?? && message='close' && !spring.status.errorMessages?has_content))>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#programme-H2').trigger('click');

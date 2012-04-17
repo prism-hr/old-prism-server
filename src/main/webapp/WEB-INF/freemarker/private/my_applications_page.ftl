@@ -125,7 +125,9 @@
 				            <#if (model.user.isInRole('SUPERADMINISTRATOR') || model.user.isInRole('ADMINISTRATOR'))>
                                 <a id="manageUsersButton" class="button">Manage Users</a>
                             </#if>
-				          	<a class="button" name="downloadAll" id="downloadAll">Download</a>
+                            <#if (model.hasApplications())>
+				          		<a class="button" name="downloadAll" id="downloadAll">Download</a>
+				          	</#if>
 				          	<#include "/private/common/feedback.ftl"/>
 				          </p>
                     	  

@@ -55,37 +55,35 @@
 		    
 		    	<form method="post" action= "/pgadmissions/refereeRegistration/submit">
 		      		<p>&gt; Register Today...</p>
-		            <input id="recordId" type="hidden" name="recordId"  value="${model.refereeUser.id?string('#######')!}" />
-		            
-		            <input id="firstName" type="text" name="firstName" value="${(model.refereeUser.firstName?html)!}" readonly="readonly"/>
-		            <#if model.hasError('firstName')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
+		            <input id="recordId" type="hidden" name="recordId"  value="${referee.id?string('#######')!}" />
+        			<#if result?? && result.getFieldError('firstName')??>                    		
+                    	<span class="invalid"><@spring.message  result.getFieldError('firstName').code /></span>                    		
                     </#if>
-		            
-		            <input id="lastName" type="text" name="lastName" value="${(model.refereeUser.lastName?html)!}" readonly="readonly"/>
-		            <#if model.hasError('lastName')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
+		            <input id="firstName" type="text" name="firstName" value="${(referee.firstName?html)!}" readonly="readonly"/>
+        			<#if result?? && result.getFieldError('firstName')??>                    		
+                    	<span class="invalid"><@spring.message  result.getFieldError('firstName').code /></span>                    		
                     </#if>
-		            
-		            <input id="email" type="text" name="email" value="${(model.refereeUser.email?html)!}" readonly="readonly"/>
-		            <#if model.hasError('email')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('email').code /></span>                    		
+		            <input id="lastName" type="text" name="lastName" value="${(referee.lastName?html)!}" readonly="readonly"/>
+        			<#if result?? && result.getFieldError('lastName')??>                    		
+                    	<span class="invalid"><@spring.message  result.getFieldError('lastName').code /></span>                    		
                     </#if>
-		            
+		            <input id="email" type="text" name="email" value="${(referee.email?html)!}" readonly="readonly"/>
+        			<#if result?? && result.getFieldError('email')??>                    		
+                    	<span class="invalid"><@spring.message  result.getFieldError('email').code /></span>                    		
+                    </#if>
 		            <input id="password" type="password" name="password" value="Password""/>
-		            <#if model.hasError('password')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('password').code /></span>                    		
+        			<#if result?? && result.getFieldError('password')??>                    		
+                    	<span class="invalid"><@spring.message  result.getFieldError('password').code /></span>                    		
                     </#if>
-		            
 		            <input id="confirmPassword" type="password" name="confirmPassword" value="Password"/>
-		            <#if model.hasError('confirmPassword')>                    		
-                    	<span class="invalid"><@spring.message  model.result.getFieldError('confirmPassword').code /></span>                    		
+                	<#if result?? && result.getFieldError('confirmPassword')??>                    		
+                    	<span class="invalid"><@spring.message  result.getFieldError('confirmPassword').code /></span>                    		
                     </#if>
-		             <input id="currentReferee" type="hidden" name="currentReferee" value="${model.referee.id?string('#######')}"/>
+		            <input id="currentReferee" type="hidden" name="currentReferee" value="${referee.currentReferee.id?string('#######')}"/>
 		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
 		      	</form>
 		      	
-		      	<a href="pgadmissions/referee/login?activationCode=${model.referee.activationCode!}">&gt; Back</a>
+		      	<a href="pgadmissions/referee/login?activationCode=${referee.currentReferee.activationCode!}">&gt; Back</a>
 		      	
 		    </section>
 		

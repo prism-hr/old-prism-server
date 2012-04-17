@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -41,7 +42,7 @@ public class RegisterRefereeControllerTest {
 	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResoureNotFoundExceptionIfRefereeDoesNotMappedToApplicationReferee() {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("f").lastName("l").email("e@test.com").username("u").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("f").lastName("l").email("email@test.com").password("12345678").confirmPassword("12345678").username("u").toUser();
 		
 		registerRefereeController.getReferee(user.getId());
 	}
@@ -67,11 +68,13 @@ public class RegisterRefereeControllerTest {
 	
 	@Test
 	public void shouldSaveRefereeIfValid(){
-		RegisteredUser referee = new RegisteredUserBuilder().id(1).email("email").firstName("first").username("email").lastName("last").confirmPassword("12345678").password("12345678").toUser();
-		userServiceMock.saveAndEmailRegisterConfirmationToReferee(referee);
+		ModelMap modelMap = new ModelMap();
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).email("email").firstName("first").username("email").lastName("last").confirmPassword("12345678").password("12345678").toUser();
+		Referee referee = new RefereeBuilder().id(1).toReferee();
+		userServiceMock.saveAndEmailRegisterConfirmationToReferee(refereeUser);
 		EasyMock.replay(userServiceMock);
 		BindingResult errors = EasyMock.createMock(BindingResult.class);		
-		registerRefereeController.submitRefereeAndGetLoginPage(referee, errors);
+		registerRefereeController.submitRefereeAndGetLoginPage(refereeUser,  errors, modelMap);
 		EasyMock.verify(userServiceMock);
 	}
 	

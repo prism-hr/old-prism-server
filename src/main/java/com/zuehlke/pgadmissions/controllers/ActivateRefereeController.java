@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -84,10 +85,9 @@ public class ActivateRefereeController {
 	}
 	
 	@RequestMapping(value = "/register",method = RequestMethod.GET)
-	public ModelAndView getRefereeRegisterPage(@RequestParam String activationCode) {
+	public ModelAndView getRefereeRegisterPage(@RequestParam String activationCode, ModelMap modelMap) {
 		Referee referee = refereeService.getRefereeByActivationCode(activationCode);
 		RegisteredUser refereeUser = referee.getUser();
-		ApplicationPageModel model = new ApplicationPageModel();
 		if (referee == null || referee.getApplication() == null || refereeUser == null) {
 			throw new ResourceNotFoundException();
 		} else {
@@ -98,11 +98,11 @@ public class ActivateRefereeController {
 			if(refereeUser.isEnabled()){
 				return new ModelAndView(ALREADY_REGISTERED);
 			}
-			model.setApplicationForm(applicationForm);
-			model.setReferee(referee);
-			model.setRefereeUser(refereeUser);
+			refereeUser.setCurrentReferee(referee);
+			modelMap.put("referee", refereeUser);
+			
 		}
-		return new ModelAndView(REGISTER_REFEREE_VIEW_NAME, "model", model);
+		return new ModelAndView(REGISTER_REFEREE_VIEW_NAME, modelMap);
 	}
 	
 	@RequestMapping(value = "/application", method = RequestMethod.GET)

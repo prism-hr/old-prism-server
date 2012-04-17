@@ -171,6 +171,7 @@ span.invalid-submit {
 	background: url("../../images/submit_error.png") no-repeat scroll 0 0.2em transparent;
 	display: inline-block; /*IE 7*/ zoom: 1; *display: inline;
 	width:805px;
+	font-size: 14px;
 }
 
 input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin: -1px; }

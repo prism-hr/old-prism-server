@@ -106,7 +106,7 @@
 								      											model.user.isInRole('REVIEWER'))) && application.isReviewable() )>
 								    					<option value="comment">Comments</option>
 								      				</#if>      												
-								      				<#if (model.user.isRefereeOfApplicationForm(application) && application.isSubmitted() )>
+								      				<#if (model.user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isDecided() )>
 								    					<option value="reference">Add Reference</option>
 								      				</#if>      												
 							                  	</select>

@@ -133,5 +133,9 @@ public class ProgrammeDetails extends DomainObject<Integer> {
 			}
 		}
 	}
+	
+	public boolean hasSupervisors(){
+		return !supervisors.isEmpty();
+	}
 
 }

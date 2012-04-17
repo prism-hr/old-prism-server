@@ -121,12 +121,14 @@
                 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                 <table id="supervisors" class="data-table">
                 <thead>
+                <#if (!applicationForm.isSubmitted() || programmeDetails.hasSupervisors())>
         		<tr>
           			<th >Name</th>
             		<th>Email</th>
            			 <th>Aware</th>
            			 <th>Action</th>
           		</tr>
+          		</#if>
         </thead>
         <tbody>
                <#list programmeDetails.supervisors! as supervisor>

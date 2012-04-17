@@ -9,7 +9,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
-import java.text.ParseException;
 import java.util.Arrays;
 
 import junit.framework.Assert;
@@ -64,7 +63,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	
 
 	@Test
-	public void shouldLoadRegisteredUserWithReferees() throws ParseException {
+	public void shouldLoadRegisteredUserWithReferees() {
 		
 		Referee referee1 = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").phoneNumber("hallihallo").toReferee();
 		Referee referee2 = new RefereeBuilder().id(5).firstname("ref1").lastname("erre1").email("ref1@test.com").phoneNumber("hallihallo").toReferee();

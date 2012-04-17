@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -189,7 +188,7 @@ public class RefereeControllerTest {
 	
 	
 	@Before
-	public void setUp() throws ParseException {
+	public void setUp() {
 
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);		
 		countriesServiceMock = EasyMock.createMock(CountryService.class);

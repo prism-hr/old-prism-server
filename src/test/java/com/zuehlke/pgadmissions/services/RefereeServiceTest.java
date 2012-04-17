@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -9,7 +9,6 @@ import javax.mail.internet.InternetAddress;
 
 import junit.framework.Assert;
 
-import org.directwebremoting.annotations.Auth;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;

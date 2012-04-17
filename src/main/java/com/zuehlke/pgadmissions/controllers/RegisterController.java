@@ -60,12 +60,12 @@ public class RegisterController {
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
 	public ModelAndView submitRegistration(@ModelAttribute("record") RegisteredUser record, @RequestParam (required=false) Integer isSuggestedUser, BindingResult errors) {
-		validator.validate(record, errors);
 		if (isSuggestedUser != null) {
 			validator.shouldValidateSameEmail(false);
 		} else {
 			validator.shouldValidateSameEmail(true);
 		}
+		validator.validate(record, errors);
 		
 		if (errors.hasErrors()) {
 			RegisterPageModel model = new RegisterPageModel();

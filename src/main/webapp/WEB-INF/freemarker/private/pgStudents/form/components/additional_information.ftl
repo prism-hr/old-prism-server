@@ -10,7 +10,7 @@
           
     	<!-- Free text field for info. -->
         <div class="row">
-       		<span class="plain-label">Additional information relevant to the application</span>
+       		<span class="plain-label">Additional information relevant to your application</span>
     		<span class="hint" data-desc="<@spring.message 'additionalInformation.content'/>"></span>
     		<div class="field">
       		 <#if !applicationForm.isSubmitted()>

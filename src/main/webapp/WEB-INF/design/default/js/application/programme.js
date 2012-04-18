@@ -1,9 +1,16 @@
 $(document).ready(function(){
+	
 	$("#addSupervisorButton").show();
 	$("#awareSupervisorCB").attr('checked', false);
 	$("#awareSupervisor").val("NO");
 	var unsavedSupervisors = 0;
 	
+	var superviworRowCount = $("#supervisors tbody").children().length;
+	if(superviworRowCount > 0){
+		$("#supervisors").show();
+	}else{
+		$("#supervisors").hide();
+	}
 	
 	$("#supervisor_div").on("click", "a[name=\"deleteSupervisor\"]", function(){	
 			var id = this.id;
@@ -18,7 +25,24 @@ $(document).ready(function(){
 			$(this).parent("span").remove();
 			$(this).parent().parent().remove();
 			$(this).parent().parent().html('');
-	
+			
+			
+			// TODO:On delete of a last element
+//			var trExists = false;
+//			$("#supervisors tbody").children().each(function (i){
+//				
+//				var elementType = $(this).prop('tr');
+//				alert(elementType);
+//				
+//			});
+			
+//			var trExists = $("#supervisors tbody").children().find('tr').length;
+//			if(trExists == false){
+//				$("#supervisors").hide();
+//			}else{
+//				$("#supervisors").show();
+//			}
+			
 	});
 	$("#supervisor_div").on("click", "a[name=\"editSupervisorLink\"]", function(){
 		var id = this.id;
@@ -91,6 +115,7 @@ $(document).ready(function(){
 	} 
 	
 	$('#addSupervisorButton').on('click', function(){
+		$("#supervisors").show();
 		if( $('#supervisorFirstname').val() ==""  || $('#supervisorFirstname').val() =="First Name" ){
 			$("span[name='superFirstname']").html('First name cannot be empty');
 			$("span[name='superFirstname']").show();

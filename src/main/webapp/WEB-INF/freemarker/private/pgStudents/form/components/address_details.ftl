@@ -17,7 +17,7 @@
 					     </div>            	
 					</#if>            	 
             		<div class="row">
-          				<label class="label">Current Address</label>
+          				<label class="group-heading-label">Current Address</label>
           			</div>
                   	
                   	<!-- Address body -->
@@ -57,7 +57,7 @@
 				</div> 
 				<div>	
 					<div class="row">
-          				<label class="label">Contact Address</label>
+          				<label class="group-heading-label">Contact Address</label>
           			</div>
 				
 					<!-- Address body -->

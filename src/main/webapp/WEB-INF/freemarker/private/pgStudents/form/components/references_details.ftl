@@ -157,7 +157,7 @@
     	<div>
     	     
 			<div class="row">
-          		<label class="label">Address</label>
+          		<label class="group-heading-label">Address</label>
           	</div> 
       		<!-- Address body -->
       		<div class="row">
@@ -201,7 +201,7 @@
     	<div>
     	
     		<div class="row">
-          		<label class="label">Contact Details</label>
+          		<label class="group-heading-label">Contact Details</label>
           	</div> 
     		
       		<!-- Email address -->

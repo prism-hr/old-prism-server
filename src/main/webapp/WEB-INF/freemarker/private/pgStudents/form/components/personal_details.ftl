@@ -108,7 +108,7 @@
 		
           	<div>
           		<div class="row">
-          			<label class="label">Nationality</label>
+          			<label class="group-heading-label">Nationality</label>
           		</div>
             	<div class="row">
               		<label class="plain-label">Country of Birth<em>*</em></label>
@@ -247,7 +247,7 @@
           	
           	<div>
           	     <div class="row">
-					<label class="label">Language</label>
+					<label class="group-heading-label">Language</label>
 				</div>	                   
 				<div class="row">
                     	<label class="plain-label">Is English your first language?<em>*</em></label>
@@ -268,7 +268,7 @@
 
           	<div>
           		<div class="row">
-            		<label class="label">Residence</label>
+            		<label class="group-heading-label">Residence</label>
             	</div>
             	<div class="row">
 					<span class="plain-label">Country of Residence<em>*</em></span>
@@ -306,7 +306,7 @@
 
           	<div>
           		<div class="row">
-            		<label class="label">Contact Details</label>
+            		<label class="group-heading-label">Contact Details</label>
             	</div>
             	
             	<div class="row">

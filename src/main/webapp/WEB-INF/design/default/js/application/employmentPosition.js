@@ -18,7 +18,6 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="deleteEmploymentButton"]').click( function(){	
-		if(confirm("Delete employment record. Are you sure?")){
 			var id = $(this).attr("id").replace("position_", "");
 			$.post("/pgadmissions/deleteentity/employment",
 					{
@@ -29,7 +28,6 @@ $(document).ready(function(){
 					}	
 					
 				);
-		}
 	});
 	
 	$('#positionSaveAndCloseButton').click(function(){

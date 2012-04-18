@@ -1,7 +1,5 @@
 $(document).ready(function(){
 
-	
-
 	$('#personalDetailsCloseButton').click(function(){		
 		$('#personalDetails-H2').trigger('click');
 		return false;
@@ -39,14 +37,25 @@ $(document).ready(function(){
 	  		"		<input type='hidden' name='candidateNationalities' value='" +$('#candidateNationalityCountry option:selected').val()+ "'/>" +
 	  		'		<a class="button-delete">Delete</a><br/>'+
 	  		'	</div>';
+				
+			// To show the tool-tip with the label 
 			
-			$('#existingCandidateNationalities').append(html);
+			var myHint = "<span id=\"my-hint\" class=\"hint individual-hint\" data-desc=\"<@spring.message \'personalDetails.nationality\'/>\"></span>";
+			
+			if($('#existingCandidateNationalities').children().length <= 1){
+				$('#existingCandidateNationalities').append(myHint + html);
+			}else{
+				$('#existingCandidateNationalities').append(html);
+			}
+			$('#my-nationality-hint').hide();
+			
 			
 			$('#candidateNationalityCountry').val("");
 			
 			$('#nationality-em').remove();
 			$('#my-nationality').replaceWith('<label class="plain-label" id="my-nationality-lb"></label>');
 			$('#my-nationality-lb').html("");
+			
 		}
 		
 	});
@@ -67,8 +76,16 @@ $(document).ready(function(){
 	  		'		<a class="button-delete">Delete</a><br/>'+
 	  		'	</div>';
 			
+			// To show the tool-tip with the label 
 			
-			$('#existingMaternalNationalities').append(html);
+			var maternalHint = "<span id=\"maternal-hint\" class=\"hint individual-hint\" data-desc=\"<@spring.message \'personalDetails.maternalGuardianNationality\'/>\"></span>";
+			
+			if($('#existingMaternalNationalities').children().length <= 1){
+				$('#existingMaternalNationalities').append(maternalHint + html);
+			}else{
+				$('#existingMaternalNationalities').append(html);
+			}
+			$('#maternal-nationality-hint').hide();
 			
 			$('#maternalNationalityCountry').val("");
 			$('#maternal-nationality').replaceWith('<label class="plain-label" id="maternal-nationality-lb"></label>');
@@ -94,8 +111,17 @@ $(document).ready(function(){
 	  		'		<a class="button-delete">Delete</a> <br/>'+
 	  		'	</div>';
 			
+			// To show the tool-tip with the label 
 			
-			$('#existingPaternalNationalities').append(html);
+			var paternalHint = "<span id=\"paternal-hint\" class=\"hint individual-hint\" data-desc=\"<@spring.message \'personalDetails.paternalGuardianNationality\'/>\"></span>";
+			
+			if($('#existingPaternalNationalities').children().length <= 1){
+				$('#existingPaternalNationalities').append(paternalHint + html);
+			}else{
+				$('#existingPaternalNationalities').append(html);
+			}
+			$('#paternal-nationality-hint').hide();
+			
 			$('#paternalNationalityCountry').val("");
 			
 			$('#paternal-nationality').replaceWith('<label class="plain-label" id="paternal-nationality-lb"></label>');
@@ -124,8 +150,15 @@ $(document).ready(function(){
 			
 			if ( $('#existingCandidateNationalities').children().length <= 1 ) {
 				$('#candidateNationalitiesLabel').remove();
-				$('#my-nationality-lb').html("My Nationality");	
+				$('#my-nationality-lb').html("My Nationality");
 			}
+			
+			if($('#existingCandidateNationalities').children().length == 1 ) {
+				
+				$('#my-hint').remove();
+				$('#my-nationality-hint').show();
+			}
+						
 		});
 		
 		$("#existingMaternalNationalities").on("click", "a", function(){	

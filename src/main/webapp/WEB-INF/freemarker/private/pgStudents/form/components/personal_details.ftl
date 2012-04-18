@@ -153,7 +153,7 @@
 						<em id="nationality-em">*</em>
 					</#if>
 					</label>      
-					<span class="hint" data-desc="<@spring.message 'personalDetails.nationality'/>"></span>    
+					<span id="my-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.nationality'/>"></span>    
 					<div class="field">
 						 <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry"<#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
 							<option value="">Select...</option>
@@ -191,7 +191,7 @@
               
             	<div class="row">                     	
               		<label class="plain-label" id="maternal-nationality">Mother's Nationality</label>
-              		<span class="hint" data-desc="<@spring.message 'personalDetails.maternalGuardianNationality'/>"></span>           
+              		<span id="maternal-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.maternalGuardianNationality'/>"></span>           
                   	 <div class="field">
                      	 <select class="full" name="maternalNationalityCountry" id="maternalNationalityCountry"<#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
                       		<option value="">Select...</option>
@@ -227,7 +227,7 @@
 
 				<div class="row">                      	
 					<label class="plain-label" id="paternal-nationality">Father's Nationality</label> 
-					  <span class="hint" data-desc="<@spring.message 'personalDetails.paternalGuardianNationality'/>"></span>      
+					  <span id="paternal-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.paternalGuardianNationality'/>"></span>      
                   	 <div class="field">
                      	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry" <#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
                       		<option value="">Select...</option>

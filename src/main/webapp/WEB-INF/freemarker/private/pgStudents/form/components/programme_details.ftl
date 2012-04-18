@@ -193,10 +193,13 @@
                 	<input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
                 </div>
             </div>      
-            
+            <div class="row">
             	<span class="supervisorAction"></span>       
             	<a id="updateSupervisorButton" class="button" style="display:none;">Update Supervisor</a>
-            	<a id="addSupervisorButton" class="button" style="display:none;">Add Supervisor</a>
+            	<div class="field">
+            		<a id="addSupervisorButton" class="button blue" style="display:none;">Add Supervisor</a>
+            	</div>
+            </div>
                 </#if>
 		</div>
 		

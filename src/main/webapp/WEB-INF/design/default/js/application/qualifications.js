@@ -48,7 +48,7 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="deleteQualificationButton"]').click( function(){
-		if(confirm("Delete qualification record. Are you sure?")){
+
 			var id = $(this).attr("id").replace("qualification_", "");
 			$.post("/pgadmissions/deleteentity/qualification",
 					{
@@ -60,7 +60,6 @@ $(document).ready(function(){
 					}	
 					
 				);
-		}
 	});
 	
 	

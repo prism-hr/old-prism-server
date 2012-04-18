@@ -9,7 +9,6 @@ $(document).ready(function(){
 	
 	
 	$('a[name="deleteFundingButton"]').click( function(){	
-		if(confirm("Delete funding record. Are you sure?")){
 			var id = $(this).attr("id").replace("funding_", "");
 			$.post("/pgadmissions/deleteentity/funding",
 					{
@@ -21,7 +20,6 @@ $(document).ready(function(){
 					}	
 					
 				);
-		}
 	});
 	
 	

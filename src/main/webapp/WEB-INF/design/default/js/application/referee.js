@@ -8,7 +8,6 @@ $(document).ready(function(){
 	});
 	
 	$('a[name="deleteRefereeButton"]').click( function(){	
-		if(confirm("Delete reference record. Are you sure?")){
 				var id = $(this).attr("id").replace("referee_", "");
 				$.post("/pgadmissions/deleteentity/referee",
 				{
@@ -20,7 +19,6 @@ $(document).ready(function(){
 				}	
 					
 			);
-		}
 	});
 	
 

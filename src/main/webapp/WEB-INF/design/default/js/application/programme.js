@@ -6,7 +6,6 @@ $(document).ready(function(){
 	
 	
 	$("#supervisor_div").on("click", "a[name=\"deleteSupervisor\"]", function(){	
-		if(confirm("Are you sure you want to delete the supervisor?")){
 			var id = this.id;
 			if(id.indexOf("usd_") != -1){
 				id = id.replace('usd_', '');
@@ -19,7 +18,6 @@ $(document).ready(function(){
 			$(this).parent("span").remove();
 			$(this).parent().parent().remove();
 			$(this).parent().parent().html('');
-		}
 	
 	});
 	$("#supervisor_div").on("click", "a[name=\"editSupervisorLink\"]", function(){

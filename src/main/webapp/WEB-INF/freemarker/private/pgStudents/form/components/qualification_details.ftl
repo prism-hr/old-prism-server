@@ -170,6 +170,9 @@
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                 </div>
          	</div>
+		</div>
+
+		<div>
 
 			<div class="row">
 	           <span class="plain-label">Has this qualification been awarded?</span>
@@ -186,10 +189,7 @@
 	           		<input type="hidden" name="currentQualification" id="currentQualification"/>
 	   			 </div>
         	</div>
-		
-		</div>
 
-		<div>
       		
       		<!-- Qualification grade -->
       		<div class="row">

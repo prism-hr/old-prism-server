@@ -21,6 +21,7 @@ public class ApplicationsService {
 
 	private final ApplicationFormDAO applicationFormDAO;
 	private final AddressDAO addressDAO;
+	
 
 	ApplicationsService() {
 		this(null, null);

@@ -36,6 +36,9 @@ $(document).ready(function(){
 			
 			$("#add-two-lb").addClass("grey-label");
 			$("#country-two-lb").addClass("grey-label");
+			$("#add-two-em").addClass("grey-label");
+			$("#country-two-em").addClass("grey-label");
+
 			
 		} else {		
 			$("#contactAddressLocation").val("");
@@ -44,6 +47,9 @@ $(document).ready(function(){
 			$("#contactAddressCountry").removeAttr('disabled');
 			$("#add-two-lb").removeClass("grey-label");
 			$("#country-two-lb").removeClass("grey-label");
+			$("#add-two-em").removeClass("grey-label");
+			$("#country-two-em").removeClass("grey-label");
+
 		}
 	});
 	

@@ -13,7 +13,6 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
-import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.QualificationService;
@@ -21,7 +20,7 @@ import com.zuehlke.pgadmissions.services.RefereeService;
 
 public class DeleteApplicationFormEntitiesControllerTest {
 
-	private ApplicationsService serviceMock;
+	
 	private DeleteApplicationFormEntitiesController controller;
 	private ApplicationForm applicationForm;
 	private QualificationService qualificationServiceMock;
@@ -84,11 +83,10 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	@Before
 	public void setup(){
 		applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
-		serviceMock = EasyMock.createMock(ApplicationsService.class);
 		qualificationServiceMock = EasyMock.createMock(QualificationService.class);
 		employmentServiceMock = EasyMock.createMock(EmploymentPositionService.class);
 		fundingServiceMock = EasyMock.createMock(FundingService.class);
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
-		controller = new DeleteApplicationFormEntitiesController(serviceMock, qualificationServiceMock, employmentServiceMock, fundingServiceMock, refereeServiceMock);
+		controller = new DeleteApplicationFormEntitiesController(qualificationServiceMock, employmentServiceMock, fundingServiceMock, refereeServiceMock);
 	}
 }

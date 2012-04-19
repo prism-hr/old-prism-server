@@ -26,7 +26,7 @@ public class ActivateRefereeController {
 	private static final String VIEW_APPLICATION_INTERNAL_VIEW_NAME = "private/referees/application/main_application_page";
 
 	private final RefereeService refereeService;
-	private final ApplicationPageModelBuilder applicationPageModelBuilder;
+	
 
 	ActivateRefereeController() {
 		this(null, null);
@@ -35,7 +35,7 @@ public class ActivateRefereeController {
 	@Autowired
 	public ActivateRefereeController(RefereeService refereeService, ApplicationPageModelBuilder applicationPageModelBuilder) {
 		this.refereeService = refereeService;
-		this.applicationPageModelBuilder = applicationPageModelBuilder;
+	
 	}
 
 	@RequestMapping(value = "/login",method = RequestMethod.GET)

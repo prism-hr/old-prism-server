@@ -21,10 +21,6 @@ import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.dao.AddressDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.EmploymentPositionDAO;
-import com.zuehlke.pgadmissions.dao.FundingDAO;
-import com.zuehlke.pgadmissions.dao.QualificationDAO;
-import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
@@ -44,10 +40,7 @@ public class ApplicationsServiceTest {
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApplicationsService applicationsService;
 	private AddressDAO addressDAOMock;
-	private QualificationDAO qualificationDAOMock;
-	private FundingDAO fundingDAOMock;
-	private EmploymentPositionDAO employmentDAOMock;
-	private RefereeDAO refereeDAOMock;
+
 
 	@Test
 	public void shouldgetListOfApplicationsForApplicant() {
@@ -181,8 +174,7 @@ public class ApplicationsServiceTest {
 		Project project = new ProjectBuilder().id(1).toProject();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
 		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock, qualificationDAOMock, fundingDAOMock, employmentDAOMock,
-				refereeDAOMock) {
+		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock) {
 
 			@Override
 			ApplicationForm newApplicationForm() {
@@ -210,12 +202,7 @@ public class ApplicationsServiceTest {
 
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		addressDAOMock = EasyMock.createMock(AddressDAO.class);
-		qualificationDAOMock = EasyMock.createMock(QualificationDAO.class);
-		fundingDAOMock = EasyMock.createMock(FundingDAO.class);
-		employmentDAOMock = EasyMock.createMock(EmploymentPositionDAO.class);
-		refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
-		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock, qualificationDAOMock, fundingDAOMock, employmentDAOMock,
-				refereeDAOMock);
+		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock);
 	}
 
 	@After

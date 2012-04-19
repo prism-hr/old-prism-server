@@ -187,6 +187,8 @@
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
                 </div>
             </div>
+        </div>
+        <div>
             <div class="row">
                <span class="plain-label">Is this your current position?</span>
                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.isOngoing'/>"></span>
@@ -205,26 +207,27 @@
                 </div>
 					
            	</div>
-			<#if !applicationForm.isSubmitted()>
+				<#if !applicationForm.isSubmitted()>
 	           	<!-- Add another button -->
 	            <div class="row">
 	            	<div class="field">
 	                	<a id="addPosisionButton" class="button blue">Add Employment</a>
 	                </div>
 	            </div>
-           	</#if>
+           		</#if>
+			</div>
+		
+			<div class="buttons">
+				<#if !applicationForm.isSubmitted()>
+            		<a class="button" type="button" id="positionCancelButton" name="positionCancelButton">Cancel</a>
+            		<button class="blue" type="button" id="positionCloseButton" name="positionCloseButton">Close</button>
+                	<button class="blue" type="button" value="add" id="positionSaveAndCloseButton" name="positionSaveAndCloseButton">Save</button>
+            	<#else>
+                	<a id="positionCloseButton" class="button blue">Close</a>
+            	</#if>    
+        	</div>
+
 		</div>
-
-		<div class="buttons">
-			<#if !applicationForm.isSubmitted()>
-            	<a class="button" type="button" id="positionCancelButton" name="positionCancelButton">Cancel</a>
-            	<button class="blue" type="button" id="positionCloseButton" name="positionCloseButton">Close</button>
-                <button class="blue" type="button" value="add" id="positionSaveAndCloseButton" name="positionSaveAndCloseButton">Save</button>
-            <#else>
-                <a id="positionCloseButton" class="button blue">Close</a>
-            </#if>    
-        </div>
-
 	</form>
 </div>
 	

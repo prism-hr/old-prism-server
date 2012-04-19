@@ -21,7 +21,7 @@
 			</#if>
         	<!-- Programme name (disabled) -->
             <div class="row">
-            	<label class="plain-label">Programme<em>*</em></label>
+            	<label class="plain-label grey-label">Programme<em>*</em></label>
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.programme'/>"></span>
                 <div class="field">
                 	<input class="full" id="programmeName" name="programmeName" type="text" value="${applicationForm.project.program.title?html}" disabled="disabled" />
@@ -55,7 +55,7 @@
 
 			<!-- Project -->
 			<div class="row">
-                <label class="plain-label">Project</label>
+                <label class="plain-label grey-label">Project</label>
                <span class="hint" data-desc="<@spring.message 'programmeDetails.project'/>"></span>
                 <div class="field">
             		<input class="full" id="projectName" name="projectName" type="text" value="${applicationForm.project.title?html}" disabled="disabled"/>

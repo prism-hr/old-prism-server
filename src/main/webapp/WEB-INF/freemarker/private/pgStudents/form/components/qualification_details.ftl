@@ -19,21 +19,17 @@
           	
           	<colgroup>
             	<col style="width: 30px" />
-            	<col />
-            	<col style="width: 80px" />
-            	<col />
-            	<col />
-            	<col style="width: 30px" />
+            	<col/>
+            	<col/>
+            	<col style="min-width: 30px" />
             </colgroup>
           	
           	<thead>
             	<tr>
-              	<th colspan="2">Qualification</th>
-                <th>Grade</th>
-                <th>Awarding Body</th>
-                <th>Date Completed</th>
-                <th>&nbsp;</th>
-                <th id="last-col">&nbsp;</th>
+	              	<th colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qualification</th>
+	                <th>Awarded</th>
+	                <th>&nbsp;</th>
+	                <th id="last-col">&nbsp;</th>
               </tr>
             </thead>
             
@@ -43,9 +39,15 @@
                 	<tr>
 	                  	<td><a class="row-arrow">-</a>
 	                  	</td>
-	                  	<td>${(existingQualification.qualificationType?html)!}</td>
-	                  	<td>${(existingQualification.qualificationGrade?html)!}</td>
-	                  	<td>${(existingQualification.qualificationInstitution?html)!}</td>
+	                  	<td>
+	                  		<div class="row-extra-hide">
+		                  		${(existingQualification.qualificationType?html)!} &nbsp
+		                  		${(qualification.qualificationSubject?html)!} &nbsp
+		                  		${(existingQualification.qualificationGrade?html)!} &nbsp
+		                  		${(existingQualification.qualificationInstitution?html)!}
+	                  		</div>	
+	                  	</td>
+	                  		
 	                  	<td>${(existingQualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
 	                  	  
 	                  	  	   <td>

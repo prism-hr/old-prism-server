@@ -30,7 +30,7 @@ public class ActivateRefereeController {
 	private static final String VIEW_APPLICATION_INTERNAL_VIEW_NAME = "private/referees/application/main_application_page";
 
 	private final RefereeService refereeService;
-	private final ApplicationPageModelBuilder applicationPageModelBuilder;
+	
 	private final ApplicationsService applicationsService;
 
 	ActivateRefereeController() {
@@ -40,7 +40,7 @@ public class ActivateRefereeController {
 	@Autowired
 	public ActivateRefereeController(RefereeService refereeService, ApplicationPageModelBuilder applicationPageModelBuilder, ApplicationsService applicationsService) {
 		this.refereeService = refereeService;
-		this.applicationPageModelBuilder = applicationPageModelBuilder;
+	
 		this.applicationsService = applicationsService;
 	}
 

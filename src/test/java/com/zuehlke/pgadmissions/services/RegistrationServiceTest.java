@@ -125,7 +125,7 @@ public class RegistrationServiceTest {
 
 	@Test
 	public void shouldSaveNewUserAndSendEmail() throws UnsupportedEncodingException {
-		final RegisteredUser record = new RegisteredUser();
+		final RegisteredUser expectedRecord = new RegisteredUser();
 		final Map<String, Object> modelMap = new HashMap<String, Object>();
 
 		Program program = new ProgramBuilder()
@@ -139,7 +139,7 @@ public class RegistrationServiceTest {
 
 			@Override
 			public RegisteredUser createNewUser(RegisteredUser record) {
-				if (record == record) {
+				if (expectedRecord == record) {
 					return newUser;
 				}
 				return null;
@@ -163,7 +163,7 @@ public class RegistrationServiceTest {
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
-		registrationService.generateAndSaveNewUser(record, null);
+		registrationService.generateAndSaveNewUser(expectedRecord, null);
 
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		assertEquals(newUser, modelMap.get("user"));
@@ -173,15 +173,15 @@ public class RegistrationServiceTest {
 
 	@Test
 	public void shouldNotSendEmailIdSaveFails() {
-		final RegisteredUser record = new RegisteredUser();
-		record.setEmail("email@test.com");
+		final RegisteredUser expectedRecord = new RegisteredUser();
+		expectedRecord.setEmail("email@test.com");
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).toUser();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, projectDAOMock, mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock) {
 
 			@Override
 			public RegisteredUser createNewUser(RegisteredUser record) {
-				if (record == record) {
+				if (expectedRecord == record) {
 					return newUser;
 				}
 				return null;
@@ -194,7 +194,7 @@ public class RegistrationServiceTest {
 
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		try {
-			registrationService.generateAndSaveNewUser(record, null);
+			registrationService.generateAndSaveNewUser(expectedRecord, null);
 		} catch (RuntimeException e) {
 			// expected...ignore
 		}
@@ -203,9 +203,10 @@ public class RegistrationServiceTest {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
-		final RegisteredUser record = new RegisteredUser();
+		final RegisteredUser expectedRecord = new RegisteredUser();
 
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
 
@@ -214,7 +215,7 @@ public class RegistrationServiceTest {
 
 			@Override
 			public RegisteredUser createNewUser(RegisteredUser record) {
-				if (record == record) {
+				if (expectedRecord == record) {
 					return newUser;
 				}
 				return null;
@@ -233,7 +234,7 @@ public class RegistrationServiceTest {
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
-		registrationService.generateAndSaveNewUser(record, null);
+		registrationService.generateAndSaveNewUser(expectedRecord, null);
 
 		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 

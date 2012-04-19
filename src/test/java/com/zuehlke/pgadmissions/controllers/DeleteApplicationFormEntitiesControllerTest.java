@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.services.RefereeService;
 
 public class DeleteApplicationFormEntitiesControllerTest {
 
+	
 	private DeleteApplicationFormEntitiesController controller;
 	private ApplicationForm applicationForm;
 	private QualificationService qualificationServiceMock;

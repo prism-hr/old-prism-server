@@ -29,8 +29,11 @@ public class DeleteApplicationFormEntitiesController {
 	}
 
 	@Autowired
-	public DeleteApplicationFormEntitiesController(QualificationService qualificationService,
-			EmploymentPositionService employmentService, FundingService fundingService, RefereeService refereeService) {
+	public DeleteApplicationFormEntitiesController(
+			QualificationService qualificationService,
+			EmploymentPositionService employmentService,
+			FundingService fundingService, RefereeService refereeService) {
+
 		this.qualificationService = qualificationService;
 		this.employmentService = employmentService;
 		this.fundingService = fundingService;
@@ -38,15 +41,15 @@ public class DeleteApplicationFormEntitiesController {
 
 	}
 
-
-
 	@RequestMapping(value = "/qualification", method = RequestMethod.POST)
 	public String deleteQualification(@RequestParam Integer id) {
-		Qualification qualification = qualificationService.getQualificationById(id);
+		Qualification qualification = qualificationService
+				.getQualificationById(id);
 		Integer applicationFormId = qualification.getApplication().getId();
 		qualificationService.delete(qualification);
 
-		return "redirect:/update/getQualification?applicationId=" + applicationFormId + "&message=deleted";
+		return "redirect:/update/getQualification?applicationId="
+				+ applicationFormId + "&message=deleted";
 	}
 
 	@RequestMapping(value = "/funding", method = RequestMethod.POST)
@@ -54,15 +57,18 @@ public class DeleteApplicationFormEntitiesController {
 		Funding funding = fundingService.getFundingById(id);
 		Integer applicationFormId = funding.getApplication().getId();
 		fundingService.delete(funding);
-		return "redirect:/update/getFunding?applicationId=" + applicationFormId + "&message=deleted";
+		return "redirect:/update/getFunding?applicationId=" + applicationFormId
+				+ "&message=deleted";
 	}
 
 	@RequestMapping(value = "/employment", method = RequestMethod.POST)
 	public String deleteEmployment(@RequestParam Integer id) {
-		EmploymentPosition position = employmentService.getEmploymentPositionById(id);
+		EmploymentPosition position = employmentService
+				.getEmploymentPositionById(id);
 		Integer applicationFormId = position.getApplication().getId();
 		employmentService.delete(position);
-		return "redirect:/update/getEmploymentPosition?applicationId=" + applicationFormId + "&message=deleted";
+		return "redirect:/update/getEmploymentPosition?applicationId="
+				+ applicationFormId + "&message=deleted";
 	}
 
 	@RequestMapping(value = "/referee", method = RequestMethod.POST)
@@ -70,7 +76,8 @@ public class DeleteApplicationFormEntitiesController {
 		Referee referee = refereeService.getRefereeById(id);
 		Integer applicationFormId = referee.getApplication().getId();
 		refereeService.delete(referee);
-		return "redirect:/update/getReferee?applicationId=" + applicationFormId + "&message=deleted";
+		return "redirect:/update/getReferee?applicationId=" + applicationFormId
+				+ "&message=deleted";
 	}
 
 }

@@ -41,6 +41,7 @@ public class ApplicationsServiceTest {
 	private ApplicationsService applicationsService;
 	private AddressDAO addressDAOMock;
 
+
 	@Test
 	public void shouldgetListOfApplicationsForApplicant() {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();

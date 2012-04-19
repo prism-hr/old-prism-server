@@ -203,6 +203,7 @@ public class UserServiceTest {
 		Assert.assertEquals(user, userService.getUserByUsername("mike"));
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldSaveRefereeAndSendEmailToReferee() throws UnsupportedEncodingException{
 	
@@ -247,6 +248,7 @@ public class UserServiceTest {
 		EasyMock.verify(mimeMessagePreparatorFactoryMock, mailsenderMock);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();

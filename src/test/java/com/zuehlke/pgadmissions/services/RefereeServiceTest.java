@@ -50,6 +50,7 @@ public class RefereeServiceTest {
 		refereeService = new RefereeService(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldSaveReferenceAndSendEmailsAdminsAndApplicant() throws UnsupportedEncodingException{
 	
@@ -107,6 +108,7 @@ public class RefereeServiceTest {
 		EasyMock.verify(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
 		Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole();

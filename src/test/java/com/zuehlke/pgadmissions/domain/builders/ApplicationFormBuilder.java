@@ -20,8 +20,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
-import cucumber.annotation.lu.a;
-
 public class ApplicationFormBuilder {
 
 	private ProgrammeDetails programmeDetails;

@@ -45,6 +45,7 @@ public class SubmitApplicationServiceTest {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldSaveApplicationFormAndSendEmailsToRefereesAdminsAndApplicant() throws UnsupportedEncodingException{
 	
@@ -90,6 +91,7 @@ public class SubmitApplicationServiceTest {
 		submitApplicationService.saveApplicationFormAndSendMailNotifications(form);
 		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 	}
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldNotSendEmailWithRegistrationFormToAlreadyExistingReferees() throws UnsupportedEncodingException{
 		Role reviewer = new RoleBuilder().authorityEnum(Authority.REFEREE).toRole();
@@ -140,6 +142,7 @@ public class SubmitApplicationServiceTest {
 		EasyMock.verify(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
 		Role reviewer = new RoleBuilder().authorityEnum(Authority.REFEREE).toRole();

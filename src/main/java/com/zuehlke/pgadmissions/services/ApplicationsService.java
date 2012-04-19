@@ -10,15 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.AddressDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.dao.EmploymentPositionDAO;
-import com.zuehlke.pgadmissions.dao.FundingDAO;
-import com.zuehlke.pgadmissions.dao.QualificationDAO;
-import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
-import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -27,24 +21,16 @@ public class ApplicationsService {
 
 	private final ApplicationFormDAO applicationFormDAO;
 	private final AddressDAO addressDAO;
-	private final QualificationDAO qualificationDAO;
-	private final FundingDAO fundingDAO;
-	private final EmploymentPositionDAO employmentPositionDAO;
-	private final RefereeDAO refereeDAO;
+	
 
 	ApplicationsService() {
-		this(null, null, null, null, null, null);
+		this(null, null);
 	}
 
 	@Autowired
-	public ApplicationsService(ApplicationFormDAO applicationFormDAO, AddressDAO addressDAO, QualificationDAO qualificationDAO, FundingDAO fundingDAO,
-			EmploymentPositionDAO employmentPositionDAO, RefereeDAO refereeDAO) {
+	public ApplicationsService(ApplicationFormDAO applicationFormDAO, AddressDAO addressDAO) {
 		this.applicationFormDAO = applicationFormDAO;
-		this.addressDAO = addressDAO;
-		this.qualificationDAO = qualificationDAO;
-		this.fundingDAO = fundingDAO;
-		this.employmentPositionDAO = employmentPositionDAO;
-		this.refereeDAO = refereeDAO;
+		this.addressDAO = addressDAO;		
 	}
 
 	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {

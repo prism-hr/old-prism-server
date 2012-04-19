@@ -81,7 +81,7 @@
                     <p></p>
                         
                     <div class="row">
-                    	<span class="plain-label">Address<em>*</em></span>
+                    	<span id="add-two-lb" class="plain-label">Address<em>*</em></span>
                        	<span class="hint" data-desc="<@spring.message 'addressDetails.ContactAddress.address'/>"></span>	
                        
                     
@@ -106,7 +106,7 @@
                     </div>
                     <!-- Country -->
                     <div class="row">
-                        <span class="plain-label">Country<em>*</em></span>
+                        <span id="country-two-lb" class="plain-label">Country<em>*</em></span>
                          	<span class="hint" data-desc="<@spring.message 'addressDetails.ContactAddress.country'/>"></span>	
                         <div class="field">
                             

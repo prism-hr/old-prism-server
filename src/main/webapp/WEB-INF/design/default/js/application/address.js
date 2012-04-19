@@ -33,14 +33,17 @@ $(document).ready(function(){
 			$("#contactAddressCountry").val($("#currentAddressCountry").val());
 			$("#contactAddressLocation").attr('disabled','disabled');
 			$("#contactAddressCountry").attr('disabled','disabled');
-
+			
+			$("#add-two-lb").addClass("grey-label");
+			$("#country-two-lb").addClass("grey-label");
 			
 		} else {		
 			$("#contactAddressLocation").val("");
 			$("#contactAddressCountry").val("");
 			$("#contactAddressLocation").removeAttr('disabled');
 			$("#contactAddressCountry").removeAttr('disabled');
-		
+			$("#add-two-lb").removeClass("grey-label");
+			$("#country-two-lb").removeClass("grey-label");
 		}
 	});
 	

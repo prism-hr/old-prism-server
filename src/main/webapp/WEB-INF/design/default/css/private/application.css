@@ -32,7 +32,7 @@ section.folding table.existing td {
 .row-extra-hide{
 	height:24px; width:655px; overflow:hidden;
 }
-
+ƒ
 /*  Modified to acomodate long strings : Manish */
 section.folding table.existing td, section.folding table.existing th { 
 	line-height: 25px; padding: 0 3px; 
@@ -95,6 +95,9 @@ section.folding form label.label { font-weight: bold; }
 	padding-bottom: 10px;
 }
 
+.grey-label{
+	color: #AAAAAA;
+}
 
 section.folding form .field .max { width: 330px; }
 section.folding form .field .full { width: 240px; }

@@ -4,11 +4,11 @@ $(document).ready(function(){
 	
 	$('#current').click(function() {
 		if ($('#current:checked').val() !== undefined) {
-			$("#posi-end-date-lb").text("End Date");
+			$("#posi-end-date-lb").text("End Date").addClass("grey-label");
 			$('#position_endDate').attr("disabled", "disabled");
 		}else{
 			$('#position_endDate').removeAttr("disabled");
-			$("#posi-end-date-lb").text("End Date").append('<em>*</em>');
+			$("#posi-end-date-lb").text("End Date").append('<em>*</em>').removeClass("grey-label");
 		}
 	});
 	

@@ -58,18 +58,20 @@
 				     </div>            	
 				</#if>
 				<div class="row">
-					<label class="plain-label">First Name<em>*</em></label>
+					<label class="plain-label grey-label">First Name<em>*</em></label>
 					 <span class="hint" data-desc="<@spring.message 'personalDetails.firstname'/>"></span>
 					<div class="field">                    	
-							<input class="full" readonly="readonly" type="text" value="${(user.firstName?html)!}"  name="firstName" id="firstName"/>	          
+							<input class="full" readonly="readonly" type="text" value="${(user.firstName?html)!}"  
+							name="firstName" id="firstName" disabled="disabled"/>	          
 					</div>
 				 </div>
              
 				<div class="row">
-					<label class="plain-label">Last Name<em>*</em></label>
+					<label class="plain-label grey-label">Last Name<em>*</em></label>
 					<span class="hint" data-desc="<@spring.message 'personalDetails.lastname'/>"></span>
 					<div class="field">
-							<input class="full" readonly="readonly" type="text" value="${(user.lastName?html)!}"   name="lastName" id="lastName"/>	          
+							<input class="full" readonly="readonly" type="text" value="${(user.lastName?html)!}"   
+							name="lastName" id="lastName" disabled="disabled"/>	          
 					</div>
 				 </div>
              
@@ -310,10 +312,11 @@
             	</div>
             	
             	<div class="row">
-            		<span class="plain-label">Email<em>*</em></span>
+            		<span class="plain-label grey-label">Email<em>*</em></span>
               		<span class="hint" data-desc="<@spring.message 'personalDetails.email'/>"></span> 
                     <div class="field">
-                    		<input class="full" readonly="readonly" type="email" value="${(user.email?html)!}"  name="email" id="email" />	          
+                    		<input class="full" readonly="readonly" type="email" value="${(user.email?html)!}"  
+                    		name="email" id="email" disabled="disabled"/>	          
                     </div>
 				</div>
               	

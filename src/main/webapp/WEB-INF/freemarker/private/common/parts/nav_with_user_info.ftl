@@ -15,7 +15,7 @@
 		</ul>
 			        
 		<div class="user">
-			<#if model??>
+			<#if model?? && model.user??>
 			${model.user.firstName!} ${' '} ${model.user.lastName!}
 			<#elseif user??>
 			${user.firstName!} ${' '} ${user.lastName!}

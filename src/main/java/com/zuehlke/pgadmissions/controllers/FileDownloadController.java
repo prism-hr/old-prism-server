@@ -13,14 +13,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Reference;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.DocumentService;
-import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.ReferenceService;
 
 @Controller
@@ -29,17 +26,15 @@ public class FileDownloadController {
 
 	private final DocumentService documentService;
 	private final ReferenceService referenceService;
-	private final RefereeService refereeService;
 
 	FileDownloadController() {
-		this(null, null, null);
+		this(null, null);
 	}
 
 	@Autowired
-	public FileDownloadController(DocumentService documentService, ReferenceService referenceService, RefereeService refereeService) {
+	public FileDownloadController(DocumentService documentService, ReferenceService referenceService) {
 		this.documentService = documentService;
 		this.referenceService = referenceService;
-		this.refereeService = refereeService;
 
 	}
 
@@ -57,23 +52,11 @@ public class FileDownloadController {
 	public void downloadReferenceDocument(@RequestParam("referenceId") Integer referenceId, HttpServletResponse response) throws IOException {
 		Reference reference = referenceService.getReferenceById(referenceId);
 		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		if (reference == null || reference.getDocument() == null || currentUser.isInRole(Authority.APPLICANT)
-				|| !currentUser.canSee(reference.getReferee().getApplication())) {
+		if (reference == null || reference.getDocument() == null || !currentUser.canSeeReference(reference)) {
 			throw new ResourceNotFoundException();
 		}
 		Document document = reference.getDocument();
 
-		sendDocument(response, document);
-
-	}
-
-	@RequestMapping(value = "/referee", method = RequestMethod.GET)
-	public void downloadReferenceDocumentForReferee(String activationCode, HttpServletResponse response) throws IOException {
-		Referee referee = refereeService.getRefereeByActivationCode(activationCode);
-		if (referee == null || referee.getReference() == null || referee.getReference().getDocument() == null) {
-			throw new ResourceNotFoundException();
-		}
-		Document document = referee.getReference().getDocument();
 		sendDocument(response, document);
 
 	}

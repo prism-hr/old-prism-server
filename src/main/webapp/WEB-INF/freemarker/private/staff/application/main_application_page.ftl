@@ -141,9 +141,11 @@
 			             <#include "/private/staff/application/components/funding_details.ftl"/>
 			          </section>
 			          
+			          <#if !user.isRefereeOfApplicationForm(applicationForm) || user.isInRole('SUPERADMINISTRATOR') >
 			           <section class="folding navy">
 			             <#include "/private/staff/application/components/references_details.ftl"/>
 			          </section>
+			          </#if>
 			          
 			           <section class="folding blue">
 			             <#include "/private/staff/application/components/documents.ftl"/>
@@ -157,12 +159,7 @@
 			          <hr />
 			          
 			          <a class="button" href="<@spring.url '/applications'/>">Close</a>
-			          <#if !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>
-			             <a id="submitButton" class="button">Submit</a>
-			             <form id="submitApplicationForm" action="<@spring.url "/apply/submit"/>" method="POST">
-			          	      <input type="hidden" id="applicationFormId" name="applicationForm" value="${applicationForm.id?string("######")}"/>
-			             </form>
-			    	 </#if>
+			          
 			    	 <p></p>
 			          <#include "/private/common/feedback.ftl"/>
 			        </div><!-- .content-box-inner -->

@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
@@ -27,7 +26,7 @@ public class ActivateRefereeController {
 	private static final String REGISTER_REFEREE_VIEW_NAME = "private/referees/register_referee";
 	private static final String EXPIRED_VIEW_NAME = "private/referees/upload_references_expired";
 	private static final String ALREADY_REGISTERED = "private/referees/already_registered";
-	private static final String VIEW_APPLICATION_INTERNAL_VIEW_NAME = "private/referees/application/main_application_page";
+	
 
 	private final RefereeService refereeService;
 	
@@ -44,40 +43,23 @@ public class ActivateRefereeController {
 		this.applicationsService = applicationsService;
 	}
 
-	@RequestMapping(value = "/login",method = RequestMethod.GET)
-	public ModelAndView getReferencesPage(@RequestParam String activationCode) {
-		Referee referee = refereeService.getRefereeByActivationCode(activationCode);
-		ApplicationPageModel model = new ApplicationPageModel();
-		//check if current user can upload
-		if (referee == null || referee.getApplication() == null) {
-			throw new ResourceNotFoundException();
-		} else {
-			ApplicationForm applicationForm = referee.getApplication();
-			if (applicationForm.isDecided()) {
-				return new ModelAndView(EXPIRED_VIEW_NAME);
-			}
-			model.setApplicationForm(applicationForm);
-			model.setReferee(referee);
-		}
-		return new ModelAndView(ADD_REFERENCES_VIEW_NAME, "model", model);
-	}
 	
 	@RequestMapping(value = "/addReferences",method = RequestMethod.GET)
-	public ModelAndView getUploadReferencesPage(@RequestParam Integer applicationFormId) {
-		ApplicationForm form = applicationsService.getApplicationById(applicationFormId);
-		ApplicationPageModel model = new ApplicationPageModel();
-		RegisteredUser user = getCurrentUser();
-		if (form == null || form.isDecided() || !user.isInRole(Authority.REFEREE)) {
+	public ModelAndView getUploadReferencesPage(@RequestParam Integer application, ModelMap modelMap) {
+		
+		RegisteredUser currentUser = getCurrentUser();
+		ApplicationForm form = applicationsService.getApplicationById(application);
+		if(form == null || ( !currentUser.isRefereeOfApplicationForm(form) && !currentUser.isInRole(Authority.SUPERADMINISTRATOR) )){
 			throw new ResourceNotFoundException();
-		} else {
-			if (form.isDecided()) {
-				return new ModelAndView(EXPIRED_VIEW_NAME);
-			}
-			model.setApplicationForm(form);
-			Referee referee = refereeService.getRefereeByUserAndApplication(user, form);
-			model.setReferee(referee);
+		}		
+		modelMap.put("application", form);		
+		modelMap.put("user", currentUser);
+		modelMap.put("referee", refereeService.getRefereeByUserAndApplication(currentUser, form));
+		if(form.isDecided()){
+			return new ModelAndView(EXPIRED_VIEW_NAME, modelMap);	
 		}
-		return new ModelAndView(ADD_REFERENCES_VIEW_NAME, "model", model);
+		return new ModelAndView(ADD_REFERENCES_VIEW_NAME, modelMap);
+
 	}
 	
 	private RegisteredUser getCurrentUser() {
@@ -104,14 +86,5 @@ public class ActivateRefereeController {
 		}
 		return new ModelAndView(REGISTER_REFEREE_VIEW_NAME, modelMap);
 	}
-	
-	@RequestMapping(value = "/application", method = RequestMethod.GET)
-	public ModelAndView getViewApplicationPageForReferee(@RequestParam String activationCode) {
-		Referee referee = refereeService.getRefereeByActivationCode(activationCode);
-		ApplicationForm application = referee.getApplication();
-		if (application.isDecided()) {
-			return new ModelAndView(EXPIRED_VIEW_NAME);
-		}
-		return new ModelAndView(VIEW_APPLICATION_INTERNAL_VIEW_NAME, "applicationForm", application);
-	}
+
 }

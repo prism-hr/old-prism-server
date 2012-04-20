@@ -26,7 +26,7 @@
 		  
 		  	<!-- Middle. -->
 		  	<div id="middle">
-		  	  	<#include "/private/common/parts/nav_without_user_info.ftl"/>
+		  	  	 <#include "/private/common/parts/nav_with_user_info.ftl"/>
 		    	<!-- Main content area. -->
 		    	<article id="content" role="main">
 		      
@@ -37,30 +37,26 @@
 		      				<!---------- Reference -------------->
 		      			
 		      			
-		              		<h2>Thank you for agreeing to provide a reference for ${model.referee.application.applicant.firstName} ${model.referee.application.applicant.lastName}.</h2>
-		              		<#list model.globalErrorCodes as globalErrorCode >
-		              		 <span class="invalid"><@spring.message  globalErrorCode /></span>
-		              		 </#list>
+		              		<h2>Thank you for agreeing to provide a reference for ${application.applicant.firstName} ${application.applicant.lastName}.</h2>
+		              		
 		              		<br/>
-		              		<#if  model.referee.hasProvidedReference() >
+		              		<#if referee.hasProvidedReference() >
 		              			<p>You have already provided a reference. You may use the fields below to upload a different file if you wish.</p>							
 			        		<#else>
 			        			<p>Please upload your reference as a PDF document using the field below.</p>		              				          		
 			        		</#if>
-			        		<p>You can view ${model.referee.application.applicant.firstName}'s application <a href="<@spring.url '/referee/application?activationCode=${model.referee.activationCode}' />" target="_blank">here</a></p>
+			        		<p>You can view ${application.applicant.firstName}'s application <a href="<@spring.url '/application?applicationId=${application.id?string("######")}' />" target="_blank">here</a></p>
 							<form id="documentUploadForm" method="POST" action="<@spring.url '/addReferences/submit'/>" enctype="multipart/form-data">
-					             <input type="hidden" name="refereeId" value="${model.referee.id?string("######")}"/>
+					             <input type="hidden" name="refereeId" value="${referee.id?string("######")}"/>
 					            <div>
 					                <!-- Document upload -->
 					                <label for="file">Upload file</label>
 					                <input class="full" type="file" name="file" value="" />                      	
-									<#if model.uploadErrorCode?? >
-										   <span class="invalid"><@spring.message  model.uploadErrorCode /></span>
-									</#if>	
+									
 									<br/>
 									<br/>
-									<#if model.referee.hasProvidedReference() && model.referee.reference.document?? >
-										Previous file: <a href="<@spring.url '/download/referee?activationCode=${model.referee.activationCode}'/>">${model.referee.reference.document.fileName}</a>
+									<#if referee.hasProvidedReference()  >
+										Previous file: <a href="<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/>">${referee.reference.document.fileName}</a>
 		                			</#if>			
 								</div>
 								
@@ -70,11 +66,7 @@
 								</div>			          			
 							</form>		     
 		          			<!---------- End Reference -------------->
-		          			
-		          			
-		          			
-		          			
-		          			
+		          					          			
 		          			
 		        		</div><!-- .content-box-inner -->
 		      		</div><!-- .content-box -->

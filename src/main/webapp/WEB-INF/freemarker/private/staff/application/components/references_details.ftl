@@ -14,6 +14,38 @@
 				<form>				
             	<#if hasReferees>
 	                <#list applicationForm.referees as referee>
+	                
+	                		<!-- All hidden input - Start -->
+									<input type="hidden" id="${referee.id?string('#######')}_refereeId" value="${referee.id?string('#######')}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_firstname" value="${(referee.firstname?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_phone" value="${(referee.phoneNumber?html)!}"/>
+                                    <#if referee.messenger??>
+                                    	<input type="hidden" id="${referee.id?string('#######')}_messenger" value="${(referee.messenger?html)!}"/>
+                                    <#else>
+                                    	<input type="hidden" id="${referee.id?string('#######')}_messenger" value=" "/>
+                                    </#if>
+                                    <input type="hidden" id="${referee.id?string('#######')}_lastname" value="${(referee.lastname?html)!}"/>                                    
+                                    <input type="hidden" id="${referee.id?string('#######')}_jobEmployer" value="${(referee.jobEmployer?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_jobTitle" value="${(referee.jobTitle?html)!}"/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_addressLocation" value="${(referee.addressLocation?html)!}"/>
+                                    
+                                    <input type="hidden" id="${referee.id?string('#######')}_addressCountry" <#if referee.addressCountry??> value="${(referee.addressCountry.name?html)!}" </#if>/>
+                                    <input type="hidden" id="${referee.id?string('#######')}_lastUpdated" value="<#if referee.hasProvidedReference() > 
+			                    		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
+			                    	<#else>
+			                    		Not provided
+			                    	</#if>"/>
+			                    	 
+			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_url" value="<#if referee.hasProvidedReference() && referee.reference.document?? >
+			                    	 	<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/></#if>"
+			                    	 />
+			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName?html}</#if><#else>No document uploaded</#if>" />
+                                     <input type="hidden" id="${referee.id?string('#######')}_email" value="${(referee.email?html)!}"/>
+								
+								<!-- All hidden input - End --> 
+	                		
+	                			<!-- Rendering part - Start -->
+	                
 		                	<div class="sub_section_amdin">
 		                
 		                	        <!-- Header -->

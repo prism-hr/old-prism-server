@@ -62,35 +62,35 @@
 			                  		<div class="admin_row">
 			                    		<span class="admin_row_label">First Name</span>
 			                    		
-			                    		<div class="field" id="ref_firstname">${(referee.firstname?html)!} </div>
+			                    		<div class="field" id="ref_firstname">${(referee.firstname?html)!"Not Available"} </div>
 			                  		</div>
 			                
 			                  		<!-- Last name -->
 			                  		<div class="admin_row">
 			                    		<span class="admin_row_label">Last Name</span>
 			             
-			                    		<div class="field" id="ref_lastname">${(referee.lastname?html)!}</div>
+			                    		<div class="field" id="ref_lastname">${(referee.lastname?html)!"Not Available"}</div>
 			                  		</div>
 		                  
 			                  		<!-- Employer / company name -->
 			                  		<div class="admin_row">
 			                    		<span class="admin_row_label">Employer</span>
 			
-			                    		<div class="field" id="ref_employer">${(referee.jobEmployer?html)!} </div>
+			                    		<div class="field" id="ref_employer">${(referee.jobEmployer?html)!"Not Available"} </div>
 			                  		</div>
 			                
 			                  		<!-- Position title -->
 			                  		<div class="admin_row">
 			                    		<span class="admin_row_label">Position</span>
 						
-			                 			<div class="field" id="ref_position">${(referee.jobTitle?html)!} </div>
+			                 			<div class="field" id="ref_position">${(referee.jobTitle?html)!"Not Available"} </div>
 			                  		</div>
 		                  
 			                  		<!-- Address body -->
 			                  		<div class="admin_row">
 			                    		<span class="admin_row_label">Address</span>
 			         
-			                    		<div class="field" id="ref_address_location">${(referee.addressLocation?html)!} </div>
+			                    		<div class="field" id="ref_address_location">${(referee.addressLocation?html)!"Not Available"} </div>
 			                  		</div>
 			                
 			           
@@ -98,7 +98,7 @@
 			                  		<!-- Country -->
 			                  		<div class="admin_row">
 			                    		<span class="admin_row_label">Country</span>
-										<div class="field" id="ref_address_country">${(referee.addressCountry.name?html)!} </div>
+										<div class="field" id="ref_address_country">${(referee.addressCountry.name?html)!"Not Available"} </div>
 			                  		</div>
 		                	
 		                
@@ -106,21 +106,21 @@
 			                  		<div class="admin_row">
 			                    		<span class="admin_row_label">Email</span>
 			                  
-			                    		<div class="field" id="ref_email">${(referee.email?html)!} </div>
+			                    		<div class="field" id="ref_email">${(referee.email?html)!"Not Available"} </div>
 			                  		</div>
 		
 			                  		<!-- Telephone -->
 			                  		<div class="admin_row">
 			                  		    <span class="admin_row_label">Telephone</span>
 			                  		
-			                    		<div class="field"  id="ref_phone">${(referee.phoneNumber?html)!} </div>
+			                    		<div class="field"  id="ref_phone">${(referee.phoneNumber?html)!"Not Available"} </div>
 			                  		</div>
 		
 				                  	<!-- Skype address -->
 				                  	<div class="admin_row">
 			                    		<span class="admin_row_label">Skype</span>
 			                    		
-			                    		<div class="field" id="ref_messenger">${(referee.messenger?html)!} </div>
+			                    		<div class="field" id="ref_messenger">${(referee.messenger?html)!"Not Available"} </div>
 			                  		</div>
 		                  		
 			                  		<div class="admin_row">

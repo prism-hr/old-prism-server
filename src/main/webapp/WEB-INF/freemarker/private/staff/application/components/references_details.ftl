@@ -11,180 +11,105 @@
         		References
        		</h2>
 			<div class="open">
-				
+				<form>				
             	<#if hasReferees>
-	            	<table class="existing">
-	                	
-	                	<colgroup>
-		                  	<col style="width: 30px" />
-		                  	<col style="width: 160px" />
-		                  	<col style="width: 160px" />
-		                  	<col style="width: 260px" />
-		                  	<col />
-	                	</colgroup>
-	                
-	                	<thead>
-	                  		<tr>
-			                    <th colspan="2">First name</th>
-			                    <th>Surname</th>
-			                    <th>Job Title</th>
-			                    <th>Email</th>
-			                    <th>Responded</th>
-		                  	</tr>
-	                	</thead>
-	                	
-	                	<tbody>
-	                		<#list applicationForm.referees as referee>
-			                  	<tr>
-				                    <td><a class="row-arrow">-</a></td>
-				                    <td>${(referee.firstname?html)!}</td>
-				                    <td>${(referee.lastname?html)!}</td>
-				                    <td>${(referee.jobTitle?html)!}</td>
-				                    <td>${(referee.email?html)!}</td>
-				                    <td>
-					                    <#if referee.hasProvidedReference() ><a href="<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/>">${referee.reference.document.fileName?html}</a><#else> - </#if>
-					                 </td>
-                                    <input type="hidden" id="${referee.id?string('#######')}_refereeId" value="${referee.id?string('#######')}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_firstname" value="${(referee.firstname?html)!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_phone" value="${(referee.phoneNumber?html)!}"/>
-                                    <#if referee.messenger??>
-                                    <input type="hidden" id="${referee.id?string('#######')}_messenger" value="${(referee.messenger?html)!}"/>
-                                    <#else>
-                                    <input type="hidden" id="${referee.id?string('#######')}_messenger" value=" "/>
-                                    </#if>
-                                    <input type="hidden" id="${referee.id?string('#######')}_lastname" value="${(referee.lastname?html)!}"/>                                    
-                                    <input type="hidden" id="${referee.id?string('#######')}_jobEmployer" value="${(referee.jobEmployer?html)!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_jobTitle" value="${(referee.jobTitle?html)!}"/>
-                                    <input type="hidden" id="${referee.id?string('#######')}_addressLocation" value="${(referee.addressLocation?html)!}"/>
-                                    
-                                    <input type="hidden" id="${referee.id?string('#######')}_addressCountry" <#if referee.addressCountry??> value="${(referee.addressCountry.name?html)!}" </#if>/>
-                                     <input type="hidden" id="${referee.id?string('#######')}_lastUpdated" value="<#if referee.hasProvidedReference() > 
-			                    		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
-			                    	<#else>
-			                    		Not provided
-			                    	</#if>"/>
-			                    	 
-			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_url" value="<#if referee.hasProvidedReference() && referee.reference.document?? >
-			                    	 	<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/></#if>"
-			                    	 />
-			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName?html}</#if><#else>No document uploaded</#if>" />
-                                    <input type="hidden" id="${referee.id?string('#######')}_email" value="${(referee.email?html)!}"/>
-									<td><a name="refereeEditButton" data-desc="Show" id="referee_${referee.id?string('#######')}" class="button-edit button-hint">edit</a></td>
-									
-
-			                  	</tr>
-		                  	</#list>
-	                	</tbody>
-	              	
-	              	</table>
-              	</#if>
-              	
-              	<input type="hidden" id="refereeId" name="refereeId"/>
-              	
-              	<form>
-                
-                	<div>
-                
-                  		<!-- First name -->
-                  		<div class="row">
-                    		<span class="label">First Name</span>
-                    	
-                    		<div class="field" id="ref_firstname">&nbsp; </div>
-                  		</div>
-                
-                  		<!-- Last name -->
-                  		<div class="row">
-                    		<span class="label">Last Name</span>
-             
-                    		<div class="field" id="ref_lastname">&nbsp; </div>
-                  		</div>
-                  	</div>	
-                
-
-
-                	<div>
-                  
-                  		<!-- Employer / company name -->
-                  		<div class="row">
-                    		<span class="label">Employer</span>
-
-                    		<div class="field" id="ref_employer">&nbsp; </div>
-                  		</div>
-                
-                  		<!-- Position title -->
-                  		<div class="row">
-                    		<span class="label">Position</span>
+	                <#list applicationForm.referees as referee>
+		                	<div class="sub_section_amdin">
+		                
+		                	        <!-- Header -->
+					                <div class="admin_row">
+					                	<label class="admin_header">Reference (${referee_index + 1})</label>
+					                  
+					                    <div class="field">
+					                    	&nbsp
+					                    </div>
+									</div>
+		                	
+		                
+			                  		<!-- First name -->
+			                  		<div class="admin_row">
+			                    		<span class="admin_row_label">First Name</span>
+			                    		
+			                    		<div class="field" id="ref_firstname">${(referee.firstname?html)!} </div>
+			                  		</div>
+			                
+			                  		<!-- Last name -->
+			                  		<div class="admin_row">
+			                    		<span class="admin_row_label">Last Name</span>
+			             
+			                    		<div class="field" id="ref_lastname">${(referee.lastname?html)!}</div>
+			                  		</div>
+		                  
+			                  		<!-- Employer / company name -->
+			                  		<div class="admin_row">
+			                    		<span class="admin_row_label">Employer</span>
 			
-                 			<div class="field" id="ref_position">&nbsp; </div>
-                  		</div>
-                	</div>
-
-                	<div>
-                	
-                  		<p><strong>Contact Details</strong></p>
-                  
-                  		<!-- Address body -->
-                  		<div class="row">
-                    		<span class="label">Address</span>
-         
-                    		<div class="field" id="ref_address_location">&nbsp; </div>
-                  		</div>
-                
-           
-                
-                  		<!-- Country -->
-                  		<div class="row">
-                    		<span class="label">Country</span>
-							<div class="field" id="ref_address_country">&nbsp; </div>
-                  		</div>
-                	
-                	</div>
-
-                	<div>
-                  	
-                  		<p><strong>Contact Details</strong></p>
-                
-                  		<!-- Email address -->
-                  		<div class="row">
-                    		<span class="label">Email</span>
-                  
-                    		<div class="field" id="ref_email">&nbsp; </div>
-                  		</div>
-
-                  		<!-- Telephone -->
-                  		<div class="row">
-                  		    <span class="label">Telephone</span>
-                  		
-                    		<div class="field"  id="ref_phone">&nbsp; </div>
-                  		</div>
-
-	                  	<!-- Skype address -->
-	                  	<div class="row">
-                    		<span class="label">Skype</span>
-                    		
-                    		<div class="field" id="ref_messenger">&nbsp; </div>
-                  		</div>
-                  		
-                	</div>
-						<div>
-	                  	     <p><strong>Reference</strong></p>      
-	                  		<div class="row">
-			                  	<span class="label">Document</span>
+			                    		<div class="field" id="ref_employer">${(referee.jobEmployer?html)!} </div>
+			                  		</div>
+			                
+			                  		<!-- Position title -->
+			                  		<div class="admin_row">
+			                    		<span class="admin_row_label">Position</span>
+						
+			                 			<div class="field" id="ref_position">${(referee.jobTitle?html)!} </div>
+			                  		</div>
+		                  
+			                  		<!-- Address body -->
+			                  		<div class="admin_row">
+			                    		<span class="admin_row_label">Address</span>
+			         
+			                    		<div class="field" id="ref_address_location">${(referee.addressLocation?html)!} </div>
+			                  		</div>
+			                
+			           
+			                
+			                  		<!-- Country -->
+			                  		<div class="admin_row">
+			                    		<span class="admin_row_label">Country</span>
+										<div class="field" id="ref_address_country">${(referee.addressCountry.name?html)!} </div>
+			                  		</div>
+		                	
+		                
+			                  		<!-- Email address -->
+			                  		<div class="admin_row">
+			                    		<span class="admin_row_label">Email</span>
 			                  
-			                    <div class="field" id="referenceDocument">	&nbsp; </div>
-		                    </div>		              
-		                    <div class="row">			        
-		                    	<span class="label">Uploaded date</span>	                   		          
-			                   <div class="field" id="referenceUpdated">&nbsp; </div>
-		                    </div>
-		               
-	                	</div>
-	                	
-                	<div class="buttons">
-                  		<button class="blue" type="button" value="close" id="refereeCloseButton">Close</button>
-                	</div>
+			                    		<div class="field" id="ref_email">${(referee.email?html)!} </div>
+			                  		</div>
+		
+			                  		<!-- Telephone -->
+			                  		<div class="admin_row">
+			                  		    <span class="admin_row_label">Telephone</span>
+			                  		
+			                    		<div class="field"  id="ref_phone">${(referee.phoneNumber?html)!} </div>
+			                  		</div>
+		
+				                  	<!-- Skype address -->
+				                  	<div class="admin_row">
+			                    		<span class="admin_row_label">Skype</span>
+			                    		
+			                    		<div class="field" id="ref_messenger">${(referee.messenger?html)!} </div>
+			                  		</div>
+		                  		
+			                  		<div class="admin_row">
+					                  	<span class="admin_row_label">Document</span>
+					                  
+					                    <div class="field" id="referenceDocument">	&nbsp; </div>
+				                    </div>		              
+				                    <div class="admin_row">			        
+				                    	<span class="admin_row_label">Uploaded date</span>	                   		          
+					                   <div class="field" id="referenceUpdated">&nbsp; </div>
+				                    </div>
+				               
+			                	</div>
 
-				</form>
-            
-            </div>
+		            </#list>
+              	</#if>
+
+					<div class="buttons">
+		            	<button class="blue" type="button" value="close" id="refereeCloseButton">Close</button>
+		            </div>
+				</form>		       
+			</div>
+              	
             <script type="text/javascript" src="<@spring.url '/design/default/js/application/staff/referee.js'/>"></script>

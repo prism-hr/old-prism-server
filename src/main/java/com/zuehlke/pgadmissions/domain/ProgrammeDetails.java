@@ -25,10 +25,10 @@ import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 @Access(AccessType.FIELD)
 public class ProgrammeDetails extends DomainObject<Integer> {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = -5997103825068065955L;
+
+
 
 	@Override
 	public void setId(Integer id) {

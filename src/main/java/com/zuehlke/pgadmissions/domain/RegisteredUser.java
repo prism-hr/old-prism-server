@@ -34,12 +34,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private String email;
 	private String username;
 	private String password;
+	
 	@Transient
 	private String confirmPassword;
 	@Transient
 	private Integer projectId;
 	@Transient
 	private Referee currentReferee;
+	
 	private boolean enabled;
 	private boolean accountNonExpired;
 	private boolean accountNonLocked;
@@ -375,6 +377,19 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 		return false;
+	}
+
+	public boolean canSeeReference(Reference reference) {
+		if(this.isInRole(Authority.APPLICANT)){
+			return false;
+		}
+		if(!this.canSee(reference.getReferee().getApplication())){
+			return false;
+		}
+		if(this.isRefereeOfApplicationForm(reference.getReferee().getApplication()) && !this.equals(reference.getReferee().getUser())){
+			return false;
+		}
+		return true;
 	}
 
 	

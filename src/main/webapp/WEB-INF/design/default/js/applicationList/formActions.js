@@ -16,7 +16,7 @@ $(document).ready(function() {
 		}else if($(this).val() == 'print') {
 			window.location.href = "/pgadmissions/print?applicationFormId=" + id;
 		}else if($(this).val() == 'reference') {
-			window.location.href = "/pgadmissions/referee/addReferences?applicationFormId=" + id;
+			window.location.href = "/pgadmissions/referee/addReferences?application=" + id;
 		}
 	});
 

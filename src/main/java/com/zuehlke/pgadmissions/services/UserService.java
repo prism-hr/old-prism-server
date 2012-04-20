@@ -137,7 +137,7 @@ public class UserService {
 			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("referee", referee);
-			model.put("applicant", applicant);
+			model.put("applicant", applicant);			
 			model.put("adminsEmails", adminsEmails);
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstName() + " " + referee.getLastName());

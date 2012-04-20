@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
@@ -23,7 +23,6 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.utils.ApplicationPageModelBuilder;
@@ -37,110 +36,112 @@ public class ActivateRefereeControllerTest {
 	private RegisteredUser currentUser;
 	private ApplicationPageModelBuilder applicationPageModelBuilderMock;
 	private ApplicationsService applicationServiceMock;
+	private UsernamePasswordAuthenticationToken authenticationToken;
 
 	@Test
-	public void shouldReturnReferencesPageIfLinkIsCorrect(){
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		Referee referee = new RefereeBuilder().id(1).application(form).activationCode("1234").toReferee();
-		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode(referee.getActivationCode())).andReturn(referee);
-		EasyMock.replay(refereeServiceMock);
-		ModelAndView modelAndView = controller.getReferencesPage("1234");
-		EasyMock.verify(refereeServiceMock);
-		assertNull(((ApplicationPageModel) modelAndView.getModel().get("model")).getMessage());
-		assertEquals(form, ((ApplicationPageModel) modelAndView.getModel().get("model")).getApplicationForm());
-		assertEquals(referee, ((ApplicationPageModel) modelAndView.getModel().get("model")).getReferee());
-		assertEquals("private/referees/upload_references", modelAndView.getViewName());
-	}
-	
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldNotReturnReferencesPageIfActivationCodeIsWrong(){				
-		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("467")).andReturn(null);
-		EasyMock.replay(refereeServiceMock);
-		ModelAndView modelAndView = controller.getReferencesPage("467");
-		EasyMock.verify(refereeServiceMock);
-		assertEquals("Sorry, the system was unable to find you in the system.", ((ApplicationPageModel) modelAndView.getModel().get("model")).getMessage());
-		assertEquals("private/referees/upload_references", modelAndView.getViewName());
-	}
-	
-	@Test
-	public void shouldReturnExpiredViewForUploadPageIfApplicationFormNotActive(){				
-		ApplicationForm form = new ApplicationFormBuilder().id(1).approvedSatus(ApprovalStatus.APPROVED).toApplicationForm();
-		Referee referee = new RefereeBuilder().id(1).application(form).activationCode("1234").toReferee();
-		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode(referee.getActivationCode())).andReturn(referee);
-		EasyMock.replay(refereeServiceMock);
-		ModelAndView modelAndView = controller.getReferencesPage("1234");	
-		assertEquals("private/referees/upload_references_expired", modelAndView.getViewName());
-	}
-	
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldNotReturnReferencesPageIfApplicationIdIsWrong(){
-		
-		Referee referee = new RefereeBuilder().id(1).application(null).activationCode("1234").toReferee();
-		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode(referee.getActivationCode())).andReturn(referee);
-		EasyMock.replay(refereeServiceMock);
-		ModelAndView modelAndView = controller.getReferencesPage("1234");
-		EasyMock.verify(refereeServiceMock);
-		assertEquals("Sorry, the system was unable to find you in the system.", ((ApplicationPageModel) modelAndView.getModel().get("model")).getMessage());
-		assertEquals("private/referees/upload_references", modelAndView.getViewName());
-	}
-	
-	@Test
-	public void shouldGetRefereeFromActicationCodeAndReturnApplitactionView() {
-		String activationCode = "abc";
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
-		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
-		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode(activationCode)).andReturn(referee);
-	
-
-		EasyMock.replay(refereeServiceMock);
-		
-		ModelAndView modelAndView = controller.getViewApplicationPageForReferee(activationCode);
-		assertEquals("private/referees/application/main_application_page", modelAndView.getViewName());
-		assertEquals(applicationForm, modelAndView.getModel().get("applicationForm"));
-	}
-	
-	@Test
-	public void shouldReturnExpiredViewIfApplicationNotActiveForApplitactionView() {
-		String activationCode = "abc";
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).approvedSatus(ApprovalStatus.APPROVED).toApplicationForm();
-		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
-		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode(activationCode)).andReturn(referee);
-		
-		EasyMock.replay(refereeServiceMock);
-		
-		assertEquals("private/referees/upload_references_expired", controller.getViewApplicationPageForReferee(activationCode).getViewName());
-	;
-	}
-	
-	@Test
-	public void shouldNotGetRegisterPageIfAlreadyRegistered(){
+	public void shouldNotGetRegisterPageIfAlreadyRegistered() {
 		ModelMap modelMap = new ModelMap();
 		Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).toRole();
 		RegisteredUser refereeUserEnabled = new RegisteredUserBuilder().id(1).role(refereeRole).enabled(true).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
-		Referee referee = new RefereeBuilder().application(applicationForm).activationCode("123").id(1).firstname("bob").lastname("bobson").user(refereeUserEnabled).email("email@test.com").toReferee();
+		Referee referee = new RefereeBuilder().application(applicationForm).activationCode("123").id(1).firstname("bob").lastname("bobson")
+				.user(refereeUserEnabled).email("email@test.com").toReferee();
 		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("123")).andReturn(referee);
-		
+
 		EasyMock.replay(refereeServiceMock, applicationPageModelBuilderMock);
 		ModelAndView registerPage = controller.getRefereeRegisterPage(referee.getActivationCode(), modelMap);
 		assertEquals("private/referees/already_registered", registerPage.getViewName());
-		
+
 	}
+
 	@Test
-	public void shouldNotGetRegisterPageIfNotRegistered(){
+	public void shouldNotGetRegisterPageIfNotRegistered() {
 		ModelMap modelMap = new ModelMap();
 		Role refereeRole = new RoleBuilder().authorityEnum(Authority.REFEREE).toRole();
 		RegisteredUser refereeUserDisabled = new RegisteredUserBuilder().id(1).role(refereeRole).enabled(false).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
-		Referee referee = new RefereeBuilder().application(applicationForm).activationCode("123").id(1).firstname("bob").lastname("bobson").user(refereeUserDisabled).email("email@test.com").toReferee();
+		Referee referee = new RefereeBuilder().application(applicationForm).activationCode("123").id(1).firstname("bob").lastname("bobson")
+				.user(refereeUserDisabled).email("email@test.com").toReferee();
 		EasyMock.expect(refereeServiceMock.getRefereeByActivationCode("123")).andReturn(referee);
-		
+
 		EasyMock.replay(refereeServiceMock, applicationPageModelBuilderMock);
 		ModelAndView registerPage = controller.getRefereeRegisterPage(referee.getActivationCode(), modelMap);
 		assertEquals("private/referees/register_referee", registerPage.getViewName());
-		
+
 	}
-	
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundexceptionIfApplicationDoesNotExist() {
+
+		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(null);
+		EasyMock.replay(applicationServiceMock);
+		controller.getUploadReferencesPage(1, null);
+
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundexceptionIfCurrentUserNotRefereeOfApplicationForm() {
+		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+		authenticationToken.setDetails(userMock);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.replay(applicationServiceMock);
+		EasyMock.expect(userMock.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
+		EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
+		EasyMock.replay(userMock);
+		controller.getUploadReferencesPage(1, null);
+
+	}
+
+	@Test
+	public void shouldNotThrowResourceNotFoundexceptionIfCurrentUserNotRefereeOfApplicationFormButIsSuperADmin() {
+		RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
+		authenticationToken.setDetails(user);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.replay(applicationServiceMock);
+
+		assertNotNull(controller.getUploadReferencesPage(1, new ModelMap()));
+
+	}
+
+	@Test
+	public void shouldGetUploadReferencePageWithCorrectModelAttributes() {
+		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+		authenticationToken.setDetails(userMock);
+		ModelMap modelMap = new ModelMap();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(applicationForm);
+
+		Referee referee = new RefereeBuilder().id(1).toReferee();
+		EasyMock.expect(refereeServiceMock.getRefereeByUserAndApplication(userMock, applicationForm)).andReturn(referee);
+		EasyMock.expect(userMock.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
+		EasyMock.replay(applicationServiceMock, userMock, refereeServiceMock);
+		ModelAndView modelAndView = controller.getUploadReferencesPage(1, modelMap);
+
+		assertEquals("private/referees/upload_references", modelAndView.getViewName());
+		assertEquals(applicationForm, modelAndView.getModel().get("application"));
+		assertEquals(userMock, modelAndView.getModel().get("user"));
+		assertEquals(referee, modelAndView.getModel().get("referee"));
+	}
+
+	@Test
+	public void shouldReturnExpiredViewIfApplicationFormAlreadyDecided() {
+		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+		authenticationToken.setDetails(userMock);
+		ModelMap modelMap = new ModelMap();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).approvedSatus(ApprovalStatus.APPROVED).toApplicationForm();
+		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.replay(applicationServiceMock);
+		EasyMock.expect(userMock.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
+		EasyMock.replay(userMock);
+		ModelAndView modelAndView = controller.getUploadReferencesPage(1, modelMap);
+
+		assertEquals("private/referees/upload_references_expired", modelAndView.getViewName());
+		assertEquals(applicationForm, modelAndView.getModel().get("application"));
+		assertEquals(userMock, modelAndView.getModel().get("user"));
+	}
+
 	@Before
 	public void setup() {
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
@@ -149,17 +150,17 @@ public class ActivateRefereeControllerTest {
 		controller = new ActivateRefereeController(refereeServiceMock, applicationPageModelBuilderMock, applicationServiceMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).toUser();
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 
 		authenticationToken.setDetails(currentUser);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 	}
-	
+
 	@After
-	public void tearDown(){
+	public void tearDown() {
 		SecurityContextHolder.clearContext();
 	}
-	
+
 }

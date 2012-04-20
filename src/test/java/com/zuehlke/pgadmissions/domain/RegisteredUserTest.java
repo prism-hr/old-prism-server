@@ -317,9 +317,13 @@ public class RegisteredUserTest {
 			public boolean isRefereeOfApplicationForm(ApplicationForm form) {
 				return true;
 			}
+			@Override
+			public boolean canSee(ApplicationForm application) {				
+				return true;				
+			}
 			 
 		};
-		
+		user.setId(1);
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).user(user).toReferee();
 		Reference reference = new ReferenceBuilder().id(1).referee(referee).toReference();
 		assertTrue(user.canSeeReference(reference));

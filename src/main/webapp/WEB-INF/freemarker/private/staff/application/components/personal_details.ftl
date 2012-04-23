@@ -229,7 +229,7 @@
 	                
 	            <div class="comment">
 	               	
-	                   <#if applicationForm.hasComments() && user??>
+	               	<#if applicationForm.hasComments() && user??>
 		                   	<#assign prevComments = "true">
 		                	<div class="previous">
 		                    	<strong>Previous comments</strong>

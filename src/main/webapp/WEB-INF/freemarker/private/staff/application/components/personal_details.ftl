@@ -24,182 +24,202 @@
 
     <div id="personal-details-section" class="open">
 		<form method="post" method = "GET">
-                <input type ="hidden" id="view-type-personal-form" value="${viewType}"/>
-                <input type="hidden" name="id" value="${applicationForm.id?string("######")}"/>
-                <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
+            <input type ="hidden" id="view-type-personal-form" value="${viewType}"/>
+            <input type="hidden" name="id" value="${applicationForm.id?string("######")}"/>
+            <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
               	
-              	<!-- Basic Details -->
-              	<div>
+            <!-- Basic Details -->
+			<div class="sub_section_amdin">
 					
-					<div class="row">
-                  		<label class="label">First Name</label>
+				<div class="admin_row">
+                  		<label class="admin_row_label">First Name</label>
                     	<div class="field">
-                    		${(applicationForm.personalDetails.firstName?html)!}
+                    		${(applicationForm.personalDetails.firstName?html)!"Not Available"}
                     	</div>
-                    </div>
+                </div>
 
-                	<div class="row">
-	                  	<label class="label">Last Name</label>
+                <div class="admin_row">
+	                  	<label class="admin_row_label">Last Name</label>
     	                <div class="field">
-        	            	${(applicationForm.personalDetails.lastName?html)!}
+        	            	${(applicationForm.personalDetails.lastName?html)!"Not Available"}
             	        </div>
-                 	</div>
+                </div>
 
-                	<div class="row">
-                  		<label class="label">Gender</label>
+                <div class="admin_row">
+                  		<label class="admin_row_label">Gender</label>
                     	<div class="field">
-                      		${(applicationForm.personalDetails.gender?html)!}
+                      		${(applicationForm.personalDetails.gender?html)!"Not Available"}
                     	</div>
-                  	</div>
+                </div>
                 	
-                	<div class="row">
-                  		<label class="label">Date of Birth</label>
-                    	<div class="field">${(applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}</div>
-                  	</div>
+                <div class="admin_row">
+                  		<label class="admin_row_label">Date of Birth</label>
+                    	<div class="field">${(applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!"Not Available"}</div>
+                </div>
                 
-                </div>
-
 				<!-- Country -->
-              	<div>
-                	<div class="row">
-                        <label class="label">Nationality</label>
+                <div class="admin_row">
+                  	<span class="admin_row_label">Country of Birth</span>
+                    <div class="field">
+                    	${(applicationForm.personalDetails.country.name?html)!"Not Available"}
                     </div>
-                	<div class="row">
-                  		<span class="label">Country of Birth</span>
-                    	<div class="field">
-                    		${(applicationForm.personalDetails.country.name?html)!}
-                    	</div>
-                  	</div>
-               </div>   	
-                  	
-                  	<div>
-                  	<label class="label">My Nationality</label>  
-                  	<#list applicationForm.personalDetails.candidateNationalities as nationality >
-                        <span name="existingCandidateNationality">
-                                <div class="field">
-                                    <label class="full">${nationality.name}</label>  
-                                    <input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
-                                </div>
-                        </span>                         
-                      </#list>
-                    </div>
-                     
-                 <!--Maternal guardian nationality -->
-                        <div>
-                     <#if (applicationForm.personalDetails.maternalGuardianNationalities?size > 0)>
-                        <label class="label">Maternal Guardian Nationality</label>    
-                        <#list applicationForm.personalDetails.maternalGuardianNationalities as nationality >
-                            <span>
-                                    <div class="field">
-                                        <label class="full">${nationality.name}</label>  
-                                        <input type="hidden" name="maternalGuardianNationalities" value='${nationality.id}'/>
-                                    </div>
-                            </span>
-                          </#list>
-                      <#else>
-                         <span>
-                            <div class="row">
-                                <label class="label">Maternal Guardian Nationality</label>    
-                                <div class="field">-</div>
-                            </div>            
-                        </span>
-                      </#if>
-                      </div>
-                 
-                  <!--Paternal guardian nationality -->
-                  <div>
-                    <#if (applicationForm.personalDetails.paternalGuardianNationalities?size > 0)>
-                        <label class="label">Paternal Guardian Nationality</label>    
-                        <#list applicationForm.personalDetails.paternalGuardianNationalities as nationality >
-                            <span>
-                                    <div class="field">
-                                        <label class="full">${nationality.name}</label>  
-                                        <input type="hidden" name="paternalGuardianNationalities" value='${nationality.id}'/>
-                                    </div>
-                            </span>
-                        </#list>
+				</div>
+                
+                <!-- My Nationality -->  	
+                	<#if (applicationForm.personalDetails.candidateNationalities?size > 0)>
+                  		<#list applicationForm.personalDetails.candidateNationalities as nationality >
+                  			<#assign index_k = nationality_index>
+	                  		<#if (index_k == 0)>
+	                  			<div class="admin_row">
+                					<label class="admin_row_label">My Nationality</label>
+	                    			<span name="existingCandidateNationality">
+	                        			<div class="field">
+	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
+	                            		</div>
+	                       			</span>
+	                       		</div>
+	                       	<#else>
+	                       		<div class="admin_row">
+	                    			<span name="existingCandidateNationality">
+	                        			<div class="field">
+	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
+	                            		</div>
+	                       			</span>
+	                       		</div>
+	                       	</#if>                         
+	                    </#list>
                     <#else>
-                         <span>
-                            <div class="row">
-                                <label class="label">Paternal Guardian Nationality</label>    
-                                <div class="field">-</div>
-                            </div>            
-                        </span>
-                      </#if>
-                      </div>
-
-				<div>
-				    <div class="row">
-                        <label class="label">Language</label>
-                    </div>
-              	     <div class="row">
-						<span class="label">Is English your first language?</span>
-						<div class="field">
-                    		<#if applicationForm.personalDetails.englishFirstLanguage>
-                    		Yes
-                    		<#else>
-                    		No
-                    		</#if>
+                    	<div class="admin_row">
+                			<label class="admin_row_label">My Nationality</label>
+                    		<div class="field">Not Available.</div>
                     	</div>
-					</div>                              
-                </div>
+                    </#if>
+                
+                 
+                 <!--Maternal guardian nationality -->   
+                	<#if (applicationForm.personalDetails.maternalGuardianNationalities?size > 0)>
+                  		<#list applicationForm.personalDetails.maternalGuardianNationalities as nationality >
+                  			<#assign index_i = nationality_index>
+	                  		<#if (index_i == 0)>
+	                  			<div class="admin_row">
+                					<label class="admin_row_label">Maternal Guardian Nationality</label>
+	                    			<span name="existingCandidateNationality">
+	                        			<div class="field">
+	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
+	                            		</div>
+	                       			</span>
+	                       		</div>
+	                       	<#else>
+	                       		<div class="admin_row">
+	                    			<span name="existingCandidateNationality">
+	                        			<div class="field">
+	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
+	                            		</div>
+	                       			</span>
+	                       		</div>
+	                       	</#if>                         
+	                    </#list>
+                    <#else>
+                    	<div class="admin_row">
+                			<label class="admin_row_label">Maternal Guardian Nationality</label>
+                    		<div class="field">Not Available.</div>
+                    	</div>
+                    </#if>
+                    
+                  <!--Paternal guardian nationality -->
+                	<#if (applicationForm.personalDetails.paternalGuardianNationalities?size > 0)>
+                  		<#list applicationForm.personalDetails.paternalGuardianNationalities as nationality >
+                  			<#assign index_j = nationality_index>
+	                  		<#if (index_j == 0)>
+	                  			<div class="admin_row">
+                					<label class="admin_row_label">Paternal Guardian Nationality</label>
+	                    			<span name="existingCandidateNationality">
+	                        			<div class="field">
+	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
+	                            		</div>
+	                       			</span>
+	                       		</div>
+	                       	<#else>
+	                       		<div class="admin_row">
+	                    			<span name="existingCandidateNationality">
+	                        			<div class="field">
+	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
+	                            		</div>
+	                       			</span>
+	                       		</div>
+	                       	</#if>                         
+	                    </#list>
+                    <#else>
+                    	<div class="admin_row">
+                			<label class="admin_row_label">Paternal Guardian Nationality</label>
+                    		<div class="field">Not Available.</div>
+                    	</div>
+                    </#if>                  
+                  
+
+				<div class="admin_row">
+					<span class="admin_row_label">Is English your first language?</span>
+					<div class="field">
+                    	<#if applicationForm.personalDetails.englishFirstLanguage>Yes
+                    	<#else>No</#if>
+                    </div>
+				</div>                              
 		
 				<!-- Nationality -->
-              	<div>
-                	
-                	<label class="label">Residence</label>  
-                	<div class="row">
-                  		<span class="label">Country of Residence</span>
-                    	<div class="field">
-                      		${(applicationForm.personalDetails.residenceCountry.name?html)!}
-                    	</div>
-                  	</div>
+                <div class="admin_row">
+                  	<span class="admin_row_label">Country of Residence</span>
+                    <div class="field">
+                      	${(applicationForm.personalDetails.residenceCountry.name?html)!"Not Available"}
+                    </div>
+                </div>
                   	
-                  	<div class="row">
-                        <span class="label">Do you require a visa to study in the UK?</span>
-                        <div class="field">
-                            <#if applicationForm.personalDetails.requiresVisa>
-                            Yes
-                            <#else>
-                            No
-                            </#if>
-                        </div>
-                    </div> 
+                <div class="admin_row">
+                	<span class="admin_row_label">Do you require a visa to study in the UK?</span>
+                    <div class="field">
+                    	<#if applicationForm.personalDetails.requiresVisa>
+                        	Yes
+                        <#else>No</#if>
+                    </div>
+                </div> 
                   	
+				<!-- Contact Details -->
+                <div class="admin_row">
+                	<span class="admin_row_label">Email</span>
+                    <div class="field">
+	                    ${(applicationForm.personalDetails.email?html)!"Not Available"}
+                    </div>
+                </div>
+                
+              	<div class="admin_row">
+                	<span class="admin_row_label">Telephone</span>
+                    <div class="field">
+	                	${(applicationForm.personalDetails.phoneNumber?html)!"Not Available"}
+                    </div>
+                </div>
+              	
+				<div class="admin_row">
+                	<span class="admin_row_label">Skype Name</span>
+                    <div class="field">
+                    	&nbsp
+	                    ${(applicationForm.personalDetails.messenger?html)!"Not Available"}
+                    </div>
                 </div>
 
-				<!-- Contact Details -->
-              	<div>
-                	
-                	<strong>Contact Details</strong>
-                	<div class="row">
-                		<span class="label">Email</span>
-                    	<div class="field">
-	                    	${(applicationForm.personalDetails.email?html)!}
-                    	</div>
-                  	</div>
-                
-              		<div class="row">
-                		<span class="label">Telephone</span>
-                    	<div class="field">
-	                    	${(applicationForm.personalDetails.phoneNumber?html)!}
-                    	</div>
-                  	</div>
-              		<div class="row">
-                		<span class="label">Skype Name</span>
-                    	<div class="field">
-	                    	${(applicationForm.personalDetails.messenger?html)!}
-                    	</div>
-                  	</div>
-                 </div>
-
-              	<div class="buttons" id="show-comment-button-div">
+			</div>
+            
+            <div class="buttons" id="show-comment-button-div">
               		<#if user??>
                 		<a class="button blue comment-open" id="comment-button">Comments</a>
                 	</#if>
                 	 <a id="personalDetailsCloseButton"class="button blue">Close</a>
-                </div>
-
+            </div>
+			
 		</form>
 		
 		<#if user??>

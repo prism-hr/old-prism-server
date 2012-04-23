@@ -8,9 +8,11 @@
 		<form>
             <div class="sub_section_amdin">
 				<div class="admin_row">
-	        		<span class="admin_row_label">Personal Statement</span>	        	
-	        		<a href="<@spring.url '/download?documentId=${(applicationForm.personalStatement.id?string("#######"))!}'/>">
-	        						${(applicationForm.personalStatement.fileName)!}</a></span>						
+	        		<span class="admin_row_label">Personal Statement</span>
+	        		<div class="field">	        	
+	        			<a href="<@spring.url '/download?documentId=${(applicationForm.personalStatement.id?string("#######"))!}'/>">
+	        						${(applicationForm.personalStatement.fileName)!}</a></span>
+	        		</div>						
 	        	</div>  
       		
 	      		 <div class="admin_row">

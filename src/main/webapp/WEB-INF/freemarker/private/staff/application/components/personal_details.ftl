@@ -206,7 +206,6 @@
 				<div class="admin_row">
                 	<span class="admin_row_label">Skype Name</span>
                     <div class="field">
-                    	&nbsp
 	                    ${(applicationForm.personalDetails.messenger?html)!"Not Available"}
                     </div>
                 </div>

@@ -13,101 +13,77 @@
 
 	<div>
 	
-		<#if hasFundings>
-			<table class="existing">
-				
-				<colgroup>
-	            	<col style="width: 30px" />
-	                <col style="width: 120px" />
-	                <col style="width: 120px" />
-	                
-	                <col />
-	                <col style="width: 120px" />
-	                <col style="width: 30px" />
-
-	        	</colgroup>
-	            
-	            <thead>
-					<tr>
-	                	<th colspan="2">Funding Type</th>
-	                    <th>Description</th>
-	                    <th>Award Date</th>
-	                    <th colspan="1">&nbsp;</th>
-                        <th id="last-col">&nbsp;</th>
-	                  
-					</tr>
-				</thead>
-	                
-				<tbody>
-				
-					<#list applicationForm.fundings as funding>		
-						<tr>
-		                  	<td><a class="row-arrow">-</a></td>
-		                  	<td>${funding.type.displayValue}</td>
-		                  	<td>${funding.description?html}</td>
-		                  	<td>${funding.awardDate?string('dd-MMM-yyyy')}</td>
-		                  	<input type="hidden" id="${funding.id?string('#######')}_fundingIdDP" value="${funding.id?string('#######')}"/>
-                            <input type="hidden" id="${funding.id?string('#######')}_fundingTypeDP" value="${funding.type?html}"/>
-                            <input type="hidden" id="${funding.id?string('#######')}_fundingValueDP" value="${funding.value?html}"/>
-                            <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description?html}"/>
-                            <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
-                            <input type="hidden" id="${funding.id?string('#######')}_docname" value="${(funding.document.fileName?html)!}"/>
-                            <input type="hidden" id="${funding.id?string('#######')}_docurl" value="/pgadmissions/download?documentId=${(funding.document.id?string("#######"))!}"/>
-                            <td><a name="fundingEditButton" data-desc="Show" id="funding_${funding.id?string('#######')}" class="button-edit button-hint">edit</a></td>
-		                </tr>
-					</#list>				               
-				</tbody>
-			
-			</table>
-        </#if>
-        <!-- Non-rendering data -->
-        <input type="hidden" id="fundingId" name="fundingId"/>
-              
+	
 		<form>
-                
-			<div>
-				<!-- Award type -->
-                <div class="row">
-                  	<span class="label">Funding Type</span>             
-                	 <div class="field" id="fundingType">&nbsp; </div>
-				</div>
+			<#if hasFundings>
+		            
+				<#list applicationForm.fundings as funding>		
+				
+					<!-- All hidden input - Start -->
+					
+			    	<input type="hidden" id="${funding.id?string('#######')}_fundingIdDP" value="${funding.id?string('#######')}"/>
+	                <input type="hidden" id="${funding.id?string('#######')}_fundingTypeDP" value="${funding.type?html}"/>
+	                <input type="hidden" id="${funding.id?string('#######')}_fundingValueDP" value="${funding.value?html}"/>
+	                <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description?html}"/>
+	                <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
+	                <input type="hidden" id="${funding.id?string('#######')}_docname" value="${(funding.document.fileName?html)!}"/>
+	                <input type="hidden" id="${funding.id?string('#######')}_docurl" value="/pgadmissions/download?documentId=${(funding.document.id?string("#######"))!}"/>
+	                
+	        		<input type="hidden" id="fundingId" name="fundingId"/>                
+					
+			    	<!-- All hidden input - End --> 
+	                		
+	                <!-- Rendering part - Start -->
+		        	<div class="sub_section_amdin">
 
-                <!-- Award description -->
-                <div class="row">
-                	<span class="label" >Description</span>
-                  					 <div class="field" id="fundingDescription">&nbsp; </div>
-				</div>
-                  
-                <!-- Value of award -->
-                <div class="row">
-                  	<span class="label">Value of Award</span>
+						<!-- Header -->
+					    <div class="admin_row">
+					    	<label class="admin_header">Funding (${funding_index + 1})</label>
+					         <div class="field">&nbsp</div>
+						</div>
 
-                 <div class="field"  id="fundingValue">&nbsp; </div>
-				</div>
-                  
-                <!-- Award date -->
-                <div class="row">
-                                    	<span class="label">Award Date</span>
-                    
-                     <div class="field" id="fundingAwardDate">&nbsp; </div>
-                </div>
-                
-                  <!-- Award date -->
-                <div class="row">
-                                    	<span class="label">Proof of award</span>
-                    
-                     <div class="field" id="proofOfAward">&nbsp; </div>
-                </div>
-                
-                <!--  
-                <div class="row">
-                  	<span class="label">Supporting Document</span>
-                    <span class="hint" data-desc="Tooltip demonstration."></span>
-                    <div class="field">
-                    </div>	
-				</div> -->
-
-			</div>
+						<!-- Award type -->
+		                <div class="admin_row">
+		                	<span class="admin_row_label">Funding Type</span>             
+		                	<div class="field" id="fundingType">${(funding.type?html)!"Not Available"}</div>
+						</div>
+		
+		                <!-- Award description -->
+		                <div class="admin_row">
+		                	<span class="admin_row_label" >Description</span>
+		                  	<div class="field" id="fundingDescription">${(funding.description?html)!"Not Available"}</div>
+						</div>
+		                  
+		                <!-- Value of award -->
+		                <div class="admin_row">
+		                  	<span class="admin_row_label">Value of Award</span>
+		                 	<div class="field"  id="fundingValue">${(funding.value?html)!"Not Available"}</div>
+						</div>
+		                  
+		                <!-- Award date -->
+		                <div class="admin_row">
+		                    <span class="admin_row_label">Award Date</span>
+		                    <div class="field" id="fundingAwardDate">${funding.awardDate?string('dd-MMM-yyyy')!"Not Available"}</div>
+		                </div>
+		                
+		                  <!-- Award date -->
+		                <div class="admin_row">
+							<span class="admin_row_label">Proof of award</span>
+							<#if funding.document?has_content>
+								<div class="field"  id="proofOfAward">
+					        		<a href="<@spring.url '/pgadmissions/download?documentId=${(funding.document.id?string("#######"))!}'/>">
+					            		${(funding.document.fileName?html)!}</a>
+					            </div>
+					        <#else> 
+					        	<div class="field" id="referenceDocument">Not Provided.</div> 
+					        </#if>
+							
+		                </div>
+		                
+					</div>
+	                
+				</#list>				               
+	        </#if>
 
 			<div class="buttons">
 				<button class="blue" id="fundingCloseButton"  type="button">Close</button>

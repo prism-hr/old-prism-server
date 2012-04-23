@@ -17,9 +17,10 @@
       		
 	      		 <div class="admin_row">
 	        		<span class="admin_row_label">CV / resume</span>       	       	
-	          		
-					<a href="<@spring.url '/download?documentId=${(applicationForm.cv.id?string("#######"))!}'/>">${(applicationForm.cv.fileName)!}</a></span>		
-	        		
+	          		<div class="field">
+						<a href="<@spring.url '/download?documentId=${(applicationForm.cv.id?string("#######"))!}'/>">
+									${(applicationForm.cv.fileName)!}</a></span>
+					</div>
 	      		</div>
       		</div>
       		

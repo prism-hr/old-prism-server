@@ -387,7 +387,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public Referee getRefereeForApplicationForm(ApplicationForm applicationForm) {
 		for (Referee referee : referees) {
-			if (referee.getApplication() != null && referee.getApplication().equals(applicationForm)) {
+			if (referee.getApplication() != null && referee.getApplication().equals(applicationForm) && !referee.isDeclined()) {
 				return referee;
 			}
 		}

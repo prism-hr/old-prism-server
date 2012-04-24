@@ -70,7 +70,13 @@
 								</div>			          			
 							</form>		     
 		          			<!---------- End Reference -------------->
-		          					          			
+		          			<hr/>
+		          			<#if !reference.id?? >
+		          			<p>If you are not able to act as a referee in this case, please let us know by clicking the "Decline" button below.</p>
+		          				<div class="buttons">				
+					                <button class="blue" type="button" id="declineReference" value="close">Decline</button>              
+								</div>	
+		          			</#if>			          			
 		          			
 		        		</div><!-- .content-box-inner -->
 		      		</div><!-- .content-box -->
@@ -99,17 +105,4 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/referee/reference.js'/>"></script>
 	</body>
-</html>
-
-
-<html>
-<#import "/spring.ftl" as spring />
-
-    
-    <div>
-    	
-
-	</div>
-	
-
 </html>

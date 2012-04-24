@@ -26,7 +26,12 @@ public class RefereeBuilder {
 	private RegisteredUser user;
 
 	private String phoneNumber;
-
+	private boolean declined;
+	
+	public RefereeBuilder declined(boolean declined){
+		this.declined = declined;
+		return this;
+	}
 	public RefereeBuilder phoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 		return this;
@@ -114,6 +119,7 @@ public class RefereeBuilder {
 		referee.setReference(reference);
 		referee.setUser(user);
 		referee.setPhoneNumber(phoneNumber);
+		referee.setDeclined(declined);
 		return referee;
 	}
 }

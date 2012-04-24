@@ -61,15 +61,3 @@
 	</body>
 </html>
 
-
-<html>
-<#import "/spring.ftl" as spring />
-
-    
-    <div>
-    	
-
-	</div>
-	
-
-</html>

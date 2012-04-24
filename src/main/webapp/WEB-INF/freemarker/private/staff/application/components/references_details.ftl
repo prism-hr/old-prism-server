@@ -129,7 +129,7 @@
 					                  		<a href="<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/>">
 					                  			${referee.reference.document.fileName?html}</a>
 					                  	<#else> 
-					                  		<div class="field" id="referenceDocument">Not Provided.</div> 
+					                  		<div class="field grey-label" id="referenceDocument">Not Provided.</div> 
 					                  	</#if>
 				                    </div>		              
 				                    <div class="admin_row">			        
@@ -137,7 +137,7 @@
 					                  	<#if referee.hasProvidedReference() >
 					                  		${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
 					                  	<#else> 
-					                  		<div class="field" id="referenceUpdated">Not Provided.</div> 
+					                  		<div class="field grey-label" id="referenceUpdated">Not Provided.</div> 
 					                  	</#if>
 				                    </div>
 				               

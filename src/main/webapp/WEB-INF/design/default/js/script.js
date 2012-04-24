@@ -1,6 +1,17 @@
 $(document).ready(function()
 {
   
+  // Toggle grey-label class where you find instances of "Not Provided" text.
+	$('.field').each(function(){
+		 
+		 var strValue = $(this).text();
+		
+		 if(strValue.match("Not Provided")){
+			 $(this).toggleClass('grey-label');
+		 }
+		 
+	});
+	
   //$('body.old-ie button').wrap('<span />');
 	
 	  

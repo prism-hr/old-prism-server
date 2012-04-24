@@ -93,7 +93,7 @@
                     <#else>
                     	<div class="admin_row">
                 			<label class="admin_row_label">My Nationality</label>
-                    		<div class="field">Not Provided.</div>
+                    		<div class="field">Not Provided</div>
                     	</div>
                     </#if>
                 
@@ -126,7 +126,7 @@
                     <#else>
                     	<div class="admin_row">
                 			<label class="admin_row_label">Maternal Guardian Nationality</label>
-                    		<div class="field">Not Provided.</div>
+                    		<div class="field">Not Provided</div>
                     	</div>
                     </#if>
                     
@@ -158,7 +158,7 @@
                     <#else>
                     	<div class="admin_row">
                 			<label class="admin_row_label">Paternal Guardian Nationality</label>
-                    		<div class="field">Not Provided.</div>
+                    		<div class="field">Not Provided</div>
                     	</div>
                     </#if>                  
                   

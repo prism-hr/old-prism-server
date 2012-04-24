@@ -113,7 +113,7 @@
             	  		<div class="sub_section_amdin">
 							<div class="row">
 				            	<label class="admin_header">Supervision</label>
-				            	<div class="field">Not Provided.</div>
+				            	<div class="field">Not Provided</div>
 				           	</div>
 				        </div>
             	  	</#if>

@@ -105,7 +105,7 @@
 		                     
 		                <div class="row">
 		                	<span class="admin_row_label">Employment</span>                 
-		                    <div class="field grey-label">Not Provided</div>
+		                    <div class="field">Not Provided</div>
 		                </div>
 		            	
 					</div>

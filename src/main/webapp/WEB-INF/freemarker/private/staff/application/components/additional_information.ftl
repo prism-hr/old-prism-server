@@ -10,7 +10,7 @@
         	<!-- Free text field for info. -->
             <div class="row">
     	        <span class="plain-label">Additional information</span>
-				<div class="field">${(applicationForm.additionalInformation?html)!"Not Available"}</div>
+				<div class="field">${(applicationForm.additionalInformation?html)!"Not Provided"}</div>
 			</div>
             <div class="buttons">
                 <button class="blue" id="additionalCloseButton" type="button">Close</button>

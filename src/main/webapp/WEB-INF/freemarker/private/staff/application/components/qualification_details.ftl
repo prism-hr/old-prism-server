@@ -112,67 +112,12 @@
 						<div class="sub_section_amdin">
 							
 		                  	<!-- Provider -->
-		                  	<div class="admin_row">
-	                            <span class="admin_row_label">Institution Country</span>
-	                            <div class="field" id="qualificationInstitutionCountry">Not Available</div>
+		                  	<div class="row">
+	                            <span class="admin_row_label">Qualification</span>
+	                            <div class="field grey-label">Not Provided</div>
 	                        </div>
 	                  	
-		                	<div class="admin_row">
-			                  	<span class="admin_row_label">Institution / Provider Name</span>
-			                    <div class="field" id="qualificationInstitution">Not Available</div>
-		                  	</div>
-		                  
-		                  	<!-- Type -->
-		                	<div class="admin_row">
-			                  	<span class="admin_row_label">QualificationType</span>
-			                    <div class="field" id="qualificationType">Not Available</div>
-		             		</div>
-		             		
-		             		<!-- Title / Subject -->
-	                        <div class="admin_row">
-	                            <span class="admin_row_label">Title / Subject</span>
-		                        <div class="field" id="qualificationSubject">Not Available</div>
-	                        </div>
-		             		
-		             		<!-- Language (in which programme was undertaken) -->
-	                        <div class="admin_row">
-	                            <span class="admin_row_label">Language of Study</span>
-		                        <div class="field" id="qualificationLanguage">Not Available</div>
-	                        </div>
-	                  
-		                  	<!-- Start date -->
-	                		<div class="admin_row">
-		                  		<span class="admin_row_label">Start Date</span>
-			                    <div class="field" id="qualificationStartDate">Not Available</div>
-		                 	</div>
-	    	             	<div class="admin_row">
-            	                <span class="admin_row_label">Has this qualification been awarded?</span>                  	
-               				    <div class="field" id="qualificationCompleted">
-               				    	Not Available
-								</div>
-	                		</div>
-                  		
-	                  		<!-- Qualification grade -->
-	                  		<div class="admin_row">
-	                    		<span class="admin_row_label">Grade / Result /GPA</span>
-	                    		<div class="field" id="qualificationGrade">Not Available</div>
-	                  		</div>
-                  
-	                  		<!-- Award date -->
-    	              		<div class="admin_row">
-        	            		<span class="admin_row_label">Award Date</span>
-            	        		<div class="field" id="qualificationAwardDate">
-            	        				Not Available</div>
-                	  		</div>
-
-	                  		<!-- Attachment / supporting document  -->
-    	              		<div class="admin_row">
-        	            		<span class="admin_row_label">Proof of award (PDF)</span>
-					            <div class="field" id="referenceDocument">Not Available</div> 
-                	  		</div>
-                	  		
 						</div>							               
-              		
               	
               	</#if>
               	

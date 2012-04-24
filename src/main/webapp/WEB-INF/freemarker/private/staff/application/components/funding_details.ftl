@@ -75,7 +75,7 @@
 					            		${(funding.document.fileName?html)!}</a>
 					            </div>
 					        <#else> 
-					        	<div class="field" id="referenceDocument">Not Provided.</div> 
+					        	<div class="field" id="referenceDocument">Not Provided</div> 
 					        </#if>
 							
 		                </div>
@@ -92,7 +92,7 @@
 						<!-- Award type -->
 		                <div class="row">
 		                	<span class="admin_row_label">Funding</span>             
-		                	<div class="field grey-label">Not Provided</div>
+		                	<div class="field">Not Provided</div>
 						</div>
 		                
 					</div>

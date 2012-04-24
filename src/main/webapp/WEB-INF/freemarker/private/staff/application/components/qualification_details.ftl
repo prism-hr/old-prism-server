@@ -102,7 +102,7 @@
 	                  		<!-- Attachment / supporting document  -->
     	              		<div class="admin_row">
         	            		<span class="admin_row_label">Proof of award (PDF)</span>
-					            <div class="field" id="referenceDocument">Not Provided.</div> 
+					            <div class="field" id="referenceDocument">Not Provided</div> 
                 	  		</div>
                 	  		
 						</div>							               
@@ -114,7 +114,7 @@
 		                  	<!-- Provider -->
 		                  	<div class="row">
 	                            <span class="admin_row_label">Qualification</span>
-	                            <div class="field grey-label">Not Provided</div>
+	                            <div class="field">Not Provided</div>
 	                        </div>
 	                  	
 						</div>							               

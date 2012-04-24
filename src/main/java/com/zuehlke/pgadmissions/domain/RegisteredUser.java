@@ -208,19 +208,19 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 
-		if (isInRole(Authority.REVIEWER)) {
+		if (isInRole(Authority.REVIEWER) && !applicationForm.isInValidationStage()) {
 			if(applicationForm.getReviewers().contains(this)){
 				return true;
 			}			
 		}
 
-		if (isInRole(Authority.APPROVER)) {
+		if (isInRole(Authority.APPROVER) && !applicationForm.isInValidationStage()) {
 			if(applicationForm.getProject().getProgram().isApprover(this)){
 				return true;
 			}
 		}
 		
-		if (isInRole(Authority.REFEREE)) {
+		if (isInRole(Authority.REFEREE) && !applicationForm.isInValidationStage()) {
 			List<Referee> referees = applicationForm.getReferees();
 			for (Referee referee : referees) {
 				if(referee.getUser()!=null){

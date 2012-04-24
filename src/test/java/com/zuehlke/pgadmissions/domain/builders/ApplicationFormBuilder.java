@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.domain.enums.ValidationStage;
 
 public class ApplicationFormBuilder {
 
@@ -41,12 +42,16 @@ public class ApplicationFormBuilder {
 	private Project project;
 
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
+	
+	private ValidationStage validationStage = ValidationStage.FALSE;
 
 	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 
 	private Date appDate;
 
 	private Date submittedDate;
+	
+	private Date validationDueDate;
 
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
 
@@ -163,6 +168,11 @@ public class ApplicationFormBuilder {
 		this.submissionStatus = submissionStatus;
 		return this;
 	}
+	
+	public ApplicationFormBuilder validationStage(ValidationStage validationStage) {
+		this.validationStage = validationStage;
+		return this;
+	}
 
 	public ApplicationFormBuilder appDate(Date date) {
 		this.appDate = date;
@@ -174,6 +184,12 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
+	
+	public ApplicationFormBuilder validationDueDate(Date validationDueDate) {
+		this.validationDueDate = validationDueDate;
+		return this;
+	}
+	
 	public ApplicationForm toApplicationForm() {
 		ApplicationForm application = new ApplicationForm();
 		application.setId(id);
@@ -196,6 +212,8 @@ public class ApplicationFormBuilder {
 		application.setContactAddress(contactAddress);
 		application.setCurrentAddress(currentAddress);
 		application.setPersonalDetails(personalDetails);
+		application.setValidationStage(validationStage);
+		application.setValidationDueDate(validationDueDate);
 		return application;
 	}
 }

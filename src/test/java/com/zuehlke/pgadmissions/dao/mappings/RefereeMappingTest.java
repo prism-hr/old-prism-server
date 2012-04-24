@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +34,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).addressLocation("loc")
-				.email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").phoneNumber("phoneNumber")
+				.email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").phoneNumber("phoneNumber").declined(true)
 				.toReferee();
 
 		sessionFactory.getCurrentSession().save(referee);
@@ -60,7 +61,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(referee.getLastname(), reloadedReferee.getLastname());
 
 		assertEquals(referee.getPhoneNumber(), reloadedReferee.getPhoneNumber());
-
+		assertTrue(reloadedReferee.isDeclined());
 
 	}
 

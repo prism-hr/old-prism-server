@@ -66,7 +66,7 @@ public class Referee extends DomainObject<Integer>{
 	@Column(name="email")
 	private String email;
 	
-
+	private boolean declined = false;
 	
 	public ApplicationForm getApplication() {
 		return application;
@@ -198,6 +198,14 @@ public class Referee extends DomainObject<Integer>{
 
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	public boolean isDeclined() {
+		return declined;
+	}
+
+	public void setDeclined(boolean declined) {
+		this.declined = declined;
 	}
 
 }

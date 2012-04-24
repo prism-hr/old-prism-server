@@ -80,6 +80,7 @@ public class ReferenceController {
 	public Reference getReference(@RequestParam Integer application) {
 		Referee referee = getCurrentUser().getRefereeForApplicationForm(getApplicationForm(application));
 		if (referee.getReference() == null) {
+			
 			Reference reference = new Reference();
 			reference.setReferee(referee);
 			return reference;

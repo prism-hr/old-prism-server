@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
-
-import java.util.Date;
+import static org.junit.Assert.assertNull;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -16,9 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Reference;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -32,7 +28,6 @@ import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.RefereeValidator;
 import com.zuehlke.pgadmissions.validators.ReferenceValidator;
 
 public class ReferenceControllerTest {
@@ -188,6 +183,7 @@ public class ReferenceControllerTest {
 		EasyMock.verify(refereeServiceMock);
 		assertEquals(reference, referee.getReference());
 	}
+	
 
 	@Before
 	public void setUp() {

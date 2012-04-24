@@ -379,4 +379,14 @@ public class RegisteredUserTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
 		assertNull(user.getRefereeForApplicationForm(applicationForm));
 	}
+	
+	@Test
+	public void shouldReturnNullIfDeclinedToRefereeForApplicationForm(){
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
+		Referee refereeOne = new RefereeBuilder().id(7).user(user).declined(true).application(applicationForm).toReferee();
+		Referee refereeTwo = new RefereeBuilder().id(8).user(new RegisteredUserBuilder().id(9).toUser()).application(new ApplicationFormBuilder().id(78).toApplicationForm()).toReferee();
+		user.setReferees(Arrays.asList(refereeOne, refereeTwo));
+		assertNull(user.getRefereeForApplicationForm(applicationForm));
+	}
 }

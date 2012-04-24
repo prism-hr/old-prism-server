@@ -28,6 +28,7 @@ import org.hibernate.annotations.Type;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.domain.enums.ValidationStage;
 
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD)
@@ -48,6 +49,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@ManyToOne
 	@JoinColumn(name = "cv_id")
 	private Document cv = null;
+	
+	@Temporal(TemporalType.DATE)
+	@Column(name="validation_due_date")
+	private Date validationDueDate;
+	
 
 	@ManyToOne
 	@JoinColumn(name = "personal_statement_id")
@@ -64,6 +70,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApprovalStatusEnumUserType")
 	@Column(name = "approval_status")
 	private ApprovalStatus approvalStatus;
+	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ValidationStageEnumUserType")
+	@Column(name = "validation_stage")
+	private ValidationStage validationStage;
 
 	@ManyToOne
 	@JoinColumn(name = "applicant_id")
@@ -211,6 +221,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public boolean isSubmitted() {
 		return submissionStatus == SubmissionStatus.SUBMITTED;
 	}
+	
+	public boolean isInValidationStage() {
+		return validationStage == ValidationStage.TRUE;
+	}
 
 	@Override
 	public int compareTo(ApplicationForm appForm) {
@@ -331,6 +345,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public Address getCurrentAddress() {
 		return currentAddress;
 	}
+	
+	public boolean isInValidationDueDate() {
+		return false;
+	}
 
 	public void setCurrentAddress(Address currentAddress) {
 		this.currentAddress = currentAddress;
@@ -363,5 +381,21 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		&& this.fundings.isEmpty() && this.referees.isEmpty() 
 		&& this.personalStatement == null && this.cv == null
 		&& StringUtils.isBlank(this.additionalInformation);
+	}
+
+	public ValidationStage getValidationStage() {
+		return validationStage;
+	}
+
+	public void setValidationStage(ValidationStage validationStage) {
+		this.validationStage = validationStage;
+	}
+
+	public Date getValidationDueDate() {
+		return validationDueDate;
+	}
+
+	public void setValidationDueDate(Date validationDueDate) {
+		this.validationDueDate = validationDueDate;
 	}
 }

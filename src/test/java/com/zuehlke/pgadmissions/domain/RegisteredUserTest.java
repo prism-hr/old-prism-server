@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import gherkin.lexer.i18n.RU;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.domain.enums.ValidationStage;
 
 public class RegisteredUserTest {
 
@@ -103,6 +106,31 @@ public class RegisteredUserTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		assertTrue(administrator.canSee(applicationForm));
 
+	}
+	
+	@Test
+	public void shouldReturnTrueIfUserReviewerAndApplicationInNotValidateStage() {
+		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		reviewers.add(reviewer);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewers).submissionStatus(SubmissionStatus.SUBMITTED).validationStage(ValidationStage.FALSE).toApplicationForm();
+		assertTrue(reviewer.canSee(applicationForm));
+		
+	}
+	
+	@Test
+	public void shouldReturnFalseIfUserApproverAndApplicationInValidateStage() {
+		RegisteredUser approver = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().approver(approver).submissionStatus(SubmissionStatus.SUBMITTED).validationStage(ValidationStage.TRUE).toApplicationForm();
+		assertFalse(approver.canSee(applicationForm));
+		
+	}
+	@Test
+	public void shouldReturnTrueIfUserAdminAndApplicationInValidateStage() {
+		RegisteredUser administrator = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).validationStage(ValidationStage.TRUE).toApplicationForm();
+		assertTrue(administrator.canSee(applicationForm));
+		
 	}
 
 	@Test

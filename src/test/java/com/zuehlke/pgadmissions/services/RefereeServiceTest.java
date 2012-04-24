@@ -284,7 +284,80 @@ public class RefereeServiceTest {
 		EasyMock.verify(refereeDAOMock);
 	}
 
+
+	@Test
+	public void shouldSaveRefereeAndSendDeclineNotification() throws UnsupportedEncodingException{		
+		
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).project(new ProjectBuilder().program(new Program()).toProject()).toApplicationForm();
+		referee.setApplication(form);
+		
+		refereeDAOMock.save(referee);
+		
+		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);		
+		
+		InternetAddress toAddress = new InternetAddress("email3@test.com", "fred freddy");
+				
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Referee declined"),EasyMock.eq("private/pgStudents/mail/reference_declined_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
+		javaMailSenderMock.send(preparatorMock);
+		
 	
+		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock);
 	
+		
+		refereeService.saveReferenceAndSendDeclineNotifications(referee);
+		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock,refereeDAOMock);
+		
+	}
+	@Test
+	public void shouldNotSendDeclineNotificationIfSaveFails() throws UnsupportedEncodingException{		
+		
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).project(new ProjectBuilder().program(new Program()).toProject()).toApplicationForm();
+		referee.setApplication(form);
+		
+		refereeDAOMock.save(referee);
+		EasyMock.expectLastCall().andThrow(new RuntimeException("aaaaaaarrrrhh"));
+		
+				
+		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock);
 	
+		try{
+		refereeService.saveReferenceAndSendDeclineNotifications(referee);
+		}catch (Exception e) {
+			//expected..ignore
+		}
+		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock,refereeDAOMock);
+		
+	}
+	@Test
+	public void shouldTNotFailEmailNotificationFails() throws UnsupportedEncodingException{		
+		
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).project(new ProjectBuilder().program(new Program()).toProject()).toApplicationForm();
+		referee.setApplication(form);
+		
+		refereeDAOMock.save(referee);	
+		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);		
+		
+		InternetAddress toAddress = new InternetAddress("email3@test.com", "fred freddy");
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Referee declined"),EasyMock.eq("private/pgStudents/mail/reference_declined_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
+		javaMailSenderMock.send(preparatorMock);
+		EasyMock.expectLastCall().andThrow( new RuntimeException("OH no - email sending's gone wrong!!"));
+		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock);
+	
+		
+		refereeService.saveReferenceAndSendDeclineNotifications(referee);
+	
+		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock,refereeDAOMock);
+		
+	}
 }

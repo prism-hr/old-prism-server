@@ -50,7 +50,7 @@
 		                
 		                	        <!-- Header -->
 					                <div class="admin_row">
-					                	<label class="admin_header">Reference (${referee_index + 1})</label>
+					                	<label class="admin_header">Reference (${referee_index + 1})<#if referee.declined> - Declined</#if></label>
 					                  
 					                    <div class="field">
 					                    	&nbsp

@@ -20,14 +20,12 @@
               	<col style="width: 30px" />
               	<col style="width: 160px" />
               	<col style="width: 160px" />
-              	<col style="width: 260px" />
+              	<col style="width: 240px" />
               	<col />
               	<#if applicationForm.isSubmitted()>
-              		<col />
-              	<#else>
-              		<col style="width: 30px" />
+              		<col />              	              		
               	</#if>
-              	
+              	<col style="width: 30px" />
         	</colgroup>
         
         	<thead>
@@ -37,12 +35,11 @@
                     <th>Job Title</th>
                     <th>Email</th>
                     <#if applicationForm.isSubmitted()>
-                    	<th>Responded</th>
+                    	<th>Status</th>
                     <#else>
-                    	<th>&nbsp;</th>
-                    	<th id="last-col">&nbsp;</th>
+                    	<th>&nbsp;</th>                    	
                     </#if>
-                    
+                    <th id="last-col">&nbsp;</th>
               	</tr>
         	</thead>
         	
@@ -56,8 +53,12 @@
 	                    <td>${(existingReferee.email?html)!}</td>
 	                     <#if (applicationForm.isSubmitted())>
 		                    <td>
-		                    	<#if existingReferee.hasProvidedReference() >Yes
-		                    	<#else>No
+		                   		<#if existingReferee.declined>
+		                   			Declined
+		                    	<#elseif existingReferee.hasProvidedReference()>
+		                    		Reference provided
+		                    	<#else>
+		                    		Not responded
 		                    	</#if>
 		                    </td>	
 		                 </#if>
@@ -260,7 +261,9 @@
           		<div class="row">
                   	<span class="label">Reference</span>                    
                     <div class="field" id="referenceUpdated">
-                    	<#if referee.hasProvidedReference()>
+                   		 <#if referee.declined>
+		                   	Declined
+                    	<#elseif referee.hasProvidedReference()>
                     		Provided ${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
                     	<#elseif referee.id??>
                     		Not provided

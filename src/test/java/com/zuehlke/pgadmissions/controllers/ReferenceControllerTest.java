@@ -185,6 +185,7 @@ public class ReferenceControllerTest {
 	}
 	
 
+
 	@Before
 	public void setUp() {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);

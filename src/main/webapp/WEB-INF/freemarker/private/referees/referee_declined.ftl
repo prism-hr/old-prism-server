@@ -32,7 +32,9 @@
 		      
 		      		<div class="content-box">
 		      			<div class="content-box-inner">
-						<h2>Thank you. You reference has been successfully submitted.</h2>     			
+		      			    <h2>Thank you for letting us know that you're unable to act as a referee in this case.</h2>
+		              		<p>We will not send you any further reminders for this application.</p>	     
+		              			          			
 		        		</div><!-- .content-box-inner -->
 		      		</div><!-- .content-box -->
 		      
@@ -52,6 +54,11 @@
 		
 		</div>
 		
+		<!-- Scripts -->
+		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/help.js' />"></script>
 		
 	</body>
 </html>

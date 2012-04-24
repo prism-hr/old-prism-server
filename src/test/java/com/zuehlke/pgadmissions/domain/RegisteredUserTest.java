@@ -83,7 +83,15 @@ public class RegisteredUserTest {
 		assertTrue(refereeUser.canSee(applicationForm));
 
 	}
+	
+	@Test
+	public void shouldReturnTrueIfUserIsRefereeOfTheApplicationFormButHasDeclined() {
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();
+		Referee referee = new RefereeBuilder().id(1).user(refereeUser).declined(true).toReferee();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		assertFalse(refereeUser.canSee(applicationForm));
 
+	}
 	@Test
 	public void shouldReturnFalseIfUserIsRefereeOfButNotOnApplicationForm() {
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();

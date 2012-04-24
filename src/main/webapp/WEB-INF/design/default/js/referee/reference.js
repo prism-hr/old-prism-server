@@ -8,6 +8,11 @@ $(document).ready(function(){
 		$('#referenceDocument').removeAttr("readonly");
 	});
 	
+	$('#declineReference').click(function(){
+		if(confirm("Decline to at as a referee. Are you sure?")){
+			$('#declineForm').submit();
+		}
+	});
 	
 });
 function referenceDelete(){

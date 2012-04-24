@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.junit.Assert.*;
+
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
@@ -90,6 +92,8 @@ public class SubmitApplicationServiceTest {
 		
 		submitApplicationService.saveApplicationFormAndSendMailNotifications(form);
 		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);
+		assertNotNull(referee1.getLastNotified());
+		assertNotNull(referee2.getLastNotified());
 	}
 	@SuppressWarnings("unchecked")
 	@Test

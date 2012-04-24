@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,7 +113,9 @@ public class SubmitApplicationService {
 				} else {
 					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification", "private/referees/mail/referee_notification_email.ftl", model));
 				}
+				referee.setLastNotified(Calendar.getInstance().getTime());
 			} catch (Throwable e) {
+				
 				log.warn("error while sending email", e);
 			}
 		}

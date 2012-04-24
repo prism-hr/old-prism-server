@@ -23,8 +23,6 @@ $(document).ready(function(){
 	
 
 	
-
-	
 	$('#refereeSaveAndCloseButton').click(function(){	
 		postRefereeData("close");
 	});

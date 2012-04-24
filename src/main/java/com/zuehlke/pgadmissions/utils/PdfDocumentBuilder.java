@@ -76,9 +76,8 @@ public class PdfDocumentBuilder {
 		addFundingSection(application, document);
 
 		addSectionSeparators(document);
-		
-		addReferencesSection(application, document);
 
+		addReferencesSection(application, document);
 
 		addSectionSeparators(document);
 
@@ -89,10 +88,11 @@ public class PdfDocumentBuilder {
 		addSupportingDocuments(application, document);
 
 		addSectionSeparators(document);
-		if(!((RegisteredUser)SecurityContextHolder.getContext().getAuthentication().getDetails()).isInRole(Authority.APPLICANT)){
+		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		if (!currentUser.isInRole(Authority.APPLICANT) && !currentUser.isRefereeOfApplicationForm(application)) {
 			addUploadedReferences(application, document);
 		}
-	
+
 	}
 
 	private void addSectionSeparators(Document document) throws DocumentException {

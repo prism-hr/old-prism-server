@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.AddressDAO;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
-import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -20,17 +18,15 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 public class ApplicationsService {
 
 	private final ApplicationFormDAO applicationFormDAO;
-	private final AddressDAO addressDAO;
-	
 
 	ApplicationsService() {
-		this(null, null);
+		this(null);
 	}
 
 	@Autowired
-	public ApplicationsService(ApplicationFormDAO applicationFormDAO, AddressDAO addressDAO) {
+	public ApplicationsService(ApplicationFormDAO applicationFormDAO) {
 		this.applicationFormDAO = applicationFormDAO;
-		this.addressDAO = addressDAO;
+
 	}
 
 	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
@@ -67,16 +63,6 @@ public class ApplicationsService {
 
 	}
 
-	public com.zuehlke.pgadmissions.domain.Address getAddressById(Integer addressId) {
-		return applicationFormDAO.getAdddressById(addressId);
-	}
-
-
-	@Transactional
-	public void deleteAddress(Address address) {
-		addressDAO.delete(address);
-	}
-	
 	@Transactional
 	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Project project) {
 

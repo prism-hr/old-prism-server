@@ -37,27 +37,31 @@
 		      				<!---------- Reference -------------->
 		      			
 		      			
-		              		<h2>Thank you for agreeing to provide a reference for ${application.applicant.firstName} ${application.applicant.lastName}.</h2>
+		              		<h2>Thank you for agreeing to provide a reference for ${applicationForm.applicant.firstName} ${applicationForm.applicant.lastName}.</h2>
 		              		
 		              		<br/>
-		              		<#if referee.hasProvidedReference() >
+		              		<#if reference.id?? >
 		              			<p>You have already provided a reference. You may use the fields below to upload a different file if you wish.</p>							
 			        		<#else>
 			        			<p>Please upload your reference as a PDF document using the field below.</p>		              				          		
 			        		</#if>
-			        		<p>You can view ${application.applicant.firstName}'s application <a href="<@spring.url '/application?applicationId=${application.id?string("######")}' />" target="_blank">here</a></p>
-							<form id="documentUploadForm" method="POST" action="<@spring.url '/addReferences/submit'/>" enctype="multipart/form-data">
-					             <input type="hidden" name="refereeId" value="${referee.id?string("######")}"/>
+			        		<p>You can view ${applicationForm.applicant.firstName}'s application <a href="<@spring.url '/application?applicationId=${applicationForm.id?string("######")}' />" target="_blank">here</a></p>
+							<form id="documentUploadForm" method="POST" action="<@spring.url '/referee/submitReference'/>">	
+								<input type="hidden" name="application" value ='${applicationForm.id?string("######")}'/>           
 					            <div>
-					                <!-- Document upload -->
-					                <label for="file">Upload file</label>
-					                <input class="full" type="file" name="file" value="" />                      	
-									
-									<br/>
-									<br/>
-									<#if referee.hasProvidedReference()  >
-										Previous file: <a href="<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/>">${referee.reference.document.fileName}</a>
-		                			</#if>			
+		
+					    		                						
+		                			<div class="field" id="referenceUploadFields">        	
+		                			 	<label for="file">Upload file</label>
+					            		<input id="referenceDocument" class="full" type="file" name="file" value=""/>					
+										<span id="referenceUploadedDocument" ><input type="hidden" id="document_REFERENCE" value = "${(reference.document.id?string('######'))!}" name="document"/>
+											<@spring.bind "reference.document" /> 
+					                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>			
+					                		<a href="<@spring.url '/download?documentId=${(reference.document.id?string("#######"))!}'/>">${(reference.document.fileName)!}</a></span>								
+										 </span>
+										<span id="referenceDocumentProgress" style="display: none;" ></span>					
+					        		</div>  
+        		
 								</div>
 								
 								<div class="buttons">
@@ -92,7 +96,8 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/help.js' />"></script>
-		
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/ajaxfileupload.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/referee/reference.js'/>"></script>
 	</body>
 </html>
 

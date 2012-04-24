@@ -113,7 +113,7 @@
 							
 		                  	<!-- Provider -->
 		                  	<div class="row">
-	                            <span class="admin_row_label">Qualification</span>
+	                            <span class="admin_header">Qualification</span>
 	                            <div class="field">Not Provided</div>
 	                        </div>
 	                  	

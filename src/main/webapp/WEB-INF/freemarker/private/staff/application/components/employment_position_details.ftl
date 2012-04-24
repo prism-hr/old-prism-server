@@ -104,7 +104,7 @@
 		        	<div class="sub_section_amdin">
 		                     
 		                <div class="row">
-		                	<span class="admin_row_label">Employment</span>                 
+		                	<span class="admin_header">Employment</span>                 
 		                    <div class="field">Not Provided</div>
 		                </div>
 		            	

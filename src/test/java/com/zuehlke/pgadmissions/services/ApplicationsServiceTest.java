@@ -134,24 +134,6 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldDelegateDeleteAddressToDAO() {
-		Address address = new AddressBuilder().id(1).toAddress();
-		addressDAOMock.delete(address);
-		EasyMock.replay(addressDAOMock);
-		applicationsService.deleteAddress(address);
-		EasyMock.verify(addressDAOMock);
-	}
-
-	@Test
-	public void shouldDelegateApplicationSaveToDAO() {
-		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
-		applicationFormDAOMock.save(application);
-		EasyMock.replay(application, applicationFormDAOMock);
-		applicationsService.save(application);
-		EasyMock.verify(applicationFormDAOMock);
-	}
-
-	@Test
 	public void shouldGetApplicationById() {
 		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
 		EasyMock.expect(applicationFormDAOMock.get(234)).andReturn(application);
@@ -161,20 +143,11 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldGetAddressById() {
-		Address address = EasyMock.createMock(Address.class);
-		EasyMock.expect(applicationFormDAOMock.getAdddressById(23)).andReturn(address);
-
-		EasyMock.replay(address, applicationFormDAOMock);
-		Assert.assertEquals(address, applicationsService.getAddressById(23));
-	}
-
-	@Test
 	public void shouldCreateAndSaveNewApplicationForm() {
 		Project project = new ProjectBuilder().id(1).toProject();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
 		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock) {
+		applicationsService = new ApplicationsService(applicationFormDAOMock) {
 
 			@Override
 			ApplicationForm newApplicationForm() {
@@ -202,7 +175,7 @@ public class ApplicationsServiceTest {
 
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		addressDAOMock = EasyMock.createMock(AddressDAO.class);
-		applicationsService = new ApplicationsService(applicationFormDAOMock, addressDAOMock);
+		applicationsService = new ApplicationsService(applicationFormDAOMock);
 	}
 
 	@After

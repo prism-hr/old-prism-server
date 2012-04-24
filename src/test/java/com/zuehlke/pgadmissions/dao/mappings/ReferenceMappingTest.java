@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 public class ReferenceMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
-	public void shouldSaveAndLoadReferenceWithCommentAndDocument(){
+	public void shouldSaveAndLoadReferenceWithAndDocument(){
 		Document document = new DocumentBuilder().content("aa".getBytes()).fileName("gekko").type(DocumentType.CV).toDocument();
 
 

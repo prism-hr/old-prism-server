@@ -213,7 +213,7 @@
 			</div>
             
             <div class="buttons" id="show-comment-button-div">
-              		<#if user??>
+              		<#if !user.isRefereeOfApplicationForm(applicationForm)>
                 		<a class="button blue comment-open" id="comment-button">Comments</a>
                 	</#if>
                 	 <a id="personalDetailsCloseButton"class="button blue">Close</a>
@@ -221,7 +221,7 @@
 			
 		</form>
 		
-		<#if user??>
+		<#if !user.isRefereeOfApplicationForm(applicationForm)>
 			<form id="commentForm" action= "/pgadmissions/comments/submit" method="POST">
 			
 			    <!-- Comment Sectiton -->

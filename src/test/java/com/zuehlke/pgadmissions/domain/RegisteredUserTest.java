@@ -2,17 +2,18 @@ package com.zuehlke.pgadmissions.domain;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import gherkin.lexer.i18n.RU;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
 
-import com.sun.swing.internal.plaf.basic.resources.basic;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
@@ -290,6 +291,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnFalseIfUserCannotSeeApplicationForReference() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		@SuppressWarnings("serial")
 		RegisteredUser user = new RegisteredUser() {
 			@Override
 			public boolean canSee(ApplicationForm application) {				
@@ -305,6 +307,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserCanSeeFormAndIsNotReferee() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		@SuppressWarnings("serial")
 		RegisteredUser user = new RegisteredUser() {
 			@Override
 			public boolean canSee(ApplicationForm application) {				
@@ -324,6 +327,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnFalseIfUserIsRefereeAndNotUploadingReferee() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		@SuppressWarnings("serial")
 		RegisteredUser user = new RegisteredUser() {		
 			@Override
 			public boolean isRefereeOfApplicationForm(ApplicationForm form) {
@@ -340,6 +344,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserIsRefereeAndUploadingReferee() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		@SuppressWarnings("serial")
 		RegisteredUser user = new RegisteredUser() {		
 			@Override
 			public boolean isRefereeOfApplicationForm(ApplicationForm form) {
@@ -355,5 +360,23 @@ public class RegisteredUserTest {
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).user(user).toReferee();
 		Reference reference = new ReferenceBuilder().id(1).referee(referee).toReference();
 		assertTrue(user.canSeeReference(reference));
+	}
+	
+	@Test
+	public void shouldReturnRefereeForApplicationForm(){
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
+		Referee refereeOne = new RefereeBuilder().id(7).user(user).application(applicationForm).toReferee();
+		Referee refereeTwo = new RefereeBuilder().id(8).user(new RegisteredUserBuilder().id(9).toUser()).application(new ApplicationFormBuilder().id(78).toApplicationForm()).toReferee();
+		user.setReferees(Arrays.asList(refereeOne, refereeTwo));
+		Referee referee = user.getRefereeForApplicationForm(applicationForm);
+		assertEquals(refereeOne, referee);
+	}
+	
+	@Test
+	public void shouldReturnNullIfNotRefereeForApplicationForm(){
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
+		assertNull(user.getRefereeForApplicationForm(applicationForm));
 	}
 }

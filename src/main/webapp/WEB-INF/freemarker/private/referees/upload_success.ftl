@@ -26,7 +26,7 @@
 		  
 		  	<!-- Middle. -->
 		  	<div id="middle">
-		  	   <#include "/private/common/parts/nav_without_user_info.ftl"/>
+		  	  	 <#include "/private/common/parts/nav_with_user_info.ftl"/>
 		    	<!-- Main content area. -->
 		    	<article id="content" role="main">
 		      

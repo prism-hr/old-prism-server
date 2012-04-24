@@ -25,6 +25,7 @@
 
 	</bean>
 		   
+
 	<context:property-placeholder location="classpath:environment.properties" />
 	   
 	 <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
@@ -43,6 +44,7 @@
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	
 	<import resource="applicationContext.xml" />
+	<import resource="Spring-Scheduler.xml" />
 
 	<!-- <import resource="dwrContext.xml"/>-->
 </beans>

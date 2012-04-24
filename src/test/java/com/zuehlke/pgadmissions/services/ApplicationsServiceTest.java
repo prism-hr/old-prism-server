@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -31,15 +32,17 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.domain.enums.ValidationStage;
+import com.zuehlke.pgadmissions.utils.ValidationStageConstant;
 
 public class ApplicationsServiceTest {
 
 	private RegisteredUser user;
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApplicationsService applicationsService;
-	private AddressDAO addressDAOMock;
 
 
 	@Test
@@ -50,6 +53,24 @@ public class ApplicationsServiceTest {
 		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(user);
 		Assert.assertTrue(visibleApplications.contains(form));
 		Assert.assertEquals(1, visibleApplications.size());
+	}
+	
+	@Test
+	public void shouldGetAllApplicationsInValidationStageWithPassedValidationDueDate(){
+		Calendar dateAfterTwoWeeks = Calendar.getInstance();
+		dateAfterTwoWeeks.add(Calendar.WEEK_OF_MONTH, 2);
+		Calendar dateBeforeTwoWeeks = Calendar.getInstance();
+		dateBeforeTwoWeeks.add(Calendar.WEEK_OF_MONTH, -2);
+		ApplicationForm decidedInValidationStage = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).approvedSatus(ApprovalStatus.APPROVED).validationStage(ValidationStage.TRUE).validationDueDate(new Date()).toApplicationForm();
+		ApplicationForm nonSubmitted = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
+		ApplicationForm submittedInValidationButBeforeDueDate = new ApplicationFormBuilder().id(3).submissionStatus(SubmissionStatus.SUBMITTED).validationStage(ValidationStage.TRUE).validationDueDate(dateAfterTwoWeeks.getTime()).toApplicationForm();
+		ApplicationForm submittedInValidationButAfterDueDate = new ApplicationFormBuilder().id(4).submissionStatus(SubmissionStatus.SUBMITTED).validationStage(ValidationStage.TRUE).validationDueDate(dateBeforeTwoWeeks.getTime()).toApplicationForm();
+		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(decidedInValidationStage, nonSubmitted, submittedInValidationButAfterDueDate, submittedInValidationButBeforeDueDate));
+		EasyMock.replay(applicationFormDAOMock);
+		List<ApplicationForm> applications = applicationsService.getAllApplicationsStillInValidationStageAndAfterDueDate();
+		EasyMock.verify(applicationFormDAOMock);
+		Assert.assertEquals(1, applications.size());
+		Assert.assertTrue(applications.contains(submittedInValidationButAfterDueDate));
 	}
 
 	@Test
@@ -133,7 +154,6 @@ public class ApplicationsServiceTest {
 		Assert.assertEquals(app1, visibleApplications.get(1));
 	}
 
-	@Test
 	public void shouldGetApplicationById() {
 		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
 		EasyMock.expect(applicationFormDAOMock.get(234)).andReturn(application);
@@ -141,8 +161,9 @@ public class ApplicationsServiceTest {
 		EasyMock.replay(application, applicationFormDAOMock);
 		Assert.assertEquals(application, applicationsService.getApplicationById(234));
 	}
+	
+	
 
-	@Test
 	public void shouldCreateAndSaveNewApplicationForm() {
 		Project project = new ProjectBuilder().id(1).toProject();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
@@ -174,7 +195,6 @@ public class ApplicationsServiceTest {
 		SecurityContextHolder.setContext(secContext);
 
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		addressDAOMock = EasyMock.createMock(AddressDAO.class);
 		applicationsService = new ApplicationsService(applicationFormDAOMock);
 	}
 

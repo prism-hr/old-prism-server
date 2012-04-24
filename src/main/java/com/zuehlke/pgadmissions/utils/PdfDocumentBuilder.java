@@ -387,7 +387,9 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("Email: " + reference.getEmail()));
 				document.add(new Paragraph("Telephone: " + reference.getPhoneNumber()));
 				addCorrectOutputDependingOnNull(document, reference.getMessenger(), "Skype Name");
-
+				if(reference.isDeclined()){
+					document.add(new Paragraph("This referee has declined"));
+				}
 				document.add(new Paragraph(" "));
 			}
 		}

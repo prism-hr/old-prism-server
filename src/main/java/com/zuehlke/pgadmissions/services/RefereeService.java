@@ -51,7 +51,7 @@ public class RefereeService {
 	public Referee getRefereeById(Integer id) {
 		return refereeDAO.getRefereeById(id);
 	}
-	
+
 	@Transactional
 	public void save(Referee referee) {
 		refereeDAO.save(referee);
@@ -159,7 +159,6 @@ public class RefereeService {
 		return user.isInRole(Authority.REFEREE);
 	}
 
-
 	private RegisteredUser createAndSaveNewUserWithRefereeRole(Referee referee, Role refereeRole) {
 		RegisteredUser user;
 		user = newRegisteredUser();
@@ -179,19 +178,40 @@ public class RefereeService {
 	@Transactional
 	public void delete(Referee referee) {
 		refereeDAO.delete(referee);
-		
+
 	}
 
 	@Transactional
-	public Referee getRefereeByUserAndApplication(RegisteredUser user,	ApplicationForm form) {
+	public Referee getRefereeByUserAndApplication(RegisteredUser user, ApplicationForm form) {
 		Referee matchedReferee = null;
 		List<Referee> referees = user.getReferees();
 		for (Referee referee : referees) {
-			if (referee.getApplication()!=null && referee.getApplication().equals(form)){
+			if (referee.getApplication() != null && referee.getApplication().equals(form)) {
 				matchedReferee = referee;
 			}
 		}
 		return matchedReferee;
+	}
+	
+	@Transactional
+	public void saveReferenceAndSendDeclineNotifications(Referee referee) {
+		refereeDAO.save(referee);
+		try {
+			ApplicationForm form = referee.getApplication();
+			RegisteredUser applicant = form.getApplicant();
+			List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("adminsEmails", adminsEmails);
+			model.put("referee", referee);
+			model.put("application", form);
+			model.put("host", Environment.getInstance().getApplicationHostName());
+			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee declined", "private/pgStudents/mail/reference_declined_notification.ftl", model));
+		} catch (Throwable e) {
+			log.warn("error while sending email", e);
+		}
+
 	}
 
 }

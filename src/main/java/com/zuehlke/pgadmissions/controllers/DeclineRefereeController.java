@@ -42,7 +42,7 @@ public class DeclineRefereeController {
 	@RequestMapping(value = "/decline", method = RequestMethod.POST)
 	public String decline(@ModelAttribute Referee referee) {
 		referee.setDeclined(true);
-		refereeService.save(referee);
+		refereeService.saveReferenceAndSendDeclineNotifications(referee);
 		return DECLINED_VIEW;
 	}
 

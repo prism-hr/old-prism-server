@@ -51,7 +51,7 @@ public class DeclineRefereeControllerTest {
 	@Test
 	public void shouldSetDeclinedToTrueAndSaveReferee(){
 		Referee referee = new RefereeBuilder().id(1).toReferee();		
-		refereeServiceMock.save(referee);
+		refereeServiceMock.saveReferenceAndSendDeclineNotifications(referee);
 		EasyMock.replay(refereeServiceMock);
 		String view =  controller.decline(referee);
 		assertTrue(referee.isDeclined());

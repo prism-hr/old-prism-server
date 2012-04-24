@@ -9,7 +9,7 @@
               
         	<!-- Free text field for info. -->
             <div class="row">
-    	        <span class="plain-label">Additional information</span>
+    	        <span class="plain-label">Additional Information</span>
 				<div class="field">${(applicationForm.additionalInformation?html)!"Not Provided"}</div>
 			</div>
             <div class="buttons">

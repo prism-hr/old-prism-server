@@ -91,7 +91,7 @@
 
 						<!-- Award type -->
 		                <div class="row">
-		                	<span class="admin_row_label">Funding</span>             
+		                	<span class="admin_header">Funding</span>             
 		                	<div class="field">Not Provided</div>
 						</div>
 		                

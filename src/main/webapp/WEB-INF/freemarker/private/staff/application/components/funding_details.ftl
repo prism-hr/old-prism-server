@@ -82,7 +82,45 @@
 		                
 					</div>
 	                
-				</#list>				               
+				</#list>
+				
+			<#else>
+			
+	                <!-- Rendering part - Start -->
+		        	<div class="sub_section_amdin">
+
+						<!-- Award type -->
+		                <div class="admin_row">
+		                	<span class="admin_row_label">Funding Type</span>             
+		                	<div class="field" id="fundingType">Not Available</div>
+						</div>
+		
+		                <!-- Award description -->
+		                <div class="admin_row">
+		                	<span class="admin_row_label" >Description</span>
+		                  	<div class="field" id="fundingDescription">Not Available</div>
+						</div>
+		                  
+		                <!-- Value of award -->
+		                <div class="admin_row">
+		                  	<span class="admin_row_label">Value of Award</span>
+		                 	<div class="field"  id="fundingValue">Not Available</div>
+						</div>
+		                  
+		                <!-- Award date -->
+		                <div class="admin_row">
+		                    <span class="admin_row_label">Award Date</span>
+		                    <div class="field" id="fundingAwardDate">Not Available</div>
+		                </div>
+		                
+		                  <!-- Award date -->
+		                <div class="admin_row">
+							<span class="admin_row_label">Proof of award</span>
+					        	<div class="field" id="referenceDocument">Not Available</div> 
+		                </div>
+		                
+					</div>
+							               
 	        </#if>
 
 			<div class="buttons">

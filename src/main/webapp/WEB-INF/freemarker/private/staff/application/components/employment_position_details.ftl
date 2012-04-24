@@ -97,6 +97,64 @@
 					</div>
 			    
 			    </#list>
+			    
+			<#else>
+			
+	                <!-- Rendering part - Start -->
+		        	<div class="sub_section_amdin">
+		                     
+		                <div class="admin_row">
+		                	<span class="admin_row_label">Country</span>                 
+		                    <div class="field" id="emp_country">Not Available</div>
+		                </div>
+		            	
+		            	<!-- Employer (company name) -->
+		                <div class="admin_row">
+		                	<span class="admin_row_label">Employer Name</span>                 
+		                   	<div class="field" id="emp_name">Not Available</div>
+		                </div>
+		                
+		                <div class="admin_row">
+		                	<span class="admin_row_label">Employer Address</span>                 
+		                   	<div class="field" id="emp_address">Not Available</div>
+		                </div>
+		                
+		                <!-- Position -->
+		                <div class="admin_row">
+		                	<span class="admin_row_label">Position</span>
+		              		<div class="field" id="emp_position">Not Available</div>
+		                </div>
+		                
+		                <!-- Position -->
+		                <div class="admin_row">
+		                	<span class="admin_row_label">Roles and Responsibilities</span>
+		              		<div class="field" id="emp_description">Not Available</div>
+		                </div>
+		                
+		                <!-- Language -->
+		                <div class="admin_row">
+		                    <span class="admin_row_label">Language of work</span>
+		                    <div class="field" id="empl_language">Not Available</div>
+		               	</div>  
+		                             
+		                <!-- Start date -->
+		                <div class="admin_row">
+		                    <span class="admin_row_label">Start Date</span>
+		                    <div class="field" id="emp_startDate">Not Available</div>
+		                </div>
+		                <div class="admin_row">
+		                    <span class="admin_row_label">Is this your current position?</span>
+		                    <div class="field" id="emp_current">Not Available</div>
+		               	</div>
+		                
+		                <!-- End date -->
+		                <div class="admin_row">
+		                    <span class="admin_row_label">End date</span>
+							<div class="field" id="emp_endDate">Not Available</div>
+		               	</div>
+		                
+					</div>
+			
 			</#if>
         	
 			<div class="buttons">

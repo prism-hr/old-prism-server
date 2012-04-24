@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Date;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -9,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -20,6 +24,10 @@ public class Referee extends DomainObject<Integer>{
 
 
 	private static final long serialVersionUID = 4591043630090924738L;
+	
+	@Column(name = "last_notified")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastNotified;
 	
 	@ManyToOne
 	@JoinColumn(name = "registered_user_id")
@@ -206,6 +214,14 @@ public class Referee extends DomainObject<Integer>{
 
 	public void setDeclined(boolean declined) {
 		this.declined = declined;
+	}
+
+	public Date getLastNotified() {
+		return lastNotified;
+	}
+
+	public void setLastNotified(Date lastNotified) {
+		this.lastNotified = lastNotified;
 	}
 
 }

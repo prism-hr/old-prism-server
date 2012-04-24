@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.Date;
+
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -27,6 +29,14 @@ public class RefereeBuilder {
 
 	private String phoneNumber;
 	private boolean declined;
+	
+	private Date lastNotified;
+	
+	
+	public RefereeBuilder lastNotified(Date lastNotified){
+		this.lastNotified = lastNotified;
+		return this;
+	}
 	
 	public RefereeBuilder declined(boolean declined){
 		this.declined = declined;
@@ -120,6 +130,7 @@ public class RefereeBuilder {
 		referee.setUser(user);
 		referee.setPhoneNumber(phoneNumber);
 		referee.setDeclined(declined);
+		referee.setLastNotified(lastNotified);
 		return referee;
 	}
 }

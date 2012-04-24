@@ -7,6 +7,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,10 +34,10 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldSaveAndLoadReferee() throws Exception {
-
+		Date lastNotified = new SimpleDateFormat("dd MM yyyy").parse("01 05 2012");
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().application(applicationForm).addressCountry(countriesDAO.getCountryById(1)).addressLocation("loc")
-				.email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").phoneNumber("phoneNumber").declined(true)
+				.email("email").firstname("name").jobEmployer("emplo").jobTitle("titl").lastname("lastname").phoneNumber("phoneNumber").declined(true).lastNotified(lastNotified)
 				.toReferee();
 
 		sessionFactory.getCurrentSession().save(referee);
@@ -62,6 +65,7 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 
 		assertEquals(referee.getPhoneNumber(), reloadedReferee.getPhoneNumber());
 		assertTrue(reloadedReferee.isDeclined());
+		assertEquals(lastNotified, reloadedReferee.getLastNotified());
 
 	}
 

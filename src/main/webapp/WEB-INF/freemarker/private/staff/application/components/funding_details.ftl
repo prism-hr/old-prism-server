@@ -45,25 +45,25 @@
 						<!-- Award type -->
 		                <div class="admin_row">
 		                	<span class="admin_row_label">Funding Type</span>             
-		                	<div class="field" id="fundingType">${(funding.type?html)!"Not Available"}</div>
+		                	<div class="field" id="fundingType">${(funding.type?html)!"Not Provided"}</div>
 						</div>
 		
 		                <!-- Award description -->
 		                <div class="admin_row">
 		                	<span class="admin_row_label" >Description</span>
-		                  	<div class="field" id="fundingDescription">${(funding.description?html)!"Not Available"}</div>
+		                  	<div class="field" id="fundingDescription">${(funding.description?html)!"Not Provided"}</div>
 						</div>
 		                  
 		                <!-- Value of award -->
 		                <div class="admin_row">
 		                  	<span class="admin_row_label">Value of Award</span>
-		                 	<div class="field"  id="fundingValue">${(funding.value?html)!"Not Available"}</div>
+		                 	<div class="field"  id="fundingValue">${(funding.value?html)!"Not Provided"}</div>
 						</div>
 		                  
 		                <!-- Award date -->
 		                <div class="admin_row">
 		                    <span class="admin_row_label">Award Date</span>
-		                    <div class="field" id="fundingAwardDate">${funding.awardDate?string('dd-MMM-yyyy')!"Not Available"}</div>
+		                    <div class="field" id="fundingAwardDate">${funding.awardDate?string('dd-MMM-yyyy')!"Not Provided"}</div>
 		                </div>
 		                
 		                  <!-- Award date -->
@@ -90,34 +90,10 @@
 		        	<div class="sub_section_amdin">
 
 						<!-- Award type -->
-		                <div class="admin_row">
-		                	<span class="admin_row_label">Funding Type</span>             
-		                	<div class="field" id="fundingType">Not Available</div>
+		                <div class="row">
+		                	<span class="admin_row_label">Funding</span>             
+		                	<div class="field grey-label">Not Provided</div>
 						</div>
-		
-		                <!-- Award description -->
-		                <div class="admin_row">
-		                	<span class="admin_row_label" >Description</span>
-		                  	<div class="field" id="fundingDescription">Not Available</div>
-						</div>
-		                  
-		                <!-- Value of award -->
-		                <div class="admin_row">
-		                  	<span class="admin_row_label">Value of Award</span>
-		                 	<div class="field"  id="fundingValue">Not Available</div>
-						</div>
-		                  
-		                <!-- Award date -->
-		                <div class="admin_row">
-		                    <span class="admin_row_label">Award Date</span>
-		                    <div class="field" id="fundingAwardDate">Not Available</div>
-		                </div>
-		                
-		                  <!-- Award date -->
-		                <div class="admin_row">
-							<span class="admin_row_label">Proof of award</span>
-					        	<div class="field" id="referenceDocument">Not Available</div> 
-		                </div>
 		                
 					</div>
 							               

@@ -34,34 +34,34 @@
 				<div class="admin_row">
                   		<label class="admin_row_label">First Name</label>
                     	<div class="field">
-                    		${(applicationForm.personalDetails.firstName?html)!"Not Available"}
+                    		${(applicationForm.personalDetails.firstName?html)!"Not Provided"}
                     	</div>
                 </div>
 
                 <div class="admin_row">
 	                  	<label class="admin_row_label">Last Name</label>
     	                <div class="field">
-        	            	${(applicationForm.personalDetails.lastName?html)!"Not Available"}
+        	            	${(applicationForm.personalDetails.lastName?html)!"Not Provided"}
             	        </div>
                 </div>
 
                 <div class="admin_row">
                   		<label class="admin_row_label">Gender</label>
                     	<div class="field">
-                      		${(applicationForm.personalDetails.gender?html)!"Not Available"}
+                      		${(applicationForm.personalDetails.gender?html)!"Not Provided"}
                     	</div>
                 </div>
                 	
                 <div class="admin_row">
                   		<label class="admin_row_label">Date of Birth</label>
-                    	<div class="field">${(applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!"Not Available"}</div>
+                    	<div class="field">${(applicationForm.personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!"Not Provided"}</div>
                 </div>
                 
 				<!-- Country -->
                 <div class="admin_row">
                   	<span class="admin_row_label">Country of Birth</span>
                     <div class="field">
-                    	${(applicationForm.personalDetails.country.name?html)!"Not Available"}
+                    	${(applicationForm.personalDetails.country.name?html)!"Not Provided"}
                     </div>
 				</div>
                 
@@ -74,7 +74,7 @@
                 					<label class="admin_row_label">My Nationality</label>
 	                    			<span name="existingCandidateNationality">
 	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
 	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
 	                            		</div>
 	                       			</span>
@@ -83,7 +83,7 @@
 	                       		<div class="admin_row">
 	                    			<span name="existingCandidateNationality">
 	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
 	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
 	                            		</div>
 	                       			</span>
@@ -93,7 +93,7 @@
                     <#else>
                     	<div class="admin_row">
                 			<label class="admin_row_label">My Nationality</label>
-                    		<div class="field">Not Available.</div>
+                    		<div class="field">Not Provided.</div>
                     	</div>
                     </#if>
                 
@@ -107,7 +107,7 @@
                 					<label class="admin_row_label">Maternal Guardian Nationality</label>
 	                    			<span name="existingCandidateNationality">
 	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
 	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
 	                            		</div>
 	                       			</span>
@@ -116,7 +116,7 @@
 	                       		<div class="admin_row">
 	                    			<span name="existingCandidateNationality">
 	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
 	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
 	                            		</div>
 	                       			</span>
@@ -126,7 +126,7 @@
                     <#else>
                     	<div class="admin_row">
                 			<label class="admin_row_label">Maternal Guardian Nationality</label>
-                    		<div class="field">Not Available.</div>
+                    		<div class="field">Not Provided.</div>
                     	</div>
                     </#if>
                     
@@ -139,7 +139,7 @@
                 					<label class="admin_row_label">Paternal Guardian Nationality</label>
 	                    			<span name="existingCandidateNationality">
 	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
 	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
 	                            		</div>
 	                       			</span>
@@ -148,7 +148,7 @@
 	                       		<div class="admin_row">
 	                    			<span name="existingCandidateNationality">
 	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Available"}</label>  
+	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
 	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
 	                            		</div>
 	                       			</span>
@@ -158,7 +158,7 @@
                     <#else>
                     	<div class="admin_row">
                 			<label class="admin_row_label">Paternal Guardian Nationality</label>
-                    		<div class="field">Not Available.</div>
+                    		<div class="field">Not Provided.</div>
                     	</div>
                     </#if>                  
                   
@@ -175,7 +175,7 @@
                 <div class="admin_row">
                   	<span class="admin_row_label">Country of Residence</span>
                     <div class="field">
-                      	${(applicationForm.personalDetails.residenceCountry.name?html)!"Not Available"}
+                      	${(applicationForm.personalDetails.residenceCountry.name?html)!"Not Provided"}
                     </div>
                 </div>
                   	
@@ -192,21 +192,21 @@
                 <div class="admin_row">
                 	<span class="admin_row_label">Email</span>
                     <div class="field">
-	                    ${(applicationForm.personalDetails.email?html)!"Not Available"}
+	                    ${(applicationForm.personalDetails.email?html)!"Not Provided"}
                     </div>
                 </div>
                 
               	<div class="admin_row">
                 	<span class="admin_row_label">Telephone</span>
                     <div class="field">
-	                	${(applicationForm.personalDetails.phoneNumber?html)!"Not Available"}
+	                	${(applicationForm.personalDetails.phoneNumber?html)!"Not Provided"}
                     </div>
                 </div>
               	
 				<div class="admin_row">
                 	<span class="admin_row_label">Skype Name</span>
                     <div class="field">
-	                    ${(applicationForm.personalDetails.messenger?html)!"Not Available"}
+	                    ${(applicationForm.personalDetails.messenger?html)!"Not Provided"}
                     </div>
                 </div>
 

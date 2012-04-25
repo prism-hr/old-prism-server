@@ -94,6 +94,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "project_id")
 	private Project project;
 	
+	@Column(name = "project_title")
+	private String projectTitle;
+	
 	@ManyToOne
 	@JoinColumn(name = "program_id")
 	private Program program;
@@ -428,5 +431,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setProgram(Program program) {
 		this.program = program;
+	}
+
+	public String getProjectTitle() {
+		return projectTitle;
+	}
+
+	public void setProjectTitle(String projectTitle) {
+		this.projectTitle = projectTitle;
 	}
 }

@@ -83,7 +83,7 @@ public class DocumentMappingTest extends AutomaticRollbackTestCase {
 	public void setUp() {
 		super.setUp();
 
-		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
 		save(program);
 
 		applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

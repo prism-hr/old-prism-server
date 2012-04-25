@@ -82,7 +82,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
-		program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
+		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
 		
 		save(user, program);
 		languageDAO = new LanguageDAO(sessionFactory);

@@ -210,7 +210,7 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		country2 = new CountryBuilder().code("CC").name("CC").toCountry();
 		save(country1, country2);
 
-		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();		
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
 		save(program);
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")

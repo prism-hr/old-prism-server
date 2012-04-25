@@ -11,7 +11,7 @@ public class ProgramBuilder {
 	private Integer id;
 	private String code;
 	private String title;
-	private String description;
+	
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
 	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
 	
@@ -52,17 +52,14 @@ public class ProgramBuilder {
 		this.title = title;
 		return this;
 	}
-	public ProgramBuilder description(String description){
-		this.description = description;
-		return this;
-	}
+
 	
 	public Program toProgram(){
 		Program program = new Program();
 		program.setId(id);
 		program.setCode(code);
 		program.setTitle(title);
-		program.setDescription(description);
+
 		program.getApprovers().addAll(approvers);
 		program.getAdministrators().addAll(administrators);
 		program.getReviewers().addAll(reviewers);

@@ -72,7 +72,7 @@ public class FundingMappingTest extends AutomaticRollbackTestCase{
 		super.setUp();
 		
 		
-		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
 		
 		save(program);
 

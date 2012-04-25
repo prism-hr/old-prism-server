@@ -23,8 +23,8 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase{
 		@Test
 		public void shouldGetAllPrograms() {
 			BigInteger	existingNumberOfPrograms = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from PROGRAM").uniqueResult();
-			Program program1 = new ProgramBuilder().id(1).code("code1").description("blahblab").title("another title").toProgram();
-			Program program2= new ProgramBuilder().id(1).code("code2").description("blahblab").title("another title").toProgram();
+			Program program1 = new ProgramBuilder().id(1).code("code1").title("another title").toProgram();
+			Program program2= new ProgramBuilder().id(1).code("code2").title("another title").toProgram();
 			sessionFactory.getCurrentSession().save(program1);
 			sessionFactory.getCurrentSession().save(program2);
 			flushAndClearSession();
@@ -35,7 +35,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase{
 		
 		@Test
 		public void shouldGetProgramById() {
-			Program program = new ProgramBuilder().id(1).code("code1").description("blahblab").title("another title").toProgram();
+			Program program = new ProgramBuilder().id(1).code("code1").title("another title").toProgram();
 			
 			sessionFactory.getCurrentSession().save(program);
 			flushAndClearSession();
@@ -47,7 +47,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase{
 		
 		@Test
 		public void shouldSaveProgram() {
-			Program program = new ProgramBuilder().code("code1").description("blahblab").title("another title").toProgram();
+			Program program = new ProgramBuilder().code("code1").title("another title").toProgram();
 			sessionFactory.getCurrentSession().save(program);
 			flushAndClearSession();
 			

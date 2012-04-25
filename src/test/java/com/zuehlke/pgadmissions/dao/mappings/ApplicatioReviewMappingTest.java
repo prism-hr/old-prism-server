@@ -20,7 +20,7 @@ public class ApplicatioReviewMappingTest extends AutomaticRollbackTestCase{
 
 	@Test
 	public void shouldSaveAndLoadApplicationReview(){
-		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();		
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
 		save( program);
 		
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

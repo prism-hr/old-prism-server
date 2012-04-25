@@ -120,8 +120,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 	public void shouldGetUsersByProgramme() {
 		
 
-		Program programOne = new ProgramBuilder().code("111111").description("hello").title("hello").toProgram();
-		Program programTwo = new ProgramBuilder().code("222222").description("hello").title("hello").toProgram();
+		Program programOne = new ProgramBuilder().code("111111").title("hello").toProgram();
+		Program programTwo = new ProgramBuilder().code("222222").title("hello").toProgram();
 		
 		save(programOne, programTwo);
 		

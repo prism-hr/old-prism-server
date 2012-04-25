@@ -93,6 +93,37 @@ public class RefereeServiceTest {
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void shouldSaveAndSendEmailToReferee() throws UnsupportedEncodingException{
+		
+		Role adminRole = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole();
+		Role applicantRole = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(1).role(adminRole).firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		RegisteredUser admin2 = new RegisteredUserBuilder().id(2).role(adminRole).firstName("anna").lastName("allen").email("email2@test.com").toUser();
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
+		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
+		Program program = new ProgramBuilder().administrators(admin1, admin2).toProgram();
+		
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).referees(referee).id(2).program(program).toApplicationForm();
+		referee.setApplication(form);
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
+		programmeDetails.setId(1);
+		form.setProgrammeDetails(programmeDetails);
+		refereeDAOMock.save(referee);
+		
+		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		InternetAddress toAddress1 = new InternetAddress("ref@test.com", "ref erre");
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Referee Notification"),EasyMock.eq("private/referees/mail/referee_notification_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
+		javaMailSenderMock.send(preparatorMock1);
+		
+		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		
+		refereeService.saveRefereeAndSendEmailNotifications(referee);
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
+	}
+	
 	@Test
 	public void shouldNotSendEmailIfSaveFails() throws UnsupportedEncodingException {
 		refereeDAOMock.save(null);

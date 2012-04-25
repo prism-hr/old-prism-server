@@ -71,7 +71,12 @@ public class RefereeController {
 			return STUDENTS_FORM_REFEREES_VIEW;
 		}
 		referee.setActivationCode(encryptionUtils.generateUUID());
-		refereeService.save(referee);
+		if(!referee.getApplication().isSubmitted()){
+			refereeService.save(referee);
+		}
+		else{
+			refereeService.saveRefereeAndSendEmailNotifications(referee);
+		}
 		return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getId();
 			
 	}

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -214,6 +215,37 @@ public class RefereeService {
 			log.warn("error while sending email", e);
 		}
 
+	}
+
+	public void saveRefereeAndSendEmailNotifications(Referee referee) {
+		save(referee);
+		sendMailToReferee(referee);
+		
+	}
+
+	private void sendMailToReferee(Referee referee) {
+		try {
+			ApplicationForm form = referee.getApplication();
+			List<RegisteredUser> administrators = form.getProgram().getAdministrators();
+			Map<String, Object> model = new HashMap<String, Object>();
+			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
+			model.put("referee", referee);
+			model.put("adminsEmails", adminsEmails);
+			model.put("applicant", form.getApplicant());
+			model.put("application", form);
+			model.put("programme", form.getProgrammeDetails());
+			model.put("host", Environment.getInstance().getApplicationHostName());
+			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
+			if (referee.getUser() != null && referee.getUser().isEnabled()) {
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+						"private/referees/mail/existing_user_referee_notification_email.ftl", model));
+			} else {
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+						"private/referees/mail/referee_notification_email.ftl", model));
+			}
+		} catch (Throwable e) {
+			log.warn("error while sending email", e);
+		}
 	}
 
 }

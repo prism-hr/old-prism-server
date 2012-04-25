@@ -174,6 +174,17 @@ public class RefereeControllerTest {
 		EasyMock.verify(refereeServiceMock);
 		assertEquals( "redirect:/update/getReferee?applicationId=5", view);
 	}
+	@Test
+	public void shouldSaveRefereeAndSendEmailIfApplicationSubmittedAndIfNoErrors() {
+		Referee referee = new RefereeBuilder().id(1).application(new ApplicationFormBuilder().id(5).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm()).toReferee();
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errors.hasErrors()).andReturn(false);
+		refereeServiceMock.saveRefereeAndSendEmailNotifications(referee);
+		EasyMock.replay(refereeServiceMock, errors);
+		String view = controller.editReferee(referee, errors);
+		EasyMock.verify(refereeServiceMock);
+		assertEquals( "redirect:/update/getReferee?applicationId=5", view);
+	}
 
 	@Test
 	public void shouldNotSaveAndReturnToViewIfErrors() {

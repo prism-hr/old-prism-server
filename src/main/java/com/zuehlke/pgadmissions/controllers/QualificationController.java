@@ -100,7 +100,7 @@ public class QualificationController {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
-		if(qualification.getApplication().isSubmitted()){
+		if(qualification.getApplication().isDecided()){
 			throw new CannotUpdateApplicationException();
 		}
 		if(result.hasErrors()){

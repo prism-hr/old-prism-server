@@ -55,7 +55,7 @@ public class AddressController {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
-		if (applicationForm.isSubmitted()) {
+		if (applicationForm.isDecided()) {
 			throw new CannotUpdateApplicationException();
 		}
 		if(result.hasErrors()){

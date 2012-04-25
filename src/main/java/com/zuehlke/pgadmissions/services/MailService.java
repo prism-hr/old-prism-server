@@ -41,7 +41,8 @@ public class MailService {
 		this.applicationsService = applicationsService;
 		this.refereeDAO = refereeDAO;
 	}
-
+	
+	@Transactional
 	public void sendMailToAdminsAndChangeLastReminderDate(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
 

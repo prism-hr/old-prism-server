@@ -6,18 +6,24 @@ import static org.junit.Assert.assertNotNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Disability;
+import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
@@ -28,6 +34,8 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 
 	private Country country;
 	private ApplicationForm applicationForm;
+	private Ethnicity ethnicity;
+	private Disability disability;
 
 	
 	@Test(expected=NullPointerException.class)
@@ -57,22 +65,63 @@ public class PersonalDetailDAOTest extends AutomaticRollbackTestCase {
 		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country).dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))
 				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc")
 				.email("email").firstName("firstName").gender(Gender.MALE).lastName("lastname").residenceCountry(country)
-				.applicationForm(applicationForm).toPersonalDetails();
-		
+				.applicationForm(applicationForm)
+				.ethnicity(ethnicity).disability(disability).toPersonalDetails();
 		personalDetailDAO.save(personalDetails);
 		assertNotNull(personalDetails.getId());		
 		flushAndClearSession();
-		
-		assertEquals(personalDetails, personalDetailDAO.getPersonalDetailsById(personalDetails.getId()));
-		
+
+		PersonalDetails savedDetails = personalDetailDAO.getPersonalDetailsById(personalDetails.getId());
+		assertEquals(personalDetails, savedDetails);
+
+		Ethnicity savedEth = savedDetails.getEthnicity();
+		Assert.assertNotNull(savedEth);
+		Assert.assertEquals("AAAA", savedEth.getName());
+
+		Disability savedDis = savedDetails.getDisability();
+		Assert.assertNotNull(savedDis);
+		Assert.assertEquals("BBBB", savedDis.getName());
 	}
-	
+
+	@Test
+	public void shouldSaveEthnicityDisability() throws ParseException {
+		PersonalDetailDAO personalDetailDAO = new PersonalDetailDAO(sessionFactory);
+		Ethnicity eth = new EthnicityBuilder().name("AAAA").toEthnicity();
+		save(eth);
+
+		Disability dis = new DisabilityBuilder().name("BBBB").toDisability();
+		save(dis);
+
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().country(country)//
+				.dateOfBirth(new SimpleDateFormat("dd/MM/yyyy").parse("01/06/1980"))//
+				.requiresVisa(true).englishFirstLanguage(true).phoneNumber("abc").email("email")//
+				.firstName("firstName").gender(Gender.MALE).lastName("lastname")//
+				.residenceCountry(country).ethnicity(eth).disability(dis).applicationForm(applicationForm).toPersonalDetails();
+
+		personalDetailDAO.save(personalDetails);
+		flushAndClearSession();
+
+		PersonalDetails storedPD = personalDetailDAO.getPersonalDetailsById(personalDetails.getId());
+		Ethnicity storedEth = storedPD.getEthnicity();
+		assertNotNull(storedEth);
+		assertEquals("AAAA", storedEth.getName());
+
+		Disability storedDis = storedPD.getDisability();
+		assertNotNull(storedDis);
+		assertEquals("BBBB", storedDis.getName());
+	}
+
 	@Before
+	@Override
 	public void setUp() {
 		super.setUp();
 		country = new CountryBuilder().code("AA").name("AA").toCountry();
-		
+		ethnicity = new EthnicityBuilder().name("AAAA").toEthnicity();
+		disability = new DisabilityBuilder().name("BBBB").toDisability();
+
 		save(country);
+		save(ethnicity);
+		save(disability);
 
 		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
 		Project project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();

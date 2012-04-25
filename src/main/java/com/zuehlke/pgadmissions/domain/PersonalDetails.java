@@ -77,6 +77,14 @@ public class PersonalDetails extends DomainObject<Integer> {
 	private Country country;
 
 	@ManyToOne
+	@JoinColumn(name = "ethnicity_id")
+	private Ethnicity ethnicity;
+	
+	@ManyToOne
+	@JoinColumn(name = "disability_id")
+	private Disability disability;
+	
+	@ManyToOne
 	@JoinColumn(name = "residence_country_id")
 	private Country residenceCountry;
 
@@ -137,7 +145,6 @@ public class PersonalDetails extends DomainObject<Integer> {
 		this.residenceCountry = residenceCountry;
 	}
 
-
 	public ApplicationForm getApplication() {
 		return application;
 	}
@@ -154,6 +161,22 @@ public class PersonalDetails extends DomainObject<Integer> {
 		this.country = country;
 	}
 
+	public void setEthnicity(Ethnicity eth) {
+		this.ethnicity = eth;
+	}
+
+	public Ethnicity getEthnicity() {
+		return ethnicity;
+	}
+
+	public void setDisability(Disability disability) {
+		this.disability = disability;
+	}
+	
+	public Disability getDisability() {
+		return disability;
+	}
+
 	public String getEmail() {
 		return email;
 	}
@@ -161,7 +184,6 @@ public class PersonalDetails extends DomainObject<Integer> {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	
 
 	public List<Country> getCandidateNationalities() {
 		return candidateNationalities;
@@ -174,7 +196,6 @@ public class PersonalDetails extends DomainObject<Integer> {
 				this.candidateNationalities.add(nationality);
 			}
 		}
-		
 	}
 
 	public List<Country> getMaternalGuardianNationalities() {
@@ -213,7 +234,6 @@ public class PersonalDetails extends DomainObject<Integer> {
 		}
 		this.messenger = messenger;
 	}
-	
 
 	public String getPhoneNumber() {
 		return phoneNumber;
@@ -238,6 +258,4 @@ public class PersonalDetails extends DomainObject<Integer> {
 	public void setRequiresVisa(boolean requiresVisa) {
 		this.requiresVisa = requiresVisa;
 	}
-
-	
 }

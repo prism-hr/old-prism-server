@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
@@ -53,7 +54,7 @@ public class ProgrammeDetailsControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1)
-				.applicationForm(new ApplicationFormBuilder().id(5).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm()).toProgrammeDetails();
+				.applicationForm(new ApplicationFormBuilder().id(5).submissionStatus(SubmissionStatus.SUBMITTED).approvedSatus(ApprovalStatus.APPROVED).toApplicationForm()).toProgrammeDetails();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(programmeDetailsServiceMock, errors);
 		controller.editProgrammeDetails(programmeDetails, errors);

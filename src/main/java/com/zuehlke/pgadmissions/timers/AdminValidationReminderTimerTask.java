@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.utils;
+package com.zuehlke.pgadmissions.timers;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -11,7 +11,7 @@ import org.hibernate.Transaction;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.MailService;
-public class MailTimerTask extends TimerTask{
+public class AdminValidationReminderTimerTask extends TimerTask{
 
 
 		private ApplicationsService applicationsService;

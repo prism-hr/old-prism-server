@@ -64,7 +64,7 @@ public class RefereeController {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
-		if(referee.getApplication().isSubmitted()){
+		if(referee.getApplication().isDecided()){
 			throw new CannotUpdateApplicationException();
 		}
 		if(result.hasErrors()){

@@ -49,7 +49,9 @@ public class RefereeDAO {
 		Date now = Calendar.getInstance().getTime();
 		Date oneWeekAgo = DateUtils.addWeeks(now, -1);
 		return (List<Referee>) sessionFactory.getCurrentSession()
-					.createCriteria(Referee.class).createAlias("application", "application").add(Restrictions.eq("declined", false))
+					.createCriteria(Referee.class)
+					.createAlias("application", "application")
+					.add(Restrictions.eq("declined", false))
 					.add(Restrictions.isNull("reference"))
 					.add(Restrictions.le("lastNotified", oneWeekAgo))
 					.add(Restrictions.not(Restrictions.in("application.submissionStatus", new SubmissionStatus[]{SubmissionStatus.UNSUBMITTED})))

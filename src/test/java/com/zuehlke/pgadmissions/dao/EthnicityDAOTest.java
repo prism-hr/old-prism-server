@@ -21,7 +21,7 @@ public class EthnicityDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldGetAllEthnicitiesInAlhphabeticalOrder() {
+	public void shouldGetAllEthnicitiesInIDOrder() {
 		BigInteger numberOfEthnicities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from ETHNICITY").uniqueResult();
 		Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").toEthnicity();
 		Ethnicity ethnicity2 = new EthnicityBuilder().name("AAAAAAAA").toEthnicity();
@@ -30,9 +30,9 @@ public class EthnicityDAOTest extends AutomaticRollbackTestCase {
 		EthnicityDAO ethnicityDAO = new EthnicityDAO(sessionFactory);
 		List<Ethnicity> allEthnicity = ethnicityDAO.getAllEthnicities();
 		assertEquals(numberOfEthnicities.intValue() + 2, allEthnicity.size());
-
-		assertEquals("AAAAAAAA", allEthnicity.get(0).getName());
-		assertEquals("ZZZZZZ", allEthnicity.get(numberOfEthnicities.intValue() + 1).getName());
+		
+		assertEquals("ZZZZZZ", allEthnicity.get(numberOfEthnicities.intValue()).getName());
+		assertEquals("AAAAAAAA", allEthnicity.get(numberOfEthnicities.intValue() + 1).getName());
 	}
 
 	@Test

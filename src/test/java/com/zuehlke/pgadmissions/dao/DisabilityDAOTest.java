@@ -21,7 +21,7 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldGetAllDisabilitiesInAlhphabeticalOrder() {
+	public void shouldGetAllDisabilitiesInIDOrder() {
 		BigInteger numberOfDisabilities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from DISABILITY").uniqueResult();
 		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").toDisability();
 		Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").toDisability();
@@ -31,8 +31,8 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 		List<Disability> allDisability = disabilityDAO.getAllDisabilities();
 		assertEquals(numberOfDisabilities.intValue() + 2, allDisability.size());
 
-		assertEquals("AAAAAAAA", allDisability.get(0).getName());
-		assertEquals("ZZZZZZ", allDisability.get(numberOfDisabilities.intValue() + 1).getName());
+		assertEquals("ZZZZZZ", allDisability.get(numberOfDisabilities.intValue()).getName());
+		assertEquals("AAAAAAAA", allDisability.get(numberOfDisabilities.intValue() + 1).getName());
 	}
 
 	@Test

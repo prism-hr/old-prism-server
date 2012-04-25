@@ -19,6 +19,8 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Address</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Funding</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Country</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Ethnicity</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Disability</value>
 	     		<value>com.zuehlke.pgadmissions.domain.EmploymentPosition</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Referee</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Reference</value>	     		

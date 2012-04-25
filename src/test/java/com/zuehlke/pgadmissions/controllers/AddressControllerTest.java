@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
@@ -51,7 +52,7 @@ public class AddressControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).approvedSatus(ApprovalStatus.APPROVED).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 
 		AddressSectionDTO addressSectionDTO = new AddressSectionDTO();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);

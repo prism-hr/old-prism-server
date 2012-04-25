@@ -224,6 +224,18 @@ public class PdfDocumentBuilder {
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getEmail(), "Email");
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getPhoneNumber(), "Telephone");
 		addCorrectOutputDependingOnNull(document, application.getPersonalDetails().getMessenger(), "Skype Name");
+
+		document.add(new Paragraph("Equal Opportunities Details", smallBoldFont));
+		if (application.getPersonalDetails().getEthnicity() == null) {
+			document.add(new Paragraph(createMessage("ethnicity")));
+		} else {
+			document.add(new Paragraph("Ethnicity: " + application.getPersonalDetails().getEthnicity().getName()));
+		}
+		if (application.getPersonalDetails().getDisability() == null) {
+			document.add(new Paragraph(createMessage("disability")));
+		} else {
+			document.add(new Paragraph("Disability: " + application.getPersonalDetails().getDisability().getName()));
+		}
 	}
 
 	private void addGivenNationality(Document document, String header, java.util.List<Country> nationalities) throws DocumentException {

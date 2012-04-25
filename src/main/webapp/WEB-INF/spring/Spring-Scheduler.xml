@@ -22,7 +22,8 @@
 	</bean>
 
 	<!--  admin reminders -->
-	<bean id="mailTimerTask" class="com.zuehlke.pgadmissions.utils.MailTimerTask" >
+	
+	<bean id="mailTimerTask" class="com.zuehlke.pgadmissions.timers.AdminValidationReminderTimerTask" >
 		<property name="service" ref="mailService" />
 		<property name="applicationsService" ref="mailApplicationsService" />
 		<property name="sessionFactory" ref="sessionFactoryMail" />
@@ -30,9 +31,9 @@
 
 	<bean id="scheduledMailTimerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="2000" />
-		<property name="period" value="3000" />
+		<property name="period" value=" 86400000 " />
 		<property name="timerTask" ref="mailTimerTask" />		
-	</bean> 
+	</bean>  
 	
 	<!--  referee remindeers -->
 	<bean id="refereeReminderTimerTask" class="com.zuehlke.pgadmissions.timers.RefereeReminderTask" >

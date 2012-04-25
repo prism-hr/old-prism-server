@@ -13,7 +13,7 @@
        		<span class="plain-label">Additional information relevant to your application</span>
     		<span class="hint" data-desc="<@spring.message 'additionalInformation.content'/>"></span>
     		<div class="field">
-      		 <#if !applicationForm.isSubmitted()>
+      		 <#if !applicationForm.isDecided()>
         		<textarea id="additionalInformation" name="additionalInformation" class="max" rows="6" cols="80" maxlength='5000'>${(applicationForm.additionalInformation?html)!}</textarea>
             <#else>
                 <textarea readonly="readonly" id="additionalInformation" name="additionalInformation" class="max" rows="10" cols=80" >${(applicationForm.additionalInformation?html)!}</textarea>
@@ -22,11 +22,11 @@
 		</div>
 
         <div class="buttons">
-        	<#if !applicationForm.isSubmitted()>
+        	<#if !applicationForm.isDecided()>
 	        	<a class="button" id="informationCancelButton" name="informationCancelButton">Cancel</a>
             </#if>                
         	<button class="blue" type="button" id="additionalCloseButton">Close</button>
-	        <#if !applicationForm.isSubmitted()>
+	        <#if !applicationForm.isDecided()>
 	            <button class="blue" type="button" id="informationSaveButton">Save</button>
 	         </#if>   
 		</div>

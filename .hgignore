@@ -205,3 +205,6 @@ docs/mock-ups.docx
 designs/*
 syntax: regexp
 target/*
+
+syntax: regexp
+^\.settings$

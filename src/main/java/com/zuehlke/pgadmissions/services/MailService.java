@@ -35,10 +35,6 @@ public class MailService {
 	}
 	
 	
-	public void print(ApplicationForm applicationForm) {
-		System.out.println("Print " + applicationForm.getId());
-	}
-	
 	public void sendMailToAdmins(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
 

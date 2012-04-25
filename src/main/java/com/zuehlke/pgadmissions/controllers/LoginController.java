@@ -18,9 +18,9 @@ public class LoginController {
 		HttpSession session = request.getSession();
 		DefaultSavedRequest attribute = (DefaultSavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
 		if (attribute != null && attribute.getRequestURL() != null && attribute.getRequestURL().endsWith("/apply/new")) {
-			String[] projectIds = attribute.getParameterValues("project");
-			if (projectIds != null && projectIds.length > 0) {
-				modelMap.put("project", projectIds[0]);
+			String[] programIds = attribute.getParameterValues("program");
+			if (programIds != null && programIds.length > 0) {
+				modelMap.put("program", programIds[0]);
 			}
 		}
 

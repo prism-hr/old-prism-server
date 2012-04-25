@@ -42,7 +42,7 @@ public class MailTimerTask extends TimerTask{
 			List<ApplicationForm> applications = applicationsService.getAllApplicationsStillInValidationStageAndAfterDueDate();
 			for (ApplicationForm applicationForm : applications) {
 				if(isLastMailSentTwoWeeksOld(applicationForm)){
-					service.sendMailToAdmins(applicationForm);
+					service.sendMailToAdminsAndChangeLastReminderDate(applicationForm);
 				}
 			}
 			transaction.commit();		

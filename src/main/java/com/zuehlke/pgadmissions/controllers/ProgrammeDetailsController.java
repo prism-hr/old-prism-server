@@ -65,7 +65,7 @@ public class ProgrammeDetailsController {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
-		if (programmeDetails.getApplication().isSubmitted()) {
+		if (programmeDetails.getApplication().isDecided()) {
 			throw new CannotUpdateApplicationException();
 		}
 		if (result.hasErrors()) {

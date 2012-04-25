@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
@@ -33,7 +34,7 @@ public class AdditionalInformationControllerTest {
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().approvedSatus(ApprovalStatus.APPROVED).id(5).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();	
 		EasyMock.replay(applicationsServiceMock);
 		controller.editAdditionalInformation(applicationForm);
 		EasyMock.verify(applicationsServiceMock);

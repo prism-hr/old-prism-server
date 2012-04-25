@@ -82,7 +82,7 @@ public class FundingController {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
-		if(funding.getApplication().isSubmitted()){
+		if(funding.getApplication().isDecided()){
 			throw new CannotUpdateApplicationException();
 		}
 		if(result.hasErrors()){

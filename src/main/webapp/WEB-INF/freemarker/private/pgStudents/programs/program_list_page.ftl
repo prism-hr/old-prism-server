@@ -1,8 +1,8 @@
-<#if model.projects?has_content>
-	<#assign hasProjects = true />
-	<#assign projects = model.projects />
+<#if model.programs?has_content>
+	<#assign hasPrograms = true />
+	<#assign programs = model.programs />
 <#else>
-	<#assign hasProjects = false />
+	<#assign hasPrograms = false />
 </#if>	
 
 <#import "/spring.ftl" as spring />
@@ -13,7 +13,7 @@
 			$(document).ready(function()
 			{
 			 	$('button.apply').click(function() {
-			    	$('#project').val(this.id);
+			    	$('#program').val(this.id);
 			    	$('#applyForm').submit();
 			   });
 			
@@ -22,31 +22,29 @@
 			</script>
 	</head>
    <body id="bodyId">   
-		<h2>Projects</h2>			
+		<h2>Programs</h2>			
 		<ul>
-		<#if hasProjects>
+		<#if hasPrograms>
 			<table>
 				<tr>
 					<td> Code </td>
 					<td> Title </td>
-					<td> Description </td>
-					<td> Program </td>
+					<td> Description </td>					
 					<td/>
 				</tr>
-			<#list projects as project>
-				<tr id = "${project.title}" > 
-					<td> ${project.code} </td>
-					<td> ${project.title} </td>
-					<td> ${project.description} </td>
-					<td> ${project.program.title} </td>
-					<td> <button id="${project.id?string("######")}" class="apply">Apply now</button></td>
+			<#list programs as program>
+				<tr id = "${program.title}" > 
+					<td> ${program.code} </td>
+					<td> ${program.title} </td>
+					<td> ${program.description} </td>					
+					<td> <button id="${program.id?string("######")}" class="apply">Apply now</button></td>
 				</tr>
 	      	</#list>
 	      	</table>
 	    </#if>
       	</ul>
       	<form id="applyForm" action="<@spring.url '/apply/new'/>" method="POST">
-      		<input type="hidden" id="project" name="project" value=""/>
+      		<input type="hidden" id="program" name="program" value=""/>
       	</form>
 	</body>
 </html>

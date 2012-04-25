@@ -109,7 +109,7 @@ public class PdfDocumentBuilder {
 
 	private void addProgrammeSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Programme                                                                                          ", grayFont));
-		document.add(new Paragraph("Programme: " + application.getProject().getProgram().getTitle()));
+		document.add(new Paragraph("Programme: " + application.getProgram().getTitle()));
 
 		if (application.getProgrammeDetails().getStudyOption() == null) {
 			document.add(new Paragraph(createMessage("study option")));
@@ -117,7 +117,7 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Study Option: " + application.getProgrammeDetails().getStudyOption().displayValue()));
 		}
 
-		addCorrectOutputDependingOnNull(document, application.getProject().getTitle(), "Project");
+		addCorrectOutputDependingOnNull(document, application.getProjectTitle(), "Project");
 
 		if (application.getProgrammeDetails().getStartDate() == null) {
 			document.add(new Paragraph(createMessage("start date")));

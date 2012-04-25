@@ -16,12 +16,10 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -121,15 +119,15 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	
 
 	@Test
-	public void shouldSaveAndLoadUserWithProjectOriginallyAppliedTo() throws Exception {
+	public void shouldSaveAndLoadUserWithProgramOriginallyAppliedTo() throws Exception {
 
 		Program program = new ProgramBuilder().code("halloo").description("hallooo").title("halllooo").toProgram();
-		Project project = new ProjectBuilder().program(program).code("halloo").description("hallo").title("hallo").toProject();
-		save(program, project);
+		
+		save(program);
 
 		flushAndClearSession();
 
-		RegisteredUser user = new RegisteredUserBuilder().projectOriginallyAppliedTo(project).firstName("Jane").lastName("Doe").email("email@test.com")
+		RegisteredUser user = new RegisteredUserBuilder().programOriginallyAppliedTo(program).firstName("Jane").lastName("Doe").email("email@test.com")
 				.username("username").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
 				.toUser();
 
@@ -139,7 +137,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, id);
-		assertEquals(project, reloadedUser.getProjectOriginallyAppliedTo());
+		assertEquals(program, reloadedUser.getProgramOriginallyAppliedTo());
 
 	}
 

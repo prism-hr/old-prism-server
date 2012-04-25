@@ -33,7 +33,7 @@
             	<label class="plain-label grey-label">Programme<em class="grey-label">*</em></label>
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.programme'/>"></span>
                 <div class="field">
-                	<input class="full" id="programmeName" name="programmeName" type="text" value="${applicationForm.project.program.title?html}" disabled="disabled" />
+                	<input class="full" id="programmeName" name="programmeName" type="text" value="${applicationForm.program.title?html}" disabled="disabled" />
                 	<@spring.bind "programmeDetails.programmeName" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                 </div>
@@ -67,7 +67,7 @@
                 <label class="plain-label grey-label">Project</label>
                <span class="hint" data-desc="<@spring.message 'programmeDetails.project'/>"></span>
                 <div class="field">
-            		<input class="full" id="projectName" name="projectName" type="text" value="${applicationForm.project.title?html}" disabled="disabled"/>
+            		<input class="full" id="projectName" name="projectName" type="text" value="${applicationForm.projectTitle?html}" disabled="disabled"/>
                 </div>
 			</div>
 			

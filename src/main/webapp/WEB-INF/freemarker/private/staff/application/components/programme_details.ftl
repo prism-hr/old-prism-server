@@ -1,7 +1,7 @@
-<#if applicationForm.project?has_content>
-	<#assign hasProject = true>
+<#if applicationForm.program?has_content>
+	<#assign hasProgram = true>
 <#else>
-	<#assign hasProject = false>
+	<#assign hasProgram = false>
 </#if>
 
 <#if programme?has_content>
@@ -31,7 +31,7 @@
 	                	<label class="admin_row_label">Programme</label>
 	                  
 	                    <div class="field">
-	                    	${applicationForm.project.program.title?html}
+	                    	${applicationForm.program.title?html}
 	                    </div>
 					</div>
 	                  
@@ -51,7 +51,7 @@
 	                    <label class="admin_row_label">Project</label>
 	
 	                    <div class="field">
-	                		${applicationForm.project.title?html}
+	                		${applicationForm.projectTitle?html}
 	                    </div>
 					</div>
 					

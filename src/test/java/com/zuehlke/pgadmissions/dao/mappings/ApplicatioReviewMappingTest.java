@@ -10,21 +10,18 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class ApplicatioReviewMappingTest extends AutomaticRollbackTestCase{
 
 	@Test
 	public void shouldSaveAndLoadApplicationReview(){
-		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
-		Project project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
-		save( program, project);
+		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();		
+		save( program);
 		
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
@@ -34,7 +31,7 @@ public class ApplicatioReviewMappingTest extends AutomaticRollbackTestCase{
 		
 		save(applicant, reviewer);
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).project(project).toApplicationForm();		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();		
 		save(applicationForm);
 		
 		flushAndClearSession();

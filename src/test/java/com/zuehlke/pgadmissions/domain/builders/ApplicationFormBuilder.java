@@ -14,7 +14,6 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -39,8 +38,6 @@ public class ApplicationFormBuilder {
 	private RegisteredUser approver;
 
 	private RegisteredUser applicant;
-
-	private Project project;
 
 	private String projectTitle;
 
@@ -114,10 +111,6 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
-	public ApplicationFormBuilder project(Project project) {
-		this.project = project;
-		return this;
-	}
 
 	public ApplicationFormBuilder program(Program program) {
 		this.program = program;
@@ -227,8 +220,7 @@ public class ApplicationFormBuilder {
 		application.setSubmittedDate(submittedDate);
 		application.setApprovalStatus(approved);
 		application.setApprover(approver);
-		application.setReferees(referees);
-		application.setProject(project);
+		application.setReferees(referees);		
 		application.setSubmissionStatus(submissionStatus);
 		application.setApplicationTimestamp(appDate);
 		application.getQualifications().addAll(qualifications);

@@ -20,14 +20,12 @@ import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
@@ -39,7 +37,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	private ApplicationFormDAO applicationDAO;
 	private RegisteredUser user;
 	private Program program;
-	private Project project;
+	
 	private ApplicationForm application;
 		
 	@Before
@@ -49,8 +47,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
 		program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
-		project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
-		save(user, program, project);
+		
+		save(user, program);
 
 		flushAndClearSession();		
 	}
@@ -66,7 +64,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	public void shouldSaveAndLoadApplication() throws Exception {
 		
 		ApplicationForm application = new ApplicationForm();
-		application.setProject(project);
+		application.setProgram(program);
 		
 		application.setApplicant(user);
 		
@@ -144,7 +142,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	@Test 
 	public void shouldAssignDateToApplicationForm() {
 		ApplicationForm application = new ApplicationForm();
-		application.setProject(project);
+		application.setProgram(program);
 		application.setApplicant(user);
 		
 		applicationDAO.save(application);
@@ -161,7 +159,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		
 		ApplicationForm application1 = new ApplicationForm();	
 		application1.setApplicant(user);
-		application1.setProject(project);
+		application1.setProgram(program);
 		application1.setApprovalStatus(ApprovalStatus.APPROVED);
 		
 		applicationDAO.save(application1);
@@ -170,7 +168,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		
 		ApplicationForm application2 = new ApplicationForm();
 		application2.setApplicant(user);
-		application2.setProject(project);
+		application2.setProgram(program);
 		
 		applicationDAO.save(application2);
 		
@@ -185,7 +183,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		
 		application = new ApplicationForm();
 		application.setApplicant(user);
-		application.setProject(project);
+		application.setProgram(program);
 		
 		List<Qualification> qualifications = new ArrayList<Qualification>();
 		

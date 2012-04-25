@@ -83,7 +83,7 @@
                     	<span class="invalid"><@spring.message  model.result.getFieldError('confirmPassword').code /></span>                    		
                     </#if>
 		            
-		            <input type="hidden" name="projectId" value="${RequestParameters.project!}"/>
+		            <input type="hidden" name="programId" value="${RequestParameters.program!}"/>
 		            
 		        	<button name ="commit" type="submit" value="Submit" class="blue">GO</button>
 		      	</form>

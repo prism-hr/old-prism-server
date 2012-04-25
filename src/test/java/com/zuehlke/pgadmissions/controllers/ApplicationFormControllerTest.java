@@ -12,12 +12,12 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.ProjectDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class ApplicationFormControllerTest {
 
-	private ProjectDAO projectDAOMock;
+	private ProgramDAO programDAOMock;
 	private ApplicationFormController applicationController;
 	private ApplicationForm applicationForm;
 	private ApplicationsService applicationsServiceMock;
@@ -34,12 +34,12 @@ public class ApplicationFormControllerTest {
 	private RegisteredUser student;
 
 	@Test
-	public void shouldCreateNewApplicationFormWithProjectAndUserFromSecurityContext() {
+	public void shouldCreateNewApplicationFormWithProgramAndUserFromSecurityContext() {
 
-		Project project = new ProjectBuilder().id(12).toProject();
-		EasyMock.expect(projectDAOMock.getProjectById(12)).andReturn(project);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, project)).andReturn(applicationForm);
-		EasyMock.replay(projectDAOMock, applicationsServiceMock);
+		Program program = new ProgramBuilder().id(12).toProgram();
+		EasyMock.expect(programDAOMock.getProgramById(12)).andReturn(program);		
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program)).andReturn(applicationForm);
+		EasyMock.replay(programDAOMock, applicationsServiceMock);
 		
 		applicationController.createNewApplicationForm(12);
 		EasyMock.verify(applicationsServiceMock);
@@ -48,10 +48,10 @@ public class ApplicationFormControllerTest {
 
 	@Test
 	public void shouldRedirectToApplicationFormView() {
-		Project project = new ProjectBuilder().id(12).toProject();
-		EasyMock.expect(projectDAOMock.getProjectById(12)).andReturn(project);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, project)).andReturn(applicationForm);
-		EasyMock.replay(projectDAOMock, applicationsServiceMock);
+		Program program = new ProgramBuilder().id(12).toProgram();
+		EasyMock.expect(programDAOMock.getProgramById(12)).andReturn(program);		
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program)).andReturn(applicationForm);
+		EasyMock.replay(programDAOMock, applicationsServiceMock);
 		
 		ModelAndView modelAndView = applicationController.createNewApplicationForm(12);
 		assertEquals(applicationForm.getId(), modelAndView.getModel().get("applicationId"));
@@ -74,11 +74,11 @@ public class ApplicationFormControllerTest {
 
 		applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 
-		projectDAOMock = EasyMock.createMock(ProjectDAO.class);
+		programDAOMock = EasyMock.createMock(ProgramDAO.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
 
-		applicationController = new ApplicationFormController(projectDAOMock, applicationsServiceMock, userPropertyEditorMock) {
+		applicationController = new ApplicationFormController(programDAOMock, applicationsServiceMock, userPropertyEditorMock) {
 			ApplicationForm newApplicationForm() {
 				return applicationForm;
 			}

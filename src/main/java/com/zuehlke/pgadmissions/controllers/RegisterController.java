@@ -43,7 +43,7 @@ public class RegisterController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getRegisterPage(@RequestParam (required=false) Integer userId) {
+	public ModelAndView getRegisterPage(@RequestParam(required = false) Integer userId) {
 		RegisterPageModel model = new RegisterPageModel();
 		RegisteredUser record = new RegisteredUser();
 		if (userId != null) {
@@ -59,14 +59,15 @@ public class RegisterController {
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
-	public ModelAndView submitRegistration(@ModelAttribute("record") RegisteredUser record, @RequestParam (required=false) Integer isSuggestedUser, BindingResult errors) {
+	public ModelAndView submitRegistration(@ModelAttribute("record") RegisteredUser record, @RequestParam(required = false) Integer isSuggestedUser,
+			BindingResult errors) {
 		if (isSuggestedUser != null) {
 			validator.shouldValidateSameEmail(false);
 		} else {
 			validator.shouldValidateSameEmail(true);
 		}
 		validator.validate(record, errors);
-		
+
 		if (errors.hasErrors()) {
 			RegisterPageModel model = new RegisterPageModel();
 			model.setRecord(record);
@@ -90,8 +91,8 @@ public class RegisterController {
 		user.setEnabled(true);
 		userService.save(user);
 		String redirectView = "redirect:";
-		if (user.getProjectOriginallyAppliedTo() != null) {
-			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProjectOriginallyAppliedTo());
+		if (user.getProgramOriginallyAppliedTo() != null) {
+			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProgramOriginallyAppliedTo());
 			redirectView = redirectView + "/application?applicationId=" + newApplicationForm.getId();
 		} else {
 			redirectView = redirectView + "/applications";

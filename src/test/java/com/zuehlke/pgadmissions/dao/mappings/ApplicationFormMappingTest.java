@@ -25,7 +25,6 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
@@ -35,7 +34,6 @@ import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
@@ -47,14 +45,13 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 	private RegisteredUser user;
 	private Program program;
-	private Project project;
 
 	@Test
 	public void shouldSaveAndLoadApplicationForm() {
 
 		ApplicationForm application = new ApplicationForm();
 		application.setApplicant(user);
-		application.setProject(project);
+
 		application.setProgram(program);
 		application.setSubmissionStatus(SubmissionStatus.UNSUBMITTED);
 		application.setProjectTitle("bob");
@@ -76,7 +73,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(application, reloadedApplication);
 
 		assertEquals(user, reloadedApplication.getApplicant());
-		assertEquals(project, reloadedApplication.getProject());
+
 		assertEquals(program, reloadedApplication.getProgram());
 		assertEquals(SubmissionStatus.UNSUBMITTED, reloadedApplication.getSubmissionStatus());
 		assertEquals("bob", reloadedApplication.getProjectTitle());
@@ -91,7 +88,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		Country country2 = new CountryBuilder().code("CC").name("CC").toCountry();
 		save(country1, country2);
 
-		ApplicationForm application = new ApplicationFormBuilder().applicant(user).project(project).submissionStatus(SubmissionStatus.UNSUBMITTED)
+		ApplicationForm application = new ApplicationFormBuilder().applicant(user).program(program).submissionStatus(SubmissionStatus.UNSUBMITTED)
 				.toApplicationForm();
 
 		sessionFactory.getCurrentSession().save(application);
@@ -112,7 +109,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadApplicationFormWithReviewer() {
 
 		ApplicationForm application = new ApplicationForm();
-		application.setProject(project);
+		application.setProgram(program);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 		application.setReviewers(Arrays.asList(user));
@@ -133,7 +130,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(application, reloadedApplication);
 
 		assertEquals(user, reloadedApplication.getApplicant());
-		assertEquals(project, reloadedApplication.getProject());
+		assertEquals(program, reloadedApplication.getProgram());
 		assertEquals(SubmissionStatus.SUBMITTED, reloadedApplication.getSubmissionStatus());
 		Assert.assertEquals(1, reloadedApplication.getReviewers().size());
 		Assert.assertTrue(reloadedApplication.getReviewers().contains(user));
@@ -142,7 +139,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadApplicationFormWithAddress() {
 		ApplicationForm application = new ApplicationForm();
-		application.setProject(project);
+		application.setProgram(program);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 
@@ -156,12 +153,12 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		application.setCurrentAddress(addressOne);
 		application.setContactAddress(addressTwo);
-		
+
 		save(application);
 		assertNotNull(addressOne.getId());
 		assertNotNull(addressTwo.getId());
 		flushAndClearSession();
-		
+
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 		assertEquals(addressOne, reloadedApplication.getCurrentAddress());
 		assertEquals(addressTwo, reloadedApplication.getContactAddress());
@@ -171,7 +168,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	public void shouldLoadApplicationFormWithCVAndPersonalStatement() {
 
 		ApplicationForm application = new ApplicationForm();
-		application.setProject(project);
+		application.setProgram(program);
 		application.setApplicant(user);
 		Document cv = new DocumentBuilder().fileName("bob").type(DocumentType.CV).content("aaa!".getBytes()).toDocument();
 		Document personalStatement = new DocumentBuilder().fileName("bob").type(DocumentType.PERSONAL_STATEMENT).content("aaa!".getBytes()).toDocument();
@@ -193,7 +190,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	public void shouldLoadApplicationFormWithComments() {
 
 		ApplicationForm application = new ApplicationForm();
-		application.setProject(project);
+		application.setProgram(program);
 		application.setApplicant(user);
 
 		sessionFactory.getCurrentSession().save(application);
@@ -215,7 +212,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveQualificationsWithApplication() throws ParseException {
 
 		ApplicationForm application = new ApplicationForm();
-		application.setProject(project);
+		application.setProgram(program);
 		application.setApplicant(user);
 
 		// sessionFactory.getCurrentSession().save(application);
@@ -249,8 +246,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
 		program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
-		project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
-		save(user, program, project);
+
+		save(user, program);
 
 		flushAndClearSession();
 	}

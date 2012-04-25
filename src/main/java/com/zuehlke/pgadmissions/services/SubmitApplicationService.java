@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,13 +51,16 @@ public class SubmitApplicationService {
 
 		for (RegisteredUser admin : administrators) {
 			try {
-				Map<String, Object> model = new HashMap<String, Object>();
-				model.put("admin", admin);
-				model.put("application", form);
-				model.put("host", Environment.getInstance().getApplicationHostName());
-				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
-
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted", "private/staff/admin/mail/application_submit_confirmation.ftl", model));
+				if(form.getLastSubmissionNotification()==null || !form.getLastSubmissionNotification().equals(new Date())){
+					Map<String, Object> model = new HashMap<String, Object>();
+					model.put("admin", admin);
+					model.put("application", form);
+					model.put("host", Environment.getInstance().getApplicationHostName());
+					InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
+					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted", "private/staff/admin/mail/application_submit_confirmation.ftl", model));
+					form.setLastSubmissionNotification(new Date());
+				}
+				
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
 			}

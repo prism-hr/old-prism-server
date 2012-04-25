@@ -4,16 +4,24 @@
 <beans>
 
 	<bean id="mailService" class="com.zuehlke.pgadmissions.services.MailService"  autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory"/>
+		<constructor-arg index="1" ref="mailSender"/>
+		<constructor-arg index="2" ref="mailApplicationsService"/>
+		<constructor-arg index="3" ref="mainRefereeDAO"/>
 	</bean>
 	
 	<bean id="mailApplicationDAO" class="com.zuehlke.pgadmissions.dao.ApplicationFormDAO" autowire-candidate="false">
 		<constructor-arg ref="sessionFactoryMail"/>
 	</bean>
+	<bean id="mainRefereeDAO" class="com.zuehlke.pgadmissions.dao.RefereeDAO" autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail"/>
+	</bean>
 	
 	<bean id="mailApplicationsService" class="com.zuehlke.pgadmissions.services.ApplicationsService"  autowire-candidate="false">
-	<constructor-arg ref="mailApplicationDAO"/>
+		<constructor-arg ref="mailApplicationDAO"/>
 	</bean>
 
+	<!--  admin reminders -->
 	<bean id="mailTimerTask" class="com.zuehlke.pgadmissions.utils.MailTimerTask" >
 		<property name="service" ref="mailService" />
 		<property name="applicationsService" ref="mailApplicationsService" />
@@ -25,11 +33,23 @@
 		<property name="period" value="3000" />
 		<property name="timerTask" ref="mailTimerTask" />		
 	</bean> 
+	
+	<!--  referee remindeers -->
+	<bean id="refereeReminderTimerTask" class="com.zuehlke.pgadmissions.timers.RefereeReminderTask" >
+		<constructor-arg index="0" ref="sessionFactoryMail"/>
+		<constructor-arg index="1" ref="mailService"/>
+	</bean>
 
+	<bean id="refereeReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="300000" />
+		<property name="period" value="43200" />
+		<property name="timerTask" ref="refereeReminderTimerTask" />		
+	</bean> 
 	<bean class="org.springframework.scheduling.timer.TimerFactoryBean">
 		<property name="scheduledTimerTasks">
 		<list>
 			<ref bean="scheduledMailTimerTask"/>
+			<ref bean="refereeReminderSchedule"/>
 		</list>
 		</property>
 	</bean>

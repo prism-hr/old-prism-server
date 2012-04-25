@@ -40,7 +40,6 @@ public class MailTimerTask extends TimerTask{
 		public void run() {
 			transaction = getSessionFactory().getCurrentSession().beginTransaction();
 			List<ApplicationForm> applications = applicationsService.getAllApplicationsStillInValidationStageAndAfterDueDate();
-			System.out.println(applications);
 			for (ApplicationForm applicationForm : applications) {
 				if(isLastMailSentTwoWeeksOld(applicationForm)){
 					service.sendMailToAdmins(applicationForm);

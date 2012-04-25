@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,16 +26,19 @@ public class SubmitApplicationService {
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final Logger log = Logger.getLogger(SubmitApplicationService.class);
 	private final ApplicationsService applicationService;
+	private final RefereeService refereeService;
 
 	public SubmitApplicationService() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public SubmitApplicationService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, ApplicationsService applicationService) {
+	public SubmitApplicationService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender,
+			ApplicationsService applicationService, RefereeService refereeService) {
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
 		this.applicationService = applicationService;
+		this.refereeService = refereeService;
 	}
 
 	@Transactional
@@ -50,13 +54,16 @@ public class SubmitApplicationService {
 
 		for (RegisteredUser admin : administrators) {
 			try {
-				Map<String, Object> model = new HashMap<String, Object>();
-				model.put("admin", admin);
-				model.put("application", form);
-				model.put("host", Environment.getInstance().getApplicationHostName());
-				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
-
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted", "private/staff/admin/mail/application_submit_confirmation.ftl", model));
+				if(form.getLastSubmissionNotification()==null || !form.getLastSubmissionNotification().equals(new Date())){
+					Map<String, Object> model = new HashMap<String, Object>();
+					model.put("admin", admin);
+					model.put("application", form);
+					model.put("host", Environment.getInstance().getApplicationHostName());
+					InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
+					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted", "private/staff/admin/mail/application_submit_confirmation.ftl", model));
+					form.setLastSubmissionNotification(new Date());
+				}
+				
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
 			}
@@ -74,7 +81,8 @@ public class SubmitApplicationService {
 			model.put("application", form);
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted", "private/pgStudents/mail/application_submit_confirmation.ftl", model));
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted",
+					"private/pgStudents/mail/application_submit_confirmation.ftl", model));
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}
@@ -105,17 +113,21 @@ public class SubmitApplicationService {
 				model.put("referee", referee);
 				model.put("adminsEmails", adminsEmails);
 				model.put("applicant", form.getApplicant());
+				model.put("application", form);
 				model.put("programme", form.getProgrammeDetails());
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
 				if (referee.getUser() != null && referee.getUser().isEnabled()) {
-					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification", "private/referees/mail/existing_user_referee_notification_email.ftl", model));
+					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+							"private/referees/mail/existing_user_referee_notification_email.ftl", model));
 				} else {
-					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification", "private/referees/mail/referee_notification_email.ftl", model));
+					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+							"private/referees/mail/referee_notification_email.ftl", model));
 				}
 				referee.setLastNotified(Calendar.getInstance().getTime());
+				refereeService.save(referee);
 			} catch (Throwable e) {
-				
+
 				log.warn("error while sending email", e);
 			}
 		}

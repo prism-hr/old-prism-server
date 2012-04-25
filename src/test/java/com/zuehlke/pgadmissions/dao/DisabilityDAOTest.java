@@ -8,43 +8,43 @@ import java.util.List;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
-import com.zuehlke.pgadmissions.domain.Ethnicity;
-import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
+import com.zuehlke.pgadmissions.domain.Disability;
+import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
 
 public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 
 	@Test(expected = NullPointerException.class)
 	public void shouldThrowNullPointerException() {
-		EthnicityDAO ethnicityDAO = new EthnicityDAO();
-		Ethnicity ethnicity = new EthnicityBuilder().id(1).name("ZZZZZZ").toEthnicity();
-		ethnicityDAO.getEthnicityById(ethnicity.getId());
+		DisabilityDAO disabilityDAO = new DisabilityDAO();
+		Disability disability = new DisabilityBuilder().id(1).name("ZZZZZZ").toDisability();
+		disabilityDAO.getDisabilityById(disability.getId());
 	}
 
 	@Test
-	public void shouldGetAllEthnicitiesInAlhphabeticalOrder() {
-		BigInteger numberOfEthnicities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from DISABILITY").uniqueResult();
-		Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").toEthnicity();
-		Ethnicity ethnicity2 = new EthnicityBuilder().name("AAAAAAAA").toEthnicity();
-		save(ethnicity1, ethnicity2);
+	public void shouldGetAllDisabilitiesInAlhphabeticalOrder() {
+		BigInteger numberOfDisabilities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from DISABILITY").uniqueResult();
+		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").toDisability();
+		Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").toDisability();
+		save(disability1, disability2);
 		flushAndClearSession();
-		EthnicityDAO ethnicityDAO = new EthnicityDAO(sessionFactory);
-		List<Ethnicity> allEthnicity = ethnicityDAO.getAllEthnicities();
-		assertEquals(numberOfEthnicities.intValue() + 2, allEthnicity.size());
+		DisabilityDAO disabilityDAO = new DisabilityDAO(sessionFactory);
+		List<Disability> allDisability = disabilityDAO.getAllDisabilities();
+		assertEquals(numberOfDisabilities.intValue() + 2, allDisability.size());
 
-		assertEquals("AAAAAAAA", allEthnicity.get(0).getName());
-		assertEquals("ZZZZZZ", allEthnicity.get(numberOfEthnicities.intValue() + 1).getName());
+		assertEquals("AAAAAAAA", allDisability.get(0).getName());
+		assertEquals("ZZZZZZ", allDisability.get(numberOfDisabilities.intValue() + 1).getName());
 	}
 
 	@Test
-	public void shouldGetEthnicityById() {
-		Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").toEthnicity();
-		Ethnicity ethnicity2 = new EthnicityBuilder().name("mmmmmm").toEthnicity();
+	public void shouldGetDisabilityById() {
+		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").toDisability();
+		Disability disability2 = new DisabilityBuilder().name("mmmmmm").toDisability();
 
-		save(ethnicity1, ethnicity2);
+		save(disability1, disability2);
 		flushAndClearSession();
-		Integer id = ethnicity1.getId();
-		EthnicityDAO ethnicityDAO = new EthnicityDAO(sessionFactory);
-		Ethnicity reloadedEthnicity = ethnicityDAO.getEthnicityById(id);
-		assertEquals(ethnicity1, reloadedEthnicity);
+		Integer id = disability1.getId();
+		DisabilityDAO disabilityDAO = new DisabilityDAO(sessionFactory);
+		Disability reloadedDisability = disabilityDAO.getDisabilityById(id);
+		assertEquals(disability1, reloadedDisability);
 	}
 }

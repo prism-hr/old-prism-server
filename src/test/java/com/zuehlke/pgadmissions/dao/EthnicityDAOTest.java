@@ -32,7 +32,6 @@ public class EthnicityDAOTest extends AutomaticRollbackTestCase {
 		assertEquals(numberOfEthnicities.intValue() + 2, allEthnicity.size());
 
 		assertEquals("AAAAAAAA", allEthnicity.get(0).getName());
-
 		assertEquals("ZZZZZZ", allEthnicity.get(numberOfEthnicities.intValue() + 1).getName());
 	}
 

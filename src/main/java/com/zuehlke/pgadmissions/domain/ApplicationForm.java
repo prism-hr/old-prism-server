@@ -54,6 +54,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name="validation_due_date")
 	private Date validationDueDate;
 	
+	@Column(name = "last_submission_notification")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastSubmissionNotification;
+	
 	@Temporal(TemporalType.DATE)
 	@Column(name="last_email_reminder_date")
 	private Date lastEmailReminderDate;
@@ -404,5 +408,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setLastEmailReminderDate(Date lastEmailReminderDate) {
 		this.lastEmailReminderDate = lastEmailReminderDate;
+	}
+
+	public Date getLastSubmissionNotification() {
+		return lastSubmissionNotification;
+	}
+
+	public void setLastSubmissionNotification(Date lastSubmissionNotification) {
+		this.lastSubmissionNotification = lastSubmissionNotification;
 	}
 }

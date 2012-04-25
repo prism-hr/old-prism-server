@@ -55,6 +55,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setApplicant(user);
 		application.setProject(project);
+		application.setProgram(program);
 		application.setSubmissionStatus(SubmissionStatus.UNSUBMITTED);
 
 		assertNotNull(application.getPersonalDetails());
@@ -75,6 +76,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		assertEquals(user, reloadedApplication.getApplicant());
 		assertEquals(project, reloadedApplication.getProject());
+		assertEquals(program, reloadedApplication.getProgram());
 		assertEquals(SubmissionStatus.UNSUBMITTED, reloadedApplication.getSubmissionStatus());
 
 		assertNotNull(application.getPersonalDetails());

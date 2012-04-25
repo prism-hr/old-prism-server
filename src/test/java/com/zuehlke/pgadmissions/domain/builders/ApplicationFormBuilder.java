@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -40,6 +41,8 @@ public class ApplicationFormBuilder {
 	private RegisteredUser applicant;
 
 	private Project project;
+	
+	private Program program;
 
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
 	
@@ -105,6 +108,11 @@ public class ApplicationFormBuilder {
 
 	public ApplicationFormBuilder project(Project project) {
 		this.project = project;
+		return this;
+	}
+	
+	public ApplicationFormBuilder program(Program program) {
+		this.program = program;
 		return this;
 	}
 
@@ -230,6 +238,7 @@ public class ApplicationFormBuilder {
 		application.setValidationStage(validationStage);
 		application.setValidationDueDate(validationDueDate);
 		application.setLastEmailReminderDate(lastEmailReminderDate);
+		application.setProgram(program);
 		application.setLastSubmissionNotification(lastSubmissionNotification);
 		return application;
 	}

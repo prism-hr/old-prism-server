@@ -25,7 +25,7 @@ public class DisabilityDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Disability> getAllDisabilities() {
-		return sessionFactory.getCurrentSession().createCriteria(Disability.class).addOrder(Order.asc("name")).list();
+		return sessionFactory.getCurrentSession().createCriteria(Disability.class).addOrder(Order.asc("id")).list();
 	}
 
 	public Disability getDisabilityById(Integer id) {

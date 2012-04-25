@@ -25,7 +25,7 @@ public class EthnicityDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Ethnicity> getAllEthnicities() {
-		return sessionFactory.getCurrentSession().createCriteria(Ethnicity.class).addOrder(Order.asc("name")).list();
+		return sessionFactory.getCurrentSession().createCriteria(Ethnicity.class).addOrder(Order.asc("id")).list();
 	}
 
 	public Ethnicity getEthnicityById(Integer id) {

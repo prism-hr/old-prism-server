@@ -45,14 +45,3 @@ Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((sele
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((select id from REGISTERED_USER where username='alice@test.com'), (select id from APPLICATION_ROLE where authority='ADMINISTRATOR'));
 
 Insert into PROGRAM_APPROVER_LINK(program_id, registered_user_id) values ((select id from PROGRAM where code='TEST-PROG-ABC'), (select id from REGISTERED_USER where username='fabian@test.com'));
-
-INSERT INTO ethnicity values (1, 'ETH AAA');
-INSERT INTO ethnicity values (2, 'ETH BBB');
-INSERT INTO ethnicity values (3, 'ETH CCC');
-INSERT INTO ethnicity values (4, 'ETH DDD');
-
-INSERT INTO disability values (1, 'DIS AAA');
-INSERT INTO disability values (2, 'DIS BBB');
-INSERT INTO disability values (3, 'DIS CCC');
-INSERT INTO disability values (4, 'DIS DDD');
-

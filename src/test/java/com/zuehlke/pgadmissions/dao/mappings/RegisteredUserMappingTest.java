@@ -121,7 +121,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadUserWithProgramOriginallyAppliedTo() throws Exception {
 
-		Program program = new ProgramBuilder().code("halloo").description("hallooo").title("halllooo").toProgram();
+		Program program = new ProgramBuilder().code("halloo").title("halllooo").toProgram();
 		
 		save(program);
 
@@ -202,7 +202,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadProgramsOfWhichAdministrator() throws Exception {
 
-		Program program = new ProgramBuilder().code("111111").description("hello").title("hello").toProgram();
+		Program program = new ProgramBuilder().code("111111").title("hello").toProgram();
 		save(program);
 		flushAndClearSession();
 
@@ -223,7 +223,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldLoadProgramsOfWhichApprover() throws Exception {
 
-		Program program = new ProgramBuilder().code("111111").description("hello").title("hello").toProgram();
+		Program program = new ProgramBuilder().code("111111").title("hello").toProgram();
 		save(program);
 		flushAndClearSession();
 
@@ -244,7 +244,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadProgramsOfWhichReviewer() throws Exception {
 
-		Program program = new ProgramBuilder().code("111111").description("hello").title("hello").toProgram();
+		Program program = new ProgramBuilder().code("111111").title("hello").toProgram();
 		save(program);
 		flushAndClearSession();
 

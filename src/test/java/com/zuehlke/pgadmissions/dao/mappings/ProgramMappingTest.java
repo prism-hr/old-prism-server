@@ -21,8 +21,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 	public void shouldSaveAndLoadProgram() {
 
 		Program program = new Program();
-		program.setCode("abcD");
-		program.setDescription("I am a program :)");
+		program.setCode("abcD");		
 		program.setTitle("Program's title");
 		assertNull(program.getId());
 
@@ -40,7 +39,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(program, reloadedProgram);
 
 		assertEquals("abcD", reloadedProgram.getCode());
-		assertEquals("I am a program :)", reloadedProgram.getDescription());
+		
 		assertEquals("Program's title", reloadedProgram.getTitle());
 
 	}
@@ -49,7 +48,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 	public void shouldLoadProgramsWithApprovers() {
 		Program program = new Program();
 		program.setCode("abcD");
-		program.setDescription("I am a program :)");
+		
 		program.setTitle("Program's title");
 		save(program);
 
@@ -74,7 +73,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 	public void shouldLoadProgramsWithAdministrators() {
 		Program program = new Program();
 		program.setCode("abcD");
-		program.setDescription("I am a program :)");
+		
 		program.setTitle("Program's title");
 		save(program);
 
@@ -99,7 +98,7 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 	public void shouldLoadProgramsWithReviewers() {
 		Program program = new Program();
 		program.setCode("abcD");
-		program.setDescription("I am a program :)");
+		
 		program.setTitle("Program's title");
 		save(program);
 

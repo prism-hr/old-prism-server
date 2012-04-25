@@ -19,7 +19,7 @@ public class Program extends DomainObject<Integer> {
 	private static final long serialVersionUID = -9073611033741317582L;
 	private String code;
 	private String title;
-	private String description;
+
 
 	@ManyToMany(mappedBy = "programsOfWhichApprover")
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
@@ -48,18 +48,12 @@ public class Program extends DomainObject<Integer> {
 		this.code = code;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-
-	}
 
 	public String getCode() {
 		return code;
 	}
 
-	public String getDescription() {
-		return description;
-	}
+	
 
 	public String getTitle() {
 		return title;

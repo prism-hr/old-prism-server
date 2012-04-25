@@ -71,7 +71,7 @@ public class EmploymentPositionMappingTest extends AutomaticRollbackTestCase {
 		super.setUp();
 		languageDAO = new LanguageDAO(sessionFactory);
 		countriesDAO = new CountriesDAO(sessionFactory);
-		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();		
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
 		save(program);
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")

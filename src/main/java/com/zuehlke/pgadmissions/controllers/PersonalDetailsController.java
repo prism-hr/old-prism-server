@@ -90,7 +90,7 @@ public class PersonalDetailsController {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
-		if(personalDetails.getApplication().isSubmitted()){
+		if(personalDetails.getApplication().isDecided()){
 			throw new CannotUpdateApplicationException();
 		}
 		if(result.hasErrors()){

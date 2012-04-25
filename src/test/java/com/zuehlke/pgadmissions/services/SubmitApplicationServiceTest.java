@@ -94,6 +94,7 @@ public class SubmitApplicationServiceTest {
 		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 		assertNotNull(referee1.getLastNotified());
 		assertNotNull(referee2.getLastNotified());
+		assertNotNull(form.getLastSubmissionNotification());
 	}
 	@SuppressWarnings("unchecked")
 	@Test

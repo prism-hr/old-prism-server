@@ -25,9 +25,9 @@ import com.zuehlke.pgadmissions.domain.enums.ValidationStage;
 public class ApplicationFormBuilder {
 
 	private ProgrammeDetails programmeDetails;
-	
+
 	private PersonalDetails personalDetails;
-	
+
 	private Address currentAddress;
 
 	private Address contactAddress;
@@ -41,11 +41,13 @@ public class ApplicationFormBuilder {
 	private RegisteredUser applicant;
 
 	private Project project;
-	
+
+	private String projectTitle;
+
 	private Program program;
 
 	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
-	
+
 	private ValidationStage validationStage = ValidationStage.FALSE;
 
 	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
@@ -53,7 +55,7 @@ public class ApplicationFormBuilder {
 	private Date appDate;
 
 	private Date submittedDate;
-	
+
 	private Date validationDueDate;
 
 	private Date lastEmailReminderDate;
@@ -72,25 +74,31 @@ public class ApplicationFormBuilder {
 
 	private Document personalStatement = null;
 
+	public ApplicationFormBuilder projectTitle(String projectTitle) {
+		this.projectTitle = projectTitle;
+		return this;
+	}
+
 	public ApplicationFormBuilder personalDetails(PersonalDetails personalDetails) {
 		this.personalDetails = personalDetails;
 		return this;
 	}
-	
-	
+
 	public ApplicationFormBuilder programmeDetails(ProgrammeDetails programmeDetails) {
 		this.programmeDetails = programmeDetails;
 		return this;
 	}
-	
+
 	public ApplicationFormBuilder contactAddress(Address contactAddress) {
 		this.contactAddress = contactAddress;
 		return this;
 	}
+
 	public ApplicationFormBuilder currentAddress(Address currentAddress) {
 		this.currentAddress = currentAddress;
 		return this;
 	}
+
 	public ApplicationFormBuilder personalStatement(Document personalStatement) {
 		this.personalStatement = personalStatement;
 		return this;
@@ -110,7 +118,7 @@ public class ApplicationFormBuilder {
 		this.project = project;
 		return this;
 	}
-	
+
 	public ApplicationFormBuilder program(Program program) {
 		this.program = program;
 		return this;
@@ -130,7 +138,7 @@ public class ApplicationFormBuilder {
 		this.lastSubmissionNotification = lastSubmissionNotification;
 		return this;
 	}
-	
+
 	public ApplicationFormBuilder qualifications(Qualification... qualifications) {
 		for (Qualification qualification : qualifications) {
 			this.qualifications.add(qualification);
@@ -164,8 +172,6 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
-
-
 	public ApplicationFormBuilder approvedSatus(ApprovalStatus approved) {
 		this.approved = approved;
 		return this;
@@ -185,7 +191,7 @@ public class ApplicationFormBuilder {
 		this.submissionStatus = submissionStatus;
 		return this;
 	}
-	
+
 	public ApplicationFormBuilder validationStage(ValidationStage validationStage) {
 		this.validationStage = validationStage;
 		return this;
@@ -201,18 +207,16 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
-	
 	public ApplicationFormBuilder lastEmailReminderDate(Date lastEmailReminderDate) {
 		this.lastEmailReminderDate = lastEmailReminderDate;
 		return this;
 	}
-	
-	
+
 	public ApplicationFormBuilder validationDueDate(Date validationDueDate) {
 		this.validationDueDate = validationDueDate;
 		return this;
 	}
-	
+
 	public ApplicationForm toApplicationForm() {
 		ApplicationForm application = new ApplicationForm();
 		application.setId(id);
@@ -240,6 +244,7 @@ public class ApplicationFormBuilder {
 		application.setLastEmailReminderDate(lastEmailReminderDate);
 		application.setProgram(program);
 		application.setLastSubmissionNotification(lastSubmissionNotification);
+		application.setProjectTitle(projectTitle);
 		return application;
 	}
 }

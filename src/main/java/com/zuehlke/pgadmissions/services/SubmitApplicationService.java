@@ -52,7 +52,7 @@ public class SubmitApplicationService {
 	}
 
 	private void sendMailToAdmins(ApplicationForm form) {
-		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 
 		for (RegisteredUser admin : administrators) {
 			try {
@@ -83,7 +83,7 @@ public class SubmitApplicationService {
 	private void sendMailToApplicant(ApplicationForm form) {
 		try {
 			RegisteredUser applicant = form.getApplicant();
-			List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+			List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("adminsEmails", adminsEmails);
@@ -114,7 +114,7 @@ public class SubmitApplicationService {
 	public void sendMailToReferees(ApplicationForm form) {
 
 		List<Referee> referees = form.getReferees();
-		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 		for (Referee referee : referees) {
 			try {

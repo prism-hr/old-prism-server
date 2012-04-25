@@ -16,12 +16,10 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
@@ -75,15 +73,15 @@ public class FundingMappingTest extends AutomaticRollbackTestCase{
 		
 		
 		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
-		Project project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
-		save(program, project);
+		
+		save(program);
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
 		save(applicant);
 
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).project(project).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
 		save(applicationForm);
 		flushAndClearSession();
 	}

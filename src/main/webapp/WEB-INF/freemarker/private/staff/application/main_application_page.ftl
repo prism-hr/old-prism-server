@@ -93,7 +93,7 @@
 			          
 				          	<div class="row">
 				            	<label>Programme</label>
-				                ${applicationForm.project.program.code} - ${applicationForm.project.program.title}
+				                ${applicationForm.program.code} - ${applicationForm.program.title}
 				            </div>
 				            
 				          	<div class="row">

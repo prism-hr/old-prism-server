@@ -9,19 +9,17 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class AddressDAOTest extends AutomaticRollbackTestCase {
 
 	
 	private RegisteredUser user;
-	private Program program;
-	private Project project;
+	
+	
 
 	@Test
 	public void shouldDeleteAddress(){
@@ -50,10 +48,8 @@ public class AddressDAOTest extends AutomaticRollbackTestCase {
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-
-		program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
-		project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
-		save(user, program, project);
+			
+		save(user);
 
 		flushAndClearSession();
 	}

@@ -1,6 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
@@ -16,13 +16,11 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -57,10 +55,9 @@ public class SubmitApplicationServiceTest {
 		Referee referee1 = new RefereeBuilder().id(1).firstname("bob").user(refereeUserDisabled).lastname("bobson").email("email@test.com").toReferee();
 		Referee referee2 = new RefereeBuilder().id(2).firstname("anna").user(refereeUserDisabled).lastname("allen").email("email2@test.com").toReferee();
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		Program program = new ProgramBuilder().administrators(administrator).toProgram();
-		Project project = new ProjectBuilder().program(program).toProject();
+		Program program = new ProgramBuilder().administrators(administrator).toProgram();		
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).lastSubmissionNotification(null).referees(referee1, referee2).id(2).project(project).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).lastSubmissionNotification(null).referees(referee1, referee2).id(2).program(program).toApplicationForm();
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
@@ -109,9 +106,9 @@ public class SubmitApplicationServiceTest {
 		Referee referee2 = new RefereeBuilder().id(2).firstname("anna").lastname("allen").user(refereeUserDisabled).email("email2@test.com").toReferee();
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		Program program = new ProgramBuilder().administrators(administrator).toProgram();
-		Project project = new ProjectBuilder().program(program).toProject();
+		
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).referees(referee1, referee2).id(2).project(project).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).referees(referee1, referee2).id(2).program(program).toApplicationForm();
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
@@ -159,9 +156,9 @@ public class SubmitApplicationServiceTest {
 		Referee referee2 = new RefereeBuilder().id(2).firstname("anna").lastname("allen").user(refereeUserEnabled).email("email2@test.com").toReferee();
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		Program program = new ProgramBuilder().administrators(administrator).toProgram();
-		Project project = new ProjectBuilder().program(program).toProject();
+		
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).referees(referee1, referee2).id(2).project(project).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).referees(referee1, referee2).id(2).program(program).toApplicationForm();
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);

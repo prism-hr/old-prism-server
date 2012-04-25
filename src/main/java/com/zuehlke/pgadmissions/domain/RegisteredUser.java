@@ -37,8 +37,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	@Transient
 	private String confirmPassword;
+	
 	@Transient
-	private Integer projectId;
+	private Integer programId;
 	@Transient
 	private Referee currentReferee;
 
@@ -52,11 +53,12 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "registered_user_id")
 	private List<Referee> referees = new ArrayList<Referee>();
-
+	
+	
 	@ManyToOne
-	@JoinColumn(name = "originally_project_id")
-	private Project projectOriginallyAppliedTo;
-
+	@JoinColumn(name = "originally_program_id")
+	private Program programOriginallyAppliedTo;
+	
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
@@ -202,7 +204,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 
 		if (isInRole(Authority.ADMINISTRATOR)) {
-			if (applicationForm.getProject().getProgram().getAdministrators().contains(this)) {
+			if (applicationForm.getProgram().getAdministrators().contains(this)) {
 				return true;
 			}
 		}
@@ -214,7 +216,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 
 		if (isInRole(Authority.APPROVER) && !applicationForm.isInValidationStage()) {
-			if (applicationForm.getProject().getProgram().isApprover(this)) {
+			if (applicationForm.getProgram().isApprover(this)) {
 				return true;
 			}
 		}
@@ -245,13 +247,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.activationCode = activationCode;
 	}
 
-	public Project getProjectOriginallyAppliedTo() {
-		return projectOriginallyAppliedTo;
-	}
-
-	public void setProjectOriginallyAppliedTo(Project projectOriginallyAppliedTo) {
-		this.projectOriginallyAppliedTo = projectOriginallyAppliedTo;
-	}
+	
 
 	public List<Program> getProgramsOfWhichAdministrator() {
 		return programsOfWhichAdministrator;
@@ -333,14 +329,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.confirmPassword = confirmPassword;
 	}
 
-	public Integer getProjectId() {
-		return projectId;
-	}
-
-	public void setProjectId(Integer projectId) {
-		this.projectId = projectId;
-	}
-
+	
 	public boolean isAdminOrReviewerInProgramme(Program program) {
 		if (program.getAdministrators().contains(this) || program.getReviewers().contains(this)) {
 			return true;
@@ -392,6 +381,22 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 		return null;
+	}
+
+	public Program getProgramOriginallyAppliedTo() {
+		return programOriginallyAppliedTo;
+	}
+
+	public void setProgramOriginallyAppliedTo(Program programOriginallyAppliedTo) {
+		this.programOriginallyAppliedTo = programOriginallyAppliedTo;
+	}
+
+	public Integer getProgramId() {
+		return programId;
+	}
+
+	public void setProgramId(Integer programId) {
+		this.programId = programId;
 	}
 
 }

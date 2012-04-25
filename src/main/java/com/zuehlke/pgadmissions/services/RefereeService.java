@@ -72,7 +72,7 @@ public class RefereeService {
 
 	private void sendMailToAdministrators(Referee referee) {
 		ApplicationForm form = referee.getApplication();
-		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 
 		for (RegisteredUser admin : administrators) {
 			try {
@@ -96,7 +96,7 @@ public class RefereeService {
 		try {
 			ApplicationForm form = referee.getApplication();
 			RegisteredUser applicant = form.getApplicant();
-			List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+			List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("adminsEmails", adminsEmails);
@@ -179,7 +179,6 @@ public class RefereeService {
 	public void delete(Referee referee) {
 		referee.getUser().getReferees().remove(referee);
 		refereeDAO.delete(referee);
-		
 
 	}
 
@@ -201,7 +200,7 @@ public class RefereeService {
 		try {
 			ApplicationForm form = referee.getApplication();
 			RegisteredUser applicant = form.getApplicant();
-			List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+			List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("adminsEmails", adminsEmails);
@@ -216,7 +215,5 @@ public class RefereeService {
 		}
 
 	}
-
-	
 
 }

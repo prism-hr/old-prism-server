@@ -30,13 +30,11 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -209,9 +207,9 @@ public class UserServiceTest {
 	
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		Program program = new ProgramBuilder().administrators(administrator).toProgram();
-		Project project = new ProjectBuilder().program(program).toProject();
+		
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("applicant").lastName("hen").email("applicant@test.com").toUser();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).project(project).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).program(program).toApplicationForm();
 		Referee referee = new RefereeBuilder().application(form).toReferee();
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referees(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
 		refereeUser.setCurrentReferee(referee);
@@ -253,9 +251,9 @@ public class UserServiceTest {
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		Program program = new ProgramBuilder().administrators(administrator).toProgram();
-		Project project = new ProjectBuilder().program(program).toProject();
+		
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("applicant").lastName("hen").email("applicant@test.com").toUser();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).project(project).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).program(program).toApplicationForm();
 		Referee referee = new RefereeBuilder().application(form).toReferee();
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referees(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
 		refereeUser.setCurrentReferee(referee);

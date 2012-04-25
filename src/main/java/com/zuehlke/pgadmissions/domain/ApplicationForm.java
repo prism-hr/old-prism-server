@@ -90,10 +90,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "approver_user_id")
 	private RegisteredUser approver = null;
 
-	@ManyToOne
-	@JoinColumn(name = "project_id")
-	private Project project;
-	
+		
 	@Column(name = "project_title")
 	private String projectTitle;
 	
@@ -159,9 +156,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.reviewers = reviewers;
 	}
 
-	public Project getProject() {
-		return project;
-	}
 
 	public ApprovalStatus getApprovalStatus() {
 		return approvalStatus;
@@ -200,9 +194,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.approver = approver;
 	}
 
-	public void setProject(Project project) {
-		this.project = project;
-	}
+
 
 	public void setSubmissionStatus(SubmissionStatus submissionStatus) {
 		this.submissionStatus = submissionStatus;

@@ -44,7 +44,7 @@ public class MailService {
 	
 	@Transactional
 	public void sendMailToAdminsAndChangeLastReminderDate(ApplicationForm form) {
-		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 
 		for (RegisteredUser admin : administrators) {
 			try {
@@ -75,7 +75,7 @@ public class MailService {
 
 		try {
 			ApplicationForm form = referee.getApplication();
-			List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
+			List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("adminsEmails", adminsEmails);

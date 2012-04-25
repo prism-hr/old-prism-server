@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.ProjectDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 @RequestMapping("/apply")
 public class ApplicationFormController {
 
-	private final ProjectDAO projectDAO;
+	private final ProgramDAO programDAO;
 	private final ApplicationsService applicationService;
 	private final UserPropertyEditor userPropertyEditor;
 
@@ -30,19 +30,19 @@ public class ApplicationFormController {
 	}
 
 	@Autowired
-	public ApplicationFormController(ProjectDAO projectDAO, ApplicationsService applicationService, UserPropertyEditor userPropertyEditor) {
-		this.projectDAO = projectDAO;
+	public ApplicationFormController(ProgramDAO programDAO, ApplicationsService applicationService, UserPropertyEditor userPropertyEditor) {
+		this.programDAO = programDAO;
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
-	public ModelAndView createNewApplicationForm(@RequestParam Integer project) {
+	public ModelAndView createNewApplicationForm(@RequestParam Integer program) {
 
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
-		Project proj = projectDAO.getProjectById(project);
-		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, proj);
+		Program prog = programDAO.getProgramById(program);
+		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog);
 
 		return new ModelAndView("redirect:/application", "applicationId", applicationForm.getId());
 

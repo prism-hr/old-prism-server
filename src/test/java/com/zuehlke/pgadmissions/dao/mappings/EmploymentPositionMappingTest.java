@@ -20,12 +20,10 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
 public class EmploymentPositionMappingTest extends AutomaticRollbackTestCase {
@@ -73,16 +71,15 @@ public class EmploymentPositionMappingTest extends AutomaticRollbackTestCase {
 		super.setUp();
 		languageDAO = new LanguageDAO(sessionFactory);
 		countriesDAO = new CountriesDAO(sessionFactory);
-		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
-		Project project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
-		save(program, project);
+		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();		
+		save(program);
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
 		save(applicant);
 
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).project(project).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
 		save(applicationForm);
 		flushAndClearSession();
 	}

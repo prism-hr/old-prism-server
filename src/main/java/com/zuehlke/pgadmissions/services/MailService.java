@@ -35,7 +35,7 @@ public class MailService {
 	}
 	
 	
-	public void sendMailToAdmins(ApplicationForm form) {
+	public void sendMailToAdminsAndChangeLastReminderDate(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
 
 		for (RegisteredUser admin : administrators) {

@@ -122,26 +122,4 @@ public class SubmitApplicationService {
 
 	}
 
-	// temporarily send same mail to all referees
-	public void sendMailToAllReferees(ApplicationForm form) {
-
-		List<Referee> referees = form.getReferees();
-		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
-		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
-		for (Referee referee : referees) {
-			try {
-				Map<String, Object> model = new HashMap<String, Object>();
-				model.put("referee", referee);
-				model.put("adminsEmails", adminsEmails);
-				model.put("applicant", form.getApplicant());
-				model.put("programme", form.getProgrammeDetails());
-				model.put("host", Environment.getInstance().getApplicationHostName());
-				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification", "private/referees/mail/referee_notification_email.ftl", model));
-			} catch (Throwable e) {
-				log.warn("error while sending email", e);
-			}
-		}
-
-	}
 }

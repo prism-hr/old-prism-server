@@ -27,12 +27,12 @@ public class LoginControllerTest {
 		request.setSession(session);
 		DefaultSavedRequest defaultSavedRequestMock = EasyMock.createMock(DefaultSavedRequest.class);
 		EasyMock.expect(defaultSavedRequestMock.getRequestURL()).andReturn("/apply/new").anyTimes();
-		EasyMock.expect(defaultSavedRequestMock.getParameterValues("project")).andReturn(new String[]{"4"});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("program")).andReturn(new String[]{"4"});
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);
 		ModelMap modelMap = new ModelMap();
 		loginController.getLoginPage(request, modelMap);
-		assertEquals("4", modelMap.get("project"));
+		assertEquals("4", modelMap.get("program"));
 	}
 	
 	@Test
@@ -42,12 +42,12 @@ public class LoginControllerTest {
 		request.setSession(session);
 		DefaultSavedRequest defaultSavedRequestMock = EasyMock.createMock(DefaultSavedRequest.class);
 		EasyMock.expect(defaultSavedRequestMock.getRequestURL()).andReturn("/apply/new").anyTimes();
-		EasyMock.expect(defaultSavedRequestMock.getParameterValues("project")).andReturn(new String[]{});
+		EasyMock.expect(defaultSavedRequestMock.getParameterValues("program")).andReturn(new String[]{});
 		EasyMock.replay(defaultSavedRequestMock);
 		session.putValue("SPRING_SECURITY_SAVED_REQUEST", defaultSavedRequestMock);
 		ModelMap modelMap = new ModelMap();
 		loginController.getLoginPage(request, modelMap);
-		assertNull( modelMap.get("project"));
+		assertNull( modelMap.get("program"));
 	}
 	@Before
 	public void setup(){

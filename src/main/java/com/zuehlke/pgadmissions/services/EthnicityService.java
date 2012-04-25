@@ -11,8 +11,16 @@ import com.zuehlke.pgadmissions.domain.Ethnicity;
 @Service
 public class EthnicityService {
 
-	@Autowired
 	private EthnicityDAO ethnicityDAO;
+
+	public EthnicityService() {
+		this(null);
+	}
+
+	@Autowired
+	public EthnicityService(EthnicityDAO ethnicityDAO) {
+		this.ethnicityDAO = ethnicityDAO;
+	}
 
 	public List<Ethnicity> getAllEthnicities() {
 		return ethnicityDAO.getAllEthnicities();

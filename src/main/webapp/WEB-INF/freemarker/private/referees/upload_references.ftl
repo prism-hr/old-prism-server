@@ -56,22 +56,23 @@
 					            		<input id="referenceDocument" class="full" type="file" name="file" value=""/>					
 										<span id="referenceUploadedDocument" ><input type="hidden" id="document_REFERENCE" value = "${(reference.document.id?string('######'))!}" name="document"/>
 											<@spring.bind "reference.document" /> 
-					                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>			
-					                		<a href="<@spring.url '/download?documentId=${(reference.document.id?string("#######"))!}'/>">${(reference.document.fileName)!}</a></span>								
+					                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>								                	
 										 </span>
 										<span id="referenceDocumentProgress" style="display: none;" ></span>					
 					        		</div>  
-        		
+        							
 								</div>
-								
+								<br/>
+								<div>Previous File: <a href="<@spring.url '/download/reference?referenceId=${reference.id?string("#######")}'/>">${reference.document.fileName?html}</a></div>
 								<div class="buttons">
 									<button type="reset" value="cancel">Cancel</button>
 					                <button class="blue" type="submit" id="referenceSaveButton" value="close">Submit</button>              
 								</div>			          			
 							</form>		     
 		          			<!---------- End Reference -------------->
-		          			<hr/>
+		          		
 		          			<#if !reference.id?? >
+		          			<hr/>
 		          			<form id="declineForm" method="POST" action="<@spring.url '/referee/decline'/>">
 		          				<input type="hidden" name="referee" value='${(reference.referee.id?string("#######"))!}'/>		          			
 		          				<p>If you are not able to act as a referee in this case, please let us know by clicking the "Decline" button below.</p>

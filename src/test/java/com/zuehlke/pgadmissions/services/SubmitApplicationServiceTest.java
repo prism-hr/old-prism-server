@@ -36,14 +36,15 @@ public class SubmitApplicationServiceTest {
 	private SubmitApplicationService submitApplicationService;
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
+	private RefereeService refereeServiceMock;
 
 	@Before
 	public void setUp(){
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		
-		submitApplicationService = new SubmitApplicationService(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationsServiceMock);
+		refereeServiceMock = EasyMock.createMock(RefereeService.class);
+		submitApplicationService = new SubmitApplicationService(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationsServiceMock,refereeServiceMock);
 
 	}
 
@@ -87,11 +88,13 @@ public class SubmitApplicationServiceTest {
 		javaMailSenderMock.send(preparatorMock3);
 		javaMailSenderMock.send(preparatorMock4);
 	
-		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		refereeServiceMock.save(referee1);
+		refereeServiceMock.save(referee2);
+		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeServiceMock);
 	
 		
 		submitApplicationService.saveApplicationFormAndSendMailNotifications(form);
-		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);
+		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock,refereeServiceMock);
 		assertNotNull(referee1.getLastNotified());
 		assertNotNull(referee2.getLastNotified());
 		assertNotNull(form.getLastSubmissionNotification());

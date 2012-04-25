@@ -1,8 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -183,6 +185,66 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Date eightDaysAgo = DateUtils.addDays(now,-8);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf").lastNotified(eightDaysAgo)
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		assertNotNull(referees);
+		assertTrue(referees.contains(referee));		
+
+	}
+	
+	@Test
+	public void shouldReturnRefereeForWhichReminderWasSendOneWeekMinus5minAgo() {
+		ApplicationForm application = new ApplicationFormBuilder().project(project).applicant(user).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		save(application);
+		Date now = Calendar.getInstance().getTime();		
+		Date oneWeekAgo = DateUtils.addDays(now,-7);
+		Date oneWeekMinusFiveMinAgo = DateUtils.addMinutes(oneWeekAgo, 5);
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf").lastNotified(oneWeekMinusFiveMinAgo)
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		assertNotNull(referees);
+		assertTrue(referees.contains(referee));			
+	}
+	
+	@Test
+	public void shouldReturnRefereeForWhichReminderWasSendOne6DaysAnd5minAgo() {
+		ApplicationForm application = new ApplicationFormBuilder().project(project).applicant(user).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		save(application);
+		Date now = Calendar.getInstance().getTime();		
+		Date sixDaysAgo = DateUtils.addDays(now,-6);
+		Date oneWeekPlusFiveMinAgo = DateUtils.addMinutes(sixDaysAgo, -5);
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf").lastNotified(oneWeekPlusFiveMinAgo)
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		assertNotNull(referees);
+		assertFalse(referees.contains(referee));		
+
+	}
+	
+	
+	@Test
+	public void shouldReturnRefereeForWhichReminderWasSendOneWeekPlus5minAgo() {
+		ApplicationForm application = new ApplicationFormBuilder().project(project).applicant(user).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		save(application);
+		Date now = Calendar.getInstance().getTime();		
+		Date oneWeekAgo = DateUtils.addDays(now,-7);
+		Date oneWeekPlusFiveMinAgo = DateUtils.addMinutes(oneWeekAgo, -5);
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf").lastNotified(oneWeekPlusFiveMinAgo)
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
 	
 		save(referee);

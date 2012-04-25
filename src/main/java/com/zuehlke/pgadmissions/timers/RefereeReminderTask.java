@@ -8,36 +8,41 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.MailService;
 
 public class RefereeReminderTask extends TimerTask {
 
 	private final SessionFactory sessionFactory;
-	private final RefereeService refereeService;
+
 	private final Logger log = Logger.getLogger(RefereeReminderTask.class);
-	
-	public RefereeReminderTask(SessionFactory sessionFactory, RefereeService refereeService) {
+
+	private final MailService mailService;
+
+	public RefereeReminderTask(SessionFactory sessionFactory, MailService mailService) {
 		this.sessionFactory = sessionFactory;
-		this.refereeService = refereeService;
+		this.mailService = mailService;
 
 	}
 
 	@Override
 	public void run() {
-		
-		List<Referee> refereesDueAReminder = refereeService.getRefereesDueAReminder();
+		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
+		List<Referee> refereesDueAReminder = mailService.getRefereesDueAReminder();
+		transaction.commit();
 		for (Referee referee : refereesDueAReminder) {
-			Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
-			try{
-				refereeService.sendReminderAndUpdateLastNotified(referee);
-				transaction.commit();
-			}catch (Throwable e) {
+			transaction =sessionFactory.getCurrentSession().beginTransaction();
+			sessionFactory.getCurrentSession().refresh(referee);
+			try {				
+				mailService.sendReminderAndUpdateLastNotified(referee);
+				transaction.commit();				
+				log.info("reminder send to referee " +  referee.getEmail());
+			} catch (Throwable e) {
 				transaction.rollback();
 				log.warn("error while sending email", e);
-				
+
 			}
 
-		}		
+		}
 
 	}
 

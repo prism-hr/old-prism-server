@@ -10,7 +10,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
@@ -47,7 +46,8 @@ public class RefereeDAO {
 	@SuppressWarnings("unchecked")
 	public List<Referee> getRefereesDueAReminder() {
 		Date now = Calendar.getInstance().getTime();
-		Date oneWeekAgo = DateUtils.addWeeks(now, -1);
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date oneWeekAgo = DateUtils.addDays(today, -6);
 		return (List<Referee>) sessionFactory.getCurrentSession()
 					.createCriteria(Referee.class)
 					.createAlias("application", "application")

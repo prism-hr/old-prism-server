@@ -22,7 +22,7 @@ public class EthnicityDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldGetAllEthnicitiesInAlhphabeticalOrder() {
-		BigInteger numberOfEthnicities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from ethnicity").uniqueResult();
+		BigInteger numberOfEthnicities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from ETHNICITY").uniqueResult();
 		Ethnicity ethnicity1 = new EthnicityBuilder().name("ZZZZZZ").toEthnicity();
 		Ethnicity ethnicity2 = new EthnicityBuilder().name("AAAAAAAA").toEthnicity();
 		save(ethnicity1, ethnicity2);

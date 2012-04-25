@@ -2,7 +2,11 @@
 <span name="supportingDocumentSpan">
 	<#if document?? && document.id??>
 		<input type="text" id="document_${document.type}" value = "${document.id?string("#######")}" style="display:none" name="document"/>
-		<a href="<@spring.url '/download?documentId=${document.id?string("#######")}'/>">${document.fileName}</a>		
+		<#if document.type != 'REFERENCE'>
+			<a href="<@spring.url '/download?documentId=${document.id?string("#######")}'/>">${document.fileName?html}</a>
+		<#else>
+			${document.fileName?html}
+		</#if>		
 	</#if>
 	<#if message??>
 		${message?html}

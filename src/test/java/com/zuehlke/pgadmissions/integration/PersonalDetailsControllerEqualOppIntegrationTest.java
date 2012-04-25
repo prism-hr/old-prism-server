@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:integrationTestContext.xml")
+@ContextConfiguration("/integrationTestContext.xml")
 public class PersonalDetailsControllerEqualOppIntegrationTest {
 
 	@Autowired

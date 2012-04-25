@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,14 +55,17 @@ public class SubmitApplicationService {
 
 		for (RegisteredUser admin : administrators) {
 			try {
-				if(form.getLastSubmissionNotification()==null || !form.getLastSubmissionNotification().equals(new Date())){
+				form.setLastSubmissionNotification(new Date());
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	        	String today = sdf.format(new Date());
+				if(form.getLastSubmissionNotification()==null || !form.getLastSubmissionNotification().equals(sdf.parse(today))){
 					Map<String, Object> model = new HashMap<String, Object>();
 					model.put("admin", admin);
 					model.put("application", form);
 					model.put("host", Environment.getInstance().getApplicationHostName());
 					InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted", "private/staff/admin/mail/application_submit_confirmation.ftl", model));
-					form.setLastSubmissionNotification(new Date());
+					form.setLastSubmissionNotification(sdf.parse(today));
 				}
 				
 			} catch (Throwable e) {

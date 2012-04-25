@@ -1,0 +1,24 @@
+/* PROGRESS page ----------------------------------------------------------------------------------------- */
+#content .content-box { background-image: url(../../images/bg_content_box_bottom_white.gif); background-color: #FFF !important; }
+#content .content-box-inner { background-image: url(../../images/bg_content_box_top_white.gif); }
+
+#tools { overflow: hidden; }
+#progress { margin-top: 20px; }
+ 
+#progress .key { font-weight: bold; list-style: none; margin: 0 0 20px; overflow: hidden; float: right; }
+#progress .key img { vertical-align: middle; width: 16px; }
+#progress .key li { float: left; margin-left: 2em; }
+ 
+#progress .row { clear: both; font-size: 8pt; margin-bottom: 10px; overflow: hidden; }
+#progress .row .bar { background: url(../../images/bg_feedback_bar.jpg) repeat-x; border: 1px solid #999; border-radius: 30px; vertical-align: middle; line-height: 15px; padding: 10px 30px 10px 50px; position: relative; }
+#progress .row .bar strong { display: block; }
+ 
+#progress .row .icon { background: no-repeat; display: block; position: absolute; right: 12px; top: 8px; width: 34px; height: 34px; }
+#progress .row.attention .icon { background-image: url(../../images/circle_attention.png); }
+#progress .row.complete .icon { background-image: url(../../images/circle_complete.png); }
+#progress .row.progress .icon { background-image: url(../../images/circle_in_progress.png); }
+#progress .row.stopped .icon { background-image: url(../../images/circle_stopped.png); }
+ 
+#progress .row .more { background: url(../../images/button_question_blue.png) no-repeat; cursor: pointer; display: block; width: 20px; height: 21px; position: absolute; top: 15px; left: 15px; overflow: hidden; text-indent: 20px; }
+ 
+#progress .row .information { background: #FFF; border: 1px solid #999; border-radius: 0 0 30px 30px; display: none; margin-top: -25px; padding: 40px 20px 20px; }

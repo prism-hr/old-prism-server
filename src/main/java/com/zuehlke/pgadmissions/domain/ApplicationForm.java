@@ -93,7 +93,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@ManyToOne
 	@JoinColumn(name = "project_id")
 	private Project project;
-
+	
+	@ManyToOne
+	@JoinColumn(name = "program_id")
+	private Program program;
+	
 	@OneToOne(mappedBy = "application")
 	private PersonalDetails personalDetails;
 
@@ -416,5 +420,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setLastSubmissionNotification(Date lastSubmissionNotification) {
 		this.lastSubmissionNotification = lastSubmissionNotification;
+	}
+
+	public Program getProgram() {
+		return program;
+	}
+
+	public void setProgram(Program program) {
+		this.program = program;
 	}
 }

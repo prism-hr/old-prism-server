@@ -27,6 +27,7 @@ public class DisabilityServiceTest {
 		assertEquals(2, disability.size());
 		assertEquals(disability1, disability.get(0));
 		assertEquals(disability2, disability.get(1));
+		EasyMock.verify(disabilityDAOMock);
 	}
 
 	@Test

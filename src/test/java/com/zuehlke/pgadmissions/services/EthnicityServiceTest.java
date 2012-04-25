@@ -30,7 +30,6 @@ public class EthnicityServiceTest {
 		EasyMock.verify(ethnicityDAOMock);
 	}
 	
-	
 	@Test
 	public void shouldGetEthnicityFromDAO(){
 		EthnicityDAO ethnicityDAOMock = EasyMock.createMock(EthnicityDAO.class);

@@ -274,6 +274,8 @@ public class RefereeServiceTest {
 	@Test			
 	public void shouldDelegateDeleteToDAO(){
 		Referee referee = new RefereeBuilder().id(2).toReferee();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).referees(referee).toUser();
+		referee.setUser(user);
 		refereeDAOMock.delete(referee);
 		EasyMock.replay(refereeDAOMock);
 		refereeService.delete(referee);

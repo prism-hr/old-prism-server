@@ -178,7 +178,9 @@ public class RefereeService {
 
 	@Transactional
 	public void delete(Referee referee) {
+		referee.getUser().getReferees().remove(referee);
 		refereeDAO.delete(referee);
+		
 
 	}
 

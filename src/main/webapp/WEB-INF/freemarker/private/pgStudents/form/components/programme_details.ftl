@@ -67,7 +67,7 @@
                 <label class="plain-label grey-label">Project</label>
                <span class="hint" data-desc="<@spring.message 'programmeDetails.project'/>"></span>
                 <div class="field">
-            		<input class="full" id="projectName" name="projectName" type="text" value="${applicationForm.projectTitle?html}" disabled="disabled"/>
+            		<input class="full" id="projectName" name="projectName" type="text" value="${(applicationForm.projectTitle?html)!}" disabled="disabled"/>
                 </div>
 			</div>
 			

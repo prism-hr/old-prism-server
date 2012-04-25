@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import gherkin.lexer.i18n.RU;
-
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +14,6 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -177,21 +174,20 @@ public class RegisteredUserTest {
 	}
 
 	@Test
-	public void shouldReturnTrueIfUserIsItsApproverOfProgramToWhichApplicationProjectBelongs() {
+	public void shouldReturnTrueIfUserIsItsApproverOfProgramToWhichApplicationBelongs() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).approver(approver).toProgram();
-		Project project = new ProjectBuilder().id(1).program(program).toProject();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().project(project).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		Program program = new ProgramBuilder().id(1).approver(approver).toProgram();		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		assertTrue(approver.canSee(applicationForm));
 
 	}
 
 	@Test
-	public void shouldReturnFalseIfUserIsNotApproverOfProgramToWhichApplicationProjectBelongs() {
+	public void shouldReturnFalseIfUserIsNotApproverOfProgramToWhichApplicationBelongs() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
-		Project project = new ProjectBuilder().id(1).program(program).toProject();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().project(project).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		assertFalse(approver.canSee(applicationForm));
 	}
 

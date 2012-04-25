@@ -25,13 +25,11 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -53,10 +51,9 @@ public class MailServiceTest {
 	
 		Role admin = new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole();
 		RegisteredUser administrator = new RegisteredUserBuilder().role(admin).id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		Program program = new ProgramBuilder().administrators(administrator).toProgram();
-		Project project = new ProjectBuilder().program(program).toProject();
+		Program program = new ProgramBuilder().administrators(administrator).toProgram();		
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).id(2).project(project).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).id(2).program(program).toApplicationForm();
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
@@ -92,7 +89,7 @@ public class MailServiceTest {
 	public void shouldSendRefereeReminderUpdateLastNotifiedAndSaveForNewReferee() throws UnsupportedEncodingException{		
 		
 		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().project(new ProjectBuilder().program(new Program()).toProject()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().program(new Program()).toApplicationForm();
 		referee.setApplication(form);
 		
 		refereeDAOMock.save(referee);
@@ -120,7 +117,7 @@ public class MailServiceTest {
 	public void shouldNotThrowExceptionAndNotUpdateRefereeIfSendRefereeReminderFailsNewReferee() throws UnsupportedEncodingException{		
 		
 		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().project(new ProjectBuilder().program(new Program()).toProject()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().program(new Program()).toApplicationForm();
 		referee.setApplication(form);		
 	
 		
@@ -146,7 +143,7 @@ public class MailServiceTest {
 	public void shouldSendRefereeReminderUpdateLastNotifiedAndSaveForExistingUserReferee() throws UnsupportedEncodingException{		
 		RegisteredUser user = new RegisteredUserBuilder().id(1).enabled(true).email("jboggs@test.com").firstName("Jonathan").lastName("Boggs").toUser();
 		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").user(user).toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().project(new ProjectBuilder().program(new Program()).toProject()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().program(new Program()).toApplicationForm();
 		referee.setApplication(form);
 		
 		refereeDAOMock.save(referee);
@@ -174,7 +171,7 @@ public class MailServiceTest {
 	public void shouldNotThrowExceptionAndNotSaveRefereeIdReminderFailsForExistingUserReferee() throws UnsupportedEncodingException{		
 		RegisteredUser user = new RegisteredUserBuilder().id(1).enabled(true).email("jboggs@test.com").firstName("Jonathan").lastName("Boggs").toUser();
 		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").user(user).toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().project(new ProjectBuilder().program(new Program()).toProject()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().program(new Program()).toApplicationForm();
 		referee.setApplication(form);
 		
 	

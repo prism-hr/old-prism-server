@@ -91,7 +91,7 @@
 			          
 				          	<div class="row">
 				            	<label>Programme</label>
-				              <input disabled size="109" value="${applicationForm.project.program.code} - ${applicationForm.project.program.title}" />
+				              <input disabled size="109" value="${applicationForm.program.code} - ${applicationForm.program.title}" />
 				            </div>
 				            
 				          	<div class="row half">

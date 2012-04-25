@@ -20,13 +20,11 @@ import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -63,8 +61,8 @@ public class RefereeServiceTest {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).role(applicantRole).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
 		Program program = new ProgramBuilder().administrators(admin1, admin2).toProgram();
-		Project project = new ProjectBuilder().program(program).toProject();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).referees(referee).id(2).project(project).toApplicationForm();
+		
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).referees(referee).id(2).program(program).toApplicationForm();
 		referee.setApplication(form);
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
@@ -121,8 +119,8 @@ public class RefereeServiceTest {
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
 		
 		Program program = new ProgramBuilder().administrators(admin1, admin2).toProgram();
-		Project project = new ProjectBuilder().program(program).toProject();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).referees(referee).id(2).project(project).toApplicationForm();
+	
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).referees(referee).id(2).program(program).toApplicationForm();
 		referee.setApplication(form);
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
@@ -293,7 +291,7 @@ public class RefereeServiceTest {
 		
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).project(new ProjectBuilder().program(new Program()).toProject()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).program(new Program()).toApplicationForm();
 		referee.setApplication(form);
 		
 		refereeDAOMock.save(referee);
@@ -320,7 +318,7 @@ public class RefereeServiceTest {
 		
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).project(new ProjectBuilder().program(new Program()).toProject()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).program(new Program()).toApplicationForm();
 		referee.setApplication(form);
 		
 		refereeDAOMock.save(referee);
@@ -344,7 +342,7 @@ public class RefereeServiceTest {
 		
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).project(new ProjectBuilder().program(new Program()).toProject()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).program(new Program()).toApplicationForm();
 		referee.setApplication(form);
 		
 		refereeDAOMock.save(referee);	

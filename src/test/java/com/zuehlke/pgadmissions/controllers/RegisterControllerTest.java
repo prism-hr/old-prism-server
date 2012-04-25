@@ -15,10 +15,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -82,7 +82,7 @@ public class RegisterControllerTest {
 		record.setEmail("emailofmarkeuston@gmail.com");
 		record.setPassword("12345678");
 		record.setConfirmPassword("12345678");
-		record.setProjectId(1);
+		record.setProgramId(1);
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		validatorMock.shouldValidateSameEmail(true);
 		validatorMock.validate(record, errorsMock);
@@ -101,7 +101,7 @@ public class RegisterControllerTest {
 	
 	
 	@Test
-	public void shouldActivateAccountAndRedirectToDefaultViewIfNoProject(){
+	public void shouldActivateAccountAndRedirectToDefaultViewIfNoProgram(){
 		String activationCode = "ul5oaij68186jbcg";
 		RegisteredUser user = new RegisteredUserBuilder().id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
 		EasyMock.expect(registrationServiceMock.findUserForActivationCode(activationCode)).andReturn(user);		
@@ -114,14 +114,14 @@ public class RegisterControllerTest {
 	}
 	
 	@Test
-	public void shouldCreatNewApplicationAndRedirectToItIfUserHasOriginalProject(){
+	public void shouldCreatNewApplicationAndRedirectToItIfUserHasOriginalProgram(){
 		String activationCode = "ul5oaij68186jbcg";
-		Project project = new ProjectBuilder().id(1).toProject();
+		Program program = new ProgramBuilder().id(1).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).toApplicationForm();
-		RegisteredUser user = new RegisteredUserBuilder().id(1).projectOriginallyAppliedTo(project).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().id(1).programOriginallyAppliedTo(program).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
 		EasyMock.expect(registrationServiceMock.findUserForActivationCode(activationCode)).andReturn(user);		
 		userServiceMock.save(user);
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(user, project)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(user, program)).andReturn(applicationForm);
 		EasyMock.replay(registrationServiceMock, applicationsServiceMock);
 		ModelAndView modelAndView = registerController.activateAccountSubmit(activationCode);		
 		EasyMock.verify(registrationServiceMock);

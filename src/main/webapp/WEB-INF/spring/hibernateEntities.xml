@@ -13,8 +13,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Role</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ApplicationForm</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ApplicationReview</value>
-	     		<value>com.zuehlke.pgadmissions.domain.Program</value>
-	     		<value>com.zuehlke.pgadmissions.domain.Project</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Program</value>	     		
 	     		<value>com.zuehlke.pgadmissions.domain.Qualification</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Address</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Funding</value>

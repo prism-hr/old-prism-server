@@ -12,7 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.ProjectDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -31,19 +31,19 @@ public class RegistrationService {
 	private final JavaMailSender mailsender;
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final Logger log = Logger.getLogger(RegistrationService.class);
-	private final ProjectDAO projectDAO;
+	private final ProgramDAO programDAO;
 
 	RegistrationService() {
 		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public RegistrationService(EncryptionUtils encryptionUtils, RoleDAO roleDAO, UserDAO userDAO, ProjectDAO projectDAO,
+	public RegistrationService(EncryptionUtils encryptionUtils, RoleDAO roleDAO, UserDAO userDAO, ProgramDAO programDAO,
 			MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
 		this.encryptionUtils = encryptionUtils;
 		this.roleDAO = roleDAO;
 		this.userDAO = userDAO;
-		this.projectDAO = projectDAO;
+		this.programDAO = programDAO;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 
 		this.mailsender = mailsender;
@@ -58,13 +58,12 @@ public class RegistrationService {
 		record.setAccountNonLocked(true);
 		record.setEnabled(false);
 		record.setCredentialsNonExpired(true);
-		if (record.getProjectId() != null) {
-			record.setProjectOriginallyAppliedTo(projectDAO.getProjectById(record.getProjectId()));
+		if (record.getProgramId() != null) {
+			record.setProgramOriginallyAppliedTo(programDAO.getProgramById(record.getProgramId()));
 		}
 		record.getRoles().add(roleDAO.getRoleByAuthority(Authority.APPLICANT));
 		return record;
 	}
-	
 
 	public RegisteredUser updateUser(RegisteredUser record, Integer isSuggestedUser) {
 		RegisteredUser suggestedUser = userDAO.get(isSuggestedUser);
@@ -87,20 +86,21 @@ public class RegistrationService {
 			newUser = createNewUser(record);
 		}
 		userDAO.save(newUser);
-	
+
 		try {
 			Map<String, Object> model = modelMap();
-			model.put("user", newUser);			
+			model.put("user", newUser);
 			model.put("host", Environment.getInstance().getApplicationHostName());
-			if(newUser.getProjectOriginallyAppliedTo() != null){
-				model.put("adminsEmails", getAdminsEmailsCommaSeparatedAsString(newUser.getProjectOriginallyAppliedTo().getProgram().getAdministrators()));
+			if (newUser.getProgramOriginallyAppliedTo() != null) {
+				model.put("adminsEmails", getAdminsEmailsCommaSeparatedAsString(newUser.getProgramOriginallyAppliedTo().getAdministrators()));
 			}
-			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " "+ newUser.getLastName());
-			
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Registration confirmation", "private/pgStudents/mail/registration_confirmation.ftl", model));
-			
+			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " " + newUser.getLastName());
+
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Registration confirmation",
+					"private/pgStudents/mail/registration_confirmation.ftl", model));
+
 		} catch (Throwable e) {
-			log.warn("error while sending email",e);
+			log.warn("error while sending email", e);
 		}
 	}
 
@@ -114,11 +114,11 @@ public class RegistrationService {
 
 	private String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
 		StringBuilder adminsMails = new StringBuilder();
-		for(int i = 0 ; i < administrators.size(); i++){
-			if(i > 0){
+		for (int i = 0; i < administrators.size(); i++) {
+			if (i > 0) {
 				adminsMails.append(", ");
-			}	
-			
+			}
+
 			adminsMails.append(administrators.get(i).getEmail());
 		}
 		return adminsMails.toString();

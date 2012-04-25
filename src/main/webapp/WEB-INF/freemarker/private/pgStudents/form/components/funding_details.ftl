@@ -69,6 +69,14 @@
           
 	<form >
     <input type="hidden" id="fundingId" name="fundingId" value="${(funding.id?string('#######'))!}"/>    
+
+		<div class="section-info-bar">
+			<div class="row">
+				<span class="info-text"> &nbsp Coming Soon.
+					<!--@spring.message 'programmeDetails.programme'/--> 
+				</span>
+			</div>
+		</div>
             
 		<div>
 			<!-- Award type -->

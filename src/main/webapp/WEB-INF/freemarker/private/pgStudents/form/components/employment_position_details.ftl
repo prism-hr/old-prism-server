@@ -68,6 +68,13 @@
     <input type="hidden" id="positionId" name="positionId" value="${(employmentPosition.id?string('#######'))!}"/>
     
     <form>
+		<div class="section-info-bar">
+			<div class="row">
+				<span class="info-text"> &nbsp Coming Soon.
+					<!--@spring.message 'programmeDetails.programme'/--> 
+				</span>
+			</div>
+		</div>
     	
     	<div id="employmentForm">
     		<!-- Country -->

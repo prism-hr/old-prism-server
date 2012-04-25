@@ -10,8 +10,16 @@ import com.zuehlke.pgadmissions.domain.Disability;
 
 @Service
 public class DisabilityService {
-	@Autowired
 	private DisabilityDAO disabilityDAO;
+
+	public DisabilityService() {
+		this(null);
+	}
+
+	@Autowired
+	public DisabilityService(DisabilityDAO disabilityDAO) {
+		this.disabilityDAO = disabilityDAO;
+	}
 
 	public List<Disability> getAllDisabilities() {
 		return disabilityDAO.getAllDisabilities();

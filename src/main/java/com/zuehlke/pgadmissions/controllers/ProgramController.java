@@ -6,32 +6,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.zuehlke.pgadmissions.dao.ProjectDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.pagemodels.MainPageModel;
 
 @Controller
-@RequestMapping(value = { "/projects" })
-public class ProjectController {
+@RequestMapping(value = { "/programs" })
+public class ProgramController {
 	
-	private static final String PROJECTS_VIEW_NAME = "private/pgStudents/projects/project_list_page";
+	private static final String PROJECTS_VIEW_NAME = "private/pgStudents/programs/program_list_page";
 
-	ProjectController() {
+	ProgramController() {
 		this(null);
 	}
 
-	private final ProjectDAO projectDAO;
+	private final ProgramDAO programDAO;
 
 	@Autowired
-	public ProjectController(ProjectDAO projectDAO) {
-		this.projectDAO = projectDAO;
+	public ProgramController(ProgramDAO programDAO) {
+		this.programDAO = programDAO;
 	}
 	
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getProjectsPage() {
+	public ModelAndView getProgramsPage() {
 		
 		MainPageModel mainPageModel = new MainPageModel();
-		mainPageModel.setProjects(projectDAO.getAllProjects());
+		mainPageModel.setPrograms(programDAO.getAllPrograms());
 		return new ModelAndView(PROJECTS_VIEW_NAME, "model", mainPageModel);
 	}
 

@@ -18,63 +18,60 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
-public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase{
+public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase {
 
 	private ApplicationReviewDAO applicationReviewDAO;
 	private RegisteredUser user;
-	private Project project;
-	
-	@Test(expected=NullPointerException.class)
-	public void shouldThrowNullPointerException(){
+	private Program program;
+
+	@Test(expected = NullPointerException.class)
+	public void shouldThrowNullPointerException() {
 		ApplicationReviewDAO reviewDAO = new ApplicationReviewDAO();
 		ApplicationReview review = new ApplicationReviewBuilder().id(1).toApplicationReview();
 		reviewDAO.save(review);
 	}
-	
+
 	@Before
 	public void setup() {
 		applicationReviewDAO = new ApplicationReviewDAO(sessionFactory);
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
-		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
-		project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
-		save(user, program, project);
+		program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
+
+		save(user, program);
 
 		flushAndClearSession();
-		
-	}
-	
-	@Test
-	public void shouldSaveAndLoadReview(){
 
-		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).project(project).applicant(user).toApplicationForm();
+	}
+
+	@Test
+	public void shouldSaveAndLoadReview() {
+
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
 		save(application);
 		flushAndClearSession();
-		
+
 		ApplicationReview review = new ApplicationReview();
 		review.setApplication(application);
 		review.setComment("Excellent Application!!!");
 		review.setUser(user);
-		
+
 		assertNull(review.getId());
-		
+
 		applicationReviewDAO.save(review);
-		
+
 		assertNotNull(review.getId());
 		Integer id = review.getId();
 		ApplicationReview reloadedReview = applicationReviewDAO.get(id);
 		assertSame(review, reloadedReview);
-		
+
 		flushAndClearSession();
 
 		reloadedReview = applicationReviewDAO.get(id);
@@ -83,17 +80,15 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase{
 		assertEquals(review.getUser(), user);
 		assertEquals(review.getComment(), reloadedReview.getComment());
 	}
-	
 
 	@Ignore
 	@Test
-	public void shouldGetReviewByApplicationForm(){
+	public void shouldGetReviewByApplicationForm() {
 
-		
-		ApplicationForm applicationOne = new ApplicationFormBuilder().id(4).project(project).applicant(user).toApplicationForm();
+		ApplicationForm applicationOne = new ApplicationFormBuilder().id(4).program(program).applicant(user).toApplicationForm();
 		save(applicationOne);
 		flushAndClearSession();
-		
+
 		ApplicationReview reviewOne = new ApplicationReview();
 		reviewOne.setApplication(applicationOne);
 		reviewOne.setComment("Excellent Application!!!");
@@ -103,17 +98,15 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase{
 		reviewThree.setApplication(applicationOne);
 		reviewThree.setComment("Excellent Application!!!");
 		reviewThree.setUser(user);
-		
-		
+
 		save(reviewOne, reviewThree);
-		
+
 		flushAndClearSession();
-		
+
 		List<ApplicationReview> reviewsByApplication = applicationReviewDAO.getReviewsByApplication(applicationOne);
-		
+
 		assertEquals(2, reviewsByApplication.size());
 		assertTrue(reviewsByApplication.containsAll(Arrays.asList(reviewOne, reviewThree)));
-		
-		
+
 	}
 }

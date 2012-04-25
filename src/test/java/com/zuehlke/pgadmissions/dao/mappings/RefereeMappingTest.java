@@ -16,13 +16,11 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Reference;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -148,15 +146,15 @@ public class RefereeMappingTest extends AutomaticRollbackTestCase {
 		super.setUp();
 
 		Program program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
-		Project project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
-		save(program, project);
+		
+		save(program);
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
 		save(applicant);
 
-		applicationForm = new ApplicationFormBuilder().applicant(applicant).project(project).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().applicant(applicant).program(program).toApplicationForm();
 		save(applicationForm);
 		flushAndClearSession();
 	}

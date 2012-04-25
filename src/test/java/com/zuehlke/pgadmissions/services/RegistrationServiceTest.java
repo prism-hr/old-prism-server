@@ -19,15 +19,13 @@ import org.junit.Test;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
-import com.zuehlke.pgadmissions.dao.ProjectDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -43,7 +41,7 @@ public class RegistrationServiceTest {
 	private UserDAO userDAOMock;
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
-	private ProjectDAO projectDAOMock;
+	private ProgramDAO programDAOMock;
 
 	@Test
 	public void shouldCreateNewUserFromDTO() {
@@ -51,9 +49,9 @@ public class RegistrationServiceTest {
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(role);
 		EasyMock.replay(roleDAOMock);
 
-		Project project = new ProjectBuilder().id(7).toProject();
-		EasyMock.expect(projectDAOMock.getProjectById(7)).andReturn(project);
-		EasyMock.replay(projectDAOMock);
+		Program program = new ProgramBuilder().id(7).toProgram();
+		EasyMock.expect(programDAOMock.getProgramById(7)).andReturn(program);
+		EasyMock.replay(programDAOMock);
 
 		RegisteredUser record = new RegisteredUser();
 		record.setFirstName("Mark");
@@ -61,7 +59,7 @@ public class RegistrationServiceTest {
 		record.setEmail("meuston@gmail.com");
 		record.setPassword("1234");
 		record.setConfirmPassword("1234");
-		record.setProjectId(7);
+		record.setProgramId(7);
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234")).andReturn("5678");
 		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("abc");
 		EasyMock.replay(encryptionUtilsMock);
@@ -72,7 +70,7 @@ public class RegistrationServiceTest {
 		assertEquals("Mark", newUser.getFirstName());
 		assertEquals("Euston", newUser.getLastName());
 		assertEquals("5678", newUser.getPassword());
-		assertEquals(project, newUser.getProjectOriginallyAppliedTo());
+		assertEquals(program, newUser.getProgramOriginallyAppliedTo());
 		assertTrue(newUser.isAccountNonExpired());
 		assertTrue(newUser.isAccountNonLocked());
 		assertTrue(newUser.isCredentialsNonExpired());
@@ -102,7 +100,7 @@ public class RegistrationServiceTest {
 	}
 
 	@Test
-	public void shouldCreateNewUserWithProjectNullIfNoIdGiven(){
+	public void shouldCreateNewUserWithProgramNullIfNoIdGiven(){
 		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).id(1).toRole();
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.APPLICANT)).andReturn(role);
 		EasyMock.replay(roleDAOMock);
@@ -115,11 +113,11 @@ public class RegistrationServiceTest {
 		record.setConfirmPassword("1234");
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("1234")).andReturn("5678");
 		EasyMock.expect(encryptionUtilsMock.generateUUID()).andReturn("abc");
-		EasyMock.replay(encryptionUtilsMock, projectDAOMock);
+		EasyMock.replay(encryptionUtilsMock, programDAOMock);
 
 		RegisteredUser newUser = registrationService.createNewUser(record);
-		EasyMock.verify(projectDAOMock);
-		assertNull(newUser.getProjectOriginallyAppliedTo());
+		EasyMock.verify(programDAOMock);
+		assertNull(newUser.getProgramOriginallyAppliedTo());
 
 	}
 
@@ -133,8 +131,8 @@ public class RegistrationServiceTest {
 				.administrators(new RegisteredUserBuilder().id(1).email("email1@test.com").toUser(),
 						new RegisteredUserBuilder().id(1).email("email2@test.com").toUser()).toProgram();
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson")
-				.projectOriginallyAppliedTo(new ProjectBuilder().program(program).toProject()).toUser();
-		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, projectDAOMock, mimeMessagePreparatorFactoryMock,
+				.programOriginallyAppliedTo(program).toUser();
+		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, programDAOMock, mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock) {
 
 			@Override
@@ -176,7 +174,7 @@ public class RegistrationServiceTest {
 		final RegisteredUser expectedRecord = new RegisteredUser();
 		expectedRecord.setEmail("email@test.com");
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).toUser();
-		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, projectDAOMock, mimeMessagePreparatorFactoryMock,
+		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, programDAOMock, mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock) {
 
 			@Override
@@ -210,7 +208,7 @@ public class RegistrationServiceTest {
 
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
 
-		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, projectDAOMock, mimeMessagePreparatorFactoryMock,
+		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, programDAOMock, mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock) {
 
 			@Override
@@ -254,11 +252,11 @@ public class RegistrationServiceTest {
 	public void setup() {
 		userDAOMock = EasyMock.createMock(UserDAO.class);
 		roleDAOMock = EasyMock.createMock(RoleDAO.class);
-		projectDAOMock = EasyMock.createMock(ProjectDAO.class);
+		programDAOMock = EasyMock.createMock(ProgramDAO.class);
 		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, projectDAOMock, mimeMessagePreparatorFactoryMock,
+		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, programDAOMock, mimeMessagePreparatorFactoryMock,
 				javaMailSenderMock);
 	}
 }

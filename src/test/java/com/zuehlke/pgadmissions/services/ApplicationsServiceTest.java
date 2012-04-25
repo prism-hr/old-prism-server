@@ -22,11 +22,10 @@ import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
@@ -101,7 +100,7 @@ public class ApplicationsServiceTest {
 		RegisteredUser administrator = new RegisteredUserBuilder().id(2).username("tom")
 				.roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1)
-				.project(new ProjectBuilder().program(new ProgramBuilder().toProgram()).toProject()).submissionStatus(SubmissionStatus.SUBMITTED)
+				.program(new ProgramBuilder().toProgram()).submissionStatus(SubmissionStatus.SUBMITTED)
 				.toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);
@@ -114,9 +113,8 @@ public class ApplicationsServiceTest {
 	public void shouldGetListOfApplicationsForAssignedAdministrator() {
 		RegisteredUser administrator = new RegisteredUserBuilder().id(2).username("tom")
 				.roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		ProgramBuilder programBuilder = new ProgramBuilder();
-		programBuilder.administrators(administrator);
-		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).project(new ProjectBuilder().program(programBuilder.toProgram()).toProject())
+		
+		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().administrators(administrator).toProgram())
 				.submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);
@@ -161,7 +159,7 @@ public class ApplicationsServiceTest {
 	
 
 	public void shouldCreateAndSaveNewApplicationForm() {
-		Project project = new ProjectBuilder().id(1).toProject();
+		Program program= new ProgramBuilder().id(1).toProgram();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
 		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		applicationsService = new ApplicationsService(applicationFormDAOMock) {
@@ -173,11 +171,11 @@ public class ApplicationsServiceTest {
 		};
 		applicationFormDAOMock.save(newApplicationForm);
 		EasyMock.replay(applicationFormDAOMock);
-		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, project);
+		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program);
 		EasyMock.verify(applicationFormDAOMock);
 		assertSame(newApplicationForm, returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
-		assertEquals(project, returnedForm.getProject());
+		assertEquals(program, returnedForm.getProgram());
 
 	}
 

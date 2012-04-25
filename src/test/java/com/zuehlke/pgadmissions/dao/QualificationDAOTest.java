@@ -12,11 +12,9 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProjectBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
@@ -26,8 +24,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 
 	
 	private RegisteredUser user;
-	private Program program;
-	private Project project;
+	private Program program;	
 	private LanguageDAO languageDAO;
 	private QualificationDAO qualificationDAO;
 	private CountriesDAO countriesDAO;
@@ -63,7 +60,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldDeleteQualification() throws ParseException{
 		ApplicationForm application = new ApplicationForm();
-		application.setProject(project);
+		application.setProgram(program);
 		application.setApplicant(user);
 		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
 
@@ -86,8 +83,8 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
 		program = new ProgramBuilder().code("doesntexist").description("blahblab").title("another title").toProgram();
-		project = new ProjectBuilder().code("neitherdoesthis").description("hello").title("title two").program(program).toProject();
-		save(user, program, project);
+		
+		save(user, program);
 		languageDAO = new LanguageDAO(sessionFactory);
 		countriesDAO = new CountriesDAO(sessionFactory);
 		flushAndClearSession();

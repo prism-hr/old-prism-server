@@ -20,7 +20,6 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.Project;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -54,9 +53,9 @@ public class PrintControllerTest {
 		
 		ApplicationForm applicationForm = new ApplicationForm();
 		applicationForm.setApplicant(new RegisteredUser());
-		Project project = new Project();
-		project.setProgram(new Program());
-		applicationForm.setProject(project);
+		
+		applicationForm.setProgram(new Program());
+		
 		EasyMock.expect(applicationSevice.getApplicationById(23)).andReturn(applicationForm);
 		
 		EasyMock.replay(request, response, applicationSevice);
@@ -85,9 +84,9 @@ public class PrintControllerTest {
 		
 		ApplicationForm applicationForm = new ApplicationForm();
 		applicationForm.setApplicant(new RegisteredUser());
-		Project project = new Project();
-		project.setProgram(new Program());
-		applicationForm.setProject(project);
+		
+		applicationForm.setProgram(new Program());
+		
 		EasyMock.expect(applicationSevice.getApplicationById(23)).andReturn(applicationForm);
 		EasyMock.expect(applicationSevice.getApplicationById(34)).andReturn(applicationForm);
 		

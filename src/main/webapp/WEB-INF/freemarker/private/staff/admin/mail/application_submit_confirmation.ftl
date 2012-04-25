@@ -35,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">A new application has bee submitted to ${application.project.program.title}. Login to to view and validate the application </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">A new application has bee submitted to ${application.program.title}. Login to to view and validate the application </font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

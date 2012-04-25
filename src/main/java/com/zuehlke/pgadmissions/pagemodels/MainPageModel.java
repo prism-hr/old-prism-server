@@ -2,18 +2,18 @@ package com.zuehlke.pgadmissions.pagemodels;
 
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Program;
 
 public class MainPageModel extends PageModel{
 
-	private List<Project> projects;
+	private List<Program> programs;
 
-	public List<Project> getProjects() {
-		return projects;
+	public List<Program> getPrograms() {
+		return programs;
 	}
 
-	public void setProjects(List<Project> projects) {
-		this.projects = projects;
+	public void setPrograms(List<Program> projects) {
+		this.programs = projects;
 	}
 	
 }

@@ -133,7 +133,7 @@ public class UserService {
 	private void sendMailToReferee(RegisteredUser referee) {
 		try {
 			RegisteredUser applicant = referee.getCurrentReferee().getApplication().getApplicant();
-			List<RegisteredUser> administrators = referee.getCurrentReferee().getApplication().getProject().getProgram().getAdministrators();
+			List<RegisteredUser> administrators = referee.getCurrentReferee().getApplication().getProgram().getAdministrators();
 			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("referee", referee);

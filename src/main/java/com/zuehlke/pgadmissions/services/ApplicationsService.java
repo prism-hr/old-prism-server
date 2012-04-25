@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Project;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -64,11 +64,11 @@ public class ApplicationsService {
 	}
 	
 	@Transactional
-	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Project project) {
+	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Program program) {
 
 		ApplicationForm applicationForm = newApplicationForm();
 		applicationForm.setApplicant(user);
-		applicationForm.setProject(project);
+		applicationForm.setProgram(program);
 		applicationFormDAO.save(applicationForm);
 		return applicationForm;
 	}

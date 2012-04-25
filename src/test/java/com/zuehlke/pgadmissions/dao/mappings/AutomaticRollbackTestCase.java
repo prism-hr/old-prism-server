@@ -18,9 +18,8 @@ public abstract class AutomaticRollbackTestCase {
 		sessionFactory = (SessionFactory) ApplicationContext.getInstance().getClassPathXmlApplicationContext().getBean("sessionFactory");
 	}
 
-	@SuppressWarnings("rawtypes")
-	protected void save(DomainObject... domainObjects) {
-		for (DomainObject domainObject : domainObjects) {
+	protected void save(DomainObject<?>... domainObjects) {
+		for (DomainObject<?> domainObject : domainObjects) {
 			sessionFactory.getCurrentSession().save(domainObject);
 		}
 	}
@@ -33,7 +32,6 @@ public abstract class AutomaticRollbackTestCase {
 	@After
 	public void tearDown() {
 		transaction.rollback();		
-
 	}
 
 	protected void flushAndClearSession() {

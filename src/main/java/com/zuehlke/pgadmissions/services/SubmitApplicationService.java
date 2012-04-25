@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.utils.DateWithoutTimeComparator;
 import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
@@ -55,17 +56,21 @@ public class SubmitApplicationService {
 
 		for (RegisteredUser admin : administrators) {
 			try {
-				form.setLastSubmissionNotification(new Date());
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-	        	String today = sdf.format(new Date());
-				if(form.getLastSubmissionNotification()==null || !form.getLastSubmissionNotification().equals(sdf.parse(today))){
+				DateWithoutTimeComparator comparator = new DateWithoutTimeComparator();
+				Calendar lastMail = Calendar.getInstance();
+				Calendar today = Calendar.getInstance();
+				today.setTime(new Date());
+				if(form.getLastSubmissionNotification()!=null){
+					lastMail.setTime(form.getLastSubmissionNotification());
+				}
+				if(form.getLastSubmissionNotification()==null || comparator.compare(today, lastMail) != 0 ){
 					Map<String, Object> model = new HashMap<String, Object>();
 					model.put("admin", admin);
 					model.put("application", form);
 					model.put("host", Environment.getInstance().getApplicationHostName());
 					InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted", "private/staff/admin/mail/application_submit_confirmation.ftl", model));
-					form.setLastSubmissionNotification(sdf.parse(today));
+					form.setLastSubmissionNotification(today.getTime());
 				}
 				
 			} catch (Throwable e) {

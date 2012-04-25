@@ -60,7 +60,7 @@ public class SubmitApplicationServiceTest {
 		Program program = new ProgramBuilder().administrators(administrator).toProgram();
 		Project project = new ProjectBuilder().program(program).toProject();
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).referees(referee1, referee2).id(2).project(project).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(currentUser).lastSubmissionNotification(null).referees(referee1, referee2).id(2).project(project).toApplicationForm();
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);

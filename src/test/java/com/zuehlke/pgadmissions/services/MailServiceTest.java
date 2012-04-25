@@ -6,12 +6,14 @@ import static org.junit.Assert.assertSame;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -71,7 +73,7 @@ public class MailServiceTest {
 		mailService.sendMailToAdminsAndChangeLastReminderDate(form);
 		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 		assertNotNull(form.getLastEmailReminderDate());
-		Assert.assertEquals(new Date(), form.getLastEmailReminderDate());
+		Assert.assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(form.getLastEmailReminderDate(), Calendar.DATE));
 	}
 	
 	

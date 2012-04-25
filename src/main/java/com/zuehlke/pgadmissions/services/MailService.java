@@ -47,12 +47,12 @@ public class MailService {
 				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 
 				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Validation Reminder", "private/staff/admin/mail/application_validation_reminder.ftl", model));
+				form.setLastEmailReminderDate(new Date());
+				applicationsService.save(form);
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
 			}
 		}
-		form.setLastEmailReminderDate(new Date());
-		applicationsService.save(form);
 
 	}
 }

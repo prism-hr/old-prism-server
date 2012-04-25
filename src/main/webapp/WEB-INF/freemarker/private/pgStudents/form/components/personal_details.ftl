@@ -347,6 +347,48 @@
                 	</div>
             	</div>
             </div>
+            
+            <div>
+          		<div class="row">
+          			<label class="group-heading-label">Equal Opportunities Details</label>
+          		</div>
+            	<div class="row">
+              		<label class="plain-label">Ethnicity</label>
+                	<span class="hint" data-desc="<@spring.message 'personalDetails.ethnicity'/>"></span>
+                	<div class="field">
+                  		<select class="full" name="ethnicity" id="ethnicity" <#if applicationForm.isSubmitted()>disabled="disabled"</#if> >
+                  			<option value="">Select...</option>
+                    		<#list ethnicities as ethnicity>
+                          	<option value="${ethnicity.id?string('#######')}"
+							<#if personalDetails.ethnicity?? &&  personalDetails.ethnicity.id == ethnicity.id >
+							selected="selected"
+							</#if>   
+                          >${ethnicity.name}</option>               
+                    	</#list>
+                 	 	</select>
+						<@spring.bind "personalDetails.ethnicity" /> 
+                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
+               	 	</div>
+              	</div>
+            	<div class="row">
+              		<label class="plain-label">Disability</label>
+                	<span class="hint" data-desc="<@spring.message 'personalDetails.disability'/>"></span>
+                	<div class="field">
+                  		<select class="full" name="disability" id="disability" <#if applicationForm.isSubmitted()>disabled="disabled"</#if> >
+                  			<option value="">Select...</option>
+                    		<#list disabilities as disability>
+                          	<option value="${disability.id?string('#######')}"
+							<#if personalDetails.disability?? &&  personalDetails.disability.id == disability.id >
+							selected="selected"
+							</#if>   
+                          >${disability.name}</option>               
+                    	</#list>
+                 	 	</select>
+						<@spring.bind "personalDetails.disability" /> 
+                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
+               	 	</div>
+              	</div>
+            </div>
   
           	<div class="buttons">
               <#if !applicationForm.isSubmitted()>

@@ -249,6 +249,8 @@ function postPersonalDetailsData(message){
 			candidateNationalities:"",
 			maternalGuardianNationalities:"",
 			paternalGuardianNationalities:"",
+			ethnicity: $("#ethnicity").val(), 
+			disability: $("#disability").val(), 
 			message: message
 			
 		};

@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.domain.Disability;
+import com.zuehlke.pgadmissions.domain.Ethnicity;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 
@@ -20,8 +22,10 @@ public class PersonalDetailsBuilder {
 	private Date dateOfBirth;
 	private Country country;
 	private Country residenceCountry;
+	private Ethnicity ethnicity;
+	private Disability disability;
 	private ApplicationForm applicationForm;
-	
+
 	private String messenger;
 	private List<Country> candiateNationalities = new ArrayList<Country>();
 	private List<Country> maternalGuardianNationalities = new ArrayList<Country>();
@@ -65,7 +69,6 @@ public class PersonalDetailsBuilder {
 		return this;
 	}
 
-
 	public PersonalDetailsBuilder messengers(String messenger) {
 		this.messenger = messenger;
 		return this;
@@ -101,6 +104,16 @@ public class PersonalDetailsBuilder {
 		return this;
 	}
 
+	public PersonalDetailsBuilder ethnicity(Ethnicity eth) {
+		ethnicity = eth;
+		return this;
+	}
+	
+	public PersonalDetailsBuilder disability(Disability dis) {
+		this.disability = dis;
+		return this;
+	}
+
 	public PersonalDetailsBuilder residenceCountry(Country residenceCountry) {
 		this.residenceCountry = residenceCountry;
 		return this;
@@ -121,7 +134,9 @@ public class PersonalDetailsBuilder {
 		personalDetails.setFirstName(firstName);
 		personalDetails.setGender(gender);
 		personalDetails.setLastName(lastName);
-		personalDetails.setResidenceCountry(residenceCountry);		
+		personalDetails.setResidenceCountry(residenceCountry);
+		personalDetails.setEthnicity(ethnicity);
+		personalDetails.setDisability(disability);
 		personalDetails.setMaternalGuardianNationalities(maternalGuardianNationalities);
 		personalDetails.setPaternalGuardianNationalities(paternalGuardianNationalities);
 		personalDetails.setCandidateNationalities(candiateNationalities);

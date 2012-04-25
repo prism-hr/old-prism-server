@@ -10,6 +10,7 @@ import javax.mail.internet.InternetAddress;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -34,7 +35,7 @@ public class MailService {
 		this.applicationsService = applicationsService;
 	}
 	
-	
+	@Transactional
 	public void sendMailToAdminsAndChangeLastReminderDate(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProject().getProgram().getAdministrators();
 

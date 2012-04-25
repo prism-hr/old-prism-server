@@ -14,12 +14,13 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.timers.AdminValidationReminderTimerTask;
 
 public class MailTimerTaskTest {
 	
 	private ApplicationsService applicationsService;
 	private ApplicationFormDAO applicationFormDAOMock;
-	private MailTimerTask mailTimerTask;
+	private AdminValidationReminderTimerTask mailTimerTask;
 	
 	@Test
 	public void shouldReturnTrueIfMoreThanTwoWeeksSinceTheLastEmailReminder(){
@@ -34,7 +35,7 @@ public class MailTimerTaskTest {
 	public void setUp(){
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		applicationsService = new ApplicationsService(applicationFormDAOMock);
-		mailTimerTask = new MailTimerTask();
+		mailTimerTask = new AdminValidationReminderTimerTask();
 	}
 	
 	@After

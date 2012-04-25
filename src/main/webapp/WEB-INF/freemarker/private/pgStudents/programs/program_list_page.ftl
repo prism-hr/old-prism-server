@@ -28,15 +28,13 @@
 			<table>
 				<tr>
 					<td> Code </td>
-					<td> Title </td>
-					<td> Description </td>					
+					<td> Title </td>					
 					<td/>
 				</tr>
 			<#list programs as program>
 				<tr id = "${program.title}" > 
 					<td> ${program.code} </td>
-					<td> ${program.title} </td>
-					<td> ${program.description} </td>					
+					<td> ${program.title} </td>										
 					<td> <button id="${program.id?string("######")}" class="apply">Apply now</button></td>
 				</tr>
 	      	</#list>

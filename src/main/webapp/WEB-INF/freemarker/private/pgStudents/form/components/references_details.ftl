@@ -22,7 +22,7 @@
               	<col style="width: 160px" />
               	<col style="width: 240px" />
               	<col />
-              	<#if applicationForm.isSubmitted()>
+              	<#if applicationForm.isDecided()>
               		<col />              	              		
               	</#if>
               	<col style="width: 30px" />
@@ -34,7 +34,7 @@
                     <th>Surname</th>
                     <th>Job Title</th>
                     <th>Email</th>
-                    <#if applicationForm.isSubmitted()>
+                    <#if applicationForm.isDecided()>
                     	<th>Status</th>
                     <#else>
                     	<th>&nbsp;</th>                    	
@@ -51,7 +51,7 @@
 	                    <td>${(existingReferee.lastname?html)!}</td>
 	                    <td>${(existingReferee.jobTitle?html)!}</td>
 	                    <td>${(existingReferee.email?html)!}</td>
-	                     <#if (applicationForm.isSubmitted())>
+	                     <#if (applicationForm.isDecided())>
 		                    <td>
 		                   		<#if existingReferee.declined>
 		                   			Declined
@@ -63,9 +63,9 @@
 		                    </td>	
 		                 </#if>
 		                    <td>
-		                    	<a name="editRefereeLink" <#if !applicationForm.isSubmitted()>data-desc="Edit" <#else>data-desc="Show"</#if> id="referee_${existingReferee.id?string('#######')}" class="button-edit button-hint">edit</a>
+		                    	<a name="editRefereeLink" <#if !applicationForm.isDecided()>data-desc="Edit" <#else>data-desc="Show"</#if> id="referee_${existingReferee.id?string('#######')}" class="button-edit button-hint">edit</a>
 				        	</td>
-				        	<#if (!applicationForm.isSubmitted())>
+				        	<#if (!applicationForm.isDecided())>
 		                    <td>
 		                    	<a name="deleteRefereeButton" data-desc="Delete" id="referee_${existingReferee.id?string('#######')}" class="button-delete button-hint">delete</a>
 				        	</td>
@@ -92,7 +92,7 @@
         		<span class="plain-label">First Name<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'referee.firstname'/>"></span>
         		<div class="field">
-        			<#if !applicationForm.isSubmitted()>
+        			<#if !applicationForm.isDecided()>
         				<input class="full" id="ref_firstname" name="ref_firstname" value="${(referee.firstname?html)!}"/>  
         				<@spring.bind "referee.firstname" /> 
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
@@ -108,7 +108,7 @@
         		<span class="plain-label">Last Name<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'referee.lastname'/>"></span>
         		<div class="field">
-	        		<#if !applicationForm.isSubmitted()>
+	        		<#if !applicationForm.isDecided()>
 	        			<input class="full" id="ref_lastname" name="ref_lastname" value="${(referee.lastname?html)!}"/>	          
 	        			<@spring.bind "referee.lastname" /> 
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
@@ -128,7 +128,7 @@
         		<span class="plain-label">Employer<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'referee.employer'/>"></span>
         		<div class="field">
-        			<#if !applicationForm.isSubmitted()>
+        			<#if !applicationForm.isDecided()>
           				<input class="full" id="ref_employer" name="ref_employer" value="${(referee.jobEmployer?html)!}"/> 
           				<@spring.bind "referee.jobEmployer" /> 
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>             
@@ -143,7 +143,7 @@
         		<span class="plain-label">Position<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'referee.position'/>"></span>
         		<div class="field">
-        		<#if !applicationForm.isSubmitted()>
+        		<#if !applicationForm.isDecided()>
           			<input class="full" id="ref_position" name="ref_position" value="${(referee.jobTitle?html)!}"/>
                    		 <@spring.bind "referee.jobTitle" /> 
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
@@ -165,7 +165,7 @@
         		<span class="plain-label">Address<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'referee.address'/>"></span>
         		<div class="field">
-        		<#if !applicationForm.isSubmitted()>
+        		<#if !applicationForm.isDecided()>
           			<textarea class="max" rows="6" cols="70" maxlength='200' id="ref_address_location" 
           				name="ref_address_location">${(referee.addressLocation?html)!}</textarea> 
           				 <@spring.bind "referee.addressLocation" /> 
@@ -184,7 +184,7 @@
         		 <span class="hint" data-desc="<@spring.message 'referee.country'/>"></span>
         		<div class="field">
         		<select class="full" name="ref_address_country" id="ref_address_country"
-                <#if applicationForm.isSubmitted()>
+                <#if applicationForm.isDecided()>
                                 disabled="disabled"
                 </#if>>
                 <option value="">Select...</option>
@@ -210,7 +210,7 @@
         		<span class="plain-label">Email<em>*</em></span>
         		 <span class="hint" data-desc="<@spring.message 'referee.email'/>"></span>
         		<div class="field">
-        		<#if !applicationForm.isSubmitted()>
+        		<#if !applicationForm.isDecided()>
           			<input class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}"/> 
           			 <@spring.bind "referee.email" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>                
@@ -227,7 +227,7 @@
         		<span class="plain-label">Telephone<em>*</em></span>
 				<span class="hint" data-desc="<@spring.message 'referee.telephone'/>"></span>
         		<div class="field">
-        			<#if !applicationForm.isSubmitted()>
+        			<#if !applicationForm.isDecided()>
         			<input class="full" id="refPhoneNumber" name="refPhoneNumber" value="${(referee.phoneNumber?html)!}"/> 
                       <@spring.bind "referee.phoneNumber" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>             
@@ -244,7 +244,7 @@
         		<span class="plain-label">Skype Name</span>
         		<span class="hint" data-desc="<@spring.message 'referee.skype'/>"></span>
         		<div class="field">
-        			<#if !applicationForm.isSubmitted()>
+        			<#if !applicationForm.isDecided()>
         			<input class="full" id="ref_messenger" name="ref_messenger" value="${(referee.messenger?html)!}"/> 
                      
                 	<#else>
@@ -253,7 +253,7 @@
           			
         		</div>
       		</div>
-		<#if applicationForm.isSubmitted()>
+		<#if applicationForm.isDecided()>
 		</div>
 		<div>
 			<div>
@@ -272,7 +272,7 @@
                 </div>
         	</div>
 		</#if>
-		<#if !applicationForm.isSubmitted()>
+		<#if !applicationForm.isDecided()>
       		<!-- Add another button -->
       		<div class="row">
       			<div class="field">
@@ -283,7 +283,7 @@
     	</div>
 		
     	<div class="buttons">
-    	 <#if !applicationForm.isSubmitted()>
+    	 <#if !applicationForm.isDecided()>
       		 <a class="button" type="button" id="refereeCancelButton" name="refereeCancelButton">Cancel</a>
       		 <button class="blue" type="button" id="refereeCloseButton" name="refereeCloseButton">Close</button>
       		 <button class="blue" type="button" value="close" id="refereeSaveAndCloseButton">Save</button>

@@ -38,7 +38,7 @@ public class AdditionalInformationController {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
-		if(applicationForm.isSubmitted()){
+		if(applicationForm.isDecided()){
 			throw new CannotUpdateApplicationException();
 		}	
 		applicationService.save(applicationForm);

@@ -44,10 +44,10 @@
 	                    <td>${(position.endDate?string('dd-MMM-yyyy'))!}</td>
 	                     
 	                    	<td>		                		
-		                		<a name="positionEditButton" <#if !applicationForm.isSubmitted()>data-desc="Edit" <#else>data-desc="Show"</#if>
+		                		<a name="positionEditButton" <#if !applicationForm.isDecided()>data-desc="Edit" <#else>data-desc="Show"</#if>
 		                				id="position_${position.id?string('#######')}" class="button-edit button-hint">edit</a>
 		                	</td>
-	                    <#if !applicationForm.isSubmitted()>
+	                    <#if !applicationForm.isDecided()>
 	                    	<td>		                		
 		                		<a name="deleteEmploymentButton" data-desc="Delete" 
 		                				id="position_${position.id?string('#######')}" class="button-delete button-hint">delete</a>
@@ -76,7 +76,7 @@
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerCountry'/>"></span>
                	<div class="field">
                 	<select class="full" id="position_country" name="position_country"
-                   		<#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
+                   		<#if applicationForm.isDecided()>disabled="disabled"</#if>>
                     	<option value="">Select...</option>
                     	<#list countries as country>
                      		<option value="${country.id?string('#######')}" <#if employmentPosition.employerCountry?? && employmentPosition.employerCountry.id == country.id> selected="selected"</#if>>${country.name}</option>
@@ -91,7 +91,7 @@
             	<span class="plain-label">Employer Name<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerName'/>"></span>
                 <div class="field">
-                <#if !applicationForm.isSubmitted()>
+                <#if !applicationForm.isDecided()>
                 	<input class="full" type="text" id="position_employer_name" name="position_employer_name" 
                 					value="${(employmentPosition.employerName?html)!}" placeholder="Provider of employment" />
                 	 <@spring.bind "employmentPosition.employerName" /> 
@@ -109,7 +109,7 @@
             	<span class="plain-label">Employer Address<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.employerAddress'/>"></span>
                 <div class="field">
-                   <#if !applicationForm.isSubmitted()>
+                   <#if !applicationForm.isDecided()>
                   		<textarea cols="70" rows="3" class="max" maxlength='1000' id="position_employer_address" 
                   		name="position_employer_address" 
                   		placeholder="Employer's address">${(employmentPosition.employerAddress?html)!}</textarea>
@@ -129,7 +129,7 @@
             	<span class="plain-label">Position<em>*</em></span>
                  <span class="hint" data-desc="<@spring.message 'employmentDetails.position.position'/>"></span>
                 <div class="field">
-                    <#if !applicationForm.isSubmitted()>
+                    <#if !applicationForm.isDecided()>
                     	<input class="full" type="text" id="position_title" name="position_title" value="${(employmentPosition.position?html)!}" placeholder="Title of position" />
                          <@spring.bind "employmentPosition.position" /> 
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
@@ -144,7 +144,7 @@
                 <span class="plain-label">Roles and Responsibilities<em>*</em></span>
                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.remit'/>"></span>
                 <div class="field">
-                    <#if !applicationForm.isSubmitted()>
+                    <#if !applicationForm.isDecided()>
                   	<textarea cols="70" rows="3" class="max" maxlength='2000' id="position_remit" 
                   		name="position_remit" 
                   		placeholder="Summary of responsibilities">${(employmentPosition.remit?html)!}</textarea>
@@ -166,7 +166,7 @@
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.language'/>"></span>
                 <div class="field">
                   	<select class="full" id="position_language" name="position_language"
-                   		<#if applicationForm.isSubmitted()>disabled="disabled"</#if>>
+                   		<#if applicationForm.isDecided()>disabled="disabled"</#if>>
                     	<option value="">Select...</option>
                     	<#list languages as language>
                      		<option value="${language.id?string('#######')}" <#if employmentPosition.language?? && employmentPosition.language.id == language.id> selected="selected"</#if>>${language.name}</option>
@@ -181,7 +181,7 @@
                 <span class="plain-label">Start Date<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'employmentDetails.position.startDate'/>"></span>
                 <div class="field">
-                  	<input class="half date" type="text" id="position_startDate" name="position_startDate" value="${(employmentPosition.startDate?string('dd-MMM-yyyy'))!}"  <#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>
+                  	<input class="half date" type="text" id="position_startDate" name="position_startDate" value="${(employmentPosition.startDate?string('dd-MMM-yyyy'))!}"  <#if applicationForm.isDecided()>disabled="disabled"</#if>/>
                           
                   	 <@spring.bind "employmentPosition.startDate" /> 
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
@@ -193,7 +193,7 @@
                <span class="plain-label">Is this your current position?</span>
                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.isOngoing'/>"></span>
                <div class="field">
-               		<input type="checkbox" name="current" id="current" 	<#if employmentPosition.current> checked ="checked"</#if><#if applicationForm.isSubmitted()>disabled="disabled"</#if>/>                   		
+               		<input type="checkbox" name="current" id="current" 	<#if employmentPosition.current> checked ="checked"</#if><#if applicationForm.isDecided()>disabled="disabled"</#if>/>                   		
        			</div>
             </div>
             <!-- End date -->
@@ -207,7 +207,7 @@
                 </div>
 					
            	</div>
-				<#if !applicationForm.isSubmitted()>
+				<#if !applicationForm.isDecided()>
 	           	<!-- Add another button -->
 	            <div class="row">
 	            	<div class="field">
@@ -218,7 +218,7 @@
 			</div>
 		
 			<div class="buttons">
-				<#if !applicationForm.isSubmitted()>
+				<#if !applicationForm.isDecided()>
             		<a class="button" type="button" id="positionCancelButton" name="positionCancelButton">Cancel</a>
             		<button class="blue" type="button" id="positionCloseButton" name="positionCloseButton">Close</button>
                 	<button class="blue" type="button" value="add" id="positionSaveAndCloseButton" name="positionSaveAndCloseButton">Save</button>

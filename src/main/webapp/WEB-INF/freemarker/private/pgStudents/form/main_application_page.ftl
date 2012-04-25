@@ -194,7 +194,7 @@
 			          				
 			          				
 			          			
-			          				<#if !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>	             			
+			          				<#if !applicationForm.isDecided() && user.isInRole('APPLICANT')>	             			
 			             			
 			             			
 			             				<form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">

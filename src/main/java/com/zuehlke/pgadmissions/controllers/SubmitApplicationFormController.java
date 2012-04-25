@@ -54,7 +54,7 @@ public class SubmitApplicationFormController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String submitApplication(@Valid ApplicationForm applicationForm, BindingResult result) {
-		if(!getCurrentUser().equals(applicationForm.getApplicant()) || applicationForm.isSubmitted() ){
+		if(!getCurrentUser().equals(applicationForm.getApplicant()) || applicationForm.isDecided()){
 			throw new ResourceNotFoundException();
 		}
 			

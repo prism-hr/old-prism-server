@@ -3,11 +3,13 @@ package com.zuehlke.pgadmissions.services;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
 import org.easymock.EasyMock;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -57,13 +59,13 @@ public class MailServiceTest {
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Application Validation Reminder"),EasyMock.eq("private/staff/admin/mail/application_validation_reminder.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
 		javaMailSenderMock.send(preparatorMock1);
-	
 		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 	
 		
 		mailService.sendMailToAdminsAndChangeLastReminderDate(form);
 		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 		assertNotNull(form.getLastEmailReminderDate());
+		Assert.assertEquals(new Date(), form.getLastEmailReminderDate());
 	}
 	
 	

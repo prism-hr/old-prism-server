@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -152,8 +153,8 @@ public class SubmitApplicationFormControllerTest {
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowSubmitExceptionIfApplicationIsAlreadySubmitted() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+	public void shouldThrowSubmitExceptionIfApplicationIsDecided() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).submissionStatus(SubmissionStatus.SUBMITTED).approvedSatus(ApprovalStatus.APPROVED).toApplicationForm();
 		applicationController.submitApplication(applicationForm, null);
 	}
 

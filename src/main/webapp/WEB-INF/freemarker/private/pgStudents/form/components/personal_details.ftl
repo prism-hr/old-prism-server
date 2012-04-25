@@ -49,6 +49,15 @@
 <div>    
 
 	<form>		
+	
+		<div class="section-info-bar">
+			<div class="row">
+				<span class="info-text"> &nbsp Coming Soon.
+					<!--@spring.message 'programmeDetails.programme'/--> 
+				</span>
+			</div>
+		</div>
+	
 			<input type="hidden" name="id" id="personalDetailsId" value="${(personalDetails.id?string("######"))!}"/>			
             <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
           	<div>

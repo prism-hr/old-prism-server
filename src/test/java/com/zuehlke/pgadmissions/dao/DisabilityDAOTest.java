@@ -22,7 +22,7 @@ public class DisabilityDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldGetAllDisabilitiesInAlhphabeticalOrder() {
-		BigInteger numberOfDisabilities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from disability").uniqueResult();
+		BigInteger numberOfDisabilities = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from DISABILITY").uniqueResult();
 		Disability disability1 = new DisabilityBuilder().name("ZZZZZZ").toDisability();
 		Disability disability2 = new DisabilityBuilder().name("AAAAAAAA").toDisability();
 		save(disability1, disability2);

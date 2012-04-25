@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -75,7 +77,8 @@ public class RefereeController {
 			refereeService.save(referee);
 		}
 		else{
-			refereeService.saveRefereeAndSendEmailNotifications(referee);
+			refereeService.processRefereesRoles(Arrays.asList(referee));
+			refereeService.sendRefereeMailNotification(referee);
 		}
 		return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getId();
 			

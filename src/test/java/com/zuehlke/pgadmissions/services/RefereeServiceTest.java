@@ -120,7 +120,7 @@ public class RefereeServiceTest {
 		
 		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		
-		refereeService.saveRefereeAndSendEmailNotifications(referee);
+		refereeService.sendRefereeMailNotification(referee);
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 	}
 	

@@ -217,8 +217,7 @@ public class RefereeService {
 
 	}
 
-	public void saveRefereeAndSendEmailNotifications(Referee referee) {
-		save(referee);
+	public void sendRefereeMailNotification(Referee referee) {
 		sendMailToReferee(referee);
 		
 	}

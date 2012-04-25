@@ -1,11 +1,6 @@
 Insert into PROGRAM(code, description, title) values ('TEST-PROG-ABC', "Test Program One Description", "Test Program One" );
 Insert into PROGRAM(code, description, title) values ('TEST-PROG-DEF', "Test Program Two Description", "Test Program Two" );
 
-Insert into PROJECT(code, description, title, program_id) values ('TEST-PROJ-1', 'Test Project One Description', 'Test Project One Title', (select id from PROGRAM where code='TEST-PROG-ABC'));
-Insert into PROJECT(code, description, title, program_id) values ('TEST-PROJ-2', 'Test Project Two Description', 'Test Project Two Title', (select id from PROGRAM where code='TEST-PROG-ABC'));
-Insert into PROJECT(code, description, title, program_id) values ('TEST-PROJ-3', 'Test Project Three Description', 'Test Project Three Title', (select id from PROGRAM where code='TEST-PROG-DEF'));
-Insert into PROJECT(code, description, title, program_id) values ('TEST-PROJ-4', 'Test Project Four Description', 'Test Project Four Title', (select id from PROGRAM where code='TEST-PROG-DEF'));
-
 Insert into REGISTERED_USER(username, password,firstName, lastName,email, accountNonExpired,  accountNonLocked,  credentialsNonExpired,  enabled) values ('alice@test.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'Alice', 'Aaronson', 'alice@test.com', 1, 1, 1, 1);
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((select id from REGISTERED_USER where username='alice@test.com'), (select id from APPLICATION_ROLE where authority='APPROVER'));
 Insert into PROGRAM_APPROVER_LINK(program_id, registered_user_id) values ((select id from PROGRAM where code='TEST-PROG-ABC'), (select id from REGISTERED_USER where username='alice@test.com'));

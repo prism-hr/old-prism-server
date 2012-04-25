@@ -54,7 +54,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name="validation_due_date")
 	private Date validationDueDate;
 	
-
+	@Temporal(TemporalType.DATE)
+	@Column(name="last_email_reminder_date")
+	private Date lastEmailReminderDate;
+	
 	@ManyToOne
 	@JoinColumn(name = "personal_statement_id")
 	private Document personalStatement = null;
@@ -346,10 +349,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return currentAddress;
 	}
 	
-	public boolean isInValidationDueDate() {
-		return false;
-	}
-
 	public void setCurrentAddress(Address currentAddress) {
 		this.currentAddress = currentAddress;
 	}
@@ -397,5 +396,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setValidationDueDate(Date validationDueDate) {
 		this.validationDueDate = validationDueDate;
+	}
+
+	public Date getLastEmailReminderDate() {
+		return lastEmailReminderDate;
+	}
+
+	public void setLastEmailReminderDate(Date lastEmailReminderDate) {
+		this.lastEmailReminderDate = lastEmailReminderDate;
 	}
 }

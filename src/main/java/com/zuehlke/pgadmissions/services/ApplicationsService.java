@@ -77,6 +77,7 @@ public class ApplicationsService {
 		return new ApplicationForm();
 	}
 
+	@Transactional
 	public List<ApplicationForm> getAllApplicationsStillInValidationStageAndAfterDueDate() {
 		Calendar now = Calendar.getInstance();
 		List<ApplicationForm> allApplications = applicationFormDAO.getAllApplications();

@@ -53,6 +53,8 @@ public class ApplicationFormBuilder {
 	
 	private Date validationDueDate;
 
+	private Date lastEmailReminderDate;
+
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
 
 	private List<Referee> referees = new ArrayList<Referee>();
@@ -185,6 +187,12 @@ public class ApplicationFormBuilder {
 	}
 
 	
+	public ApplicationFormBuilder lastEmailReminderDate(Date lastEmailReminderDate) {
+		this.lastEmailReminderDate = lastEmailReminderDate;
+		return this;
+	}
+	
+	
 	public ApplicationFormBuilder validationDueDate(Date validationDueDate) {
 		this.validationDueDate = validationDueDate;
 		return this;
@@ -214,6 +222,7 @@ public class ApplicationFormBuilder {
 		application.setPersonalDetails(personalDetails);
 		application.setValidationStage(validationStage);
 		application.setValidationDueDate(validationDueDate);
+		application.setLastEmailReminderDate(lastEmailReminderDate);
 		return application;
 	}
 }

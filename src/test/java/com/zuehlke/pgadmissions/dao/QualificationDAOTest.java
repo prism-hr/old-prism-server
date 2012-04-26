@@ -61,8 +61,7 @@ public class QualificationDAOTest extends AutomaticRollbackTestCase {
 	public void shouldDeleteQualification() throws ParseException{
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
-		application.setApplicant(user);
-		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		application.setApplicant(user);		
 
 		Qualification qualification =new QualificationBuilder().awardDate(new SimpleDateFormat("yyyy/MM/dd").parse("2011/02/02")).grade("")
 				.institution("").languageOfStudy(languageDAO.getLanguageById(1)).subject("").isCompleted(CheckedStatus.YES)

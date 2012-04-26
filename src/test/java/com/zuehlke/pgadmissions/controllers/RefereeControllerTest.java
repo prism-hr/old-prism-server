@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -55,7 +56,7 @@ public class RefereeControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
 		Referee referee = new RefereeBuilder().id(1)
-				.application(new ApplicationFormBuilder().approvedSatus(ApprovalStatus.APPROVED).id(5).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm()).toReferee();
+				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm()).toReferee();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(refereeServiceMock, errors);
 		controller.editReferee(referee, errors);
@@ -176,7 +177,7 @@ public class RefereeControllerTest {
 	}
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationSubmittedAndIfNoErrors() {
-		ApplicationForm application = new ApplicationFormBuilder().id(5).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);

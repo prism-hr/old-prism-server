@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
@@ -42,8 +43,7 @@ public class FileUploadControllerTest {
 
 	@Test
 	public void shouldGetApplicationFormFromService() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).submissionStatus(SubmissionStatus.UNSUBMITTED)
-				.toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).toApplicationForm();
 
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
@@ -63,7 +63,7 @@ public class FileUploadControllerTest {
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowCannotUpdateApplicationExceptionIfApplicationFormNotInUnsubmmitedState() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).submissionStatus(SubmissionStatus.SUBMITTED)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(currentUser).id(2).status(ApplicationFormStatus.APPROVED)
 				.toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
@@ -73,7 +73,7 @@ public class FileUploadControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionIfCurrentUserNotApplicant() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(6).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(applicant)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(applicant)
 				.toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);

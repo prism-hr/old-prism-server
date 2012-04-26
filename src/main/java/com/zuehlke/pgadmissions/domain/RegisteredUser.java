@@ -20,8 +20,8 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Entity(name = "REGISTERED_USER")
 @Access(AccessType.FIELD)
@@ -37,7 +37,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	@Transient
 	private String confirmPassword;
-	
+
 	@Transient
 	private Integer programId;
 	@Transient
@@ -53,12 +53,11 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "registered_user_id")
 	private List<Referee> referees = new ArrayList<Referee>();
-	
-	
+
 	@ManyToOne
 	@JoinColumn(name = "originally_program_id")
 	private Program programOriginallyAppliedTo;
-	
+
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
@@ -195,7 +194,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public boolean canSee(ApplicationForm applicationForm) {
 
-		if (applicationForm.getSubmissionStatus() == SubmissionStatus.UNSUBMITTED && !isInRole(Authority.APPLICANT)) {
+		if (applicationForm.getStatus() == ApplicationFormStatus.UNSUBMITTED && !isInRole(Authority.APPLICANT)) {
 			return false;
 		}
 
@@ -209,13 +208,13 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 
-		if (isInRole(Authority.REVIEWER) && !applicationForm.isInValidationStage()) {
+		if (isInRole(Authority.REVIEWER) && applicationForm.isInValidationStage()) {
 			if (applicationForm.getReviewers().contains(this)) {
 				return true;
 			}
 		}
 
-		if (isInRole(Authority.APPROVER) && !applicationForm.isInValidationStage()) {
+		if (isInRole(Authority.APPROVER) && applicationForm.isSubmitted()) {
 			if (applicationForm.getProgram().isApprover(this)) {
 				return true;
 			}
@@ -246,8 +245,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public void setActivationCode(String activationCode) {
 		this.activationCode = activationCode;
 	}
-
-	
 
 	public List<Program> getProgramsOfWhichAdministrator() {
 		return programsOfWhichAdministrator;
@@ -329,7 +326,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.confirmPassword = confirmPassword;
 	}
 
-	
 	public boolean isAdminOrReviewerInProgramme(Program program) {
 		if (program.getAdministrators().contains(this) || program.getReviewers().contains(this)) {
 			return true;

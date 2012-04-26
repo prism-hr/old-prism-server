@@ -26,9 +26,7 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.domain.enums.ValidationStage;
 
 @Entity(name = "APPLICATION_FORM")
@@ -79,14 +77,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "submitted_on_timestamp")
 	private Date submittedDate;
 
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApprovalStatusEnumUserType")
-	@Column(name = "approval_status")
-	private ApprovalStatus approvalStatus;
-
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ValidationStageEnumUserType")
-	@Column(name = "validation_stage")
-	private ValidationStage validationStage;
-
 	@ManyToOne
 	@JoinColumn(name = "applicant_id")
 	private RegisteredUser applicant = null;
@@ -107,10 +97,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	@OneToOne(mappedBy = "application")
 	private ProgrammeDetails programmeDetails;
-
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.SubmissionStatusEnumUserType")
-	@Column(name = "submission_status")
-	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
@@ -159,13 +145,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.reviewers = reviewers;
 	}
 
-	public ApprovalStatus getApprovalStatus() {
-		return approvalStatus;
-	}
 
-	public void setApprovalStatus(ApprovalStatus approvalStatus) {
-		this.approvalStatus = approvalStatus;
-	}
 
 	@Override
 	public void setId(Integer id) {
@@ -196,14 +176,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.approver = approver;
 	}
 
-	public void setSubmissionStatus(SubmissionStatus submissionStatus) {
-		this.submissionStatus = submissionStatus;
 
-	}
-
-	public SubmissionStatus getSubmissionStatus() {
-		return submissionStatus;
-	}
 
 	public Date getApplicationTimestamp() {
 		return applicationTimestamp;
@@ -217,20 +190,17 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return !reviewers.isEmpty();
 	}
 
-	public boolean isReviewable() {
-		if (submissionStatus != SubmissionStatus.SUBMITTED || approvalStatus != null) {
-			return false;
+	public boolean isModifiable() {
+		if (status == ApplicationFormStatus.VALIDATION) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	public boolean isSubmitted() {
-		return submissionStatus == SubmissionStatus.SUBMITTED;
+		return status != ApplicationFormStatus.UNSUBMITTED;
 	}
 
-	public boolean isInValidationStage() {
-		return validationStage == ValidationStage.TRUE;
-	}
 
 	@Override
 	public int compareTo(ApplicationForm appForm) {
@@ -245,7 +215,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public boolean isDecided() {
-		return approvalStatus != null;
+		if(status == ApplicationFormStatus.REJECTED || 	status== ApplicationFormStatus.APPROVED){
+		return true;
+		}
+		return false;		
 	}
 
 	public List<ApplicationReview> getApplicationComments() {
@@ -380,13 +353,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 				&& this.personalStatement == null && this.cv == null && StringUtils.isBlank(this.additionalInformation);
 	}
 
-	public ValidationStage getValidationStage() {
-		return validationStage;
-	}
-
-	public void setValidationStage(ValidationStage validationStage) {
-		this.validationStage = validationStage;
-	}
 
 	public Date getValidationDueDate() {
 		return validationDueDate;
@@ -434,5 +400,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setStatus(ApplicationFormStatus status) {
 		this.status = status;
+	}
+
+	public boolean isInValidationStage() {
+		return status == ApplicationFormStatus.VALIDATION;
 	}
 }

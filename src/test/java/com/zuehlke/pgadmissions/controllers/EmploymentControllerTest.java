@@ -29,6 +29,7 @@ import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -62,7 +63,7 @@ public class EmploymentControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
 		EmploymentPosition employment = new EmploymentPositionBuilder().id(1)
-				.application(new ApplicationFormBuilder().approvedSatus(ApprovalStatus.APPROVED).id(5).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm()).toEmploymentPosition();
+				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm()).toEmploymentPosition();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(employmentServiceMock, errors);
 		controller.editEmployment(employment, errors);

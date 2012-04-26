@@ -17,12 +17,12 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ValidationStage;
 
 public class ApplicationFormBuilder {
 
+	private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 	private ProgrammeDetails programmeDetails;
 
 	private PersonalDetails personalDetails;
@@ -33,8 +33,6 @@ public class ApplicationFormBuilder {
 
 	private Integer id;
 
-	private ApprovalStatus approved;
-
 	private RegisteredUser approver;
 
 	private RegisteredUser applicant;
@@ -42,10 +40,6 @@ public class ApplicationFormBuilder {
 	private String projectTitle;
 
 	private Program program;
-
-	private SubmissionStatus submissionStatus = SubmissionStatus.UNSUBMITTED;
-
-	private ValidationStage validationStage = ValidationStage.FALSE;
 
 	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 
@@ -70,6 +64,11 @@ public class ApplicationFormBuilder {
 	private Document cv = null;
 
 	private Document personalStatement = null;
+
+	public ApplicationFormBuilder status(ApplicationFormStatus status) {
+		this.status = status;
+		return this;
+	}
 
 	public ApplicationFormBuilder projectTitle(String projectTitle) {
 		this.projectTitle = projectTitle;
@@ -110,7 +109,6 @@ public class ApplicationFormBuilder {
 		this.applicant = applicant;
 		return this;
 	}
-
 
 	public ApplicationFormBuilder program(Program program) {
 		this.program = program;
@@ -165,11 +163,6 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
-	public ApplicationFormBuilder approvedSatus(ApprovalStatus approved) {
-		this.approved = approved;
-		return this;
-	}
-
 	public ApplicationFormBuilder id(Integer id) {
 		this.id = id;
 		return this;
@@ -177,16 +170,6 @@ public class ApplicationFormBuilder {
 
 	public ApplicationFormBuilder reviewers(Set<RegisteredUser> reviewers) {
 		this.reviewers = reviewers;
-		return this;
-	}
-
-	public ApplicationFormBuilder submissionStatus(SubmissionStatus submissionStatus) {
-		this.submissionStatus = submissionStatus;
-		return this;
-	}
-
-	public ApplicationFormBuilder validationStage(ValidationStage validationStage) {
-		this.validationStage = validationStage;
 		return this;
 	}
 
@@ -218,10 +201,10 @@ public class ApplicationFormBuilder {
 			application.getReviewers().addAll(reviewers);
 		}
 		application.setSubmittedDate(submittedDate);
-		application.setApprovalStatus(approved);
+
 		application.setApprover(approver);
-		application.setReferees(referees);		
-		application.setSubmissionStatus(submissionStatus);
+		application.setReferees(referees);
+
 		application.setApplicationTimestamp(appDate);
 		application.getQualifications().addAll(qualifications);
 		application.setProgrammeDetails(programmeDetails);
@@ -231,12 +214,12 @@ public class ApplicationFormBuilder {
 		application.setContactAddress(contactAddress);
 		application.setCurrentAddress(currentAddress);
 		application.setPersonalDetails(personalDetails);
-		application.setValidationStage(validationStage);
 		application.setValidationDueDate(validationDueDate);
 		application.setLastEmailReminderDate(lastEmailReminderDate);
 		application.setProgram(program);
 		application.setLastSubmissionNotification(lastSubmissionNotification);
 		application.setProjectTitle(projectTitle);
+		application.setStatus(status);
 		return application;
 	}
 }

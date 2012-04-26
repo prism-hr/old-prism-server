@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotReviewApplicationException;
@@ -54,7 +55,7 @@ public class ReviewControllerTest {
 	public void shouldReturnReviwersViewName() {
 
 		assertEquals("private/staff/admin/assign_reviewers_page",
-				controller.getReviewerPage(new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm()).getViewName());
+				controller.getReviewerPage(new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm()).getViewName());
 	}
 
 	@Test
@@ -63,7 +64,7 @@ public class ReviewControllerTest {
 		EasyMock.replay(userServiceMock);
 
 		ReviewersListModel model = (ReviewersListModel) controller
-				.getReviewerPage(new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm()).getModel().get("model");
+				.getReviewerPage(new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm()).getModel().get("model");
 		ApplicationForm reviewedApplication = model.getApplicationForm();
 		assertEquals(form, reviewedApplication);
 		assertNotNull(model.getReviewers());
@@ -79,7 +80,7 @@ public class ReviewControllerTest {
 		SecurityContextHolder.setContext(secContext);
 
 		ReviewersListModel model = (ReviewersListModel) controller
-				.getReviewerPage(new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm()).getModel().get("model");
+				.getReviewerPage(new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm()).getModel().get("model");
 		assertEquals(currentUser, model.getUser());
 	}
 
@@ -87,7 +88,7 @@ public class ReviewControllerTest {
 	public void shouldGetApplicationFromFromService() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
 		authenticationToken.setDetails(userMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(userMock, applicationsServiceMock);
@@ -96,7 +97,7 @@ public class ReviewControllerTest {
 
 	@Test
 	public void shouldSaveApplicationForm() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		ModelAndView redirectModel = controller.updateReviewers(applicationForm);
@@ -117,7 +118,7 @@ public class ReviewControllerTest {
 	public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplication() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
 		authenticationToken.setDetails(userMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(userMock, applicationsServiceMock);
@@ -127,7 +128,7 @@ public class ReviewControllerTest {
 	@Test(expected = CannotReviewApplicationException.class)
 	public void shouldThrowCannotReviewApprovedApplicationExceptionIfSubmittedApplicationnNotReviewable() {
 		ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
-		EasyMock.expect(applicationFormMock.isReviewable()).andReturn(false);
+		EasyMock.expect(applicationFormMock.isModifiable()).andReturn(false);
 		EasyMock.replay(applicationFormMock);
 		controller.updateReviewers(applicationFormMock);
 	}
@@ -145,7 +146,7 @@ public class ReviewControllerTest {
 		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
 		controller = new ReviewController(applicationsServiceMock, userServiceMock, userPropertyEditorMock);
 
-		form = new ApplicationFormBuilder().id(1).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		form = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 
 	}
 

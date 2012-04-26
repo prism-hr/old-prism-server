@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotApproveApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -35,20 +35,20 @@ public class ApproveRejectController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView applyDecision(@ModelAttribute ApplicationForm applicationForm, @RequestParam ApprovalStatus decision) {
+	public ModelAndView applyDecision(@ModelAttribute ApplicationForm applicationForm, @RequestParam ApplicationFormStatus decision) {
 		RegisteredUser approver = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		if(!(approver.isInRole(Authority.APPROVER) || approver.isInRole(Authority.ADMINISTRATOR))){
 			throw new ResourceNotFoundException();
 		}
 		
-		if (approver.isInRole(Authority.ADMINISTRATOR) && decision == ApprovalStatus.APPROVED){
+		if (approver.isInRole(Authority.ADMINISTRATOR) && decision == ApplicationFormStatus.APPROVED){
 			throw new ResourceNotFoundException();
 		}
-		if(!applicationForm.isReviewable()){
+		if(!applicationForm.isModifiable()){
 			throw new CannotApproveApplicationException();
 		}
 				
-		applicationForm.setApprovalStatus(decision);
+		applicationForm.setStatus(decision);
 		applicationForm.setApprover(approver);
 		applicationsService.save(applicationForm);		
 		return new ModelAndView("redirect:/applications", "decision", decision.toString().toLowerCase()); 

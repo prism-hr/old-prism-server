@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatusTest;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Repository
@@ -54,8 +56,7 @@ public class RefereeDAO {
 					.add(Restrictions.eq("declined", false))
 					.add(Restrictions.isNull("reference"))
 					.add(Restrictions.le("lastNotified", oneWeekAgo))
-					.add(Restrictions.not(Restrictions.in("application.submissionStatus", new SubmissionStatus[]{SubmissionStatus.UNSUBMITTED})))
-					.add(Restrictions.isNull("application.approvalStatus"))
+					.add(Restrictions.eq("application.status",ApplicationFormStatus.VALIDATION))					
 				.list();
 	}
 

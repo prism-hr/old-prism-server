@@ -6,48 +6,51 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class ApplicationFormTest {
 
 	@Test
-	public void shouldReturnReviewableFalseIfAppliactioNFormUnsubmittfe() {
+	public void shouldReturnReviewableFalseIfAppliactioNFormUnsubmitted() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
-		assertFalse(applicationForm.isReviewable());
+		assertFalse(applicationForm.isModifiable());
 	}
 
 	@Test
 	public void shouldReturnReviewableFalseIfApplicationFormRejected() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).approvedSatus(ApprovalStatus.REJECTED)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED)
 				.toApplicationForm();
-		assertFalse(applicationForm.isReviewable());
+		assertFalse(applicationForm.isModifiable());
 	}
 
 	@Test
 	public void shouldReturnReviewableFalseIfApplicationFormAccepted() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).approvedSatus(ApprovalStatus.APPROVED)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED)
 				.toApplicationForm();
-		assertFalse(applicationForm.isReviewable());
+		assertFalse(applicationForm.isModifiable());
 	}
 
 	@Test
-	public void shouldReturnReviewableTrueIfApplicationFormSubmittedButNeitherRejectedOrApproved() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
-		assertTrue(applicationForm.isReviewable());
+	public void shouldReturnReviewableTrueIfApplicationFormInValidation() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertTrue(applicationForm.isModifiable());
 	}
 
+	
+	
 	@Test
 	public void shouldReturnDecidedTrueIfRejectedOrApproved() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().approvedSatus(ApprovalStatus.APPROVED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm();
 		assertTrue(applicationForm.isDecided());
-		applicationForm = new ApplicationFormBuilder().approvedSatus(ApprovalStatus.REJECTED).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).toApplicationForm();
 		assertTrue(applicationForm.isDecided());
 	}
 
 	@Test
-	public void shouldReturnDecidedFalseIfNeitherRejectedOrApproved() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+	public void shouldReturnDecidedFalseIfNeitherUnsubmitterOrValidation() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		assertFalse(applicationForm.isDecided());
+		 applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertFalse(applicationForm.isDecided());
 	}
 

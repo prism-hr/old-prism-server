@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.domain.enums.ValidationStage;
@@ -60,8 +61,7 @@ public class SubmitApplicationFormController {
 		if(result.hasErrors()){
 			return VIEW_APPLICATION_APPLICANT_VIEW_NAME;			
 		}
-		applicationForm.setSubmissionStatus(SubmissionStatus.SUBMITTED);
-		applicationForm.setValidationStage(ValidationStage.TRUE);
+		applicationForm.setStatus(ApplicationFormStatus.VALIDATION);;		
 		Date dueDate = calculateAndGetValidationDueDate();
 		applicationForm.setValidationDueDate(dueDate);
 		applicationForm.setSubmittedDate(new Date());

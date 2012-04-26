@@ -29,8 +29,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
@@ -50,7 +49,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
 		application.setApplicant(user);
-		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+	
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();
@@ -98,10 +97,10 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldNotReturnRefereesForInactiveApplicationForms() {
-		ApplicationForm unsubmittedApplication = new ApplicationFormBuilder().program(program).applicant(user).submissionStatus(SubmissionStatus.UNSUBMITTED)
+		ApplicationForm unsubmittedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED)
 				.toApplicationForm();
-		ApplicationForm decidedApplication = new ApplicationFormBuilder().program(program).applicant(user).submissionStatus(SubmissionStatus.SUBMITTED)
-				.approvedSatus(ApprovalStatus.APPROVED).toApplicationForm();
+		ApplicationForm decidedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED)
+				.toApplicationForm();
 		save(unsubmittedApplication, decidedApplication);
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
@@ -120,7 +119,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldNotReturnRefereesWhoHaveDeclined() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		save(application);
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
@@ -137,7 +136,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesWhoHaveProvidedReference() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		save(application);
 		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").toDocument();
 		Reference reference = new ReferenceBuilder().document(document).toReference();
@@ -157,7 +156,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldNotReturnRefereesWhoHaveBeenRemindedInLastWeek() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date threeDaysAgo = DateUtils.addDays(now,-3);
@@ -176,7 +175,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturnRefereesDueReminders() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date eightDaysAgo = DateUtils.addDays(now,-8);
@@ -195,7 +194,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturnRefereeForWhichReminderWasSendOneWeekMinus5minAgo() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date oneWeekAgo = DateUtils.addDays(now,-7);
@@ -214,7 +213,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturnRefereeForWhichReminderWasSendOne6DaysAnd5minAgo() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date sixDaysAgo = DateUtils.addDays(now,-6);
@@ -235,7 +234,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturnRefereeForWhichReminderWasSendOneWeekPlus5minAgo() {
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
 		Date oneWeekAgo = DateUtils.addDays(now,-7);

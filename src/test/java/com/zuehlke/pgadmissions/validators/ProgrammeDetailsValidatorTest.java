@@ -35,7 +35,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class ProgrammeDetailsValidatorTest {
 
@@ -181,7 +180,7 @@ public class ProgrammeDetailsValidatorTest {
 		programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME)
 				.applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).toProgramInstance();
 		program.setInstances(Arrays.asList(programInstance));
-		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(currentUser)
+		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicant(currentUser)
 				.toApplicationForm();
 		programmeDetail = new ProgrammeDetailsBuilder().id(5).supervisors(supervisor).programmeName("programmeName").referrer(Referrer.OPTION_1)
 				.startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06")).applicationForm(form).studyOption(StudyOption.FULL_TIME)

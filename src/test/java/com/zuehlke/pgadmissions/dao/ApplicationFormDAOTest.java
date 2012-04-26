@@ -28,7 +28,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
@@ -160,7 +159,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		ApplicationForm application1 = new ApplicationForm();	
 		application1.setApplicant(user);
 		application1.setProgram(program);
-		application1.setApprovalStatus(ApprovalStatus.APPROVED);
+		
 		
 		applicationDAO.save(application1);
 		

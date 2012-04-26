@@ -41,7 +41,7 @@ public class ReviewController {
 
 	@RequestMapping(value = "/assign", method = RequestMethod.GET)
 	public ModelAndView getReviewerPage(@ModelAttribute ApplicationForm applicationForm) {	
-		if (!applicationForm.isReviewable()) {
+		if (!applicationForm.isModifiable()) {
 			throw new CannotReviewApplicationException();
 		}
 
@@ -55,7 +55,7 @@ public class ReviewController {
 	@RequestMapping(value = { "/reviewerSuccess" }, method = RequestMethod.POST)
 	public ModelAndView updateReviewers(@ModelAttribute ApplicationForm applicationForm) {
 	
-		if (!applicationForm.isReviewable()) {
+		if (!applicationForm.isModifiable()) {
 			throw new CannotReviewApplicationException();
 		}
 		applicationsService.save(applicationForm);

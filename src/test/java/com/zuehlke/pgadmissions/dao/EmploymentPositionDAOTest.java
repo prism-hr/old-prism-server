@@ -16,7 +16,6 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 	private RegisteredUser user;
@@ -34,7 +33,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
 		application.setApplicant(user);
-		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		
 		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").application(application).employerName("fr")
 				.endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
 		save(application, employmentPosition);
@@ -52,7 +51,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
 		application.setApplicant(user);
-		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		
 		save(application);
 		flushAndClearSession();
 
@@ -71,7 +70,7 @@ public class EmploymentPositionDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
 		application.setApplicant(user);
-		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		
 		EmploymentPosition employmentPosition = new EmploymentPositionBuilder().employerAdress("Address").application(application).employerName("fr")
 				.endDate(new Date()).language(null).remit("dfsfsd").startDate(new Date()).position("rerew").toEmploymentPosition();
 		save(application, employmentPosition);

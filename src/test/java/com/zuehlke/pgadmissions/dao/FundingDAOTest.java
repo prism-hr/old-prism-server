@@ -17,7 +17,6 @@ import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class FundingDAOTest extends AutomaticRollbackTestCase {
 
@@ -36,7 +35,7 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
 		application.setApplicant(user);
-		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		
 		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432")
 				.toFunding();
 		save(application, funding);
@@ -54,7 +53,7 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
 		application.setApplicant(user);
-		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		
 		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432")
 				.toFunding();
 		save(application, funding);
@@ -70,7 +69,7 @@ public class FundingDAOTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
 		application.setApplicant(user);
-		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		
 		save(application);
 		flushAndClearSession();
 		Funding funding = new FundingBuilder().application(application).awardDate(new Date()).description("fi").type(FundingType.EMPLOYER).value("34432")

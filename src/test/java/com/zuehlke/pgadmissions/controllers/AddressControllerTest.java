@@ -28,9 +28,8 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -41,7 +40,7 @@ import com.zuehlke.pgadmissions.validators.AddressSectionDTOValidator;
 
 public class AddressControllerTest {
 
-	private RegisteredUser currentUser;	
+	private RegisteredUser currentUser;
 	private ApplicationsService applicationsServiceMock;
 	private AddressSectionDTOValidator addressSectionValidatorMock;
 	private AddressController controller;
@@ -52,7 +51,7 @@ public class AddressControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).approvedSatus(ApprovalStatus.APPROVED).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).toApplicationForm();
 
 		AddressSectionDTO addressSectionDTO = new AddressSectionDTO();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
@@ -209,7 +208,7 @@ public class AddressControllerTest {
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
 
 		applicationsServiceMock.save(applicationForm);
 
@@ -249,8 +248,7 @@ public class AddressControllerTest {
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).submissionStatus(SubmissionStatus.UNSUBMITTED).currentAddress(addressOne)
-				.contactAddress(addressTwo).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).currentAddress(addressOne).contactAddress(addressTwo).toApplicationForm();
 
 		applicationsServiceMock.save(applicationForm);
 
@@ -277,8 +275,7 @@ public class AddressControllerTest {
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 		EasyMock.replay(applicationsServiceMock, errors);
-		String view = controller.editAddresses(addressSectionDTO, errors, new ApplicationFormBuilder().submissionStatus(SubmissionStatus.UNSUBMITTED)
-				.toApplicationForm());
+		String view = controller.editAddresses(addressSectionDTO, errors, new ApplicationFormBuilder().toApplicationForm());
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals("/private/pgStudents/form/components/address_details", view);
 	}
@@ -297,7 +294,7 @@ public class AddressControllerTest {
 		countryPropertyEditor = EasyMock.createMock(CountryPropertyEditor.class);
 		countriesServiceMock = EasyMock.createMock(CountryService.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		
+
 		addressSectionValidatorMock = EasyMock.createMock(AddressSectionDTOValidator.class);
 
 		controller = new AddressController(applicationsServiceMock, countriesServiceMock, countryPropertyEditor, addressSectionValidatorMock);

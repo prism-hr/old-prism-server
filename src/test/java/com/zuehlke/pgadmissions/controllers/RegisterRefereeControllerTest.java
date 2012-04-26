@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.RefereePropertyEditor;
@@ -51,7 +52,7 @@ public class RegisterRefereeControllerTest {
 	
 	@Test
 	public void shouldGetRefereeFromServiceIfIdAndIsMappedToAnApplicationRefereeProvided() {
-		ApplicationForm application = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).id(1).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).toApplicationForm();
 		Referee referee = new RefereeBuilder().firstname("f").lastname("l").email("e@test.com").application(application).toReferee();
 		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("f").referees(referee).lastName("l").email("e@test.com").username("u").toUser();
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
@@ -62,7 +63,7 @@ public class RegisterRefereeControllerTest {
 	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResoureNotFoundExceptionIfRefereeDoesNotExists() {
-		ApplicationForm application = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).id(1).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).toApplicationForm();
 		Referee referee = new RefereeBuilder().firstname("f").lastname("l").email("e@test.com").application(application).toReferee();
 		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("f").referees(referee).lastName("l").email("e@test.com").username("u").toUser();
 		registerRefereeController.getReferee(user.getId());

@@ -40,7 +40,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
@@ -53,8 +52,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setApplicant(user);
 
-		application.setProgram(program);
-		application.setSubmissionStatus(SubmissionStatus.UNSUBMITTED);
+		application.setProgram(program);		
 		application.setStatus(ApplicationFormStatus.APPROVED);
 		application.setProjectTitle("bob");
 
@@ -77,7 +75,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(user, reloadedApplication.getApplicant());
 
 		assertEquals(program, reloadedApplication.getProgram());
-		assertEquals(SubmissionStatus.UNSUBMITTED, reloadedApplication.getSubmissionStatus());
+		
 		assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
 		assertEquals("bob", reloadedApplication.getProjectTitle());
 		assertNotNull(application.getPersonalDetails());
@@ -91,8 +89,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		Country country2 = new CountryBuilder().code("CC").name("CC").toCountry();
 		save(country1, country2);
 
-		ApplicationForm application = new ApplicationFormBuilder().applicant(user).program(program).submissionStatus(SubmissionStatus.UNSUBMITTED)
-				.toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().applicant(user).program(program).toApplicationForm();
 
 		sessionFactory.getCurrentSession().save(application);
 		flushAndClearSession();
@@ -114,7 +111,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
 		application.setApplicant(user);
-		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		
 		application.setReviewers(Arrays.asList(user));
 
 		assertNull(application.getId());
@@ -134,7 +131,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 		assertEquals(user, reloadedApplication.getApplicant());
 		assertEquals(program, reloadedApplication.getProgram());
-		assertEquals(SubmissionStatus.SUBMITTED, reloadedApplication.getSubmissionStatus());
+		
 		Assert.assertEquals(1, reloadedApplication.getReviewers().size());
 		Assert.assertTrue(reloadedApplication.getReviewers().contains(user));
 	}
@@ -144,7 +141,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
 		application.setApplicant(user);
-		application.setSubmissionStatus(SubmissionStatus.SUBMITTED);
+		
 
 		save(application);
 		flushAndClearSession();

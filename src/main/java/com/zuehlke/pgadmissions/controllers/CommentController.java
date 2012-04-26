@@ -12,7 +12,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotCommentException;
 import com.zuehlke.pgadmissions.services.ApplicationReviewService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -42,8 +41,7 @@ public class CommentController {
 		ApplicationReview applicationReview = new ApplicationReview();
 		ApplicationForm application = applicationService.getApplicationById(id);
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		if(user.isInRole(Authority.APPLICANT) || (application.getApprovalStatus() != null)
-				|| application.getSubmissionStatus().equals(SubmissionStatus.UNSUBMITTED))
+		if(user.isInRole(Authority.APPLICANT) || !application.isModifiable())
 		{
 			throw new CannotCommentException();
 		}

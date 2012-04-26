@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -86,7 +87,7 @@ public class SubmitApplicationFormControllerTest {
 		applicationController.submitApplication(applicationForm, errorsMock);
 
 		EasyMock.verify(submitApplicationServiceMock);
-		assertEquals(SubmissionStatus.SUBMITTED, applicationForm.getSubmissionStatus());
+		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());
 		assertNotNull(applicationForm.getSubmittedDate());
 	}
 
@@ -127,7 +128,7 @@ public class SubmitApplicationFormControllerTest {
 	@Test
 	public void shouldGetApplicationFormFromService() {
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(student)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).status(ApplicationFormStatus.UNSUBMITTED).applicant(student)
 				.toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
@@ -154,7 +155,7 @@ public class SubmitApplicationFormControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowSubmitExceptionIfApplicationIsDecided() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).submissionStatus(SubmissionStatus.SUBMITTED).approvedSatus(ApprovalStatus.APPROVED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).status(ApplicationFormStatus.APPROVED).toApplicationForm();
 		applicationController.submitApplication(applicationForm, null);
 	}
 
@@ -162,7 +163,7 @@ public class SubmitApplicationFormControllerTest {
 	public void shouldThrowSubmitExceptionIfUserCannotSeeApplicationForm() {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
 		authenticationToken.setDetails(userMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).submissionStatus(SubmissionStatus.UNSUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(3)).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, userMock);

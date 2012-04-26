@@ -18,9 +18,8 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
-import com.zuehlke.pgadmissions.domain.enums.ValidationStage;
 
 public class RegisteredUserTest {
 
@@ -76,7 +75,7 @@ public class RegisteredUserTest {
 	public void shouldReturnTrueIfUserIsRefereeOfTheApplicationForm() {
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();
 		Referee referee = new RefereeBuilder().id(1).user(refereeUser).toReferee();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertTrue(refereeUser.canSee(applicationForm));
 
 	}
@@ -85,14 +84,14 @@ public class RegisteredUserTest {
 	public void shouldReturnTrueIfUserIsRefereeOfTheApplicationFormButHasDeclined() {
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();
 		Referee referee = new RefereeBuilder().id(1).user(refereeUser).declined(true).toReferee();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().referees(referee).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertFalse(refereeUser.canSee(applicationForm));
 
 	}
 	@Test
 	public void shouldReturnFalseIfUserIsRefereeOfButNotOnApplicationForm() {
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertFalse(refereeUser.canSee(applicationForm));
 
 	}
@@ -109,32 +108,34 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserIsAdministrator() {
 		RegisteredUser administrator = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertTrue(administrator.canSee(applicationForm));
 
 	}
 	
 	@Test
-	public void shouldReturnTrueIfUserReviewerAndApplicationInNotValidateStage() {
+	public void shouldReturnTrueIfUserReviewerAndApplicationInValidateStage() {
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		reviewers.add(reviewer);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewers).submissionStatus(SubmissionStatus.SUBMITTED).validationStage(ValidationStage.FALSE).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewers).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertTrue(reviewer.canSee(applicationForm));
 		
 	}
 	
 	@Test
 	public void shouldReturnFalseIfUserApproverAndApplicationInValidateStage() {
-		RegisteredUser approver = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().approver(approver).submissionStatus(SubmissionStatus.SUBMITTED).validationStage(ValidationStage.TRUE).toApplicationForm();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		RegisteredUser approver = new RegisteredUserBuilder().programsOfWhichApprover(program).roles(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).approver(approver).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertFalse(approver.canSee(applicationForm));
 		
 	}
 	@Test
 	public void shouldReturnTrueIfUserAdminAndApplicationInValidateStage() {
 		RegisteredUser administrator = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.SUBMITTED).validationStage(ValidationStage.TRUE).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertTrue(administrator.canSee(applicationForm));
 		
 	}
@@ -144,7 +145,7 @@ public class RegisteredUserTest {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		reviewers.add(reviewer);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewers).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewers).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertTrue(reviewer.canSee(applicationForm));
 
 	}
@@ -169,7 +170,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueForAnApplicantIfUnsubmittedApplication() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().submissionStatus(SubmissionStatus.UNSUBMITTED).applicant(applicant).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicant(applicant).toApplicationForm();
 		assertTrue(applicant.canSee(applicationForm));
 	}
 
@@ -177,7 +178,7 @@ public class RegisteredUserTest {
 	public void shouldReturnTrueIfUserIsItsApproverOfProgramToWhichApplicationBelongs() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).approver(approver).toProgram();		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertTrue(approver.canSee(applicationForm));
 
 	}
@@ -187,7 +188,7 @@ public class RegisteredUserTest {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
 	
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).submissionStatus(SubmissionStatus.SUBMITTED).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertFalse(approver.canSee(applicationForm));
 	}
 

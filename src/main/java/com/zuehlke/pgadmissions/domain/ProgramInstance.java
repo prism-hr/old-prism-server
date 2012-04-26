@@ -8,6 +8,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -32,6 +34,9 @@ public class ProgramInstance extends DomainObject<Integer> {
 	
 	private int sequence;
 	
+	@ManyToOne
+	@JoinColumn(name = "program_id")
+	private Program program;
 	
 	@Override
 	public void setId(Integer id) {
@@ -68,6 +73,14 @@ public class ProgramInstance extends DomainObject<Integer> {
 
 	public void setSequence(int sequence) {
 		this.sequence = sequence;
+	}
+
+	public Program getProgram() {
+		return program;
+	}
+
+	public void setProgram(Program program) {
+		this.program = program;
 	}
 
 }

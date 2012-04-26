@@ -39,11 +39,11 @@ public class ProgramInstanceDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPast(
-			StudyOption studyOption) {
+	public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPast(Program program, StudyOption studyOption) {
 		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
 		return (List<ProgramInstance>) sessionFactory.getCurrentSession()
 				.createCriteria(ProgramInstance.class)
+				.add(Restrictions.eq("program", program))
 				.add(Restrictions.eq("studyOption", studyOption))
 				.add(Restrictions.ge("applicationDeadline", today))
 				.list();

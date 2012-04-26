@@ -61,7 +61,7 @@ public class ApplicationFormValidator implements Validator{
 		}
 		
 		if(programmeDetails != null){
-			List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(programmeDetails.getStudyOption());
+			List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(applicationForm.getProgram(), programmeDetails.getStudyOption());
 			if(programInstances==null || programInstances.isEmpty()){
 				errors.rejectValue("programmeDetails", "programmeDetails.studyOption.invalid");
 			}

@@ -63,7 +63,7 @@ public class SubmitApplicationService {
 				if(form.getLastSubmissionNotification()!=null){
 					lastMail.setTime(form.getLastSubmissionNotification());
 				}
-				if(form.getLastSubmissionNotification()==null || comparator.compare(today, lastMail) != 0 ){
+				if(form.getLastSubmissionNotification() == null || comparator.compare(today, lastMail) != 0 ){
 					Map<String, Object> model = new HashMap<String, Object>();
 					model.put("admin", admin);
 					model.put("application", form);

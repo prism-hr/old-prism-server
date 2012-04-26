@@ -25,6 +25,7 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.ApprovalStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
@@ -34,34 +35,38 @@ import com.zuehlke.pgadmissions.domain.enums.ValidationStage;
 @Access(AccessType.FIELD)
 public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm> {
 
+	
 	private static final long serialVersionUID = -7671357234815343496L;
 	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
+	private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
+
 	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "current_address_id")
 	private Address currentAddress;
-	
+
 	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "contact_address_id")
 	private Address contactAddress;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "cv_id")
 	private Document cv = null;
-	
+
 	@Temporal(TemporalType.DATE)
-	@Column(name="validation_due_date")
+	@Column(name = "validation_due_date")
 	private Date validationDueDate;
-	
+
 	@Column(name = "last_submission_notification")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastSubmissionNotification;
-	
+
 	@Temporal(TemporalType.DATE)
-	@Column(name="last_email_reminder_date")
+	@Column(name = "last_email_reminder_date")
 	private Date lastEmailReminderDate;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "personal_statement_id")
 	private Document personalStatement = null;
@@ -77,7 +82,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApprovalStatusEnumUserType")
 	@Column(name = "approval_status")
 	private ApprovalStatus approvalStatus;
-	
+
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ValidationStageEnumUserType")
 	@Column(name = "validation_stage")
 	private ValidationStage validationStage;
@@ -90,14 +95,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "approver_user_id")
 	private RegisteredUser approver = null;
 
-		
 	@Column(name = "project_title")
 	private String projectTitle;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "program_id")
 	private Program program;
-	
+
 	@OneToOne(mappedBy = "application")
 	private PersonalDetails personalDetails;
 
@@ -114,7 +118,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	@OneToMany(mappedBy = "application")
 	private List<ApplicationReview> applicationComments = new ArrayList<ApplicationReview>();
-
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -156,7 +159,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.reviewers = reviewers;
 	}
 
-
 	public ApprovalStatus getApprovalStatus() {
 		return approvalStatus;
 	}
@@ -194,8 +196,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.approver = approver;
 	}
 
-
-
 	public void setSubmissionStatus(SubmissionStatus submissionStatus) {
 		this.submissionStatus = submissionStatus;
 
@@ -227,7 +227,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public boolean isSubmitted() {
 		return submissionStatus == SubmissionStatus.SUBMITTED;
 	}
-	
+
 	public boolean isInValidationStage() {
 		return validationStage == ValidationStage.TRUE;
 	}
@@ -259,8 +259,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public boolean hasComments() {
 		return applicationComments != null && !applicationComments.isEmpty();
 	}
-
-
 
 	public boolean hasQualifications() {
 		return !qualifications.isEmpty();
@@ -351,7 +349,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public Address getCurrentAddress() {
 		return currentAddress;
 	}
-	
+
 	public void setCurrentAddress(Address currentAddress) {
 		this.currentAddress = currentAddress;
 	}
@@ -363,9 +361,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public void setContactAddress(Address contactAddress) {
 		this.contactAddress = contactAddress;
 	}
-	
+
 	public List<ApplicationReview> getVisibleComments(RegisteredUser user) {
-		List<ApplicationReview> visibleComments = new ArrayList<ApplicationReview>();	
+		List<ApplicationReview> visibleComments = new ArrayList<ApplicationReview>();
 		for (ApplicationReview comment : applicationComments) {
 			if (comment.getUser().isInRole(Authority.REVIEWER) && (!comment.getUser().equals(user))) {
 				continue;
@@ -375,14 +373,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 		return visibleComments;
 	}
-	
+
 	public boolean shouldOpenFirstSection() {
-		return this.programmeDetails == null && this.personalDetails == null 
-		&& this.currentAddress == null && this.contactAddress == null 
-		&& this.qualifications.isEmpty() && this.employmentPositions.isEmpty()
-		&& this.fundings.isEmpty() && this.referees.isEmpty() 
-		&& this.personalStatement == null && this.cv == null
-		&& StringUtils.isBlank(this.additionalInformation);
+		return this.programmeDetails == null && this.personalDetails == null && this.currentAddress == null && this.contactAddress == null
+				&& this.qualifications.isEmpty() && this.employmentPositions.isEmpty() && this.fundings.isEmpty() && this.referees.isEmpty()
+				&& this.personalStatement == null && this.cv == null && StringUtils.isBlank(this.additionalInformation);
 	}
 
 	public ValidationStage getValidationStage() {
@@ -431,5 +426,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setProjectTitle(String projectTitle) {
 		this.projectTitle = projectTitle;
+	}
+
+	public ApplicationFormStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ApplicationFormStatus status) {
+		this.status = status;
 	}
 }

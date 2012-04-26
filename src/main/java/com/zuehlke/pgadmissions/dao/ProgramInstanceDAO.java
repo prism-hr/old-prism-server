@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
 @Repository
 public class ProgramInstanceDAO {
@@ -33,6 +34,17 @@ public class ProgramInstanceDAO {
 		return (List<ProgramInstance>) sessionFactory.getCurrentSession()
 				.createCriteria(ProgramInstance.class)
 				.add(Restrictions.eq("program", program))
+				.add(Restrictions.ge("applicationDeadline", today))
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ProgramInstance> getProgramInstancesWithStudyOptionAndDeadlineNotInPast(
+			StudyOption studyOption) {
+		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
+		return (List<ProgramInstance>) sessionFactory.getCurrentSession()
+				.createCriteria(ProgramInstance.class)
+				.add(Restrictions.eq("studyOption", studyOption))
 				.add(Restrictions.ge("applicationDeadline", today))
 				.list();
 	}

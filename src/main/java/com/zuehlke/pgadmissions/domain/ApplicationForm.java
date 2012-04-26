@@ -27,7 +27,6 @@ import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.ValidationStage;
 
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD)

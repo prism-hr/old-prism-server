@@ -38,7 +38,7 @@
 </#if>
 
 <#import "/spring.ftl" as spring />
-<input type="hidden" id="submissionStatus" value="${applicationForm.submissionStatus}"/>
+
 <#-- Personal Details Rendering -->
 <!-- Personal details -->
 <h2 id="personalDetails-H2" class="open">

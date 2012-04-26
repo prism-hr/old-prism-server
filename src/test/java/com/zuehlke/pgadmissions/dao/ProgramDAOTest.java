@@ -32,7 +32,7 @@ public class ProgramDAOTest extends AutomaticRollbackTestCase{
 			Assert.assertEquals(existingNumberOfPrograms.intValue() + 2, programDAO.getAllPrograms().size());
 		}
 
-		
+
 		@Test
 		public void shouldGetProgramById() {
 			Program program = new ProgramBuilder().id(1).code("code1").title("another title").toProgram();

@@ -80,14 +80,11 @@
 							                <td name="idColumn">${application.id?string("######")}</td>
 							                <td>${application.applicant.firstName}</td>
 							                <td>${application.applicant.lastName}</td>
-							                <td>${application.program.code} - ${application.program.title}</td>	
-							                 <#if application.isDecided() >
-							               	     <td name="statusColumn">${application.approvalStatus.displayValue()}</td>
-							               	 <#elseif application.isUnderReview()>
-							               	     <td name="statusColumn">Under Review</td>
-							               	 <#else>
-							               	     <td name="statusColumn">${application.submissionStatus.displayValue()}</td>
-							              	</#if>
+							                <td>${application.program.code} - ${application.program.title}</td>								                
+							               	 <td name="statusColumn">${application.status.displayValue()}</td>
+							               
+							               
+							               	
 							                <td>
 							                	<select class="actionType" name="app_[${application.id?string("######")}]">
 							                		<option>Select...</option>

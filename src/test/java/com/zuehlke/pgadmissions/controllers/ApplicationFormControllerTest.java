@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.easymock.EasyMock;
@@ -79,10 +80,8 @@ public class ApplicationFormControllerTest {
 	
 	@Test
 	public void shouldReturnProgramDoesNotExistPageIfProgramDoesNotExists(){
-		Program program1 = new ProgramBuilder().id(1).toProgram();
-		Program program = new ProgramBuilder().id(12).toProgram();
+		Program program1 = new ProgramBuilder().toProgram();
 		EasyMock.expect(programDAOMock.getProgramById(1)).andReturn(null);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program)).andReturn(applicationForm);
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program1)).andReturn(null);
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
 		

@@ -72,8 +72,9 @@
   	<form>
 		<div class="section-info-bar">
 			<div class="row">
-				<span class="info-text"> &nbsp Coming Soon.
-					<!--@spring.message 'programmeDetails.programme'/--> 
+				<span class="info-text"> &nbsp
+					<@spring.message 'education.qualifications.sectionInfo'/>
+					<b><@spring.message 'education.qualifications.sectionInfoBold'/></b> 
 				</span>
 			</div>
 		</div>

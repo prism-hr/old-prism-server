@@ -82,8 +82,8 @@
   	<form>
 		<div class="section-info-bar">
 			<div class="row">
-				<span class="info-text"> &nbsp Coming Soon.
-					<!--@spring.message 'programmeDetails.programme'/--> 
+				<span class="info-text"> &nbsp
+					<@spring.message 'referencesDetails.sectionInfo'/> 
 				</span>
 			</div>
 		</div>

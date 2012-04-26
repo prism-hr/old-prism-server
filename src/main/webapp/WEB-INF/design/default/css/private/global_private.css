@@ -181,8 +181,8 @@ span.info-text {
 }
 
 /* to control the looks of the information bar on top of each section */
-div.section-info-bar{
-    border: #0071B9;
+section.folding form > div.section-info-bar{
+    border:  1px solid #0071B9;
 }
 
 

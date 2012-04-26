@@ -19,13 +19,6 @@ $(document).ready(function()
 		 
 	});
 	
-
-	// To apply css on section information bar.
-	//alert("1 :" + $(".section-info-bar").css("border-color"));
-	$("div.section-info-bar").css("border-color","#0071B9");
-	//alert("2 :" + $(".section-info-bar").css("border-color"));
-
-	
 	//$('body.old-ie button').wrap('<span />');
 	
 	  

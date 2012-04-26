@@ -2,17 +2,32 @@ package com.zuehlke.pgadmissions.validators;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 
 @Component
 public class ProgrammeDetailsValidator implements Validator {
 
+	
+	private final ProgramInstanceDAO programInstaceDAO;
+
+	ProgrammeDetailsValidator(){
+		this(null);
+	}
+	
+	@Autowired
+	public ProgrammeDetailsValidator(ProgramInstanceDAO programInstaceDAO){
+		this.programInstaceDAO = programInstaceDAO;
+	}
+	
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return ProgrammeDetails.class.equals(clazz);
@@ -26,7 +41,13 @@ public class ProgrammeDetailsValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "referrer", "user.programmeReferrer.notempty");
 
 		ProgrammeDetails programmeDetail = (ProgrammeDetails) target;
-
+		
+		
+		List<ProgramInstance> programInstances = programInstaceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(programmeDetail.getStudyOption());
+		if(programInstances==null || programInstances.isEmpty()){
+			errors.rejectValue("studyOption", "programmeDetails.studyOption.invalid");
+		}
+		
 		List<Supervisor> supervisors = programmeDetail.getSupervisors();
 		for (int i = 0; i < supervisors.size(); i++) {
 //			if (!EmailValidator.getInstance().isValid(supervisors.get(i).getEmail())) {
@@ -40,4 +61,5 @@ public class ProgrammeDetailsValidator implements Validator {
 			}
 		}
 	}
+
 }

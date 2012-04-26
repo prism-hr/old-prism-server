@@ -18,7 +18,6 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 public class QualificationDAOTest extends AutomaticRollbackTestCase {
 

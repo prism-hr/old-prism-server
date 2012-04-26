@@ -12,8 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatusTest;
-import com.zuehlke.pgadmissions.domain.enums.SubmissionStatus;
 
 @Repository
 public class RefereeDAO {

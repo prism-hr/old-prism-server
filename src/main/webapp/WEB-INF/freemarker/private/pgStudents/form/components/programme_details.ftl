@@ -24,7 +24,7 @@
         <input type="hidden" name="programmeDetailsId" id="programmeDetailsId" value="${(programmeDetails.id?string("######"))!}"/>
 		<div>
     		<#if errorCode?? && errorCode =="true">
-				<div class="row">              	
+				<div class="row">        
 					<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
 			     </div>            	
 			</#if>
@@ -45,7 +45,7 @@
                <span class="hint" data-desc="<@spring.message 'programmeDetails.studyOption'/>"></span>
                 <div class="field">
             		<select class="full" id="studyOption" name="studyOption" 
-            		<#if applicationForm.isSubmitted()>
+            		<#if applicationForm.isDecided()>
             		disabled="disabled"
             		</#if>>
             		  <option value="">Select...</option>

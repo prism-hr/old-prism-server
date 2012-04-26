@@ -1,16 +1,33 @@
 package com.zuehlke.pgadmissions.validators;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
+import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
+import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 
 @Component
 public class ApplicationFormValidator implements Validator{
 
+	private final ProgramInstanceDAO programInstanceDAO;
 
+	ApplicationFormValidator(){
+		this(null);
+	}
+	
+	@Autowired
+	public ApplicationFormValidator(ProgramInstanceDAO programInstanceDAO) {
+		this.programInstanceDAO = programInstanceDAO;
+		
+	}
+	
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return ApplicationForm.class.equals(clazz);
@@ -19,7 +36,8 @@ public class ApplicationFormValidator implements Validator{
 	@Override
 	public void validate(Object target, Errors errors) {
 		ApplicationForm applicationForm = (ApplicationForm) target;
-		if(applicationForm.getProgrammeDetails() != null && applicationForm.getProgrammeDetails().getId() == null){
+		ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
+		if(programmeDetails != null && programmeDetails.getId() == null){
 			errors.rejectValue("programmeDetails", "user.programmeDetails.incomplete");
 		}else{
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeDetails", "user.programmeDetails.incomplete");
@@ -39,6 +57,13 @@ public class ApplicationFormValidator implements Validator{
 		if (applicationForm.getAdditionalInformation() != null ) {
 			if (applicationForm.getAdditionalInformation().length() > 5000) {
 				errors.rejectValue("additionalInformation", "user.additionalInformation.notvalid");
+			}
+		}
+		
+		if(programmeDetails != null){
+			List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(programmeDetails.getStudyOption());
+			if(programInstances==null || programInstances.isEmpty()){
+				errors.rejectValue("programmeDetails", "programmeDetails.studyOption.invalid");
 			}
 		}
 	

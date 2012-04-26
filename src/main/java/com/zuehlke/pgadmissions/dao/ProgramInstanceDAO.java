@@ -8,6 +8,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 
 public class ProgramInstanceDAO {
@@ -19,10 +20,11 @@ public class ProgramInstanceDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ProgramInstance> getActiveProgramInstances() {
+	public List<ProgramInstance> getActiveProgramInstances(Program program) {
 		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
 		return (List<ProgramInstance>) sessionFactory.getCurrentSession()
 				.createCriteria(ProgramInstance.class)
+				.add(Restrictions.eq("program", program))
 				.add(Restrictions.ge("applicationDeadline", today))
 				.list();
 	}

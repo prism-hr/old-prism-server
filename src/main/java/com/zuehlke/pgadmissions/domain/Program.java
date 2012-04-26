@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -30,6 +31,9 @@ public class Program extends DomainObject<Integer> {
 	@ManyToMany(mappedBy = "programsOfWhichReviewer")
 	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
 
+	@OneToMany(mappedBy = "program")
+	private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
+	
 	@Override
 	@Id
 	@GeneratedValue
@@ -101,5 +105,13 @@ public class Program extends DomainObject<Integer> {
 			}
 		}
 		return false;
+	}
+
+	public List<ProgramInstance> getInstances() {
+		return instances;
+	}
+
+	public void setInstances(List<ProgramInstance> instances) {
+		this.instances = instances;
 	}
 }

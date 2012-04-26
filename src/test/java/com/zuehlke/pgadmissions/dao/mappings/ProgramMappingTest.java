@@ -8,12 +8,16 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
 public class ProgramMappingTest extends AutomaticRollbackTestCase {
 
@@ -43,7 +47,26 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		assertEquals("Program's title", reloadedProgram.getTitle());
 
 	}
+	@Test
+	public void shouldSaveAndLoadProgramWithInstances() {
 
+		Program program = new Program();
+		program.setCode("abcD");		
+		program.setTitle("Program's title");
+		
+		save(program);
+		ProgramInstance instanceOne = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption(StudyOption.FULL_TIME).program(program).toProgramInstance();
+		ProgramInstance instanceTwo = new ProgramInstanceBuilder().applicationDeadline(new Date()).sequence(1).studyOption(StudyOption.FULL_TIME).program(program).toProgramInstance();
+		save(instanceOne, instanceTwo);
+		flushAndClearSession();
+		
+		Integer id = program.getId();
+
+		Program reloadedProgram = (Program) sessionFactory.getCurrentSession().get(Program.class, id);
+		assertEquals(2, reloadedProgram.getInstances().size());
+		assertTrue(reloadedProgram.getInstances().containsAll(Arrays.asList(instanceOne, instanceTwo)));
+
+	}
 	@Test
 	public void shouldLoadProgramsWithApprovers() {
 		Program program = new Program();

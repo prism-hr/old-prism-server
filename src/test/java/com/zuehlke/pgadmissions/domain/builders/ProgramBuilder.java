@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.Program;
+import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public class ProgramBuilder {
@@ -17,10 +18,20 @@ public class ProgramBuilder {
 	
 	private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
 	
+	private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
+	
 	public ProgramBuilder id(Integer id){
 		this.id = id;
 		return this;
 	}
+	
+	public ProgramBuilder instances(ProgramInstance... instances){
+		for (ProgramInstance instance : instances) {
+			this.instances.add(instance);
+		}
+		return this;
+	}
+	
 	
 	public ProgramBuilder approver(RegisteredUser... approvers){
 		for (RegisteredUser approver : approvers) {
@@ -63,6 +74,7 @@ public class ProgramBuilder {
 		program.getApprovers().addAll(approvers);
 		program.getAdministrators().addAll(administrators);
 		program.getReviewers().addAll(reviewers);
+		program.getInstances().addAll(instances);
 		return program;
 	}
 }

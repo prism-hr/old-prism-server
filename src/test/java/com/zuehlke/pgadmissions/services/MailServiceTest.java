@@ -190,9 +190,10 @@ public class MailServiceTest {
 		mailService.sendReminderAndUpdateLastNotified(referee);
 		
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock,refereeDAOMock);
-		assertNull(referee.getLastNotified());
-		
+		assertNull(referee.getLastNotified());		
 	}
+	
+	
 	@Before
 	public void setUp(){
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);

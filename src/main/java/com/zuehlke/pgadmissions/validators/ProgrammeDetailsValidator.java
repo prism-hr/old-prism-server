@@ -16,18 +16,17 @@ import com.zuehlke.pgadmissions.domain.Supervisor;
 @Component
 public class ProgrammeDetailsValidator implements Validator {
 
-	
 	private final ProgramInstanceDAO programInstaceDAO;
 
-	ProgrammeDetailsValidator(){
+	ProgrammeDetailsValidator() {
 		this(null);
 	}
-	
+
 	@Autowired
-	public ProgrammeDetailsValidator(ProgramInstanceDAO programInstaceDAO){
+	public ProgrammeDetailsValidator(ProgramInstanceDAO programInstaceDAO) {
 		this.programInstaceDAO = programInstaceDAO;
 	}
-	
+
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return ProgrammeDetails.class.equals(clazz);
@@ -41,18 +40,21 @@ public class ProgrammeDetailsValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "referrer", "user.programmeReferrer.notempty");
 
 		ProgrammeDetails programmeDetail = (ProgrammeDetails) target;
-		
-		
-		List<ProgramInstance> programInstances = programInstaceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(programmeDetail.getStudyOption());
-		if(programInstances==null || programInstances.isEmpty()){
+
+		List<ProgramInstance> programInstances = programInstaceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(programmeDetail.getApplication()
+				.getProgram(), programmeDetail.getStudyOption());
+		if (programInstances == null || programInstances.isEmpty()) {
 			errors.rejectValue("studyOption", "programmeDetails.studyOption.invalid");
 		}
-		
+
 		List<Supervisor> supervisors = programmeDetail.getSupervisors();
 		for (int i = 0; i < supervisors.size(); i++) {
-//			if (!EmailValidator.getInstance().isValid(supervisors.get(i).getEmail())) {
-//				errors.rejectValue("supervisors", "programmeDetails.email.invalid");
-//			}
+			// if
+			// (!EmailValidator.getInstance().isValid(supervisors.get(i).getEmail()))
+			// {
+			// errors.rejectValue("supervisors",
+			// "programmeDetails.email.invalid");
+			// }
 			if (supervisors.get(i).getFirstname() == "" || supervisors.get(i).getFirstname() == null) {
 				errors.rejectValue("supervisors", "programmeDetails.firstname.notempty");
 			}

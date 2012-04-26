@@ -1,6 +1,8 @@
 <#-- Assignments -->
 <#import "/spring.ftl" as spring />
 <#assign errorCode = RequestParameters.errorCode! />
+<#assign studyOptionError = RequestParameters.studyOptionError! />
+<#assign programError = RequestParameters.programError! />
 <#-- Programme Details Rendering -->
 
 
@@ -28,6 +30,9 @@
 					<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
 			     </div>            	
 			</#if>
+			<#if programError?? && programError=='true'>
+                	<span class="invalid"><@spring.message 'application.program.invalid'/></span>
+             </#if>
         	<!-- Programme name (disabled) -->
             <div class="row">
             	<label class="plain-label grey-label">Programme<em class="grey-label">*</em></label>
@@ -59,6 +64,9 @@
                   	</select>     
                   	<@spring.bind "programmeDetails.studyOption" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                	<#if studyOptionError?? && studyOptionError=='true'>
+                		 <span class="invalid"><@spring.message  'programmeDetails.studyOption.invalid'/></span>
+                	</#if>
                 </div>
 			</div>
 
@@ -231,7 +239,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>
 <@spring.bind "programmeDetails.*" />
 
-<#if ((errorCode?? && errorCode=='false' && !applicationForm.shouldOpenFirstSection()) || applicationForm.isSubmitted() || (message?? && message='close' && !spring.status.errorMessages?has_content))>
+<#if ((errorCode?? && errorCode=='false' && studyOptionError?? && studyOptionError =='false' && programError?? && programError =='false' && !applicationForm.shouldOpenFirstSection()) || applicationForm.isSubmitted() || (message?? && message='close' && !spring.status.errorMessages?has_content))>
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#programme-H2').trigger('click');

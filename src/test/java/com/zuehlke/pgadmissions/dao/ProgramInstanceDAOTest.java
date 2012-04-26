@@ -86,4 +86,45 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 		List<ProgramInstance> activeInstances = dao.getActiveProgramInstances(program);
 		assertFalse(activeInstances.contains(programInstance));
 	}
+	
+	@Test
+	public void shouldReturnProgramInstanceWithStudyOptionAndDeadlineNotInThePast(){
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		ProgramInstance programInstance = new ProgramInstanceBuilder().applicationDeadline(today).sequence(1).studyOption(StudyOption.FULL_TIME).toProgramInstance();
+		save(programInstance);
+		flushAndClearSession();
+		
+		ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
+		
+		List<ProgramInstance> matchedInstances = dao.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(StudyOption.FULL_TIME);
+		assertTrue(matchedInstances.contains(programInstance));
+	}
+	
+	@Test
+	public void shouldNotReturnProgramInstanceWithStudyOptionAndDeadlineInThePast(){
+		Date now = Calendar.getInstance().getTime();
+		Date oneYearAgo = DateUtils.addYears(now, -1);
+		ProgramInstance programInstance = new ProgramInstanceBuilder().applicationDeadline(oneYearAgo).sequence(1).studyOption(StudyOption.FULL_TIME).toProgramInstance();
+		save(programInstance);
+		flushAndClearSession();
+		
+		ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
+		
+		List<ProgramInstance> matchedInstances = dao.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(StudyOption.FULL_TIME);
+		assertFalse(matchedInstances.contains(programInstance));
+	}
+	@Test
+	public void shouldNotReturnProgramInstanceWithoutStudyOptionAndDeadlineNotInThePast(){
+		Date now = Calendar.getInstance().getTime();
+		Date oneYearAgo = DateUtils.addYears(now, -1);
+		ProgramInstance programInstance = new ProgramInstanceBuilder().applicationDeadline(oneYearAgo).sequence(1).studyOption(StudyOption.FULL_TIME_DISTANCE).toProgramInstance();
+		save(programInstance);
+		flushAndClearSession();
+		
+		ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
+		
+		List<ProgramInstance> matchedInstances = dao.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(StudyOption.FULL_TIME);
+		assertFalse(matchedInstances.contains(programInstance));
+	}
 }

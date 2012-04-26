@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -24,16 +25,20 @@ public class ApplicationFormController {
 	private final ProgramDAO programDAO;
 	private final ApplicationsService applicationService;
 	private final UserPropertyEditor userPropertyEditor;
-
+	public static final String PROGRAM_DOES_NOT_EXIST = "private/pgStudents/programs/program_does_not_exist";
+	private final ProgramInstanceDAO programInstanceDAO;
+	
 	ApplicationFormController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public ApplicationFormController(ProgramDAO programDAO, ApplicationsService applicationService, UserPropertyEditor userPropertyEditor) {
+	public ApplicationFormController(ProgramDAO programDAO, ApplicationsService applicationService, UserPropertyEditor userPropertyEditor,
+			ProgramInstanceDAO programInstanceDAO) {
 		this.programDAO = programDAO;
 		this.applicationService = applicationService;
 		this.userPropertyEditor = userPropertyEditor;
+		this.programInstanceDAO = programInstanceDAO;
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
@@ -42,6 +47,11 @@ public class ApplicationFormController {
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
 		Program prog = programDAO.getProgramById(program);
+		if(prog==null || programInstanceDAO.getActiveProgramInstances(prog) == null
+				|| programInstanceDAO.getActiveProgramInstances(prog).isEmpty()
+				){
+			return new ModelAndView(PROGRAM_DOES_NOT_EXIST); 
+		}
 		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog);
 
 		return new ModelAndView("redirect:/application", "applicationId", applicationForm.getId());

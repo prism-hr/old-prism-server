@@ -4,6 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import org.easymock.EasyMock;
@@ -16,11 +17,14 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.zuehlke.pgadmissions.dao.custom.StudyOptionEnumUserType;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -81,9 +85,13 @@ public class ProgrammeDetailsControllerTest {
 
 
 	@Test
-	public void shouldReturnAllStudyOptionsLevels() {
-		StudyOption[] studyOptions = controller.getStudyOptions();
-		assertArrayEquals(studyOptions, StudyOption.values());
+	public void shouldReturnAvaialbeStudyOptionLevels() {
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).toApplicationForm();
+		EasyMock.expect(programmeDetailsServiceMock.getAvailableStudyOptions(program)).andReturn(Arrays.asList(StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE));
+		EasyMock.replay(programmeDetailsServiceMock);
+		StudyOption[] studyOptions = controller.getStudyOptions(applicationForm);
+		assertArrayEquals(studyOptions, new StudyOption[]{StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE});
 	}
 	
 	@Test

@@ -86,8 +86,8 @@ public class ProgrammeDetailsController {
 	}
 
 	@ModelAttribute("studyOptions")
-	public StudyOption[] getStudyOptions() {
-		return StudyOption.values();
+	public StudyOption[] getStudyOptions(@ModelAttribute ApplicationForm applicationForm) {
+		return (StudyOption[]) programmeDetailsService.getAvailableStudyOptions(applicationForm.getProgram()).toArray(new StudyOption[]{});
 	}
 
 	@ModelAttribute("referrers")

@@ -5,12 +5,14 @@ import static org.junit.Assert.assertTrue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
 
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.DirectFieldBindingResult;
 
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
@@ -47,18 +49,23 @@ public class ApplicationFormValidatorTest {
 	public void shouldRejectIfProgrammeDetailsSectionMissing() {
 		applicationForm.setProgrammeDetails(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+
 		validator.validate(applicationForm, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.programmeDetails.incomplete", mappingResult.getFieldError("programmeDetails").getCode());
 
 	}
 
 	@Test
 	public void shouldRejectIfProgrammeDetailsSectionNotSaved() {
-		applicationForm.setProgrammeDetails(new ProgrammeDetails());
+		ProgrammeDetails unsavedProgramDetails = new ProgrammeDetailsBuilder().studyOption(StudyOption.FULL_TIME).toProgrammeDetails();
+		applicationForm.setProgrammeDetails(unsavedProgramDetails);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, unsavedProgramDetails.getStudyOption())).andReturn(
+				Arrays.asList(programInstance));
+		EasyMock.replay(programInstanceDAOMock);
 		validator.validate(applicationForm, mappingResult);
-		Assert.assertEquals(2, mappingResult.getErrorCount());
+		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.programmeDetails.incomplete", mappingResult.getFieldError("programmeDetails").getCode());
 	}
 
@@ -91,7 +98,7 @@ public class ApplicationFormValidatorTest {
 	@Test
 	public void shouldRejectIfCurrentAddressIsMissing() {
 		applicationForm.setCurrentAddress(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm.*");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetails.getStudyOption())).andReturn(
 				Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
@@ -159,17 +166,34 @@ public class ApplicationFormValidatorTest {
 	public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
 		ProgrammeDetails programmeDetail = applicationForm.getProgrammeDetails();
 		programmeDetail.setStudyOption(StudyOption.FULL_TIME_DISTANCE);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "programmeDetails");
+		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "programmeDetails.studyOption");
 		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
 				null);
+		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance));
 		EasyMock.replay(programInstanceDAOMock);
 		validator.validate(applicationForm, mappingResult);
 		EasyMock.verify(programInstanceDAOMock);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("programmeDetails.studyOption.invalid", mappingResult.getFieldError("programmeDetails").getCode());
+		Assert.assertEquals("programmeDetails.studyOption.invalid", mappingResult.getFieldError("programmeDetails.studyOption").getCode());
 
 	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void shouldRejectIfNoCurrentProgrammeInstancesExist() {
+		ProgrammeDetails programmeDetail = applicationForm.getProgrammeDetails();
+		programmeDetail.setStudyOption(StudyOption.FULL_TIME_DISTANCE);
+		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "program");
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+				Collections.EMPTY_LIST);
+		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Collections.EMPTY_LIST);
+		EasyMock.replay(programInstanceDAOMock);
+		validator.validate(applicationForm, mappingResult);
+		EasyMock.verify(programInstanceDAOMock);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("application.program.invalid", mappingResult.getFieldError("program").getCode());
+
+	}
 	@Before
 	public void setup() throws ParseException {
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);

@@ -5,6 +5,8 @@ $(document).ready(function(){
 			{
 				applicationId:  $('#applicationId').val(),
 				errorCode: $('#programDetailsError').val(),
+				studyOptionError: $('#studyOptionError').val(),
+				programError: $('#programError').val(),
 				cacheBreaker: new Date().getTime() 
 			},
 			function(data) {

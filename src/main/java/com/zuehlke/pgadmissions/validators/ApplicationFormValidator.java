@@ -37,16 +37,19 @@ public class ApplicationFormValidator implements Validator{
 	public void validate(Object target, Errors errors) {
 		ApplicationForm applicationForm = (ApplicationForm) target;
 		ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
+		
 		if(programmeDetails != null && programmeDetails.getId() == null){
 			errors.rejectValue("programmeDetails", "user.programmeDetails.incomplete");
 		}else{
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeDetails", "user.programmeDetails.incomplete");
 		}
+		
 		if(applicationForm.getPersonalDetails() != null && applicationForm.getPersonalDetails().getId() == null){
 			errors.rejectValue( "personalDetails", "user.personalDetails.incomplete");
 		}else{
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalDetails", "user.personalDetails.incomplete");
 		}
+		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress", "user.addresses.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddress", "user.addresses.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalStatement", "documents.section.invalid");
@@ -60,10 +63,18 @@ public class ApplicationFormValidator implements Validator{
 			}
 		}
 		
-		if(programmeDetails != null){
+		if(programmeDetails != null && programmeDetails.getStudyOption() != null){
 			List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(applicationForm.getProgram(), programmeDetails.getStudyOption());
-			if(programInstances==null || programInstances.isEmpty()){
-				errors.rejectValue("programmeDetails", "programmeDetails.studyOption.invalid");
+			if(programInstances == null || programInstances.isEmpty()){
+				List<ProgramInstance> allActiveProgramInstances = programInstanceDAO.getActiveProgramInstances(applicationForm.getProgram());
+				if(allActiveProgramInstances == null || allActiveProgramInstances.isEmpty()){
+					//program is  no longer active
+					errors.rejectValue("program", "application.program.invalid");
+				}else{
+					//program is active, but not with selected study option
+					errors.rejectValue("programmeDetails.studyOption", "programmeDetails.studyOption.invalid");
+				}
+				
 			}
 		}
 	

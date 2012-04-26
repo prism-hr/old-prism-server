@@ -19,6 +19,20 @@
 <#else>
 	<#assign programDetailsError = false/>
 </#if>
+ <@spring.bind "applicationForm.programmeDetails.studyOption" />
+<#if spring.status.errorMessages?has_content >
+	<#assign studyOptionError = true />
+<#else>
+	<#assign studyOptionError = false />
+</#if>
+
+ <@spring.bind "applicationForm.program" />
+<#if spring.status.errorMessages?has_content >
+	<#assign programError = true />
+<#else>
+	<#assign programError = false />
+</#if>
+
 <@spring.bind "applicationForm.personalDetails" />
 <#if spring.status.errorMessages?has_content >
 	<#assign personalDetailsError = true/>
@@ -54,7 +68,7 @@
 
 <html>
 	<head>
-	
+		
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title>Shell template</title>
 		
@@ -97,6 +111,8 @@
 		<input type="hidden" id="addressError" value="<#if currentAddressError || contactAddressError>true<#else>false</#if>"/>
 		<input type="hidden" id="personalStatementError" value="${personalStatementError?string}"/>
 		<input type="hidden" id="refereesError" value="${refereesError?string}"/>
+		<input type="hidden" id="studyOptionError" value="${studyOptionError?string}"/>
+		<input type="hidden" id="programError" value="${programError?string}"/>
 		
 		<div id="wrapper">
 			
@@ -153,7 +169,7 @@
 								<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/>
 								
 				
-					          	<section id="programmeDetailsSection" class="folding violet <#if programDetailsError >error</#if>">					          	
+					          	<section id="programmeDetailsSection" class="folding violet <#if programDetailsError || studyOptionError>error</#if>">					          	
 								</section>
 			          
 			          			<section id="personalDetailsSection" class="folding purple <#if personalDetailsError>error</#if>">

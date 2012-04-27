@@ -28,7 +28,17 @@ public class AdditionalInformationValidatorTest {
 	}
 
 	@Test
-	public void validateGoodAddInfo() {
+	public void validateGoodAdditionalInfo() {
+		info.setInformationText("add info");
+		info.setConvictions(false);
+		info.setConvictionsText(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "convictions");
+		infoValidator.validate(info, mappingResult);
+		Assert.assertEquals(0, mappingResult.getErrorCount());
+	}
+	
+	@Test
+	public void validateGoodConvictionsData() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "convictions");
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());

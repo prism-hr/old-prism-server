@@ -96,4 +96,13 @@ public class AdditionalInformationController {
 	public void registerValidators(WebDataBinder binder) {
 		binder.setValidator(additionalInformationValidator);
 	}
+	
+	@ModelAttribute("applicationForm")
+	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {		
+		ApplicationForm application = applicationService.getApplicationById(applicationId);
+		if(application == null || !getCurrentUser().canSee(application)){
+			throw new ResourceNotFoundException();
+		}
+		return application;
+	}
 }

@@ -16,8 +16,8 @@ public class AdditionalInformationBuilder {
 		info.setId(infoId);
 		info.setApplication(applicationForm);
 		info.setInformationText(infoText);
-		if (hasConvictions != null && hasConvictions.booleanValue()) {
-			info.setConvictions(true);
+		if (hasConvictions != null) {
+			info.setConvictions(hasConvictions);
 			info.setConvictionsText(convictionsText);
 		}
 		return info;

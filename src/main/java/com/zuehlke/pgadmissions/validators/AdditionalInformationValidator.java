@@ -24,7 +24,7 @@ public class AdditionalInformationValidator implements Validator {
 			}
 		}
 
-		Boolean hasConvictions = info.hasConvictions();
+		Boolean hasConvictions = info.getConvictions();
 		if (hasConvictions == null) {
 			errors.rejectValue("convictions", "additionalInformation.convictions.notempty");
 		} else {

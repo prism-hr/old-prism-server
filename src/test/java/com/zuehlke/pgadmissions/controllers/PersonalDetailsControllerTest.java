@@ -230,13 +230,11 @@ public class PersonalDetailsControllerTest {
 	@Test
 	public void shouldReturnMessage() {
 		assertEquals("bob", controller.getMessage("bob"));
-
 	}
 
 	@Test
 	public void shouldReturnErrorCode() {
 		assertEquals("bob", controller.getErrorCode("bob"));
-
 	}
 
 	@Test
@@ -280,7 +278,6 @@ public class PersonalDetailsControllerTest {
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 
 		personalDetailsValidatorMock = EasyMock.createMock(PersonalDetailsValidator.class);
-		personalDetailsServiceMock = EasyMock.createMock(PersonalDetailsService.class);
 
 		controller = new PersonalDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock,// 
 				datePropertyEditorMock, countryServiceMock, ethnicityServiceMock, disabilityServiceMock,// 

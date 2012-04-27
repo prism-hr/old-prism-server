@@ -411,7 +411,7 @@ public class PdfDocumentBuilder {
 	private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Additional Information                                                                        ", grayFont));
 		if (application.getAdditionalInformation() != null) {
-			document.add(new Paragraph(application.getAdditionalInformation()));
+			document.add(new Paragraph(application.getAdditionalInformation().getInformationText()));
 		} else {
 			document.add(new Paragraph(createMessage("additional information")));
 		}

@@ -42,9 +42,18 @@ public class AdditionalInformationControllerTest {
 		addInfoServiceMock = EasyMock.createMock(AdditionalInfoService.class);
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 
+<<<<<<< local
 		validatorMock = EasyMock.createMock(AdditionalInformationValidator.class);
 		controller = new AdditionalInformationController(applicationServiceMock, addInfoServiceMock, validatorMock);
+=======
+	@Test(expected = CannotUpdateApplicationException.class)
+	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm();	
+		EasyMock.replay(applicationsServiceMock);
+		controller.editAdditionalInformation(applicationForm);
+		EasyMock.verify(applicationsServiceMock);
+>>>>>>> other
+
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
@@ -74,7 +83,7 @@ public class AdditionalInformationControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void throwExceptionWhenApplicationFormAlreadySubmitted() {
 		ApplicationForm applForm = new ApplicationFormBuilder().id(1)//
-				.status(ApplicationFormStatus.APPROVED)//
+				.approvedSatus(ApprovalStatus.APPROVED)//
 				.toApplicationForm();
 		AdditionalInformation info = new AdditionalInformationBuilder().id(1)//
 				.applicationForm(applForm).toAdditionalInformation();

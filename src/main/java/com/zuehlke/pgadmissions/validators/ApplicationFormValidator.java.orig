@@ -14,20 +14,24 @@ import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 
 @Component
+<<<<<<< local
 public class ApplicationFormValidator implements Validator {
+=======
+public class ApplicationFormValidator implements Validator{
 
 	private final ProgramInstanceDAO programInstanceDAO;
+>>>>>>> other
 
-	ApplicationFormValidator() {
+	ApplicationFormValidator(){
 		this(null);
 	}
-
+	
 	@Autowired
 	public ApplicationFormValidator(ProgramInstanceDAO programInstanceDAO) {
 		this.programInstanceDAO = programInstanceDAO;
-
+		
 	}
-
+	
 	@Override
 	public boolean supports(Class<?> clazz) {
 		return ApplicationForm.class.equals(clazz);
@@ -36,43 +40,68 @@ public class ApplicationFormValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		ApplicationForm applicationForm = (ApplicationForm) target;
+<<<<<<< local
+		if (applicationForm.getProgrammeDetails() != null && applicationForm.getProgrammeDetails().getId() == null) {
+=======
 		ProgrammeDetails programmeDetails = applicationForm.getProgrammeDetails();
-
-		if (programmeDetails != null && programmeDetails.getId() == null) {
+		
+		if(programmeDetails != null && programmeDetails.getId() == null){
+>>>>>>> other
 			errors.rejectValue("programmeDetails", "user.programmeDetails.incomplete");
 		} else {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "programmeDetails", "user.programmeDetails.incomplete");
 		}
-
+<<<<<<< local
 		if (applicationForm.getPersonalDetails() != null && applicationForm.getPersonalDetails().getId() == null) {
 			errors.rejectValue("personalDetails", "user.personalDetails.incomplete");
 		} else {
+=======
+		
+		if(applicationForm.getPersonalDetails() != null && applicationForm.getPersonalDetails().getId() == null){
+			errors.rejectValue( "personalDetails", "user.personalDetails.incomplete");
+		}else{
+>>>>>>> other
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalDetails", "user.personalDetails.incomplete");
 		}
+<<<<<<< local
 		if (applicationForm.getAdditionalInformation() != null && applicationForm.getAdditionalInformation().getId() == null) {
 			errors.rejectValue("additionalInformation", "user.additionalInformation.incomplete");
 		} else {
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "additionalInformation", "user.additionalInformation.incomplete");
 		}
+=======
+		
+>>>>>>> other
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "currentAddress", "user.addresses.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "contactAddress", "user.addresses.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "personalStatement", "documents.section.invalid");
 		if (applicationForm.getReferees().size() < 3) {
 			errors.rejectValue("referees", "user.referees.notvalid");
 		}
-		if (programmeDetails != null && programmeDetails.getStudyOption() != null) {
+<<<<<<< local
+=======
+		
+		if (applicationForm.getAdditionalInformation() != null ) {
+			if (applicationForm.getAdditionalInformation().length() > 5000) {
+				errors.rejectValue("additionalInformation", "user.additionalInformation.notvalid");
+			}
+		}
+		
+		if(programmeDetails != null && programmeDetails.getStudyOption() != null){
 			List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(applicationForm.getProgram(), programmeDetails.getStudyOption());
-			if (programInstances == null || programInstances.isEmpty()) {
+			if(programInstances == null || programInstances.isEmpty()){
 				List<ProgramInstance> allActiveProgramInstances = programInstanceDAO.getActiveProgramInstances(applicationForm.getProgram());
-				if (allActiveProgramInstances == null || allActiveProgramInstances.isEmpty()) {
+				if(allActiveProgramInstances == null || allActiveProgramInstances.isEmpty()){
 					//program is  no longer active
 					errors.rejectValue("program", "application.program.invalid");
-				} else {
+				}else{
 					//program is active, but not with selected study option
 					errors.rejectValue("programmeDetails.studyOption", "programmeDetails.studyOption.invalid");
 				}
-
+				
 			}
 		}
+	
+>>>>>>> other
 	}
 }

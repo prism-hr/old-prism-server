@@ -126,8 +126,10 @@
 			                  		<div class="admin_row">
 					                  	<span class="admin_row_label">Document</span>
 					                  	<#if referee.hasProvidedReference() >
-					                  		<a href="<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/>">
+					                  		<div class="field">
+					                  			<a href="<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/>">
 					                  			${referee.reference.document.fileName?html}</a>
+					                  		</div>
 					                  	<#else> 
 					                  		<div class="field" id="referenceDocument">Not Provided</div> 
 					                  	</#if>
@@ -135,7 +137,9 @@
 				                    <div class="admin_row">			        
 				                    	<span class="admin_row_label">Uploaded date</span>
 					                  	<#if referee.hasProvidedReference() >
-					                  		${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
+					                  		<div class="field">
+					                  			${(referee.reference.lastUpdated?string('dd-MMM-yyyy'))!}
+					                  		</div>
 					                  	<#else> 
 					                  		<div class="field" id="referenceUpdated">Not Provided</div> 
 					                  	</#if>

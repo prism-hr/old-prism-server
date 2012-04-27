@@ -21,10 +21,9 @@
               	<col style="width: 160px" />
               	<col style="width: 160px" />
               	<col style="width: 240px" />
-              	<col />
-              	<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
-              		<col />              	              		
-              	</#if>
+              	<col />          
+              	<col />             	              		
+          
               	<col style="width: 30px" />
         	</colgroup>
         
@@ -33,12 +32,8 @@
                     <th colspan="2">First name</th>
                     <th>Surname</th>
                     <th>Job Title</th>
-                    <th>Email</th>
-                    <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
-                    	<th>Status</th>
-                    <#else>
-                    	<th>&nbsp;</th>                    	
-                    </#if>
+                    <th>Email</th>              
+                    <th>&nbsp;</th>  
                     <th id="last-col">&nbsp;</th>
               	</tr>
         	</thead>
@@ -51,26 +46,17 @@
 	                    <td>${(existingReferee.lastname?html)!}</td>
 	                    <td>${(existingReferee.jobTitle?html)!}</td>
 	                    <td>${(existingReferee.email?html)!}</td>
-	                     <#if (applicationForm.isDecided() || applicationForm.isWithdrawn())>
-		                    <td>
-		                   		<#if existingReferee.declined>
-		                   			Declined
-		                    	<#elseif existingReferee.hasProvidedReference()>
-		                    		Reference provided
-		                    	<#else>
-		                    		Not responded
-		                    	</#if>
-		                    </td>	
-		                 </#if>
-		                    <td>
+	                  	<#if existingReferee.declined || existingReferee.hasProvidedReference()>
+		                    <td colspan="2">Responded</td>
+		                 <#else>
+		                	 <td>
 		                    	<a name="editRefereeLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="referee_${existingReferee.id?string('#######')}" class="button-edit button-hint">edit</a>
-				        	</td>
-				        	<#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>
-		                    <td>
+				        	</td>	
+				        	 <td>
 		                    	<a name="deleteRefereeButton" data-desc="Delete" id="referee_${existingReferee.id?string('#######')}" class="button-delete button-hint">delete</a>
-				        	</td>
-	                     </#if>
-	                     </tr>    
+				        	</td>	                   
+		                 </#if> 
+	                </tr>    
               	</#list>
         	</tbody>
       	

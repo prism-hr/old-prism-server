@@ -110,6 +110,21 @@ $(document).ready(function(){
 		}
 	});
 	
+	
+	$('#withdrawButton').click(function(){
+		if(confirm("Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application."))
+		{
+			$.post("/pgadmissions/withdraw",
+			{
+				applicationId:  $('#wapplicationFormId').val()
+			}, 
+			function(data) {
+			}	
+		);
+		}
+	});
+
+	
 	/*
 	 * Submit commnet on click of comment submit button.
 	 */ 

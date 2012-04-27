@@ -12,6 +12,7 @@ public class ApplicationFormStatusTest {
 		assertEquals("Rejected", ApplicationFormStatus.REJECTED.displayValue());
 		assertEquals("Validation", ApplicationFormStatus.VALIDATION.displayValue());
 		assertEquals("Not Submitted", ApplicationFormStatus.UNSUBMITTED.displayValue());
+		assertEquals("Withdrawn", ApplicationFormStatus.WITHDRAWN.displayValue());
 	}
 
 }

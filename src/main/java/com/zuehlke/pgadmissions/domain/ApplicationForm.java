@@ -212,6 +212,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 		return false;
 	}
+	
+	public boolean isWithdrawn() {
+		return status == ApplicationFormStatus.WITHDRAWN;
+	}
 
 	public List<ApplicationReview> getApplicationComments() {
 		return applicationComments;

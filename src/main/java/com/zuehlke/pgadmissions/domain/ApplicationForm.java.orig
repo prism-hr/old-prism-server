@@ -20,6 +20,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
@@ -33,12 +34,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	
 	private static final long serialVersionUID = -7671357234815343496L;
-<<<<<<< local
-=======
 	
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
 	private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
->>>>>>> other
 
 	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -78,17 +76,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "submitted_on_timestamp")
 	private Date submittedDate;
 
-<<<<<<< local
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApprovalStatusEnumUserType")
-	@Column(name = "approval_status")
-	private ApprovalStatus approvalStatus;
-
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ValidationStageEnumUserType")
-	@Column(name = "validation_stage")
-	private ValidationStage validationStage;
-
-=======
->>>>>>> other
 	@ManyToOne
 	@JoinColumn(name = "applicant_id")
 	private RegisteredUser applicant = null;
@@ -137,8 +124,8 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "application_form_id")
 	private List<Referee> referees = new ArrayList<Referee>();
 
-	@OneToOne(mappedBy = "application")
-	private AdditionalInformation additionalInformation;
+	@Column(name = "additional_information")
+	private String additionalInformation;
 
 	public List<Qualification> getQualifications() {
 		return qualifications;
@@ -189,21 +176,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 
-<<<<<<< local
-	public void setSubmissionStatus(SubmissionStatus submissionStatus) {
-		this.submissionStatus = submissionStatus;
-=======
->>>>>>> other
 
-<<<<<<< local
-	}
-
-	public SubmissionStatus getSubmissionStatus() {
-		return submissionStatus;
-	}
-
-=======
->>>>>>> other
 	public Date getApplicationTimestamp() {
 		return applicationTimestamp;
 	}
@@ -227,12 +200,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return status != ApplicationFormStatus.UNSUBMITTED;
 	}
 
-<<<<<<< local
-	public boolean isInValidationStage() {
-		return validationStage == ValidationStage.TRUE;
-	}
-=======
->>>>>>> other
 
 	@Override
 	public int compareTo(ApplicationForm appForm) {
@@ -251,6 +218,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return true;
 		}
 		return false;		
+	}
+	
+	public boolean isWithdrawn() {
+		return status == ApplicationFormStatus.WITHDRAWN;
 	}
 
 	public List<ApplicationReview> getApplicationComments() {
@@ -315,15 +286,16 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.programmeDetails = programmeDetails;
 	}
 
-	public AdditionalInformation getAdditionalInformation() {
-		if( additionalInformation == null) {
-			return new AdditionalInformation();
-		}
+	public String getAdditionalInformation() {
 		return additionalInformation;
 	}
 
-	public void setAdditionalInformation(AdditionalInformation additionalInformation) {
-		this.additionalInformation = additionalInformation;
+	public void setAdditionalInformation(String additionalInformation) {
+		if (StringUtils.isBlank(additionalInformation)) {
+			this.additionalInformation = null;
+		} else {
+			this.additionalInformation = additionalInformation;
+		}
 	}
 
 	public Date getSubmittedDate() {
@@ -371,24 +343,17 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		for (ApplicationReview comment : applicationComments) {
 			if (comment.getUser().isInRole(Authority.REVIEWER) && (!comment.getUser().equals(user))) {
 				continue;
+			} else {
+				visibleComments.add(comment);
 			}
-			visibleComments.add(comment);
 		}
 		return visibleComments;
 	}
 
 	public boolean shouldOpenFirstSection() {
-<<<<<<< local
-		return this.programmeDetails == null && this.personalDetails == null// 
-				&& this.currentAddress == null && this.contactAddress == null// 
-				&& this.qualifications.isEmpty() && this.employmentPositions.isEmpty()//
-				&& this.fundings.isEmpty() && this.referees.isEmpty() && this.personalStatement == null //
-				&& this.cv == null && this.additionalInformation == null;
-=======
 		return this.programmeDetails == null && this.personalDetails == null && this.currentAddress == null && this.contactAddress == null
 				&& this.qualifications.isEmpty() && this.employmentPositions.isEmpty() && this.fundings.isEmpty() && this.referees.isEmpty()
 				&& this.personalStatement == null && this.cv == null && StringUtils.isBlank(this.additionalInformation);
->>>>>>> other
 	}
 
 

@@ -208,19 +208,20 @@
 			          					<#include "/private/common/feedback.ftl"/>
 			          				</div>
 			          				
-			          				
+			          				<#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
+										<form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
+										<input type="hidden" id="wapplicationFormId" name="applicationId" 	value="${applicationForm.id?string("######")}"/>
+										<button id="withdrawButton" class="blue">Withdraw</button>
+										</form>
+									</#if>
 			          			
 			          				<#if !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>	             			
-			             			
-			             			
 			             				<form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
 			          	      				<input type="hidden" id="applicationFormId" name="applicationId" 	value="${applicationForm.id?string("######")}"/>
-		          	      					<a class="button" href="<@spring.url '/applications'/>">Close</a>
 		          	      					<button id="submitButton" type="submit" class="blue">Submit</button>
 										</form>
-									<#else>
-										<a class="button" href="<@spring.url '/applications'/>">Close</a>
 									</#if>
+									<a class="button" href="<@spring.url '/applications'/>">Close</a>
 
 			          			</div>
 			        

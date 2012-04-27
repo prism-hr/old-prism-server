@@ -81,7 +81,7 @@
 							                <td>${application.applicant.firstName}</td>
 							                <td>${application.applicant.lastName}</td>
 							                <td>${application.program.code} - ${application.program.title}</td>								                
-							               	 <td name="statusColumn">${application.status.displayValue()}</td>
+							               	<td name="statusColumn">${application.status.displayValue()}</td>
 							               
 							               
 							               	
@@ -105,6 +105,9 @@
 								      				</#if>      												
 								      				<#if (model.user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isDecided() )>
 								    					<option value="reference">Add Reference</option>
+								      				</#if>      												
+								      				<#if (model.user.isInRole('APPLICANT') && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn())>
+								    					<option value="withdraw">Withdraw</option>
 								      				</#if>      												
 							                  	</select>
 							                </td>

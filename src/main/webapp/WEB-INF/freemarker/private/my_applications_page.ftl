@@ -81,10 +81,7 @@
 							                <td>${application.applicant.firstName}</td>
 							                <td>${application.applicant.lastName}</td>
 							                <td>${application.program.code} - ${application.program.title}</td>								                
-							               	<td name="statusColumn">${application.status.displayValue()}</td>
-							               
-							               
-							               	
+							               	<td id="statusColumn" name="statusColumn">${application.status.displayValue()}</td>
 							                <td>
 							                	<select class="actionType" name="app_[${application.id?string("######")}]">
 							                		<option>Select...</option>

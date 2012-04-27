@@ -106,10 +106,14 @@
 					<label class="plain-label">Date of Birth<em>*</em> </label>
 					<span class="hint" data-desc="<@spring.message 'personalDetails.dateOfBirth'/>"></span>
 					<div class="field">
-						<input class="half date" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>
+					<#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>
+						<input class="half date" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>
 						<@spring.bind "personalDetails.dateOfBirth" /> 
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>					
-					</div>                
+					<#else>
+						<input class="full" readonly="readonly" type="text" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
+					</#if>    
+					</div>               
 				</div>
 			</div>
 		

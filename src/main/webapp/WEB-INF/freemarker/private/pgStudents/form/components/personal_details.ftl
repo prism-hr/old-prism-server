@@ -93,7 +93,7 @@
 									<#if personalDetails.gender?? &&  personalDetails.gender == gender >
 										checked="checked"
 									</#if> 
-									 <#if applicationForm.isDecided()>disabled="disabled"</#if>									   
+									 <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>									   
 								/> ${gender.displayValue}</label>
 											 
 						</#list>          		
@@ -106,13 +106,9 @@
 					<label class="plain-label">Date of Birth<em>*</em> </label>
 					<span class="hint" data-desc="<@spring.message 'personalDetails.dateOfBirth'/>"></span>
 					<div class="field">
-					<#if !applicationForm.isDecided()>
-						<input class="half date" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>
+						<input class="half date" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>
 						<@spring.bind "personalDetails.dateOfBirth" /> 
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>					
-					<#else>
-						<input class="full" readonly="readonly" type="text" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
-					</#if>    
 					</div>                
 				</div>
 			</div>
@@ -125,7 +121,7 @@
               		<label class="plain-label">Country of Birth<em>*</em></label>
                 	<span class="hint" data-desc="<@spring.message 'personalDetails.countryOfBirth'/>"></span>
                 	<div class="field">
-                  		<select class="full" name="country" id="country" <#if applicationForm.isDecided()>disabled="disabled"</#if> >
+                  		<select class="full" name="country" id="country" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
                   			<option value="">Select...</option>
                     		<#list countries as country>
                           	<option value="${country.id?string('#######')}"
@@ -150,7 +146,7 @@
               				<div class="field">
               					<label class="full">${nationality.name}</label>  
               	  				<input type="hidden" name="candidateNationalities" value='${nationality.id?html}'/>
-								<#if !applicationForm.isDecided()><a class="button-delete">Delete</a></#if>
+								<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
               	  			</div>
               	  		</div>
               	  	</span>                  		
@@ -166,7 +162,7 @@
 					</label>      
 					<span id="my-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.nationality'/>"></span>    
 					<div class="field">
-						 <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry"<#if applicationForm.isDecided()>disabled="disabled"</#if>>
+						 <select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
 							<option value="">Select...</option>
 							<#list countries as country>
 							  <option value="${country.id?string('#######')}">${country.name}</option>               
@@ -192,7 +188,7 @@
 								<div class="field">
 									<label class="full">${nationality.name}</label>  
 									<input type="hidden" name="maternalGuardianNationalities" value='${nationality.id?html}'/>
-									<#if !applicationForm.isDecided()><a class="button-delete">Delete</a></#if>
+									<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
 								</div>
 							</div>            
 						</span>
@@ -204,7 +200,7 @@
               		<label class="plain-label" id="maternal-nationality">Mother's Nationality</label>
               		<span id="maternal-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.maternalGuardianNationality'/>"></span>           
                   	 <div class="field">
-                     	 <select class="full" name="maternalNationalityCountry" id="maternalNationalityCountry"<#if applicationForm.isDecided()>disabled="disabled"</#if>>
+                     	 <select class="full" name="maternalNationalityCountry" id="maternalNationalityCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
                       		<option value="">Select...</option>
                         	<#list countries as country>
                               <option value="${country.id?string('#######')}">${country.name}</option>               
@@ -228,7 +224,7 @@
 								<div class="field">
 									<label class="full">${nationality.name?html}</label>  
 									<input type="hidden" name="paternalGuardianNationalities" value='${nationality.id?html}'/>
-									<#if !applicationForm.isDecided()><a class="button-delete">Delete</a></#if>
+									<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
 								</div>
 							</div>            
 						</span>
@@ -240,7 +236,7 @@
 					<label class="plain-label" id="paternal-nationality">Father's Nationality</label> 
 					  <span id="paternal-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.paternalGuardianNationality'/>"></span>      
                   	 <div class="field">
-                     	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry" <#if applicationForm.isDecided()>disabled="disabled"</#if>>
+                     	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
                       		<option value="">Select...</option>
                         	<#list countries as country>
                               <option value="${country.id?string('#######')}">${country.name?html}</option>               
@@ -268,7 +264,7 @@
                    			<#if personalDetails.isEnglishFirstLanguage()>
                                       checked="checked"
                             </#if>
-                   			<#if applicationForm.isDecided()>
+                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                                       disabled="disabled"
                             </#if>
                            />
@@ -285,7 +281,7 @@
 					<span class="plain-label">Country of Residence<em>*</em></span>
 						<span class="hint" data-desc="<@spring.message 'personalDetails.residence.country'/>"></span>        
 					<div class="field">
-						<select class="full" name="residenceCountry" id="residenceCountry" <#if applicationForm.isDecided()>disabled="disabled"</#if>>
+						<select class="full" name="residenceCountry" id="residenceCountry" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
 							<option value="">Select...</option>
 							<#list countries as country>
 								  <option value="${country.id?string('#######')}"
@@ -306,7 +302,7 @@
                    			<#if personalDetails.isRequiresVisa()>
                                       checked="checked"
                             </#if>
-                   			<#if applicationForm.isDecided()>
+                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                                       disabled="disabled"
                             </#if>/>
                    			<input type="hidden" name="requiresVisa" id="requiresVisa"/>
@@ -334,7 +330,7 @@
               		<span class="plain-label">Telephone<em>*</em></span>
                 	<span class="hint" data-desc="<@spring.message 'personalDetails.telephone'/>"></span>
                 	<div class="field">                    	
-                		<#if !applicationForm.isDecided()>
+                		<#if !applicationForm.isDecided()  && !applicationForm.isWithdrawn()>
                 			<input class="full" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone"/>
 						<@spring.bind "personalDetails.phoneNumber" /> 
                 		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	                			
@@ -348,7 +344,7 @@
               		<label class="plain-label">Skype Name</label>
                 	<span class="hint" data-desc="<@spring.message 'personalDetails.skype'/>"></span>
                 	<div class="field">                    	
-                		<#if !applicationForm.isDecided()>
+                		<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 			<input class="full" type="text" value="${(personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger"/>
                 		<#else>
                 			<input class="full" readonly="readonly" type="text" value="${(personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger" />	          
@@ -365,7 +361,7 @@
               		<label class="plain-label">Ethnicity</label>
                 	<span class="hint" data-desc="<@spring.message 'personalDetails.ethnicity'/>"></span>
                 	<div class="field">
-                  		<select class="full" name="ethnicity" id="ethnicity" <#if applicationForm.isDecided()>disabled="disabled"</#if> >
+                  		<select class="full" name="ethnicity" id="ethnicity" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
                   			<option value="">Select...</option>
                     		<#list ethnicities as ethnicity>
                           	<option value="${ethnicity.id?string('#######')}"
@@ -383,7 +379,7 @@
               		<label class="plain-label">Disability</label>
                 	<span class="hint" data-desc="<@spring.message 'personalDetails.disability'/>"></span>
                 	<div class="field">
-                  		<select class="full" name="disability" id="disability" <#if applicationForm.isDecided()>disabled="disabled"</#if> >
+                  		<select class="full" name="disability" id="disability" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
                   			<option value="">Select...</option>
                     		<#list disabilities as disability>
                           	<option value="${disability.id?string('#######')}"
@@ -400,7 +396,7 @@
             </div>
   
           	<div class="buttons">
-              <#if !applicationForm.isDecided()>
+              <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
               		<button type="reset" name="personalDetailsCancelButton" id="personalDetailsCancelButton" value="cancel">Cancel</button>
                     <a id="personalDetailsCloseButton" class="button blue">Close</a>
 					<button class="blue" type="button" id="personalDetailsSaveButton" value="close">Save</button>

@@ -50,7 +50,7 @@
                <span class="hint" data-desc="<@spring.message 'programmeDetails.studyOption'/>"></span>
                 <div class="field">
             		<select class="full" id="studyOption" name="studyOption" 
-            		<#if applicationForm.isDecided()>
+            		<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
             		disabled="disabled"
             		</#if>>
             		  <option value="">Select...</option>
@@ -86,7 +86,7 @@
                <span class="hint" data-desc="<@spring.message 'programmeDetails.startDate'/>"></span>
                <div class="field">
                 	<input class="full date" type="text" id="startDate" name="startDate" value="${(programmeDetails.startDate?string('dd-MMM-yyyy'))!}"
-                	<#if applicationForm.isDecided()>
+                	<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                     	disabled="disabled"
                     </#if>>
                 	</input> 
@@ -101,7 +101,7 @@
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.howDidYouFindUs'/>"></span>
                 <div class="field">
                 	<select class="full" id="referrer" name="referrer"
-                	<#if applicationForm.isDecided()>
+                	<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                     disabled="disabled"
                     </#if>>
                 	<option value="">Select...</option>
@@ -154,7 +154,7 @@
                      <td> ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} </td>
                      <td> ${supervisor.email?html} </td>
                      <td><#if supervisor.awareSupervisor == "YES"> Yes <#else> No </#if></td>
-                     <td> <#if !applicationForm.isDecided()><a class="button-delete" name="deleteSupervisor" id="supervisorDelete_${(supervisor.id?string('#######'))!}">delete</a> <a class="button-edit"  id="supervisor_${(supervisor.id?string('#######'))!}" name ="editSupervisorLink">edit</a></#if></td>
+                     <td> <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete" name="deleteSupervisor" id="supervisorDelete_${(supervisor.id?string('#######'))!}">delete</a> <a class="button-edit"  id="supervisor_${(supervisor.id?string('#######'))!}" name ="editSupervisorLink">edit</a></#if></td>
                  </tr>
                     <input type="hidden" id="${(supervisor.id?string('#######'))!}_supervisorId" name = "sId" value="${(supervisor.id?string('#######'))!}"/>
                     <input type="hidden" id="${(supervisor.id?string('#######'))!}_firstname" name = "sFN" value="${(supervisor.firstname?html)!}"/>
@@ -170,7 +170,7 @@
             </div>
   
             
-            <#if !applicationForm.isDecided()>
+            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
             
             <!-- supervisor rows -->
             <input type="hidden" id="supervisorId" name="supervisorId"/>
@@ -224,11 +224,11 @@
 
         <div class="buttons">
         
-        	<#if !applicationForm.isDecided()>
+        	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
         		<button type="reset" id="programmeCancelButton" name="programmeCancelButton" value="cancel">Cancel</button>
             </#if>    
         	<a class="button blue" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</a>
-        	<#if !applicationForm.isDecided()>
+        	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
             	<a class="button blue" id="programmeSaveButton">Save</a>
             </#if>  	
 		</div>

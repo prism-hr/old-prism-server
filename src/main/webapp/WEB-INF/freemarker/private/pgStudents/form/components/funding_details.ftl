@@ -48,10 +48,10 @@
                         <#if existingFunding.document.fileName?length <20 >${existingFunding.document.fileName}<#else>${existingFunding.document.fileName?substring(0,17)}...</#if></a></td>
 	                  	<td>${existingFunding.awardDate?string('dd-MMM-yyyy')}</td>
 								<td>				                  		                		
-		                			<a name="editFundingLink" <#if !applicationForm.isDecided()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_${existingFunding.id?string('#######')}" class="button-edit button-hint">edit</a>
+		                			<a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_${existingFunding.id?string('#######')}" class="button-edit button-hint">edit</a>
 		                		</td>
 		                		<td>
-	                  	     <#if !applicationForm.isDecided()>
+	                  	     <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 		                			<a name="deleteFundingButton" data-desc="Delete" id="funding_${existingFunding.id?string('#######')}" class="button-delete button-hint">delete</a>
 		                		</td>
 		                	<#else>
@@ -86,7 +86,7 @@
             	
             	<div class="field">
             		<select id="fundingType" name="fundingType" class="full"
-            		<#if applicationForm.isDecided()>
+            		<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                                             disabled="disabled"
                                         </#if>>
                     	<option value="">Select...</option>
@@ -108,7 +108,7 @@
             	<span class="plain-label">Description<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'fundingDetails.award.description'/>"></span>
 				<div class="field">
-			    <#if !applicationForm.isDecided()>		
+			    <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>		
                 	<textarea id="fundingDescription" name="fundingDescription" class="max" cols="70" rows="6" maxlength='2000'>${(funding.description?html)!}</textarea>
             		<@spring.bind "funding.description" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
@@ -124,7 +124,7 @@
               	<span class="plain-label">Value of Award<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'fundingDetails.award.value'/>"></span>
                 <div class="field">
-                <#if !applicationForm.isDecided()>
+                <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${(funding.value?html)!}" />
              		<@spring.bind "funding.value" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>     
@@ -140,7 +140,7 @@
                 <span class="hint"  data-desc="<@spring.message 'fundingDetails.award.awardDate'/>"></span>
                 <div class="field">
                     <input id="fundingAwardDate" name="fundingAwardDate" class="half date" type="text" value="${(funding.awardDate?string('dd-MMM-yyyy'))!}"
-                       <#if applicationForm.isDecided()>
+                       <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                                             disabled="disabled"
                                         </#if>>
                                 </input>
@@ -156,7 +156,7 @@
         		<span class="plain-label">Proof of award (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
         		<div class="field" id="fundingUploadFields">        	
-          			<input id="fundingDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided()>disabled="disabled"</#if>/>					
+          			<input id="fundingDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="fundingUploadedDocument" ><input type="hidden" id="document_SUPPORTING_FUNDING" value = "${(funding.document.id?string('######'))!}"/>
 					 <@spring.bind "funding.document" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
@@ -166,7 +166,7 @@
         		
       		</div>
       		
-      		<#if !applicationForm.isDecided()>
+      		<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	      		<!-- Add another button -->
 	            <div class="row">
 	            	<div class="field">
@@ -177,7 +177,7 @@
 		</div>
 
 	<div class="buttons">
-		<#if !applicationForm.isDecided()>
+		<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
         	
         	<a class="button" type="button" id="fundingCancelButton" name="fundingCancelButton">Cancel</a>
         	<button class="blue" type="button" id="fundingCloseButton" name="fundingCloseButton">Close</button>

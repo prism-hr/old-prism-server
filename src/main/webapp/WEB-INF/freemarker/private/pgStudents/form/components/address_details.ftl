@@ -32,7 +32,7 @@
                     	<span class="plain-label">Address<em>*</em></span>
                     	<span class="hint" data-desc="<@spring.message 'addressDetails.currentAddress.address'/>"></span>	
                     	<div class="field">
-                    	   <#if !applicationForm.isDecided()>
+                    	   <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                       		<textarea id="currentAddressLocation" class="max" rows="6" cols="80" maxlength='2000'>${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
                       			<@spring.bind "addressSectionDTO.currentAddressLocation" /> 
                 				<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
@@ -49,7 +49,7 @@
 	                    <div class="field">
 	                      	
 	                      	<select class="full" name="currentAddressCountry" id="currentAddressCountry"
-	                      	<#if applicationForm.isDecided()>
+	                      	<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                                             disabled="disabled"
                             </#if>>
                             <option value="">Select...</option>
@@ -78,7 +78,7 @@
                             <#if addressSectionDTO.sameAddress>
                                             checked="checked"
                             </#if> 
-                            <#if applicationForm.isDecided()>
+                            <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                                           disabled="disabled"
                                 </#if>
                             />                           
@@ -93,7 +93,7 @@
                        
                     
                         <div class="field">
-                           <#if !applicationForm.isDecided()>
+                           <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                             <textarea id="contactAddressLocation" class="max" rows="6" cols="80" maxlength='2000'
                             <#if addressSectionDTO.sameAddress>
                                           disabled="disabled"
@@ -118,7 +118,7 @@
                         <div class="field">
                             
                             <select class="full" name="contactAddressCountry" id="contactAddressCountry"
-                            <#if applicationForm.isDecided()> || (addressSectionDTO.sameAddress)>
+                            <#if (applicationForm.isDecided()  || applicationForm.isWithdrawn()) || (addressSectionDTO.sameAddress)>
                                             disabled="disabled"
                             </#if>>
                             <option value="">Select...</option>
@@ -134,7 +134,7 @@
 				</div>
 
                 <div class="buttons">
-                 <#if !applicationForm.isDecided()>
+                 <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                		<a class="button" type="button" id="addressCancelButton" name="addressCancelButton">Cancel</a>
                		<button class="blue" type="button" id="addressCloseButton" name="addressCloseButton">Close</button>
                   	<button class="blue" type="button" id="addressSaveAndAddButton" name="addressSaveAndAddButton">Save</button>

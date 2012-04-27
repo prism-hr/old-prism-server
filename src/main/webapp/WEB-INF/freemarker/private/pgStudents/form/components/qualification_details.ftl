@@ -49,9 +49,9 @@
 	                  	<td>${(existingQualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
 	                  	  
 	                  	  	   <td>
-	                  	  	   		<a name="editQualificationLink" <#if !applicationForm.isDecided()>data-desc="Edit" <#else>data-desc="Show"</#if> id="qualification_${existingQualification.id?string('#######')}" class="button-edit button-hint">edit</a>
+	                  	  	   		<a name="editQualificationLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="qualification_${existingQualification.id?string('#######')}" class="button-edit button-hint">edit</a>
 	                  	  	   </td>
-	                  	  	<#if !applicationForm.isDecided()>
+	                  	  	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	                  	  	   <td>
 		                			<a name="deleteQualificationButton" data-desc="Delete" id="qualification_${existingQualification.id?string('#######')}" class="button-delete button-hint">delete</a>
 		                	   </td>
@@ -86,7 +86,7 @@
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.institutionCountry'/>"></span>
         		<div class="field">
           			<select class="full" id="institutionCountry" name="institutionCountry"
-          			 	<#if applicationForm.isDecided()>
+          			 	<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
 							disabled="disabled"
                          </#if>>
             			<option value="">Select...</option>
@@ -104,7 +104,7 @@
               	<span class="plain-label">Institution / Provider Name<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'education.qualifications.institutionName'/>"></span>
                 <div class="field">
-                	<#if !applicationForm.isDecided()>
+                	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 		<input id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL"  value="${(qualification.qualificationInstitution?html)!}" />
                 		 <@spring.bind "qualification.qualificationInstitution" /> 
                 	 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>                	
@@ -120,7 +120,7 @@
         		<span class="plain-label">Qualification Type<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.qualificationType'/>"></span>
         		<div class="field">
-        			<#if !applicationForm.isDecided()>
+        			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
           				<input id="qualificationType" class="full" type="text" value="${(qualification.qualificationType?html)!}"/>
 						<@spring.bind "qualification.qualificationType" /> 
                 		 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
@@ -135,7 +135,7 @@
               	<span class="plain-label">Title / Subject<em>*</em></span>
                <span class="hint" data-desc="<@spring.message 'education.qualifications.subject'/>"></span>
                 <div class="field">
-                	<#if !applicationForm.isDecided()>
+                	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 		<input id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering"  value="${(qualification.qualificationSubject?html)!}"/>
    					 	<@spring.bind "qualification.qualificationSubject" /> 
                 	 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
@@ -151,7 +151,7 @@
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.language'/>"></span>
         		<div class="field">
           			<select class="full" id="qualificationLanguage" name="qualificationLanguage" value="${qualification.qualificationLanguage!}"
-          			 	<#if applicationForm.isDecided()>
+          			 	<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                       		disabled="disabled"
                       	</#if>>
             			<option value="">Select...</option>
@@ -170,7 +170,7 @@
                 <span class="hint" data-desc="<@spring.message 'education.qualifications.startDate'/>"></span>
                 <div class="field">                    
                     <input id="qualificationStartDate" class="half date" type="text" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}" 
-                    	<#if applicationForm.isDecided()>
+                    	<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
                         	disabled="disabled"
                          </#if>>
                 	</input>
@@ -190,7 +190,7 @@
 	           			<#if qualification.isQualificationCompleted()>
 									checked ='checked'
 	                    </#if>
-	           			<#if applicationForm.isDecided()>
+	           			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
 	                              disabled="disabled"
 	                    </#if>
 	                    />
@@ -204,7 +204,7 @@
         		<span id="quali-grad-id" class="plain-label">Expected Grade / Result / GPA<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.grade'/>"></span>
         		<div class="field">
-	        		<#if !applicationForm.isDecided()>
+	        		<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	          			<input id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction" value="${(qualification.qualificationGrade?html)!}"/>
 						<@spring.bind "qualification.qualificationGrade" /> 
 	                	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
@@ -233,7 +233,7 @@
         		<span id="quali-proof-of-award-lb" class="plain-label grey-label">Proof of award (PDF)</span>
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
         		<div class="field" id="uploadFields">         		       	
-          			<input id="proofOfAward" class="full" type="file" name="file" value=""  <#if applicationForm.isDecided()>disabled="disabled"</#if>/>					
+          			<input id="proofOfAward" class="full" type="file" name="file" value=""  <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="qualUploadedDocument" >
 						<input type="hidden" id="document_PROOF_OF_AWARD" value = "${(qualification.proofOfAward.id?string('######'))!}"/>
 						<#if qualification.proofOfAward??> 
@@ -245,7 +245,7 @@
       		</div>
       		
       		<!-- Add another button -->
-      		<#if !applicationForm.isDecided()>
+      		<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	            <div class="row">
 	            	<div class="field">
 	                	<a id="addQualificationButton" class="button blue">Add Qualification</a>
@@ -255,7 +255,7 @@
 		</div>
 		
     	<div class="buttons">
-	    	<#if !applicationForm.isDecided()>
+	    	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	        	<a class="button" id="qualificationCancelButton" name="qualificationCancelButton">Cancel</a>
 	        	<button class="blue" type="button" id="qualificationsCloseButton" name="qualificationsCloseButton">Close</button>
 	            <button id="qualificationsSaveButton" class="blue" type="button" value="add">Save</button>

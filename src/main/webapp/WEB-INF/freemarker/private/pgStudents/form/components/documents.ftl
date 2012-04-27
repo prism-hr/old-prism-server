@@ -26,7 +26,7 @@
         		<span class="plain-label">Personal Statement (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.personalStatement'/>"></span>	 
         		<div class="field" id="psUploadFields">        	
-            			<input id="psDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided()>disabled="disabled"</#if>/>					
+            			<input id="psDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="psUploadedDocument" ><input type="hidden" id="document_PERSONAL_STATEMENT" value = "${(applicationForm.personalStatement.id?string('######'))!}"/>
 					<@spring.bind "applicationForm.personalStatement" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
@@ -40,7 +40,7 @@
         		<span class="plain-label">CV / resume (PDF)</span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.cv'/>"></span>
         		<div class="field" id="cvUploadFields">        	
-          			<input id="cvDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided()>disabled="disabled"</#if>/>					
+          			<input id="cvDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="cvUploadedDocument" ><input type="hidden" id="document_CV" value = "${(applicationForm.cv.id?string('######'))!}"/>
 					<@spring.bind "applicationForm.cv" /> 
                 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
@@ -54,11 +54,11 @@
 
 		<div class="buttons">
 			
-            <#if !applicationForm.isDecided()>
+            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
             	<button type="reset" id="documentsCancelButton" value="cancel">Cancel</button>
             </#if>             
             <button class="blue" id="documentsCloseButton" value="close">Close</button>
-            <#if !applicationForm.isDecided()> 
+            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()> 
                 <button type="button" class="blue" id="documentsSaveButton" value="close">Save</button>
             </#if>      
 		</div>

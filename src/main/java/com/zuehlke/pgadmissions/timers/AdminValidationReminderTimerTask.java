@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
@@ -50,9 +51,14 @@ public class AdminValidationReminderTimerTask extends TimerTask{
 		
 		public boolean isLastMailSentTwoWeeksOld(ApplicationForm applicationForm){
 			Date lastDateMailWasSent = applicationForm.getLastEmailReminderDate();
+			if(lastDateMailWasSent == null){
+				return true;
+			}
 			Calendar calendar  = Calendar.getInstance();
 			Date today = calendar.getTime();
-			int daysBetween = 0;
+			Date oneMinuteAgo = DateUtils.addMinutes(today, -1);			
+			return lastDateMailWasSent.before(oneMinuteAgo);
+			/*int daysBetween = 0;
 			if(lastDateMailWasSent!=null){
 			while (today.after(lastDateMailWasSent)) {
 				 calendar.add(Calendar.DAY_OF_MONTH, -1);  
@@ -63,7 +69,8 @@ public class AdminValidationReminderTimerTask extends TimerTask{
 			if(daysBetween >= 14){
 				return true;
 			}
-			return false;
+			return false*/
+			
 		}
 
 		public SessionFactory getSessionFactory() {

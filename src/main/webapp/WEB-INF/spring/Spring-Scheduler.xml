@@ -31,7 +31,7 @@
 
 	<bean id="scheduledMailTimerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="2000" />
-		<property name="period" value=" 86400000 " />
+		<property name="period" value=" 60000 " />
 		<property name="timerTask" ref="mailTimerTask" />		
 	</bean>  
 	
@@ -43,7 +43,7 @@
 
 	<bean id="refereeReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="300000" />
-		<property name="period" value="43200" />
+		<property name="period" value="60000" />
 		<property name="timerTask" ref="refereeReminderTimerTask" />		
 	</bean> 
 	<bean class="org.springframework.scheduling.timer.TimerFactoryBean">

@@ -1,34 +1,33 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
-import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.FundingType;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	
@@ -104,38 +103,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 	
 
 	
-	@Test
-	public void shouldGetFundingById() throws ParseException{
-		Funding funding = new Funding();
-		funding.setId(1);
-		funding.setType(FundingType.SCHOLARSHIP);
-		funding.setDescription("my description");
-		funding.setValue("2000");
-		funding.setAwardDate(new Date());
-		sessionFactory.getCurrentSession().save(funding);
-		flushAndClearSession();
-		ApplicationFormDAO applicationFormDAO = new ApplicationFormDAO(sessionFactory);
-		assertEquals(funding, applicationFormDAO.getFundingById(funding.getId()));
-	}
 
-	
-	@Test
-	public void shouldGetAddressById(){
-		Address address = new AddressBuilder().location("UK").id(1).toAddress();
-		sessionFactory.getCurrentSession().save(address);
-		flushAndClearSession();
-		ApplicationFormDAO applicationFormDAO = new ApplicationFormDAO(sessionFactory);
-		assertEquals(address, applicationFormDAO.getAdddressById(address.getId()));
-	}
-	
-	@Test
-	public void shouldGetRefereeById(){
-		Referee referee = new RefereeBuilder().firstname("mark").lastname("marky").email("test@test.com").phoneNumber("hallihallo").id(1).toReferee();
-		sessionFactory.getCurrentSession().save(referee);
-		flushAndClearSession();
-		ApplicationFormDAO applicationFormDAO = new ApplicationFormDAO(sessionFactory);
-		assertEquals(referee, applicationFormDAO.getRefereeById(referee.getId()));
-	}
 	
 	
 	@Test 
@@ -152,6 +120,124 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		
 	}
 	
+	@Test
+	public void shouldReturnOverDueApplicationInValidationStageWithReminderMoreThanAWeekAgo(){
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date eightDaysAgo = DateUtils.addDays(today, -8);
+		Date oneMonthAgo = DateUtils.addMonths(today,-1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).validationDueDate(oneMonthAgo).lastEmailReminderDate(eightDaysAgo).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		assertTrue(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldReturnOverDueApplicationInValidationStageWithNoReminder(){
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);		
+		Date oneMonthAgo = DateUtils.addMonths(today,-1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).validationDueDate(oneMonthAgo).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		assertTrue(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldNotReturnApplicationsNotInValidationStage(){
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date eightDaysAgo = DateUtils.addDays(today, -8);
+		Date oneMonthAgo = DateUtils.addMonths(today,-1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED).validationDueDate(oneMonthAgo).lastEmailReminderDate(eightDaysAgo).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		assertFalse(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldNotReturnApplicationaInValidationStageButNotOverDue(){
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);		
+		Date oneWeekInFuture = DateUtils.addWeeks(today,1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).validationDueDate(oneWeekInFuture).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		assertFalse(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldNotReturnApplicationaInValidationStageWitDueDateToday(){
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);		
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).validationDueDate(today).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		assertFalse(applicationsDueReminder.contains(applicationForm));
+	}
+	@Test
+	public void shouldNotReturnOverDueApplicationInValidationStageWithReminderSixDausWeekAgo(){
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date sixDaysAgo = DateUtils.addDays(today, -6);
+		Date oneMonthAgo = DateUtils.addMonths(today,-1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).validationDueDate(oneMonthAgo).lastEmailReminderDate(sixDaysAgo).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		assertFalse(applicationsDueReminder.contains(applicationForm));
+	}
+
+	@Test
+	public void shouldReturnOverDueApplicationInValidationStageWithReminderOneWeekAndFiveMinAgo(){
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date oneWeekAgo = DateUtils.addWeeks(now, -1);
+		Date oneWeekAgoAndFiveMinAgo = DateUtils.addMinutes(oneWeekAgo,-5);
+		Date oneMonthAgo = DateUtils.addMonths(today,-1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).validationDueDate(oneMonthAgo).lastEmailReminderDate(oneWeekAgoAndFiveMinAgo).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		assertTrue(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	
+	@Test
+	public void shouldReturnOverDueApplicationInValidationStageWithReminderOneWeekMinusFiveMinAgo(){
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date oneWeekAgo = DateUtils.addWeeks(now, -1);
+		Date oneWeekAgoAndFiveMinAgo = DateUtils.addMinutes(oneWeekAgo,-5);
+		Date oneMonthAgo = DateUtils.addMonths(today,-1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).validationDueDate(oneMonthAgo).lastEmailReminderDate(oneWeekAgoAndFiveMinAgo).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		assertTrue(applicationsDueReminder.contains(applicationForm));
+	}
 	public List<ApplicationForm> getApplicationFormsBelongingToSameUser(){
 		List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
 
@@ -213,4 +299,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase{
 		qualifications.add(qualification1);
 		return qualifications;
 	}
+	
+	
+	
 }

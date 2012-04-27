@@ -35,7 +35,12 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This notification is to remind you that you that the validation due date for application with id:  ${application.id?html} has passed on ${(application.validationDueDate?string("dd-MMM-yyyy hh:mm a"))!} . You still didn't validate the application the last two weeks. Please click on the link below to validate it. </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to remind you that you that validation of application ${application.id?html} is now overdue.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View the application</a>
+			      		</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards, <br />UCL Portal</font>

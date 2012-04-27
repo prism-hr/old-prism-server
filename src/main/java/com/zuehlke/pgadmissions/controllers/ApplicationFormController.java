@@ -47,8 +47,7 @@ public class ApplicationFormController {
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
 		Program prog = programDAO.getProgramById(program);
-		if(prog==null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty()
-				){
+		if(prog==null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty()){
 			return new ModelAndView(PROGRAM_DOES_NOT_EXIST); 
 		}
 		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog);

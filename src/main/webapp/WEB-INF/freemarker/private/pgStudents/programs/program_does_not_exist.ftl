@@ -26,13 +26,13 @@
 		  
 		  	<!-- Middle. -->
 		  	<div id="middle">
-		  	   <#include "/private/common/parts/nav_without_user_info.ftl"/>
+		  	   <#include "/private/common/parts/nav_with_user_info.ftl"/>
 		    	<!-- Main content area. -->
 		    	<article id="content" role="main">
 		      
 		      		<div class="content-box">
 		      			<div class="content-box-inner">
-		              		<h2>Sorry, the program is no longer available. </a> </h2>	          			
+		              		<h2>Sorry, this program is no longer available. </h2>	          			
 		        		</div><!-- .content-box-inner -->
 		      		</div><!-- .content-box -->
 		      

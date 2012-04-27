@@ -90,17 +90,17 @@
 							                		<option>Select...</option>
 							                		<option value="view">View</option>
 							                		<option value="print">Print</option>
-							                	    <#if (model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')) && application.isReviewable()>
+							                	    <#if (model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')) && application.isModifiable()>
       													<option value="assignReviewer">Assign Reviewer</option>
         		  									</#if>
-							                	    <#if model.user.isInRole('APPROVER') && application.isReviewable()>
+							                	    <#if model.user.isInRole('APPROVER') && application.isModifiable()>
 							                	    	<option value="approve">Approve</option>
       												</#if>
-									    			<#if (model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR'))  && application.isReviewable()>
+									    			<#if (model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR'))  && application.isModifiable()>
 									    				<option value="reject">Reject</option>
 									      			</#if>
 								      				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || 
-								      											model.user.isInRole('REVIEWER'))) && application.isReviewable() )>
+								      											model.user.isInRole('REVIEWER'))) && application.isModifiable() )>
 								    					<option value="comment">Comments</option>
 								      				</#if>      												
 								      				<#if (model.user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isDecided() )>

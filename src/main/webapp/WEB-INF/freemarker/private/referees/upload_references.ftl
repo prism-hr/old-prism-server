@@ -63,7 +63,9 @@
         							
 								</div>
 								<br/>
-								<div>Previous File: <a href="<@spring.url '/download/reference?referenceId=${reference.id?string("#######")}'/>">${reference.document.fileName?html}</a></div>
+								<#if reference.id??>
+									<div>Previous File: <a href="<@spring.url '/download/reference?referenceId=${reference.id?string("#######")}'/>">${reference.document.fileName?html}</a></div>
+								</#if>
 								<div class="buttons">
 									<button type="reset" value="cancel">Cancel</button>
 					                <button class="blue" type="submit" id="referenceSaveButton" value="close">Submit</button>              

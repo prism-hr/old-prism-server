@@ -56,7 +56,10 @@ public class AdditionalInformation extends DomainObject<Integer> {
 		this.informationText = additionalInformation;
 	}
 
-	public Boolean hasConvictions() {
+	// no default value for the convictions (the user has to set this property
+	// explicitly) therefore it is easier to use this boolean flag as a
+	// regular bean property -> no hasConvictions() method.
+	public Boolean getConvictions() {
 		return convictions;
 	}
 

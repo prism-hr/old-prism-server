@@ -33,6 +33,15 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void testSetupFailure() {
+		AdditionalInfoDAO infoDAO = new AdditionalInfoDAO();
+		AdditionalInformation info = new AdditionalInformationBuilder()//
+				.setConvictions(false)//
+				.applicationForm(applicationForm).toAdditionalInformation();
+		infoDAO.save(info);
+	}
+
 	@Test
 	public void storeFullAdditionalInfo() {
 		AdditionalInfoDAO infoDAO = new AdditionalInfoDAO(sessionFactory);
@@ -53,11 +62,12 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 
 		Assert.assertNotNull(storedInfo);
 		Assert.assertEquals(persistentID, storedInfo.getId());
-		Assert.assertTrue(storedInfo.hasConvictions());
+		Assert.assertTrue(storedInfo.getConvictions());
 		Assert.assertEquals(infoText, storedInfo.getInformationText());
 		Assert.assertEquals(conText, storedInfo.getConvictionsText());
 	}
 
+	@Test
 	public void storeMinimumAdditionalInfo() {
 		AdditionalInfoDAO infoDAO = new AdditionalInfoDAO(sessionFactory);
 		AdditionalInformation info = new AdditionalInformationBuilder()//
@@ -74,6 +84,6 @@ public class AdditionalInfoDAOTest extends AutomaticRollbackTestCase {
 
 		Assert.assertNotNull(storedInfo);
 		Assert.assertEquals(persistentID, storedInfo.getId());
-		Assert.assertFalse(storedInfo.hasConvictions());
+		Assert.assertFalse(storedInfo.getConvictions());
 	}
 }

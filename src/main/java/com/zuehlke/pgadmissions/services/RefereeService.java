@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,8 +104,8 @@ public class RefereeService {
 			model.put("application", form);
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Reference Submitted",
-					"private/pgStudents/mail/reference_submit_confirmation.ftl", model));
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Responded",
+					"private/pgStudents/mail/reference_respond_confirmation.ftl", model));
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}
@@ -211,8 +210,8 @@ public class RefereeService {
 			model.put("application", form);
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee declined",
-					"private/pgStudents/mail/reference_declined_notification.ftl", model));
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Responded",
+					"private/pgStudents/mail/reference_respond_notification.ftl", model));
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}

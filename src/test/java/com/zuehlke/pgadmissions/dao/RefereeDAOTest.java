@@ -104,9 +104,9 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		save(unsubmittedApplication, decidedApplication);
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
-		Referee refereeOne = new RefereeBuilder().application(unsubmittedApplication).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+		Referee refereeOne = new RefereeBuilder().declined(false).application(unsubmittedApplication).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();
-		Referee refereeTwo = new RefereeBuilder().application(decidedApplication).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+		Referee refereeTwo = new RefereeBuilder().declined(false).application(decidedApplication).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
 				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();
 		save(refereeOne, refereeTwo);
 		flushAndClearSession();
@@ -192,6 +192,23 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
 	}
 	
+	@Test
+	public void shouldReturnRefereesWithNoReminders() {
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		save(application);		
+		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		assertNotNull(referees);
+		assertTrue(referees.contains(referee));		
+
+	}
 	@Test
 	public void shouldReturnRefereeForWhichReminderWasSendOneWeekMinus5minAgo() {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();

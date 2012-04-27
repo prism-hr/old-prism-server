@@ -70,6 +70,18 @@ public class ApplicationFormValidatorTest {
 		Assert.assertEquals("user.programmeDetails.incomplete", mappingResult.getFieldError("programmeDetails").getCode());
 	}
 
+<<<<<<< local
+	@Test
+	public void shouldRejectIfProgrammeDetailsSectionNotSaved() {
+		applicationForm.setProgrammeDetails(new ProgrammeDetails());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+		validator.validate(applicationForm, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("user.programmeDetails.incomplete", mappingResult.getFieldError("programmeDetails").getCode());
+	}
+
+=======
+>>>>>>> other
 	@Test
 	public void shouldRejectIfPersonalDetailsSectionMissing() {
 		applicationForm.setPersonalDetails(null);
@@ -80,20 +92,21 @@ public class ApplicationFormValidatorTest {
 		validator.validate(applicationForm, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.personalDetails.incomplete", mappingResult.getFieldError("personalDetails").getCode());
+
 	}
 
+<<<<<<< local
 	@Test
 	public void shouldRejectIfAdditionalInfoSectionMissing() {
 		applicationForm.setAdditionalInformation(null);
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
-		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetails.getStudyOption())).andReturn(
-				Arrays.asList(programInstance));
-		EasyMock.replay(programInstanceDAOMock);
 		validator.validate(applicationForm, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.additionalInformation.incomplete", mappingResult.getFieldError("additionalInformation").getCode());
 	}
 
+=======
+>>>>>>> other
 	@Test
 	public void shouldRejectIfPersonalDetailsSectionNotSaved() {
 		applicationForm.setPersonalDetails(new PersonalDetails());
@@ -158,6 +171,35 @@ public class ApplicationFormValidatorTest {
 		Assert.assertEquals("documents.section.invalid", mappingResult.getFieldError("personalStatement").getCode());
 	}
 
+<<<<<<< local
+	@Before
+	public void setup() {
+		validator = new ApplicationFormValidator();
+		applicationForm = new ApplicationFormBuilder()//
+				.programmeDetails(new ProgrammeDetailsBuilder().id(2).toProgrammeDetails())//
+				.personalDetails(new PersonalDetailsBuilder().id(1).toPersonalDetails())//
+				.currentAddress(new Address()).contactAddress(new Address())//
+				.referees(new Referee(), new Referee(), new Referee())//
+				.personalStatement(new Document())//
+				.additionalInformation(new AdditionalInformationBuilder().id(3).toAdditionalInformation())//
+				.toApplicationForm();
+=======
+	@Test
+	public void shouldRejectIfTooMuchAddtionalInfo() {
+		StringBuilder addnInfo = new StringBuilder();
+		for (int i = 0; i <= 5000; i++) {
+			addnInfo.append("a");
+		}
+
+		applicationForm.setAdditionalInformation(addnInfo.toString());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(applicationForm, "applicationForm");
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetails.getStudyOption())).andReturn(
+				Arrays.asList(programInstance));
+		EasyMock.replay(programInstanceDAOMock);
+		validator.validate(applicationForm, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+	}
+
 	@Test
 	public void shouldRejectIfStudyOptionDoesNotExistInTheProgrammeInstances() {
 		ProgrammeDetails programmeDetail = applicationForm.getProgrammeDetails();
@@ -172,7 +214,11 @@ public class ApplicationFormValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("programmeDetails.studyOption.invalid", mappingResult.getFieldError("programmeDetails.studyOption").getCode());
 
+>>>>>>> other
 	}
+<<<<<<< local
+}
+=======
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -193,7 +239,6 @@ public class ApplicationFormValidatorTest {
 	@Before
 	public void setup() throws ParseException {
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
-		
 		validator = new ApplicationFormValidator(programInstanceDAOMock);
 		program = new ProgramBuilder().id(1).title("Program 1").toProgram();
 		programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME)
@@ -201,10 +246,8 @@ public class ApplicationFormValidatorTest {
 		program.setInstances(Arrays.asList(programInstance));
 		programmeDetails = new ProgrammeDetailsBuilder().studyOption(StudyOption.FULL_TIME).id(2).toProgrammeDetails();
 		applicationForm = new ApplicationFormBuilder().program(program).programmeDetails(programmeDetails)
-				.personalDetails(new PersonalDetailsBuilder().id(1).toPersonalDetails())
-				.additionalInformation(new AdditionalInformationBuilder().id(3).toAdditionalInformation())//
-				.currentAddress(new Address()).contactAddress(new Address())//
-				.referees(new Referee(), new Referee(), new Referee())//
-				.personalStatement(new Document()).toApplicationForm();
+				.personalDetails(new PersonalDetailsBuilder().id(1).toPersonalDetails()).currentAddress(new Address()).contactAddress(new Address())
+				.referees(new Referee(), new Referee(), new Referee()).personalStatement(new Document()).toApplicationForm();
 	}
-}
+
+}>>>>>>> other

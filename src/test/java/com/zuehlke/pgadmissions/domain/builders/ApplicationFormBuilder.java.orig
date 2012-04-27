@@ -65,12 +65,14 @@ public class ApplicationFormBuilder {
 
 	private Document personalStatement = null;
 
+<<<<<<< local
 	private AdditionalInformation info;
-
+=======
 	public ApplicationFormBuilder status(ApplicationFormStatus status) {
 		this.status = status;
 		return this;
 	}
+>>>>>>> other
 
 	public ApplicationFormBuilder projectTitle(String projectTitle) {
 		this.projectTitle = projectTitle;
@@ -225,8 +227,11 @@ public class ApplicationFormBuilder {
 		application.setProgram(program);
 		application.setLastSubmissionNotification(lastSubmissionNotification);
 		application.setProjectTitle(projectTitle);
-		application.setStatus(status);
+<<<<<<< local
 		application.setAdditionalInformation(info);
+=======
+		application.setStatus(status);
+>>>>>>> other
 		return application;
 	}
 }

@@ -81,7 +81,7 @@ public class RefereeServiceTest {
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), EasyMock.eq("Applicant Reference Submitted"),EasyMock.eq("private/staff/admin/mail/reference_submit_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock2);
 		
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress3), EasyMock.eq("Reference Submitted"),EasyMock.eq("private/pgStudents/mail/reference_submit_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock3);
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress3), EasyMock.eq("Referee Responded"),EasyMock.eq("private/pgStudents/mail/reference_respond_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock3);
 		javaMailSenderMock.send(preparatorMock1);
 		javaMailSenderMock.send(preparatorMock2);
 		javaMailSenderMock.send(preparatorMock3);
@@ -332,7 +332,7 @@ public class RefereeServiceTest {
 		InternetAddress toAddress = new InternetAddress("email3@test.com", "fred freddy");
 				
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Referee declined"),EasyMock.eq("private/pgStudents/mail/reference_declined_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Referee Responded"),EasyMock.eq("private/pgStudents/mail/reference_respond_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 		
 	
@@ -381,7 +381,7 @@ public class RefereeServiceTest {
 		
 		InternetAddress toAddress = new InternetAddress("email3@test.com", "fred freddy");
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Referee declined"),EasyMock.eq("private/pgStudents/mail/reference_declined_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Referee Responded"),EasyMock.eq("private/pgStudents/mail/reference_respond_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow( new RuntimeException("OH no - email sending's gone wrong!!"));
 		EasyMock.replay( mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock);

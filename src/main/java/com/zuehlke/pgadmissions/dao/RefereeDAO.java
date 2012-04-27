@@ -18,31 +18,33 @@ public class RefereeDAO {
 
 	private final SessionFactory sessionFactory;
 
-	RefereeDAO(){
+	RefereeDAO() {
 		this(null);
 	}
+
 	@Autowired
-	public RefereeDAO(SessionFactory sessionFactory){
+	public RefereeDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-	
 
 	public void save(Referee referee) {
 		sessionFactory.getCurrentSession().saveOrUpdate(referee);
 	}
-	
+
 	public Referee getRefereeById(Integer id) {
 		return (Referee) sessionFactory.getCurrentSession().get(Referee.class, id);
 	}
-	
+
 	public void delete(Referee referee) {
 		sessionFactory.getCurrentSession().delete(referee);
-		
+
 	}
+
 	public Referee getRefereeByActivationCode(String activationCode) {
 		return (Referee) sessionFactory.getCurrentSession().createCriteria(Referee.class).add(Restrictions.eq("activationCode", activationCode)).uniqueResult();
-		
+
 	}
+
 	@SuppressWarnings("unchecked")
 	public List<Referee> getRefereesDueAReminder() {
 		Date now = Calendar.getInstance().getTime();
@@ -53,9 +55,8 @@ public class RefereeDAO {
 					.createAlias("application", "application")
 					.add(Restrictions.eq("declined", false))
 					.add(Restrictions.isNull("reference"))
-					.add(Restrictions.le("lastNotified", oneWeekAgo))
-					.add(Restrictions.eq("application.status",ApplicationFormStatus.VALIDATION))					
+					.add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED})))
+					.add(Restrictions.or(Restrictions.isNull("lastNotified"),Restrictions.le("lastNotified", oneWeekAgo)))					
 				.list();
 	}
-
 }

@@ -51,7 +51,7 @@
 	                    <label class="admin_row_label">Project</label>
 	
 	                    <div class="field">
-	                		${applicationForm.projectTitle?html}
+	                		${(applicationForm.projectTitle?html)!}
 	                    </div>
 					</div>
 					

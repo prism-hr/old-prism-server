@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +36,6 @@ public class ApplicationsServiceTest {
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApplicationsService applicationsService;
 
-
 	@Test
 	public void shouldgetListOfApplicationsForApplicant() {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
@@ -47,23 +45,15 @@ public class ApplicationsServiceTest {
 		Assert.assertTrue(visibleApplications.contains(form));
 		Assert.assertEquals(1, visibleApplications.size());
 	}
-	
+
 	@Test
-	public void shouldGetAllApplicationsInValidationStageWithPassedValidationDueDate(){
-		Calendar dateAfterTwoWeeks = Calendar.getInstance();
-		dateAfterTwoWeeks.add(Calendar.WEEK_OF_MONTH, 2);
-		Calendar dateBeforeTwoWeeks = Calendar.getInstance();
-		dateBeforeTwoWeeks.add(Calendar.WEEK_OF_MONTH, -2);
-		
-		ApplicationForm nonSubmitted = new ApplicationFormBuilder().id(2).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
-		ApplicationForm submittedInValidationButBeforeDueDate = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.VALIDATION).validationDueDate(dateAfterTwoWeeks.getTime()).toApplicationForm();
-		ApplicationForm submittedInValidationButAfterDueDate = new ApplicationFormBuilder().id(4).status(ApplicationFormStatus.VALIDATION).validationDueDate(dateBeforeTwoWeeks.getTime()).toApplicationForm();
-		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(nonSubmitted, submittedInValidationButAfterDueDate, submittedInValidationButBeforeDueDate));
+	public void shouldGetAllApplicationsInValidationStageWithPassedValidationDueDate() {
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2)
+				.toApplicationForm());
+		EasyMock.expect(applicationFormDAOMock.getApplicationsDueValidationReminder()).andReturn(applicationsList);
 		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> applications = applicationsService.getAllApplicationsStillInValidationStageAndAfterDueDate();
-		EasyMock.verify(applicationFormDAOMock);
-		Assert.assertEquals(1, applications.size());
-		Assert.assertTrue(applications.contains(submittedInValidationButAfterDueDate));
+		List<ApplicationForm> validationStageAndAfterDueDate = applicationsService.getAllApplicationsStillInValidationStageAndAfterDueDate();
+		assertSame(applicationsList, validationStageAndAfterDueDate);
 	}
 
 	@Test
@@ -72,8 +62,7 @@ public class ApplicationsServiceTest {
 				.toUser();
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		reviewers.add(reviewer);
-		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).reviewers(reviewers).status(ApplicationFormStatus.VALIDATION)
-				.toApplicationForm();
+		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).reviewers(reviewers).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(reviewer);
@@ -97,8 +86,7 @@ public class ApplicationsServiceTest {
 	public void shouldNotGetListOfApplicationsForUnAssignedAdministrator() {
 		RegisteredUser administrator = new RegisteredUserBuilder().id(2).username("tom")
 				.roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1)
-				.program(new ProgramBuilder().toProgram()).status(ApplicationFormStatus.VALIDATION)
+		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().toProgram()).status(ApplicationFormStatus.VALIDATION)
 				.toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);
@@ -111,7 +99,7 @@ public class ApplicationsServiceTest {
 	public void shouldGetListOfApplicationsForAssignedAdministrator() {
 		RegisteredUser administrator = new RegisteredUserBuilder().id(2).username("tom")
 				.roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		
+
 		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().administrators(administrator).toProgram())
 				.status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
@@ -153,11 +141,9 @@ public class ApplicationsServiceTest {
 		EasyMock.replay(application, applicationFormDAOMock);
 		Assert.assertEquals(application, applicationsService.getApplicationById(234));
 	}
-	
-	
 
 	public void shouldCreateAndSaveNewApplicationForm() {
-		Program program= new ProgramBuilder().id(1).toProgram();
+		Program program = new ProgramBuilder().id(1).toProgram();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
 		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		applicationsService = new ApplicationsService(applicationFormDAOMock) {

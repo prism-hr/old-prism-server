@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,17 +78,7 @@ public class ApplicationsService {
 
 	@Transactional
 	public List<ApplicationForm> getAllApplicationsStillInValidationStageAndAfterDueDate() {
-		Calendar now = Calendar.getInstance();
-		List<ApplicationForm> allApplications = applicationFormDAO.getAllApplications();
-		List<ApplicationForm> applicationsInVal = new ArrayList<ApplicationForm>();
-		for (ApplicationForm applicationForm : allApplications) {
-			if(!applicationForm.isDecided() && applicationForm.isSubmitted()
-					&& applicationForm.isInValidationStage() 
-					&& now.getTime().after(applicationForm.getValidationDueDate())){
-				applicationsInVal.add(applicationForm);
-			}
-		}
-		return applicationsInVal;
+		return applicationFormDAO.getApplicationsDueValidationReminder();
 	}
 
 }

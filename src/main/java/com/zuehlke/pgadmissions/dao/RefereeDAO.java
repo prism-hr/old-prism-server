@@ -47,7 +47,7 @@ public class RefereeDAO {
 	public List<Referee> getRefereesDueAReminder() {
 		Date now = Calendar.getInstance().getTime();
 		Date today = DateUtils.truncate(now, Calendar.DATE);
-		Date oneWeekAgo = DateUtils.addDays(today, -6);
+		Date oneWeekAgo = DateUtils.addDays(today, -6);	
 		return (List<Referee>) sessionFactory.getCurrentSession()
 					.createCriteria(Referee.class)
 					.createAlias("application", "application")

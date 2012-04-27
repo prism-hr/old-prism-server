@@ -203,6 +203,8 @@ target/test-classes/com/zuehlke/pgadmissions/controllers/ViewApplicationFormCont
 target/test-classes/com/zuehlke/pgadmissions/domain/ApplicationFormTest.class
 docs/mock-ups.docx
 designs/*
+src/sql/misc/insert_real_programs.sql
+src/sql/misc/insert_real_projects.sql
 syntax: regexp
 target/*
 

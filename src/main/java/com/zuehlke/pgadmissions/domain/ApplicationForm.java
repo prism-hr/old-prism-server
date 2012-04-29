@@ -184,10 +184,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public boolean isModifiable() {
-		if (status == ApplicationFormStatus.VALIDATION) {
-			return true;
+		if(status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN){
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	public boolean isSubmitted() {

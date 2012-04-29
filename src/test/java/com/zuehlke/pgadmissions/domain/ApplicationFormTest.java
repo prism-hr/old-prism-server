@@ -10,11 +10,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class ApplicationFormTest {
 
-	@Test
-	public void shouldReturnReviewableFalseIfAppliactioNFormUnsubmitted() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
-		assertFalse(applicationForm.isModifiable());
-	}
+
 
 	@Test
 	public void shouldReturnReviewableFalseIfApplicationFormRejected() {
@@ -30,13 +26,21 @@ public class ApplicationFormTest {
 		assertFalse(applicationForm.isModifiable());
 	}
 
-	@Test
-	public void shouldReturnReviewableTrueIfApplicationFormInValidation() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		assertTrue(applicationForm.isModifiable());
-	}
-
 	
+
+	@Test
+	public void shouldReturnReviewableFalseIfApplicationFormAcceptedRejecteOrwitdrawn() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		assertTrue(applicationForm.isModifiable());
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertTrue(applicationForm.isModifiable());
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		assertFalse(applicationForm.isModifiable());
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm();
+		assertFalse(applicationForm.isModifiable());
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).toApplicationForm();
+		assertFalse(applicationForm.isModifiable());
+	}
 	
 	@Test
 	public void shouldReturnDecidedTrueIfRejectedOrApproved() {

@@ -35,9 +35,9 @@ public class CommentControllerTest {
 	private ApplicationsService applicationsServiceMock;
 	private ApplicationReviewService applicationReviewServiceMock;
 	private CommentController controller;
-	ApplicationForm submittedNonApprovedApplication;
+	ApplicationForm inValidationApplication;
 	ApplicationForm submittedApprovedApplication;
-	ApplicationForm unsubmittedApplication;
+
 	ApplicationReview applicationReviewForSubmittedNonApproved1, applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved3, applicationReviewForSubmittedNonApproved4;
 	UsernamePasswordAuthenticationToken authenticationToken;
 	
@@ -61,13 +61,13 @@ public class CommentControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);
 		controller = new CommentController(applicationReviewServiceMock, applicationsServiceMock);
-		submittedNonApprovedApplication = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		inValidationApplication = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		submittedApprovedApplication = new ApplicationFormBuilder().id(2).status(ApplicationFormStatus.APPROVED).approver(approver).toApplicationForm();
-		unsubmittedApplication = new ApplicationFormBuilder().id(3).toApplicationForm();
-		applicationReviewForSubmittedNonApproved1 = new ApplicationReviewBuilder().id(1).application(submittedNonApprovedApplication).comment("Amazing Research !!!").user(admin).toApplicationReview();
-		applicationReviewForSubmittedNonApproved2 = new ApplicationReviewBuilder().id(2).application(submittedNonApprovedApplication).comment("I'm not interested").user(reviewer).toApplicationReview();
-		applicationReviewForSubmittedNonApproved3 = new ApplicationReviewBuilder().id(3).application(submittedNonApprovedApplication).comment("I'm interested").user(reviewer2).toApplicationReview();
-		applicationReviewForSubmittedNonApproved4 = new ApplicationReviewBuilder().id(4).application(submittedNonApprovedApplication).comment("Comment By Admin And Reviewer").user(adminAndReviewer).toApplicationReview();
+		
+		applicationReviewForSubmittedNonApproved1 = new ApplicationReviewBuilder().id(1).application(inValidationApplication).comment("Amazing Research !!!").user(admin).toApplicationReview();
+		applicationReviewForSubmittedNonApproved2 = new ApplicationReviewBuilder().id(2).application(inValidationApplication).comment("I'm not interested").user(reviewer).toApplicationReview();
+		applicationReviewForSubmittedNonApproved3 = new ApplicationReviewBuilder().id(3).application(inValidationApplication).comment("I'm interested").user(reviewer2).toApplicationReview();
+		applicationReviewForSubmittedNonApproved4 = new ApplicationReviewBuilder().id(4).application(inValidationApplication).comment("Comment By Admin And Reviewer").user(adminAndReviewer).toApplicationReview();
 	}
 	
 	@Test
@@ -77,7 +77,7 @@ public class CommentControllerTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(submittedNonApprovedApplication);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(inValidationApplication);
 		EasyMock.replay(applicationsServiceMock);
 		ModelAndView modelAndView = controller.getCommentedApplicationPage(1, "Amazing Research !!!");
 		assertEquals("redirect:/application?view=comments", modelAndView.getViewName());
@@ -109,13 +109,13 @@ public class CommentControllerTest {
 	}
 	
 	@Test(expected = CannotCommentException.class)
-	public void shouldNotSaveCommentByAdminOnUnSubmittedApplication(){
+	public void shouldNotSaveCommentByAdminOnNonModifiableApplication(){
 		authenticationToken.setDetails(admin);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(3)).andReturn(unsubmittedApplication);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(3)).andReturn(new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).toApplicationForm());
 		EasyMock.replay(applicationsServiceMock);
 		ModelAndView modelAndView = controller.getCommentedApplicationPage(3, "Amazing Research !!!");
 		assertEquals("redirect:/application", modelAndView.getViewName());
@@ -130,7 +130,7 @@ public class CommentControllerTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(unsubmittedApplication);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(inValidationApplication);
 		EasyMock.replay(applicationsServiceMock);
 		ModelAndView modelAndView = controller.getCommentedApplicationPage(1, "Amazing Research !!!");
 		assertEquals("redirect:/application", modelAndView.getViewName());

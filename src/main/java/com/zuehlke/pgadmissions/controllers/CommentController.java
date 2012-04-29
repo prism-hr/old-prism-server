@@ -36,8 +36,7 @@ public class CommentController {
 	}
 	
 	@RequestMapping(value = { "/submit" }, method = RequestMethod.POST)
-	public ModelAndView getCommentedApplicationPage(@RequestParam Integer id,
-			@RequestParam String comment) {
+	public ModelAndView getCommentedApplicationPage(@RequestParam Integer id,@RequestParam String comment) {
 		ApplicationReview applicationReview = new ApplicationReview();
 		ApplicationForm application = applicationService.getApplicationById(id);
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();

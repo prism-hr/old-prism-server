@@ -1,5 +1,5 @@
 $(document).ready(function(){	
-
+	$("#acceptTermsValue").val("NO");
 	
 	$.get("/pgadmissions/update/getProgrammeDetails",
 			{
@@ -95,21 +95,14 @@ $(document).ready(function(){
 				$('#additionalInformationSection').html(data);
 			}
 	);
-	/*
-	 * Submit application form on click of submit button.
-	 */ 
-	$('#submitButton').click(function(){
-		
-		var flag = confirm("I understand that in accepting this declaration I am confirming " +
-				"that the information contained in this application is true and accurate. " +
-				"I am aware that any subsequent offer of study may be retracted at any time " +
-				"if any of the information contained is found to be misleading or false.");
-		
-		if (flag == true){
-			$('#submitApplicationForm').submit();
-		}
-	});
-	
+	$.get("/pgadmissions/acceptTerms/getTermsAndConditions",
+			{
+				applicationId:  $('#applicationId').val()
+			},
+			function(data) {
+				$('#acceptTermsSection').html(data);
+			}
+	);
 	
 	$('#withdrawButton').click(function(){
 		if(confirm("Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application."))
@@ -144,6 +137,22 @@ $(document).ready(function(){
 		
 	});
 	
+	/*
+	 * Submit application form on click of submit button.
+	 */ 
+	$('#submitButton').click(function(){
+		if( $("#acceptTermsValue").val() =='NO'){ 
+			$("span[name='nonAccepted']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAccepted']").html('');
+			$.post("/pgadmissions/acceptTerms", {  
+				applicationId: $("#applicationFormId").val()
+			},
+			function(data) {
+			});
+		}
+	});
 	
 	/* Cases for comment section */
 	
@@ -219,3 +228,4 @@ function closeSections(){
 
 	}
 }
+

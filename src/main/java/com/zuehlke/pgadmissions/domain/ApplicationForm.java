@@ -26,6 +26,7 @@ import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Entity(name = "APPLICATION_FORM")
@@ -60,6 +61,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "validation_due_date")
 	private Date validationDueDate;
 
+
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	@Column(name="accepted_terms")
+	private CheckedStatus acceptedTerms;
+	
 	@ManyToOne
 	@JoinColumn(name = "personal_statement_id")
 	private Document personalStatement = null;
@@ -404,12 +410,24 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return null;
 	}
 
+	public boolean hasAcceptedTheTerms(){
+		return acceptedTerms == CheckedStatus.YES;
+	}
+	
 	public Date getLastUpdated() {
 		return lastUpdated;
 	}
 
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
+	}
+
+	public CheckedStatus getAcceptedTerms() {
+		return acceptedTerms;
+	}
+
+	public void setAcceptedTerms(CheckedStatus acceptedTerms) {
+		this.acceptedTerms = acceptedTerms;
 	}
 
 	public boolean isInState(String strStatus) {

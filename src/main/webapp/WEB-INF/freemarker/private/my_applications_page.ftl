@@ -96,10 +96,7 @@
       												<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('VALIDATION')> 
 									    				<option value="validate">Validate</option>
 									      			</#if>
-									    			<#if (model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR'))  && application.isModifiable() && false>
-									    				<option value="reject">Reject</option>
-									      			</#if>
-								      				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || 
+									    			<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || 
 								      											model.user.isInRole('REVIEWER'))) && application.isModifiable() )>
 								    					<option value="comment">Comments</option>
 								      				</#if>      												

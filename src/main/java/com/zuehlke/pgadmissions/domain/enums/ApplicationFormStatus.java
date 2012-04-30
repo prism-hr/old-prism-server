@@ -15,4 +15,11 @@ public enum ApplicationFormStatus {
 		return displayValue;
 	}
 
+	public static ApplicationFormStatus[] getAvailableNextStati(ApplicationFormStatus status) {
+		if(status == VALIDATION){
+			return new ApplicationFormStatus[]{REJECTED, APPROVED} ;
+		}
+		return  new ApplicationFormStatus[]{} ;
+	}
+
 }

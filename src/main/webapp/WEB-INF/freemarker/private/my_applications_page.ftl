@@ -93,6 +93,9 @@
 							                	    <#if model.user.isInRole('APPROVER') && application.isModifiable()>
 							                	    	<option value="approve">Approve</option>
       												</#if>
+      												<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.inValidationStage> 
+									    				<option value="validate">Validate</option>
+									      			</#if>
 									    			<#if (model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR'))  && application.isModifiable()>
 									    				<option value="reject">Reject</option>
 									      			</#if>

@@ -57,7 +57,7 @@ public class ApplicationFormTest {
 	public void shouldReturnDecidedFalseIfNeitherUnsubmitterOrValidation() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
 		assertFalse(applicationForm.isDecided());
-		 applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertFalse(applicationForm.isDecided());
 	}
 
@@ -72,4 +72,11 @@ public class ApplicationFormTest {
 		assertEquals(submissionUpdateNotification, applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION));
 	}
 	
+	@Test
+	public void shouldReturnTrueIfInStateByString(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		assertTrue(applicationForm.isInState("UNSUBMITTED"));
+		assertFalse(applicationForm.isInState("VALIDATION"));
+		assertFalse(applicationForm.isInState("BOB"));
+	}
 }

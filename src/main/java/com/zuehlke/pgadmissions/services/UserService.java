@@ -10,6 +10,7 @@ import javax.mail.internet.InternetAddress;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -161,6 +162,12 @@ public class UserService {
 			result = result.substring(0, result.length() - 1);
 		}
 		return result;
+	}
+	
+	@Transactional
+	public RegisteredUser getCurrentUser() {
+		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userDAO.get(currentUser.getId());
 	}
 
 

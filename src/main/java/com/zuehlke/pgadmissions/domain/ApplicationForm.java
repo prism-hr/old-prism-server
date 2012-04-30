@@ -411,4 +411,12 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public void setLastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
 	}
+
+	public boolean isInState(String strStatus) {
+		try {
+			return status == ApplicationFormStatus.valueOf(strStatus);
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
 }

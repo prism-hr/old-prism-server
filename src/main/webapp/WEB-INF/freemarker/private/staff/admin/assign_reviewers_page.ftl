@@ -110,11 +110,11 @@
 			        <br />
   				</#if> 
 
-		<#if model.applicationForm.isModifiable()  && (model.user.isInRole('SUPERADMINISTRATOR')|| model.user.isAdminOrReviewerInProgramme(model.applicationForm.program))>
+			<#if model.applicationForm.isModifiable()  && (model.user.isInRole('SUPERADMINISTRATOR')||  model.user.isInRoleInProgram('ADMINISTRATOR',model.applicationForm.program) ||  model.user.isInRoleInProgram('APPROVER', model.applicationForm.program))>
 					<form id="approvalForm" action="<@spring.url '/approveOrReject'/>" method = "POST">
 						<input type="hidden" name="id" value="${model.applicationForm.id?string("######")!}"/>
 			          	<div class="row">
-			          		<#if model.user.isInRole('APPROVER')>
+			          		<#if model.user.isInRoleInProgram('APPROVER', model.applicationForm.program) && model.applicationForm.isInState('APPROVAL')>
 			            		<label><input type="radio" name="decision" value="APPROVED"/> Approve</label>
 			            	</#if>
 			            	<label><input type="radio" name="decision" value="REJECTED"/> Reject</label>

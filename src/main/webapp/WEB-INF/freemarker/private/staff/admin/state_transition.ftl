@@ -19,7 +19,8 @@
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
 	
-	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>	    
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/admin/changeState.js' />"></script> 
 	    
 	    
 	</head>
@@ -50,7 +51,7 @@
 				      <!-- content box -->				      
 				      <div class="content-box">
 				        <div class="content-box-inner">
-				        	<form>
+				        		<input type="hidden" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 							    <h1>Validate application ${(applicationForm.id?string('#####'))!}</h1>
 							    <br/><br/>
 		            			<div class="row">
@@ -72,11 +73,10 @@
 		            				</div>
 		            			</div>
 		            			<div class="buttons">						        		
-		            					<button type="reset" value="cancel">Cancel</button>
-						       			<button type="submit" value="submit@>Submit</button>
-						        
+		            				<button type="reset" value="cancel">Cancel</button>
+						       		<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>						        
 								</div>
-		            		</form>
+		  
 				        </div><!-- .content-box-inner -->
 				      </div><!-- .content-box -->
 				      

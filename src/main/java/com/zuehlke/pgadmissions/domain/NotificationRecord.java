@@ -24,6 +24,7 @@ public class NotificationRecord  extends DomainObject<Integer>{
 
 	private static final long serialVersionUID = 8927883549224930562L;
 	
+	
 	@ManyToOne
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
@@ -35,6 +36,14 @@ public class NotificationRecord  extends DomainObject<Integer>{
 	@Column(name = "notification_type")
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.NotificationTypeEnumUserType")
 	private NotificationType notificationType;
+	
+	public NotificationRecord(){
+		
+	}
+	public NotificationRecord(NotificationType notificationType) {
+		this.notificationType = notificationType;	
+	}
+
 	
 	@Override
 	public void setId(Integer id) {

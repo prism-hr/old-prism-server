@@ -16,7 +16,7 @@ public class ApplicationUpdatedNotificationTask extends TimerTask {
 	private final MailService mailService;
 	private final ApplicationsService applicationsService;
 	private final SessionFactory sessionFactory;
-	
+
 	private final Logger log = Logger.getLogger(ApplicationUpdatedNotificationTask.class);
 
 	public ApplicationUpdatedNotificationTask(SessionFactory sessionFactory, MailService mailService, ApplicationsService applicationsService) {
@@ -28,16 +28,17 @@ public class ApplicationUpdatedNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
+		log.info("Application Update Notification task running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<ApplicationForm> applicationsDueUpdateNotification = applicationsService.getApplicationsDueUpdateNotification();
 		transaction.commit();
 		for (ApplicationForm applicationForm : applicationsDueUpdateNotification) {
-			transaction =sessionFactory.getCurrentSession().beginTransaction();
+			transaction = sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().refresh(applicationForm);
-			try {				
+			try {
 				mailService.sendApplicationUpdatedMailToAdmins(applicationForm);
-				transaction.commit();				
-				log.info("update notifiations send  for " +  applicationForm.getId());
+				transaction.commit();
+				log.info("update notifiations send  for " + applicationForm.getId());
 			} catch (Throwable e) {
 				transaction.rollback();
 				log.warn("error while sending email", e);
@@ -45,7 +46,7 @@ public class ApplicationUpdatedNotificationTask extends TimerTask {
 			}
 
 		}
-
+		log.info("Application Update Notification task complete");
 	}
 
 }

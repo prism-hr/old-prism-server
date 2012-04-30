@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -63,6 +65,9 @@ public class SubmitApplicationFormController {
 		Date dueDate = calculateAndGetValidationDueDate();
 		applicationForm.setValidationDueDate(dueDate);
 		applicationForm.setSubmittedDate(new Date());
+		applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
+		applicationForm.getNotificationRecords().add(new NotificationRecord(NotificationType.UPDATED_NOTIFICATION));
+		applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION).setNotificationDate(new Date());
 		refereeService.processRefereesRoles(applicationForm.getReferees());
 		submitApplicationService.saveApplicationFormAndSendMailNotifications(applicationForm);
 		return "redirect:/applications?submissionSuccess=true";

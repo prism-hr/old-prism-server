@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+	<bean id="mailServiceForTimers" class="com.zuehlke.pgadmissions.services.MailService"  autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory"/>
+		<constructor-arg index="1" ref="mailSender"/>
+		<constructor-arg index="2" ref="mailApplicationsService"/>
+		<constructor-arg index="3" ref="mainRefereeDAO"/>
+	</bean>
+	
+	<bean id="mailApplicationDAO" class="com.zuehlke.pgadmissions.dao.ApplicationFormDAO" autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail"/>
+	</bean>
+	<bean id="mainRefereeDAO" class="com.zuehlke.pgadmissions.dao.RefereeDAO" autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail"/>
+	</bean>
+	
+	<bean id="mailApplicationsService" class="com.zuehlke.pgadmissions.services.ApplicationsService"  autowire-candidate="false">
+		<constructor-arg ref="mailApplicationDAO"/>
+	</bean>
+
+	<!--  admin reminders -->
+	
+	<bean id="mailTimerTask" class="com.zuehlke.pgadmissions.timers.AdminValidationReminderTimerTask" >
+		<property name="service" ref="mailServiceForTimers" />
+		<property name="applicationsService" ref="mailApplicationsService" />
+		<property name="sessionFactory" ref="sessionFactoryMail" />
+	</bean>
+
+	<bean id="scheduledMailTimerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="2000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="mailTimerTask" />		
+	</bean>  
+	
+	<!--  referee remindeers -->
+	<bean id="refereeReminderTimerTask" class="com.zuehlke.pgadmissions.timers.RefereeReminderTask" >
+		<constructor-arg index="0" ref="sessionFactoryMail"/>
+		<constructor-arg index="1" ref="mailServiceForTimers"/>
+	</bean>
+
+	<bean id="refereeReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="300000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="refereeReminderTimerTask" />		
+	</bean> 
+	
+	
+	<!--  update notifications -->
+	
+	<bean id="updateNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.ApplicationUpdatedNotificationTask" >
+		<constructor-arg index="0" ref="sessionFactoryMail"/>
+		<constructor-arg index="1" ref="mailServiceForTimers"/>
+		<constructor-arg index="2" ref="mailApplicationsService"/>
+	</bean>
+
+	<bean id="updateNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="300000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="updateNotificationTimerTask" />		
+	</bean> 
+	
+	<!-- The main schedule -->
+	<bean class="org.springframework.scheduling.timer.TimerFactoryBean">
+		<property name="scheduledTimerTasks">
+		<list>
+			<ref bean="scheduledMailTimerTask"/>
+			<ref bean="refereeReminderSchedule"/>
+		</list>
+		</property>
+	</bean>
+	
+	
+	<bean id="sessionFactoryMail"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" autowire-candidate="false">
+
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses" ref="entities"/>
+		
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.current_session_context_class">thread</prop>
+				<prop key="javax.persistence.validation.mode">NONE</prop>
+			
+			</props>
+		</property>
+	</bean>
+</beans>

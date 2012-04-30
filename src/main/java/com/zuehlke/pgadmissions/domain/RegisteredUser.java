@@ -191,7 +191,15 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return false;
 		}
 	}
-
+	
+	public boolean isInRoleInProgram(String strAuthority, Program program) {
+		try {
+			return isInRoleInProgram(Authority.valueOf(strAuthority), program);
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+	}
+	
 	public boolean canSee(ApplicationForm applicationForm) {
 
 		if (applicationForm.getStatus() == ApplicationFormStatus.UNSUBMITTED && !isInRole(Authority.APPLICANT)) {

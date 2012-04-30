@@ -24,35 +24,42 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationListModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class ApplicationListControllerTest {
 
 	private RegisteredUser user;
 	private ApplicationsService applicationsServiceMock;
 	private ApplicationListController controller;
+	private UserService userServiceMock;
 
 	@Test
 	public void shouldReturnCorrectViewForApplicant() {		
-		
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.replay(userServiceMock);
 		ModelAndView modelAndView = controller.getApplicationListPage(false, null);
 
 		assertEquals("private/my_applications_page", modelAndView.getViewName());
 	}
 	
 	@Test
-	public void shouldAddUserFromSecurityContextObjectToModel() {
+	public void shouldAddUserFromSecurityContextObjectToModelAndRefresh() {
 		
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.replay(userServiceMock);
 		ModelAndView modelAndView = controller.getApplicationListPage(false, null);
 		
 		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
 		
 		assertNotNull(model.getUser());
 		assertEquals(user, model.getUser());
+		EasyMock.verify(userServiceMock);
 	}
 	
 	@Test
 	public void shouldAddSubmissionSuccesMessageIfRequired() {
-		
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.replay(userServiceMock);
 		ModelAndView modelAndView = controller.getApplicationListPage(true, null);
 		
 		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
@@ -62,7 +69,8 @@ public class ApplicationListControllerTest {
 	
 	@Test
 	public void shouldAddDecissionMessageIfRequired() {
-		
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.replay(userServiceMock);
 		ModelAndView modelAndView = controller.getApplicationListPage(true, "bobbed");
 		
 		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
@@ -77,7 +85,8 @@ public class ApplicationListControllerTest {
 		ApplicationForm applicationTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getVisibleApplications(user)).andReturn(Arrays.asList(applicationOne, applicationTwo));
 		EasyMock.replay(applicationsServiceMock);
-		
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.replay(userServiceMock);
 		ModelAndView modelAndView = controller.getApplicationListPage(false, null);
 		ApplicationListModel model = (ApplicationListModel) modelAndView.getModel().get("model");
 	
@@ -95,9 +104,9 @@ public class ApplicationListControllerTest {
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
-		
+		userServiceMock = EasyMock.createMock(UserService.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		controller = new ApplicationListController(applicationsServiceMock);
+		controller = new ApplicationListController(applicationsServiceMock, userServiceMock);
 	}
 
 	

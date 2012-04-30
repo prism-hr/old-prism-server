@@ -56,6 +56,11 @@ public class RefereeService {
 	public void save(Referee referee) {
 		refereeDAO.save(referee);
 	}
+	
+	@Transactional
+	public List<Referee> getRefereesWhoHaveNotProvidedReference(ApplicationForm form) {
+		return refereeDAO.getRefereesWhoDidntProvideReferenceYet(form);
+	}
 
 	@Transactional
 	public Referee getRefereeByActivationCode(String activationCode) {

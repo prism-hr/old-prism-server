@@ -10,6 +10,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
@@ -57,6 +58,16 @@ public class RefereeDAO {
 					.add(Restrictions.isNull("reference"))
 					.add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED})))
 					.add(Restrictions.or(Restrictions.isNull("lastNotified"),Restrictions.le("lastNotified", oneWeekAgo)))					
+				.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Referee> getRefereesWhoDidntProvideReferenceYet(ApplicationForm form) {
+		return (List<Referee>) sessionFactory.getCurrentSession()
+				.createCriteria(Referee.class)
+				.add(Restrictions.eq("declined", false))
+				.add(Restrictions.eq("application", form))
+				.add(Restrictions.isNull("reference"))
 				.list();
 	}
 }

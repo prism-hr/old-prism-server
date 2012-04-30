@@ -356,6 +356,98 @@ public class MailServiceTest {
 		assertSame(notificationRecord, form.getNotificationForType(NotificationType.UPDATED_NOTIFICATION));
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(form.getNotificationForType(NotificationType.UPDATED_NOTIFICATION).getNotificationDate(), Calendar.DATE));
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void shouldSendWithdrawnNotificationToReferees() throws UnsupportedEncodingException, ParseException {
+		Program program = new ProgramBuilder().toProgram();
+		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicant(new RegisteredUser()).toApplicationForm();
+		
+		RegisteredUser refereeOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		RegisteredUser refereeTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
+		Referee referee1 = new RefereeBuilder().application(form).id(2).user(refereeTwo).toReferee();
+		Referee referee2 = new RefereeBuilder().application(form).id(2).id(1).user(refereeOne).toReferee();
+		
+		
+		
+		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
+		
+		InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
+		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
+		
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Application Withdrawn"),
+						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), EasyMock.eq("Application Withdrawn"),
+						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock2);
+		javaMailSenderMock.send(preparatorMock1);
+		javaMailSenderMock.send(preparatorMock2);
+		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		
+		mailService.sendWithdrawMailToReferees(Arrays.asList(referee1, referee2));
+		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void shouldSendWithdrawnNotificationToAdmins() throws UnsupportedEncodingException, ParseException {
+		
+		RegisteredUser admin1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		RegisteredUser admin2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
+		Program program = new ProgramBuilder().administrators(admin1, admin2).toProgram();
+		
+		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).toApplicationForm();
+		
+		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
+		
+		InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
+		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
+		
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Application Withdrawn"),
+						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), EasyMock.eq("Application Withdrawn"),
+						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock2);
+		javaMailSenderMock.send(preparatorMock1);
+		javaMailSenderMock.send(preparatorMock2);
+		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		
+		mailService.sendWithdrawToAdmins(form);
+		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);		
+	}
+	@SuppressWarnings("unchecked")
+	@Test
+	public void shouldSendWithdrawnNotificationToReviewers() throws UnsupportedEncodingException, ParseException {
+		
+		RegisteredUser reviewer1 = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		RegisteredUser reviewer2 = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
+		Program program = new ProgramBuilder().reviewers(reviewer1, reviewer2).toProgram();
+		
+		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).toApplicationForm();
+		
+		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
+		
+		InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
+		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
+		
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Application Withdrawn"),
+						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), EasyMock.eq("Application Withdrawn"),
+						EasyMock.eq("private/staff/mail/application_withdrawn_notification.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock2);
+		javaMailSenderMock.send(preparatorMock1);
+		javaMailSenderMock.send(preparatorMock2);
+		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		
+		mailService.sendWithdrawToReviewers(form);
+		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);		
+	}
 	@Before
 	public void setUp() {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);

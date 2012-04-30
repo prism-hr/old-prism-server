@@ -154,6 +154,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	
+	
 	@Test
 	public void shouldNotReturnRefereesWhoHaveBeenRemindedInLastWeek() {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
@@ -268,6 +269,49 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		assertTrue(referees.contains(referee));		
 
 	}
+	
+	@Test
+	public void shouldReturnRefereesWhoHavenNotProvidedReference() {
+		ApplicationForm application = new ApplicationFormBuilder().id(20).program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application2 = new ApplicationFormBuilder().id(21).applicant(user).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		save(application, application2);
+		flushAndClearSession();
+		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").toDocument();
+		Reference reference = new ReferenceBuilder().document(document).toReference();
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		Referee hasRefInApp = new RefereeBuilder().id(1).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fs").firstname("sdsd").jobEmployer("sdfsdf").jobTitle("fssd").lastname("fsdsdf").phoneNumber("halliallo").reference(reference).toReferee();			
+		
+		Referee noRefInApp = new RefereeBuilder().id(2).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("rrwe.fsd").firstname("df").jobEmployer("df").jobTitle("fsdsd").lastname("dsdf").phoneNumber("hahallo").toReferee();			
+		
+		Referee noRefNoApp = new RefereeBuilder().id(3).application(application2).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("erwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdf").phoneNumber("halliho").toReferee();			
+		
+		Referee hasRefInApp1 = new RefereeBuilder().id(4).application(application).addressCountry(countriesDAO.getCountryById(2)).addressLocation("sdfsdf")
+				.email("rrwe.fsd").firstname("ssdf").jobEmployer("sdfsdf").jobTitle("fssd").lastname("fsdsdf").phoneNumber("hallihallo").reference(reference).toReferee();			
+		
+		Referee noRefInApp2 = new RefereeBuilder().id(6).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("rrwe.fsd").firstname("df").jobEmployer("df").jobTitle("fsdsd").lastname("dsdf").phoneNumber("hahallo").toReferee();			
+		
+		Referee hasRefButNotInApp = new RefereeBuilder().id(5).application(application2).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwesd").firstname("sdf").jobEmployer("sdf").jobTitle("fssd").lastname("fsdsdf").phoneNumber("hallihallo").reference(reference).toReferee();			
+		
+		save(document, reference,hasRefInApp, noRefInApp, noRefNoApp, hasRefButNotInApp, hasRefInApp1, noRefInApp2);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesWhoDidntProvideReferenceYet(application);
+		assertNotNull(referees);
+		assertEquals(2, referees.size());
+		assertFalse(referees.contains(hasRefInApp));		
+		assertTrue(referees.contains(noRefInApp));		
+		assertTrue(referees.contains(noRefInApp2));		
+		assertFalse(referees.contains(noRefNoApp));		
+		assertFalse(referees.contains(hasRefButNotInApp));		
+		assertFalse(referees.contains(hasRefInApp1));		
+		
+	}
+	
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

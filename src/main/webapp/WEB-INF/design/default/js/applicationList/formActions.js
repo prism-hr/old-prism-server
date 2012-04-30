@@ -26,7 +26,7 @@ $(document).ready(function() {
 						applicationId: id
 					}, 
 					function(data) {
-						$('#statusColumn').html('Withdrawn');
+//						$('#statusColumn').html('Withdrawn');
 					}
 				);
 				}

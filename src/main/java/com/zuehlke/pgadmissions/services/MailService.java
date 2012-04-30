@@ -236,5 +236,67 @@ public class MailService {
 		}
 		createOrUpdateUpdateNotificationRecord(form);
 	}
+	
+
+
+	public void sendWithdrawMailToReferees(
+			List<Referee> referees) {
+		for (Referee referee : referees) {
+			try {
+				RegisteredUser user = referee.getUser();
+				System.out.println(user.getEmail());
+				Map<String, Object> model = new HashMap<String, Object>();
+				model.put("user", user);
+				model.put("application", referee.getApplication());
+				model.put("applicant", referee.getApplication().getApplicant());
+				model.put("host", Environment.getInstance().getApplicationHostName());
+				InternetAddress toAddress = new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Withdrawn", "private/staff/mail/application_withdrawn_notification.ftl", model));
+			} catch (Throwable e) {
+				log.warn("error while sending email", e);
+			}
+			
+		}
+		
+	}
+
+	public void sendWithdrawToAdmins(ApplicationForm form) {
+		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
+		for (RegisteredUser admin : administrators) {
+			try {
+				Map<String, Object> model = new HashMap<String, Object>();
+				model.put("user", admin);
+				model.put("application", form);
+				model.put("applicant", form.getApplicant());
+				model.put("host", Environment.getInstance().getApplicationHostName());
+				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Withdrawn", "private/staff/mail/application_withdrawn_notification.ftl", model));
+			} catch (Throwable e) {
+				log.warn("error while sending email", e);
+			}
+			
+		}
+		
+	}
+
+	public void sendWithdrawToReviewers(ApplicationForm form) {
+		List<RegisteredUser> reviewers = form.getProgram().getReviewers();
+		for (RegisteredUser reviewer : reviewers) {
+			try {
+				Map<String, Object> model = new HashMap<String, Object>();
+				model.put("user", reviewer);
+				model.put("application", form);
+				model.put("host", Environment.getInstance().getApplicationHostName());
+				model.put("applicant", form.getApplicant());
+				InternetAddress toAddress = new InternetAddress(reviewer.getEmail(), reviewer.getFirstName() + " " + reviewer.getLastName());
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Withdrawn", "private/staff/mail/application_withdrawn_notification.ftl", model));
+			} catch (Throwable e) {
+				log.warn("error while sending email", e);
+			}
+			
+		}
+		
+		
+	}
 
 }

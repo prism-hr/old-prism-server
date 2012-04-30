@@ -17,31 +17,53 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.exceptions.CannotWithdrawApplicationException;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.WithdrawService;
 
 public class WithdrawControllerTest {
 	
 	private WithdrawController withdrawController;
 	private ApplicationsService applicationsServiceMock;
+	private WithdrawService withdrawServiceMock;
 	private RegisteredUser student;
 	private UsernamePasswordAuthenticationToken authenticationToken;
 
+	@Test(expected = CannotWithdrawApplicationException.class)
+	public void shouldThrowCannotWithdrawApplicationExceptionIfInApprovedStage() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicant(student).id(2).toApplicationForm();
+		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
+	}
 	
-	@Test
-	public void shouldReturnApplicationsListIfWithdrawn(){
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		String view = withdrawController.withdrawApplicationAndGetApplicationList(form);
-		assertEquals("redirect:/applications", view);
+	@Test(expected = CannotWithdrawApplicationException.class)
+	public void shouldThrowCannotWithdrawApplicationExceptionIfInRejectStage() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.REJECTED).applicant(student).id(2).toApplicationForm();
+		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
+	}
+	
+	@Test(expected = CannotWithdrawApplicationException.class)
+	public void shouldThrowCannotWithdrawApplicationExceptionIfInUnsubmittedStage() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).applicant(student).id(2).toApplicationForm();
+		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
+	}
+	
+	@Test(expected = CannotWithdrawApplicationException.class)
+	public void shouldThrowCannotWithdrawApplicationExceptionIfAlreadyWithdrawn() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.WITHDRAWN).applicant(student).id(2).toApplicationForm();
+		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
 	}
 	
 	@Test
-	public void shouldChangeStatusToWithdrawnAndSave() {
+	public void shouldChangeStatusToWithdrawnAndSaveAndSendEmailsNotifications() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicant(student).id(2).toApplicationForm();
-		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
-		EasyMock.verify(applicationsServiceMock);
+		withdrawServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
+		EasyMock.replay(withdrawServiceMock);
+		String view = withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
+		EasyMock.verify(withdrawServiceMock);
 		assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
+		assertEquals("redirect:/applications", view);
 	}
 	
 	
@@ -49,8 +71,8 @@ public class WithdrawControllerTest {
 	public void setUp() {
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-
-		withdrawController = new WithdrawController(applicationsServiceMock);
+		withdrawServiceMock = EasyMock.createMock(WithdrawService.class);
+		withdrawController = new WithdrawController(applicationsServiceMock, withdrawServiceMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

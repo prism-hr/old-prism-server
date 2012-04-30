@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -60,10 +61,10 @@ public class WithdrawControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicant(student).id(2).toApplicationForm();
 		withdrawServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
 		EasyMock.replay(withdrawServiceMock);
-		String view = withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
+		ModelAndView view = withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
 		EasyMock.verify(withdrawServiceMock);
 		assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
-		assertEquals("redirect:/applications", view);
+		assertEquals("private/my_applications_page", view.getViewName());
 	}
 	
 	

@@ -55,7 +55,17 @@ public class ApplicationsServiceTest {
 		List<ApplicationForm> validationStageAndAfterDueDate = applicationsService.getAllApplicationsStillInValidationStageAndAfterDueDate();
 		assertSame(applicationsList, validationStageAndAfterDueDate);
 	}
-
+	
+	@Test
+	public void shouldGetAllApplicationsDueAndUpdatedNotificationToAdmin() {
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2)
+				.toApplicationForm());
+		EasyMock.expect(applicationFormDAOMock.getApplicationsDueUpdateNotification()).andReturn(applicationsList);
+		EasyMock.replay(applicationFormDAOMock);
+		List<ApplicationForm> appsDueUpdateNotification = applicationsService.getApplicationsDueUpdateNotification();
+		assertSame(applicationsList, appsDueUpdateNotification);
+	}
+	
 	@Test
 	public void shouldGetListOfApplicationsForAssignedReviewer() {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole())

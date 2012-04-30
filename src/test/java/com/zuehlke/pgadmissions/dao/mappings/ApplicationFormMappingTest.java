@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 import junit.framework.Assert;
 
@@ -23,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApplicationReview;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -32,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
@@ -40,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
@@ -47,11 +51,12 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	private Program program;
 
 	@Test
-	public void shouldSaveAndLoadApplicationForm() {
+	public void shouldSaveAndLoadApplicationForm() throws ParseException {
 
+		Date lastUpdatedDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 06 2011 14:05:23");
 		ApplicationForm application = new ApplicationForm();
 		application.setApplicant(user);
-
+		application.setLastUpdated(lastUpdatedDate);
 		application.setProgram(program);		
 		application.setStatus(ApplicationFormStatus.APPROVED);
 		application.setProjectTitle("bob");
@@ -79,7 +84,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(ApplicationFormStatus.APPROVED, reloadedApplication.getStatus());
 		assertEquals("bob", reloadedApplication.getProjectTitle());
 		assertNotNull(application.getPersonalDetails());
-
+		assertEquals(lastUpdatedDate, application.getLastUpdated());
 		assertNull(application.getPersonalDetails().getId());
 	}
 
@@ -142,10 +147,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setProgram(program);
 		application.setApplicant(user);
 		
-
-		save(application);
-		flushAndClearSession();
-
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 
 		Address addressOne = new AddressBuilder().country(countriesDAO.getAllCountries().get(0)).location("london").toAddress();
@@ -239,7 +240,37 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(2, reloadedApplication.getQualifications().size());
 
 	}
+	
+	@Test
+	public void shouldSaveAndLoadNotificationRecordsWithApplication() throws ParseException {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
+		NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.UPDATED_NOTIFICATION).toNotificationRecord();
+		NotificationRecord recordTwo = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("03 12 2011 14:09:26")).notificationType(NotificationType.VALIDATION_REMINDER).toNotificationRecord();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).notificationRecords(recordOne, recordTwo).toApplicationForm();
+		
+		save(application);
+		Integer recordOneId = recordOne.getId();
+		assertNotNull(recordOneId);
+		assertNotNull(recordTwo.getId());
+		flushAndClearSession();
+		
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertEquals(2, reloadedApplication.getNotificationRecords().size());
+		assertTrue(reloadedApplication.getNotificationRecords().containsAll(Arrays.asList(recordOne, recordTwo)));
+		
+		recordOne = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId);
+		reloadedApplication.getNotificationRecords().remove(recordOne);
+		save(reloadedApplication);
+		flushAndClearSession();
+		
+		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertEquals(1, reloadedApplication.getNotificationRecords().size());
+		assertTrue(reloadedApplication.getNotificationRecords().containsAll(Arrays.asList(recordTwo)));
+		
+		assertNull(sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId));
 
+
+	}
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

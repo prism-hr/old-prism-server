@@ -1,11 +1,8 @@
 package com.zuehlke.pgadmissions.timers;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
@@ -41,38 +38,14 @@ public class AdminValidationReminderTimerTask extends TimerTask{
 		public void run() {
 			transaction = getSessionFactory().getCurrentSession().beginTransaction();
 			List<ApplicationForm> applications = applicationsService.getAllApplicationsStillInValidationStageAndAfterDueDate();
-			for (ApplicationForm applicationForm : applications) {
-				if(isLastMailSentTwoWeeksOld(applicationForm)){
-					service.sendMailToAdminsAndChangeLastReminderDate(applicationForm);
-				}
+			for (ApplicationForm applicationForm : applications) {				
+				service.sendValidationReminderMailToAdminsAndChangeLastReminderDate(applicationForm);
+				
 			}
 			transaction.commit();		
 		}
 		
-		public boolean isLastMailSentTwoWeeksOld(ApplicationForm applicationForm){
-			Date lastDateMailWasSent = applicationForm.getLastEmailReminderDate();
-			if(lastDateMailWasSent == null){
-				return true;
-			}
-			Calendar calendar  = Calendar.getInstance();
-			Date today = calendar.getTime();
-			Date oneMinuteAgo = DateUtils.addMinutes(today, -1);			
-			return lastDateMailWasSent.before(oneMinuteAgo);
-			/*int daysBetween = 0;
-			if(lastDateMailWasSent!=null){
-			while (today.after(lastDateMailWasSent)) {
-				 calendar.add(Calendar.DAY_OF_MONTH, -1);  
-				 today = calendar.getTime();
-				 daysBetween++;
-				}
-			}
-			if(daysBetween >= 14){
-				return true;
-			}
-			return false*/
-			
-		}
-
+		
 		public SessionFactory getSessionFactory() {
 			return sessionFactory;
 		}

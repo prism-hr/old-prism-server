@@ -30,6 +30,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Document</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Language</value>
 	     		<value>com.zuehlke.pgadmissions.domain.AdditionalInformation</value>
+	     		<value>com.zuehlke.pgadmissions.domain.NotificationRecord</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

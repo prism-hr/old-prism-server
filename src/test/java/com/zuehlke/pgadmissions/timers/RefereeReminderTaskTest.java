@@ -37,10 +37,10 @@ public class RefereeReminderTaskTest {
 		EasyMock.expect(mailServiceMock.getRefereesDueAReminder()).andReturn(Arrays.asList(refereeOne, refereeTwo));
 		transactionOne.commit();
 		
-		mailServiceMock.sendReminderAndUpdateLastNotified(refereeOne);
+		mailServiceMock.sendRefereeReminderAndUpdateLastNotified(refereeOne);
 		transactionTwo.commit();
 		
-		mailServiceMock.sendReminderAndUpdateLastNotified(refereeTwo);		
+		mailServiceMock.sendRefereeReminderAndUpdateLastNotified(refereeTwo);		
 		transactionThree.commit();
 		
 		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock);
@@ -65,11 +65,11 @@ public class RefereeReminderTaskTest {
 		sessionMock.refresh(refereeTwo);
 		EasyMock.expect(mailServiceMock.getRefereesDueAReminder()).andReturn(Arrays.asList(refereeOne, refereeTwo));
 		transactionOne.commit();
-		mailServiceMock.sendReminderAndUpdateLastNotified(refereeOne);
+		mailServiceMock.sendRefereeReminderAndUpdateLastNotified(refereeOne);
 		
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
-		mailServiceMock.sendReminderAndUpdateLastNotified(refereeTwo);	
+		mailServiceMock.sendRefereeReminderAndUpdateLastNotified(refereeTwo);	
 		transactionThree.commit();
 		
 		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock);

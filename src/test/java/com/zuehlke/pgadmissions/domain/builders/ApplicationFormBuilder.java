@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
@@ -24,34 +25,20 @@ public class ApplicationFormBuilder {
 
 	private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 	private ProgrammeDetails programmeDetails;
-
 	private PersonalDetails personalDetails;
-
 	private Address currentAddress;
-
 	private Address contactAddress;
-
 	private Integer id;
-
 	private RegisteredUser approver;
-
 	private RegisteredUser applicant;
-
 	private String projectTitle;
-
 	private Program program;
-
 	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
-
 	private Date appDate;
-
 	private Date submittedDate;
-
 	private Date validationDueDate;
 
-	private Date lastEmailReminderDate;
-
-	private Date lastSubmissionNotification;
+	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
 
@@ -66,7 +53,15 @@ public class ApplicationFormBuilder {
 	private Document personalStatement = null;
 
 	private AdditionalInformation info;
+	
+	private Date lastUpdated;
+	
+	public ApplicationFormBuilder lastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
+		return this;
+	}
 
+	
 	public ApplicationFormBuilder status(ApplicationFormStatus status) {
 		this.status = status;
 		return this;
@@ -127,8 +122,10 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
-	public ApplicationFormBuilder lastSubmissionNotification(Date lastSubmissionNotification) {
-		this.lastSubmissionNotification = lastSubmissionNotification;
+	public ApplicationFormBuilder notificationRecords(NotificationRecord... notificationRecords) {
+		for (NotificationRecord notificationRecord : notificationRecords) {
+			this.notificationRecords.add(notificationRecord);
+		}
 		return this;
 	}
 
@@ -185,15 +182,11 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
-	public ApplicationFormBuilder lastEmailReminderDate(Date lastEmailReminderDate) {
-		this.lastEmailReminderDate = lastEmailReminderDate;
-		return this;
-	}
-
 	public ApplicationFormBuilder validationDueDate(Date validationDueDate) {
 		this.validationDueDate = validationDueDate;
 		return this;
 	}
+
 	public ApplicationFormBuilder additionalInformation(AdditionalInformation info) {
 		this.info = info;
 		return this;
@@ -221,12 +214,14 @@ public class ApplicationFormBuilder {
 		application.setCurrentAddress(currentAddress);
 		application.setPersonalDetails(personalDetails);
 		application.setValidationDueDate(validationDueDate);
-		application.setLastEmailReminderDate(lastEmailReminderDate);
+
 		application.setProgram(program);
-		application.setLastSubmissionNotification(lastSubmissionNotification);
+
 		application.setProjectTitle(projectTitle);
 		application.setStatus(status);
 		application.setAdditionalInformation(info);
+		application.getNotificationRecords().addAll(notificationRecords);
+		application.setLastUpdated(lastUpdated);
 		return application;
 	}
 }

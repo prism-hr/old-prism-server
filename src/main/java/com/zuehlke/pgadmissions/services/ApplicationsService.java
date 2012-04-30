@@ -75,6 +75,11 @@ public class ApplicationsService {
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
 	}
+	
+	@Transactional
+	public List<ApplicationForm> getApplicationsDueUpdateNotification() {
+		return applicationFormDAO.getApplicationsDueUpdateNotification();
+	}
 
 	@Transactional
 	public List<ApplicationForm> getAllApplicationsStillInValidationStageAndAfterDueDate() {

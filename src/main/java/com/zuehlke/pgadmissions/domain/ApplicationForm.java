@@ -26,12 +26,18 @@ import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD)
 public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm> {
 
 	private static final long serialVersionUID = -7671357234815343496L;
+
+	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "application_form_id")
+	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
 	private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
@@ -54,14 +60,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "validation_due_date")
 	private Date validationDueDate;
 
-	@Column(name = "last_submission_notification")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastSubmissionNotification;
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "last_email_reminder_date")
-	private Date lastEmailReminderDate;
-
 	@ManyToOne
 	@JoinColumn(name = "personal_statement_id")
 	private Document personalStatement = null;
@@ -74,6 +72,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "submitted_on_timestamp")
 	private Date submittedDate;
 
+	@Column(name = "last_updated")
+	@Temporal(value = TemporalType.TIMESTAMP)
+	private Date lastUpdated;
+	
 	@ManyToOne
 	@JoinColumn(name = "applicant_id")
 	private RegisteredUser applicant = null;
@@ -184,7 +186,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public boolean isModifiable() {
-		if(status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN){
+		if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN) {
 			return false;
 		}
 		return true;
@@ -212,7 +214,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 		return false;
 	}
-	
+
 	public boolean isWithdrawn() {
 		return status == ApplicationFormStatus.WITHDRAWN;
 	}
@@ -342,9 +344,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public boolean shouldOpenFirstSection() {
-		return this.programmeDetails == null && this.personalDetails == null && this.currentAddress == null// 
-				&& this.contactAddress == null && this.qualifications.isEmpty() && this.employmentPositions.isEmpty()// 
-				&& this.fundings.isEmpty() && this.referees.isEmpty() && this.personalStatement == null// 
+		return this.programmeDetails == null && this.personalDetails == null && this.currentAddress == null//
+				&& this.contactAddress == null && this.qualifications.isEmpty() && this.employmentPositions.isEmpty()//
+				&& this.fundings.isEmpty() && this.referees.isEmpty() && this.personalStatement == null//
 				&& this.cv == null && this.additionalInformation == null;
 	}
 
@@ -354,22 +356,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setValidationDueDate(Date validationDueDate) {
 		this.validationDueDate = validationDueDate;
-	}
-
-	public Date getLastEmailReminderDate() {
-		return lastEmailReminderDate;
-	}
-
-	public void setLastEmailReminderDate(Date lastEmailReminderDate) {
-		this.lastEmailReminderDate = lastEmailReminderDate;
-	}
-
-	public Date getLastSubmissionNotification() {
-		return lastSubmissionNotification;
-	}
-
-	public void setLastSubmissionNotification(Date lastSubmissionNotification) {
-		this.lastSubmissionNotification = lastSubmissionNotification;
 	}
 
 	public Program getProgram() {
@@ -398,5 +384,31 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public boolean isInValidationStage() {
 		return status == ApplicationFormStatus.VALIDATION;
+	}
+
+	public List<NotificationRecord> getNotificationRecords() {
+		return notificationRecords;
+	}
+
+	public void setNotificationRecords(List<NotificationRecord> notificationRecords) {
+		this.notificationRecords.clear();
+		this.notificationRecords.addAll(notificationRecords);
+	}
+
+	public NotificationRecord getNotificationForType(NotificationType type) {
+		for (NotificationRecord notification : notificationRecords) {
+			if (notification.getNotificationType() == type) {
+				return notification;
+			}
+		}
+		return null;
+	}
+
+	public Date getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
 	}
 }

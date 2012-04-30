@@ -15,20 +15,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
 public class MailService {
 
 	private final JavaMailSender mailsender;
-	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;	
+	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final ApplicationsService applicationsService;
 	private final RefereeDAO refereeDAO;
 
 	private final Logger log = Logger.getLogger(MailService.class);
-	
+
 	public MailService() {
 		this(null, null, null, null);
 	}
@@ -41,9 +43,9 @@ public class MailService {
 		this.applicationsService = applicationsService;
 		this.refereeDAO = refereeDAO;
 	}
-	
+
 	@Transactional
-	public void sendMailToAdminsAndChangeLastReminderDate(ApplicationForm form) {
+	public void sendValidationReminderMailToAdminsAndChangeLastReminderDate(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 
 		for (RegisteredUser admin : administrators) {
@@ -56,7 +58,8 @@ public class MailService {
 
 				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Validation Reminder",
 						"private/staff/admin/mail/application_validation_reminder.ftl", model));
-				form.setLastEmailReminderDate(new Date());
+				NotificationRecord validationReminder = getOrCreateValidationReminder(form);
+				validationReminder.setNotificationDate(new Date());
 				applicationsService.save(form);
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
@@ -65,13 +68,23 @@ public class MailService {
 
 	}
 
+	private NotificationRecord getOrCreateValidationReminder(ApplicationForm form) {
+		NotificationRecord validationReminder = form.getNotificationForType(NotificationType.VALIDATION_REMINDER);
+		if (validationReminder == null) {
+			validationReminder = new NotificationRecord();					
+			validationReminder.setNotificationType(NotificationType.VALIDATION_REMINDER);
+			form.getNotificationRecords().add(validationReminder);
+		}
+		return validationReminder;
+	}
+
 	@Transactional
 	public List<Referee> getRefereesDueAReminder() {
 		return refereeDAO.getRefereesDueAReminder();
 	}
 
 	@Transactional
-	public void sendReminderAndUpdateLastNotified(Referee referee) {
+	public void sendRefereeReminderAndUpdateLastNotified(Referee referee) {
 
 		try {
 			ApplicationForm form = referee.getApplication();
@@ -115,4 +128,113 @@ public class MailService {
 		}
 		return result;
 	}
+	
+	
+	
+	@Transactional
+	public void sendSubmissionMailToReferees(ApplicationForm form) {
+
+		List<Referee> referees = form.getReferees();
+		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
+		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
+		for (Referee referee : referees) {
+			try {
+				Map<String, Object> model = new HashMap<String, Object>();
+				model.put("referee", referee);
+				model.put("adminsEmails", adminsEmails);
+				model.put("applicant", form.getApplicant());
+				model.put("application", form);
+				model.put("programme", form.getProgrammeDetails());
+				model.put("host", Environment.getInstance().getApplicationHostName());
+				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
+				if (referee.getUser() != null && referee.getUser().isEnabled()) {
+					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+							"private/referees/mail/existing_user_referee_notification_email.ftl", model));
+				} else {
+					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+							"private/referees/mail/referee_notification_email.ftl", model));
+				}
+				referee.setLastNotified(Calendar.getInstance().getTime());
+				refereeDAO.save(referee);
+			} catch (Throwable e) {
+
+				log.warn("error while sending email", e);
+			}
+		}
+
+	}
+	
+	public void sendSubmissionMailToApplicant(ApplicationForm form) {
+		try {
+			RegisteredUser applicant = form.getApplicant();
+			List<RegisteredUser> administrators = form.getProgram().getAdministrators();
+			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("adminsEmails", adminsEmails);
+			model.put("application", form);
+			model.put("host", Environment.getInstance().getApplicationHostName());
+			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted",
+					"private/pgStudents/mail/application_submit_confirmation.ftl", model));
+		} catch (Throwable e) {
+			log.warn("error while sending email", e);
+		}
+
+	}
+	
+	@Transactional
+	public void sendSubmissionMailToAdmins(ApplicationForm form) {
+		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
+
+		for (RegisteredUser admin : administrators) {
+			try {
+										
+				Map<String, Object> model = new HashMap<String, Object>();
+				model.put("admin", admin);
+				model.put("application", form);
+				model.put("host", Environment.getInstance().getApplicationHostName());
+				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted", "private/staff/admin/mail/application_submit_confirmation.ftl", model));
+			
+				createOrUpdateUpdateNotificationRecord(form);
+				
+			} catch (Throwable e) {
+				log.warn("error while sending email", e);
+			}
+		}
+	}
+	
+	@Transactional
+	private void createOrUpdateUpdateNotificationRecord(ApplicationForm form) {
+		NotificationRecord notificationRecord = form.getNotificationForType(NotificationType.UPDATED_NOTIFICATION);
+		if(notificationRecord == null){
+			notificationRecord = new NotificationRecord();
+			notificationRecord.setNotificationType(NotificationType.UPDATED_NOTIFICATION);
+			form.getNotificationRecords().add(notificationRecord);
+		}
+		notificationRecord.setNotificationDate(new Date());		
+		applicationsService.save(form);
+	}
+	
+	@Transactional
+	public void sendApplicationUpdatedMailToAdmins(ApplicationForm form) {
+		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
+
+		for (RegisteredUser admin : administrators) {
+			try {										
+				Map<String, Object> model = new HashMap<String, Object>();
+				model.put("admin", admin);
+				model.put("application", form);
+				model.put("host", Environment.getInstance().getApplicationHostName());
+				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Updated", "private/staff/admin/mail/application_updated_confirmation.ftl", model));			
+				
+				
+			} catch (Throwable e) {
+				log.warn("error while sending email", e);
+			}
+		}
+		createOrUpdateUpdateNotificationRecord(form);
+	}
+
 }

@@ -33,7 +33,7 @@ public class RefereeReminderTask extends TimerTask {
 			transaction =sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().refresh(referee);
 			try {				
-				mailService.sendReminderAndUpdateLastNotified(referee);
+				mailService.sendRefereeReminderAndUpdateLastNotified(referee);
 				transaction.commit();				
 				log.info("reminder send to referee " +  referee.getEmail());
 			} catch (Throwable e) {

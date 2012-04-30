@@ -38,8 +38,7 @@ public class PgAdmissionAuthenticationProvider implements AuthenticationProvider
 					preProcessToken.getCredentials(), user.getAuthorities());
 			
 			authentication.setDetails(user);
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
+		} catch (NoSuchAlgorithmException e) {		
 			e.printStackTrace();
 		}
 		return authentication;

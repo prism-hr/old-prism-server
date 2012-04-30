@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -44,7 +45,7 @@ import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 public class UserServiceTest {
 
 	private UserDAO userDAOMock;
-	private RegisteredUser user;
+	private RegisteredUser currentUser;
 	private UserService userService;
 	private RoleDAO roleDAOMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
@@ -276,16 +277,28 @@ public class UserServiceTest {
 
 	}
 	
+	@Test
+	public void shouldGetUserFromSecurityContextAndRefresh(){
+		RegisteredUser refreshedUser = new RegisteredUser();
+		EasyMock.expect(userDAOMock.get(8)).andReturn(refreshedUser);
+		EasyMock.replay(userDAOMock);
+		RegisteredUser user = userService.getCurrentUser();
+		assertSame(refreshedUser, user);
+		EasyMock.verify(userDAOMock);
+		
+	}
+	
 	@Before
 	public void setUp() {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		mailsenderMock =EasyMock.createMock(JavaMailSender.class);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		user = new RegisteredUserBuilder().id(1).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(user);
+		currentUser = new RegisteredUserBuilder().id(8).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		authenticationToken.setDetails(currentUser);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
+		
 		userDAOMock = EasyMock.createMock(UserDAO.class);
 		roleDAOMock = EasyMock.createMock(RoleDAO.class);
 		userService = new UserService(userDAOMock, roleDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock);

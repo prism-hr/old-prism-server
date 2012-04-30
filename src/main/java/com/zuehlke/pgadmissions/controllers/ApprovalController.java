@@ -17,25 +17,21 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
-@RequestMapping("/progress")
-public class StateTransitionController {
-
-	private static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
+@RequestMapping("/approval")
+public class ApprovalController {
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
 
-	StateTransitionController() {
+	ApprovalController(){
 		this(null, null);
-
 	}
-
 	@Autowired
-	public StateTransitionController(ApplicationsService applicationsService, UserService userService) {
+	public ApprovalController(ApplicationsService applicationsService, UserService userService) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
-
+	
 	}
-
+	
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer application) {
 		ApplicationForm applicationForm = applicationsService.getApplicationById(application);
@@ -50,21 +46,13 @@ public class StateTransitionController {
 		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		return userService.getUser(currentUser.getId());
 	}
-
-	@ModelAttribute("stati")
-	public ApplicationFormStatus[] getAvailableNextStati(@RequestParam Integer application) {
-		ApplicationForm applicationForm = getApplicationForm(application);
-		return ApplicationFormStatus.getAvailableNextStati(applicationForm.getStatus());
-	}
-
-	@RequestMapping(method = RequestMethod.GET)
-	public String getStateTransitionView() {
-		return STATE_TRANSITION_VIEW;
-	}
-
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return getCurrentUser();
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public String moveToApproval(@ModelAttribute ApplicationForm applicationForm) {
+		applicationForm.setStatus(ApplicationFormStatus.APPROVAL);
+		applicationsService.save(applicationForm);
+		return "redirect:/applications";
+		
 	}
 
 }

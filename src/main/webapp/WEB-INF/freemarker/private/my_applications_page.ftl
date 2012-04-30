@@ -87,16 +87,16 @@
 							                		<option>Select...</option>
 							                		<option value="view">View</option>
 							                		<option value="print">Print</option>
-							                	    <#if (model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')) && application.isModifiable()>
+							                	    <#if (model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')) && false>
       													<option value="assignReviewer">Assign Reviewer</option>
         		  									</#if>
-							                	    <#if model.user.isInRole('APPROVER') && application.isModifiable()>
+							                	    <#if model.user.isInRole('APPROVER') && application.isInState('APPROVAL')>
 							                	    	<option value="approve">Approve</option>
       												</#if>
-      												<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.inValidationStage> 
+      												<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('VALIDATION')> 
 									    				<option value="validate">Validate</option>
 									      			</#if>
-									    			<#if (model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR'))  && application.isModifiable()>
+									    			<#if (model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR'))  && application.isModifiable() && false>
 									    				<option value="reject">Reject</option>
 									      			</#if>
 								      				<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || 

@@ -52,7 +52,9 @@ public class ReviewControllerTest {
 
 	@Test
 	public void shouldReturnReviwersViewName() {
-
+		EasyMock.expect(userServiceMock.getReviewersForApplication(form)).andReturn(Arrays.asList(reviewer));
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(reviewer);
+		EasyMock.replay(userServiceMock);
 		assertEquals("private/staff/admin/assign_reviewers_page",
 				controller.getReviewerPage(new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm()).getViewName());
 	}
@@ -60,6 +62,7 @@ public class ReviewControllerTest {
 	@Test
 	public void shouldgetListOfReviewersAndAddToApplication() {
 		EasyMock.expect(userServiceMock.getReviewersForApplication(form)).andReturn(Arrays.asList(reviewer));
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(reviewer);
 		EasyMock.replay(userServiceMock);
 
 		ReviewersListModel model = (ReviewersListModel) controller
@@ -71,12 +74,11 @@ public class ReviewControllerTest {
 
 	@Test
 	public void shouldAddCurrentUserToAModel() {
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(1).toUser();
-		authenticationToken.setDetails(currentUser);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		EasyMock.expect(userServiceMock.getReviewersForApplication(form)).andReturn(Arrays.asList(reviewer));
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
+		EasyMock.replay(userServiceMock);
 
 		ReviewersListModel model = (ReviewersListModel) controller
 				.getReviewerPage(new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm()).getModel().get("model");

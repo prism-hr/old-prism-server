@@ -222,7 +222,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 
-		if (isInRole(Authority.APPROVER) && applicationForm.isSubmitted()) {
+		if (isInRole(Authority.APPROVER) && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
 			if (applicationForm.getProgram().isApprover(this)) {
 				return true;
 			}

@@ -36,7 +36,7 @@ public class StateTransitionController {
 
 	}
 
-	@ModelAttribute
+	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer application) {
 		ApplicationForm applicationForm = applicationsService.getApplicationById(application);
 		if (applicationForm == null || !getCurrentUser().isInRoleInProgram(Authority.ADMINISTRATOR, applicationForm.getProgram())) {
@@ -51,7 +51,7 @@ public class StateTransitionController {
 		return userService.getUser(currentUser.getId());
 	}
 
-	@ModelAttribute
+	@ModelAttribute("stati")
 	public ApplicationFormStatus[] getAvailableNextStati(@ModelAttribute ApplicationForm applicationForm) {
 		return ApplicationFormStatus.getAvailableNextStati(applicationForm.getStatus());
 	}
@@ -61,7 +61,7 @@ public class StateTransitionController {
 		return STATE_TRANSITION_VIEW;
 	}
 
-	@ModelAttribute
+	@ModelAttribute("user")
 	public RegisteredUser getUser() {
 		return getCurrentUser();
 	}

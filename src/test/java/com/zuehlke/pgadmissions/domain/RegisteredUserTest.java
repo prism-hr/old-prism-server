@@ -175,10 +175,12 @@ public class RegisteredUserTest {
 	}
 
 	@Test
-	public void shouldReturnTrueIfUserIsItsApproverOfProgramToWhichApplicationBelongs() {
+	public void shouldReturnTrueIfUserIsItsApproverOfProgramToWhichApplicationBelongsAndApplicatioIsInApproval() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).approver(approver).toProgram();		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertFalse(approver.canSee(applicationForm));
+		applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		assertTrue(approver.canSee(applicationForm));
 
 	}

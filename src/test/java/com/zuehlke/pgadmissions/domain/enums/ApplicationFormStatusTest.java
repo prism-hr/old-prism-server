@@ -8,6 +8,7 @@ public class ApplicationFormStatusTest {
 
 	@Test
 	public void shouldOutputCorrectDisplayValues(){
+		assertEquals("Approval", ApplicationFormStatus.APPROVAL.displayValue());
 		assertEquals("Approved", ApplicationFormStatus.APPROVED.displayValue());
 		assertEquals("Rejected", ApplicationFormStatus.REJECTED.displayValue());
 		assertEquals("Validation", ApplicationFormStatus.VALIDATION.displayValue());
@@ -18,7 +19,7 @@ public class ApplicationFormStatusTest {
 	@Test
 	public void shouldReturnRejectedAndApprovedForValidationState(){
 		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.VALIDATION);
-		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.APPROVED},avaialbleStati);
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.APPROVAL},avaialbleStati);
 	}
 	
 	@Test

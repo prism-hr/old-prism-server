@@ -88,7 +88,7 @@ $(document).ready(function(){
 	$.get("/pgadmissions/update/getAdditionalInformation",
 			{
 				applicationId:  $('#applicationId').val(),
-				errorCode: false	,
+				errorCode:  $('#additionalInformationError').val(),
 				cacheBreaker: new Date().getTime() 								
 			},
 			function(data) {

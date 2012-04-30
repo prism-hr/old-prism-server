@@ -21,6 +21,8 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.BooleanPropertyEditor;
 import com.zuehlke.pgadmissions.services.AdditionalInfoService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.validators.AdditionalInformationValidator;
@@ -33,21 +35,27 @@ public class AdditionalInformationController {
 	private final AdditionalInfoService additionalService;
 	private final ApplicationsService applicationService;
 	private final AdditionalInformationValidator additionalInformationValidator;
-
+	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
+	private final BooleanPropertyEditor booleanPropertyEditor;
+	
 	AdditionalInformationController() {
-		this(null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public AdditionalInformationController(ApplicationsService applicationService, AdditionalInfoService addInfoServiceMock, AdditionalInformationValidator infoValidator) {
+	public AdditionalInformationController(ApplicationsService applicationService,
+			ApplicationFormPropertyEditor applicationFormPropertyEditor,//
+			BooleanPropertyEditor booleanEditor,//
+			AdditionalInfoService addInfoServiceMock, AdditionalInformationValidator infoValidator) {
 		this.applicationService = applicationService;
+		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
+		booleanPropertyEditor = booleanEditor;
 		this.additionalService = addInfoServiceMock;
 		additionalInformationValidator = infoValidator;
 	}
 
 	@RequestMapping(value = "/editAdditionalInformation", method = RequestMethod.POST)
 	public String editAdditionalInformation(@Valid AdditionalInformation info, BindingResult result) {
-
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
@@ -66,7 +74,6 @@ public class AdditionalInformationController {
 
 	@RequestMapping(value = "/getAdditionalInformation", method = RequestMethod.GET)
 	public String getAdditionalInformationView() {
-
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
@@ -97,14 +104,17 @@ public class AdditionalInformationController {
 	}
 
 	@InitBinder(value = "additionalInformation")
-	public void registerValidators(WebDataBinder binder) {
+	public void registerValidatorsEditors(WebDataBinder binder) {
 		binder.setValidator(additionalInformationValidator);
+		
+		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
+		binder.registerCustomEditor(Boolean.class, booleanPropertyEditor);
 	}
-	
+
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {		
+	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
 		ApplicationForm application = applicationService.getApplicationById(applicationId);
-		if(application == null || !getCurrentUser().canSee(application)){
+		if (application == null || !getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();
 		}
 		return application;

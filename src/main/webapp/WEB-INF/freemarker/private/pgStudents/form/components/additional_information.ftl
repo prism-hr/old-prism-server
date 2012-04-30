@@ -32,33 +32,51 @@
 		</div>
 
 		<div>
+    		<#if errorCode?? && errorCode=="true">
+				<div class="row">              	
+					<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
+			     </div>            	
+			</#if>
+	    	
 	    	<!-- Radio buttons for convictions. -->
 			<div class="row">
 				<label class="plain-label">Do you have any prior convictions?<em>*</em></label>
 				<span class="hint" data-desc="<@spring.message 'additionalInformation.hasconvictions'/>"></span>
 				<div class="field">
-					<label><input type="radio" name="convictionRadio" value="YES" id="convictionRadio_0"
+					<label><input type="radio" name="convictionRadio" value="TRUE" id="convictionRadio_true"
 						<#if additionalInformation.convictions?? && additionalInformation.convictions >
 							checked="checked"
 						</#if> 
 						 <#if applicationForm.isDecided()>disabled="disabled"</#if>									   
 					/> Yes</label>   		
-					<label><input type="radio" name="convictionRadio" value="NO" id="convictionRadio_1"
+					<label><input type="radio" name="convictionRadio" value="FALSE" id="convictionRadio_false"
 						<#if  additionalInformation.convictions?? && !additionalInformation.convictions >
 							checked="checked"
 						</#if> 
 						 <#if applicationForm.isDecided()>disabled="disabled"</#if>									   
-					/> No</label>    		 
+					/> No</label>
+					<@spring.bind "additionalInformation.convictions" /> 
+                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>    		 
 				</div>
 			</div>
 			
 	    	<!-- Free text field for convictions. -->
 			<div class="row">
-	       		<span id="convictions-details-lbl" class="plain-label">Details of the convictions:<em>*</em></span>
+	       		<span id="convictions-details-lbl" class="plain-label">Details of the convictions
+	        	  <#if  additionalInformation.convictions?? && additionalInformation.convictions >
+	       		    <em>*</em>
+	        	  </#if>
+	       		</span>
 	    		<span class="hint" data-desc="<@spring.message 'additionalInformation.convictionstext'/>"></span>
 	    		<div class="field">
 	      		 <#if !applicationForm.isDecided()>
-	        		<textarea id="convictionsText" name="convictionsText" class="max" rows="6" cols="80" maxlength='5000'>${(additionalInformation.convictionsText?html)!}</textarea>
+	        		<textarea id="convictionsText" name="convictionsText" 
+	        		<#if  additionalInformation.convictions?? && !additionalInformation.convictions >
+	        		    disabled="disabled"
+	        		</#if>
+	        		class="max" rows="6" cols="80" maxlength='5000'>${(additionalInformation.convictionsText?html)!}</textarea>
+					<@spring.bind "additionalInformation.convictionsText" /> 
+                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>    		 
 	            <#else>
 	                <textarea readonly="readonly" id="convictionsText" name="convictionsText" class="max" rows="10" cols=80" >${(additionalInformation.convictionsText?html)!}</textarea>
 	            </#if>

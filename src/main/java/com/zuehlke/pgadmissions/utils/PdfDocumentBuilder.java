@@ -22,6 +22,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
@@ -399,7 +400,7 @@ public class PdfDocumentBuilder {
 				document.add(new Paragraph("Email: " + reference.getEmail()));
 				document.add(new Paragraph("Telephone: " + reference.getPhoneNumber()));
 				addCorrectOutputDependingOnNull(document, reference.getMessenger(), "Skype Name");
-				if(reference.isDeclined()){
+				if (reference.isDeclined()) {
 					document.add(new Paragraph("This referee has declined"));
 				}
 				document.add(new Paragraph(" "));
@@ -410,8 +411,13 @@ public class PdfDocumentBuilder {
 
 	private void addAdditionalInformationSection(ApplicationForm application, Document document) throws DocumentException {
 		document.add(new Paragraph("Additional Information                                                                        ", grayFont));
-		if (application.getAdditionalInformation() != null) {
-			document.add(new Paragraph(application.getAdditionalInformation().getInformationText()));
+		AdditionalInformation addInfo = application.getAdditionalInformation();
+		if (addInfo != null) {
+			document.add(new Paragraph(addInfo.getInformationText()));
+			if (addInfo.getConvictions() != null && addInfo.getConvictions()) {
+				document.add(new Paragraph("Convictions", smallBoldFont));
+				document.add(new Paragraph("Details of convictions: " + addInfo.getConvictionsText()));
+			}
 		} else {
 			document.add(new Paragraph(createMessage("additional information")));
 		}
@@ -423,8 +429,7 @@ public class PdfDocumentBuilder {
 		if (doc != null) {
 			document.newPage();
 			document.add(new Paragraph(doc.getType().getDisplayValue(), smallBoldFont));
-			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg")
-					|| doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
+			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg") || doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
 				Image image = Image.getInstance(doc.getContent());
 				document.add(image);
 			} else if (doc.getFileName().endsWith(".txt")) {
@@ -438,8 +443,7 @@ public class PdfDocumentBuilder {
 		if (doc != null) {
 			document.newPage();
 			document.add(new Paragraph(doc.getType().getDisplayValue(), smallBoldFont));
-			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg")
-					|| doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
+			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg") || doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
 				Image image = Image.getInstance(doc.getContent());
 				document.add(image);
 			} else if (doc.getFileName().endsWith(".txt")) {

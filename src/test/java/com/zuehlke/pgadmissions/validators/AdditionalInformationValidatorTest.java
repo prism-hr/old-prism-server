@@ -31,7 +31,7 @@ public class AdditionalInformationValidatorTest {
 	public void validateGoodAdditionalInfo() {
 		info.setInformationText("add info");
 		info.setConvictions(false);
-		info.setConvictionsText(null);
+		info.setConvictionsText("");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "convictions");
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
@@ -78,6 +78,16 @@ public class AdditionalInformationValidatorTest {
 		infoValidator.validate(info, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("additionalInformation.convictionsText.notempty", mappingResult.getFieldError("convictionsText").getCode());
+	}
+
+	@Test
+	public void shouldRejectIfNoCovictionsButConvictionTextProvided() {
+		info.setConvictions(false);
+		info.setConvictionsText("lalala");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(info, "informationText");
+		infoValidator.validate(info, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("additionalInformation.convictionsText.noTextExpected", mappingResult.getFieldError("convictionsText").getCode());
 	}
 
 	@Test

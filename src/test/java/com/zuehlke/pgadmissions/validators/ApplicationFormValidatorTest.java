@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramInstanceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgrammeDetailsBuilder;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
 public class ApplicationFormValidatorTest {
@@ -190,6 +191,20 @@ public class ApplicationFormValidatorTest {
 		Assert.assertEquals("application.program.invalid", mappingResult.getFieldError("program").getCode());
 
 	}
+	
+//	@Test
+//	public void shouldRejectIfNotAcceptedTheTerms() {
+//		applicationForm.setAcceptedTerms(CheckedStatus.NO);
+//		BeanPropertyBindingResult mappingResult = new BeanPropertyBindingResult(applicationForm, "acceptedTerms");
+//		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetails.getStudyOption())).andReturn(
+//				Arrays.asList(programInstance));
+//		EasyMock.replay(programInstanceDAOMock);
+//		validator.validate(applicationForm, mappingResult);
+//		EasyMock.verify(programInstanceDAOMock);
+//		Assert.assertEquals(1, mappingResult.getErrorCount());
+//		Assert.assertEquals("application.acceptedTerms.unchecked", mappingResult.getFieldError("acceptedTerms").getCode());
+//		
+//	}
 	@Before
 	public void setup() throws ParseException {
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
@@ -201,7 +216,7 @@ public class ApplicationFormValidatorTest {
 		program.setInstances(Arrays.asList(programInstance));
 		programmeDetails = new ProgrammeDetailsBuilder().studyOption(StudyOption.FULL_TIME).id(2).toProgrammeDetails();
 		applicationForm = new ApplicationFormBuilder().program(program).programmeDetails(programmeDetails)
-				.personalDetails(new PersonalDetailsBuilder().id(1).toPersonalDetails())
+				.acceptedTerms(CheckedStatus.YES).personalDetails(new PersonalDetailsBuilder().id(1).toPersonalDetails())
 				.additionalInformation(new AdditionalInformationBuilder().id(3).toAdditionalInformation())//
 				.currentAddress(new Address()).contactAddress(new Address())//
 				.referees(new Referee(), new Referee(), new Referee())//

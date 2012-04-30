@@ -209,6 +209,9 @@
 
 			          			<hr/>
 			          			
+			          			<section id="acceptTermsSection" >
+	                    		</section>
+	                    		
 			          			<div class="buttons">
 			          			
 									<div style="float:left">		    	 
@@ -225,7 +228,7 @@
 			          				<#if !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>	             			
 			             				<form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
 			          	      				<input type="hidden" id="applicationFormId" name="applicationId" 	value="${applicationForm.id?string("######")}"/>
-		          	      					<button id="submitButton" type="submit" class="blue">Submit</button>
+		          	      					<button id="submitButton" class="blue">Submit</button>
 										</form>
 									</#if>
 									<a class="button" href="<@spring.url '/applications'/>">Close</a>

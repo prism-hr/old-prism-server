@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class ApplicationFormBuilder {
 
@@ -37,6 +38,7 @@ public class ApplicationFormBuilder {
 	private Date appDate;
 	private Date submittedDate;
 	private Date validationDueDate;
+	private CheckedStatus acceptedTerms;
 
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 
@@ -72,6 +74,11 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
+	public ApplicationFormBuilder acceptedTerms(CheckedStatus acceptedTerms) {
+		this.acceptedTerms = acceptedTerms;
+		return this;
+	}
+	
 	public ApplicationFormBuilder personalDetails(PersonalDetails personalDetails) {
 		this.personalDetails = personalDetails;
 		return this;
@@ -222,6 +229,7 @@ public class ApplicationFormBuilder {
 		application.setAdditionalInformation(info);
 		application.getNotificationRecords().addAll(notificationRecords);
 		application.setLastUpdated(lastUpdated);
+		application.setAcceptedTerms(acceptedTerms);
 		return application;
 	}
 }

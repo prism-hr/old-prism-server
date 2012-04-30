@@ -20,21 +20,26 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 @Entity(name = "APPLICATION_FORM")
 @Access(AccessType.FIELD)
 public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm> {
 
-	
 	private static final long serialVersionUID = -7671357234815343496L;
-	
+
+	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "application_form_id")
+	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
+
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
 	private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 
@@ -56,14 +61,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "validation_due_date")
 	private Date validationDueDate;
 
-	@Column(name = "last_submission_notification")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date lastSubmissionNotification;
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "last_email_reminder_date")
-	private Date lastEmailReminderDate;
-
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	@Column(name="accepted_terms")
+	private CheckedStatus acceptedTerms;
+	
 	@ManyToOne
 	@JoinColumn(name = "personal_statement_id")
 	private Document personalStatement = null;
@@ -76,6 +78,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "submitted_on_timestamp")
 	private Date submittedDate;
 
+	@Column(name = "last_updated")
+	@Temporal(value = TemporalType.TIMESTAMP)
+	private Date lastUpdated;
+	
 	@ManyToOne
 	@JoinColumn(name = "applicant_id")
 	private RegisteredUser applicant = null;
@@ -124,8 +130,8 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "application_form_id")
 	private List<Referee> referees = new ArrayList<Referee>();
 
-	@Column(name = "additional_information")
-	private String additionalInformation;
+	@OneToOne(mappedBy = "application")
+	private AdditionalInformation additionalInformation;
 
 	public List<Qualification> getQualifications() {
 		return qualifications;
@@ -143,8 +149,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public void setReviewers(List<RegisteredUser> reviewers) {
 		this.reviewers = reviewers;
 	}
-
-
 
 	@Override
 	public void setId(Integer id) {
@@ -175,8 +179,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.approver = approver;
 	}
 
-
-
 	public Date getApplicationTimestamp() {
 		return applicationTimestamp;
 	}
@@ -190,16 +192,15 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public boolean isModifiable() {
-		if (status == ApplicationFormStatus.VALIDATION) {
-			return true;
+		if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED || status == ApplicationFormStatus.WITHDRAWN) {
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	public boolean isSubmitted() {
 		return status != ApplicationFormStatus.UNSUBMITTED;
 	}
-
 
 	@Override
 	public int compareTo(ApplicationForm appForm) {
@@ -214,12 +215,12 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public boolean isDecided() {
-		if(status == ApplicationFormStatus.REJECTED || 	status== ApplicationFormStatus.APPROVED){
-		return true;
+		if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED) {
+			return true;
 		}
-		return false;		
+		return false;
 	}
-	
+
 	public boolean isWithdrawn() {
 		return status == ApplicationFormStatus.WITHDRAWN;
 	}
@@ -286,16 +287,15 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.programmeDetails = programmeDetails;
 	}
 
-	public String getAdditionalInformation() {
+	public AdditionalInformation getAdditionalInformation() {
+		if (additionalInformation == null) {
+			return new AdditionalInformation();
+		}
 		return additionalInformation;
 	}
 
-	public void setAdditionalInformation(String additionalInformation) {
-		if (StringUtils.isBlank(additionalInformation)) {
-			this.additionalInformation = null;
-		} else {
-			this.additionalInformation = additionalInformation;
-		}
+	public void setAdditionalInformation(AdditionalInformation additionalInformation) {
+		this.additionalInformation = additionalInformation;
 	}
 
 	public Date getSubmittedDate() {
@@ -343,19 +343,18 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		for (ApplicationReview comment : applicationComments) {
 			if (comment.getUser().isInRole(Authority.REVIEWER) && (!comment.getUser().equals(user))) {
 				continue;
-			} else {
-				visibleComments.add(comment);
 			}
+			visibleComments.add(comment);
 		}
 		return visibleComments;
 	}
 
 	public boolean shouldOpenFirstSection() {
-		return this.programmeDetails == null && this.personalDetails == null && this.currentAddress == null && this.contactAddress == null
-				&& this.qualifications.isEmpty() && this.employmentPositions.isEmpty() && this.fundings.isEmpty() && this.referees.isEmpty()
-				&& this.personalStatement == null && this.cv == null && StringUtils.isBlank(this.additionalInformation);
+		return this.programmeDetails == null && this.personalDetails == null && this.currentAddress == null//
+				&& this.contactAddress == null && this.qualifications.isEmpty() && this.employmentPositions.isEmpty()//
+				&& this.fundings.isEmpty() && this.referees.isEmpty() && this.personalStatement == null//
+				&& this.cv == null && this.additionalInformation == null;
 	}
-
 
 	public Date getValidationDueDate() {
 		return validationDueDate;
@@ -363,22 +362,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setValidationDueDate(Date validationDueDate) {
 		this.validationDueDate = validationDueDate;
-	}
-
-	public Date getLastEmailReminderDate() {
-		return lastEmailReminderDate;
-	}
-
-	public void setLastEmailReminderDate(Date lastEmailReminderDate) {
-		this.lastEmailReminderDate = lastEmailReminderDate;
-	}
-
-	public Date getLastSubmissionNotification() {
-		return lastSubmissionNotification;
-	}
-
-	public void setLastSubmissionNotification(Date lastSubmissionNotification) {
-		this.lastSubmissionNotification = lastSubmissionNotification;
 	}
 
 	public Program getProgram() {
@@ -408,4 +391,54 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public boolean isInValidationStage() {
 		return status == ApplicationFormStatus.VALIDATION;
 	}
+
+	public List<NotificationRecord> getNotificationRecords() {
+		return notificationRecords;
+	}
+
+	public void setNotificationRecords(List<NotificationRecord> notificationRecords) {
+		this.notificationRecords.clear();
+		this.notificationRecords.addAll(notificationRecords);
+	}
+
+	public NotificationRecord getNotificationForType(NotificationType type) {
+		for (NotificationRecord notification : notificationRecords) {
+			if (notification.getNotificationType() == type) {
+				return notification;
+			}
+		}
+		return null;
+	}
+
+	public boolean hasAcceptedTheTerms(){
+		return acceptedTerms == CheckedStatus.YES;
+	}
+	
+	public Date getLastUpdated() {
+		return lastUpdated;
+	}
+
+	public void setLastUpdated(Date lastUpdated) {
+		this.lastUpdated = lastUpdated;
+	}
+
+<<<<<<< local
+	public CheckedStatus getAcceptedTerms() {
+		return acceptedTerms;
+=======
+	public boolean isInState(String strStatus) {
+		try {
+			return status == ApplicationFormStatus.valueOf(strStatus);
+		} catch (IllegalArgumentException e) {
+			return false;
+		}
+>>>>>>> other
+	}
+<<<<<<< local
+
+	public void setAcceptedTerms(CheckedStatus acceptedTerms) {
+		this.acceptedTerms = acceptedTerms;
+	}
+=======
+>>>>>>> other
 }

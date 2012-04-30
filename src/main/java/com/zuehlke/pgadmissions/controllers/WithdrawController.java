@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.services.WithdrawService;
 @RequestMapping("/withdraw")
 public class WithdrawController {
 
-	private static final String APPLICATION_LIST_VIEW_NAME = "private/my_applications_page";
 	private final WithdrawService withdrawService;
 	private final ApplicationsService applicationService;
 

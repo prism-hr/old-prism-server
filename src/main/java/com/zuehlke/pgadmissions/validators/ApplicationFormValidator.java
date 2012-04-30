@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Component
 public class ApplicationFormValidator implements Validator {
@@ -60,6 +61,9 @@ public class ApplicationFormValidator implements Validator {
 		if (applicationForm.getReferees().size() < 3) {
 			errors.rejectValue("referees", "user.referees.notvalid");
 		}
+//		if (applicationForm.getAcceptedTerms() == CheckedStatus.NO) {
+//			errors.rejectValue("acceptedTerms", "application.acceptedTerms.unchecked");
+//		}
 		if (programmeDetails != null && programmeDetails.getStudyOption() != null) {
 			List<ProgramInstance> programInstances = programInstanceDAO.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(applicationForm.getProgram(), programmeDetails.getStudyOption());
 			if (programInstances == null || programInstances.isEmpty()) {

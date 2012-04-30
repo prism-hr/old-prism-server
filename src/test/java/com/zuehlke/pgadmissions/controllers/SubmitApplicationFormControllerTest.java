@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RefereeService;
@@ -74,9 +75,9 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.verify(submitApplicationServiceMock);
 	}
 
-	@Ignore
+
 	@Test
-	public void shouldChangeStatusToSubmittedAndSaveIfNoErrors() {
+	public void shouldChangeStatusToValidateAndSaveIfNoErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).toApplicationForm();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
@@ -85,8 +86,10 @@ public class SubmitApplicationFormControllerTest {
 		applicationController.submitApplication(applicationForm, errorsMock);
 
 		EasyMock.verify(submitApplicationServiceMock);
-		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());
-		assertNotNull(applicationForm.getSubmittedDate());
+		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());		
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getSubmittedDate(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION).getNotificationDate(), Calendar.DATE));
 	}
 
 	@Test

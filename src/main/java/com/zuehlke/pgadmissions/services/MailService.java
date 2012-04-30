@@ -231,6 +231,7 @@ public class MailService {
 				
 				
 			} catch (Throwable e) {
+				e.printStackTrace();
 				log.warn("error while sending email", e);
 			}
 		}

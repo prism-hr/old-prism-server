@@ -5,8 +5,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -164,14 +166,17 @@ public class RefereeControllerTest {
 
 	@Test
 	public void shouldSaveRefereeAndRedirectIfNoErrors() {
-		Referee referee = new RefereeBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toReferee();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		refereeServiceMock.save(referee);
-		EasyMock.replay(refereeServiceMock, errors);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(refereeServiceMock,applicationsServiceMock,  errors);
 		String view = controller.editReferee(referee, errors);
-		EasyMock.verify(refereeServiceMock);
+		EasyMock.verify(refereeServiceMock, applicationsServiceMock);
 		assertEquals( "redirect:/update/getReferee?applicationId=5", view);
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationSubmittedAndIfNoErrors() {

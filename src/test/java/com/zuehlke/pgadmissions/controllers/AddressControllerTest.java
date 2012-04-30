@@ -7,8 +7,10 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -217,6 +219,7 @@ public class AddressControllerTest {
 		String view = controller.editAddresses(addressSectionDTO, errors, applicationForm);
 
 		EasyMock.verify(applicationsServiceMock);
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 
 		assertEquals("location1", applicationForm.getContactAddress().getLocation());
 		assertEquals(countryOne, applicationForm.getContactAddress().getCountry());
@@ -251,12 +254,12 @@ public class AddressControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).currentAddress(addressOne).contactAddress(addressTwo).toApplicationForm();
 
 		applicationsServiceMock.save(applicationForm);
-
 		EasyMock.replay(applicationsServiceMock, errors);
 
 		String view = controller.editAddresses(addressSectionDTO, errors, applicationForm);
 
 		EasyMock.verify(applicationsServiceMock);
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 
 		assertEquals("location1", applicationForm.getContactAddress().getLocation());
 		assertEquals(countryOne, applicationForm.getContactAddress().getCountry());

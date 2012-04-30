@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Date;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +58,8 @@ public class AdditionalInformationController {
 			return STUDENTS_FORM_ADDITIONAL_INFORMATION_VIEW;
 		}
 		additionalService.save(info);
+		info.getApplication().setLastUpdated(new Date());
+		applicationService.save(info.getApplication());
 		return "redirect:/update/getAdditionalInformation?applicationId=" + info.getApplication().getId();
 
 	}

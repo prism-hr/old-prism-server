@@ -31,7 +31,7 @@
 
 	<bean id="scheduledMailTimerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="2000" />
-		<property name="period" value=" 60000 " />
+		<property name="period" value="60000" />
 		<property name="timerTask" ref="mailTimerTask" />		
 	</bean>  
 	
@@ -46,6 +46,23 @@
 		<property name="period" value="60000" />
 		<property name="timerTask" ref="refereeReminderTimerTask" />		
 	</bean> 
+	
+	
+	<!--  update notifications -->
+	
+	<bean id="updateNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.ApplicationUpdatedNotificationTask" >
+		<constructor-arg index="0" ref="sessionFactoryMail"/>
+		<constructor-arg index="1" ref="mailServiceForTimers"/>
+		<constructor-arg index="2" ref="mailApplicationsService"/>
+	</bean>
+
+	<bean id="updateNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="300000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="updateNotificationTimerTask" />		
+	</bean> 
+	
+	<!-- The main schedule -->
 	<bean class="org.springframework.scheduling.timer.TimerFactoryBean">
 		<property name="scheduledTimerTasks">
 		<list>

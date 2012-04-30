@@ -4,8 +4,10 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -159,14 +161,17 @@ public class FundingControllerTest {
 
 	@Test
 	public void shouldSaveQulificationAndRedirectIfNoErrors() {
-		Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toFunding();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		Funding funding = new FundingBuilder().id(1).application(applicationForm).toFunding();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		fundingServiceMock.save(funding);
-		EasyMock.replay(fundingServiceMock, errors);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(fundingServiceMock,applicationsServiceMock, errors);
 		String view = controller.editFunding(funding, errors);
-		EasyMock.verify(fundingServiceMock);
+		EasyMock.verify(fundingServiceMock, applicationsServiceMock);
 		assertEquals("redirect:/update/getFunding?applicationId=5", view);
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test

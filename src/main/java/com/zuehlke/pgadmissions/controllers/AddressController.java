@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -78,7 +79,7 @@ public class AddressController {
 		currentAddress.setCountry(addressSectionDTO.getCurrentAddressCountry());
 		currentAddress.setLocation(addressSectionDTO.getCurrentAddressLocation());
 	
-		
+		applicationForm.setLastUpdated(new Date());
 		applicationService.save(applicationForm);
 		
 		return "redirect:/update/getAddress?applicationId=" + applicationForm.getId();

@@ -97,6 +97,8 @@ public class PersonalDetailsController {
 			return STUDENTS_FORM_PERSONAL_DETAILS_VIEW;
 		}
 		personalDetailsService.save(personalDetails);
+		personalDetails.getApplication().setLastUpdated(new Date());
+		applicationsService.save(personalDetails.getApplication());
 		return "redirect:/update/getPersonalDetails?applicationId=" + personalDetails.getApplication().getId();
 			
 	}

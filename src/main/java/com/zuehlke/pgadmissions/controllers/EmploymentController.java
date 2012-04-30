@@ -102,6 +102,8 @@ public class EmploymentController {
 			return STUDENTS_EMPLOYMENT_DETAILS_VIEW;
 		}
 		employmentPositionService.save(employment);
+		employment.getApplication().setLastUpdated(new Date());
+		applicationService.save(employment.getApplication());
 		return "redirect:/update/getEmploymentPosition?applicationId=" + employment.getApplication().getId();
 
 	}

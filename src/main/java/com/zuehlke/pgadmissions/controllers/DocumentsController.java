@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.Date;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,7 @@ public class DocumentsController{
 		if(result.hasErrors()){
 			return STUDENTS_FORM_DOCUMENTS_VIEW;
 		}
+		applicationForm.setLastUpdated(new Date());
 		applicationsService.save(applicationForm);
 		return "redirect:/update/getDocuments?applicationId=" + applicationForm.getId();
 			

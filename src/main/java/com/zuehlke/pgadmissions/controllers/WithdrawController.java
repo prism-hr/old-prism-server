@@ -39,18 +39,13 @@ public class WithdrawController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView withdrawApplicationAndGetApplicationList(@ModelAttribute ApplicationForm applicationForm) {
-		SecurityContext context = SecurityContextHolder.getContext();
-		RegisteredUser user = (RegisteredUser) context.getAuthentication().getDetails();
+	public String withdrawApplicationAndGetApplicationList(@ModelAttribute ApplicationForm applicationForm) {
 		if(applicationForm.getStatus() != ApplicationFormStatus.VALIDATION ){
 			throw new CannotWithdrawApplicationException();
 		}
 		applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
 		withdrawService.saveApplicationFormAndSendMailNotifications(applicationForm);
-		ApplicationListModel model = new ApplicationListModel();
-		model.setUser(user);
-		model.setApplications(applicationService.getVisibleApplications(user));
-		return new ModelAndView(APPLICATION_LIST_VIEW_NAME, "model", model);
+		return "redirect:/applications";
 	}
 	
 	

@@ -6,10 +6,21 @@ $(document).ready(function(){
 	});
 	
 	$('#informationSaveButton').click(function(){
-		$.post("/pgadmissions/update/addAdditionalInformation", { 
-			additionalInformation: $("#additionalInformation").val(),
-			id: $("#id").val(), 
-			appId: $("#appId").val()
+		var hasConvictions = null;
+		if ($('#convictionRadio_true:checked').val() !== undefined) {
+			hasConvictions = true;
+		}
+		if ($('#convictionRadio_false:checked').val() !== undefined) {
+			hasConvictions = false;
+		}
+
+		$.post("/pgadmissions/update/editAdditionalInformation", { 
+			informationText: $("#informationText").val(),
+			convictions: hasConvictions,
+			convictionsText: $("#convictionsText").val(),
+			applicationId:  $('#applicationId').val(),
+			application:  $('#applicationId').val(),
+			message:'close'
 		},
 		
 		function(data) {

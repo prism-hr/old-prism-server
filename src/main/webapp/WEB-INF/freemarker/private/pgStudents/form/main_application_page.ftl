@@ -64,6 +64,12 @@
 <#else>
 	<#assign refereesError = false/>
 </#if>
+<@spring.bind "applicationForm.additionalInformation" />
+<#if spring.status.errorMessages?has_content >
+	<#assign additionalInformationError = true/>
+<#else>
+	<#assign additionalInformationError = false/>
+</#if>
 <#-- Personal Details Rendering -->
 
 <html>
@@ -113,6 +119,7 @@
 		<input type="hidden" id="refereesError" value="${refereesError?string}"/>
 		<input type="hidden" id="studyOptionError" value="${studyOptionError?string}"/>
 		<input type="hidden" id="programError" value="${programError?string}"/>
+		<input type="hidden" id="additionalInformationError" value="${additionalInformationError?string}"/>
 		
 		<div id="wrapper">
 			
@@ -196,7 +203,7 @@
 			          			<section id="documentSection" class="folding blue <#if personalStatementError>error</#if>">							
 			          			</section>
 			          
-			          			<section id="additionalInformationSection" class="folding lightblue">
+			          			<section id="additionalInformationSection" class="folding lightblue" <#if additionalInformationError> error</#if>>
 			          				
 			          			</section>
 

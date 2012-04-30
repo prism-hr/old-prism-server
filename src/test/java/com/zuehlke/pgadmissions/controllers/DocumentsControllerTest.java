@@ -2,6 +2,9 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Calendar;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -120,6 +123,7 @@ public class DocumentsControllerTest {
 		String view = controller.editDocuments(applicationForm, errors);
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals("redirect:/update/getDocuments?applicationId=5", view);
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test

@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.validation.Valid;
 
-import org.directwebremoting.guice.RequestParameters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -73,6 +72,8 @@ public class ProgrammeDetailsController {
 			return STUDENTS_FORM_PROGRAMME_DETAILS_VIEW;
 		}
 		programmeDetailsService.save(programmeDetails);
+		programmeDetails.getApplication().setLastUpdated(new Date());
+		applicationsService.save(programmeDetails.getApplication());
 		return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getId();
 
 	}

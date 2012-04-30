@@ -6,9 +6,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -239,14 +241,17 @@ public class PersonalDetailsControllerTest {
 
 	@Test
 	public void shouldSaveQulificationAndRedirectIfNoErrors() {
-		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().id(5).toApplicationForm()).toPersonalDetails();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).applicationForm(applicationForm).toPersonalDetails();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		personalDetailsServiceMock.save(personalDetails);
-		EasyMock.replay(personalDetailsServiceMock, errors);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(personalDetailsServiceMock,applicationsServiceMock,  errors);
 		String view = controller.editPersonalDetails(personalDetails, errors);
-		EasyMock.verify(personalDetailsServiceMock);
+		EasyMock.verify(personalDetailsServiceMock, applicationsServiceMock);
 		assertEquals("redirect:/update/getPersonalDetails?applicationId=5", view);
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test

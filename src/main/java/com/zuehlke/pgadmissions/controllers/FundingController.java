@@ -89,6 +89,8 @@ public class FundingController {
 			return STUDENT_FUNDING_DETAILS_VIEW;
 		}
 		fundingService.save(funding);
+		funding.getApplication().setLastUpdated(new Date());
+		applicationService.save(funding.getApplication());
 		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getId();
 			
 	}

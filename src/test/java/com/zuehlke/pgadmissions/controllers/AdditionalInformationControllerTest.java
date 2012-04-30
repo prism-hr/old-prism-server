@@ -1,7 +1,12 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Calendar;
+
 import junit.framework.Assert;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -43,8 +48,7 @@ public class AdditionalInformationControllerTest {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 
 		validatorMock = EasyMock.createMock(AdditionalInformationValidator.class);
-		controller = new AdditionalInformationController(applicationServiceMock, addInfoServiceMock, validatorMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm();	
+		controller = new AdditionalInformationController(applicationServiceMock, addInfoServiceMock, validatorMock);			
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
@@ -119,10 +123,13 @@ public class AdditionalInformationControllerTest {
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 
 		addInfoServiceMock.save(info);
+		applicationServiceMock.save(applicationForm);
+		
 		EasyMock.replay(errors, applicationServiceMock, addInfoServiceMock);
 		String viewID = controller.editAdditionalInformation(info, errors);
 		EasyMock.verify(errors, applicationServiceMock, addInfoServiceMock);
 		Assert.assertEquals("redirect:/update/getAdditionalInformation?applicationId=5", viewID);
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test

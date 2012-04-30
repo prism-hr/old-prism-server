@@ -5,8 +5,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -44,14 +46,12 @@ public class ProgrammeDetailsControllerTest {
 	private RegisteredUser currentUser;
 	private DatePropertyEditor datePropertyEditorMock;
 	private ApplicationsService applicationsServiceMock;
-	private ProgrammeDetailsValidator programmeDetailsValidatorMock;	
+	private ProgrammeDetailsValidator programmeDetailsValidatorMock;
 	private ProgrammeDetailsService programmeDetailsServiceMock;
 	private ProgrammeDetailsController controller;
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
 	private UsernamePasswordAuthenticationToken authenticationToken;
 	private SupervisorJSONPropertyEditor supervisorJSONPropertyEditorMock;
-	
-	
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -81,17 +81,17 @@ public class ProgrammeDetailsControllerTest {
 		assertEquals("/private/pgStudents/form/components/programme_details", controller.getProgrammeDetailsView());
 	}
 
-
 	@Test
 	public void shouldReturnAvaialbeStudyOptionLevels() {
 		Program program = new ProgramBuilder().id(1).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).toApplicationForm();
-		EasyMock.expect(programmeDetailsServiceMock.getAvailableStudyOptions(program)).andReturn(Arrays.asList(StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE));
+		EasyMock.expect(programmeDetailsServiceMock.getAvailableStudyOptions(program)).andReturn(
+				Arrays.asList(StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE));
 		EasyMock.replay(programmeDetailsServiceMock);
 		StudyOption[] studyOptions = controller.getStudyOptions(applicationForm);
-		assertArrayEquals(studyOptions, new StudyOption[]{StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE});
+		assertArrayEquals(studyOptions, new StudyOption[] { StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE });
 	}
-	
+
 	@Test
 	public void shouldReturnAllReferers() {
 		Referrer[] referrers = controller.getReferrers();
@@ -143,16 +143,16 @@ public class ProgrammeDetailsControllerTest {
 
 	@Test
 	public void shouldGetProgrammeDetailsFromApplicationForm() {
-		
+
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).toProgrammeDetails();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
 		applicationForm.setProgrammeDetails(programmeDetails);
 		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);		
+		authenticationToken.setDetails(currentUser);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(applicationsServiceMock, currentUser);
-		
+
 		ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails(5);
 		assertEquals(programmeDetails, returnedProgrammeDetails);
 	}
@@ -162,9 +162,9 @@ public class ProgrammeDetailsControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);		
+		authenticationToken.setDetails(currentUser);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.replay(applicationsServiceMock,currentUser);
+		EasyMock.replay(applicationsServiceMock, currentUser);
 		ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails(5);
 		assertNull(returnedProgrammeDetails.getId());
 	}
@@ -184,16 +184,18 @@ public class ProgrammeDetailsControllerTest {
 	}
 
 	@Test
-	public void shouldSaveQulificationAndRedirectIfNoErrors() {
-		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(new ApplicationFormBuilder().id(5).toApplicationForm())
-				.toProgrammeDetails();
+	public void shouldSaveProgrammeDetailsAndApplicationAndRedirectIfNoErrors() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(applicationForm).toProgrammeDetails();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		programmeDetailsServiceMock.save(programmeDetails);
-		EasyMock.replay(programmeDetailsServiceMock, errors);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(programmeDetailsServiceMock,applicationsServiceMock, errors);
 		String view = controller.editProgrammeDetails(programmeDetails, errors);
-		EasyMock.verify(programmeDetailsServiceMock);
+		EasyMock.verify(programmeDetailsServiceMock, applicationsServiceMock);
 		assertEquals("redirect:/update/getProgrammeDetails?applicationId=5", view);
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test
@@ -212,7 +214,7 @@ public class ProgrammeDetailsControllerTest {
 	@Before
 	public void setUp() {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		
+
 		programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
 
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
@@ -222,7 +224,8 @@ public class ProgrammeDetailsControllerTest {
 		programmeDetailsValidatorMock = EasyMock.createMock(ProgrammeDetailsValidator.class);
 		programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
 
-		controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock);
+		controller = new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
+				supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 

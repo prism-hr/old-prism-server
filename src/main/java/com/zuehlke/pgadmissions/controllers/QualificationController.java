@@ -107,6 +107,8 @@ public class QualificationController {
 			return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
 		}
 		qualificationService.save(qualification);
+		qualification.getApplication().setLastUpdated(new Date());
+		applicationService.save(qualification.getApplication());
 		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getId();
 			
 	}

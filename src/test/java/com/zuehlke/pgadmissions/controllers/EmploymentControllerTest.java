@@ -5,9 +5,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -181,14 +183,17 @@ public class EmploymentControllerTest {
 
 	@Test
 	public void shouldSaveEmploymentAndRedirectIfNoErrors() {
-		EmploymentPosition employment = new EmploymentPositionBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toEmploymentPosition();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		EmploymentPosition employment = new EmploymentPositionBuilder().id(1).application(applicationForm).toEmploymentPosition();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		employmentServiceMock.save(employment);
-		EasyMock.replay(employmentServiceMock, errors);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(employmentServiceMock, applicationsServiceMock, errors);
 		String view = controller.editEmployment(employment, errors);
-		EasyMock.verify(employmentServiceMock);
+		EasyMock.verify(employmentServiceMock, applicationsServiceMock);
 		assertEquals( "redirect:/update/getEmploymentPosition?applicationId=5", view);
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test

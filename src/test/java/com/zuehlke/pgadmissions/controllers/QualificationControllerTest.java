@@ -5,9 +5,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -182,14 +184,17 @@ public class QualificationControllerTest {
 
 	@Test
 	public void shouldSaveQulificationAndRedirectIfNoErrors() {
-		Qualification qualification = new QualificationBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toQualification();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		Qualification qualification = new QualificationBuilder().id(1).application(applicationForm).toQualification();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		qualificationServiceMock.save(qualification);
-		EasyMock.replay(qualificationServiceMock, errors);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(qualificationServiceMock, applicationsServiceMock, errors);
 		String view = controller.editQualification(qualification, errors);
-		EasyMock.verify(qualificationServiceMock);
+		EasyMock.verify(qualificationServiceMock,applicationsServiceMock);
 		assertEquals( "redirect:/update/getQualification?applicationId=5", view);
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test

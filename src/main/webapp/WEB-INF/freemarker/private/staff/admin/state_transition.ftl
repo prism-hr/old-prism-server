@@ -12,6 +12,7 @@
 		
 		<!-- Styles for Application List Page -->
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
 				<!-- Styles for Application List Page -->
 
 		<!--[if lt IE 9]>
@@ -49,7 +50,33 @@
 				      <!-- content box -->				      
 				      <div class="content-box">
 				        <div class="content-box-inner">
-							        	 STATE TRANSITION PAGE FOR ${applicationForm.id} 
+				        	<form>
+							    <h1>Validate application ${(applicationForm.id?string('#####'))!}</h1>
+							    <br/><br/>
+		            			<div class="row">
+		            				<span class="plain-label">Comment</span>
+		            				<div class="field">		            				
+		            					<textarea name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+		            				</div>
+		            			</div>
+		        
+		            			<div class="row">
+		            				<label class="plain-label">Next stage</label>
+		            				<div class="field">		            				
+		            					<select class="max" name="status" id="status">
+											<option value="">Select...</option>
+											<#list stati as status>
+												  <option value="${status}" >${status.displayValue()}</option>               
+											</#list>
+										 </select>	
+		            				</div>
+		            			</div>
+		            			<div class="buttons">						        		
+		            					<button type="reset" value="cancel">Cancel</button>
+						       			<button type="submit" value="submit@>Submit</button>
+						        
+								</div>
+		            		</form>
 				        </div><!-- .content-box-inner -->
 				      </div><!-- .content-box -->
 				      

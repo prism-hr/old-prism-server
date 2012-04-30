@@ -63,7 +63,7 @@ public class ReferenceController {
 		return userService.getUser(currentUser.getId());
 	}
 
-	@ModelAttribute
+	@ModelAttribute("user")
 	public RegisteredUser getUser() {				
 		return getCurrentUser();
 	}

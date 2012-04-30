@@ -57,7 +57,7 @@
 	</bean>
 
 	<bean id="updateNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="300000" />
+		<property name="delay" value="3000" />
 		<property name="period" value="60000" />
 		<property name="timerTask" ref="updateNotificationTimerTask" />		
 	</bean> 
@@ -68,6 +68,7 @@
 		<list>
 			<ref bean="scheduledMailTimerTask"/>
 			<ref bean="refereeReminderSchedule"/>
+			<ref bean="updateNotificationSchedule"/>
 		</list>
 		</property>
 	</bean>
@@ -82,7 +83,7 @@
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
-				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.show_sql">false</prop>
 				<prop key="hibernate.current_session_context_class">thread</prop>
 				<prop key="javax.persistence.validation.mode">NONE</prop>
 			

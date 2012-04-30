@@ -27,6 +27,7 @@ $(document).ready(function() {
 					}, 
 					function(data) {
 //						$('#statusColumn').html('Withdrawn');
+						window.location.href = "/pgadmissions/applications";
 					}
 				);
 				}

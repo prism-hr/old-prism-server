@@ -61,10 +61,10 @@ public class WithdrawControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicant(student).id(2).toApplicationForm();
 		withdrawServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
 		EasyMock.replay(withdrawServiceMock);
-		ModelAndView view = withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
+		String view = withdrawController.withdrawApplicationAndGetApplicationList(applicationForm);
 		EasyMock.verify(withdrawServiceMock);
 		assertEquals(ApplicationFormStatus.WITHDRAWN, applicationForm.getStatus());
-		assertEquals("private/my_applications_page", view.getViewName());
+		assertEquals("redirect:/applications", view);
 	}
 	
 	

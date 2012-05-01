@@ -79,55 +79,7 @@ public class CommentControllerTest {
 		commentForSubmittedNonApproved4 = new CommentBuilder().id(4).application(inValidationApplication).comment("Comment By Admin And Reviewer").user(adminAndReviewer).toComment();
 	}
 	
-	@Test
-	public void shouldGetApplicationFormFromId(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.replay(currentUser, userServiceMock);
-	
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		ApplicationForm returnedApplication = controller.getApplicationForm(5);
-		assertEquals(returnedApplication, applicationForm);
-	}
-	
-	@Test(expected=ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist(){		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(null);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);		
-	}
-	
-	@Test(expected=ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentUserIsApplicant(){		
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
-		EasyMock.replay(currentUser, userServiceMock);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);		
 
-	}
-	@Test(expected=ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentCannotSeeApplicationForm(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(false);
-		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
-		EasyMock.replay(currentUser, userServiceMock);
-		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
-		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
-
-	}
-	
 	@Test
 	public void shouldSaveCommentByAdminOnSubmittedNonApprovedApplication(){
 		authenticationToken.setDetails(admin);
@@ -142,31 +94,8 @@ public class CommentControllerTest {
 		EasyMock.verify(applicationsServiceMock);
 	}
 	
-	@Test
-	public void shouldGetAllVisibleCommentsForApplication(){
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(5).toUser();
-		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-				
-		final ApplicationForm applicationForm = EasyMock.createMock(ApplicationForm.class);
-		List<Comment> commentsList = Arrays.asList(new CommentBuilder().id(1).toComment(), new CommentBuilder().id(2).toComment());
-		EasyMock.expect(applicationForm.getVisibleComments(currentUser)).andReturn(commentsList);
-		EasyMock.replay(userServiceMock, applicationForm);
-		
-		controller = new CommentController(commentServiceMock, applicationsServiceMock, userServiceMock){
-
-			@Override
-			public ApplicationForm getApplicationForm(Integer id) {			
-				return applicationForm;
-			}
-			
-		};
-		assertSame(commentsList, controller.getComments(5));
-	}
 	
-	@Test
-	public void shouldReturnTimeLine(){
-		assertEquals("private/staff/admin/timeline", controller.getCommentsView());
-	}
+
 	
 	@Test(expected = CannotCommentException.class)
 	public void shouldNotSaveCommentByAdminOnSubmittedApprovedApplication(){

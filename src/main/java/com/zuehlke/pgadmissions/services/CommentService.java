@@ -28,7 +28,7 @@ public class CommentService {
 	}
 
 	public List<Comment> getCommentsByApplication(ApplicationForm application) {
-		return commentDAO.getReviewsByApplication(application);
+		return commentDAO.getCommentsByApplication(application);
 	}
 
 	@Transactional

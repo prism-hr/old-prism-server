@@ -103,7 +103,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<Comment> reviewsByApplication = commentDAO.getReviewsByApplication(applicationOne);
+		List<Comment> reviewsByApplication = commentDAO.getCommentsByApplication(applicationOne);
 
 		assertEquals(2, reviewsByApplication.size());
 		assertTrue(reviewsByApplication.containsAll(Arrays.asList(reviewOne, reviewThree)));

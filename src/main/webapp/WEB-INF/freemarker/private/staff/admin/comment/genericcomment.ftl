@@ -51,21 +51,27 @@
 				      <!-- content box -->				      
 				      <div class="content-box">
 				        <div class="content-box-inner">
-			        		<input type="hidden" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
-						    <h1>Comment for application ${(applicationForm.id?string('#####'))!}</h1>
+				       	 
+			        		
+						    <h1>Add comment for application ${(applicationForm.id?string('#####'))!}</h1>
 						    <br/><br/>
-	            			<div class="row">
-	            				<span class="plain-label">Comment</span>
-	            				<div class="field">		            				
-	            					<textarea name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
-	            				</div>
-	            			</div>
-	    
-	            			<div class="buttons">						        		
-	            				<button type="reset" value="cancel">Cancel</button>
-					       		<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>						        
-							</div>
-		  	
+						    <form method="POST" action= "<@spring.url '/comment'/>">
+						    	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
+		            			<div class="row">
+		            				<span class="plain-label">Comment</span>
+		            				<div class="field">		            				
+		            					<textarea name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+		            					<@spring.bind "comment.comment" /> 
+                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+		            				</div>
+
+		            			</div>
+		    
+		            			<div class="buttons">						        		
+		            				<button type="reset" value="cancel">Cancel</button>
+						       		<button class="blue" type="submit" value="Submit">Submit</button>						        
+								</div>
+		  					</form>
 		  					<hr/>
 		  					<div id= "timeline">
 		  						

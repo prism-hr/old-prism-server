@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	$("#acceptTermsQDValue").val("NO");
 	
 	if($("#qualificationInstitution").val() == ""){
 		$("#currentQualificationCB").attr('checked', false);
@@ -62,13 +63,38 @@ $(document).ready(function(){
 				);
 	});
 	
+	$("input[name*='acceptTermsQDCB']").click(function() {
+		if ($("#acceptTermsQDValue").val() =='YES'){
+			$("#acceptTermsQDValue").val("NO");
+		} else {	
+			$("#acceptTermsQDValue").val("YES");
+			$.post("/pgadmissions/acceptTerms", {  
+				applicationId: $("#applicationId").val(), 
+				acceptedTerms: $("#acceptTermsQDValue").val()
+			},
+			function(data) {
+			});
+		}
+		});
 	
 	$('#addQualificationButton').click(function(){
-		postQualificationData('add');
+		if( $("#acceptTermsQDValue").val() =='NO'){ 
+			$("span[name='nonAcceptedQD']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedQD']").html('');
+			postQualificationData('add');
+		}
 	});
 	
 	$('#qualificationsSaveButton').click(function(){
-		postQualificationData('close');
+		if( $("#acceptTermsQDValue").val() =='NO'){ 
+			$("span[name='nonAcceptedQD']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedQD']").html('');
+			postQualificationData('close');
+		}
 	});
 	
 	$('a[name="editQualificationLink"]').click(function(){

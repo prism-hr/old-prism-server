@@ -1,5 +1,5 @@
 $(document).ready(function(){
-	
+	$("#acceptTermsADValue").val("NO");
 	limitTextArea();
 
 	$('#addressCloseButton').click(function(){
@@ -22,8 +22,28 @@ $(document).ready(function(){
 		}
 	});
 	
+	$("input[name*='acceptTermsADCB']").click(function() {
+		if ($("#acceptTermsADValue").val() =='YES'){
+			$("#acceptTermsADValue").val("NO");
+		} else {	
+			$("#acceptTermsADValue").val("YES");
+			$.post("/pgadmissions/acceptTerms", {  
+				applicationId: $("#applicationId").val(), 
+				acceptedTerms: $("#acceptTermsADValue").val()
+			},
+			function(data) {
+			});
+		}
+		});
+	
 	$('#addressSaveAndAddButton').click(function(){
-		postAddressData("close");
+		if( $("#acceptTermsADValue").val() =='NO'){ 
+			$("span[name='nonAcceptedAD']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedAD']").html('');
+			postAddressData("close");
+		}
 	});
 	
 	$("#sameAddressCB").click(function() {

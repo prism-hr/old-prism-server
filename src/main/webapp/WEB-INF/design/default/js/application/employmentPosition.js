@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+	$("#acceptTermsEPValue").val("NO");
 	limitTextArea();
 	
 	$('#current').click(function() {
@@ -30,12 +31,38 @@ $(document).ready(function(){
 				);
 	});
 	
+	$("input[name*='acceptTermsEPCB']").click(function() {
+		if ($("#acceptTermsEPValue").val() =='YES'){
+			$("#acceptTermsEPValue").val("NO");
+		} else {	
+			$("#acceptTermsEPValue").val("YES");
+			$.post("/pgadmissions/acceptTerms", {  
+				applicationId: $("#applicationId").val(), 
+				acceptedTerms: $("#acceptTermsEPValue").val()
+			},
+			function(data) {
+			});
+		}
+		});
+	
 	$('#positionSaveAndCloseButton').click(function(){
-		postEmploymentData('close');
+		if( $("#acceptTermsEPValue").val() =='NO'){ 
+			$("span[name='nonAcceptedEP']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedEP']").html('');
+			postEmploymentData('close');
+		}
 	});
 
 	$('#addPosisionButton').click(function(){
-		postEmploymentData('add');
+		if( $("#acceptTermsEPValue").val() =='NO'){ 
+			$("span[name='nonAcceptedEP']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedEP']").html('');
+			postEmploymentData('add');
+		}
 	});
 
 	$('a[name="positionEditButton"]').click(function(){

@@ -2,6 +2,7 @@
 <#assign termsError = RequestParameters.termsError! />
 
 
+
 <input type="hidden" id="ATapplicationFormId" name="applicationId" 	value="${applicationForm.id?string("######")}"/>
 			          			I understand that in accepting this declaration I am confirming
 											that the information contained in this application is true and accurate. 
@@ -14,5 +15,5 @@
 	                    					/>
 	                    					<input type="hidden" name="acceptTermsValue" id="acceptTermsValue"/>
 	                    		<span class="invalid" name="nonAccepted"></span>
-            					
+        					
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/termsAndConditions.js'/>"></script>

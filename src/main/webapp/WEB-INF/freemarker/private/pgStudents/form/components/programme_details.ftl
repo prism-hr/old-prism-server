@@ -220,7 +220,15 @@
                 </#if>
 		</div>
 		
-       
+       <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
+			       I understand that in accepting this declaration I am confirming
+					that the information contained in this application is true and accurate. 
+					I am aware that any subsequent offer of study may be retracted at any time
+					if any of the information contained is found to be misleading or false.
+		          	<input type="checkbox" name="acceptTermsPDCB" id="acceptTermsPDCB"/>
+	              <input type="hidden" name="acceptTermsPDValue" id="acceptTermsPDValue"/>
+	           <span class="invalid" name="nonAcceptedPD"></span>
+	    </#if>  
 
         <div class="buttons">
         

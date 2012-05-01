@@ -1,5 +1,6 @@
 $(document).ready(function(){
-
+	$("#acceptTermsDDValue").val("NO");
+	
 	$('#documentsCloseButton').click(function(){
 		$('#documents-H2').trigger('click');
 		return false;
@@ -17,8 +18,28 @@ $(document).ready(function(){
 		);
 	});
 	
+	$("input[name*='acceptTermsDDCB']").click(function() {
+		if ($("#acceptTermsDDValue").val() =='YES'){
+			$("#acceptTermsDDValue").val("NO");
+		} else {	
+			$("#acceptTermsDDValue").val("YES");
+			$.post("/pgadmissions/acceptTerms", {  
+				applicationId: $("#applicationId").val(), 
+				acceptedTerms: $("#acceptTermsDDValue").val()
+			},
+			function(data) {
+			});
+		}
+		});
+	
 	$('#documentsSaveButton').click(function(){
-		postDocumentData('close');
+		if( $("#acceptTermsDDValue").val() =='NO'){ 
+			$("span[name='nonAcceptedDD']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedDD']").html('');
+			postDocumentData('close');
+		}
 	});
 	addToolTips();
 

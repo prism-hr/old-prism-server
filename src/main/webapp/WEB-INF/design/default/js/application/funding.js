@@ -1,5 +1,6 @@
 $(document).ready(function(){
 	
+	$("#acceptTermsFDValue").val("NO");
 	limitTextArea();
 	
 	$('#fundingCloseButton').click(function(){
@@ -22,13 +23,38 @@ $(document).ready(function(){
 				);
 	});
 	
+	$("input[name*='acceptTermsFDCB']").click(function() {
+		if ($("#acceptTermsFDValue").val() =='YES'){
+			$("#acceptTermsFDValue").val("NO");
+		} else {	
+			$("#acceptTermsFDValue").val("YES");
+			$.post("/pgadmissions/acceptTerms", {  
+				applicationId: $("#applicationId").val(), 
+				acceptedTerms: $("#acceptTermsFDValue").val()
+			},
+			function(data) {
+			});
+		}
+		});
 	
 	$('#addFundingButton').click(function(){
-		postFundingData('add');
+		if( $("#acceptTermsFDValue").val() =='NO'){ 
+			$("span[name='nonAcceptedFD']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedFD']").html('');
+			postFundingData('add');
+		}
 	});
 	
 	$('#fundingSaveCloseButton').click(function(){
-		postFundingData('close');
+		if( $("#acceptTermsFDValue").val() =='NO'){ 
+			$("span[name='nonAcceptedFD']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedFD']").html('');
+			postFundingData('close');
+		}
 	});
 	
 	$('a[name="editFundingLink"]').click(function(){

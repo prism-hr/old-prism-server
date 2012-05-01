@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	$("#acceptTermsAIDValue").val("NO");
 	
 	limitTextArea();
 	
@@ -38,6 +39,20 @@ $(document).ready(function(){
 		}
 	});
 	
+	$("input[name*='acceptTermsAIDCB']").click(function() {
+		if ($("#acceptTermsAIDValue").val() =='YES'){
+			$("#acceptTermsAIDValue").val("NO");
+		} else {	
+			$("#acceptTermsAIDValue").val("YES");
+			$.post("/pgadmissions/acceptTerms", {  
+				applicationId: $("#applicationId").val(), 
+				acceptedTerms: $("#acceptTermsAIDValue").val()
+			},
+			function(data) {
+			});
+		}
+		});
+	
 	
 	$('#informationSaveButton').click(function(){
 		var hasConvictions = null;
@@ -47,19 +62,26 @@ $(document).ready(function(){
 		if ($('#convictionRadio_false:checked').val() !== undefined) {
 			hasConvictions = false;
 		}
+		if( $("#acceptTermsAIDValue").val() =='NO'){ 
+			$("span[name='nonAcceptedAID']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedAID']").html('');
+			$.post("/pgadmissions/update/editAdditionalInformation", { 
+				informationText: $("#informationText").val(),
+				convictions: hasConvictions,
+				convictionsText: $("#convictionsText").val(),
+				applicationId:  $('#applicationId').val(),
+				application:  $('#applicationId').val(),
+				message:'close'
+			},
+			
+			function(data) {
+				$('#additionalInformationSection').html(data);
+			});
+		}
 
-		$.post("/pgadmissions/update/editAdditionalInformation", { 
-			informationText: $("#informationText").val(),
-			convictions: hasConvictions,
-			convictionsText: $("#convictionsText").val(),
-			applicationId:  $('#applicationId').val(),
-			application:  $('#applicationId').val(),
-			message:'close'
-		},
 		
-		function(data) {
-			$('#additionalInformationSection').html(data);
-		});
 	});
 	
 	addToolTips();

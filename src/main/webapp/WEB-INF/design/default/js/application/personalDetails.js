@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+	$("#acceptTermsPEDValue").val("NO");
 	$('#personalDetailsCloseButton').click(function(){		
 		$('#personalDetails-H2').trigger('click');
 		return false;
@@ -131,8 +132,28 @@ $(document).ready(function(){
 	});
 	
 	
-	$('#personalDetailsSaveButton').on("click", function(){		
-		postPersonalDetailsData('close');
+	$("input[name*='acceptTermsPEDCB']").click(function() {
+		if ($("#acceptTermsPEDValue").val() =='YES'){
+			$("#acceptTermsPEDValue").val("NO");
+		} else {	
+			$("#acceptTermsPEDValue").val("YES");
+			$.post("/pgadmissions/acceptTerms", {  
+				applicationId: $("#applicationId").val(), 
+				acceptedTerms: $("#acceptTermsPEDValue").val()
+			},
+			function(data) {
+			});
+		}
+		});
+	
+	$('#personalDetailsSaveButton').on("click", function(){	
+		if( $("#acceptTermsPEDValue").val() =='NO'){ 
+			$("span[name='nonAcceptedPED']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedPED']").html('');
+			postPersonalDetailsData('close');
+		}
 
 	});
 	

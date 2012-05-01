@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	$("#acceptTermsRDValue").val("NO");
 	
 	limitTextArea();
 	
@@ -21,13 +22,37 @@ $(document).ready(function(){
 			);
 	});
 	
-
+	$("input[name*='acceptTermsRDCB']").click(function() {
+		if ($("#acceptTermsRDValue").val() =='YES'){
+			$("#acceptTermsRDValue").val("NO");
+		} else {	
+			$("#acceptTermsRDValue").val("YES");
+			$.post("/pgadmissions/acceptTerms", {  
+				applicationId: $("#applicationId").val(), 
+				acceptedTerms: $("#acceptTermsRDValue").val()
+			},
+			function(data) {
+			});
+		}
+		});
 	
-	$('#refereeSaveAndCloseButton').click(function(){	
-		postRefereeData("close");
+	$('#refereeSaveAndCloseButton').click(function(){
+		if( $("#acceptTermsRDValue").val() =='NO'){ 
+			$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedRD']").html('');
+			postRefereeData("close");
+		}
 	});
 	$('#addReferenceButton').click(function(){
-		postRefereeData("add");
+		if( $("#acceptTermsRDValue").val() =='NO'){ 
+			$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');
+		}
+		else{
+			$("span[name='nonAcceptedRD']").html('');
+			postRefereeData("add");
+		}
 		
 	});
 

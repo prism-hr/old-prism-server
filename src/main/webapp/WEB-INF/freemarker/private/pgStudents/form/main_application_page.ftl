@@ -208,10 +208,10 @@
 			          			</section>
 
 			          			<hr/>
-			          			
+			          			<#if applicationForm.isInState('UNSUBMITTED')>
 			          			<section id="acceptTermsSection" >
 	                    		</section>
-	                    		
+	                    		 </#if>  
 			          			<div class="buttons">
 			          			
 									<div style="float:left">		    	 

@@ -9,6 +9,7 @@ import java.util.Set;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
@@ -40,6 +41,7 @@ public class ApplicationFormBuilder {
 	private Date validationDueDate;
 	private CheckedStatus acceptedTerms;
 
+
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
@@ -47,6 +49,7 @@ public class ApplicationFormBuilder {
 	private List<Referee> referees = new ArrayList<Referee>();
 
 	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
+	private List<Comment> comments = new ArrayList<Comment>();
 
 	private List<Funding> fundings = new ArrayList<Funding>();
 
@@ -135,7 +138,14 @@ public class ApplicationFormBuilder {
 		}
 		return this;
 	}
-
+	
+	public ApplicationFormBuilder comments(Comment... comments) {
+		for (Comment comment : comments) {
+			this.comments.add(comment);
+		}
+		return this;
+	}
+	
 	public ApplicationFormBuilder qualifications(Qualification... qualifications) {
 		for (Qualification qualification : qualifications) {
 			this.qualifications.add(qualification);
@@ -173,9 +183,18 @@ public class ApplicationFormBuilder {
 		this.id = id;
 		return this;
 	}
-
+	
 	public ApplicationFormBuilder reviewers(Set<RegisteredUser> reviewers) {
-		this.reviewers = reviewers;
+		for(RegisteredUser user : reviewers){
+			this.reviewers.add(user);
+		}
+		return this;
+	}
+	
+	public ApplicationFormBuilder reviewers(RegisteredUser... reviewers) {
+		for(RegisteredUser user : reviewers){
+			this.reviewers.add(user);
+		}
 		return this;
 	}
 
@@ -230,6 +249,7 @@ public class ApplicationFormBuilder {
 		application.getNotificationRecords().addAll(notificationRecords);
 		application.setLastUpdated(lastUpdated);
 		application.setAcceptedTerms(acceptedTerms);
+		application.getApplicationComments().addAll(comments);
 		return application;
 	}
 }

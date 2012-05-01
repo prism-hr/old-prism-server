@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.Date;
+
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -10,6 +12,12 @@ public class CommentBuilder {
 	private RegisteredUser user;
 	private String strComment;
 	private Integer id;
+	private Date createdTimeStamp;
+	
+	public CommentBuilder createdTimeStamp(Date createdTimeStamp) {
+		this.createdTimeStamp = createdTimeStamp;
+		return this;
+	}
 	
 	public CommentBuilder id(Integer id) {
 		this.id = id;
@@ -35,6 +43,7 @@ public class CommentBuilder {
 		comment.setComment(strComment);
 		comment.setId(id);
 		comment.setUser(user);
+		comment.setCreatedTimestamp(createdTimeStamp);
 		return comment;
 	}
 }

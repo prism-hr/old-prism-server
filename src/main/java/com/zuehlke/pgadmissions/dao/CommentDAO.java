@@ -1,13 +1,9 @@
 package com.zuehlke.pgadmissions.dao;
 
-import java.util.List;
-
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 
 @Repository
@@ -33,11 +29,6 @@ public class CommentDAO {
 				Comment.class, id);
 	}
 	
-	@SuppressWarnings("unchecked")
-	public List<Comment> getCommentsByApplication(ApplicationForm application) {
-		return sessionFactory.getCurrentSession()
-				.createCriteria(Comment.class)
-				.add(Restrictions.eq("application", application)).list();
-	}
+	
 	
 }

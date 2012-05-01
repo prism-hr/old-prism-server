@@ -5,7 +5,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.easymock.EasyMock;
@@ -18,16 +17,12 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -137,88 +132,6 @@ public class ApplicationPageModelBuilderTest {
 	public void shouldSetErrorMessageForErrorViewParameter() {
 		ApplicationPageModel model = builder.createAndPopulatePageModel(null, null, "errors", null, null);
 		assertEquals("There are missing required fields on the form, please review.", model.getMessage());
-	}
-
-	@Test
-	public void shouldGetNoCommentsIfCurrentUserApplicant() {
-		Comment comment1 = new CommentBuilder().id(1).toComment();
-		Comment comment2 = new CommentBuilder().id(2).toComment();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
-		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
-		assertTrue(model.getApplicationComments().isEmpty());
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldGetAllCommentsIfCurrentUserSuperadmin() {
-		EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
-		EasyMock.expect(userMock.getAuthorities()).andReturn(Collections.EMPTY_LIST);
-		EasyMock.replay(userMock);
-		Comment comment1 = new CommentBuilder().id(1).toComment();
-		Comment comment2 = new CommentBuilder().id(2).toComment();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
-		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
-		assertEquals(2, model.getApplicationComments().size());
-		assertTrue(model.getApplicationComments().containsAll(Arrays.asList(comment1, comment2)));
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldGetAllCommentsIfCurrentUserAdmin() {
-		EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
-		EasyMock.expect(userMock.getAuthorities()).andReturn(Collections.EMPTY_LIST);
-		EasyMock.replay(userMock);
-		Comment comment1 = new CommentBuilder().id(1).toComment();
-		Comment comment2 = new CommentBuilder().id(2).toComment();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
-		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
-		assertEquals(2, model.getApplicationComments().size());
-		assertTrue(model.getApplicationComments().containsAll(Arrays.asList(comment1, comment2)));
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldGetAllCommentsIfCurrentUserApprover() {
-		EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
-		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(true);
-		EasyMock.expect(userMock.getAuthorities()).andReturn(Collections.EMPTY_LIST);
-		EasyMock.replay(userMock);
-		Comment comment1 = new CommentBuilder().id(1).toComment();
-		Comment comment2 = new CommentBuilder().id(2).toComment();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
-		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
-		assertEquals(2, model.getApplicationComments().size());
-		assertTrue(model.getApplicationComments().containsAll(Arrays.asList(comment1, comment2)));
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldGetOnlyVisibleCommentsIfReviewer() {
-		EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
-		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
-		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
-		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(true);
-		EasyMock.expect(userMock.getAuthorities()).andReturn(Collections.EMPTY_LIST);
-		Comment comment1 = new CommentBuilder().id(1).toComment();
-		Comment comment2 = new CommentBuilder().id(2).toComment();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
-		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
-		EasyMock.expect(commentServiceMock.getVisibleComments(applicationForm, userMock)).andReturn(Arrays.asList(comment2));
-		EasyMock.replay(userMock, commentServiceMock);
-		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
-		assertEquals(1, model.getApplicationComments().size());
-		assertTrue(model.getApplicationComments().containsAll(Arrays.asList(comment2)));
-
 	}
 
 	@Test

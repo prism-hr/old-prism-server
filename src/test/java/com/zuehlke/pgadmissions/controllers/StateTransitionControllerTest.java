@@ -13,16 +13,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.CommentFactory;
 
 public class StateTransitionControllerTest {
 
@@ -30,6 +35,8 @@ public class StateTransitionControllerTest {
 	private ApplicationsService applicationServiceMock;
 	private UsernamePasswordAuthenticationToken authenticationToken;
 	private UserService userServiceMock;
+	private CommentFactory commentFactoryMock;
+	private CommentService commentServiceMock;
 
 	@Test
 	public void shouldGetApplicationFromId() {
@@ -37,7 +44,7 @@ public class StateTransitionControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 		final RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		authenticationToken.setDetails(currentUserMock);
-		controller =  new StateTransitionController(applicationServiceMock, userServiceMock){
+		controller =  new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock){
 
 			@Override
 			RegisteredUser getCurrentUser() {
@@ -71,7 +78,7 @@ public class StateTransitionControllerTest {
 
 		final RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);		
 		authenticationToken.setDetails(currentUserMock);
-		controller =  new StateTransitionController(applicationServiceMock, userServiceMock){
+		controller =  new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock){
 
 			@Override
 			RegisteredUser getCurrentUser() {
@@ -99,7 +106,7 @@ public class StateTransitionControllerTest {
 	@Test
 	public void shouldReturnAvaialableNextStati() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		controller = new StateTransitionController(applicationServiceMock,userServiceMock){
+		controller = new StateTransitionController(applicationServiceMock,userServiceMock, commentServiceMock, commentFactoryMock){
 
 			@Override
 			public ApplicationForm getApplicationForm(Integer application) {
@@ -108,7 +115,6 @@ public class StateTransitionControllerTest {
 			
 		};
 		assertArrayEquals(ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.VALIDATION), controller.getAvailableNextStati(5));
-
 	}
 
 	@Test
@@ -116,12 +122,38 @@ public class StateTransitionControllerTest {
 		assertEquals("private/staff/admin/state_transition", controller.getStateTransitionView());
 	}
 	
+	@Test
+	public void shouldCreateCommentAndSave(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		String strComment = "comment";
+		Comment comment = new CommentBuilder().id(6).toComment();
+		CommentType type = CommentType.VALIDATION;
+		EasyMock.expect(commentFactoryMock.createComment(applicationForm, user, strComment, type)).andReturn(comment);
+		commentServiceMock.save(comment);
+		EasyMock.replay(commentFactoryMock, commentServiceMock);
+		assertEquals("private/common/simpleMessage", controller.addComment(applicationForm, user, type, strComment));
+		EasyMock.verify(commentServiceMock);
+	}
 	
+	@Test
+	public void shouldNotCreateCommentORSaveIfCommentParameterIsBlank(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		String strComment = "";		
+		CommentType type = CommentType.VALIDATION;
+		
+		EasyMock.replay(commentFactoryMock, commentServiceMock);
+		controller.addComment(applicationForm, user, type, strComment);
+		EasyMock.verify(commentServiceMock);
+	}
 	@Before
 	public void setUp() {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		controller = new StateTransitionController(applicationServiceMock, userServiceMock);
+		commentFactoryMock = EasyMock.createMock(CommentFactory.class);
+		commentServiceMock = EasyMock.createMock(CommentService.class);
+		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		SecurityContextImpl secContext = new SecurityContextImpl();

@@ -20,6 +20,7 @@
 		<![endif]-->
 	
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+	        <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/genericComment.js' />"></script> 
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/admin/changeState.js' />"></script> 
 	    
 	    
@@ -57,7 +58,7 @@
 		            			<div class="row">
 		            				<span class="plain-label">Comment</span>
 		            				<div class="field">		            				
-		            					<textarea name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+		            					<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 		            				</div>
 		            			</div>
 		        
@@ -76,6 +77,11 @@
 		            				<button type="reset" value="cancel">Cancel</button>
 						       		<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>						        
 								</div>
+							
+							<hr/>	
+							<div id= "timeline">
+		  						
+		  					</div>
 		  
 				        </div><!-- .content-box-inner -->
 				      </div><!-- .content-box -->

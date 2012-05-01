@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -61,11 +63,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "validation_due_date")
 	private Date validationDueDate;
 
-
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
-	@Column(name="accepted_terms")
+	@Column(name = "accepted_terms")
 	private CheckedStatus acceptedTerms;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "personal_statement_id")
 	private Document personalStatement = null;
@@ -81,7 +82,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "last_updated")
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date lastUpdated;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "applicant_id")
 	private RegisteredUser applicant = null;
@@ -197,7 +198,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 		return true;
 	}
-	
+
 	public boolean isSubmitted() {
 		return status != ApplicationFormStatus.UNSUBMITTED;
 	}
@@ -340,12 +341,30 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public List<Comment> getVisibleComments(RegisteredUser user) {
 		List<Comment> visibleComments = new ArrayList<Comment>();
-		for (Comment comment : applicationComments) {
-			if (comment.getUser().isInRole(Authority.REVIEWER) && (!comment.getUser().equals(user))) {
-				continue;
-			}
-			visibleComments.add(comment);
+		if (user.isInRole(Authority.APPLICANT) || user.isRefereeOfApplicationForm(this)) {
+			return visibleComments;
 		}
+
+		for (Comment comment : applicationComments) {
+			if (!reviewers.contains(comment.getUser()) || comment.getUser().equals(user)) {			
+				visibleComments.add(comment);
+			}
+		}
+
+		Collections.sort(visibleComments, new Comparator<Comment>() {
+			@Override
+			public int compare(Comment commentOne, Comment commentTwo) {
+				if(commentTwo.getCreatedTimestamp() == null){
+					return -1;
+				}
+				if(commentOne.getCreatedTimestamp() == null){
+					return 1;
+				}
+				return commentTwo.getCreatedTimestamp().compareTo(commentOne.getCreatedTimestamp());
+			}
+
+		});
+
 		return visibleComments;
 	}
 
@@ -410,10 +429,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return null;
 	}
 
-	public boolean hasAcceptedTheTerms(){
+	public boolean hasAcceptedTheTerms() {
 		return acceptedTerms == CheckedStatus.YES;
 	}
-	
+
 	public Date getLastUpdated() {
 		return lastUpdated;
 	}

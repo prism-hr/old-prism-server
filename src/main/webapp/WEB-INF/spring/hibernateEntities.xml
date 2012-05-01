@@ -12,7 +12,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.RegisteredUser</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Role</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ApplicationForm</value>
-	     		<value>com.zuehlke.pgadmissions.domain.ApplicationReview</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Comment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Program</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ProgramInstance</value>		     		
 	     		<value>com.zuehlke.pgadmissions.domain.Qualification</value>

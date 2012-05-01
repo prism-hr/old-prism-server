@@ -8,35 +8,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Comment;
 
 @Repository
-public class ApplicationReviewDAO {
+public class CommentDAO {
 
 	private final SessionFactory sessionFactory;
 	
-	ApplicationReviewDAO(){
+	CommentDAO(){
 		this(null);
 	}
 	
 	@Autowired
-	public ApplicationReviewDAO(SessionFactory sessionFactory) {
+	public CommentDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
 
-	public void save(ApplicationReview review) {
+	public void save(Comment review) {
 		sessionFactory.getCurrentSession().saveOrUpdate(review);
 	}
 	
-	public ApplicationReview get(Integer id) {
-		return (ApplicationReview) sessionFactory.getCurrentSession().get(
-				ApplicationReview.class, id);
+	public Comment get(Integer id) {
+		return (Comment) sessionFactory.getCurrentSession().get(
+				Comment.class, id);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<ApplicationReview> getReviewsByApplication(ApplicationForm application) {
+	public List<Comment> getReviewsByApplication(ApplicationForm application) {
 		return sessionFactory.getCurrentSession()
-				.createCriteria(ApplicationReview.class)
+				.createCriteria(Comment.class)
 				.add(Restrictions.eq("application", application)).list();
 	}
 	

@@ -8,18 +8,18 @@ import static org.junit.Assert.assertSame;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
-public class ApplicatioReviewMappingTest extends AutomaticRollbackTestCase{
+public class CommentMappingTest extends AutomaticRollbackTestCase{
 
 	@Test
-	public void shouldSaveAndLoadApplicationReview(){
+	public void shouldSaveAndLoadComment(){
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
 		save( program);
 		
@@ -37,22 +37,22 @@ public class ApplicatioReviewMappingTest extends AutomaticRollbackTestCase{
 		flushAndClearSession();
 		
 		
-		ApplicationReview applicationReview = new ApplicationReviewBuilder().application(applicationForm).comment("comment").user(reviewer).toApplicationReview();
-		save(applicationReview);
+		Comment comment = new CommentBuilder().application(applicationForm).comment("comment").user(reviewer).toComment();
+		save(comment);
 		
-		assertNotNull(applicationReview.getId());
-		Integer id = applicationReview.getId();
-		ApplicationReview reloadedApplicationReview = (ApplicationReview) sessionFactory.getCurrentSession().get(ApplicationReview.class, id);
-		assertSame(applicationReview, reloadedApplicationReview);
+		assertNotNull(comment.getId());
+		Integer id = comment.getId();
+		Comment reloadedComment = (Comment) sessionFactory.getCurrentSession().get(Comment.class, id);
+		assertSame(comment, reloadedComment);
 
 		flushAndClearSession();
 
-		reloadedApplicationReview  =(ApplicationReview) sessionFactory.getCurrentSession().get(ApplicationReview.class, id);
-		assertNotSame(applicationReview, reloadedApplicationReview);
-		assertEquals(applicationReview, reloadedApplicationReview);
+		reloadedComment  =(Comment) sessionFactory.getCurrentSession().get(Comment.class, id);
+		assertNotSame(comment, reloadedComment);
+		assertEquals(comment, reloadedComment);
 
-		assertEquals(reviewer, reloadedApplicationReview.getUser());
-		assertEquals("comment", reloadedApplicationReview.getComment());
+		assertEquals(reviewer, reloadedComment.getUser());
+		assertEquals("comment", reloadedComment.getComment());
 		
 	
 	}

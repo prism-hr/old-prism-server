@@ -8,7 +8,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 
@@ -18,7 +18,7 @@ public class PageModel {
 	private List<ObjectError> errorObjs;
 	private ApplicationForm applicationForm;
 	private RegisteredUser user;
-	private List<ApplicationReview> applicationComments = new ArrayList<ApplicationReview>();
+	private List<Comment> applicationComments = new ArrayList<Comment>();
 	private String view;
 	private BindingResult result;
 	private List<String> globalErrorCodes = new ArrayList<String>();
@@ -77,11 +77,11 @@ public class PageModel {
 		setUserRoles(user);
 	}
 
-	public List<ApplicationReview> getApplicationComments() {
+	public List<Comment> getApplicationComments() {
 		return applicationComments;
 	}
 
-	public void setApplicationComments(List<ApplicationReview> applicationComments) {
+	public void setApplicationComments(List<Comment> applicationComments) {
 		this.applicationComments = applicationComments;
 	}
 

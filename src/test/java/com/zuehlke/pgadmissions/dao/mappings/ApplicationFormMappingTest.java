@@ -21,7 +21,7 @@ import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.LanguageDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
@@ -198,15 +198,15 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		Integer id = application.getId();
 		flushAndClearSession();
 
-		ApplicationReview applicationReviewOne = new ApplicationReviewBuilder().application(application).comment("comment1").user(user).toApplicationReview();
-		ApplicationReview applicationReviewTwo = new ApplicationReviewBuilder().application(application).comment("comment2").user(user).toApplicationReview();
-		save(applicationReviewOne, applicationReviewTwo);
+		Comment commentOne = new CommentBuilder().application(application).comment("comment1").user(user).toComment();
+		Comment commentTwo = new CommentBuilder().application(application).comment("comment2").user(user).toComment();
+		save(commentOne, commentTwo);
 
 		flushAndClearSession();
 
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
 		assertEquals(2, reloadedApplication.getApplicationComments().size());
-		assertTrue(reloadedApplication.getApplicationComments().containsAll(Arrays.asList(applicationReviewOne, applicationReviewTwo)));
+		assertTrue(reloadedApplication.getApplicationComments().containsAll(Arrays.asList(commentOne, commentTwo)));
 	}
 
 	@Test

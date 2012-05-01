@@ -9,9 +9,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 
-@Entity(name="APPLICATION_REVIEW")
+@Entity(name="COMMENT")
 @Access(AccessType.FIELD) 
-public class ApplicationReview extends DomainObject<Integer>{
+public class Comment extends DomainObject<Integer>{
 
 	private static final long serialVersionUID = 2861325991249900547L;
 

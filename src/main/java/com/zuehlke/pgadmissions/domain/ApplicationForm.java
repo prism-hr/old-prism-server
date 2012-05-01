@@ -108,7 +108,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
 
 	@OneToMany(mappedBy = "application")
-	private List<ApplicationReview> applicationComments = new ArrayList<ApplicationReview>();
+	private List<Comment> applicationComments = new ArrayList<Comment>();
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -225,11 +225,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return status == ApplicationFormStatus.WITHDRAWN;
 	}
 
-	public List<ApplicationReview> getApplicationComments() {
+	public List<Comment> getApplicationComments() {
 		return applicationComments;
 	}
 
-	public void setApplicationComments(List<ApplicationReview> applicationComments) {
+	public void setApplicationComments(List<Comment> applicationComments) {
 		this.applicationComments = applicationComments;
 	}
 
@@ -338,9 +338,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.contactAddress = contactAddress;
 	}
 
-	public List<ApplicationReview> getVisibleComments(RegisteredUser user) {
-		List<ApplicationReview> visibleComments = new ArrayList<ApplicationReview>();
-		for (ApplicationReview comment : applicationComments) {
+	public List<Comment> getVisibleComments(RegisteredUser user) {
+		List<Comment> visibleComments = new ArrayList<Comment>();
+		for (Comment comment : applicationComments) {
 			if (comment.getUser().isInRole(Authority.REVIEWER) && (!comment.getUser().equals(user))) {
 				continue;
 			}

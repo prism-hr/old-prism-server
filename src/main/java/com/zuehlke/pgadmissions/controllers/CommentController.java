@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotCommentException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ApplicationReviewService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class CommentController {
 
 	private static final String COMMENTS_VIEW = "private/staff/admin/timeline";
-	private final ApplicationReviewService applicationReviewService;
+	private final CommentService commentService;
 	private final ApplicationsService applicationService;
 	private final UserService userService;
 
@@ -35,9 +35,9 @@ public class CommentController {
 	}
 
 	@Autowired
-	public CommentController(ApplicationReviewService applicationReviewService,
+	public CommentController(CommentService commentService,
 			ApplicationsService applicationService, UserService userService) {
-		this.applicationReviewService = applicationReviewService;
+		this.commentService = commentService;
 		this.applicationService = applicationService;
 		this.userService = userService;
 
@@ -45,7 +45,7 @@ public class CommentController {
 	
 	@RequestMapping(value = { "/submit" }, method = RequestMethod.POST)
 	public ModelAndView getCommentedApplicationPage(@RequestParam Integer id, @RequestParam String comment) {
-		ApplicationReview applicationReview = new ApplicationReview();
+		Comment cmt = new Comment();
 		ApplicationForm application = applicationService.getApplicationById(id);
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		if(user.isInRole(Authority.APPLICANT) || !application.isModifiable())
@@ -54,10 +54,10 @@ public class CommentController {
 		}
 		else 
 		{
-			applicationReview.setApplication(application);
-			applicationReview.setComment(comment);
-			applicationReview.setUser(user);
-			applicationReviewService.save(applicationReview);
+			cmt.setApplication(application);
+			cmt.setComment(comment);
+			cmt.setUser(user);
+			commentService.save(cmt);
 		}
 		return new  ModelAndView("redirect:/application?view=comments","applicationId", application.getId());
 	}
@@ -80,7 +80,7 @@ public class CommentController {
 	}
 
 	@ModelAttribute("comments")
-	public List<ApplicationReview> getComments(@RequestParam Integer id) {
+	public List<Comment> getComments(@RequestParam Integer id) {
 		return getApplicationForm(id).getVisibleComments(userService.getCurrentUser());
 	}
 	

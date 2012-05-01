@@ -16,17 +16,17 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotCommentException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.services.ApplicationReviewService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -38,12 +38,12 @@ public class CommentControllerTest {
 	private RegisteredUser applicant;
 	private RegisteredUser adminAndReviewer;
 	private ApplicationsService applicationsServiceMock;
-	private ApplicationReviewService applicationReviewServiceMock;
+	private CommentService commentServiceMock;
 	private CommentController controller;
 	ApplicationForm inValidationApplication;
 	ApplicationForm submittedApprovedApplication;
 
-	ApplicationReview applicationReviewForSubmittedNonApproved1, applicationReviewForSubmittedNonApproved2, applicationReviewForSubmittedNonApproved3, applicationReviewForSubmittedNonApproved4;
+	Comment commentForSubmittedNonApproved1, commentForSubmittedNonApproved2, commentForSubmittedNonApproved3, commentForSubmittedNonApproved4;
 	UsernamePasswordAuthenticationToken authenticationToken;
 	private UserService userServiceMock;
 	
@@ -66,17 +66,17 @@ public class CommentControllerTest {
 				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole(), new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);
+		commentServiceMock = EasyMock.createMock(CommentService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		controller = new CommentController(applicationReviewServiceMock, applicationsServiceMock, userServiceMock);
+		controller = new CommentController(commentServiceMock, applicationsServiceMock, userServiceMock);
 		
 		inValidationApplication = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		submittedApprovedApplication = new ApplicationFormBuilder().id(2).status(ApplicationFormStatus.APPROVED).approver(approver).toApplicationForm();
 		
-		applicationReviewForSubmittedNonApproved1 = new ApplicationReviewBuilder().id(1).application(inValidationApplication).comment("Amazing Research !!!").user(admin).toApplicationReview();
-		applicationReviewForSubmittedNonApproved2 = new ApplicationReviewBuilder().id(2).application(inValidationApplication).comment("I'm not interested").user(reviewer).toApplicationReview();
-		applicationReviewForSubmittedNonApproved3 = new ApplicationReviewBuilder().id(3).application(inValidationApplication).comment("I'm interested").user(reviewer2).toApplicationReview();
-		applicationReviewForSubmittedNonApproved4 = new ApplicationReviewBuilder().id(4).application(inValidationApplication).comment("Comment By Admin And Reviewer").user(adminAndReviewer).toApplicationReview();
+		commentForSubmittedNonApproved1 = new CommentBuilder().id(1).application(inValidationApplication).comment("Amazing Research !!!").user(admin).toComment();
+		commentForSubmittedNonApproved2 = new CommentBuilder().id(2).application(inValidationApplication).comment("I'm not interested").user(reviewer).toComment();
+		commentForSubmittedNonApproved3 = new CommentBuilder().id(3).application(inValidationApplication).comment("I'm interested").user(reviewer2).toComment();
+		commentForSubmittedNonApproved4 = new CommentBuilder().id(4).application(inValidationApplication).comment("Comment By Admin And Reviewer").user(adminAndReviewer).toComment();
 	}
 	
 	@Test
@@ -148,11 +148,11 @@ public class CommentControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 				
 		final ApplicationForm applicationForm = EasyMock.createMock(ApplicationForm.class);
-		List<ApplicationReview> commentsList = Arrays.asList(new ApplicationReviewBuilder().id(1).toApplicationReview(), new ApplicationReviewBuilder().id(2).toApplicationReview());
+		List<Comment> commentsList = Arrays.asList(new CommentBuilder().id(1).toComment(), new CommentBuilder().id(2).toComment());
 		EasyMock.expect(applicationForm.getVisibleComments(currentUser)).andReturn(commentsList);
 		EasyMock.replay(userServiceMock, applicationForm);
 		
-		controller = new CommentController(applicationReviewServiceMock, applicationsServiceMock, userServiceMock){
+		controller = new CommentController(commentServiceMock, applicationsServiceMock, userServiceMock){
 
 			@Override
 			public ApplicationForm getApplicationForm(Integer id) {			

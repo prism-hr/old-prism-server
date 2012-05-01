@@ -16,7 +16,7 @@ import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.dto.AddressSectionDTO;
 import com.zuehlke.pgadmissions.errors.ValidationErrorsUtil;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.services.ApplicationReviewService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 
@@ -25,15 +25,15 @@ public class ApplicationPageModelBuilder {
 
 	private final CountryService countryService;
 	private final LanguageService languageService;
-	private final ApplicationReviewService applicationReviewService;
+	private final CommentService commentService;
 
 	ApplicationPageModelBuilder() {
 		this(null, null, null);
 	}
 
 	@Autowired
-	public ApplicationPageModelBuilder(ApplicationReviewService applicationReviewService, CountryService countryService, LanguageService languageService) {
-		this.applicationReviewService = applicationReviewService;
+	public ApplicationPageModelBuilder(CommentService commentService, CountryService countryService, LanguageService languageService) {
+		this.commentService = commentService;
 		this.countryService = countryService;
 		this.languageService = languageService;
 	}
@@ -74,7 +74,7 @@ public class ApplicationPageModelBuilder {
 			if (currentUser.isInRole(Authority.SUPERADMINISTRATOR) || currentUser.isInRole(Authority.ADMINISTRATOR) || currentUser.isInRole(Authority.APPROVER)) {
 				viewApplicationModel.setApplicationComments(applicationForm.getApplicationComments());
 			} else if (currentUser.isInRole(Authority.REVIEWER)) {
-				viewApplicationModel.setApplicationComments((applicationReviewService.getVisibleComments(applicationForm, currentUser)));
+				viewApplicationModel.setApplicationComments((commentService.getVisibleComments(applicationForm, currentUser)));
 			}
 		}
 

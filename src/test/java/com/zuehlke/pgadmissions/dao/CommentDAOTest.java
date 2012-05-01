@@ -16,30 +16,30 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 
-public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase {
+public class CommentDAOTest extends AutomaticRollbackTestCase {
 
-	private ApplicationReviewDAO applicationReviewDAO;
+	private CommentDAO commentDAO;
 	private RegisteredUser user;
 	private Program program;
 
 	@Test(expected = NullPointerException.class)
 	public void shouldThrowNullPointerException() {
-		ApplicationReviewDAO reviewDAO = new ApplicationReviewDAO();
-		ApplicationReview review = new ApplicationReviewBuilder().id(1).toApplicationReview();
+		CommentDAO reviewDAO = new CommentDAO();
+		Comment review = new CommentBuilder().id(1).toComment();
 		reviewDAO.save(review);
 	}
 
 	@Before
 	public void setup() {
-		applicationReviewDAO = new ApplicationReviewDAO(sessionFactory);
+		commentDAO = new CommentDAO(sessionFactory);
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
@@ -58,23 +58,23 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase {
 		save(application);
 		flushAndClearSession();
 
-		ApplicationReview review = new ApplicationReview();
+		Comment review = new Comment();
 		review.setApplication(application);
 		review.setComment("Excellent Application!!!");
 		review.setUser(user);
 
 		assertNull(review.getId());
 
-		applicationReviewDAO.save(review);
+		commentDAO.save(review);
 
 		assertNotNull(review.getId());
 		Integer id = review.getId();
-		ApplicationReview reloadedReview = applicationReviewDAO.get(id);
+		Comment reloadedReview = commentDAO.get(id);
 		assertSame(review, reloadedReview);
 
 		flushAndClearSession();
 
-		reloadedReview = applicationReviewDAO.get(id);
+		reloadedReview = commentDAO.get(id);
 		assertNotSame(review, reloadedReview);
 		assertEquals(review, reloadedReview);
 		assertEquals(review.getUser(), user);
@@ -89,12 +89,12 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase {
 		save(applicationOne);
 		flushAndClearSession();
 
-		ApplicationReview reviewOne = new ApplicationReview();
+		Comment reviewOne = new Comment();
 		reviewOne.setApplication(applicationOne);
 		reviewOne.setComment("Excellent Application!!!");
 		reviewOne.setUser(user);
 
-		ApplicationReview reviewThree = new ApplicationReview();
+		Comment reviewThree = new Comment();
 		reviewThree.setApplication(applicationOne);
 		reviewThree.setComment("Excellent Application!!!");
 		reviewThree.setUser(user);
@@ -103,7 +103,7 @@ public class ApplicationReviewDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationReview> reviewsByApplication = applicationReviewDAO.getReviewsByApplication(applicationOne);
+		List<Comment> reviewsByApplication = commentDAO.getReviewsByApplication(applicationOne);
 
 		assertEquals(2, reviewsByApplication.size());
 		assertTrue(reviewsByApplication.containsAll(Arrays.asList(reviewOne, reviewThree)));

@@ -18,12 +18,12 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.ApplicationReview;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationReviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -35,7 +35,7 @@ import com.zuehlke.pgadmissions.domain.enums.PhoneType;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 import com.zuehlke.pgadmissions.pagemodels.ApplicationPageModel;
-import com.zuehlke.pgadmissions.services.ApplicationReviewService;
+import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 
@@ -44,7 +44,7 @@ public class ApplicationPageModelBuilderTest {
 	private RegisteredUser userMock;
 	private CountryService countryServiceMock;
 	private LanguageService languageServiceMock;
-	private ApplicationReviewService applicationReviewServiceMock;
+	private CommentService commentServiceMock;
 	private ApplicationPageModelBuilder builder;
 	private UsernamePasswordAuthenticationToken authenticationToken;
 
@@ -141,8 +141,8 @@ public class ApplicationPageModelBuilderTest {
 
 	@Test
 	public void shouldGetNoCommentsIfCurrentUserApplicant() {
-		ApplicationReview comment1 = new ApplicationReviewBuilder().id(1).toApplicationReview();
-		ApplicationReview comment2 = new ApplicationReviewBuilder().id(2).toApplicationReview();
+		Comment comment1 = new CommentBuilder().id(1).toComment();
+		Comment comment2 = new CommentBuilder().id(2).toComment();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
 		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
 		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
@@ -156,8 +156,8 @@ public class ApplicationPageModelBuilderTest {
 		EasyMock.expect(userMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(userMock.getAuthorities()).andReturn(Collections.EMPTY_LIST);
 		EasyMock.replay(userMock);
-		ApplicationReview comment1 = new ApplicationReviewBuilder().id(1).toApplicationReview();
-		ApplicationReview comment2 = new ApplicationReviewBuilder().id(2).toApplicationReview();
+		Comment comment1 = new CommentBuilder().id(1).toComment();
+		Comment comment2 = new CommentBuilder().id(2).toComment();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
 		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
 		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
@@ -173,8 +173,8 @@ public class ApplicationPageModelBuilderTest {
 		EasyMock.expect(userMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
 		EasyMock.expect(userMock.getAuthorities()).andReturn(Collections.EMPTY_LIST);
 		EasyMock.replay(userMock);
-		ApplicationReview comment1 = new ApplicationReviewBuilder().id(1).toApplicationReview();
-		ApplicationReview comment2 = new ApplicationReviewBuilder().id(2).toApplicationReview();
+		Comment comment1 = new CommentBuilder().id(1).toComment();
+		Comment comment2 = new CommentBuilder().id(2).toComment();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
 		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
 		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
@@ -191,8 +191,8 @@ public class ApplicationPageModelBuilderTest {
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(true);
 		EasyMock.expect(userMock.getAuthorities()).andReturn(Collections.EMPTY_LIST);
 		EasyMock.replay(userMock);
-		ApplicationReview comment1 = new ApplicationReviewBuilder().id(1).toApplicationReview();
-		ApplicationReview comment2 = new ApplicationReviewBuilder().id(2).toApplicationReview();
+		Comment comment1 = new CommentBuilder().id(1).toComment();
+		Comment comment2 = new CommentBuilder().id(2).toComment();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
 		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
 		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
@@ -209,12 +209,12 @@ public class ApplicationPageModelBuilderTest {
 		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(userMock.isInRole(Authority.REVIEWER)).andReturn(true);
 		EasyMock.expect(userMock.getAuthorities()).andReturn(Collections.EMPTY_LIST);
-		ApplicationReview comment1 = new ApplicationReviewBuilder().id(1).toApplicationReview();
-		ApplicationReview comment2 = new ApplicationReviewBuilder().id(2).toApplicationReview();
+		Comment comment1 = new CommentBuilder().id(1).toComment();
+		Comment comment2 = new CommentBuilder().id(2).toComment();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
 		applicationForm.getApplicationComments().addAll(Arrays.asList(comment1, comment2));
-		EasyMock.expect(applicationReviewServiceMock.getVisibleComments(applicationForm, userMock)).andReturn(Arrays.asList(comment2));
-		EasyMock.replay(userMock, applicationReviewServiceMock);
+		EasyMock.expect(commentServiceMock.getVisibleComments(applicationForm, userMock)).andReturn(Arrays.asList(comment2));
+		EasyMock.replay(userMock, commentServiceMock);
 		ApplicationPageModel model = builder.createAndPopulatePageModel(applicationForm, null, null, null, null);
 		assertEquals(1, model.getApplicationComments().size());
 		assertTrue(model.getApplicationComments().containsAll(Arrays.asList(comment2)));
@@ -242,9 +242,9 @@ public class ApplicationPageModelBuilderTest {
 
 		countryServiceMock = EasyMock.createMock(CountryService.class);
 		languageServiceMock = EasyMock.createMock(LanguageService.class);
-		applicationReviewServiceMock = EasyMock.createMock(ApplicationReviewService.class);
+		commentServiceMock = EasyMock.createMock(CommentService.class);
 
-		builder = new ApplicationPageModelBuilder(applicationReviewServiceMock, countryServiceMock, languageServiceMock);
+		builder = new ApplicationPageModelBuilder(commentServiceMock, countryServiceMock, languageServiceMock);
 
 	}
 

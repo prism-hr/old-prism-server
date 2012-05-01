@@ -56,6 +56,7 @@ public class RefereeDAO {
 					.createAlias("application", "application")
 					.add(Restrictions.eq("declined", false))
 					.add(Restrictions.isNull("reference"))
+					.add(Restrictions.isNotNull("user"))
 					.add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED})))
 					.add(Restrictions.or(Restrictions.isNull("lastNotified"),Restrictions.le("lastNotified", oneWeekAgo)))					
 				.list();

@@ -5,7 +5,6 @@ import java.util.Date;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -19,10 +18,11 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
+
 
 @Entity(name="COMMENT")
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name="comment_type")
 @Access(AccessType.FIELD) 
 public class Comment extends DomainObject<Integer>{
 
@@ -88,6 +88,10 @@ public class Comment extends DomainObject<Integer>{
 
 	public void setCreatedTimestamp(Date createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
+	}
+
+	public CommentType getType() {
+		return CommentType.GENERIC;
 	}
 	
 	

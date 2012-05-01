@@ -7,11 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -19,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -52,7 +49,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldSaveAndLoadReview() {
+	public void shouldSaveAndLoadGenericComment() {
 
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
 		save(application);
@@ -80,33 +77,40 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		assertEquals(review.getUser(), user);
 		assertEquals(review.getComment(), reloadedReview.getComment());
 	}
-
-	@Ignore
+	
 	@Test
-	public void shouldGetReviewByApplicationForm() {
+	public void shouldSaveAndLoadValidationComment() {
 
-		ApplicationForm applicationOne = new ApplicationFormBuilder().id(4).program(program).applicant(user).toApplicationForm();
-		save(applicationOne);
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
+		save(application);
 		flushAndClearSession();
 
-		Comment reviewOne = new Comment();
-		reviewOne.setApplication(applicationOne);
-		reviewOne.setComment("Excellent Application!!!");
-		reviewOne.setUser(user);
+		ValidationComment validationComment = new ValidationComment();
+		validationComment.setApplication(application);
+		validationComment.setComment("Excellent Application!!!");
+		validationComment.setUser(user);
 
-		Comment reviewThree = new Comment();
-		reviewThree.setApplication(applicationOne);
-		reviewThree.setComment("Excellent Application!!!");
-		reviewThree.setUser(user);
+		assertNull(validationComment.getId());
 
-		save(reviewOne, reviewThree);
+		commentDAO.save(validationComment);
+
+		assertNotNull(validationComment.getId());
+		Integer id = validationComment.getId();
+		Comment reloadedComment = commentDAO.get(id);
+		assertSame(validationComment, reloadedComment);
 
 		flushAndClearSession();
 
-		List<Comment> reviewsByApplication = commentDAO.getCommentsByApplication(applicationOne);
-
-		assertEquals(2, reviewsByApplication.size());
-		assertTrue(reviewsByApplication.containsAll(Arrays.asList(reviewOne, reviewThree)));
-
+		reloadedComment = commentDAO.get(id);
+	
+		assertNotSame(validationComment, reloadedComment);
+		assertEquals(validationComment, reloadedComment);
+		assertEquals(validationComment.getUser(), user);
+		assertEquals(validationComment.getComment(), reloadedComment.getComment());
+		
+		
+		assertTrue(reloadedComment instanceof ValidationComment);
 	}
+
+
 }

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
@@ -70,13 +69,7 @@ public class ApplicationPageModelBuilder {
 			viewApplicationModel.setMessage("There are missing required fields on the form, please review.");
 		}
 
-		if (applicationForm != null && applicationForm.hasComments() && !applicationForm.getApplicant().equals(currentUser)) {
-			if (currentUser.isInRole(Authority.SUPERADMINISTRATOR) || currentUser.isInRole(Authority.ADMINISTRATOR) || currentUser.isInRole(Authority.APPROVER)) {
-				viewApplicationModel.setApplicationComments(applicationForm.getApplicationComments());
-			} else if (currentUser.isInRole(Authority.REVIEWER)) {
-				viewApplicationModel.setApplicationComments((commentService.getVisibleComments(applicationForm, currentUser)));
-			}
-		}
+		
 
 		viewApplicationModel.setFundingErrors(ValidationErrorsUtil.convertFundingErrors(fundingErrors));
 		return viewApplicationModel;

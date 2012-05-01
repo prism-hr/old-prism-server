@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -30,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RefereeService;
+import com.zuehlke.pgadmissions.services.ApproveApplicationService;
 import com.zuehlke.pgadmissions.services.SubmitApplicationService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
@@ -41,11 +43,10 @@ public class SubmitApplicationFormControllerTest {
 
 	private RegisteredUser student;
 
-	private SubmitApplicationService submitApplicationServiceMock;
-	private RefereeService refereeServiceMock;
 	private UsernamePasswordAuthenticationToken authenticationToken;
 
 	private ApplicationFormValidator applicationFormValidatorMock;
+	private SubmitApplicationService submitApplicationServiceMock;
 
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -69,10 +70,9 @@ public class SubmitApplicationFormControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).toApplicationForm();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-		EasyMock.replay(submitApplicationServiceMock, errorsMock);
+		EasyMock.replay(errorsMock);
 		String view = applicationController.submitApplication(applicationForm, errorsMock);
 		assertEquals("/private/pgStudents/form/main_application_page", view);
-		EasyMock.verify(submitApplicationServiceMock);
 	}
 
 
@@ -90,6 +90,8 @@ public class SubmitApplicationFormControllerTest {
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getSubmittedDate(), Calendar.DATE));
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION).getNotificationDate(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
+
 	}
 
 	@Test
@@ -97,26 +99,12 @@ public class SubmitApplicationFormControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).toApplicationForm();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-		submitApplicationServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
-		EasyMock.replay(submitApplicationServiceMock, errorsMock);
+		applicationsServiceMock.save(applicationForm);
+		EasyMock.replay(applicationsServiceMock, errorsMock);
 		String view = applicationController.submitApplication(applicationForm, errorsMock);
 		assertEquals("redirect:/applications?submissionSuccess=true", view);
 	}
 	
-	@Test
-	public void shouldProcessRefereesRoleIfNoErrors() {
-		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).toApplicationForm();
-		List<Referee> referees = Arrays.asList(new RefereeBuilder().id(1).toReferee(), new RefereeBuilder().id(2).toReferee());
-		applicationForm.setReferees(referees);
-		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-		refereeServiceMock.processRefereesRoles(referees);
-		EasyMock.replay(refereeServiceMock, errorsMock);
-		applicationController.submitApplication(applicationForm, errorsMock);
-		EasyMock.verify(refereeServiceMock);
-
-	}
-
 	@Test
 	public void shouldRegisterValidator() {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
@@ -176,12 +164,10 @@ public class SubmitApplicationFormControllerTest {
 	public void setUp() {
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		submitApplicationServiceMock  = EasyMock.createMock(SubmitApplicationService.class);
 
-		submitApplicationServiceMock = EasyMock.createMock(SubmitApplicationService.class);
-		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		applicationFormValidatorMock = EasyMock.createMock(ApplicationFormValidator.class);
-		applicationController = new SubmitApplicationFormController(applicationsServiceMock, submitApplicationServiceMock, refereeServiceMock,
-				applicationFormValidatorMock);
+		applicationController = new SubmitApplicationFormController(applicationsServiceMock, applicationFormValidatorMock, submitApplicationServiceMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

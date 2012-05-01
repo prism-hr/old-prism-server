@@ -1,12 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.UnsupportedEncodingException;
-import java.util.Calendar;
-import java.util.Date;
 
-import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,33 +9,30 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 
-public class SubmitApplicationServiceTest {
+public class ApproveApplicationServiceTest {
 
 	private ApplicationsService applicationsServiceMock;
-	private SubmitApplicationService submitApplicationService;
+	private ApproveApplicationService submitApplicationService;
 	private MailService mailServiceMock;
 
 	@Before
 	public void setUp() {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		mailServiceMock = EasyMock.createMock(MailService.class);		
-		submitApplicationService = new SubmitApplicationService(applicationsServiceMock, mailServiceMock);
+		submitApplicationService = new ApproveApplicationService(applicationsServiceMock, mailServiceMock);
 
 	}
 
 
 	@Test
-	public void shouldSaveApplicationFormAndSendEmailsToAdminsAndApplicant() throws UnsupportedEncodingException {
+	public void shouldSaveApplicationFormAndSendEmailsToRefereesAdminsAndApplicant() throws UnsupportedEncodingException {
 
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		applicationsServiceMock.save(form);
-		mailServiceMock.sendSubmissionMailToAdmins(form);
-		mailServiceMock.sendSubmissionMailToApplicant(form);
+		mailServiceMock.sendSubmissionMailToReferees(form);
 		EasyMock.replay(applicationsServiceMock, mailServiceMock);
 		submitApplicationService.saveApplicationFormAndSendMailNotifications(form);
 		EasyMock.verify(applicationsServiceMock, mailServiceMock);
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(form.getLastUpdated(), Calendar.DATE));
-
 	}
 
 	

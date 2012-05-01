@@ -24,7 +24,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.SubmitApplicationService;
 import com.zuehlke.pgadmissions.utils.ValidationStageConstant;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
@@ -36,20 +35,18 @@ public class SubmitApplicationFormController {
 	private final ApplicationsService applicationService;
 	private static final String VIEW_APPLICATION_APPLICANT_VIEW_NAME = "/private/pgStudents/form/main_application_page";
 	private static final String VIEW_APPLICATION_STAFF_VIEW_NAME = "/private/staff/application/main_application_page";
-	private final SubmitApplicationService submitApplicationService;
-	private final RefereeService refereeService;
 	private final ApplicationFormValidator applicationFormValidator;
+	private final SubmitApplicationService submitApplicationService;
 
 	SubmitApplicationFormController() {
-		this(null, null, null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public SubmitApplicationFormController(ApplicationsService applicationService, SubmitApplicationService submitApplicationService, RefereeService refereeService, ApplicationFormValidator applicationFormValidator) {
+	public SubmitApplicationFormController(ApplicationsService applicationService, ApplicationFormValidator applicationFormValidator, SubmitApplicationService submitApplicationService) {
 		this.applicationService = applicationService;
-		this.submitApplicationService = submitApplicationService;
-		this.refereeService = refereeService;
 		this.applicationFormValidator = applicationFormValidator;
+		this.submitApplicationService = submitApplicationService;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
@@ -61,14 +58,13 @@ public class SubmitApplicationFormController {
 		if(result.hasErrors()){
 			return VIEW_APPLICATION_APPLICANT_VIEW_NAME;			
 		}
-		applicationForm.setStatus(ApplicationFormStatus.VALIDATION);;		
+		applicationForm.setStatus(ApplicationFormStatus.VALIDATION);		
 		Date dueDate = calculateAndGetValidationDueDate();
 		applicationForm.setValidationDueDate(dueDate);
 		applicationForm.setSubmittedDate(new Date());
 		applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
 		applicationForm.getNotificationRecords().add(new NotificationRecord(NotificationType.UPDATED_NOTIFICATION));
 		applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION).setNotificationDate(new Date());
-		refereeService.processRefereesRoles(applicationForm.getReferees());
 		submitApplicationService.saveApplicationFormAndSendMailNotifications(applicationForm);
 		return "redirect:/applications?submissionSuccess=true";
 	}

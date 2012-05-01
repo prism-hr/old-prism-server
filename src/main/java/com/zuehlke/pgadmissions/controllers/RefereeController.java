@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -66,23 +67,24 @@ public class RefereeController {
 		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
-		if(referee.getApplication().isDecided()){
+		ApplicationForm application = referee.getApplication();
+		if(application.isDecided()){
 			throw new CannotUpdateApplicationException();
 		}
 		if(result.hasErrors()){
 			return STUDENTS_FORM_REFEREES_VIEW;
 		}
 		referee.setActivationCode(encryptionUtils.generateUUID());
-		if(!referee.getApplication().isSubmitted()){
+		if(!application.isSubmitted()){
 			refereeService.save(referee);
 		}
-		else{
+		else if(application.isInState("APPROVAL")){ //later to be checked if it it review as well
 			refereeService.processRefereesRoles(Arrays.asList(referee));
 			refereeService.sendRefereeMailNotification(referee);
 		}
-		referee.getApplication().setLastUpdated(new Date());
-		applicationsService.save(referee.getApplication());
-		return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getId();
+		application.setLastUpdated(new Date());
+		applicationsService.save(application);
+		return "redirect:/update/getReferee?applicationId=" + application.getId();
 			
 	}
 

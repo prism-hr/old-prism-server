@@ -14,6 +14,8 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.ApproveApplicationService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -21,14 +23,19 @@ import com.zuehlke.pgadmissions.services.UserService;
 public class ApprovalController {
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
+	private final ApproveApplicationService approveApplicationService;
+	private final RefereeService refereeService;
 
 	ApprovalController(){
-		this(null, null);
+		this(null, null, null, null);
 	}
 	@Autowired
-	public ApprovalController(ApplicationsService applicationsService, UserService userService) {
+	public ApprovalController(ApplicationsService applicationsService, UserService userService, ApproveApplicationService approveApplicationService,
+			RefereeService refereeService) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
+		this.approveApplicationService = approveApplicationService;
+		this.refereeService = refereeService;
 	
 	}
 	
@@ -50,7 +57,8 @@ public class ApprovalController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String moveToApproval(@ModelAttribute ApplicationForm applicationForm) {
 		applicationForm.setStatus(ApplicationFormStatus.APPROVAL);
-		applicationsService.save(applicationForm);
+		refereeService.processRefereesRoles(applicationForm.getReferees());
+		approveApplicationService.saveApplicationFormAndSendMailNotifications(applicationForm);
 		return "redirect:/applications";
 		
 	}

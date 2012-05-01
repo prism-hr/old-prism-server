@@ -197,7 +197,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 		return true;
 	}
-
+	
 	public boolean isSubmitted() {
 		return status != ApplicationFormStatus.UNSUBMITTED;
 	}

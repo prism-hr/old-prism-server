@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,17 +8,17 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 
 @Service
-public class SubmitApplicationService {
+public class ApproveApplicationService {
 
 	private final ApplicationsService applicationService;
 	private final MailService mailService;
 
-	public SubmitApplicationService() {
+	public ApproveApplicationService() {
 		this(null, null);
 	}
 
 	@Autowired
-	public SubmitApplicationService(ApplicationsService applicationService, MailService mailService) {
+	public ApproveApplicationService(ApplicationsService applicationService, MailService mailService) {
 		this.mailService = mailService;
 		this.applicationService = applicationService;
 
@@ -28,10 +26,8 @@ public class SubmitApplicationService {
 
 	@Transactional
 	public void saveApplicationFormAndSendMailNotifications(ApplicationForm form) {
-		form.setLastUpdated(new Date());
 		applicationService.save(form);
-		mailService.sendSubmissionMailToApplicant(form);
-		mailService.sendSubmissionMailToAdmins(form);
+		mailService.sendSubmissionMailToReferees(form);
 	}
 
 }

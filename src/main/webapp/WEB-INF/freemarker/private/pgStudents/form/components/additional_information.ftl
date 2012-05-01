@@ -4,7 +4,7 @@
 
 <h2 id="additional-H2" class="empty open">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
-    Additional Information
+    Additional Information<em>*</em>
 </h2>
 
 <div>

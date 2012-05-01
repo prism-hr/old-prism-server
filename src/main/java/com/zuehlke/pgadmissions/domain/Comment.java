@@ -1,12 +1,20 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Date;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 
 @Entity(name="COMMENT")
@@ -15,6 +23,11 @@ public class Comment extends DomainObject<Integer>{
 
 	private static final long serialVersionUID = 2861325991249900547L;
 
+	@Column(name = "created_timestamp", insertable = false)
+	@Generated(GenerationTime.INSERT)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdTimestamp;
+	
 	private String comment;
 	
 	public String getComment() {
@@ -62,6 +75,14 @@ public class Comment extends DomainObject<Integer>{
 	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
+	}
+
+	public Date getCreatedTimestamp() {
+		return createdTimestamp;
+	}
+
+	public void setCreatedTimestamp(Date createdTimestamp) {
+		this.createdTimestamp = createdTimestamp;
 	}
 	
 	

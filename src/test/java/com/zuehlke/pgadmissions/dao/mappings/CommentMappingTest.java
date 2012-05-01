@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
+import java.util.Calendar;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -53,6 +56,7 @@ public class CommentMappingTest extends AutomaticRollbackTestCase{
 
 		assertEquals(reviewer, reloadedComment.getUser());
 		assertEquals("comment", reloadedComment.getComment());
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(reloadedComment.getCreatedTimestamp(), Calendar.DATE));
 		
 	
 	}

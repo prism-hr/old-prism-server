@@ -140,17 +140,13 @@ $(document).ready(function(){
 	/*
 	 * Submit application form on click of submit button.
 	 */ 
-	$('#submitButton').click(function(){
+	$('#submitAppButton').click(function(){
 		if( $("#acceptTermsValue").val() =='NO'){ 
 			$("span[name='nonAccepted']").html('You must agree to the terms and conditions');
 		}
 		else{
 			$("span[name='nonAccepted']").html('');
-			$.post("/pgadmissions/acceptTerms", {  
-				applicationId: $("#applicationFormId").val()
-			},
-			function(data) {
-			});
+			$('#submitApplicationForm').submit();
 		}
 	});
 	

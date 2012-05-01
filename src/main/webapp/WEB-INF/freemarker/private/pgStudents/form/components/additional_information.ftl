@@ -20,7 +20,7 @@
           
     	<!-- Free text field for info. -->
         <div class="row">
-       		<span class="plain-label">Additional information relevant to your application<em>*</em></span>
+       		<span class="plain-label">Additional information relevant to your application</span>
     		<span class="hint" data-desc="<@spring.message 'additionalInformation.infotext'/>"></span>
     		<div class="field">
       		 <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>

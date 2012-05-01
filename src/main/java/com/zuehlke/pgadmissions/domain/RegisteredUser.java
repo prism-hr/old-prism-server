@@ -361,6 +361,11 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return this.isInRole(Authority.REFEREE) && hasRefereesInApplicationForm(form);
 	}
 
+	
+	public boolean isReviewerOfApplicationForm(ApplicationForm form) {
+		return this.isInRole(Authority.REVIEWER) && form.getReviewers().contains(this);
+	}
+	
 	public boolean hasRefereesInApplicationForm(ApplicationForm form) {
 		return getRefereeForApplicationForm(form) != null;
 	}

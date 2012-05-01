@@ -194,6 +194,35 @@ public class RegisteredUserTest {
 		assertFalse(approver.canSee(applicationForm));
 	}
 
+	
+	@Test
+	public void shouldReturnTrueIfUserIsReviewerTApplication() {
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewer).program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertTrue(reviewer.isReviewerOfApplicationForm(applicationForm));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfUserIsReviewerButNotInApplication() {
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertFalse(reviewer.isReviewerOfApplicationForm(applicationForm));
+	}
+	
+	
+	@Test
+	public void shouldReturnFalseIfUserIsApproverInApplication() {
+		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().approver(approver).program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertFalse(approver.isReviewerOfApplicationForm(applicationForm));
+	}
+	
 	@Test
 	public void shouldReturnListOfAuthoritiesForProgram() {
 		Program program = new ProgramBuilder().id(1).toProgram();

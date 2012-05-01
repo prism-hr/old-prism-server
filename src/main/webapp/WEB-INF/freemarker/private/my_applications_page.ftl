@@ -99,6 +99,9 @@
 									    			<#if !model.user.isInRole('APPLICANT') && !model.user.isRefereeOfApplicationForm(application)>
 								    					<option value="comment">Comment</option>								    				
 								      				</#if>      												
+									    			<#if model.user.isInRole('SUPERADMINISTRATOR')>
+								    					<option value="review">Add Review</option>								    				
+								      				</#if>      												
 								      				<#if (model.user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isDecided() )>
 								    					<option value="reference">Add Reference</option>
 								      				</#if>      												

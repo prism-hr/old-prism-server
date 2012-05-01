@@ -78,7 +78,7 @@ public class RefereeController {
 		if(!application.isSubmitted()){
 			refereeService.save(referee);
 		}
-		else if(application.isInState("APPROVAL")){ //later to be checked if it it review as well
+		else if(application.isInState("APPROVAL")){ //later to be checked if it it review as well 
 			refereeService.processRefereesRoles(Arrays.asList(referee));
 			refereeService.sendRefereeMailNotification(referee);
 		}

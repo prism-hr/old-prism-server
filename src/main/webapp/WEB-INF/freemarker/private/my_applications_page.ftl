@@ -96,9 +96,8 @@
       												<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('VALIDATION')> 
 									    				<option value="validate">Validate</option>
 									      			</#if>
-									    			<#if (((model.user.isInRole('APPROVER') || model.user.isInRole('ADMINISTRATOR') || 
-								      											model.user.isInRole('REVIEWER'))) && application.isModifiable() )>
-								    					<option value="comment">Comments</option>
+									    			<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isModifiable() >
+								    					<option value="comment">Comment</option>								    				
 								      				</#if>      												
 								      				<#if (model.user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isDecided() )>
 								    					<option value="reference">Add Reference</option>

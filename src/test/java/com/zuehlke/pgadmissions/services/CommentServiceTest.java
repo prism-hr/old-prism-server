@@ -25,7 +25,7 @@ public class CommentServiceTest {
 	public void shouldGetCommentByApplication() {
 		ApplicationForm applicationForm = EasyMock.createMock(ApplicationForm.class);
 		Comment comment = EasyMock.createMock(Comment.class);
-		EasyMock.expect(commentDAOMock.getReviewsByApplication(applicationForm)).andReturn(Arrays.asList(comment));
+		EasyMock.expect(commentDAOMock.getCommentsByApplication(applicationForm)).andReturn(Arrays.asList(comment));
 		EasyMock.replay(applicationForm, comment, commentDAOMock);
 		
 		List<Comment> commentsByApplication = service.getCommentsByApplication(applicationForm);
@@ -69,7 +69,7 @@ public class CommentServiceTest {
 		EasyMock.expect(commentOne.getUser()).andReturn(user);
 		EasyMock.expect(commentTwo.getUser()).andReturn(user);
 		
-		EasyMock.expect(commentDAOMock.getReviewsByApplication(form)).andReturn(Arrays.asList(commentOne, commentTwo));
+		EasyMock.expect(commentDAOMock.getCommentsByApplication(form)).andReturn(Arrays.asList(commentOne, commentTwo));
 		
 		EasyMock.replay(user, form, commentOne, commentTwo, commentDAOMock);
 		

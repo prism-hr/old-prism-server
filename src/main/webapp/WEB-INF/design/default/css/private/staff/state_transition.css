@@ -1,0 +1,12 @@
+.row { line-height: 24px; margin-bottom: 2px; clear: left; }
+.label { float: left; line-height: 1.2; width: 180px; }
+.field { margin-left: 205px; }
+
+label.label { font-weight: bold; }
+
+.field .max { width: 480px; }
+.field .full { width: 240px; }
+.field .half { width: 120px; }
+.field label { display: inline-block; margin-right: 1em; min-width: 60px; }
+
+div.buttons { border-width: 1px 0 0; margin: 8px -10px -10px; }

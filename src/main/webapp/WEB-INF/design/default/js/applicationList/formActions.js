@@ -12,7 +12,7 @@ $(document).ready(function() {
 		}else if($(this).val() == 'reject') {
 			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
 		}else if($(this).val() == 'comment') {
-			window.location.href = "/pgadmissions/comments/showAll?id=" + id;
+			window.location.href = "/pgadmissions/comment?applicationId=" + id;
 		}else if($(this).val() == 'print') {
 			window.location.href = "/pgadmissions/print?applicationFormId=" + id;
 		}else if($(this).val() == 'reference') {

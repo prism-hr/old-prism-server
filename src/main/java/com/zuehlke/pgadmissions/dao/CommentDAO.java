@@ -24,8 +24,8 @@ public class CommentDAO {
 		this.sessionFactory = sessionFactory;
 	}
 
-	public void save(Comment review) {
-		sessionFactory.getCurrentSession().saveOrUpdate(review);
+	public void save(Comment comment) {
+		sessionFactory.getCurrentSession().saveOrUpdate(comment);
 	}
 	
 	public Comment get(Integer id) {
@@ -34,7 +34,7 @@ public class CommentDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Comment> getReviewsByApplication(ApplicationForm application) {
+	public List<Comment> getCommentsByApplication(ApplicationForm application) {
 		return sessionFactory.getCurrentSession()
 				.createCriteria(Comment.class)
 				.add(Restrictions.eq("application", application)).list();

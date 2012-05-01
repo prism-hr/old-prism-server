@@ -7,7 +7,7 @@
  <#list comments as comment>
  	<tr>
  		<td>${(comment.user.firstName)!} ${(comment.user.lastName)!}</td>
- 		<td>${(comment.createTimestamp?string('dd-MMM-yyyy hh:mm a'))!}</td>
+ 		<td>${(comment.createdTimestamp?string('dd-MMM-yyyy hh:mm a'))!}</td>
  		<td>${(comment.comment?html)!}</td>
 	</tr>	 
 </#list>

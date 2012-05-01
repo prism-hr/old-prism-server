@@ -237,7 +237,7 @@
             </#if>    
         	<a class="button blue" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</a>
         	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-            	<a class="button blue" id="programmeSaveButton">Save</a>
+            	<a class="button blue" type="button" id="programmeSaveButton">Save</a>
             </#if>  	
 		</div>
 

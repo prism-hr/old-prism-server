@@ -62,7 +62,7 @@
             <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
           	<div>
 				<#if errorCode?? && errorCode=="true">
-					<div class="row">              	
+					<div class="row">             	
 						<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
 				     </div>            	
 				</#if>
@@ -98,9 +98,16 @@
 											 
 						</#list>          		
             			<@spring.bind "personalDetails.gender" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                		 
 					</div>
 				</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
             
 				<div class="row">
 					<label class="plain-label">Date of Birth<em>*</em> </label>
@@ -109,12 +116,20 @@
 					<#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>
 						<input class="half date" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>
 						<@spring.bind "personalDetails.dateOfBirth" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>					
 					<#else>
 						<input class="full" readonly="readonly" type="text" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
 					</#if>    
 					</div>               
 				</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+				
+				
 			</div>
 		
           	<div>
@@ -136,9 +151,18 @@
                     	</#list>
                  	 	</select>
 						<@spring.bind "personalDetails.country" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
+                			
                	 	</div>
               	</div>
+              	
+              	<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+              	
          
 				<div class="row" id="existingCandidateNationalities">
 				<#if candidateNationalitiesExist>
@@ -173,9 +197,16 @@
 						 </#list>
 						 </select>             	 
 						<@spring.bind "personalDetails.candidateNationalities" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>						   
 					 </div>
-            	</div> 
+            	</div>
+            	<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+            	 
               
 				<div class="row">
 					<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add Nationality</a></div>
@@ -287,18 +318,25 @@
 					<div class="field">
 						<select class="full" name="residenceCountry" id="residenceCountry" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
 							<option value="">Select...</option>
-							<#list countries as country>
+								<#list countries as country>
 								  <option value="${country.id?string('#######')}"
-								  <#if personalDetails.residenceCountry?? &&  personalDetails.residenceCountry.id == country.id >
-									selected="selected"
+								  	<#if personalDetails.residenceCountry?? &&  personalDetails.residenceCountry.id == country.id >
+										selected="selected"
 									</#if>  
 								  >${country.name}</option>               
-							</#list>
+								</#list>
 						 </select>
 						<@spring.bind "personalDetails.residenceCountry" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>			
-						</div>
+					</div>
+					<#list spring.status.errorMessages as error>
 						<div class="row">
+							<div class="field">
+								<span class="invalid">${error}</span>
+							</div>
+						</div>
+					</#list>
+					
+					<div class="row">
 						 <label class="plain-label">Do you require a visa to study in the UK?<em>*</em></label>
                    		<span class="hint"></span>
                    		<div class="field">
@@ -328,7 +366,6 @@
                     		name="email" id="email" disabled="disabled"/>	          
                     </div>
 				</div>
-              	
    
           	 	<div class="row">          
               		<span class="plain-label">Telephone<em>*</em></span>
@@ -337,12 +374,20 @@
                 		<#if !applicationForm.isDecided()  && !applicationForm.isWithdrawn()>
                 			<input class="full" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone"/>
 						<@spring.bind "personalDetails.phoneNumber" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	                			
                 		<#else>
                 			<input class="full" readonly="readonly" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone" />	          
                 		</#if>
                 	</div>
             	</div>
+            	
+            	<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+            	
               
            		<div class="row">
               		<label class="plain-label">Skype Name</label>
@@ -376,9 +421,16 @@
                     	</#list>
                  	 	</select>
 						<@spring.bind "personalDetails.ethnicity" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
                	 	</div>
               	</div>
+              	<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+              	
             	<div class="row">
               		<label class="plain-label">Disability</label>
                 	<span class="hint" data-desc="<@spring.message 'personalDetails.disability'/>"></span>
@@ -394,9 +446,17 @@
                     	</#list>
                  	 	</select>
 						<@spring.bind "personalDetails.disability" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
                	 	</div>
               	</div>
+              	<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+              	
+              	
             </div>
   
   			<#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>

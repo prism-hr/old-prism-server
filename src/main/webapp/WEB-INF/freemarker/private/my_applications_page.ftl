@@ -96,6 +96,9 @@
       												<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('VALIDATION')> 
 									    				<option value="validate">Validate</option>
 									      			</#if>
+									      			<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('REVIEW')> 
+									    				<option value="validate">Evaluate reviews</option>
+									      			</#if>
 									    			<#if !model.user.isInRole('APPLICANT') && !model.user.isRefereeOfApplicationForm(application)>
 								    					<option value="comment">Comment</option>								    				
 								      				</#if>      												

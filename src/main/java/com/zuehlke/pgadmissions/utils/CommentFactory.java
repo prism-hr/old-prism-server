@@ -6,19 +6,20 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Component
 public class CommentFactory {
 
 	public Comment createComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType) {		
-		if(commentType == CommentType.VALIDATION){
-			ValidationComment validationComment = new ValidationComment();
-			validationComment.setApplication(applicationForm);
-			validationComment.setUser(user);
-			validationComment.setComment(strComment);
-			return validationComment;
+		if(commentType == CommentType.VALIDATION || commentType == CommentType.REVIEW_EVALUATION){
+			StateChangeComment stateChangeComment = new StateChangeComment();
+			stateChangeComment.setApplication(applicationForm);
+			stateChangeComment.setUser(user);
+			stateChangeComment.setComment(strComment);
+			stateChangeComment.setType(commentType);
+			return stateChangeComment;
 		}
 		
 		if(commentType == CommentType.REVIEW){

@@ -53,14 +53,23 @@
 				      <div class="content-box">
 				        <div class="content-box-inner">
 				        		<input type="hidden" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
-				        		<input type="hidden" id="status" value =  "${(applicationForm.status)!}"/>
-							    <h1>Validate application ${(applicationForm.id?string('#####'))!}</h1>
+				        		
+				        		<#if applicationForm.isInState('VALIDATION')>
+							    	<h1>Validate application ${(applicationForm.id?string('#####'))!}</h1>
+							    <#elseif applicationForm.isInState('REVIEW')>
+							    	<h1>Evaluate reviews for application ${(applicationForm.id?string('#####'))!}</h1>
+							    </#if>
 							    <br/><br/>
 		            			<div class="row">
 		            				<span class="plain-label">Comment</span>
 		            				<div class="field">		            				
 		            					<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 		            				</div>
+	            					<#if applicationForm.isInState('VALIDATION')>
+								    	<input type="hidden" id="commentType" value="VALIDATION"/>
+								    <#elseif applicationForm.isInState('REVIEW')>
+								    	<input type="hidden" id="commentType" value="REVIEW"/>
+								    </#if>
 		            			</div>
 		        
 		            			<div class="row">

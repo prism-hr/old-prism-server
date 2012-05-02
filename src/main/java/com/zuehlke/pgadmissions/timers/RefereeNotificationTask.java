@@ -29,6 +29,7 @@ public class RefereeNotificationTask extends TimerTask {
 
 	@Override
 	public void run() {
+		log.info("Referee Notification Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<Referee> refereesDueNotification = refereeDAO.getRefereesDueNotification();
 		refereeService.processRefereesRoles(refereesDueNotification);
@@ -49,6 +50,6 @@ public class RefereeNotificationTask extends TimerTask {
 			}
 
 		}
-
+		log.info("Referee Notification Task complete");
 	}
 }

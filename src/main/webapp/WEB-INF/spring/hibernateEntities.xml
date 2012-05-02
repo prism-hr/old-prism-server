@@ -13,7 +13,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Role</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ApplicationForm</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Comment</value>
-	     		<value>com.zuehlke.pgadmissions.domain.ValidationComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.StateChangeComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ReviewComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Program</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ProgramInstance</value>		     		

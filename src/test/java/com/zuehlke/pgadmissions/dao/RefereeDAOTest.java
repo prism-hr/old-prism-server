@@ -5,10 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.text.ParseException;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -100,21 +100,35 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	public void shouldNotReturnRefereesForInactiveApplicationForms() {
 		ApplicationForm unsubmittedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED)
 				.toApplicationForm();
-		ApplicationForm decidedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED)
+		ApplicationForm approvedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED)
 				.toApplicationForm();
-		save(unsubmittedApplication, decidedApplication);
+		ApplicationForm rejectedApplication = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REJECTED)
+				.toApplicationForm();
+		ApplicationForm withdrawnApplicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.WITHDRAWN)
+				.toApplicationForm();
+		save(unsubmittedApplication, approvedApplication, rejectedApplication,withdrawnApplicationForm);
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee refereeOne = new RefereeBuilder().declined(false).application(unsubmittedApplication).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
-				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();
-		Referee refereeTwo = new RefereeBuilder().declined(false).application(decidedApplication).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
-				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();
-		save(refereeOne, refereeTwo);
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).toReferee();
+		
+		Referee refereeTwo = new RefereeBuilder().declined(false).application(rejectedApplication).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).toReferee();
+		
+		Referee refereeThree = new RefereeBuilder().declined(false).application(approvedApplication).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).toReferee();
+		
+		Referee refereeFour = new RefereeBuilder().declined(false).application(withdrawnApplicationForm).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).toReferee();
+		
+		save(refereeOne, refereeTwo, refereeThree, refereeFour);
 		flushAndClearSession();
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertNotNull(referees);
 		assertFalse(referees.contains(refereeOne));
 		assertFalse(referees.contains(refereeTwo));
+		assertFalse(referees.contains(refereeThree));
+		assertFalse(referees.contains(refereeFour));
 
 	}
 
@@ -125,14 +139,12 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().application(application).declined(true).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
-				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();		
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).toReferee();		
 		save(referee);
 		flushAndClearSession();
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertNotNull(referees);
 		assertFalse(referees.contains(referee));
-		
-
 	}
 	
 	@Test
@@ -143,7 +155,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Reference reference = new ReferenceBuilder().document(document).toReference();
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
-				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").reference(reference).toReferee();			
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").reference(reference).user(user).toReferee();			
 	
 		save(document, reference,referee);
 		
@@ -164,7 +176,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		Date threeDaysAgo = DateUtils.addDays(now,-3);
 		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
 		Referee referee = new RefereeBuilder().application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf").lastNotified(threeDaysAgo)
-				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").user(user).toReferee();			
 	
 		save(referee);
 		
@@ -196,7 +208,7 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
-	public void shouldReturnRefereesWithNoReminders() {
+	public void shouldNotReturnRefereesWithNoReminders() {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		save(application);		
 		
@@ -210,7 +222,8 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
 		assertNotNull(referees);
-		assertTrue(referees.contains(referee));		
+		assertFalse(referees.contains(referee));		
+		
 
 	}
 	@Test
@@ -335,6 +348,170 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		
 	}
 	
+	@Test
+	public void shouldReturnRefereesDueNotifiation() {
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		save(application);		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
+		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueNotification();
+		assertNotNull(referees);
+		assertTrue(referees.contains(referee));		
+
+	}
+	
+
+	@Test
+	public void shouldReturnRefereesForNotifiationIfAlreadyNotified() {
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		save(application);		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
+		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf").lastNotified(new Date())
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueNotification();
+		assertNotNull(referees);
+		assertFalse(referees.contains(referee));		
+
+	}
+	@Test
+	public void shouldNotReturnRefereesForNotifiationIfDeclined() {
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		save(application);		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
+		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").declined(true).toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueNotification();
+		assertNotNull(referees);
+		assertFalse(referees.contains(referee));		
+
+	}
+	
+	@Test
+	public void shouldNotReturnRefereesForNotifiationIfReferenceProvided() {
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		save(application);		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
+		Document document = new DocumentBuilder().content("aaa".getBytes()).fileName("hi").toDocument();
+		Reference reference = new ReferenceBuilder().document(document).toReference();
+		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").declined(false).reference(reference).toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueNotification();
+		assertNotNull(referees);
+		assertFalse(referees.contains(referee));		
+
+	}
+	
+	@Test
+	public void shouldNotReturnRefereesForNotifiationIfAPplicationNotSubmitted() {
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		save(application);		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
+		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueNotification();
+		assertNotNull(referees);
+		assertFalse(referees.contains(referee));		
+
+	}
+	
+	
+	@Test
+	public void shouldNotReturnRefereesForNotifiationIfAPplicationInValidation() {
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		save(application);		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
+		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueNotification();
+		assertNotNull(referees);
+		assertFalse(referees.contains(referee));		
+
+	}
+	
+	@Test
+	public void shouldNotReturnRefereesForNotifiationIfAPplicationInAccepted() {
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED).toApplicationForm();
+		save(application);		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
+		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueNotification();
+		assertNotNull(referees);
+		assertFalse(referees.contains(referee));		
+
+	}
+	
+	@Test
+	public void shouldNotReturnRefereesForNotifiationIfAPplicationRejected() {
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REJECTED).toApplicationForm();
+		save(application);		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
+		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueNotification();
+		assertNotNull(referees);
+		assertFalse(referees.contains(referee));		
+
+	}
+	
+	@Test
+	public void shouldNotReturnRefereesForNotifiationIfAPplicationWithdrawn() {
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.WITHDRAWN).toApplicationForm();
+		save(application);		
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
+		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf")
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+	
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueNotification();
+		assertNotNull(referees);
+		assertFalse(referees.contains(referee));		
+
+	}
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

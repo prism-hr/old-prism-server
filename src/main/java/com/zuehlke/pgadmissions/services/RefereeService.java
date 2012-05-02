@@ -27,7 +27,7 @@ public class RefereeService {
 
 	private final JavaMailSender mailsender;
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
-	private final Logger log = Logger.getLogger(ApproveApplicationService.class);
+	private final Logger log = Logger.getLogger(RefereeService.class);
 	private final RefereeDAO refereeDAO;
 	private final UserService userService;
 	private final RoleDAO roleDAO;

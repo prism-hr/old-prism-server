@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.timers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
@@ -18,16 +20,17 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.services.MailService;
 import com.zuehlke.pgadmissions.services.RefereeMailService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 
-public class RefereeReminderTaskTest {
+public class RefereeNotificationTaskTest {
 
 	private SessionFactory sessionFactoryMock;
 	private Session sessionMock;
-	private RefereeReminderTask refereeReminderTask;
+	private RefereeNotificationTask refereeNotificationTask;
 	private RefereeMailService mailServiceMock;
 	private RefereeDAO refereeDAOMock;
+	private RefereeService refereeServiceMock;
 
 	@Test
 	public void shouldGetRefereesAndSendReminders() throws UnsupportedEncodingException {
@@ -43,22 +46,24 @@ public class RefereeReminderTaskTest {
 		Referee refereeTwo = new RefereeBuilder().id(2).toReferee();
 		sessionMock.refresh(refereeOne);
 		sessionMock.refresh(refereeTwo);
-		EasyMock.expect(refereeDAOMock.getRefereesDueAReminder()).andReturn(Arrays.asList(refereeOne, refereeTwo));
+		List<Referee> refereeList = Arrays.asList(refereeOne, refereeTwo);
+		EasyMock.expect(refereeDAOMock.getRefereesDueNotification()).andReturn(refereeList);
+		refereeServiceMock.processRefereesRoles(refereeList);
 		transactionOne.commit();
 
-		mailServiceMock.sendRefereeReminder(refereeOne);
+		mailServiceMock.sendRefereeNotification(refereeOne);
 		refereeDAOMock.save(refereeOne);
 		transactionTwo.commit();
 
-		mailServiceMock.sendRefereeReminder(refereeTwo);
+		mailServiceMock.sendRefereeNotification(refereeTwo);
 		refereeDAOMock.save(refereeTwo);
 		transactionThree.commit();
 
-		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, refereeDAOMock);
+		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, refereeDAOMock, refereeServiceMock);
 
-		refereeReminderTask.run();
+		refereeNotificationTask.run();
 
-		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, refereeDAOMock);
+		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, refereeDAOMock, refereeServiceMock);
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(refereeOne.getLastNotified(), Calendar.DATE));
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(refereeTwo.getLastNotified(), Calendar.DATE));
 	}
@@ -76,19 +81,20 @@ public class RefereeReminderTaskTest {
 		Referee refereeTwo = new RefereeBuilder().id(2).toReferee();
 		sessionMock.refresh(refereeOne);
 		sessionMock.refresh(refereeTwo);
-		EasyMock.expect(refereeDAOMock.getRefereesDueAReminder()).andReturn(Arrays.asList(refereeOne, refereeTwo));
+		EasyMock.expect(refereeDAOMock.getRefereesDueNotification()).andReturn(Arrays.asList(refereeOne, refereeTwo));
+		
 		transactionOne.commit();
-		mailServiceMock.sendRefereeReminder(refereeOne);
+		mailServiceMock.sendRefereeNotification(refereeOne);
 
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
-		mailServiceMock.sendRefereeReminder(refereeTwo);
+		mailServiceMock.sendRefereeNotification(refereeTwo);
 		refereeDAOMock.save(refereeTwo);
 		transactionThree.commit();
 
 		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, refereeDAOMock);
 
-		refereeReminderTask.run();
+		refereeNotificationTask.run();
 
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, refereeDAOMock);
 		assertNull(refereeOne.getLastNotified());
@@ -102,7 +108,8 @@ public class RefereeReminderTaskTest {
 
 		mailServiceMock = EasyMock.createMock(RefereeMailService.class);
 		refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
-		refereeReminderTask = new RefereeReminderTask(sessionFactoryMock, mailServiceMock, refereeDAOMock);
+		refereeServiceMock = EasyMock.createMock(RefereeService.class);
+		refereeNotificationTask = new RefereeNotificationTask(sessionFactoryMock, mailServiceMock, refereeDAOMock, refereeServiceMock);
 
 	}
 

@@ -7,7 +7,11 @@
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory"/>
 		<constructor-arg index="1" ref="mailSender"/>
 		<constructor-arg index="2" ref="mailApplicationsService"/>
-		<constructor-arg index="3" ref="mainRefereeDAO"/>
+	</bean>
+	
+	<bean id="refereeMailService" class="com.zuehlke.pgadmissions.services.RefereeMailService"  autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory"/>
+		<constructor-arg index="1" ref="mailSender"/>
 	</bean>
 	
 	<bean id="mailApplicationDAO" class="com.zuehlke.pgadmissions.dao.ApplicationFormDAO" autowire-candidate="false">
@@ -38,7 +42,8 @@
 	<!--  referee remindeers -->
 	<bean id="refereeReminderTimerTask" class="com.zuehlke.pgadmissions.timers.RefereeReminderTask" >
 		<constructor-arg index="0" ref="sessionFactoryMail"/>
-		<constructor-arg index="1" ref="mailServiceForTimers"/>
+		<constructor-arg index="1" ref="refereeMailService"/>
+		<constructor-arg index="2" ref="mainRefereeDAO"/>
 	</bean>
 
 	<bean id="refereeReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">

@@ -30,11 +30,12 @@ $(document).ready(function(){
 
 function saveComment(callback){
 	var application = $('#applicationId').val();	
+	var commentType = $('#commentType').val();
 	$.post( 
 			"/pgadmissions/progress",
 			{
 				application: application,
-				type: 'VALIDATION',
+				type: commentType,
 				comment: $('#comment').val()
 			},
 			callback

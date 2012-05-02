@@ -7,8 +7,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -82,6 +85,7 @@ public class ApplicationFormTest {
 		applicationForm.getNotificationRecords().add(submissionUpdateNotification);
 		assertEquals(submissionUpdateNotification, applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION));
 	}
+
 	
 	@Test
 	public void shouldReturnTrueIfInStateByString(){
@@ -141,5 +145,26 @@ public class ApplicationFormTest {
 		assertEquals(2, visibleComments.size());		
 		assertEquals(commentThree, visibleComments.get(0));
 		assertEquals(commentOne, visibleComments.get(1));
+	}
+	
+	
+	@Test
+	public void shouldAddEventIfStatusIsChanged(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
+		applicationForm.setStatus(ApplicationFormStatus.REVIEW);
+		assertEquals(1, applicationForm.getEvents().size());
+		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getEvents().get(0).getNewStatus());
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(0).getEventDate(), Calendar.DATE));		
+		
+	}
+	
+
+	@Test
+	public void shouldNotAddEventIfStatusIsUnfChanged(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		applicationForm.setStatus(ApplicationFormStatus.UNSUBMITTED);
+		assertEquals(0, applicationForm.getEvents().size());
+				
+		
 	}
 }

@@ -48,6 +48,13 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private boolean accountNonLocked;
 	private boolean credentialsNonExpired;
 	private String activationCode;
+	
+
+	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "user_id")
+	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
+	
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -406,6 +413,15 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public void setProgramId(Integer programId) {
 		this.programId = programId;
+	}
+
+	public List<NotificationRecord> getNotificationRecords() {
+		return notificationRecords;
+	}
+
+	public void setNotificationRecords(List<NotificationRecord> notificationRecords) {
+		this.notificationRecords.clear();
+		this.notificationRecords.addAll(notificationRecords);
 	}
 
 }

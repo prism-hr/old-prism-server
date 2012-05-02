@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -40,23 +41,15 @@ public class ApplicationFormBuilder {
 	private Date submittedDate;
 	private Date validationDueDate;
 	private CheckedStatus acceptedTerms;
-
-
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
-
+	private List<Event> events = new ArrayList<Event>();
 	private List<Qualification> qualifications = new ArrayList<Qualification>();
-
 	private List<Referee> referees = new ArrayList<Referee>();
-
-	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();
+	private List<EmploymentPosition> employmentPositions = new ArrayList<EmploymentPosition>();	
 	private List<Comment> comments = new ArrayList<Comment>();
-
 	private List<Funding> fundings = new ArrayList<Funding>();
-
 	private Document cv = null;
-
 	private Document personalStatement = null;
-
 	private AdditionalInformation info;
 	
 	private Date lastUpdated;
@@ -138,7 +131,13 @@ public class ApplicationFormBuilder {
 		}
 		return this;
 	}
-	
+
+	public ApplicationFormBuilder events(Event... events) {
+		for (Event event : events) {
+			this.events.add(event);
+		}
+		return this;
+	}
 	public ApplicationFormBuilder comments(Comment... comments) {
 		for (Comment comment : comments) {
 			this.comments.add(comment);
@@ -242,7 +241,7 @@ public class ApplicationFormBuilder {
 		application.setValidationDueDate(validationDueDate);
 
 		application.setProgram(program);
-
+		application.setEvents(events);
 		application.setProjectTitle(projectTitle);
 		application.setStatus(status);
 		application.setAdditionalInformation(info);

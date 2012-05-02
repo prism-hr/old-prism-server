@@ -14,8 +14,6 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.ApproveApplicationService;
-import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -28,20 +26,16 @@ public class MoteToReviewTempController {
 	 */
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
-	private final RefereeService refereeService;
-	private final ApproveApplicationService approveApplicationService;
 
-	MoteToReviewTempController(){
-		this(null, null, null, null);
+	MoteToReviewTempController() {
+		this(null, null);
 	}
-	
+
 	@Autowired
-	public MoteToReviewTempController(ApplicationsService applicationsService, UserService userService, ApproveApplicationService approveApplicationService,
-			RefereeService refereeService) {
+	public MoteToReviewTempController(ApplicationsService applicationsService, UserService userService) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
-		this.approveApplicationService = approveApplicationService;
-		this.refereeService = refereeService;
+
 	}
 
 	@ModelAttribute("applicationForm")
@@ -62,8 +56,7 @@ public class MoteToReviewTempController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String moveToReview(@ModelAttribute ApplicationForm applicationForm) {
 		applicationForm.setStatus(ApplicationFormStatus.REVIEW);
-		refereeService.processRefereesRoles(applicationForm.getReferees());
-		approveApplicationService.saveApplicationFormAndSendMailNotifications(applicationForm);
+		applicationsService.save(applicationForm);
 		return "redirect:/applications";
 
 	}

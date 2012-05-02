@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import java.io.UnsupportedEncodingException;
@@ -11,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
@@ -112,160 +110,8 @@ public class MailServiceTest {
 				DateUtils.truncate(form.getNotificationForType(NotificationType.VALIDATION_REMINDER).getNotificationDate(), Calendar.DATE));
 	}
 
-	@Test
-	public void shouldDelegateGetRefereesDueReminderToDAO() {
-		List<Referee> refList = Arrays.asList(new RefereeBuilder().id(1).toReferee(), new RefereeBuilder().id(2).toReferee());
-		EasyMock.expect(refereeDAOMock.getRefereesDueAReminder()).andReturn(refList);
-		EasyMock.replay(refereeDAOMock);
-		List<Referee> returnedReferees = mailService.getRefereesDueAReminder();
-		assertSame(refList, returnedReferees);
 
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldSendRefereeReminderUpdateLastNotifiedAndSaveForNewReferee() throws UnsupportedEncodingException {
-
-		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().program(new Program()).toApplicationForm();
-		referee.setApplication(form);
-
-		refereeDAOMock.save(referee);
-
-		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		InternetAddress toAddress = new InternetAddress("ref@test.com", "john boggs");
-
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Reminder - reference required"),
-						EasyMock.eq("private/referees/mail/referee_reminder_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
-		javaMailSenderMock.send(preparatorMock);
-
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock);
-
-		mailService.sendRefereeReminderAndUpdateLastNotified(referee);
-
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock);
-		assertNotNull(referee.getLastNotified());
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldNotThrowExceptionAndNotUpdateRefereeIfSendRefereeReminderFailsNewReferee() throws UnsupportedEncodingException {
-
-		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().program(new Program()).toApplicationForm();
-		referee.setApplication(form);
-
-		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		InternetAddress toAddress = new InternetAddress("ref@test.com", "john boggs");
-
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Reminder - reference required"),
-						EasyMock.eq("private/referees/mail/referee_reminder_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
-		javaMailSenderMock.send(preparatorMock);
-		EasyMock.expectLastCall().andThrow(new RuntimeException("Couldn't remind referee!!"));
-
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock);
-
-		mailService.sendRefereeReminderAndUpdateLastNotified(referee);
-
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock);
-		assertNull(referee.getLastNotified());
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldSendRefereeReminderUpdateLastNotifiedAndSaveForExistingUserReferee() throws UnsupportedEncodingException {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).enabled(true).email("jboggs@test.com").firstName("Jonathan").lastName("Boggs").toUser();
-		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").user(user).toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().program(new Program()).toApplicationForm();
-		referee.setApplication(form);
-
-		refereeDAOMock.save(referee);
-
-		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		InternetAddress toAddress = new InternetAddress("jboggs@test.com", "Jonathan Boggs");
-
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Reminder - reference required"),
-						EasyMock.eq("private/referees/mail/existing_user_referee_reminder_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
-		javaMailSenderMock.send(preparatorMock);
-
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock);
-
-		mailService.sendRefereeReminderAndUpdateLastNotified(referee);
-
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock);
-		assertNotNull(referee.getLastNotified());
-
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldNotThrowExceptionAndNotSaveRefereeIdReminderFailsForExistingUserReferee() throws UnsupportedEncodingException {
-		RegisteredUser user = new RegisteredUserBuilder().id(1).enabled(true).email("jboggs@test.com").firstName("Jonathan").lastName("Boggs").toUser();
-		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").user(user).toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().program(new Program()).toApplicationForm();
-		referee.setApplication(form);
-
-		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		InternetAddress toAddress = new InternetAddress("jboggs@test.com", "Jonathan Boggs");
-
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Reminder - reference required"),
-						EasyMock.eq("private/referees/mail/existing_user_referee_reminder_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
-		javaMailSenderMock.send(preparatorMock);
-		EasyMock.expectLastCall().andThrow(new RuntimeException("yikes!"));
-
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock);
-
-		mailService.sendRefereeReminderAndUpdateLastNotified(referee);
-
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock);
-		assertNull(referee.getLastNotified());
-	}
-
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldSendMailToRefereesAndSetTimeStamp() throws UnsupportedEncodingException {
-
-		Referee referee1 = new RefereeBuilder().id(1).firstname("bob").user(new RegisteredUserBuilder().id(1).enabled(false).toUser()).lastname("bobson")
-				.email("email@test.com").toReferee();
-		Referee referee2 = new RefereeBuilder().id(2).firstname("anna").user(new RegisteredUserBuilder().id(2).enabled(true).toUser()).lastname("allen")
-				.email("email2@test.com").toReferee();
-
-		ApplicationForm form = new ApplicationFormBuilder().referees(referee1, referee2).id(2).program(new ProgramBuilder().id(1).toProgram())
-				.toApplicationForm();
-
-		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
-		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
-
-		InternetAddress toAddress1 = new InternetAddress("email@test.com", "bob bobson");
-		InternetAddress toAddress2 = new InternetAddress("email2@test.com", "anna allen");
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Referee Notification"),
-						EasyMock.eq("private/referees/mail/referee_notification_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), EasyMock.eq("Referee Notification"),
-						EasyMock.eq("private/referees/mail/existing_user_referee_notification_email.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock2);
-
-		javaMailSenderMock.send(preparatorMock1);
-		javaMailSenderMock.send(preparatorMock2);
-
-		refereeDAOMock.save(referee1);
-		refereeDAOMock.save(referee2);
-
-		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock);
-
-		mailService.sendSubmissionMailToReferees(form);
-		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock);
-		assertNotNull(referee1.getLastNotified());
-		assertNotNull(referee2.getLastNotified());
-
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldSendEmailToApplicant() throws UnsupportedEncodingException {

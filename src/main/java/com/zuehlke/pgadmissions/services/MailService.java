@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -78,44 +77,8 @@ public class MailService {
 		return validationReminder;
 	}
 
-	@Transactional
-	public List<Referee> getRefereesDueAReminder() {
-		return refereeDAO.getRefereesDueAReminder();
-	}
 
-	@Transactional
-	public void sendRefereeReminderAndUpdateLastNotified(Referee referee) {
-
-		try {
-			ApplicationForm form = referee.getApplication();
-			List<RegisteredUser> administrators = form.getProgram().getAdministrators();
-			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
-			Map<String, Object> model = new HashMap<String, Object>();
-			model.put("adminsEmails", adminsEmails);
-			model.put("referee", referee);
-			model.put("application", form);
-			model.put("programme", form.getProgrammeDetails());
-			model.put("applicant", form.getApplicant());
-			model.put("host", Environment.getInstance().getApplicationHostName());
-			if (referee.getUser() != null && referee.getUser().isEnabled()) {
-				InternetAddress toAddress = new InternetAddress(referee.getUser().getEmail(), referee.getUser().getFirstName() + " "
-						+ referee.getUser().getLastName());
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Reminder - reference required",
-						"private/referees/mail/existing_user_referee_reminder_email.ftl", model));
-			} else {
-				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Reminder - reference required",
-						"private/referees/mail/referee_reminder_email.ftl", model));
-			}
-			referee.setLastNotified(Calendar.getInstance().getTime());
-			refereeDAO.save(referee);
-
-		} catch (Throwable e) {
-			log.warn("error while sending email", e);
-		}
-
-	}
-
+	
 	private String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
 		StringBuilder adminsMails = new StringBuilder();
 		for (RegisteredUser admin : administrators) {
@@ -131,38 +94,6 @@ public class MailService {
 	
 	
 	
-	@Transactional
-	public void sendSubmissionMailToReferees(ApplicationForm form) {
-
-		List<Referee> referees = form.getReferees();
-		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
-		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
-		for (Referee referee : referees) {
-			try {
-				Map<String, Object> model = new HashMap<String, Object>();
-				model.put("referee", referee);
-				model.put("adminsEmails", adminsEmails);
-				model.put("applicant", form.getApplicant());
-				model.put("application", form);
-				model.put("programme", form.getProgrammeDetails());
-				model.put("host", Environment.getInstance().getApplicationHostName());
-				InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
-				if (referee.getUser() != null && referee.getUser().isEnabled()) {
-					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
-							"private/referees/mail/existing_user_referee_notification_email.ftl", model));
-				} else {
-					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
-							"private/referees/mail/referee_notification_email.ftl", model));
-				}
-				referee.setLastNotified(Calendar.getInstance().getTime());
-				refereeDAO.save(referee);
-			} catch (Throwable e) {
-
-				log.warn("error while sending email", e);
-			}
-		}
-
-	}
 	
 	public void sendSubmissionMailToApplicant(ApplicationForm form) {
 		try {

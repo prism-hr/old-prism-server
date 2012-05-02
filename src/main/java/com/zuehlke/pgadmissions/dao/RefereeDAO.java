@@ -57,8 +57,8 @@ public class RefereeDAO {
 					.add(Restrictions.eq("declined", false))
 					.add(Restrictions.isNull("reference"))
 					.add(Restrictions.isNotNull("user"))
-					.add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED})))
-					.add(Restrictions.or(Restrictions.isNull("lastNotified"),Restrictions.le("lastNotified", oneWeekAgo)))					
+					.add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED})))
+					.add(Restrictions.le("lastNotified", oneWeekAgo))
 				.list();
 	}
 	
@@ -69,6 +69,18 @@ public class RefereeDAO {
 				.add(Restrictions.eq("declined", false))
 				.add(Restrictions.eq("application", form))
 				.add(Restrictions.isNull("reference"))
+				.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Referee> getRefereesDueNotification() {		
+		return sessionFactory.getCurrentSession()
+				.createCriteria(Referee.class)
+				.add(Restrictions.isNull("lastNotified"))
+				.add(Restrictions.eq("declined", false))
+				.add(Restrictions.isNull("reference"))
+				.createAlias("application", "application")
+				.add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.VALIDATION, ApplicationFormStatus.UNSUBMITTED})))
 				.list();
 	}
 }

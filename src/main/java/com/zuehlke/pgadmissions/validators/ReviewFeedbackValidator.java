@@ -21,8 +21,12 @@ public class ReviewFeedbackValidator implements Validator{
 	public void validate(Object target, Errors errors) {
 		ReviewComment comment = (ReviewComment) target;
 		if(comment.getDecline() ==  CheckedStatus.NO){
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "willingToSupervice", "reviewComment.willingToSupervice.notempty");
-			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "suitableCandidate", "reviewComment.suitableCandidate.notempty");
+			if(comment.getSuitableCandidate() == null || (comment.getSuitableCandidate() != CheckedStatus.YES && comment.getSuitableCandidate() != CheckedStatus.NO)){
+				errors.rejectValue("suitableCandidate", "reviewComment.suitableCandidate.notempty");
+			}
+			if(comment.getWillingToSupervice() == null || (comment.getWillingToSupervice() != CheckedStatus.YES && comment.getWillingToSupervice() != CheckedStatus.NO)){
+				errors.rejectValue("willingToSupervice", "reviewComment.willingToSupervice.notempty");
+			}
 			ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "reviewComment.comment.notempty");
 		}
 		

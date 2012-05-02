@@ -28,18 +28,23 @@ $(document).ready(function(){
 			if ($('#suitableRB_false:checked').val() !== undefined) {
 				isSuitable = 'NO';
 			}
+			var postParams = {
+				applicationId: application,
+				type: 'REVIEW',
+				comment: $('#review-comment').val(),
+				decline: $("#declineValue").val()				
+			};
+			if(isSuitable){
+				postParams.suitableCandidate= isSuitable;
+			}
+			if(willingSupervise){
+				postParams.willingToSupervice= willingSupervise;
+			}
 			$.post(
 					"/pgadmissions/reviewFeedback",
-					{
-						applicationId: application,
-						type: 'REVIEW',
-						comment: $('#review-comment').val(),
-						willingToSupervice: willingSupervise,
-						decline: $("#declineValue").val(),
-						suitableCandidate: isSuitable
-					},
+					postParams,
 					function(data) {
-						window.location.href = "reviewFeedback?applicationId=" + application;
+						$('#reviewcommentsectopm').html(data);
 					}
 				);
 	});	

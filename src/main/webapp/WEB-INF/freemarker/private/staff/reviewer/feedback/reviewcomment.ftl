@@ -1,3 +1,4 @@
+<section id="reviewcommentsectopm" >					          	
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
 <html>
@@ -73,12 +74,16 @@
 										<div class="field">
 											<label><input type="radio"   name="willingRB" value="TRUE" id="willingRB_true"/> Yes</label> 
 											<label><input type="radio"  name="willingRB" value="FALSE" id="willingRB_false"/> No</label> 
+											<@spring.bind "comment.willingToSupervice" /> 
+	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
 			    					
 			    					<span id="suitable-lbl" class="plain-label">Is candidate suitable for UCL?<em>*</em></span>
 										<div class="field">
 											<label><input type="radio"  name="suitableRB" value="TRUE" id="suitableRB_true"/> Yes</label> 
 											<label><input type="radio"  name="suitableRB" value="FALSE" id="suitableRB_false"/> No</label> 
+											<@spring.bind "comment.suitableCandidate" /> 
+	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
 									
 			    
@@ -111,3 +116,4 @@
 		   
 	</body>
 </html>
+</section>

@@ -11,12 +11,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
@@ -27,8 +25,6 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.CommentFactory;
-import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
 import com.zuehlke.pgadmissions.validators.ReviewFeedbackValidator;
 
 public class ReviewCommentControllerTest {
@@ -37,7 +33,6 @@ public class ReviewCommentControllerTest {
 	private ReviewCommentController controller;
 	private ReviewFeedbackValidator reviewFeedbackValidatorMock;
 	private CommentService commentServiceMock;
-	private CommentFactory commentFactoryMock;
 
 	
 	@Test
@@ -119,8 +114,7 @@ public class ReviewCommentControllerTest {
 		final RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
-		commentFactoryMock = EasyMock.createMock(CommentFactory.class);
-		controller = new  ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock, commentFactoryMock){
+		controller = new  ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock){
 
 			@Override
 			public ApplicationForm getApplicationForm(Integer id) {
@@ -181,12 +175,11 @@ public class ReviewCommentControllerTest {
 	
 	@Before
 	public void setUp() {
-		commentFactoryMock = EasyMock.createMock(CommentFactory.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		reviewFeedbackValidatorMock = EasyMock.createMock(ReviewFeedbackValidator.class);
 		commentServiceMock = EasyMock.createMock(CommentService.class);
-		controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock, commentFactoryMock);
+		controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock);
 
 	}
 }

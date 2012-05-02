@@ -63,7 +63,7 @@
           	<div>
 				<#if errorCode?? && errorCode=="true">
 					<div class="row">             	
-						<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
+						<span class="invalid invalid-submit-sec">Please provide all mandatory fields in this section.</span>
 				     </div>            	
 				</#if>
 				<div class="row">

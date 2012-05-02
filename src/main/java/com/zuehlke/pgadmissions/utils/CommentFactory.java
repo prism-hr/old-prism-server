@@ -27,6 +27,7 @@ public class CommentFactory {
 			reviewComment.setApplication(applicationForm);
 			reviewComment.setUser(user);
 			reviewComment.setComment(strComment);
+			reviewComment.setType(commentType);
 			return reviewComment;
 		}
 		Comment comment = new Comment();

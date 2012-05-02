@@ -18,6 +18,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 
@@ -93,7 +94,6 @@ public class Comment extends DomainObject<Integer>{
 	public CommentType getType() {
 		return CommentType.GENERIC;
 	}
-	
 	
 
 }

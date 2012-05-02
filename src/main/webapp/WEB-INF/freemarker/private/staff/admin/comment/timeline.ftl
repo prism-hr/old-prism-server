@@ -11,6 +11,11 @@
  		<td>${(comment.createdTimestamp?string('dd-MMM-yyyy hh:mm a'))!}</td>
  		<td>${(comment.comment?html)!}</td>
  		<td>${(comment.type?html)!}</td>
+ 		<#if comment.type?? && comment.type ==  "REVIEW">
+ 			<td>Supervise: ${(comment.willingToSupervice.displayValue()?html)!}</td>
+ 			<td>Suitable: ${(comment.suitableCandidate.displayValue()?html)!}</td>
+ 			<td>Decline: ${(comment.decline.displayValue()?html)!}</td>
+ 		</#if>
 	</tr>	 
 </#list>
 </table>   

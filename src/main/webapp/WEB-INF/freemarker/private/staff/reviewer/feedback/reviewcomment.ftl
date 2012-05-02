@@ -54,7 +54,6 @@
 				       	 <!--	if user is reviewer in program -->			        		
 							    <h1>Add comment for application ${(applicationForm.id?string('#####'))!}</h1>
 							    <br/><br/>
-							    <form method="POST" action= "<@spring.url '/reviewFeedback'/>">
 							    	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 			            			<div class="row">
 										<label class="plain-label">Decline<em>*</em></label>
@@ -86,9 +85,8 @@
 			            			</div>
 			            			<div class="buttons">						        		
 			            				<button type="reset" value="cancel">Cancel</button>
-							       		<button class="blue" type="submit" value="Submit">Submit</button>						        
+							       		<button class="blue" id="submitReviewFeedback" type="button" value="Submit">Submit</button>						        
 									</div>
-			  					</form>
 			  					<hr/>
 			  				<!-- else hidden app close if-->
 		  					<div id= "timeline">

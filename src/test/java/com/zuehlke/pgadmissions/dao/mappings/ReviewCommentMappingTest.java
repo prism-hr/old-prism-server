@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class ReviewCommentMappingTest extends AutomaticRollbackTestCase{
 
@@ -40,7 +41,7 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase{
 		
 		flushAndClearSession();
 		
-		ReviewComment reviewComment = new ReviewCommentBuilder().comment("This is a review comment").suitableCandidate(CheckedStatus.NO).user(reviewer).application(applicationForm).decline(CheckedStatus.YES).willingToSupervice(CheckedStatus.NO).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().commentType(CommentType.REVIEW).comment("This is a review comment").suitableCandidate(CheckedStatus.NO).user(reviewer).application(applicationForm).decline(CheckedStatus.YES).willingToSupervice(CheckedStatus.NO).toReviewComment();
 		save(reviewComment);
 		
 		assertNotNull(reviewComment.getId());
@@ -57,6 +58,7 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase{
 
 		assertEquals(reviewer, reloadedComment.getUser());
 		assertEquals("This is a review comment", reloadedComment.getComment());
+		assertEquals(CheckedStatus.NO, reloadedComment.getSuitableCandidate());
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(reloadedComment.getCreatedTimestamp(), Calendar.DATE));
 		
 	}

@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -15,12 +16,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.CommentFactory;
 import com.zuehlke.pgadmissions.validators.GenericCommentValidator;
+import com.zuehlke.pgadmissions.validators.ReviewFeedbackValidator;
 
 @Controller
 @RequestMapping(value = { "/reviewFeedback" })
@@ -29,27 +36,30 @@ public class ReviewCommentController {
 	private static final String REVIEW_FEEDBACK_PAGE = "private/staff/reviewer/feedback/reviewcomment";
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
-	private final GenericCommentValidator genericCommentValidator;
+	private final ReviewFeedbackValidator reviewFeedbackValidator;
 	private final CommentService commentService;
+	private final CommentFactory commentFactory;
 
 	ReviewCommentController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public ReviewCommentController(ApplicationsService applicationsService, UserService userService, CommentService commentService,
-			GenericCommentValidator genericCommentValidator) {
+			ReviewFeedbackValidator reviewFeedbackValidator, CommentFactory commentFactory) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.commentService = commentService;
-		this.genericCommentValidator = genericCommentValidator;
+		this.reviewFeedbackValidator = reviewFeedbackValidator;
+		this.commentFactory = commentFactory;
 	}
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
 		RegisteredUser currentUser = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
-		if (applicationForm == null || currentUser.isInRole(Authority.APPLICANT) || currentUser.isRefereeOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)){
+		//!currentUser.isInRole(Authority.REVIEWER) add it back when everything works and unignored tests
+		if (applicationForm == null ||  !currentUser.canSee(applicationForm)){
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;
@@ -66,23 +76,28 @@ public class ReviewCommentController {
 	}
 
 	@ModelAttribute("comment")
-	public Comment getComment(@RequestParam Integer applicationId) {
+	public ReviewComment getComment(@RequestParam Integer applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		Comment comment = new Comment();
-		comment.setApplication(applicationForm);
-		comment.setUser(userService.getCurrentUser());
-		return comment;
+		ReviewComment reviewComment = new ReviewComment();
+		reviewComment.setApplication(applicationForm);
+		reviewComment.setUser(getUser());
+		reviewComment.setComment("");
+		reviewComment.setType(CommentType.REVIEW);
+		return reviewComment;
 	}
 
 	@InitBinder(value = "comment")
 	public void registerBinders(WebDataBinder binder) {
-		binder.setValidator(genericCommentValidator);
+		binder.setValidator(reviewFeedbackValidator);
 
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String addComment(@Valid @ModelAttribute("comment") Comment comment, BindingResult result) {
-		if (result.hasErrors()) {
+	public String addComment(@Valid @ModelAttribute("comment") ReviewComment comment, BindingResult result) {
+		if(comment.getApplication().isDecided()){
+			throw new CannotUpdateApplicationException();
+		}
+		if(result.hasErrors()){
 			return REVIEW_FEEDBACK_PAGE;
 		}
 		commentService.save(comment);

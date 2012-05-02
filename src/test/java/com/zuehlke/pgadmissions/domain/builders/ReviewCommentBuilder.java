@@ -7,6 +7,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class ReviewCommentBuilder {
 	
@@ -18,6 +19,7 @@ public class ReviewCommentBuilder {
 	private Integer id;
 	private Date createdTimeStamp;
 	private RegisteredUser user;
+	private CommentType commentType;
 	
 	public ReviewCommentBuilder willingToSupervice(CheckedStatus willingToSupervice) {
 		this.willingToSupervice = willingToSupervice;
@@ -47,6 +49,10 @@ public class ReviewCommentBuilder {
 		this.comment = comment;
 		return this;
 	}
+	public ReviewCommentBuilder commentType (CommentType commentType){
+		this.commentType = commentType;
+		return this;
+	}
 	public ReviewCommentBuilder user (RegisteredUser user){
 		this.user = user;
 		return this;
@@ -56,6 +62,7 @@ public class ReviewCommentBuilder {
 		ReviewComment reviewComment = new ReviewComment();
 		reviewComment.setApplication(applicationForm);
 		reviewComment.setComment(comment);
+		reviewComment.setType(commentType);
 		reviewComment.setCreatedTimestamp(createdTimeStamp);
 		reviewComment.setDecline(decline);
 		reviewComment.setId(id);

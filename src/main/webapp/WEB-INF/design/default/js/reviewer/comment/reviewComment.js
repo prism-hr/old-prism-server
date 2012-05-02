@@ -12,6 +12,38 @@ $(document).ready(function(){
 			}
 	);
 	
+	$('#submitReviewFeedback').click(function() {
+			var application = $('#applicationId').val();
+			var willingSupervise = null;
+			if ($('#willingRB_true:checked').val() !== undefined) {
+				willingSupervise = 'YES';
+			}
+			if ($('#willingRB_false:checked').val() !== undefined) {
+				willingSupervise = 'NO';
+			}
+			var isSuitable = null;
+			if ($('#suitableRB_true:checked').val() !== undefined) {
+				isSuitable = 'YES';
+			}
+			if ($('#suitableRB_false:checked').val() !== undefined) {
+				isSuitable = 'NO';
+			}
+			$.post(
+					"/pgadmissions/reviewFeedback",
+					{
+						applicationId: application,
+						type: 'REVIEW',
+						comment: $('#review-comment').val(),
+						willingToSupervice: willingSupervise,
+						decline: $("#declineValue").val(),
+						suitableCandidate: isSuitable
+					},
+					function(data) {
+						window.location.href = "reviewFeedback?applicationId=" + application;
+					}
+				);
+	});	
+	
 	$("input[name*='declineCB']").click(function() {
 		if ($("#declineValue").val() =='YES'){
 			$("#declineValue").val("NO");

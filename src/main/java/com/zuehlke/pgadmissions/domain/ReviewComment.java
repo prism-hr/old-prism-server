@@ -35,6 +35,18 @@ public class ReviewComment extends Comment{
 	@Column(name = "decline")
 	private CheckedStatus decline;
 	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CommentTypeEnumUserType")
+	@Column(name="comment_type")
+	private CommentType type;
+
+	public CommentType getType() {
+		return type;
+	}
+
+	public void setType(CommentType type) {
+		this.type = type;
+	}
+	
 	public CheckedStatus getWillingToSupervice() {
 		return willingToSupervice;
 	}
@@ -59,9 +71,5 @@ public class ReviewComment extends Comment{
 		this.decline = decline;
 	}
 
-	@Override
-	public CommentType getType() {
-		return CommentType.REVIEW;
-	}
 	
 }

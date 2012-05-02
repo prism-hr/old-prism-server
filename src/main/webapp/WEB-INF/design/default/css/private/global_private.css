@@ -163,7 +163,7 @@ div.search-box button {
 
 /* Validation errors. */
 span.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; 
-color: red; display: inline-block; padding-left: 24px; 
+color: red; display: inline-block; padding-left: 24px; margin-left: -2px;
 /*IE 7*/ zoom: 1; *display: inline;}
 
 span.invalid-submit { 
@@ -176,7 +176,7 @@ span.invalid-submit {
 
 span.info-text { 
 	background: url(../../images/temp_blue_i.png) no-repeat 0 .1em; 
-	display: inline-block; margin-left: -3px;; padding-left: 24px; 
+	display: inline-block; margin-left: -5px;; padding-left: 24px; 
 	/*IE 7*/ zoom: 1; *display: inline;
 }
 

@@ -162,9 +162,14 @@ div.search-box button {
 }
 
 /* Validation errors. */
-span.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; 
-color: red; display: inline-block; padding-left: 24px; margin-left: -2px;
-/*IE 7*/ zoom: 1; *display: inline;}
+span.invalid {
+	/* background: url(../../images/button_exclaim.png) no-repeat 0 .1em; */ 
+	color: red; 
+	display: inline-block; 
+	padding-left: 3px; 
+	margin-left: -2px;
+	/*IE 7*/ zoom: 1; *display: inline;
+}
 
 span.invalid-submit { 
 	color:red; padding-bottom:10px; line-height:46px; padding-left: 48px;
@@ -176,18 +181,37 @@ span.invalid-submit {
 	margin-top: -15px;
 }
 
-span.invalid-submit-sec{
+span.invalid-info-text{
+	
+	/* background: url(../../images/button_exclaim.png) no-repeat 0 .1em; */ 
+	color: red; 
+	display: inline-block;
+	padding-left: 10px;
+	margin-left: -2px;
+	/*IE 7*/ zoom: 1; *display: inline;
 	margin-bottom: 5px;
+	
 }
 span.info-text { 
-	background: url(../../images/temp_blue_i.png) no-repeat 0 .1em; 
-	display: inline-block; margin-left: -5px;; padding-left: 24px; 
-	/*IE 7*/ zoom: 1; *display: inline;
+	 
+	background: url(../../images/temp_blue_i.png) no-repeat 0 .1em;
+	display: inline-block;
+	padding-left: 24px; 
+	margin-left: -2px;
+	/*IE 7*/ zoom: 1; 
+	*display: inline;
+	margin-bottom: 5px;
 }
 
 /* to control the looks of the information bar on top of each section */
 section.folding form > div.section-info-bar{
     border:  1px solid #0071B9;
+	padding-bottom: 0;
+}
+
+section.folding form > div.section-error-bar{
+	border:  1px solid red;
+	padding-bottom: 0;
 }
 
 

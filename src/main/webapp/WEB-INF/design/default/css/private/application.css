@@ -99,6 +99,13 @@ section.folding form .hint {
 	float: left; margin-left: 10px; 
 }
 
+section.folding form .error-hint { 
+	background: url(../../images/button_exclaim.png) no-repeat 0 .1em; 
+	no-repeat; height: 24px; 
+	float: left;
+	width: 20px; 
+}
+
 .individual-hint{
 	 margin-top: 2px;	
 } 

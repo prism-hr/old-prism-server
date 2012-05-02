@@ -50,22 +50,30 @@
 
 	<form>		
 	
-		<div class="section-info-bar">
-			<div class="row">
-				<span class="info-text"> &nbsp
-					<@spring.message 'personalDetails.sectionInfo'/> 
-				</span>
-			</div>
-		</div>
-	
 			<input type="hidden" name="id" id="personalDetailsId" value="${(personalDetails.id?string("######"))!}"/>			
             <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
-          	<div>
+
+			
 				<#if errorCode?? && errorCode=="true">
-					<div class="row">             	
-						<span class="invalid invalid-submit-sec">Please provide all mandatory fields in this section.</span>
-				     </div>            	
+					<div class="section-error-bar">
+						<div class="row">
+							<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
+							<span class="invalid-info-text">
+								<@spring.message 'personalDetails.sectionInfo'/>
+							</span>
+				 		</div>
+				 	</div>
+			 	<#else>
+				 	<div class="section-info-bar">
+						<div class="row">
+							<span class="info-text">&nbsp
+								<@spring.message 'personalDetails.sectionInfo'/> 
+							</span>
+						</div>
+					</div>	
 				</#if>
+            
+          	<div>
 				<div class="row">
 					<label class="plain-label grey-label">First Name<em class="grey-label">*</em></label>
 					 <span class="hint" data-desc="<@spring.message 'personalDetails.firstname'/>"></span>
@@ -328,6 +336,7 @@
 						 </select>
 						<@spring.bind "personalDetails.residenceCountry" /> 
 					</div>
+					
 					<#list spring.status.errorMessages as error>
 						<div class="row">
 							<div class="field">

@@ -14,12 +14,19 @@ public class ApplicationFormStatusTest {
 		assertEquals("Validation", ApplicationFormStatus.VALIDATION.displayValue());
 		assertEquals("Not Submitted", ApplicationFormStatus.UNSUBMITTED.displayValue());
 		assertEquals("Withdrawn", ApplicationFormStatus.WITHDRAWN.displayValue());
+		assertEquals("Review", ApplicationFormStatus.REVIEW.displayValue());
 	}
 
 	@Test
-	public void shouldReturnRejectedAndApprovedForValidationState(){
+	public void shouldReturnRejectedReviewAndApprovedForValidationState(){
 		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.VALIDATION);
-		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.APPROVAL},avaialbleStati);
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL},avaialbleStati);
+	}
+	
+	@Test
+	public void shouldReturnRejectedReviewAndApprovedForReviewState(){
+		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.REVIEW);
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL},avaialbleStati);
 	}
 	
 	@Test

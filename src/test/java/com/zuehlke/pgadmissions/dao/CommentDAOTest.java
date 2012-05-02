@@ -15,11 +15,12 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ValidationComment;
+import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class CommentDAOTest extends AutomaticRollbackTestCase {
 
@@ -79,17 +80,17 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
-	public void shouldSaveAndLoadValidationComment() {
+	public void shouldSaveAndLoadStateChangeComment() {
 
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
 		save(application);
 		flushAndClearSession();
 
-		ValidationComment validationComment = new ValidationComment();
+		StateChangeComment validationComment = new StateChangeComment();
 		validationComment.setApplication(application);
 		validationComment.setComment("Excellent Application!!!");
 		validationComment.setUser(user);
-
+		validationComment.setType(CommentType.REVIEW_EVALUATION);
 		assertNull(validationComment.getId());
 
 		commentDAO.save(validationComment);
@@ -105,11 +106,12 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	
 		assertNotSame(validationComment, reloadedComment);
 		assertEquals(validationComment, reloadedComment);
-		assertEquals(validationComment.getUser(), user);
+		assertEquals(user, reloadedComment.getUser());
+		assertEquals(CommentType.REVIEW_EVALUATION, reloadedComment.getType());
 		assertEquals(validationComment.getComment(), reloadedComment.getComment());
 		
 		
-		assertTrue(reloadedComment instanceof ValidationComment);
+		assertTrue(reloadedComment instanceof StateChangeComment);
 	}
 
 

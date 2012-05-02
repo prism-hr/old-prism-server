@@ -29,6 +29,11 @@ public class NotificationRecord  extends DomainObject<Integer>{
 	@JoinColumn(name="application_form_id")
 	private ApplicationForm application;
 	
+	
+	@ManyToOne
+	@JoinColumn(name="user_id")
+	private RegisteredUser user;
+	
 	@Column(name="notification_date")
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date notificationDate;
@@ -78,5 +83,11 @@ public class NotificationRecord  extends DomainObject<Integer>{
 
 	public void setApplication(ApplicationForm application) {
 		this.application = application;
+	}
+	public RegisteredUser getUser() {
+		return user;
+	}
+	public void setUser(RegisteredUser user) {
+		this.user = user;
 	}
 }

@@ -42,6 +42,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "application_form_id")
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 
+	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "application_form_id")
+	private List<Event> events = new ArrayList<Event>();
+	
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
 	private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 
@@ -455,5 +460,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		} catch (IllegalArgumentException e) {
 			return false;
 		}
+	}
+
+	public List<Event> getEvents() {
+		return events;
+	}
+
+	public void setEvents(List<Event> events) {
+		this.events.clear();
+		this.events.addAll(events);
 	}
 }

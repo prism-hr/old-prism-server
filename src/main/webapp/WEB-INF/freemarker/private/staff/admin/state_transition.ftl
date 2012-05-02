@@ -68,7 +68,7 @@
 	            					<#if applicationForm.isInState('VALIDATION')>
 								    	<input type="hidden" id="commentType" value="VALIDATION"/>
 								    <#elseif applicationForm.isInState('REVIEW')>
-								    	<input type="hidden" id="commentType" value="REVIEW"/>
+								    	<input type="hidden" id="commentType" value="REVIEW_EVALUATION"/>
 								    </#if>
 		            			</div>
 		        

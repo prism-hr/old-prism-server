@@ -114,7 +114,7 @@
 							                  	</select>
 							                </td>
 							                <td> <#if application.isSubmitted()>
-							                	${(application.submittedDate?string("dd-MMM-yyyy hh:mm a"))!} 
+							                	${(application.submittedDate?string("dd MMM yyyy"))!} 
 							               		 </#if>
 							               	</td>							  
 							                <td class="centre"><input type="checkbox" name="appDownload" id="appDownload_${application.id?string("######")}"/></td>

@@ -3,15 +3,18 @@ package com.zuehlke.pgadmissions.domain;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
+/**
+ * @author kpa
+ *
+ */
 @Entity(name="REVIEW_COMMENT")
-@DiscriminatorValue("REVIEW")
 @Access(AccessType.FIELD)
 public class ReviewComment extends Comment{
 	
@@ -55,4 +58,10 @@ public class ReviewComment extends Comment{
 	public void setDecline(CheckedStatus decline) {
 		this.decline = decline;
 	}
+
+	@Override
+	public CommentType getType() {
+		return CommentType.REVIEW;
+	}
+	
 }

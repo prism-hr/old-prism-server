@@ -65,6 +65,7 @@ public class SubmitApplicationFormController {
 		applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
 		applicationForm.getNotificationRecords().add(new NotificationRecord(NotificationType.UPDATED_NOTIFICATION));
 		applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION).setNotificationDate(new Date());
+		
 		submitApplicationService.saveApplicationFormAndSendMailNotifications(applicationForm);
 		return "redirect:/applications?submissionSuccess=true";
 	}

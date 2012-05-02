@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -31,6 +32,13 @@ public class RegisteredUserBuilder {
 	private List<Program> programsOfWhichApprover = new ArrayList<Program>();		
 	private List<Program> programsOfWhichReviewer = new ArrayList<Program>();
 	
+	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
+	
+	
+	public RegisteredUserBuilder notificationRecords(NotificationRecord...notifications) {
+		this.notificationRecords.addAll(Arrays.asList(notifications));
+		return this;
+	} 
 	
 	public RegisteredUserBuilder programsOfWhichAdministrator(Program...programs) {
 		this.programsOfWhichAdministrator.addAll(Arrays.asList(programs));
@@ -150,6 +158,7 @@ public class RegisteredUserBuilder {
 		user.setProgramsOfWhichReviewer(programsOfWhichReviewer);
 		user.setConfirmPassword(confirmPassword);
 		user.setReferees(referees);
+		user.setNotificationRecords(notificationRecords);
 		return user;
 	}
 

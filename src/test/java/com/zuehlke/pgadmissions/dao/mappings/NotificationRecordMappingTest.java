@@ -45,7 +45,7 @@ public class NotificationRecordMappingTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
-	public void shouldLoadApplicationFormFormNotificationRecord() throws ParseException{	
+	public void shouldLoadApplicationFormForNotificationRecord() throws ParseException{	
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
@@ -61,6 +61,22 @@ public class NotificationRecordMappingTest extends AutomaticRollbackTestCase {
 		NotificationRecord reloadedRecord = (NotificationRecord ) sessionFactory.getCurrentSession().get(NotificationRecord.class, notificationRecord.getId());
 		
 		assertEquals(application, reloadedRecord.getApplication());
+		
+	}
+	
+	@Test
+	public void shouldLoadUserForNotificationRecord() throws ParseException{	
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
+		NotificationRecord notificationRecord = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.UPDATED_NOTIFICATION).toNotificationRecord();		
+		
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).notificationRecords(notificationRecord).toUser();
+		save(user);
+		flushAndClearSession();
+		NotificationRecord reloadedRecord = (NotificationRecord ) sessionFactory.getCurrentSession().get(NotificationRecord.class, notificationRecord.getId());
+		
+		assertEquals(user, reloadedRecord.getUser());
 		
 	}
 }

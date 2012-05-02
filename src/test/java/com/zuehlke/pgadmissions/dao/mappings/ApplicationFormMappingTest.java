@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -34,6 +35,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -269,6 +271,35 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		assertNull(sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId));
 
+	}
+	
+	@Test
+	public void shouldSaveAndLoadEventsWithApplication() throws ParseException {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
+		Event eventOne = new EventBuilder().eventDate(simpleDateFormat.parse("01 12 2011 14:09:26")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
+		Event eventTwo = new EventBuilder().eventDate(simpleDateFormat.parse("03 12 2011 14:09:26")).newStatus(ApplicationFormStatus.UNSUBMITTED).toEvent();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).events(eventOne, eventTwo).toApplicationForm();
+		
+		save(application);
+		Integer eventOneId = eventOne.getId();
+		assertNotNull(eventOneId);
+		assertNotNull(eventTwo.getId());
+		flushAndClearSession();
+		
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertEquals(2, reloadedApplication.getEvents().size());
+		assertTrue(reloadedApplication.getEvents().containsAll(Arrays.asList(eventOne, eventTwo)));
+		
+		eventOne = (Event) sessionFactory.getCurrentSession().get(Event.class, eventOneId);
+		reloadedApplication.getEvents().remove(eventOne);
+		save(reloadedApplication);
+		flushAndClearSession();
+		
+		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertEquals(1, reloadedApplication.getEvents().size());
+		assertTrue(reloadedApplication.getEvents().containsAll(Arrays.asList(eventTwo)));
+		
+		assertNull(sessionFactory.getCurrentSession().get(Event.class, eventOneId));
 
 	}
 	@Before

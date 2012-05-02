@@ -56,19 +56,19 @@ public class RegisterRefereeController {
 	}
 
 	@RequestMapping(value = "/submit",method = RequestMethod.POST)
-	public ModelAndView submitRefereeAndGetLoginPage(@ModelAttribute RegisteredUser referee, BindingResult result, ModelMap modelMap) {
-		validator.validate(referee, result);
+	public ModelAndView submitRefereeAndGetLoginPage(@ModelAttribute RegisteredUser refereeUser, BindingResult result, ModelMap modelMap) {
+		validator.validate(refereeUser, result);
 		if(result.hasErrors()){
-			modelMap.put("referee", referee);
+			modelMap.put("referee", refereeUser);
 			modelMap.put("result", result);
 			return new ModelAndView(REGISTER_REFEREE_VIEW_NAME, modelMap);
 		}
-		referee.setPassword(encryptionUtils.getMD5Hash(referee.getPassword()));
-		referee.setEnabled(true);
-		referee.setAccountNonExpired(true);
-		referee.setAccountNonLocked(true);
-		referee.setCredentialsNonExpired(true);
-		userService.saveAndEmailRegisterConfirmationToReferee(referee);
+		refereeUser.setPassword(encryptionUtils.getMD5Hash(refereeUser.getPassword()));
+		refereeUser.setEnabled(true);
+		refereeUser.setAccountNonExpired(true);
+		refereeUser.setAccountNonLocked(true);
+		refereeUser.setCredentialsNonExpired(true);
+		userService.saveAndEmailRegisterConfirmationToReferee(refereeUser);
 		return  new ModelAndView("redirect:" + REGISTER_COMPLETE_VIEW_NAME);
 
 	}

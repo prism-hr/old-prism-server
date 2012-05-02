@@ -33,6 +33,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Language</value>
 	     		<value>com.zuehlke.pgadmissions.domain.AdditionalInformation</value>
 	     		<value>com.zuehlke.pgadmissions.domain.NotificationRecord</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Event</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

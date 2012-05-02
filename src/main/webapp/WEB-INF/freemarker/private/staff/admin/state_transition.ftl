@@ -53,6 +53,7 @@
 				      <div class="content-box">
 				        <div class="content-box-inner">
 				        		<input type="hidden" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
+				        		<input type="hidden" id="status" value =  "${(applicationForm.status)!}"/>
 							    <h1>Validate application ${(applicationForm.id?string('#####'))!}</h1>
 							    <br/><br/>
 		            			<div class="row">

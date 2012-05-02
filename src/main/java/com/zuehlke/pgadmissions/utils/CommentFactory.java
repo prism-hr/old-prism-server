@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -18,6 +19,14 @@ public class CommentFactory {
 			validationComment.setUser(user);
 			validationComment.setComment(strComment);
 			return validationComment;
+		}
+		
+		if(commentType == CommentType.REVIEW){
+			ReviewComment reviewComment = new ReviewComment();
+			reviewComment.setApplication(applicationForm);
+			reviewComment.setUser(user);
+			reviewComment.setComment(strComment);
+			return reviewComment;
 		}
 		Comment comment = new Comment();
 		comment.setApplication(applicationForm);

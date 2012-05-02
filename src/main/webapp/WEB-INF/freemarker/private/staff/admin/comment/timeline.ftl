@@ -1,0 +1,16 @@
+ <table>
+ 	<tr>
+ 		<th>Author</th>
+ 		<th>Date</th>
+ 		<th>Comment</th>
+ 		<th>Type</th>
+ 	</tr>
+ <#list comments as comment>
+ 	<tr>
+ 		<td>${(comment.user.firstName)!} ${(comment.user.lastName)!}</td>
+ 		<td>${(comment.createdTimestamp?string('dd-MMM-yyyy hh:mm a'))!}</td>
+ 		<td>${(comment.comment?html)!}</td>
+ 		<td>${(comment.type?html)!}</td>
+	</tr>	 
+</#list>
+</table>   

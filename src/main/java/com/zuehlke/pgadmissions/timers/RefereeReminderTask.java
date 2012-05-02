@@ -30,6 +30,7 @@ public class RefereeReminderTask extends TimerTask {
 
 	@Override
 	public void run() {
+		log.info("Referee Reminder Task running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<Referee> refereesDueAReminder = refereeDAO.getRefereesDueAReminder();
 		transaction.commit();
@@ -49,7 +50,7 @@ public class RefereeReminderTask extends TimerTask {
 			}
 
 		}
-
+		log.info("Referee Reminder Task complete");
 	}
 
 }

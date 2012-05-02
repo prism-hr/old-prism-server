@@ -21,11 +21,13 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -84,8 +86,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertEquals(application, reloadedApplication);
 		assertEquals(application.getApplicant(), user);
 	}
-
-
 
 	@Test
 	public void shouldFindAllApplicationsBelongingToSameUser() {
@@ -294,7 +294,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertTrue(applicationsDueUpdateNotification.contains(applicationForm));
 
 	}
-	
+
 	@Test
 	public void shouldNotReturnApplicationUpdatedSinceLastAlertAndLastAlertLessThan24HoursAgo() {
 		Date now = Calendar.getInstance().getTime();
@@ -312,7 +312,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertFalse(applicationsDueUpdateNotification.contains(applicationForm));
 
 	}
-	
+
 	@Test
 	public void shouldNotReturnApplicationNotUpdatedSinceLastAlert() {
 		Date now = Calendar.getInstance().getTime();
@@ -330,7 +330,59 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertFalse(applicationsDueUpdateNotification.contains(applicationForm));
 
 	}
+
+	@Test
+	public void shouldReturnApplicationFormDueReviewNotification() {
+		Date now = Calendar.getInstance().getTime();
+		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
+				.events(new EventBuilder().eventDate(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
+		save(applicationForm);
+
+		flushAndClearSession();
+
+		List<ApplicationForm> applicationsDueApplicantReviewNotification = applicationDAO.getApplicationsDueApplicantReviewNotification();
+		assertTrue(applicationsDueApplicantReviewNotification.contains(applicationForm));
+
+	}
 	
+	@Test
+	public void shouldNotReturnApplicationFormForReviewNotificationIfNotifiedSinceOnlyEvent() {
+		Date now = Calendar.getInstance().getTime();
+		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
+		Date fiveMinutesAgo = DateUtils.addMinutes(now, -5);
+		NotificationRecord lastNotificationRecord = new NotificationRecordBuilder().notificationType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION)
+				.notificationDate(fiveMinutesAgo).toNotificationRecord();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
+				.events(new EventBuilder().eventDate(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).notificationRecords(lastNotificationRecord).toApplicationForm();
+		save(applicationForm);
+
+		flushAndClearSession();
+
+		List<ApplicationForm> applicationsDueApplicantReviewNotification = applicationDAO.getApplicationsDueApplicantReviewNotification();
+		assertFalse(applicationsDueApplicantReviewNotification.contains(applicationForm));
+
+	}
+	@Test
+	public void shouldReturnApplicationFormForReviewNotificationIfEventSinceLastNotified() {
+		Date now = Calendar.getInstance().getTime();
+		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
+		Date fiveMinutesAgo = DateUtils.addMinutes(now, -5);
+		Date twoMinutesAgo = DateUtils.addMinutes(now, -2);
+		NotificationRecord lastNotificationRecord = new NotificationRecordBuilder().notificationType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION)
+				.notificationDate(fiveMinutesAgo).toNotificationRecord();
+		Event firstEvent = new EventBuilder().eventDate(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent();
+		Event lastEvent = new EventBuilder().eventDate(twoMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
+				.events(firstEvent, lastEvent).notificationRecords(lastNotificationRecord).toApplicationForm();
+		save(applicationForm);
+
+		flushAndClearSession();
+
+		List<ApplicationForm> applicationsDueApplicantReviewNotification = applicationDAO.getApplicationsDueApplicantReviewNotification();
+		assertTrue(applicationsDueApplicantReviewNotification.contains(applicationForm));
+
+	}
 	public List<ApplicationForm> getApplicationFormsBelongingToSameUser() {
 		List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
 

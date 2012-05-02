@@ -9,21 +9,26 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
@@ -261,5 +266,36 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		assertTrue(reloadedUser.getProgramsOfWhichReviewer().containsAll(Arrays.asList(program)));
 
 	}
+	
+	@Test
+	public void shouldSaveAndLoadNotificationRecordsWithUser() throws ParseException {
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
+		NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.SUBMISSION_NOTIFICATION).toNotificationRecord();
+		NotificationRecord recordTwo = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("03 12 2011 14:09:26")).notificationType(NotificationType.REFEREE_RESPONDED_NOTIFICATION).toNotificationRecord();
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).notificationRecords(recordOne, recordTwo).toUser();
+		
+		save(user);
+		Integer recordOneId = recordOne.getId();
+		assertNotNull(recordOneId);
+		assertNotNull(recordTwo.getId());
+		flushAndClearSession();
+		
+		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
+		assertEquals(2, reloadedUser.getNotificationRecords().size());
+		assertTrue(reloadedUser.getNotificationRecords().containsAll(Arrays.asList(recordOne, recordTwo)));
+		
+		recordOne = (NotificationRecord) sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId);
+		reloadedUser.getNotificationRecords().remove(recordOne);
+		save(reloadedUser);
+		flushAndClearSession();
+		
+		reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
+		assertEquals(1, reloadedUser.getNotificationRecords().size());
+		assertTrue(reloadedUser.getNotificationRecords().containsAll(Arrays.asList(recordTwo)));
+		
+		assertNull(sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId));
 
+
+	}
 }

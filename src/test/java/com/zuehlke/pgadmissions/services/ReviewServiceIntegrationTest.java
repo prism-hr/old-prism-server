@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:integrationTestContext.xml")
+@ContextConfiguration("/integrationTestContext.xml")
 public class ReviewServiceIntegrationTest {
 
 	@Autowired

@@ -96,6 +96,9 @@
       												<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('VALIDATION')> 
 									    				<option value="validate">Validate</option>
 									      			</#if>
+									      			<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('REVIEW')> 
+									    				<option value="validate">Evaluate reviews</option>
+									      			</#if>
 									    			<#if !model.user.isInRole('APPLICANT') && !model.user.isRefereeOfApplicationForm(application)>
 								    					<option value="comment">Comment</option>								    				
 								      				</#if>      												
@@ -111,7 +114,7 @@
 							                  	</select>
 							                </td>
 							                <td> <#if application.isSubmitted()>
-							                	${(application.submittedDate?string("dd-MMM-yyyy hh:mm a"))!} 
+							                	${(application.submittedDate?string("dd MMM yyyy"))!} 
 							               		 </#if>
 							               	</td>							  
 							                <td class="centre"><input type="checkbox" name="appDownload" id="appDownload_${application.id?string("######")}"/></td>

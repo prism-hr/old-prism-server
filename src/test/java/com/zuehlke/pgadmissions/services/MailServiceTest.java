@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
-import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -46,7 +45,7 @@ public class MailServiceTest {
 	private ApplicationsService applicationsServiceMock;
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
-	private RefereeDAO refereeDAOMock;
+
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -299,8 +298,8 @@ public class MailServiceTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
-		mailService = new MailService(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationsServiceMock, refereeDAOMock);
+		
+		mailService = new MailService(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationsServiceMock);
 
 	}
 

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -26,21 +25,19 @@ public class MailService {
 	private final JavaMailSender mailsender;
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final ApplicationsService applicationsService;
-	private final RefereeDAO refereeDAO;
+	
 
 	private final Logger log = Logger.getLogger(MailService.class);
 
 	public MailService() {
-		this(null, null, null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public MailService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, ApplicationsService applicationsService,
-			RefereeDAO refereeDAO) {
+	public MailService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, ApplicationsService applicationsService) {
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
 		this.applicationsService = applicationsService;
-		this.refereeDAO = refereeDAO;
 	}
 
 	@Transactional

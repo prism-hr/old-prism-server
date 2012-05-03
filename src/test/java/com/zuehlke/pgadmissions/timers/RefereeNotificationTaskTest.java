@@ -20,7 +20,7 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
-import com.zuehlke.pgadmissions.services.RefereeMailService;
+import com.zuehlke.pgadmissions.mail.RefereeMailSender;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
 public class RefereeNotificationTaskTest {
@@ -28,7 +28,7 @@ public class RefereeNotificationTaskTest {
 	private SessionFactory sessionFactoryMock;
 	private Session sessionMock;
 	private RefereeNotificationTask refereeNotificationTask;
-	private RefereeMailService mailServiceMock;
+	private RefereeMailSender mailServiceMock;
 	private RefereeDAO refereeDAOMock;
 	private RefereeService refereeServiceMock;
 
@@ -106,7 +106,7 @@ public class RefereeNotificationTaskTest {
 		sessionFactoryMock = EasyMock.createMock(SessionFactory.class);
 		sessionMock = EasyMock.createMock(Session.class);
 
-		mailServiceMock = EasyMock.createMock(RefereeMailService.class);
+		mailServiceMock = EasyMock.createMock(RefereeMailSender.class);
 		refereeDAOMock = EasyMock.createMock(RefereeDAO.class);
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
 		refereeNotificationTask = new RefereeNotificationTask(sessionFactoryMock, mailServiceMock, refereeDAOMock, refereeServiceMock);

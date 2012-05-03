@@ -409,12 +409,12 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public void setStatus(ApplicationFormStatus status) {
-		if(status != this.status){
-			Event event = new Event();
-			event.setNewStatus(status);
-			event.setEventDate(new Date());
-			this.events.add(event);	
-		}
+		
+		Event event = new Event();
+		event.setNewStatus(status);
+		event.setEventDate(new Date());
+		this.events.add(event);	
+	
 		this.status = status;
 		
 	}

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services;
+package com.zuehlke.pgadmissions.mail;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -13,16 +13,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.utils.Environment;
-import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
-public class RefereeMailService {
+public class RefereeMailSender extends MailSender {
 
-	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
-	private final JavaMailSender mailSender;
-
-	public RefereeMailService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender) {
-		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
-		this.mailSender = mailSender;
+	public RefereeMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender) {
+		super(mimeMessagePreparatorFactory, mailSender);
 	}
 
 	public void sendRefereeReminder(Referee referee) throws UnsupportedEncodingException {
@@ -30,11 +25,11 @@ public class RefereeMailService {
 		if (referee.getUser() != null && referee.getUser().isEnabled()) {
 			InternetAddress toAddress = new InternetAddress(referee.getUser().getEmail(), referee.getUser().getFirstName() + " "
 					+ referee.getUser().getLastName());
-			mailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Reminder - reference required",
+			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Reminder - reference required",
 					"private/referees/mail/existing_user_referee_reminder_email.ftl", createModel(referee)));
 		} else {
 			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
-			mailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Reminder - reference required",
+			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Reminder - reference required",
 					"private/referees/mail/referee_reminder_email.ftl", createModel(referee)));
 		}
 
@@ -45,11 +40,11 @@ public class RefereeMailService {
 		if (referee.getUser() != null && referee.getUser().isEnabled()) {
 			InternetAddress toAddress = new InternetAddress(referee.getUser().getEmail(), referee.getUser().getFirstName() + " "
 					+ referee.getUser().getLastName());
-			mailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
 					"private/referees/mail/existing_user_referee_notification_email.ftl", createModel(referee)));
 		} else {
 			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
-			mailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
 					"private/referees/mail/referee_notification_email.ftl", createModel(referee)));
 		}
 
@@ -67,18 +62,6 @@ public class RefereeMailService {
 		model.put("applicant", form.getApplicant());
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		return model;
-	}
-
-	private String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
-		StringBuilder adminsMails = new StringBuilder();
-		for (RegisteredUser admin : administrators) {
-			if (adminsMails.length() > 0) {
-				adminsMails.append(", ");
-			}
-			adminsMails.append(admin.getEmail());
-
-		}
-		return adminsMails.toString();
 	}
 
 }

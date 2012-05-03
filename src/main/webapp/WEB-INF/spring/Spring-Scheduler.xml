@@ -9,7 +9,13 @@
 		<constructor-arg index="2" ref="mailApplicationsService"/>
 	</bean>
 	
-	<bean id="refereeMailService" class="com.zuehlke.pgadmissions.services.RefereeMailService"  autowire-candidate="false">
+	<bean id="refereeMailSender" class="com.zuehlke.pgadmissions.mail.RefereeMailSender"  autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory"/>
+		<constructor-arg index="1" ref="mailSender"/>
+	</bean>
+	
+		
+	<bean id="applicantMailSender" class="com.zuehlke.pgadmissions.mail.ApplicantMailSender"  autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory"/>
 		<constructor-arg index="1" ref="mailSender"/>
 	</bean>
@@ -45,8 +51,7 @@
 		<constructor-arg ref="mailApplicationDAO"/>
 	</bean>
 
-	<!--  admin reminders -->
-	
+	<!--  admin reminders -->	
 	<bean id="adminValidationReminderTimerTask" class="com.zuehlke.pgadmissions.timers.AdminValidationReminderTimerTask" >
 		<property name="service" ref="mailServiceForTimers" />
 		<property name="applicationsService" ref="mailApplicationsService" />
@@ -62,7 +67,7 @@
 	<!--  referee notification -->
 	<bean id="refereeNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.RefereeNotificationTask" >
 		<constructor-arg index="0" ref="sessionFactoryMail"/>
-		<constructor-arg index="1" ref="refereeMailService"/>
+		<constructor-arg index="1" ref="refereeMailSender"/>
 		<constructor-arg index="2" ref="mainRefereeDAO"/>
 		<constructor-arg index="3" ref="mailRefereeService"/>
 	</bean>
@@ -76,7 +81,7 @@
 	<!--  referee remindeers -->
 	<bean id="refereeReminderTimerTask" class="com.zuehlke.pgadmissions.timers.RefereeReminderTask" >
 		<constructor-arg index="0" ref="sessionFactoryMail"/>
-		<constructor-arg index="1" ref="refereeMailService"/>
+		<constructor-arg index="1" ref="refereeMailSender"/>
 		<constructor-arg index="2" ref="mainRefereeDAO"/>
 	</bean>
 
@@ -87,8 +92,7 @@
 	</bean> 
 	
 	
-	<!--  update notifications -->
-	
+	<!--  update notifications -->	
 	<bean id="updateNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.ApplicationUpdatedNotificationTask" >
 		<constructor-arg index="0" ref="sessionFactoryMail"/>
 		<constructor-arg index="1" ref="mailServiceForTimers"/>
@@ -101,6 +105,22 @@
 		<property name="timerTask" ref="updateNotificationTimerTask" />		
 	</bean> 
 	
+	
+	<!-- move to review notifications -->	
+	<bean id="moveToReviewNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.MoveToReviewNotificationTask" >
+		<constructor-arg index="0" ref="sessionFactoryMail"/>
+		<constructor-arg index="1" ref="mailApplicationDAO"/>
+		<constructor-arg index="2" ref="applicantMailSender"/>
+	</bean>
+
+	<bean id="moveToReviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="10000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="moveToReviewNotificationTimerTask" />		
+	</bean> 
+	
+	
+	
 	<!-- The main schedule -->
 	<bean class="org.springframework.scheduling.timer.TimerFactoryBean">
 		<property name="scheduledTimerTasks">
@@ -109,6 +129,7 @@
 			<ref bean="refereeReminderSchedule"/>
 			<ref bean="refereeNotificationSchedule"/>
 			<ref bean="updateNotificationSchedule"/>
+			<ref bean="moveToReviewNotificationSchedule"/>
 		</list>
 		</property>
 	</bean>

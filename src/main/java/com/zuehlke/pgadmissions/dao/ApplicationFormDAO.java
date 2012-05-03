@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -100,14 +101,7 @@ public class ApplicationFormDAO {
 	}
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueApplicantReviewNotification() {
-		/*DetachedCriteria reviewEventsCriteria = DetachedCriteria.forClass(Event.class, "event")
-				.add(Restrictions.eq("newStatus", ApplicationFormStatus.REVIEW))
-				.createAlias("event.application", "application")
-				.createAlias("application.notificationRecords", "notificationRecord")
-				.add(Restrictions.eq("notificationRecord.notificationType", NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION))
-				.add(Restrictions.gtProperty("notificationRecord.notificationDate","event.eventDate"))
-				.add(Property.forName("event.application").eqProperty("applicationForm.id"));*/
-		
+
 		DetachedCriteria notificationCriteriaOne = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION))				
 				.add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
@@ -124,7 +118,34 @@ public class ApplicationFormDAO {
 		
 		
 		
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm").add(Subqueries.exists(reviewEventsCriteria.setProjection(Projections.property("event.id")))).list();
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
+				.add(Restrictions.not(Restrictions.in("status", Arrays.asList(ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED))))
+				.add(Subqueries.exists(reviewEventsCriteria.setProjection(Projections.property("event.id"))))
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getApplicationsDueApplicantSubmissionNotification() {
+		DetachedCriteria notificationCriteriaOne = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
+				.add(Restrictions.eq("notificationType", NotificationType.APPLICANT_SUBMISSION_NOTIFICATION))				
+				.add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
+				
+		DetachedCriteria notificationCriteriaTwo = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
+				.add(Restrictions.eq("notificationType", NotificationType.APPLICANT_SUBMISSION_NOTIFICATION))
+				.add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
+				
+		
+		DetachedCriteria reviewEventsCriteria = DetachedCriteria.forClass(Event.class, "event")
+				.add(Restrictions.eq("newStatus", ApplicationFormStatus.VALIDATION))
+				.add(Restrictions.or(Subqueries.notExists(notificationCriteriaOne.setProjection(Projections.property("notificationRecord.id"))), Subqueries.propertyGt("eventDate", notificationCriteriaTwo.setProjection(Projections.max("notificationRecord.notificationDate")))))
+				.add(Property.forName("event.application").eqProperty("applicationForm.id"));
+		
+		
+		
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
+				.add(Restrictions.not(Restrictions.in("status", Arrays.asList(ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED))))
+				.add(Subqueries.exists(reviewEventsCriteria.setProjection(Projections.property("event.id"))))
+				.list();
 	}
 
 }

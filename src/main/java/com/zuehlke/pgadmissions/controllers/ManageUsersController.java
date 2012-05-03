@@ -33,11 +33,11 @@ import com.zuehlke.pgadmissions.dto.NewRolesDTO;
 import com.zuehlke.pgadmissions.dto.UpdateUserForProgramWithRolesDTO;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.propertyeditors.RolePropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
-import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.validators.NewAdminUserDTOValidator;
 import com.zuehlke.pgadmissions.validators.UpdateUserForProgramWithRolesDTOValidator;
 

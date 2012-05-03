@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.services;
+package com.zuehlke.pgadmissions.mail;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,12 +23,11 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.utils.Environment;
-import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
-public class RefereeMailServiceTest {
+public class RefereeMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
-	private RefereeMailService mailService;
+	private RefereeMailSender refereeMailSender;
 
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
@@ -40,7 +39,7 @@ public class RefereeMailServiceTest {
 				.applicant(applicant).toApplicationForm();
 		referee.setApplication(form);
 
-		Map<String, Object> model = mailService.createModel(referee);
+		Map<String, Object> model = refereeMailSender.createModel(referee);
 		assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
 		assertEquals(referee, model.get("referee"));
 		assertEquals(form, model.get("application"));
@@ -52,7 +51,7 @@ public class RefereeMailServiceTest {
 	@Test
 	public void shouldSendRefereeRemindeForNewReferee() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		mailService = new RefereeMailService(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
+		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
 			@Override
 			Map<String, Object> createModel(Referee referee) {
@@ -74,7 +73,7 @@ public class RefereeMailServiceTest {
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
-		mailService.sendRefereeReminder(referee);
+		refereeMailSender.sendRefereeReminder(referee);
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 
@@ -84,7 +83,7 @@ public class RefereeMailServiceTest {
 	public void shouldSendRefereeReminderUExistingUserReferee() throws UnsupportedEncodingException {
 
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		mailService = new RefereeMailService(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
+		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 			@Override
 			Map<String, Object> createModel(Referee referee) {
 
@@ -107,7 +106,7 @@ public class RefereeMailServiceTest {
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
-		mailService.sendRefereeReminder(referee);
+		refereeMailSender.sendRefereeReminder(referee);
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 
@@ -116,7 +115,7 @@ public class RefereeMailServiceTest {
 	@Test
 	public void shouldSendRefereeNotificationForNewReferee() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		mailService = new RefereeMailService(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
+		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
 			@Override
 			Map<String, Object> createModel(Referee referee) {
@@ -138,7 +137,7 @@ public class RefereeMailServiceTest {
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
-		mailService.sendRefereeNotification(referee);
+		refereeMailSender.sendRefereeNotification(referee);
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 
@@ -148,7 +147,7 @@ public class RefereeMailServiceTest {
 	public void shouldSendRefereeNotificationExistingUserReferee() throws UnsupportedEncodingException {
 
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		mailService = new RefereeMailService(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
+		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 			@Override
 			Map<String, Object> createModel(Referee referee) {
 
@@ -171,7 +170,7 @@ public class RefereeMailServiceTest {
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
-		mailService.sendRefereeNotification(referee);
+		refereeMailSender.sendRefereeNotification(referee);
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 
@@ -184,7 +183,7 @@ public class RefereeMailServiceTest {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 
-		mailService = new RefereeMailService(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		refereeMailSender = new RefereeMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
 	}
 }

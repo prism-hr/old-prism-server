@@ -151,20 +151,15 @@ public class ApplicationFormTest {
 	@Test
 	public void shouldAddEventIfStatusIsChanged(){
 		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
-		applicationForm.setStatus(ApplicationFormStatus.REVIEW);
 		assertEquals(1, applicationForm.getEvents().size());
-		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getEvents().get(0).getNewStatus());
+		applicationForm.setStatus(ApplicationFormStatus.REVIEW);
+		assertEquals(2, applicationForm.getEvents().size());
+		assertEquals(ApplicationFormStatus.UNSUBMITTED, applicationForm.getEvents().get(0).getNewStatus());
+		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getEvents().get(1).getNewStatus());
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(0).getEventDate(), Calendar.DATE));		
 		
 	}
 	
 
-	@Test
-	public void shouldNotAddEventIfStatusIsUnfChanged(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
-		applicationForm.setStatus(ApplicationFormStatus.UNSUBMITTED);
-		assertEquals(0, applicationForm.getEvents().size());
-				
-		
-	}
+
 }

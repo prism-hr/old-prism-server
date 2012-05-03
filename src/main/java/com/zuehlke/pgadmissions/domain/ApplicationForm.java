@@ -65,8 +65,8 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	private Document cv = null;
 
 	@Temporal(TemporalType.DATE)
-	@Column(name = "validation_due_date")
-	private Date validationDueDate;
+	@Column(name = "due_date")
+	private Date dueDate;
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
 	@Column(name = "accepted_terms")
@@ -380,12 +380,12 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 				&& this.cv == null && this.additionalInformation == null;
 	}
 
-	public Date getValidationDueDate() {
-		return validationDueDate;
+	public Date getDueDate() {
+		return dueDate;
 	}
 
-	public void setValidationDueDate(Date validationDueDate) {
-		this.validationDueDate = validationDueDate;
+	public void setDueDate(Date validationDueDate) {
+		this.dueDate = validationDueDate;
 	}
 
 	public Program getProgram() {

@@ -60,7 +60,7 @@ public class SubmitApplicationFormController {
 		}
 		applicationForm.setStatus(ApplicationFormStatus.VALIDATION);		
 		Date dueDate = calculateAndGetValidationDueDate();
-		applicationForm.setValidationDueDate(dueDate);
+		applicationForm.setDueDate(dueDate);
 		applicationForm.setSubmittedDate(new Date());
 		applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
 		applicationForm.getNotificationRecords().add(new NotificationRecord(NotificationType.UPDATED_NOTIFICATION));

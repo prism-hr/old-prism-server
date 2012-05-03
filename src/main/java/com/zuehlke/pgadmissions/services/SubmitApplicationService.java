@@ -29,8 +29,7 @@ public class SubmitApplicationService {
 	@Transactional
 	public void saveApplicationFormAndSendMailNotifications(ApplicationForm form) {
 		form.setLastUpdated(new Date());
-		applicationService.save(form);
-		mailService.sendSubmissionMailToApplicant(form);
+		applicationService.save(form);		
 		mailService.sendSubmissionMailToAdmins(form);
 	}
 

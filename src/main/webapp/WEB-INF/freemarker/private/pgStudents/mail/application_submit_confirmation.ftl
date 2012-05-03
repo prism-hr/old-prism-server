@@ -35,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your application ${application.id?string("######")} to join ${application.programmeDetails.programmeName}, which we can now confirm has been submitted. To review your application, click the link below: </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your application ${application.id?string("######")} to join ${application.program.title}, which we can now confirm has been submitted. To review your application, click the link below: </font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

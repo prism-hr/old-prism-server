@@ -35,7 +35,7 @@ public class SubmitApplicationServiceTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(2).toApplicationForm();
 		applicationsServiceMock.save(form);
 		mailServiceMock.sendSubmissionMailToAdmins(form);
-		mailServiceMock.sendSubmissionMailToApplicant(form);
+		
 		EasyMock.replay(applicationsServiceMock, mailServiceMock);
 		submitApplicationService.saveApplicationFormAndSendMailNotifications(form);
 		EasyMock.verify(applicationsServiceMock, mailServiceMock);

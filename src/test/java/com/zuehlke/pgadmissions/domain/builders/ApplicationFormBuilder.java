@@ -238,7 +238,7 @@ public class ApplicationFormBuilder {
 		application.setContactAddress(contactAddress);
 		application.setCurrentAddress(currentAddress);
 		application.setPersonalDetails(personalDetails);
-		application.setValidationDueDate(validationDueDate);
+		application.setDueDate(validationDueDate);
 
 		application.setProgram(program);
 		application.setEvents(events);

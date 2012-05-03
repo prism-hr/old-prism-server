@@ -77,7 +77,7 @@ public class ApplicationFormDAO {
 		
 		return (List<ApplicationForm>) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
 				.add(Restrictions.eq("status", ApplicationFormStatus.VALIDATION))
-				.add(Restrictions.lt("validationDueDate", today))
+				.add(Restrictions.lt("dueDate", today))
 				.add(Restrictions.or(
 						Subqueries.exists(overDueRemindersCriteria.setProjection(Projections.property("notificationRecord.id"))),
 						Subqueries.notExists(anyRemindersCriteria.setProjection(Projections.property("notificationRecord.id")))
@@ -101,7 +101,7 @@ public class ApplicationFormDAO {
 	}
 
 
-	
+	  
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueNotificationForStateChangeEvent(NotificationType notificationType, ApplicationFormStatus newStatus) {
 		DetachedCriteria notificationCriteriaOne = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")

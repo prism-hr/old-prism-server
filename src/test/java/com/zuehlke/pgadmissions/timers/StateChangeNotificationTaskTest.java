@@ -27,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.ApplicantMailSender;
+import com.zuehlke.pgadmissions.mail.StateChangeMailSender;
 
 public class StateChangeNotificationTaskTest {
 
@@ -34,7 +35,7 @@ public class StateChangeNotificationTaskTest {
 	private Session sessionMock;
 	private StateChangeNotificationTask notificationTask;
 	private ApplicationFormDAO applicationFormDAOMock;
-	private ApplicantMailSender applicationMailSenderMock;
+	private StateChangeMailSender applicationMailSenderMock;
 	private String subjectMessage;
 	private String emailTemplate;
 	private NotificationType notificationType;
@@ -56,23 +57,19 @@ public class StateChangeNotificationTaskTest {
 				.id(2)
 				.applicant(new RegisteredUserBuilder().id(2).email("jjjjjj@test.com").toUser())
 				.notificationRecords(
-						new NotificationRecordBuilder().id(1).notificationType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION)
+						new NotificationRecordBuilder().id(1).notificationType(notificationType)
 								.notificationDate(new SimpleDateFormat("dd MM yyyy").parse("01 02 2011")).toNotificationRecord()).toApplicationForm();
 		sessionMock.refresh(applicationFormOne);
 		sessionMock.refresh(applicationFormTwo);
 		List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);
-		EasyMock.expect(
-				applicationFormDAOMock.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION,
-						ApplicationFormStatus.REVIEW)).andReturn(applicationFormList);
+		EasyMock.expect(applicationFormDAOMock.getApplicationsDueNotificationForStateChangeEvent(notificationType, newStatus)).andReturn(applicationFormList);
 		transactionOne.commit();
 
-		applicationMailSenderMock.sendStateChangeNotification(applicationFormOne, "now being reviewed",
-				"private/pgStudents/mail/moved_to_review_notification.ftl");
+		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate);
 		applicationFormDAOMock.save(applicationFormOne);
 		transactionTwo.commit();
 
-		applicationMailSenderMock.sendStateChangeNotification(applicationFormTwo, "now being reviewed",
-				"private/pgStudents/mail/moved_to_review_notification.ftl");
+		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
@@ -82,10 +79,10 @@ public class StateChangeNotificationTaskTest {
 
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
 
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(
-				applicationFormOne.getNotificationForType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION).getNotificationDate(), Calendar.DATE));
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(
-				applicationFormTwo.getNotificationForType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION).getNotificationDate(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
+				DateUtils.truncate(applicationFormOne.getNotificationForType(notificationType).getNotificationDate(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
+				DateUtils.truncate(applicationFormTwo.getNotificationForType(notificationType).getNotificationDate(), Calendar.DATE));
 	}
 
 	@Test
@@ -105,16 +102,14 @@ public class StateChangeNotificationTaskTest {
 		sessionMock.refresh(applicationFormTwo);
 		List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);
 		EasyMock.expect(
-				applicationFormDAOMock.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION,
-						ApplicationFormStatus.REVIEW)).andReturn(applicationFormList);
+				applicationFormDAOMock.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION, newStatus))
+				.andReturn(applicationFormList);
 
 		transactionOne.commit();
-		applicationMailSenderMock.sendStateChangeNotification(applicationFormOne, "now being reviewed",
-				"private/pgStudents/mail/moved_to_review_notification.ftl");
+		applicationMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate);
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
-		applicationMailSenderMock.sendStateChangeNotification(applicationFormTwo, "now being reviewed",
-				"private/pgStudents/mail/moved_to_review_notification.ftl");
+		applicationMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
@@ -123,9 +118,9 @@ public class StateChangeNotificationTaskTest {
 		notificationTask.run();
 
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
-		assertNull(applicationFormOne.getNotificationForType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION));
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(
-				applicationFormTwo.getNotificationForType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION).getNotificationDate(), Calendar.DATE));
+		assertNull(applicationFormOne.getNotificationForType(notificationType));
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
+				DateUtils.truncate(applicationFormTwo.getNotificationForType(notificationType).getNotificationDate(), Calendar.DATE));
 	}
 
 	@Before
@@ -139,7 +134,8 @@ public class StateChangeNotificationTaskTest {
 		notificationType = NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION;
 		newStatus = ApplicationFormStatus.REVIEW;
 
-		notificationTask = new StateChangeNotificationTask(sessionFactoryMock, applicationFormDAOMock, applicationMailSenderMock, notificationType, newStatus, subjectMessage, emailTemplate);
+		notificationTask = new StateChangeNotificationTask(sessionFactoryMock, applicationFormDAOMock, applicationMailSenderMock, notificationType, newStatus,
+				subjectMessage, emailTemplate);
 
 	}
 

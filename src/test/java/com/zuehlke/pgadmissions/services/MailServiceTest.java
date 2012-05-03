@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
 import java.io.UnsupportedEncodingException;
@@ -43,39 +42,7 @@ public class MailServiceTest {
 
 
 	
-	@SuppressWarnings("unchecked")
-	@Test
-	public void shouldSendSubmissionEmailToAdmins() throws UnsupportedEncodingException {
-
-		RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("henry").lastName("harck").email("hh@test.com").toUser();
-		Program program = new ProgramBuilder().administrators(administratorOne, administratorTwo).toProgram();
 	
-		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).toApplicationForm();
-		
-		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
-		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
-	
-		InternetAddress toAddress1 = new InternetAddress("bb@test.com", "benny brack");
-		InternetAddress toAddress2 = new InternetAddress("hh@test.com", "harck");
-			
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Application Submitted"),
-						EasyMock.eq("private/staff/admin/mail/application_submit_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress2), EasyMock.eq("Application Submitted"),
-						EasyMock.eq("private/staff/admin/mail/application_submit_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock2);
-		javaMailSenderMock.send(preparatorMock1);
-		javaMailSenderMock.send(preparatorMock2);
-		applicationsServiceMock.save(form);
-		EasyMock.replay(applicationsServiceMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
-
-		mailService.sendSubmissionMailToAdmins(form);
-		EasyMock.verify(applicationsServiceMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);		
-		assertNotNull(form.getNotificationForType(NotificationType.UPDATED_NOTIFICATION));
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(form.getNotificationForType(NotificationType.UPDATED_NOTIFICATION).getNotificationDate(), Calendar.DATE));
-	}
-
 	
 	@SuppressWarnings("unchecked")
 	@Test

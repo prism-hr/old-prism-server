@@ -13,7 +13,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.utils.Environment;
 
-public class AdminMailSender extends MailSender {
+public class AdminMailSender extends StateChangeMailSender {
 	private final Logger log = Logger.getLogger(AdminMailSender.class);
 
 	public AdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender) {
@@ -30,11 +30,12 @@ public class AdminMailSender extends MailSender {
 		model.put("reviewer", reviewer);
 		return model;
 	}
-
-	public void sendReminderToAdmins(ApplicationForm form, String subjectMessage, String templatename) {
+	
+	@Override
+	public void sendMailsForApplication(ApplicationForm form, String subjectMessage, String templatename) {
 		for (RegisteredUser administrator : form.getProgram().getAdministrators()) {
 			try {
-				sendReminderToAdmin(form, administrator, subjectMessage, templatename);
+				sendMailToAdmin(form, administrator, subjectMessage, templatename);
 			} catch (Throwable e) {
 				e.printStackTrace();
 				log.warn("error while sending email to " + administrator.getEmail(), e);
@@ -50,7 +51,7 @@ public class AdminMailSender extends MailSender {
 	}
 
 
-	public void sendReminderToAdmin(ApplicationForm applicationForm, RegisteredUser administrator, String subjectMessage, String templatename)
+	void sendMailToAdmin(ApplicationForm applicationForm, RegisteredUser administrator, String subjectMessage, String templatename)
 			throws UnsupportedEncodingException {
 		InternetAddress toAddress = new InternetAddress(administrator.getEmail(), administrator.getFirstName() + " " + administrator.getLastName());
 
@@ -59,5 +60,8 @@ public class AdminMailSender extends MailSender {
 				createModel(applicationForm, administrator, null)));
 
 	}
+
+	
+	
 
 }

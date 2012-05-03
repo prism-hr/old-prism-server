@@ -99,7 +99,7 @@ public class AdminMailSenderTest {
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
-		adminMailSender.sendReminderToAdmin(form, administratorOne, subjectMessage, templatename);
+		adminMailSender.sendMailToAdmin(form, administratorOne, subjectMessage, templatename);
 		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 	}
 	
@@ -150,7 +150,7 @@ public class AdminMailSenderTest {
 
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 			@Override
-			public void sendReminderToAdmin(ApplicationForm passedFord, RegisteredUser passedAdmin, String passedSubjectMessage, String passedTemplatename)
+			public void sendMailToAdmin(ApplicationForm passedFord, RegisteredUser passedAdmin, String passedSubjectMessage, String passedTemplatename)
 					throws UnsupportedEncodingException {
 				if (form == passedFord && passedSubjectMessage == subjectMessage && passedTemplatename == templatename) {
 					if (passedAdmin == administratorOne) {
@@ -164,13 +164,13 @@ public class AdminMailSenderTest {
 
 		};
 
-		adminMailSender.sendReminderToAdmins(form, subjectMessage, templatename);
+		adminMailSender.sendMailsForApplication(form, subjectMessage, templatename);
 		assertTrue(passedAdmins.containsAll(Arrays.asList(administratorOne, administratorTwo)));
 	}
 	
 	
 	@Test
-	public void shouldNotStopIfOneEmailFails() throws UnsupportedEncodingException {
+	public void shouldNotStopIfOneReminderEmailFails() throws UnsupportedEncodingException {
 
 		final List<RegisteredUser> passedAdmins = new ArrayList<RegisteredUser>();
 
@@ -185,7 +185,7 @@ public class AdminMailSenderTest {
 
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 			@Override
-			public void sendReminderToAdmin(ApplicationForm passedFord, RegisteredUser passedAdmin, String passedSubjectMessage, String passedTemplatename)
+			public void sendMailToAdmin(ApplicationForm passedFord, RegisteredUser passedAdmin, String passedSubjectMessage, String passedTemplatename)
 					throws UnsupportedEncodingException {
 				if (form == passedFord && passedSubjectMessage == subjectMessage && passedTemplatename == templatename) {
 					if (passedAdmin == administratorOne) {
@@ -199,7 +199,7 @@ public class AdminMailSenderTest {
 
 		};
 
-		adminMailSender.sendReminderToAdmins(form, subjectMessage, templatename);
+		adminMailSender.sendMailsForApplication(form, subjectMessage, templatename);
 		assertTrue(passedAdmins.contains(administratorTwo));
 	}
 	

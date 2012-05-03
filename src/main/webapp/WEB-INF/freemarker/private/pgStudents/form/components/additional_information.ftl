@@ -9,15 +9,26 @@
 
 <div>
 	<form>
-        
-		<div class="section-info-bar">
-			<div class="row">
-				<span class="info-text"> &nbsp 
-					<@spring.message 'additionalInformation.sectionInfo'/> 
-				</span>
-			</div>
-		</div>
-          
+
+				<#if errorCode?? && errorCode=="true">
+					<div class="section-error-bar">
+						<div class="row">
+							<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
+							<span class="invalid-info-text">
+								<@spring.message 'additionalInformation.sectionInfo'/>
+							</span>
+				 		</div>
+				 	</div>
+			 	<#else>
+				 	<div class="section-info-bar">
+						<div class="row">
+							<span class="info-text">&nbsp
+								<@spring.message 'additionalInformation.sectionInfo'/> 
+							</span>
+						</div>
+					</div>	
+				</#if>
+	
     	<!-- Free text field for info. -->
         <div class="row">
        		<span class="plain-label">Additional information relevant to your application</span>
@@ -32,11 +43,6 @@
 		</div>
 
 		<div>
-    		<#if errorCode?? && errorCode=="true">
-				<div class="row">              	
-					<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
-			     </div>            	
-			</#if>
 	    	
 	    	<!-- Radio buttons for convictions. -->
 			<div class="row">

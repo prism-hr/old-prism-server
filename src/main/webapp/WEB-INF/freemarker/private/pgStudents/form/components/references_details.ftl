@@ -66,21 +66,27 @@
   	<input type="hidden" id="refereeId" name="refereeId" value="${(referee.id?string('#######'))!}" />
   	  <#if  applicationForm.referees?size &lt; 3 || referee.id??>
   	<form>
-		<div class="section-info-bar">
-			<div class="row">
-				<span class="info-text"> &nbsp
-					<@spring.message 'referencesDetails.sectionInfo'/> 
-				</span>
-			</div>
-		</div>
-    
-  
+  	
+ 				<#if errorCode?? && errorCode=="true">
+					<div class="section-error-bar">
+						<div class="row">
+							<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
+							<span class="invalid-info-text">
+								<@spring.message 'referencesDetails.sectionInfo'/>
+							</span>
+				 		</div>
+				 	</div>
+			 	<#else>
+				 	<div class="section-info-bar">
+						<div class="row">
+							<span class="info-text">&nbsp
+								<@spring.message 'referencesDetails.sectionInfo'/> 
+							</span>
+						</div>
+					</div>	
+				</#if>
+  	
     	<div>
-        	<#if errorCode?? && errorCode =="true">
-				<div class="row">              	
-					<span class="invalid">Please provide details of three referees.<p></p></span>
-			     </div>            	
-			</#if>
 	   		<!-- First name -->
       		<div class="row">
         		<span class="plain-label">First Name<em>*</em></span>

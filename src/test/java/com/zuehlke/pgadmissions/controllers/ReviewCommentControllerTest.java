@@ -59,7 +59,6 @@ public class ReviewCommentControllerTest {
 		controller.getApplicationForm(5);
 	}
 
-	@Ignore
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfCurrentUserNotReviewer() {
 		Program program = new ProgramBuilder().id(7).toProgram();

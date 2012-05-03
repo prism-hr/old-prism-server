@@ -78,8 +78,16 @@ $(document).ready(function(){
 			  newLblText1 = newLblText1.substring(0, starIndex1);
 			}
 			$("#supervise-lbl").text(newLblText1).addClass("grey-label");
+//			$("#willingRB").checked = false;   //does not work - replace
+			$('input[name="willingRB"]')[0].checked = false;
+			$('input[name="willingRB"]')[1].checked = false;
+
+//			$("#willingRB_true").removeAttr("checked");
+			$("#willingRB_true").attr("checked", "false");
 			$("#willingRB_true").addClass("grey-label");
 			$("#willingRB_true").attr("disabled", "disabled");
+//			$("#willingRB_false").removeAttr("checked");
+			$("#willingRB_false").attr("checked", "false");
 			$("#willingRB_false").addClass("grey-label");
 			$("#willingRB_false").attr("disabled", "disabled");
 			
@@ -91,10 +99,18 @@ $(document).ready(function(){
 			  newLblText2 = newLblText2.substring(0, starIndex2);
 			}
 			$("#suitable-lbl").text(newLblText2).addClass("grey-label");
+			$('input[name="suitableRB"]')[0].checked = false;
+			$('input[name="suitableRB"]')[1].checked = false;
+			$("#suitableRB_true").attr("checked", "false");
 			$("#suitableRB_true").addClass("grey-label");
 			$("#suitableRB_true").attr("disabled", "disabled");
+			$("#suitableRB_false").attr("checked", "false");
 			$("#suitableRB_false").addClass("grey-label");
 			$("#suitableRB_false").attr("disabled", "disabled");
+			
+			//remove validation messages
+			$('span[class="invalid"]').html('');
+			
 			
 		} else {
 			//comment field

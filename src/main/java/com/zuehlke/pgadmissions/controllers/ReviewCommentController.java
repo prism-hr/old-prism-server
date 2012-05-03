@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -50,8 +51,7 @@ public class ReviewCommentController {
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
 		RegisteredUser currentUser = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
-		//!currentUser.isInRole(Authority.REVIEWER) add it back when everything works and unignored tests
-		if (applicationForm == null ||  !currentUser.canSee(applicationForm)){
+		if (applicationForm == null || !currentUser.isInRole(Authority.REVIEWER) ||  !currentUser.canSee(applicationForm) ){
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;

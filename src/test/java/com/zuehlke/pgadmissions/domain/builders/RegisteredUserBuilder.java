@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -26,6 +27,7 @@ public class RegisteredUserBuilder {
 	private String activationCode;
 	private Program programOriginallyAppliedTo;
 	private List<Referee> referees = new ArrayList<Referee>();
+	private List<Comment> comments = new ArrayList<Comment>();
 
 	private List<Role> roles = new ArrayList<Role>();	
 	private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
@@ -57,6 +59,12 @@ public class RegisteredUserBuilder {
 	
 	public RegisteredUserBuilder referees(Referee...referees) {
 		this.referees.addAll(Arrays.asList(referees));
+		return this;
+	} 
+	
+	
+	public RegisteredUserBuilder comments(Comment...comments) {
+		this.comments.addAll(Arrays.asList(comments));
 		return this;
 	} 
 	
@@ -158,6 +166,7 @@ public class RegisteredUserBuilder {
 		user.setProgramsOfWhichReviewer(programsOfWhichReviewer);
 		user.setConfirmPassword(confirmPassword);
 		user.setReferees(referees);
+		user.setComments(comments);
 		user.setNotificationRecords(notificationRecords);
 		return user;
 	}

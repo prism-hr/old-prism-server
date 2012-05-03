@@ -17,17 +17,24 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
@@ -264,6 +271,41 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, reviewer.getId());
 		assertEquals(1, reloadedUser.getProgramsOfWhichReviewer().size());
 		assertTrue(reloadedUser.getProgramsOfWhichReviewer().containsAll(Arrays.asList(program)));
+
+	}
+	
+	
+	@Test
+	public void shouldLoadRegisteredUserWithComments() {
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		
+		ApplicationForm application = new ApplicationFormBuilder().applicant(applicant).id(1).toApplicationForm();
+		
+		sessionFactory.getCurrentSession().save(application);
+		
+		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
+		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").toComment();
+		
+		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		
+		sessionFactory.getCurrentSession().save(admin1);
+		flushAndClearSession();
+		comment.setUser(admin1);
+		reviewComment.setUser(admin1);
+		comment1.setUser(admin1);
+
+		save(comment, comment1, reviewComment);
+
+		RegisteredUser reloadedUser = ((RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, admin1.getId()));
+		
+		assertEquals(3, reloadedUser.getComments().size());
+		assertTrue(reloadedUser.getComments().contains(comment));
+		assertTrue(reloadedUser.getComments().contains(comment1));
+		assertTrue(reloadedUser.getComments().contains(reviewComment));
+		assertNotNull(comment.getUser());
+		assertNotNull(comment1.getUser());
+		assertNotNull(reviewComment.getUser());
 
 	}
 	

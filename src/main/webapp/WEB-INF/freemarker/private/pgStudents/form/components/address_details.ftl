@@ -8,21 +8,29 @@
 	
 	<div>
 	
-        	<form>	
-				<div class="section-info-bar">
-					<div class="row">
-						<span class="info-text"> &nbsp
-							<@spring.message 'addressDetails.sectionInfo'/> 
-						</span>
-					</div>
-				</div>
-				
+        	<form>
+        	
+        		<#if errorCode?? && errorCode=="true">
+					<div class="section-error-bar">
+						<div class="row">
+							<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
+							<span class="invalid-info-text">
+								<@spring.message 'addressDetails.sectionInfo'/>
+							</span>
+				 		</div>
+				 	</div>
+			 	<#else>
+				 	<div class="section-info-bar">
+						<div class="row">
+							<span class="info-text">&nbsp
+								<@spring.message 'addressDetails.sectionInfo'/> 
+							</span>
+						</div>
+					</div>	
+				</#if>
+        	
+        		
             	<div>
-	            	<#if errorCode?? && errorCode =="true">
-						<div class="row">              	
-							<span class="invalid">Please provide all mandatory fields in this section.<p></p></span>
-					     </div>            	
-					</#if>            	 
             		<div class="row">
           				<label class="group-heading-label">Current Address</label>
           			</div>

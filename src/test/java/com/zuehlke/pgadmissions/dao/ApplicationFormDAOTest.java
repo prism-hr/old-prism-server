@@ -138,7 +138,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertTrue(applicationsDueReminder.contains(applicationForm));
 	}
 
@@ -153,7 +153,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertTrue(applicationsDueReminder.contains(applicationForm));
 	}
 
@@ -175,7 +175,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertFalse(applicationsDueReminder.contains(applicationForm));
 	}
 
@@ -190,7 +190,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertFalse(applicationsDueReminder.contains(applicationForm));
 	}
 
@@ -205,7 +205,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertFalse(applicationsDueReminder.contains(applicationForm));
 	}
 
@@ -227,7 +227,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertFalse(applicationsDueReminder.contains(applicationForm));
 	}
 
@@ -250,7 +250,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertTrue(applicationsDueReminder.contains(applicationForm));
 	}
 
@@ -273,7 +273,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		flushAndClearSession();
 
-		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueValidationReminder();
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
 		assertTrue(applicationsDueReminder.contains(applicationForm));
 	}
 

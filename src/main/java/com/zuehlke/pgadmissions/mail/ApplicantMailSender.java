@@ -35,7 +35,7 @@ public class ApplicantMailSender extends MailSender {
 		return model;
 	}
 
-	public void sendMovedToReviewNotification(ApplicationForm form,  String message, String templatename) throws UnsupportedEncodingException {
+	public void sendStateChangeNotification(ApplicationForm form,  String message, String templatename) throws UnsupportedEncodingException {
 
 		InternetAddress toAddress = new InternetAddress(form.getApplicant().getEmail(), form.getApplicant().getFirstName() + " "
 				+ form.getApplicant().getLastName());

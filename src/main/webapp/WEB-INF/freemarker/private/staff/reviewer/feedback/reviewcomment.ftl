@@ -93,7 +93,7 @@
 			    
 			            			</div>
 			            			<div class="buttons">						        		
-			            				<button type="reset" id="cancelReview" value="cancel">Cancel</button>
+			            				<button type="button" id="cancelReviewBtn" value="cancel">Cancel</button>
 							       		<button class="blue" id="submitReviewFeedback" type="button" value="Submit">Submit</button>						        
 									</div>
 									</form>

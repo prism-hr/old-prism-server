@@ -61,7 +61,7 @@ function moveToReview(data){
 
 	var application = $('#applicationId').val();
 	$.post(
-		"/pgadmissions/review",
+		"/pgadmissions/assignReviewers",
 		{
 			application: application
 		}, 

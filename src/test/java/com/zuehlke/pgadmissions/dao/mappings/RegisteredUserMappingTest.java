@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
@@ -284,7 +285,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().save(application);
 		
 		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).adminsNotified(CheckedStatus.NO).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
 		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").toComment();
 		
 		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();

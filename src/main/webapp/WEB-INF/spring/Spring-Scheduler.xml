@@ -16,6 +16,12 @@
 		<constructor-arg index="1" ref="mailSender" />
 	</bean>
 
+	<bean id="mailAdminMailSender" class="com.zuehlke.pgadmissions.mail.AdminMailSender"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+	</bean>
+
 
 	<bean id="applicantMailSender" class="com.zuehlke.pgadmissions.mail.ApplicantMailSender"
 		autowire-candidate="false">
@@ -36,6 +42,11 @@
 		autowire-candidate="false">
 		<constructor-arg ref="sessionFactoryMail" />
 	</bean>
+	
+	<bean id="mailCommentDAO" class="com.zuehlke.pgadmissions.dao.CommentDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
 
 	<bean id="mailUserDAO" class="com.zuehlke.pgadmissions.dao.UserDAO"
 		autowire-candidate="false">
@@ -47,6 +58,10 @@
 		<constructor-arg index="1" ref="mailRoleDAO" />
 		<constructor-arg index="2" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="3" ref="mailSender" />
+	</bean>
+	<bean id="mailCommentService" class="com.zuehlke.pgadmissions.services.CommentService"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mailCommentDAO" />
 	</bean>
 	<bean id="mailRefereeService" class="com.zuehlke.pgadmissions.services.RefereeService"
 		autowire-candidate="false">
@@ -73,6 +88,20 @@
 		<property name="delay" value="2000" />
 		<property name="period" value="60000" />
 		<property name="timerTask" ref="adminValidationReminderTimerTask" />
+	</bean>
+	
+	<!-- admin notifications -->
+	<bean id="adminReviewFeedbackNotificationTimerTask"
+		class="com.zuehlke.pgadmissions.timers.AdminReviewFeedbackNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="mailAdminMailSender" />
+		<constructor-arg index="2" ref="mailCommentService" />
+	</bean>
+
+	<bean id="adminReviewFeedbackNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="2000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="adminReviewFeedbackNotificationTimerTask" />
 	</bean>
 
 	<!-- referee notification -->
@@ -101,7 +130,7 @@
 		<property name="period" value="60000" />
 		<property name="timerTask" ref="refereeReminderTimerTask" />
 	</bean>
-
+	
 
 	<!-- update notifications -->
 	<bean id="updateNotificationTimerTask"
@@ -169,6 +198,7 @@
 				<ref bean="updateNotificationSchedule" />
 				<ref bean="moveToReviewNotificationSchedule" />
 				<ref bean="applicantSubmissionNotificationSchedule" />
+				<ref bean="adminReviewFeedbackNotificationSchedule" />
 			</list>
 		</property>
 	</bean>

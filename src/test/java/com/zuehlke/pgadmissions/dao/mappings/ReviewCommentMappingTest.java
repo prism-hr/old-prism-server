@@ -41,7 +41,7 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase{
 		
 		flushAndClearSession();
 		
-		ReviewComment reviewComment = new ReviewCommentBuilder().commentType(CommentType.REVIEW).comment("This is a review comment").suitableCandidate(CheckedStatus.NO).user(reviewer).application(applicationForm).decline(CheckedStatus.YES).willingToSupervice(CheckedStatus.NO).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().adminsNotified(CheckedStatus.NO).commentType(CommentType.REVIEW).comment("This is a review comment").suitableCandidate(CheckedStatus.NO).user(reviewer).application(applicationForm).decline(CheckedStatus.YES).willingToSupervice(CheckedStatus.NO).toReviewComment();
 		save(reviewComment);
 		
 		assertNotNull(reviewComment.getId());

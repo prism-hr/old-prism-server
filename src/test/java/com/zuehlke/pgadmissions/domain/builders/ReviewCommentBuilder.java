@@ -14,6 +14,7 @@ public class ReviewCommentBuilder {
 	private CheckedStatus willingToSupervice;
 	private CheckedStatus suitableCandidate;
 	private CheckedStatus decline;
+	private CheckedStatus adminsNotified;
 	private ApplicationForm applicationForm;
 	private String comment;
 	private Integer id;
@@ -33,6 +34,12 @@ public class ReviewCommentBuilder {
 	
 	public ReviewCommentBuilder decline(CheckedStatus decline) {
 		this.decline = decline;
+		return this;
+	}
+	
+	
+	public ReviewCommentBuilder adminsNotified(CheckedStatus adminsNotified) {
+		this.adminsNotified = adminsNotified;
 		return this;
 	}
 	
@@ -69,6 +76,7 @@ public class ReviewCommentBuilder {
 		reviewComment.setSuitableCandidate(suitableCandidate);
 		reviewComment.setUser(user);
 		reviewComment.setWillingToSupervice(willingToSupervice);
+		reviewComment.setAdminsNotified(adminsNotified);
 		return reviewComment;
 		
 	}

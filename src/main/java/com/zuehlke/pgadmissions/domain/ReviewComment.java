@@ -35,6 +35,18 @@ public class ReviewComment extends Comment{
 	@Column(name = "decline")
 	private CheckedStatus decline;
 	
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	@Column(name = "admins_notified")
+	private CheckedStatus adminsNotified;
+	
+	public CheckedStatus getAdminsNotified() {
+		return adminsNotified;
+	}
+
+	public void setAdminsNotified(CheckedStatus adminsNotified) {
+		this.adminsNotified = adminsNotified;
+	}
+
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CommentTypeEnumUserType")
 	@Column(name="comment_type")
 	private CommentType type;

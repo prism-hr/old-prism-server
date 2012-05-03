@@ -1,11 +1,14 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,11 +18,14 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class CommentDAOTest extends AutomaticRollbackTestCase {
@@ -112,6 +118,100 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		
 		
 		assertTrue(reloadedComment instanceof StateChangeComment);
+	}
+	
+	@Test
+	public void shouldSaveAndLoadReviewComment() {
+		
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
+		save(application);
+		flushAndClearSession();
+		
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.NO).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
+		
+		assertNull(reviewComment.getId());
+		
+		commentDAO.save(reviewComment);
+		
+		assertNotNull(reviewComment.getId());
+		Integer id = reviewComment.getId();
+		Comment reloadedComment = commentDAO.get(id);
+		assertSame(reviewComment, reloadedComment);
+		
+		flushAndClearSession();
+		
+		reloadedComment = commentDAO.get(id);
+		
+		assertNotSame(reviewComment, reloadedComment);
+		assertEquals(reviewComment, reloadedComment);
+		assertEquals(user, reloadedComment.getUser());
+		assertEquals(CommentType.REVIEW, reloadedComment.getType());
+		assertEquals(reviewComment.getComment(), reloadedComment.getComment());
+		
+		
+		assertTrue(reloadedComment instanceof ReviewComment);
+	}
+	
+	@Test
+	public void shouldGetAllComments() {
+		
+		int noOfCommentsBefore = commentDAO.getAllComments().size(); 
+		
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
+		save(application);
+		flushAndClearSession();
+		
+		Comment comment = new CommentBuilder().user(user).comment("comment").application(application).toComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.NO).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
+		
+		assertNull(reviewComment.getId());
+		
+		commentDAO.save(comment);
+		commentDAO.save(reviewComment);
+		
+		List<Comment> reloadedComments = commentDAO.getAllComments();
+		
+		flushAndClearSession();
+		
+		reloadedComments = commentDAO.getAllComments();
+		
+		
+		assertEquals(noOfCommentsBefore+2, reloadedComments.size());
+		assertTrue(reloadedComments.contains(comment));
+		assertTrue(reloadedComments.contains(reviewComment));
+	}
+	
+	@Test
+	public void shouldGetAllCommentsDueAdminEmailNotification() {
+		
+		int noOfReviewCommentsBefore = commentDAO.getReviewCommentsDueNotification().size(); 
+		
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
+		save(application);
+		flushAndClearSession();
+		
+		Comment comment = new CommentBuilder().user(user).comment("comment").application(application).toComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.NO).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment1 = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.YES).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment2 = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.YES).comment("comment").user(user).commentType(CommentType.GENERIC).toReviewComment();
+		
+		assertNull(reviewComment.getId());
+		
+		commentDAO.save(comment);
+		commentDAO.save(reviewComment);
+		commentDAO.save(reviewComment1);
+		commentDAO.save(reviewComment2);
+		
+		List<ReviewComment> reloadedComments = commentDAO.getReviewCommentsDueNotification();
+		
+		flushAndClearSession();
+		
+		reloadedComments = commentDAO.getReviewCommentsDueNotification();
+		
+		
+		assertEquals(noOfReviewCommentsBefore+1, reloadedComments.size());
+		assertFalse(reloadedComments.contains(comment));
+		assertTrue(reloadedComments.contains(reviewComment));
 	}
 
 

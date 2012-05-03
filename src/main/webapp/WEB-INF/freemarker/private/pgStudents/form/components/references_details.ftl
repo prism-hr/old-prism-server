@@ -95,13 +95,21 @@
         			<#if referee.editable>
         				<input class="full" id="ref_firstname" name="ref_firstname" value="${(referee.firstname?html)!}"/>  
         				<@spring.bind "referee.firstname" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                		
                 	<#else>
                 	   <input readonly="readonly" class="full" id="ref_firstname" name="ref_firstname" value="${(referee.firstname?html)!}"/>
                 	</#if>
           			
         		</div>
       		</div>
+    
+    			<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
     
       		<!-- Last name -->
       		<div class="row">
@@ -111,12 +119,20 @@
 	        		<#if referee.editable>
 	        			<input class="full" id="ref_lastname" name="ref_lastname" value="${(referee.lastname?html)!}"/>	          
 	        			<@spring.bind "referee.lastname" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+
 	            	<#else>
 	            	   <input readonly="readonly" class="full" id="ref_lastname" name="ref_lastname" value="${(referee.lastname?html)!}"/>
 	            	</#if>
         		</div>
       		</div>
+
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
     
     	
     	</div>
@@ -131,12 +147,20 @@
         			<#if referee.editable>
           				<input class="full" id="ref_employer" name="ref_employer" value="${(referee.jobEmployer?html)!}"/> 
           				<@spring.bind "referee.jobEmployer" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>             
+                		             
                 	<#else>
                 	   <input readonly="readonly" class="full" id="ref_employer" name="ref_employer" value="${(referee.jobEmployer?html)!}"/>
                 	</#if>
         		</div>
       		</div>
+    
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
     
       		<!-- Position title -->
       		<div class="row">
@@ -146,12 +170,21 @@
         		<#if referee.editable>
           			<input class="full" id="ref_position" name="ref_position" value="${(referee.jobTitle?html)!}"/>
                    		 <@spring.bind "referee.jobTitle" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
+  
                 	<#else>
                 	   <input readonly="readonly" class="full" id="ref_position" name="ref_position" value="${(referee.jobTitle?html)!}"/>
                 	</#if>   
         		</div>
       		</div>
+
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+
       		
     	</div>
 
@@ -169,7 +202,7 @@
           			<textarea class="max" rows="6" cols="70" maxlength='200' id="ref_address_location" 
           				name="ref_address_location">${(referee.addressLocation?html)!}</textarea> 
           				 <@spring.bind "referee.addressLocation" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>           		
+                		           		
                 	<#else>
                 	   <textarea readonly="readonly" class="max" rows="6" cols="70" id="ref_address_location" 
                         name="ref_address_location" >${(referee.addressLocation?html)!}</textarea>
@@ -177,6 +210,13 @@
         		</div>
       		</div>
       		
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
     
       		<!-- Country -->
       		<div class="row">
@@ -193,10 +233,18 @@
                     </#list>
                 </select>
                  <@spring.bind "referee.addressCountry" /> 
-                <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>    
+                    
         		</div>
       		</div>
-    	
+ 
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+  
     	</div>
 
     	<div>
@@ -213,12 +261,19 @@
         		<#if referee.editable>
           			<input class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}"/> 
           			 <@spring.bind "referee.email" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>                
+                	                
                 	<#else>
                 	   <input readonly="readonly" class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}"/>
                 	</#if>
         		</div>
       		</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
 
       		<!-- Telephone -->
       		
@@ -230,13 +285,19 @@
         			<#if referee.editable>
         			<input class="full" id="refPhoneNumber" name="refPhoneNumber" value="${(referee.phoneNumber?html)!}"/> 
                       <@spring.bind "referee.phoneNumber" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>             
                 	<#else>
                 	   <input readonly="readonly" class="full" id="refPhoneNumber" name="refPhoneNumber" value="${(referee.phoneNumber?html)!}"/>
                 	</#if>
           			
         		</div>
       		</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
 
           	<!-- Skype address -->
           

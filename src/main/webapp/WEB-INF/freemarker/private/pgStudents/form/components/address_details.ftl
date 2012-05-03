@@ -43,12 +43,19 @@
                     	   <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                       		<textarea id="currentAddressLocation" class="max" rows="6" cols="80" maxlength='2000'>${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
                       			<@spring.bind "addressSectionDTO.currentAddressLocation" /> 
-                				<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
+                				  
 				             <#else>
                       		    <textarea readonly="readonly" id="currentAddressLocation" class="max" rows="6" cols="80">${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
                             </#if>
                     	</div>
                   	</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
 
                   	<!-- Country -->
                   	<div class="row">
@@ -66,9 +73,17 @@
                             	</#list>
                             </select>
                       	        	<@spring.bind "addressSectionDTO.currentAddressCountry" /> 
-                				<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>                	
 						</div>
 					</div>
+					
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+					
 				</div> 
 				<div>	
 					<div class="row">
@@ -98,7 +113,6 @@
                     <div class="row">
                     	<span id="add-two-lb" class="plain-label">Address<em id="add-two-em">*</em></span>
                        	<span class="hint" data-desc="<@spring.message 'addressDetails.ContactAddress.address'/>"></span>	
-                       
                     
                         <div class="field">
                            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
@@ -108,7 +122,6 @@
                                 </#if>
                             >${(addressSectionDTO.contactAddressLocation?html)!}</textarea>
                             	        	<@spring.bind "addressSectionDTO.contactAddressLocation" /> 
-                				<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>         
                           
                             <#else>
                                 <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80"
@@ -119,6 +132,15 @@
                             </#if>
                         </div>
                     </div>
+                    
+               	<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+                    
                     <!-- Country -->
                     <div class="row">
                         <span id="country-two-lb" class="plain-label">Country<em id="country-two-em">*</em></span>
@@ -135,9 +157,19 @@
                                 </#list>
                             </select>            
                             	        	<@spring.bind "addressSectionDTO.contactAddressCountry" /> 
-                				<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>                    
+                				                    
                         </div>
                     </div>
+                    
+                    
+					<#list spring.status.errorMessages as error>
+						<div class="row">
+							<div class="field">
+								<span class="invalid">${error}</span>
+							</div>
+						</div>
+					</#list>
+                    
 					
 				</div>
 

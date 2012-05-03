@@ -64,19 +64,22 @@ public class ApplicationFormDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ApplicationForm> getApplicationsDueValidationReminder() {
+	public List<ApplicationForm> getApplicationsDueAdminReminder(NotificationType notificationType, ApplicationFormStatus status) {
+
 		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
 		Date oneWeekAgo = DateUtils.addDays(today, -6);
 		
+		
 		DetachedCriteria anyRemindersCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", NotificationType.VALIDATION_REMINDER))
+				.add(Restrictions.eq("notificationType", notificationType))
 				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 
 		DetachedCriteria overDueRemindersCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", NotificationType.VALIDATION_REMINDER)).add(Restrictions.lt("notificationRecord.notificationDate", oneWeekAgo)).add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+				.add(Restrictions.eq("notificationType", notificationType)).add(Restrictions.lt("notificationRecord.notificationDate", oneWeekAgo)).add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 		
+
 		return (List<ApplicationForm>) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
-				.add(Restrictions.eq("status", ApplicationFormStatus.VALIDATION))
+				.add(Restrictions.eq("status", status))
 				.add(Restrictions.lt("dueDate", today))
 				.add(Restrictions.or(
 						Subqueries.exists(overDueRemindersCriteria.setProjection(Projections.property("notificationRecord.id"))),

@@ -16,8 +16,10 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
+import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -41,6 +43,8 @@ public class SubmitApplicationFormControllerTest {
 
 	private ApplicationFormValidator applicationFormValidatorMock;
 	private SubmitApplicationService submitApplicationServiceMock;
+
+	private StageDurationDAO stageDurationDAOMock;
 
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -73,15 +77,21 @@ public class SubmitApplicationFormControllerTest {
 	@Test
 	public void shouldChangeStatusToValidateAndSaveIfNoErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).toApplicationForm();
-		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).toApplicationForm();		
+		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);		
+		StageDuration stageDuration = new StageDuration();
+		stageDuration.setDurationInDays(8);
+		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		submitApplicationServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
-		EasyMock.replay(submitApplicationServiceMock, errorsMock);
+		
+		EasyMock.replay(submitApplicationServiceMock, errorsMock, stageDurationDAOMock);
+		
+		
 		applicationController.submitApplication(applicationForm, errorsMock);
 
 		EasyMock.verify(submitApplicationServiceMock);
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());	
-		
+		assertEquals(DateUtils.truncate(DateUtils.addDays(new Date(), 8), Calendar.DATE), applicationForm.getDueDate());
 		assertEquals(2, applicationForm.getEvents().size());
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getEvents().get(1).getNewStatus());
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(1).getEventDate(), Calendar.DATE));
@@ -98,8 +108,9 @@ public class SubmitApplicationFormControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).toApplicationForm();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(new StageDuration());
 		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(applicationsServiceMock, errorsMock);
+		EasyMock.replay(applicationsServiceMock, errorsMock,stageDurationDAOMock);
 		String view = applicationController.submitApplication(applicationForm, errorsMock);
 		assertEquals("redirect:/applications?submissionSuccess=true", view);
 	}
@@ -166,7 +177,8 @@ public class SubmitApplicationFormControllerTest {
 		submitApplicationServiceMock  = EasyMock.createMock(SubmitApplicationService.class);
 
 		applicationFormValidatorMock = EasyMock.createMock(ApplicationFormValidator.class);
-		applicationController = new SubmitApplicationFormController(applicationsServiceMock, applicationFormValidatorMock, submitApplicationServiceMock);
+		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
+		applicationController = new SubmitApplicationFormController(applicationsServiceMock, applicationFormValidatorMock, submitApplicationServiceMock, stageDurationDAOMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

@@ -46,15 +46,6 @@ public class ApplicationsServiceTest {
 		Assert.assertEquals(1, visibleApplications.size());
 	}
 
-	@Test
-	public void shouldGetAllApplicationsInValidationStageWithPassedValidationDueDate() {
-		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2)
-				.toApplicationForm());
-		EasyMock.expect(applicationFormDAOMock.getApplicationsDueValidationReminder()).andReturn(applicationsList);
-		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> validationStageAndAfterDueDate = applicationsService.getAllApplicationsStillInValidationStageAndAfterDueDate();
-		assertSame(applicationsList, validationStageAndAfterDueDate);
-	}
 	
 	@Test
 	public void shouldGetAllApplicationsDueAndUpdatedNotificationToAdmin() {

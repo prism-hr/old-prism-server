@@ -24,8 +24,7 @@ public class Environment {
 			e.printStackTrace();
 		} finally {
 			try {
-				in.close();
-				;
+				in.close();				
 			} catch (Exception e) {
 				// ignore
 			}

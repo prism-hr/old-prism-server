@@ -3,8 +3,11 @@ package com.zuehlke.pgadmissions.controllers;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -13,10 +16,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
+import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -32,7 +37,8 @@ public class MoveToReviewTempControllerTest {
 	private UsernamePasswordAuthenticationToken authenticationToken;
 	private MoteToReviewTempController controller;
 	private ApplicationsService applicationServiceMock;
-	private UserService userServiceMock;	
+	private UserService userServiceMock;
+	private StageDurationDAO stageDurationDAOMock;	
 
 	@Test
 	public void shouldGetApplicationFromId() {
@@ -87,11 +93,16 @@ public class MoveToReviewTempControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
 		List<Referee> referees = Arrays.asList(new RefereeBuilder().id(1).toReferee(), new RefereeBuilder().id(2).toReferee());
 		applicationForm.setReferees(referees);
-		
+		StageDuration stageDuration = new StageDuration();
+		stageDuration.setDurationInDays(8);
+		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.REVIEW)).andReturn(stageDuration);
 		applicationServiceMock.save(applicationForm);
-		EasyMock.replay(applicationServiceMock);
+		EasyMock.replay(applicationServiceMock,stageDurationDAOMock);
+		
 		String view = controller.moveToReview(applicationForm);
+		
 		EasyMock.verify(applicationServiceMock);
+		assertEquals(DateUtils.truncate(DateUtils.addDays(new Date(), 8), Calendar.DATE), applicationForm.getDueDate());
 		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getStatus());
 		assertEquals("redirect:/applications", view);
 	}
@@ -100,8 +111,8 @@ public class MoveToReviewTempControllerTest {
 	public void setUp() {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		
-		controller = new MoteToReviewTempController(applicationServiceMock, userServiceMock);
+		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
+		controller = new MoteToReviewTempController(applicationServiceMock, userServiceMock, stageDurationDAOMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		SecurityContextImpl secContext = new SecurityContextImpl();

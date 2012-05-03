@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -161,7 +162,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		save(application);
 		flushAndClearSession();
 		
-		Comment comment = new CommentBuilder().user(user).comment("comment").application(application).toComment();
+		Comment comment = new CommentBuilder().user(user).createdTimeStamp(new Date()).comment("comment").application(application).toComment();
 		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.NO).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
 		
 		assertNull(reviewComment.getId());

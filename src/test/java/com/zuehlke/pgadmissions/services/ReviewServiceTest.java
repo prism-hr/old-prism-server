@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -26,6 +27,7 @@ public class ReviewServiceTest {
 
 	private UserDAO userDaoMock;
 	private RoleDAO roleDaoMock;
+	private ProgramDAO programmeDaoMock;
 	private ApplicationFormDAO applicationDaoMock;
 
 	private Program programme;
@@ -37,6 +39,7 @@ public class ReviewServiceTest {
 	public void setUp() {
 		userDaoMock = EasyMock.createMock(UserDAO.class);
 		roleDaoMock = EasyMock.createMock(RoleDAO.class);
+		programmeDaoMock = EasyMock.createMock(ProgramDAO.class);
 		applicationDaoMock = EasyMock.createMock(ApplicationFormDAO.class);
 
 		reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole();
@@ -47,7 +50,7 @@ public class ReviewServiceTest {
 		programme = new ProgramBuilder().id(1).title("super prog").reviewers(reviewer1).toProgram();
 		application = new ApplicationFormBuilder().id(200).program(programme).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 
-		reviewService = new ReviewService(userDaoMock, roleDaoMock, applicationDaoMock);
+		reviewService = new ReviewService(userDaoMock, roleDaoMock, programmeDaoMock, applicationDaoMock);
 	}
 
 	@Test(expected = IllegalStateException.class)

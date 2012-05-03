@@ -26,8 +26,8 @@ import com.zuehlke.pgadmissions.services.UserService;
 @Controller
 @RequestMapping("/assignReviewers")
 public class AssignReviewerController {
-	private static final String ASSIGN_REVIEWERS_TO_APPLICATION_VIEW = "/private/staff/admin/assign_reviewers_to_appl_page";
-	private static final String NEW_REVIEWER_JSON = "/private/staff/admin/reviewer_as_JSON";
+	private static final String ASSIGN_REVIEWERS_TO_APPLICATION_VIEW = "private/staff/admin/assign_reviewers_to_appl_page";
+	private static final String NEW_REVIEWER_JSON = "private/staff/admin/reviewer_as_JSON";
 
 	private final ApplicationsService applicationService;
 	private final ReviewService reviewService;
@@ -44,7 +44,7 @@ public class AssignReviewerController {
 		this.userService = userService;
 	}
 
-	@RequestMapping(value = "/showPage", method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.GET)
 	public String getAssignReviewerPage() {
 		return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;
 	}
@@ -71,7 +71,7 @@ public class AssignReviewerController {
 	}
 
 	@RequestMapping(value = "/createReviewer", method = RequestMethod.POST)
-	public String createReviewer(@ModelAttribute Program programme, @Valid RegisteredUser uiReviewer, ModelMap modelMap) {
+	public String createReviewer(@ModelAttribute("programme") Program programme, @Valid RegisteredUser uiReviewer, ModelMap modelMap) {
 		checkAdminPermission(programme);
 
 		RegisteredUser reviewer = userService.getUserByEmail(uiReviewer.getEmail());
@@ -96,7 +96,7 @@ public class AssignReviewerController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(Integer applicationId) {
+	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
 		ApplicationForm application = applicationService.getApplicationById(applicationId);
 		checkPermissionForApplication(application);
 		checkApplicationStatus(application);

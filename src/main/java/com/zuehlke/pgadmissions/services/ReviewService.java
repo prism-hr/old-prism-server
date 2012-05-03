@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.ProgramDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -21,16 +22,18 @@ public class ReviewService {
 
 	private final RoleDAO roleDAO;
 	private final UserDAO userDAO;
+	private final ProgramDAO programmeDAO;
 	private final ApplicationFormDAO applicationDAO;
 
 	ReviewService() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public ReviewService(UserDAO userDAO, RoleDAO roleDAO, ApplicationFormDAO applicationDAO) {
+	public ReviewService(UserDAO userDAO, RoleDAO roleDAO, ProgramDAO programmeDAO, ApplicationFormDAO applicationDAO) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
+		this.programmeDAO = programmeDAO;
 		this.applicationDAO = applicationDAO;
 	}
 
@@ -81,6 +84,7 @@ public class ReviewService {
 		newUser.getProgramsOfWhichReviewer().add(programme);
 		programme.getReviewers().add(newUser);
 		userDAO.save(newUser);
+		programmeDAO.save(programme);
 		return newUser;
 	}
 
@@ -99,6 +103,7 @@ public class ReviewService {
 		reviewer.getProgramsOfWhichReviewer().add(programme);
 		programme.getReviewers().add(reviewer);
 		userDAO.save(reviewer);
+		programmeDAO.save(programme);
 	}
 
 	private RegisteredUser createNewReviewer(String firstName, String lastName, String email) {

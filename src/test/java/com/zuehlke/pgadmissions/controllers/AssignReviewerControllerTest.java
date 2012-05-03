@@ -30,6 +30,9 @@ import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class AssignReviewerControllerTest {
+	private static final String VIEW_RESULT = "private/staff/admin/assign_reviewers_to_appl_page";
+	private static final String REVIEWER_AS_JSON_VIEW = "private/staff/admin/reviewer_as_JSON";
+
 	private AssignReviewerController controllerUT;
 
 	private ApplicationForm application;
@@ -218,7 +221,7 @@ public class AssignReviewerControllerTest {
 
 	@Test
 	public void shouldReturnShowPageTemplate() {
-		Assert.assertEquals("/private/staff/admin/assign_reviewers_to_appl_page", controllerUT.getAssignReviewerPage());
+		Assert.assertEquals(VIEW_RESULT, controllerUT.getAssignReviewerPage());
 	}
 
 	// -------------------------------------------
@@ -238,7 +241,7 @@ public class AssignReviewerControllerTest {
 		String view = controllerUT.createReviewer(program, inputUser, mmap);
 
 		EasyMock.verify(reviewServiceMock, userServiceMock);
-		Assert.assertEquals("/private/staff/admin/reviewer_as_JSON", view);
+		Assert.assertEquals(REVIEWER_AS_JSON_VIEW, view);
 		Assert.assertEquals(storedUser, mmap.get("newReviewer"));
 		Assert.assertEquals("Created user 'uname' (e-mail: uname@name.com) and added as a reviewer for this programme.", mmap.get("message"));
 	}
@@ -259,7 +262,7 @@ public class AssignReviewerControllerTest {
 		String view = controllerUT.createReviewer(program, inputUser, mmap);
 
 		EasyMock.verify(reviewServiceMock, userServiceMock);
-		Assert.assertEquals("/private/staff/admin/reviewer_as_JSON", view);
+		Assert.assertEquals(REVIEWER_AS_JSON_VIEW, view);
 		Assert.assertEquals(storedUser, mmap.get("newReviewer"));
 		Assert.assertEquals("Created user 'uname' (e-mail: uname@name.com) and added as a reviewer for this programme.", mmap.get("message"));
 	}
@@ -283,7 +286,7 @@ public class AssignReviewerControllerTest {
 		String view = controllerUT.createReviewer(program, inputUser, mmap);
 
 		EasyMock.verify(reviewServiceMock, userServiceMock);
-		Assert.assertEquals("/private/staff/admin/reviewer_as_JSON", view);
+		Assert.assertEquals(REVIEWER_AS_JSON_VIEW, view);
 		Assert.assertEquals(storedUser, mmap.get("newReviewer"));
 		Assert.assertEquals("Created user 'uname' (e-mail: uname@name.com) and added as a reviewer for this programme.", mmap.get("message"));
 	}
@@ -318,7 +321,7 @@ public class AssignReviewerControllerTest {
 		ModelMap mmap = new ModelMap();
 		String view = controllerUT.createReviewer(program, inputUser, mmap);
 
-		Assert.assertEquals("/private/staff/admin/reviewer_as_JSON", view);
+		Assert.assertEquals(REVIEWER_AS_JSON_VIEW, view);
 		EasyMock.verify(reviewServiceMock, userServiceMock);
 		Assert.assertEquals("User 'rev 1' (e-mail: rev1@bla.com) is already a reviewer for this programme.", mmap.get("message"));
 		Assert.assertNull(mmap.get("newReviewer"));
@@ -337,7 +340,7 @@ public class AssignReviewerControllerTest {
 		String view = controllerUT.createReviewer(program, inputUser, mmap);
 		EasyMock.verify(reviewServiceMock, userServiceMock);
 
-		Assert.assertEquals("/private/staff/admin/reviewer_as_JSON", view);
+		Assert.assertEquals(REVIEWER_AS_JSON_VIEW, view);
 		Object message = mmap.get("message");
 		Assert.assertEquals("User 'i review others' (e-mail: woi@blu.com) added as reviewer for this programme.", message);
 		Assert.assertEquals(otherReviewer, mmap.get("newReviewer"));

@@ -90,9 +90,17 @@
                      	</#list>
                  	 </select>
                  	 <@spring.bind "employmentPosition.employerCountry" /> 
-            		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>						
                 </div>
             </div>
+            
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+            
         	<!-- Employer (company name) -->
             <div class="row">
             	<span class="plain-label">Employer Name<em>*</em></span>
@@ -102,7 +110,6 @@
                 	<input class="full" type="text" id="position_employer_name" name="position_employer_name" 
                 					value="${(employmentPosition.employerName?html)!}" placeholder="Provider of employment" />
                 	 <@spring.bind "employmentPosition.employerName" /> 
-            		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
                    
                 <#else>
                     <input readonly="readonly" class="full" type="text" id="position_employer_name" name="position_employer_name" 
@@ -110,6 +117,15 @@
                 </#if>    
                	</div>
             </div>
+            
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+            
             
         	<!-- Employer (company name) -->
             <div class="row">
@@ -122,7 +138,7 @@
                   		placeholder="Employer's address">${(employmentPosition.employerAddress?html)!}</textarea>
 						
 						 <@spring.bind "employmentPosition.employerAddress" /> 
-            			<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
+            				
 					 <#else>
 					    <textarea readonly="readonly" cols="70" rows="3" class="max" id="position_employer_address" 
                         name="position_employer_address"
@@ -130,6 +146,13 @@
 					 </#if>   
                	</div>
             </div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
             
             <!-- Position -->
             <div class="row">
@@ -139,12 +162,20 @@
                     <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                     	<input class="full" type="text" id="position_title" name="position_title" value="${(employmentPosition.position?html)!}" placeholder="Title of position" />
                          <@spring.bind "employmentPosition.position" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
+                			
                     <#else>
                         <input readonly="readonly" class="full" type="text" id="position_title" name="position_title" value="${(employmentPosition.position?html)!}" placeholder="Title of position" />
                     </#if> 
                 </div>
             </div>
+            
+            	<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
             
             <!-- Remit (job description) -->
             <div class="row">
@@ -157,7 +188,7 @@
                   		placeholder="Summary of responsibilities">${(employmentPosition.remit?html)!}</textarea>
                   		
 						 <@spring.bind "employmentPosition.remit" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
+                			
 					
 					 <#else>
 					    <textarea readonly="readonly" cols="70" rows="3" class="max" id="position_remit" 
@@ -167,6 +198,15 @@
 					 
                 </div>
          	</div>
+         	
+         		<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+         	
              <!-- Language -->
             <div class="row">
                 <span class="plain-label">Language of work<em>*</em></span>
@@ -180,9 +220,18 @@
                      	</#list>
                  	 </select>
                  	  <@spring.bind "employmentPosition.language" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>							
+                									
                 </div>
            	</div>
+           	
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+           	
             <!-- Start date -->
             <div class="row">
                 <span class="plain-label">Start Date<em>*</em></span>
@@ -191,10 +240,20 @@
                   	<input class="half date" type="text" id="position_startDate" name="position_startDate" value="${(employmentPosition.startDate?string('dd-MMM-yyyy'))!}"  <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>
                           
                   	 <@spring.bind "employmentPosition.startDate" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
+                			
                 </div>
             </div>
+            
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+            
         </div>
+        
         <div>
             <div class="row">
                <span class="plain-label">Is this your current position?</span>
@@ -210,10 +269,19 @@
                 <div class="field" id="endDateField">
                   	<input class="half date" id="position_endDate" name="position_endDate" value="${(employmentPosition.endDate?string('dd-MMM-yyyy'))!}" <#if employmentPosition.current ||  applicationForm.isDecided() || applicationForm.isWithdrawn()> disabled ="disabled"</#if>/>                  	
                   	<@spring.bind "employmentPosition.endDate" /> 
-                		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>			
+                					
                 </div>
 					
            	</div>
+           	
+           		<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+           	
 				<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	           	<!-- Add another button -->
 	            <div class="row">

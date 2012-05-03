@@ -95,9 +95,17 @@
              			</#list>
           			</select>
 					<@spring.bind "qualification.institutionCountry" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                	
         		</div>
       		</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+      		
 	
           	<!-- Provider -->
         	<div class="row">
@@ -107,13 +115,22 @@
                 	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 		<input id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL"  value="${(qualification.qualificationInstitution?html)!}" />
                 		 <@spring.bind "qualification.qualificationInstitution" /> 
-                	 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>                	
+                	 	                	
         			<#else>
         			     <input readonly="readonly" id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL" value="${(qualification.qualificationInstitution?html)!}" />
         			</#if>
                     									
                 </div>
           	</div>
+
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+
 
       		<!-- Qualification type -->
       		<div class="row">
@@ -123,12 +140,20 @@
         			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
           				<input id="qualificationType" class="full" type="text" value="${(qualification.qualificationType?html)!}"/>
 						<@spring.bind "qualification.qualificationType" /> 
-                		 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+
         			<#else>
         			 	<input readonly="readonly" id="qualificationType" class="full" type="text" value="${(qualification.qualificationType?html)!}"/>
         			</#if>
         		</div>
       		</div>
+
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
 			
           	<!-- Name (of programme) -->
         	<div class="row">
@@ -138,12 +163,21 @@
                 	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 		<input id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering"  value="${(qualification.qualificationSubject?html)!}"/>
    					 	<@spring.bind "qualification.qualificationSubject" /> 
-                	 	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+
    					<#else>
    					  	<input readonly="readonly" id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering" value="${(qualification.qualificationSubject?html)!}"/>
    					</#if>					
                 </div>
      		</div>
+
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+
 		
 		    <!-- Language (in which programme was undertaken) -->
       		<div class="row">
@@ -160,9 +194,16 @@
              			</#list>
           			</select>
 					<@spring.bind "qualification.qualificationLanguage" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+
         		</div>
       		</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
 		
           	<!-- Start date -->
         	<div class="row">
@@ -175,10 +216,20 @@
                          </#if>>
                 	</input>
                		<@spring.bind "qualification.qualificationStartDate" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+
                 </div>
          	</div>
+         	
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+         	
 		</div>
+
 
 		<div>
 
@@ -207,12 +258,19 @@
 	        		<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	          			<input id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction" value="${(qualification.qualificationGrade?html)!}"/>
 						<@spring.bind "qualification.qualificationGrade" /> 
-	                	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+
 	        		<#else>
 	        			  <input readonly="readonly" id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction" value="${(qualification.qualificationGrade?html)!}"/>
 	        		</#if>
         		</div>
       		</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
       		
       		<!-- Award date -->
       		<div class="row">
@@ -224,9 +282,16 @@
         				 <#if !qualification.isQualificationCompleted()>disabled="disabled"</#if>>
                 	</input>
                	 	<@spring.bind "qualification.qualificationAwardDate" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+
         		</div>
       		</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
 
       		<!-- Attachment / supporting document -->
       		<div class="row">

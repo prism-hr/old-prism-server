@@ -21,11 +21,13 @@ public class AdminMailSender extends MailSender {
 
 	}
 
-	Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser administrator) {
+	Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser administrator, RegisteredUser reviewer) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("admin", administrator);
 		model.put("application", applicationForm);
 		model.put("host", Environment.getInstance().getApplicationHostName());
+		model.put("applicant", applicationForm.getApplicant());
+		model.put("reviewer", reviewer);
 		return model;
 	}
 
@@ -39,27 +41,14 @@ public class AdminMailSender extends MailSender {
 			}
 		}
 	}
-
-	public Map<String, Object> createModel(RegisteredUser admin, ApplicationForm form, RegisteredUser reviewer) {
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put("admin", admin);
-		model.put("application", form);
-		model.put("applicant", form.getApplicant());
-		model.put("reviewer", reviewer);
-		model.put("host", Environment.getInstance().getApplicationHostName());
-		return model;
-	}
-
+	
 	public void sendAdminReviewNotification(RegisteredUser admin, ApplicationForm form, RegisteredUser reviewer) throws UnsupportedEncodingException {
 			InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Notification - review added",
-					"private/staff/admin/mail/review_submission_notification.ftl", createModel(admin, form, reviewer)));
+					"private/staff/admin/mail/review_submission_notification.ftl", createModel(form, admin, reviewer)));
 		
 	}
 
-}
-
-	}
 
 	public void sendReminderToAdmin(ApplicationForm applicationForm, RegisteredUser administrator, String subjectMessage, String templatename)
 			throws UnsupportedEncodingException {
@@ -67,7 +56,7 @@ public class AdminMailSender extends MailSender {
 
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + applicationForm.getId() + " by "
 				+ applicationForm.getApplicant().getFirstName() + " " + applicationForm.getApplicant().getLastName() + " " + subjectMessage, templatename,
-				createModel(applicationForm, administrator)));
+				createModel(applicationForm, administrator, null)));
 
 	}
 

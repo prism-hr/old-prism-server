@@ -133,7 +133,7 @@ public class ApplicationFormTest {
 	public void shouldNotSeeOtherReviewersCommentsIfReviewer() throws ParseException{
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
 		RegisteredUser reviewerOne = new RegisteredUserBuilder().id(6).toUser();
-		RegisteredUser reviewerTwo = new RegisteredUserBuilder().id(7).toUser();
+		RegisteredUser reviewerTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).id(7).toUser();
 		
 		Comment commentOne = new CommentBuilder().createdTimeStamp(format.parse("01 01 2011")).id(4).user(reviewerTwo).toComment();
 		Comment commentTwo = new CommentBuilder().createdTimeStamp(format.parse("01 10 2011")).id(6).user(reviewerOne).toComment();
@@ -145,6 +145,22 @@ public class ApplicationFormTest {
 		assertEquals(2, visibleComments.size());		
 		assertEquals(commentThree, visibleComments.get(0));
 		assertEquals(commentOne, visibleComments.get(1));
+	}
+	
+	@Test
+	public void shouldNotSeeAllCommentsIfNotReviewer() throws ParseException{
+		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
+		RegisteredUser reviewerOne = new RegisteredUserBuilder().id(6).toUser();
+		RegisteredUser reviewerTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(7).toUser();
+		
+		Comment commentOne = new CommentBuilder().createdTimeStamp(format.parse("01 01 2011")).id(4).user(reviewerTwo).toComment();
+		Comment commentTwo = new CommentBuilder().createdTimeStamp(format.parse("01 10 2011")).id(6).user(reviewerOne).toComment();
+		Comment commentThree = new CommentBuilder().createdTimeStamp(format.parse("01 05 2011")).id(9).user(reviewerTwo).toComment();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewerOne, reviewerTwo).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
+		
+		List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerTwo);
+		assertEquals(3, visibleComments.size());		
 	}
 	
 	

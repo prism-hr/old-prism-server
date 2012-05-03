@@ -72,7 +72,7 @@ public class ApplicationsServiceTest {
 				.toUser();
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		reviewers.add(reviewer);
-		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).reviewers(reviewers).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).reviewers(reviewers).status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(reviewer);

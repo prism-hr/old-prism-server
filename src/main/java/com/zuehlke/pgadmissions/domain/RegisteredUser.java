@@ -22,6 +22,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Entity(name = "REGISTERED_USER")
 @Access(AccessType.FIELD)
@@ -49,6 +51,12 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private boolean credentialsNonExpired;
 	private String activationCode;
 	
+	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "user_id")
+	private List<Comment> comments = new ArrayList<Comment>();
+
+
 
 	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -68,7 +76,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
-
+	
 	@ManyToMany
 	@JoinTable(name = "PROGRAM_ADMINISTRATOR_LINK", joinColumns = { @JoinColumn(name = "administrator_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
@@ -223,7 +231,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 
-		if (isInRole(Authority.REVIEWER) && applicationForm.isInValidationStage()) {
+		if (isInRole(Authority.REVIEWER) && applicationForm.getStatus() == ApplicationFormStatus.REVIEW) {
 			if (applicationForm.getReviewers().contains(this)) {
 				return true;
 			}
@@ -415,13 +423,35 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.programId = programId;
 	}
 
+	public List<Comment> getComments() {
+		return comments;
+	}
+	
 	public List<NotificationRecord> getNotificationRecords() {
 		return notificationRecords;
 	}
 
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
 	public void setNotificationRecords(List<NotificationRecord> notificationRecords) {
 		this.notificationRecords.clear();
 		this.notificationRecords.addAll(notificationRecords);
+	}
+	
+	public boolean hasDeclinedToProvideReviewForApplication(ApplicationForm application){
+		if(this.isInRoleInProgram(Authority.REVIEWER, application.getProgram())){
+			for (Comment comment : comments) {
+				if(comment.getApplication().equals(application) && comment.getType().equals(CommentType.REVIEW)){
+					ReviewComment reviewComment = (ReviewComment)comment;
+					if(reviewComment.getDecline().equals(CheckedStatus.YES)){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+		
 	}
 
 }

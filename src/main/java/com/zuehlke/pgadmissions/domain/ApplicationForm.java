@@ -351,7 +351,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 
 		for (Comment comment : applicationComments) {
-			if (!reviewers.contains(comment.getUser()) || comment.getUser().equals(user)) {			
+			if ( !user.isInRole(Authority.REVIEWER) || !reviewers.contains(comment.getUser()) || comment.getUser().equals(user) ) {			
 				visibleComments.add(comment);
 			}
 		}

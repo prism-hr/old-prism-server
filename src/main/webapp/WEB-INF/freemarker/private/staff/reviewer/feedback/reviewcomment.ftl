@@ -52,9 +52,13 @@
 				      <!-- content box -->				      
 				      <div class="content-box">
 				        <div class="content-box-inner">
-				       	 <!--	if user is reviewer in program -->			        		
-							    <h1>Add comment for application ${(applicationForm.id?string('#####'))!}</h1>
+				       	 <!--	if user is reviewer in program and haven't already declined-->	
+				       	 	<#if !user.hasDeclinedToProvideReviewForApplication(applicationForm) >			        		
+							
+							    <h1>Add review feedback for application ${(applicationForm.id?string('#####'))!}</h1>
 							    <br/><br/>
+							     <form>
+							   
 							    	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 			            			<div class="row">
 										<label class="plain-label">Decline<em>*</em></label>
@@ -89,11 +93,14 @@
 			    
 			            			</div>
 			            			<div class="buttons">						        		
-			            				<button type="reset" value="cancel">Cancel</button>
+			            				<button type="reset" id="cancelReview" value="cancel">Cancel</button>
 							       		<button class="blue" id="submitReviewFeedback" type="button" value="Submit">Submit</button>						        
 									</div>
+									</form>
 			  					<hr/>
-			  				<!-- else hidden app close if-->
+			  				<#else>
+			  					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
+		  					</#if>
 		  					<div id= "timeline">
 		  						
 		  					</div>

@@ -102,7 +102,7 @@
 									    			<#if !model.user.isInRole('APPLICANT') && !model.user.isRefereeOfApplicationForm(application)>
 								    					<option value="comment">Comment</option>								    				
 								      				</#if>      												
-									    			<#if model.user.isInRole('SUPERADMINISTRATOR')>
+									    			<#if model.user.isInRoleInProgram('REVIEWER', application.program) && application.isInState('REVIEW')> 
 								    					<option value="review">Add Review</option>								    				
 								      				</#if>      												
 								      				<#if (model.user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isDecided() )>

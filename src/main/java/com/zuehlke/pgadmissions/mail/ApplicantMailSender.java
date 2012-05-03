@@ -15,6 +15,8 @@ import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApplicantMailSender extends MailSender {
 
+
+	
 	public ApplicantMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender) {
 		super(mimeMessagePreparatorFactory, mailSender);
 	}
@@ -33,12 +35,14 @@ public class ApplicantMailSender extends MailSender {
 		return model;
 	}
 
-	public void sendMovedToReviewNotification(ApplicationForm form) throws UnsupportedEncodingException {
+	public void sendMovedToReviewNotification(ApplicationForm form,  String message, String templatename) throws UnsupportedEncodingException {
 
 		InternetAddress toAddress = new InternetAddress(form.getApplicant().getEmail(), form.getApplicant().getFirstName() + " "
 				+ form.getApplicant().getLastName());
+
+		
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + form.getId() + " for "
-				+ form.getProgram().getTitle() + " now being reviewed", "private/pgStudents/mail/moved_to_review_notification.ftl", createModel(form)));
+				+ form.getProgram().getTitle() + " " + message, templatename, createModel(form)));
 
 	}
 

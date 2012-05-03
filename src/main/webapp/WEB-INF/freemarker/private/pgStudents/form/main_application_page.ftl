@@ -92,6 +92,7 @@
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/programme.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/qualifications.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/references.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/terms_and_condition.css' />"/>
 		
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -207,11 +208,12 @@
 			          				
 			          			</section>
 
-			          			<hr/>
 			          			<#if applicationForm.isInState('UNSUBMITTED')>
-			          			<section id="acceptTermsSection" >
-	                    		</section>
+			          				<section id="acceptTermsSection" class="folding lightgrey">
+	                    			</section>
 	                    		 </#if>  
+
+			          			<hr/>
 			          			<div class="buttons">
 			          			
 									<div style="float:left">		    	 

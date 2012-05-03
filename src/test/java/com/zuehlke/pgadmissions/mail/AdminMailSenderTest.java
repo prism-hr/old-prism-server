@@ -25,17 +25,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.utils.Environment;
-
-public class AdminMailSenderTest {
-
-	private JavaMailSender javaMailSenderMock;
-	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
-
-	private AdminMailSender adminMailSender;
-
-	@Test
-	public void shouldReturnCorrectlyPopulatedModel() {
-
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,27 +45,27 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.utils.Environment;
 
+
 public class AdminMailSenderTest {
+
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
+
 	private AdminMailSender adminMailSender;
-	
+
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
 		
 		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).toUser();
 		RegisteredUser applicant = new RegisteredUserBuilder().id(10).toUser();
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(11).toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(admin).toProgram())
-				.applicant(applicant).toApplicationForm();
-
 		RegisteredUser adminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").toUser();
 		RegisteredUser adminTwo = new RegisteredUserBuilder().id(8).email("alice@test.com").toUser();
 
 		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram())
 				.toApplicationForm();
 
-		Map<String, Object> model = adminMailSender.createModel(form, adminOne);
+		Map<String, Object> model = adminMailSender.createModel(form, adminOne, null);
 		assertEquals(form, model.get("application"));
 		assertEquals(adminOne, model.get("admin"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
@@ -89,7 +78,7 @@ public class AdminMailSenderTest {
 
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 			@Override
-			Map<String, Object> createModel(ApplicationForm application, RegisteredUser administrator) {
+			Map<String, Object> createModel(ApplicationForm application, RegisteredUser administrator, RegisteredUser reviewer) {
 				return model;
 			}
 		};
@@ -107,13 +96,11 @@ public class AdminMailSenderTest {
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Application 2 by Jane Smith " + subjectMessage, templatename, model))
 				.andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
-		Map<String, Object> model = adminMailSender.createModel(admin, form, reviewer);
-		assertEquals(admin, model.get("admin"));
-		assertEquals(form, model.get("application"));
-		assertEquals(applicant, model.get("applicant"));
-		assertEquals(reviewer, model.get("reviewer"));
-		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+
+		adminMailSender.sendReminderToAdmin(form, administratorOne, subjectMessage, templatename);
+		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 	}
 	
 	@Test
@@ -122,8 +109,7 @@ public class AdminMailSenderTest {
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
 			@Override
-			public
-			Map<String, Object> createModel(RegisteredUser admin, ApplicationForm form, RegisteredUser reviewer) {
+			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer) {
 				return model;
 			}
 
@@ -145,28 +131,16 @@ public class AdminMailSenderTest {
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 	}
 
-		adminMailSender.sendReminderToAdmin(form, administratorOne, subjectMessage, templatename);
-		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
-	}
 	
-	@Before
-	public void setUp() {
-
 	@Test
 	public void shouldSendReminderEmailToEachAdmin() throws UnsupportedEncodingException {
-		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
-		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 
 		final List<RegisteredUser> passedAdmins = new ArrayList<RegisteredUser>();
-		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
 		final RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		final RegisteredUser administratorTwo = new RegisteredUserBuilder().id(2).firstName("charlie").lastName("crock").email("cc@test.com").toUser();
-	}
-}
 		Program program = new ProgramBuilder().administrators(administratorOne, administratorTwo).toProgram();
 
 		final ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).toApplicationForm();
@@ -193,6 +167,8 @@ public class AdminMailSenderTest {
 		adminMailSender.sendReminderToAdmins(form, subjectMessage, templatename);
 		assertTrue(passedAdmins.containsAll(Arrays.asList(administratorOne, administratorTwo)));
 	}
+	
+	
 	@Test
 	public void shouldNotStopIfOneEmailFails() throws UnsupportedEncodingException {
 
@@ -226,6 +202,8 @@ public class AdminMailSenderTest {
 		adminMailSender.sendReminderToAdmins(form, subjectMessage, templatename);
 		assertTrue(passedAdmins.contains(administratorTwo));
 	}
+	
+	
 	@Before
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);

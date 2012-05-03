@@ -349,6 +349,12 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.confirmPassword = confirmPassword;
 	}
 
+	public boolean isReviewerInProgramme(Program program) {
+		if (program.getReviewers().contains(this)) {
+			return true;
+		}
+		return false;
+	}
 	public boolean isAdminOrReviewerInProgramme(Program program) {
 		if (program.getAdministrators().contains(this) || program.getReviewers().contains(this)) {
 			return true;

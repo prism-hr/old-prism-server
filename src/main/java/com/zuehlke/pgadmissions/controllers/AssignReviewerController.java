@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -32,8 +32,6 @@ public class AssignReviewerController {
 	private final ApplicationsService applicationService;
 	private final ReviewService reviewService;
 	private final UserService userService;
-
-	private final Logger logger = Logger.getLogger(AssignReviewerController.class);
 
 	AssignReviewerController() {
 		this(null, null, null);
@@ -55,13 +53,28 @@ public class AssignReviewerController {
 	public String moveApplicationToReviewState(@ModelAttribute ApplicationForm application, // 
 			@RequestParam("reviewerIds[]") Integer[] reviewerIds) {
 
+		checkApplicationStatus(application);
+		checkAdminPermission(application.getProgram());
+		if (reviewerIds == null || reviewerIds.length == 0) {
+			throw new ResourceNotFoundException();
+		}
+		RegisteredUser[] users = new RegisteredUser[reviewerIds.length];
+		for (int i = 0; i < reviewerIds.length; i++) {
+			users[i] = userService.getUser(reviewerIds[i]);
+		}
+		try {
+			reviewService.moveApplicationToReview(application, users);
+		} catch (Exception e) {
+			throw new ResourceNotFoundException(e.getMessage());
+		}
 		return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;
 	}
 
 	@RequestMapping(value = "/createReviewer", method = RequestMethod.POST)
 	public String createReviewer(@ModelAttribute Program programme, @Valid RegisteredUser uiReviewer, ModelMap modelMap) {
-		RegisteredUser reviewer = userService.getUserByEmail(uiReviewer.getEmail());
+		checkAdminPermission(programme);
 
+		RegisteredUser reviewer = userService.getUserByEmail(uiReviewer.getEmail());
 		if (programme.getReviewers().contains(reviewer)) {
 			modelMap.put("message", String.format("User '%s' (e-mail: %s) is already a reviewer for this programme.",// 
 					reviewer.getUsername(), reviewer.getEmail()));
@@ -85,32 +98,32 @@ public class AssignReviewerController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(Integer applicationId) {
 		ApplicationForm application = applicationService.getApplicationById(applicationId);
-		if (application == null || !getCurrentUser().canSee(application)) {
-			throw new ResourceNotFoundException();
-		}
-		switch (application.getStatus()) {
-		case REVIEW:
-		case VALIDATION:
-			break;
-		default:
-			throw new CannotUpdateApplicationException();
-		}
+		checkPermissionForApplication(application);
+		checkApplicationStatus(application);
 		return application;
 	}
 
 	@ModelAttribute("programme")
-	public Program getProgrammeForApplication(Integer applicationId) {
-		return getProgramme(applicationId);
+	public Program getProgrammeForApplication(@ModelAttribute("applicationForm") ApplicationForm application) {
+		checkPermissionForApplication(application);
+		return application.getProgram();
 	}
 
 	@ModelAttribute("availableReviewers")
-	public List<RegisteredUser> getAvailableReviewers(Integer applicationId) {
-		return getProgramme(applicationId).getReviewers();
+	public List<RegisteredUser> getAvailableReviewers(//
+			@ModelAttribute("programme") Program program,//
+			@ModelAttribute("applicationForm") ApplicationForm application) {
+
+		checkPermissionForApplication(application);
+		List<RegisteredUser> programmeReviewers = program.getReviewers();
+		programmeReviewers.removeAll(application.getReviewers());
+		return programmeReviewers;
 	}
 
 	@ModelAttribute("applicationReviewers")
-	public List<RegisteredUser> getApplicationReviewers(Integer applicationId) {
-		return getApplicationForm(applicationId).getReviewers();
+	public List<RegisteredUser> getApplicationReviewers(@ModelAttribute("applicationForm") ApplicationForm application) {
+		checkPermissionForApplication(application);
+		return application.getReviewers();
 	}
 
 	@ModelAttribute("user")
@@ -118,11 +131,32 @@ public class AssignReviewerController {
 		return getCurrentUser();
 	}
 
-	private Program getProgramme(Integer applicationId) {
-		return getApplicationForm(applicationId).getProgram();
-	}
-
 	private RegisteredUser getCurrentUser() {
 		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+	}
+
+	private void checkPermissionForApplication(ApplicationForm application) {
+		if (application == null || !getCurrentUser().canSee(application)) {
+			throw new ResourceNotFoundException();
+		}
+	}
+
+	private void checkAdminPermission(Program programme) {
+		RegisteredUser currentUser = getCurrentUser();
+		if (!(programme.getAdministrators().contains(currentUser) || //
+				currentUser.isInRole(Authority.SUPERADMINISTRATOR) || //
+		programme.getReviewers().contains(currentUser))) {
+			throw new ResourceNotFoundException();
+		}
+	}
+
+	private void checkApplicationStatus(ApplicationForm application) {
+		switch (application.getStatus()) {
+		case REVIEW:
+		case VALIDATION:
+			break;
+		default:
+			throw new CannotUpdateApplicationException();
+		}
 	}
 }

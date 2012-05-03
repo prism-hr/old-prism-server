@@ -13,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -32,7 +31,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 
 public class AssignReviewerControllerTest {
 	private AssignReviewerController controllerUT;
-	private RegisteredUser admin;
 
 	private ApplicationForm application;
 	private ApplicationsService applicationServiceMock;
@@ -41,10 +39,10 @@ public class AssignReviewerControllerTest {
 
 	private UsernamePasswordAuthenticationToken authenticationToken;
 	private Program program;
+	private RegisteredUser admin;
 	private RegisteredUser reviewer1;
 	private RegisteredUser reviewer2;
 	private RegisteredUser otherReviewer;
-	private BindingResult bindingResultMock;
 
 	@Before
 	public void setUp() {
@@ -71,11 +69,6 @@ public class AssignReviewerControllerTest {
 				.program(program)//
 				.toApplicationForm();
 
-		bindingResultMock = EasyMock.createMock(BindingResult.class);
-		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-
-		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
-		EasyMock.replay(applicationServiceMock, bindingResultMock);
 	}
 
 	@After
@@ -88,56 +81,76 @@ public class AssignReviewerControllerTest {
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void throwCUAEIfApplicationIsInApproval() {
 		application.setStatus(ApplicationFormStatus.APPROVAL);
+		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+
 		controllerUT.getApplicationForm(10);
 	}
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void throwCUAEIfApplicationIsApproved() {
 		application.setStatus(ApplicationFormStatus.APPROVED);
+		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+
 		controllerUT.getApplicationForm(10);
 	}
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void throwCUAEIfApplicationIsRejected() {
 		application.setStatus(ApplicationFormStatus.REJECTED);
+		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+
 		controllerUT.getApplicationForm(10);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void throwRNFEIfApplicationIsUnsubmitted() {
+		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+
 		application.setStatus(ApplicationFormStatus.UNSUBMITTED);
 		controllerUT.getApplicationForm(10);
 	}
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void throwCUAEIfApplicationIsWithdrawn() {
+		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+
 		application.setStatus(ApplicationFormStatus.WITHDRAWN);
 		controllerUT.getApplicationForm(10);
 	}
 
+	@Test(expected = ResourceNotFoundException.class)
+	public void throwRNFEIfApplicationDoesntExist() {
+		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(null);
+		EasyMock.replay(applicationServiceMock);
+
+		controllerUT.getApplicationForm(10);
+	}
+
+	@Test
 	public void returnApplicationIfApplicationIsInReview() {
+		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+
 		application.setStatus(ApplicationFormStatus.REVIEW);
 		ApplicationForm applicationForm = controllerUT.getApplicationForm(10);
 		Assert.assertNotNull(applicationForm);
 		Assert.assertEquals(application, applicationForm);
+		EasyMock.verify(applicationServiceMock);
 	}
 
 	// -----------------------------------------
 	// ------ Programme for an application:
 	@Test(expected = ResourceNotFoundException.class)
-	public void throwRNFEIfApplicationDoesntExist() {
-		EasyMock.reset(applicationServiceMock);
-		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(null);
-		EasyMock.replay(applicationServiceMock);
-		controllerUT.getProgrammeForApplication(10);
-	}
-
-	@Test(expected = ResourceNotFoundException.class)
 	public void throwRNFEIfApplicantUser() {
 		admin.getRoles().clear();
 		admin.getRoles().add(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole());
 
-		controllerUT.getProgrammeForApplication(10);
+		controllerUT.getProgrammeForApplication(application);
 	}
 
 	@Test
@@ -145,50 +158,55 @@ public class AssignReviewerControllerTest {
 		admin.getRoles().clear();
 		admin.getRoles().add(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole());
 
-		Program returnedProgram = controllerUT.getProgrammeForApplication(10);
+		Program returnedProgram = controllerUT.getProgrammeForApplication(application);
 		Assert.assertNotNull(returnedProgram);
 		Assert.assertEquals(program, returnedProgram);
-		EasyMock.verify(applicationServiceMock);
 	}
 
 	@Test
 	public void getProgrammeFromApplication() {
-		Program returnedProgram = controllerUT.getProgrammeForApplication(10);
+		Program returnedProgram = controllerUT.getProgrammeForApplication(application);
 		Assert.assertNotNull(returnedProgram);
 		Assert.assertEquals(program, returnedProgram);
-		EasyMock.verify(applicationServiceMock);
 	}
 
 	// -------------------------------------------
 	// ------- available reviewers of a program:
 	@Test
 	public void getAvailableReviewers() {
-		List<RegisteredUser> availableReviewers = controllerUT.getAvailableReviewers(10);
+		List<RegisteredUser> availableReviewers = controllerUT.getAvailableReviewers(program, application);
 		Assert.assertNotNull(availableReviewers);
 		Assert.assertEquals(2, availableReviewers.size());
 		Assert.assertTrue(availableReviewers.contains(reviewer1));
 		Assert.assertTrue(availableReviewers.contains(reviewer2));
-		EasyMock.verify(applicationServiceMock);
 	}
 
 	// -------------------------------------------
 	// ------- existing reviewers of an application:
 	@Test
 	public void getEmptyApplicationReviewerList() {
-		List<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(10);
+		List<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(application);
 		Assert.assertNotNull(applReviewers);
 		Assert.assertTrue(applReviewers.isEmpty());
-		EasyMock.verify(applicationServiceMock);
+	}
+
+	@Test
+	public void getAvailableReviewersMinusAlreadyReviewerOfApplication() {
+		application.getReviewers().add(reviewer1);
+
+		List<RegisteredUser> availableReviewers = controllerUT.getAvailableReviewers(program, application);
+		Assert.assertNotNull(availableReviewers);
+		Assert.assertEquals(1, availableReviewers.size());
+		Assert.assertTrue(availableReviewers.contains(reviewer2));
 	}
 
 	@Test
 	public void getExistingApplicationReviewerList() {
 		application.setReviewers(Arrays.asList(reviewer2));
 
-		List<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(10);
+		List<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(application);
 		Assert.assertNotNull(applReviewers);
 		Assert.assertTrue(applReviewers.contains(reviewer2));
-		EasyMock.verify(applicationServiceMock);
 	}
 
 	@Test
@@ -203,9 +221,11 @@ public class AssignReviewerControllerTest {
 		Assert.assertEquals("/private/staff/admin/assign_reviewers_to_appl_page", controllerUT.getAssignReviewerPage());
 	}
 
+	// -------------------------------------------
+	// ------- creating reviewers for programme:
 	@Test
 	public void shouldCreateNewReviewerUser() {
-		RegisteredUser storedUser = new RegisteredUserBuilder().id(5)//
+		RegisteredUser storedUser = new RegisteredUserBuilder().id(52233)//
 				.firstName("fresh").lastName("reviewer").username("uname").email("uname@name.com")//
 				.toUser();
 
@@ -221,6 +241,71 @@ public class AssignReviewerControllerTest {
 		Assert.assertEquals("/private/staff/admin/reviewer_as_JSON", view);
 		Assert.assertEquals(storedUser, mmap.get("newReviewer"));
 		Assert.assertEquals("Created user 'uname' (e-mail: uname@name.com) and added as a reviewer for this programme.", mmap.get("message"));
+	}
+
+	@Test
+	public void shouldCreateNewReviewerUserAsProgrammeReviewer() {
+		authenticationToken.setDetails(reviewer1);
+		RegisteredUser storedUser = new RegisteredUserBuilder().id(534)//
+				.firstName("fresh").lastName("reviewer").username("uname").email("uname@name.com")//
+				.toUser();
+
+		EasyMock.expect(userServiceMock.getUserByEmail("bla@blu.com")).andReturn(null);
+		EasyMock.expect(reviewServiceMock.createNewReviewerForProgramme(program, "fresh", "reviewer", "bla@blu.com")).andReturn(storedUser);
+		EasyMock.replay(reviewServiceMock, userServiceMock);
+
+		RegisteredUser inputUser = new RegisteredUserBuilder().firstName("fresh").lastName("reviewer").email("bla@blu.com").toUser();
+		ModelMap mmap = new ModelMap();
+		String view = controllerUT.createReviewer(program, inputUser, mmap);
+
+		EasyMock.verify(reviewServiceMock, userServiceMock);
+		Assert.assertEquals("/private/staff/admin/reviewer_as_JSON", view);
+		Assert.assertEquals(storedUser, mmap.get("newReviewer"));
+		Assert.assertEquals("Created user 'uname' (e-mail: uname@name.com) and added as a reviewer for this programme.", mmap.get("message"));
+	}
+
+	@Test
+	public void shouldCreateNewReviewerUserAsSuperAdmin() {
+		RegisteredUser superAdmin = new RegisteredUserBuilder().id(541).username("superadmin")//
+				.role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole())//
+				.toUser();
+		authenticationToken.setDetails(superAdmin);
+		RegisteredUser storedUser = new RegisteredUserBuilder().id(552)//
+				.firstName("fresh").lastName("reviewer").username("uname").email("uname@name.com")//
+				.toUser();
+
+		EasyMock.expect(userServiceMock.getUserByEmail("bla@blu.com")).andReturn(null);
+		EasyMock.expect(reviewServiceMock.createNewReviewerForProgramme(program, "fresh", "reviewer", "bla@blu.com")).andReturn(storedUser);
+		EasyMock.replay(reviewServiceMock, userServiceMock);
+
+		RegisteredUser inputUser = new RegisteredUserBuilder().firstName("fresh").lastName("reviewer").email("bla@blu.com").toUser();
+		ModelMap mmap = new ModelMap();
+		String view = controllerUT.createReviewer(program, inputUser, mmap);
+
+		EasyMock.verify(reviewServiceMock, userServiceMock);
+		Assert.assertEquals("/private/staff/admin/reviewer_as_JSON", view);
+		Assert.assertEquals(storedUser, mmap.get("newReviewer"));
+		Assert.assertEquals("Created user 'uname' (e-mail: uname@name.com) and added as a reviewer for this programme.", mmap.get("message"));
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowRNFEIfUserApplicant() {
+		RegisteredUser applicant = new RegisteredUserBuilder().id(1546).username("appl")//
+				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole())//
+				.toUser();
+		authenticationToken.setDetails(applicant);
+
+		RegisteredUser inputUser = new RegisteredUserBuilder().email("hui@blu.com").toUser();
+		ModelMap mmap = new ModelMap();
+		controllerUT.createReviewer(program, inputUser, mmap);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowRNFEIfReviewerIsNotInProgramme() {
+		authenticationToken.setDetails(otherReviewer);
+		RegisteredUser inputUser = new RegisteredUserBuilder().email("hui@blu.com").toUser();
+		ModelMap mmap = new ModelMap();
+		controllerUT.createReviewer(program, inputUser, mmap);
 	}
 
 	@Test
@@ -258,8 +343,67 @@ public class AssignReviewerControllerTest {
 		Assert.assertEquals(otherReviewer, mmap.get("newReviewer"));
 	}
 
+	// -------------------------------------------
+	// ------- move application to review:
+
 	@Test
-	public void assignReviewerToApplication() {
-		//		controllerUT.assignReviewer(application.getId(), otherReviewer.getId());
+	public void moveToReviewThrowCUpadateWhenApplicationInInvalidState() {
+		ApplicationFormStatus[] values = ApplicationFormStatus.values();
+		for (ApplicationFormStatus status : values) {
+			if (status != ApplicationFormStatus.VALIDATION && status != ApplicationFormStatus.REVIEW) {
+				application.setStatus(status);
+				boolean threwException = false;
+				try {
+					controllerUT.moveApplicationToReviewState(application, new Integer[] { 50, 60 });
+				} catch (CannotUpdateApplicationException cuae) {
+					threwException = true;
+				}
+				Assert.assertTrue("expected exception not thrown for status: " + status, threwException);
+			}
+		}
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void moveToReviewThrowRNFEWhenInvalidUser() {
+		RegisteredUser applicant = new RegisteredUserBuilder().id(156).username("appl")//
+				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole())//
+				.toUser();
+		authenticationToken.setDetails(applicant);
+		controllerUT.moveApplicationToReviewState(application, new Integer[] { 50, 60 });
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void moveToReviewThrowRNFEWhenNoReviewersProvided() {
+		controllerUT.moveApplicationToReviewState(application, null);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void moveToReviewThrowRNFEWhenEmptyReviewerListProvided() {
+		controllerUT.moveApplicationToReviewState(application, new Integer[] {});
+	}
+
+	@Test
+	public void moveToReviewCallServiceWithUsers() {
+		reviewServiceMock.moveApplicationToReview(application, reviewer1, reviewer2);
+		EasyMock.expectLastCall();
+
+		EasyMock.expect(userServiceMock.getUser(reviewer1.getId())).andReturn(reviewer1);
+		EasyMock.expect(userServiceMock.getUser(reviewer2.getId())).andReturn(reviewer2);
+		EasyMock.replay(reviewServiceMock, userServiceMock);
+
+		controllerUT.moveApplicationToReviewState(application, new Integer[] { reviewer1.getId(), reviewer2.getId() });
+
+		EasyMock.verify(reviewServiceMock, userServiceMock);
+	}
+
+	@Test(expected = ResourceNotFoundException.class)
+	public void moveToReviewCatchISEFromService() {
+		reviewServiceMock.moveApplicationToReview(application, reviewer1);
+		EasyMock.expectLastCall().andThrow(new IllegalStateException("blabla-message"));
+
+		EasyMock.expect(userServiceMock.getUser(reviewer1.getId())).andReturn(reviewer1);
+		EasyMock.replay(reviewServiceMock, userServiceMock);
+
+		controllerUT.moveApplicationToReviewState(application, new Integer[] { reviewer1.getId()});
 	}
 }

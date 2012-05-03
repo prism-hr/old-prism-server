@@ -10,6 +10,7 @@ $(document).ready(function() {
 	});
 
 	$('#createReviewer').click(function() {
+		alert("doesn't work yet...");
 		$.post("/pgadmissions/assignReviewers/createReviewer", {
 			applicationId : $('#applicationId').val(),
 			firstName : "hello",

@@ -71,7 +71,7 @@ public class ApplicantMailSenderTest {
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
-		applicantMailSender.sendMovedToReviewNotification(form,	"now being reviewed","private/pgStudents/mail/moved_to_review_notification.ftl");
+		applicantMailSender.sendStateChangeNotification(form,	"now being reviewed","private/pgStudents/mail/moved_to_review_notification.ftl");
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 

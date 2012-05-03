@@ -66,12 +66,12 @@ public class StateChangeNotificationTaskTest {
 						ApplicationFormStatus.REVIEW)).andReturn(applicationFormList);
 		transactionOne.commit();
 
-		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormOne, "now being reviewed",
+		applicationMailSenderMock.sendStateChangeNotification(applicationFormOne, "now being reviewed",
 				"private/pgStudents/mail/moved_to_review_notification.ftl");
 		applicationFormDAOMock.save(applicationFormOne);
 		transactionTwo.commit();
 
-		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormTwo, "now being reviewed",
+		applicationMailSenderMock.sendStateChangeNotification(applicationFormTwo, "now being reviewed",
 				"private/pgStudents/mail/moved_to_review_notification.ftl");
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
@@ -109,11 +109,11 @@ public class StateChangeNotificationTaskTest {
 						ApplicationFormStatus.REVIEW)).andReturn(applicationFormList);
 
 		transactionOne.commit();
-		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormOne, "now being reviewed",
+		applicationMailSenderMock.sendStateChangeNotification(applicationFormOne, "now being reviewed",
 				"private/pgStudents/mail/moved_to_review_notification.ftl");
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
-		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormTwo, "now being reviewed",
+		applicationMailSenderMock.sendStateChangeNotification(applicationFormTwo, "now being reviewed",
 				"private/pgStudents/mail/moved_to_review_notification.ftl");
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();

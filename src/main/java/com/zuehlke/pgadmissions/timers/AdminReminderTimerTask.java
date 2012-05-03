@@ -13,36 +13,38 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.mail.ApplicantMailSender;
+import com.zuehlke.pgadmissions.mail.AdminMailSender;
 
-public class StateChangeNotificationTask extends TimerTask {
-	private final Logger log = Logger.getLogger(StateChangeNotificationTask.class);
+
+
+public class AdminReminderTimerTask extends TimerTask {
+	private final Logger log = Logger.getLogger(AdminReminderTimerTask.class);
 	private final SessionFactory sessionFactory;
 	private final ApplicationFormDAO applicationFormDAO;
-	private final ApplicantMailSender applicantMailSender;
+	private final AdminMailSender adminMailSender;
+	private final NotificationType notificationType;
+	private final ApplicationFormStatus status;
 	private final String subjectMessage;
 	private final String emailTemplate;
-	private final NotificationType notificationType;
-	private final ApplicationFormStatus newStatus;
 
-	public StateChangeNotificationTask(SessionFactory sessionFactory, ApplicationFormDAO applicationFormDAO, ApplicantMailSender applicantMailSender,
-			NotificationType notificationType, ApplicationFormStatus newStatus, String subjectMessage, String emailTemplate) {
-		this.sessionFactory = sessionFactory;
-		this.applicationFormDAO = applicationFormDAO;
-		this.applicantMailSender = applicantMailSender;
-		this.notificationType = notificationType;
-		this.newStatus = newStatus;
-		this.subjectMessage = subjectMessage;
-		this.emailTemplate = emailTemplate;
+	public AdminReminderTimerTask(SessionFactory sessionFactory, ApplicationFormDAO applicationFormDAO, AdminMailSender adminMailSender,
+			NotificationType notificationType, ApplicationFormStatus status, String subjectMessage, String emailTemplate) {
+				this.sessionFactory = sessionFactory;
 
+				this.applicationFormDAO = applicationFormDAO;
+				this.adminMailSender = adminMailSender;
+				this.notificationType = notificationType;
+				this.status = status;
+				this.subjectMessage = subjectMessage;
+				this.emailTemplate = emailTemplate;
 	}
 
 	@Override
 	public void run() {
-		log.info(notificationType +  " Notification Task Running");
+		log.info(notificationType +  " Reminder Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 
-		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueNotificationForStateChangeEvent(notificationType, newStatus);
+		List<ApplicationForm> applications = applicationFormDAO.getApplicationsDueAdminReminder(notificationType, status);
 
 		transaction.commit();
 		for (ApplicationForm application : applications) {
@@ -50,7 +52,7 @@ public class StateChangeNotificationTask extends TimerTask {
 			sessionFactory.getCurrentSession().refresh(application);
 			try {
 
-				applicantMailSender.sendStateChangeNotification(application, subjectMessage, emailTemplate);
+				adminMailSender.sendReminderToAdmins(application, subjectMessage, emailTemplate);
 				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(notificationType);
@@ -59,15 +61,16 @@ public class StateChangeNotificationTask extends TimerTask {
 				notificationRecord.setNotificationDate(new Date());
 				applicationFormDAO.save(application);
 				transaction.commit();
-				log.info("move to "+  newStatus + " notification send to " + application.getApplicant().getEmail());
+				log.info(status + " reminders send to " + application.getId());
 			} catch (Throwable e) {
 				transaction.rollback();
-				log.info("error in move to  "+  newStatus + " notification to " + application.getApplicant().getEmail(), e);
+				log.info("error in sending " + status + " reminders for " + application.getId(), e);
 			}
 
 		}
-		log.info(notificationType + " Notification Task complete");
+		log.info(notificationType +  " Reminder Task complete");
 
+		
 	}
 
 }

@@ -40,57 +40,7 @@ public class MailService {
 		this.applicationsService = applicationsService;
 	}
 
-	@Transactional
-	public void sendValidationReminderMailToAdminsAndChangeLastReminderDate(ApplicationForm form) {
-		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 
-		for (RegisteredUser admin : administrators) {
-			try {
-				Map<String, Object> model = new HashMap<String, Object>();
-				model.put("admin", admin);
-				model.put("application", form);
-				model.put("host", Environment.getInstance().getApplicationHostName());
-				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
-
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Validation Reminder",
-						"private/staff/admin/mail/application_validation_reminder.ftl", model));
-				NotificationRecord validationReminder = getOrCreateValidationReminder(form);
-				validationReminder.setNotificationDate(new Date());
-				applicationsService.save(form);
-			} catch (Throwable e) {
-				log.warn("error while sending email", e);
-			}
-		}
-
-	}
-
-	private NotificationRecord getOrCreateValidationReminder(ApplicationForm form) {
-		NotificationRecord validationReminder = form.getNotificationForType(NotificationType.VALIDATION_REMINDER);
-		if (validationReminder == null) {
-			validationReminder = new NotificationRecord();					
-			validationReminder.setNotificationType(NotificationType.VALIDATION_REMINDER);
-			form.getNotificationRecords().add(validationReminder);
-		}
-		return validationReminder;
-	}
-
-
-	
-	private String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
-		StringBuilder adminsMails = new StringBuilder();
-		for (RegisteredUser admin : administrators) {
-			adminsMails.append(admin.getEmail());
-			adminsMails.append(", ");
-		}
-		String result = adminsMails.toString();
-		if (!result.isEmpty()) {
-			result = result.substring(0, result.length() - 1);
-		}
-		return result;
-	}
-	
-	
-	
 
 	
 	@Transactional

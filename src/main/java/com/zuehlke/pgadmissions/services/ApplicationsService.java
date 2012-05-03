@@ -81,9 +81,6 @@ public class ApplicationsService {
 		return applicationFormDAO.getApplicationsDueUpdateNotification();
 	}
 
-	@Transactional
-	public List<ApplicationForm> getAllApplicationsStillInValidationStageAndAfterDueDate() {
-		return applicationFormDAO.getApplicationsDueValidationReminder();
-	}
+
 
 }

@@ -46,9 +46,16 @@
                 <div class="field">
                 	<input class="full" id="programmeName" name="programmeName" type="text" value="${applicationForm.program.title?html}" disabled="disabled" />
                 	<@spring.bind "programmeDetails.programmeName" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                 </div>
 			</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+			
               
 			<!-- Study option -->
             <div class="row">
@@ -69,12 +76,19 @@
                     </#list>
                   	</select>     
                   	<@spring.bind "programmeDetails.studyOption" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                 	<#if studyOptionError?? && studyOptionError=='true'>
                 		 <span class="invalid"><@spring.message  'programmeDetails.studyOption.invalid'/></span>
                 	</#if>
                 </div>
 			</div>
+
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
 
 			<!-- Project -->
 			<div class="row">
@@ -97,9 +111,15 @@
                     </#if>>
                 	</input> 
                 	<@spring.bind "programmeDetails.startDate" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                 </div>
             </div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
 
             <!-- Referrer -->
             <div class="row">
@@ -120,9 +140,17 @@
                     </#list>
                     </select>    
                    <@spring.bind "programmeDetails.referrer" /> 
-                <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>          
                 </div>
 			</div>
+			
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+			
 
 		</div>
 		

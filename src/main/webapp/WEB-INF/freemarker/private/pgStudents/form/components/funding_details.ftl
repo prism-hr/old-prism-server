@@ -99,9 +99,16 @@
                     	</#list>
                   	</select>
             		<@spring.bind "funding.type" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                	
 				</div>
 			</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
 
             <!-- Award description -->
             <div class="row">
@@ -111,13 +118,21 @@
 			    <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>		
                 	<textarea id="fundingDescription" name="fundingDescription" class="max" cols="70" rows="6" maxlength='2000'>${(funding.description?html)!}</textarea>
             		<@spring.bind "funding.description" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
+  
                   <#else>
                     <textarea id="fundingDescription" name="fundingDescription" class="full" readonly="readonly">${(funding.description?html)!}</textarea>
                 </#if>
                 </div>
                 
 			</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
+			
               
             <!-- Value of award -->
             <div class="row">
@@ -127,12 +142,20 @@
                 <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${(funding.value?html)!}" />
              		<@spring.bind "funding.value" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>     
+                	     
                 <#else>
                    <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${(funding.value?html)!}" />
                 </#if>
                 </div>
 			</div>
+
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
               
             <!-- Award date -->
             <div class="row">
@@ -145,11 +168,17 @@
                                         </#if>>
                                 </input>
               		<@spring.bind "funding.awardDate" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list> 
                 </div>
                 
             </div>
           
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
            
      <!-- Attachment / supporting document -->
       		<div class="row">
@@ -159,12 +188,19 @@
           			<input id="fundingDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="fundingUploadedDocument" ><input type="hidden" id="document_SUPPORTING_FUNDING" value = "${(funding.document.id?string('######'))!}"/>
 					 <@spring.bind "funding.document" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
+                	  
 					<a href="<@spring.url '/download?documentId=${(funding.document.id?string("#######"))!}'/>">${(funding.document.fileName)!}</a></span>
 					<span id="fundingDocumentProgress" style="display: none;" ></span>					
         		</div>  
         		
       		</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
       		
       		<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	      		<!-- Add another button -->

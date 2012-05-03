@@ -10,17 +10,17 @@ import org.hibernate.Transaction;
 
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.Referee;
-import com.zuehlke.pgadmissions.services.RefereeMailService;
+import com.zuehlke.pgadmissions.mail.RefereeMailSender;
 import com.zuehlke.pgadmissions.services.RefereeService;
 
 public class RefereeNotificationTask extends TimerTask {
 	private final Logger log = Logger.getLogger(RefereeNotificationTask.class);
 	private final SessionFactory sessionFactory;
-	private final RefereeMailService refereeMailService;
+	private final RefereeMailSender refereeMailService;
 	private final RefereeDAO refereeDAO;
 	private final RefereeService refereeService;
 
-	public RefereeNotificationTask(SessionFactory sessionFactory, RefereeMailService refereeMailService, RefereeDAO refereeDAO, RefereeService refereeService) {
+	public RefereeNotificationTask(SessionFactory sessionFactory, RefereeMailSender refereeMailService, RefereeDAO refereeDAO, RefereeService refereeService) {
 		this.sessionFactory = sessionFactory;
 		this.refereeMailService = refereeMailService;
 		this.refereeDAO = refereeDAO;

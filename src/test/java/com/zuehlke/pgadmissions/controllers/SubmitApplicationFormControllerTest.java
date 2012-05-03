@@ -82,9 +82,9 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.verify(submitApplicationServiceMock);
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());	
 		
-		assertEquals(1, applicationForm.getEvents().size());
-		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getEvents().get(0).getNewStatus());
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(0).getEventDate(), Calendar.DATE));
+		assertEquals(2, applicationForm.getEvents().size());
+		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getEvents().get(1).getNewStatus());
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(1).getEventDate(), Calendar.DATE));
 		
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getSubmittedDate(), Calendar.DATE));
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));

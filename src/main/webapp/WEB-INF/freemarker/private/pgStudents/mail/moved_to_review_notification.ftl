@@ -35,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your application ${application.id?string("######")} to join ${application.programmeDetails.programmeName}, which we can now confirm has been submitted. To review your application, click the link below: </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to inform you that your application ${application.id?string("######")} to join ${application.program.title}, is now being formally reviewed by admissions staff. To view your application, click the link below: </font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
@@ -43,7 +43,7 @@
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Your application will now be validated by our admissions staff and we will be in touch with further updates.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We will be in touch with further updates in due course.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">In the meantime, for further assistance <a href="mailto: ${adminsEmails}">email the administrator</a></font>

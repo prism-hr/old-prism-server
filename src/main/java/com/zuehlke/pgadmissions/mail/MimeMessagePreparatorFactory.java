@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.utils;
+package com.zuehlke.pgadmissions.mail;
 
 import java.util.Map;
 
@@ -10,6 +10,8 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
+
+import com.zuehlke.pgadmissions.utils.Environment;
 
 
 public class MimeMessagePreparatorFactory {

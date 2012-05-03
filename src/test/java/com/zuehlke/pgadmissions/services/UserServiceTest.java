@@ -40,7 +40,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 
 public class UserServiceTest {
 

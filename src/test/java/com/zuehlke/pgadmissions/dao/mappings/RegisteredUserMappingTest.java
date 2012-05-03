@@ -270,7 +270,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadNotificationRecordsWithUser() throws ParseException {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-		NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.SUBMISSION_NOTIFICATION).toNotificationRecord();
+		NotificationRecord recordOne = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("01 12 2011 14:09:26")).notificationType(NotificationType.APPLICANT_SUBMISSION_NOTIFICATION).toNotificationRecord();
 		NotificationRecord recordTwo = new NotificationRecordBuilder().notificationDate(simpleDateFormat.parse("03 12 2011 14:09:26")).notificationType(NotificationType.REFEREE_RESPONDED_NOTIFICATION).toNotificationRecord();
 		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).notificationRecords(recordOne, recordTwo).toUser();

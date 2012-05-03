@@ -35,10 +35,10 @@ import com.zuehlke.pgadmissions.dto.NewAdminUserDTO;
 import com.zuehlke.pgadmissions.dto.NewRolesDTO;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.propertyeditors.RolePropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
 public class ManageUsersControllerTest {
 

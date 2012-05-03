@@ -20,8 +20,8 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.Environment;
-import com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory;
 
 @Service("userService")
 public class UserService {

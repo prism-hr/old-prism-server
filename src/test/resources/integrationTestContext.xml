@@ -40,7 +40,7 @@
 		</property>
 	</bean>
 
-	<bean id="mimeMessagePreparatorFactory" class="com.zuehlke.pgadmissions.utils.MimeMessagePreparatorFactory">
+	<bean id="mimeMessagePreparatorFactory" class="com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory">
 		<constructor-arg index="0">
 			<ref bean="freemarkerConfig" />
 		</constructor-arg>

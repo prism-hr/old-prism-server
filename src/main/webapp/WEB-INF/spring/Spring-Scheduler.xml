@@ -107,10 +107,14 @@
 	
 	
 	<!-- move to review notifications -->	
-	<bean id="moveToReviewNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.MoveToReviewNotificationTask" >
+	<bean id="moveToReviewNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask" >
 		<constructor-arg index="0" ref="sessionFactoryMail"/>
 		<constructor-arg index="1" ref="mailApplicationDAO"/>
 		<constructor-arg index="2" ref="applicantMailSender"/>
+		<constructor-arg index="3" value="APPLICANT_MOVED_TO_REVIEW_NOTIFICATION"/>
+		<constructor-arg index="4" value="REVIEW"/>
+		<constructor-arg index="5" value="now being reviewed"/>
+		<constructor-arg index="6" value="private/pgStudents/mail/moved_to_review_notification.ftl"/>
 	</bean>
 
 	<bean id="moveToReviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">

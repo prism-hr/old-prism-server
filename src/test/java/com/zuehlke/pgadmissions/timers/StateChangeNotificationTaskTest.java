@@ -24,19 +24,21 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.ApplicantMailSender;
 
-public class MoveToReviewNotificationTaskTest {
+public class StateChangeNotificationTaskTest {
 
 	private SessionFactory sessionFactoryMock;
 	private Session sessionMock;
-	private MoveToReviewNotificationTask moveToReviewNotificationTask;
+	private StateChangeNotificationTask notificationTask;
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApplicantMailSender applicationMailSenderMock;
-	
-	
-	
+	private String subjectMessage;
+	private String emailTemplate;
+	private NotificationType notificationType;
+	private ApplicationFormStatus newStatus;
 
 	@Test
 	public void shouldGetApplicationsAndSendInReviewNotifications() throws UnsupportedEncodingException, ParseException {
@@ -48,30 +50,42 @@ public class MoveToReviewNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).applicant( new RegisteredUserBuilder().id(1).email("lllll@test.com").toUser()).toApplicationForm();
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicant( new RegisteredUserBuilder().id(2).email("jjjjjj@test.com").toUser()).notificationRecords(new NotificationRecordBuilder().id(1).notificationType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION).notificationDate(new SimpleDateFormat("dd MM yyyy").parse("01 02 2011")).toNotificationRecord()).toApplicationForm();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().id(1).email("lllll@test.com").toUser())
+				.toApplicationForm();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder()
+				.id(2)
+				.applicant(new RegisteredUserBuilder().id(2).email("jjjjjj@test.com").toUser())
+				.notificationRecords(
+						new NotificationRecordBuilder().id(1).notificationType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION)
+								.notificationDate(new SimpleDateFormat("dd MM yyyy").parse("01 02 2011")).toNotificationRecord()).toApplicationForm();
 		sessionMock.refresh(applicationFormOne);
 		sessionMock.refresh(applicationFormTwo);
 		List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);
-		EasyMock.expect(applicationFormDAOMock.getApplicationsDueApplicantReviewNotification()).andReturn(applicationFormList);		
+		EasyMock.expect(
+				applicationFormDAOMock.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION,
+						ApplicationFormStatus.REVIEW)).andReturn(applicationFormList);
 		transactionOne.commit();
 
-		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormOne);
+		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormOne, "now being reviewed",
+				"private/pgStudents/mail/moved_to_review_notification.ftl");
 		applicationFormDAOMock.save(applicationFormOne);
 		transactionTwo.commit();
 
-		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormTwo);
+		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormTwo, "now being reviewed",
+				"private/pgStudents/mail/moved_to_review_notification.ftl");
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
 		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
 
-		moveToReviewNotificationTask.run();
+		notificationTask.run();
 
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
-	
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationFormOne.getNotificationForType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION).getNotificationDate(), Calendar.DATE));
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationFormTwo.getNotificationForType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION).getNotificationDate(), Calendar.DATE));
+
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(
+				applicationFormOne.getNotificationForType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION).getNotificationDate(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(
+				applicationFormTwo.getNotificationForType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION).getNotificationDate(), Calendar.DATE));
 	}
 
 	@Test
@@ -83,28 +97,35 @@ public class MoveToReviewNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).applicant( new RegisteredUserBuilder().id(1).email("lllll@test.com").toUser()).toApplicationForm();
-		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicant( new RegisteredUserBuilder().id(2).email("jjjjjj@test.com").toUser()).toApplicationForm();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().id(1).email("lllll@test.com").toUser())
+				.toApplicationForm();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicant(new RegisteredUserBuilder().id(2).email("jjjjjj@test.com").toUser())
+				.toApplicationForm();
 		sessionMock.refresh(applicationFormOne);
 		sessionMock.refresh(applicationFormTwo);
 		List<ApplicationForm> applicationFormList = Arrays.asList(applicationFormOne, applicationFormTwo);
-		EasyMock.expect(applicationFormDAOMock.getApplicationsDueApplicantReviewNotification()).andReturn(applicationFormList);		
-		
+		EasyMock.expect(
+				applicationFormDAOMock.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION,
+						ApplicationFormStatus.REVIEW)).andReturn(applicationFormList);
+
 		transactionOne.commit();
-		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormOne);
+		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormOne, "now being reviewed",
+				"private/pgStudents/mail/moved_to_review_notification.ftl");
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
-		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormTwo);
+		applicationMailSenderMock.sendMovedToReviewNotification(applicationFormTwo, "now being reviewed",
+				"private/pgStudents/mail/moved_to_review_notification.ftl");
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
 		EasyMock.replay(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
 
-		moveToReviewNotificationTask.run();
+		notificationTask.run();
 
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
 		assertNull(applicationFormOne.getNotificationForType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION));
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationFormTwo.getNotificationForType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION).getNotificationDate(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(
+				applicationFormTwo.getNotificationForType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION).getNotificationDate(), Calendar.DATE));
 	}
 
 	@Before
@@ -113,7 +134,12 @@ public class MoveToReviewNotificationTaskTest {
 		sessionMock = EasyMock.createMock(Session.class);
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		applicationMailSenderMock = EasyMock.createMock(ApplicantMailSender.class);
-		moveToReviewNotificationTask = new MoveToReviewNotificationTask(sessionFactoryMock, applicationFormDAOMock,applicationMailSenderMock);
+		subjectMessage = "now being reviewed";
+		emailTemplate = "private/pgStudents/mail/moved_to_review_notification.ftl";
+		notificationType = NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION;
+		newStatus = ApplicationFormStatus.REVIEW;
+
+		notificationTask = new StateChangeNotificationTask(sessionFactoryMock, applicationFormDAOMock, applicationMailSenderMock, notificationType, newStatus, subjectMessage, emailTemplate);
 
 	}
 

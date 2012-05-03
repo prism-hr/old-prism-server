@@ -99,20 +99,22 @@ public class ApplicationFormDAO {
 				.list();
 		
 	}
-	@SuppressWarnings("unchecked")
-	public List<ApplicationForm> getApplicationsDueApplicantReviewNotification() {
 
+
+	
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getApplicationsDueNotificationForStateChangeEvent(NotificationType notificationType, ApplicationFormStatus newStatus) {
 		DetachedCriteria notificationCriteriaOne = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION))				
+				.add(Restrictions.eq("notificationType", notificationType))				
 				.add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
 				
 		DetachedCriteria notificationCriteriaTwo = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION))
+				.add(Restrictions.eq("notificationType", notificationType))
 				.add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
 				
 		
 		DetachedCriteria reviewEventsCriteria = DetachedCriteria.forClass(Event.class, "event")
-				.add(Restrictions.eq("newStatus", ApplicationFormStatus.REVIEW))
+				.add(Restrictions.eq("newStatus", newStatus))
 				.add(Restrictions.or(Subqueries.notExists(notificationCriteriaOne.setProjection(Projections.property("notificationRecord.id"))), Subqueries.propertyGt("eventDate", notificationCriteriaTwo.setProjection(Projections.max("notificationRecord.notificationDate")))))
 				.add(Property.forName("event.application").eqProperty("applicationForm.id"));
 		
@@ -123,29 +125,4 @@ public class ApplicationFormDAO {
 				.add(Subqueries.exists(reviewEventsCriteria.setProjection(Projections.property("event.id"))))
 				.list();
 	}
-
-	@SuppressWarnings("unchecked")
-	public List<ApplicationForm> getApplicationsDueApplicantSubmissionNotification() {
-		DetachedCriteria notificationCriteriaOne = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", NotificationType.APPLICANT_SUBMISSION_NOTIFICATION))				
-				.add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
-				
-		DetachedCriteria notificationCriteriaTwo = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", NotificationType.APPLICANT_SUBMISSION_NOTIFICATION))
-				.add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
-				
-		
-		DetachedCriteria reviewEventsCriteria = DetachedCriteria.forClass(Event.class, "event")
-				.add(Restrictions.eq("newStatus", ApplicationFormStatus.VALIDATION))
-				.add(Restrictions.or(Subqueries.notExists(notificationCriteriaOne.setProjection(Projections.property("notificationRecord.id"))), Subqueries.propertyGt("eventDate", notificationCriteriaTwo.setProjection(Projections.max("notificationRecord.notificationDate")))))
-				.add(Property.forName("event.application").eqProperty("applicationForm.id"));
-		
-		
-		
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
-				.add(Restrictions.not(Restrictions.in("status", Arrays.asList(ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED))))
-				.add(Subqueries.exists(reviewEventsCriteria.setProjection(Projections.property("event.id"))))
-				.list();
-	}
-
 }

@@ -37,12 +37,19 @@
             			<input id="psDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="psUploadedDocument" ><input type="hidden" id="document_PERSONAL_STATEMENT" value = "${(applicationForm.personalStatement.id?string('######'))!}"/>
 					<@spring.bind "applicationForm.personalStatement" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
+                	  
 					<a href="<@spring.url '/download?documentId=${(applicationForm.personalStatement.id?string("#######"))!}'/>">${(applicationForm.personalStatement.fileName?html)!}</a></span>
 					<span id="psDocumentProgress" style="display: none;" ></span>					
         		</div>  
         		
       		</div>
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
       		
       		 <div class="row">
         		<span class="plain-label">CV / resume (PDF)</span>
@@ -51,12 +58,20 @@
           			<input id="cvDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="cvUploadedDocument" ><input type="hidden" id="document_CV" value = "${(applicationForm.cv.id?string('######'))!}"/>
 					<@spring.bind "applicationForm.cv" /> 
-                	<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>  
 					<a href="<@spring.url '/download?documentId=${(applicationForm.cv.id?string("#######"))!}'/>">${(applicationForm.cv.fileName)!}</a></span>
 					<span id="cvDocumentProgress" style="display: none;" ></span>					
         		</div>  
         		
       		</div>
+
+
+				<#list spring.status.errorMessages as error>
+					<div class="row">
+						<div class="field">
+							<span class="invalid">${error}</span>
+						</div>
+					</div>
+				</#list>
 			
 		</div>
 		

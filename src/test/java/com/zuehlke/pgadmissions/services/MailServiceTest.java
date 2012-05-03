@@ -113,29 +113,6 @@ public class MailServiceTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test
-	public void shouldSendEmailToApplicant() throws UnsupportedEncodingException {
-
-		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("harry").lastName("hen").email("hh@test.com").toUser();
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).program(new ProgramBuilder().toProgram()).toApplicationForm();
-
-		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-
-		InternetAddress toAddress = new InternetAddress("hh@test.com", "harry hen");
-
-		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Application Submitted"),
-						EasyMock.eq("private/pgStudents/mail/application_submit_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
-
-		javaMailSenderMock.send(preparatorMock);
-
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
-
-		mailService.sendSubmissionMailToApplicant(form);
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
-
-	}
-	@SuppressWarnings("unchecked")
-	@Test
 	public void shouldSendSubmissionEmailToAdmins() throws UnsupportedEncodingException {
 
 		RegisteredUser administratorOne = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();

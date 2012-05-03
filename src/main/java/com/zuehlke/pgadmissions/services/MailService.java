@@ -91,24 +91,7 @@ public class MailService {
 	
 	
 	
-	
-	public void sendSubmissionMailToApplicant(ApplicationForm form) {
-		try {
-			RegisteredUser applicant = form.getApplicant();
-			List<RegisteredUser> administrators = form.getProgram().getAdministrators();
-			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
-			Map<String, Object> model = new HashMap<String, Object>();
-			model.put("adminsEmails", adminsEmails);
-			model.put("application", form);
-			model.put("host", Environment.getInstance().getApplicationHostName());
-			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Submitted",
-					"private/pgStudents/mail/application_submit_confirmation.ftl", model));
-		} catch (Throwable e) {
-			log.warn("error while sending email", e);
-		}
 
-	}
 	
 	@Transactional
 	public void sendSubmissionMailToAdmins(ApplicationForm form) {

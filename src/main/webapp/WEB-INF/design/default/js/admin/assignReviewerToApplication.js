@@ -10,19 +10,26 @@ $(document).ready(function() {
 	});
 
 	$('#createReviewer').click(function() {
-		alert("doesn't work yet...");
-		$.post("/pgadmissions/assignReviewers/createReviewer", {
+		var postData ={ 
 			applicationId : $('#applicationId').val(),
-			firstName : "hello",
+			firstName : "",
 			lastName : "world",
 			email : "hello@world.com"
-		}, function(data) {
-			alert("data: " + data);
-		});
+		};
+		
+		$.post("/pgadmissions/assignReviewers/createReviewer", 
+			$.param(postData),
+			function(data) {
+				alert("data: " + data);
+			},
+			function(data) {
+				alert("error: " + data);
+			}
+		);
 	});
 	
 	$('#moveToReviewBtn').click(function() {
-		alert("doesn't work yet...");
+		alert("doesn't work yet...\n(reviewerids need to be assigned to post request");
 		var selectedReviewers = $('#assignedReviewers').val();
 		alert("items: " + selectedReviewer.length);
 		$.post("/pgadmissions/assignReviewers/moveApplicationToReview", {

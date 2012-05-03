@@ -7,13 +7,14 @@ import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+
 import org.springframework.mail.javamail.JavaMailSender;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.utils.Environment;
 
-public class ApplicantMailSender extends MailSender {
+public class ApplicantMailSender extends StateChangeMailSender {
 
 
 	
@@ -34,16 +35,16 @@ public class ApplicantMailSender extends MailSender {
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		return model;
 	}
-
-	public void sendStateChangeNotification(ApplicationForm form,  String message, String templatename) throws UnsupportedEncodingException {
-
+	
+	@Override
+	public  void sendMailsForApplication(ApplicationForm form, String message, String templatename) throws UnsupportedEncodingException {
+		
 		InternetAddress toAddress = new InternetAddress(form.getApplicant().getEmail(), form.getApplicant().getFirstName() + " "
 				+ form.getApplicant().getLastName());
-
+	
 		
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + form.getId() + " for "
 				+ form.getProgram().getTitle() + " " + message, templatename, createModel(form)));
-
+	
 	}
-
 }

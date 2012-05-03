@@ -60,11 +60,11 @@ public class AdminReminderTimerTaskTest {
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueAdminReminder(notificationType, status)).andReturn(applicationFormList);
 		transactionOne.commit();
 
-		adminMailSenderMock.sendReminderToAdmins(applicationFormOne, subjectMessage, emailTemplate);
+		adminMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate);
 		applicationFormDAOMock.save(applicationFormOne);
 		transactionTwo.commit();
 
-		adminMailSenderMock.sendReminderToAdmins(applicationFormTwo, subjectMessage, emailTemplate);
+		adminMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 
@@ -99,10 +99,10 @@ public class AdminReminderTimerTaskTest {
 						ApplicationFormStatus.VALIDATION)).andReturn(applicationFormList);
 
 		transactionOne.commit();
-		adminMailSenderMock.sendReminderToAdmins(applicationFormOne, subjectMessage, emailTemplate);
+		adminMailSenderMock.sendMailsForApplication(applicationFormOne, subjectMessage, emailTemplate);
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
-		adminMailSenderMock.sendReminderToAdmins(applicationFormTwo, subjectMessage, emailTemplate);
+		adminMailSenderMock.sendMailsForApplication(applicationFormTwo, subjectMessage, emailTemplate);
 		applicationFormDAOMock.save(applicationFormTwo);
 		transactionThree.commit();
 

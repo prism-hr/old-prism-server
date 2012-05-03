@@ -25,10 +25,8 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.SubmitApplicationService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
 public class SubmitApplicationFormControllerTest {
@@ -42,7 +40,7 @@ public class SubmitApplicationFormControllerTest {
 	private UsernamePasswordAuthenticationToken authenticationToken;
 
 	private ApplicationFormValidator applicationFormValidatorMock;
-	private SubmitApplicationService submitApplicationServiceMock;
+	
 
 	private StageDurationDAO stageDurationDAOMock;
 
@@ -82,14 +80,14 @@ public class SubmitApplicationFormControllerTest {
 		StageDuration stageDuration = new StageDuration();
 		stageDuration.setDurationInDays(8);
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
-		submitApplicationServiceMock.saveApplicationFormAndSendMailNotifications(applicationForm);
+		applicationsServiceMock.save(applicationForm);
 		
-		EasyMock.replay(submitApplicationServiceMock, errorsMock, stageDurationDAOMock);
+		EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationDAOMock);
 		
 		
 		applicationController.submitApplication(applicationForm, errorsMock);
 
-		EasyMock.verify(submitApplicationServiceMock);
+		EasyMock.verify(applicationsServiceMock);
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());	
 		assertEquals(DateUtils.truncate(DateUtils.addDays(new Date(), 8), Calendar.DATE), applicationForm.getDueDate());
 		assertEquals(2, applicationForm.getEvents().size());
@@ -97,8 +95,7 @@ public class SubmitApplicationFormControllerTest {
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(1).getEventDate(), Calendar.DATE));
 		
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getSubmittedDate(), Calendar.DATE));
-		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
-		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getNotificationForType(NotificationType.UPDATED_NOTIFICATION).getNotificationDate(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));		
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 
 	}
@@ -174,11 +171,11 @@ public class SubmitApplicationFormControllerTest {
 	public void setUp() {
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		submitApplicationServiceMock  = EasyMock.createMock(SubmitApplicationService.class);
+		
 
 		applicationFormValidatorMock = EasyMock.createMock(ApplicationFormValidator.class);
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
-		applicationController = new SubmitApplicationFormController(applicationsServiceMock, applicationFormValidatorMock, submitApplicationServiceMock, stageDurationDAOMock);
+		applicationController = new SubmitApplicationFormController(applicationsServiceMock, applicationFormValidatorMock, stageDurationDAOMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

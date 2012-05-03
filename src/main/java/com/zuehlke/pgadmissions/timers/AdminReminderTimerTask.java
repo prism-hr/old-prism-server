@@ -52,7 +52,7 @@ public class AdminReminderTimerTask extends TimerTask {
 			sessionFactory.getCurrentSession().refresh(application);
 			try {
 
-				adminMailSender.sendReminderToAdmins(application, subjectMessage, emailTemplate);
+				adminMailSender.sendMailsForApplication(application, subjectMessage, emailTemplate);
 				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(notificationType);

@@ -154,35 +154,6 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
-	public void shouldGetAllComments() {
-		
-		int noOfCommentsBefore = commentDAO.getAllComments().size(); 
-		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
-		save(application);
-		flushAndClearSession();
-		
-		Comment comment = new CommentBuilder().user(user).createdTimeStamp(new Date()).comment("comment").application(application).toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.NO).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
-		
-		assertNull(reviewComment.getId());
-		
-		commentDAO.save(comment);
-		commentDAO.save(reviewComment);
-		
-		List<Comment> reloadedComments = commentDAO.getAllComments();
-		
-		flushAndClearSession();
-		
-		reloadedComments = commentDAO.getAllComments();
-		
-		
-		assertEquals(noOfCommentsBefore+2, reloadedComments.size());
-		assertTrue(reloadedComments.contains(comment));
-		assertTrue(reloadedComments.contains(reviewComment));
-	}
-	
-	@Test
 	public void shouldGetAllCommentsDueAdminEmailNotification() {
 		
 		int noOfReviewCommentsBefore = commentDAO.getReviewCommentsDueNotification().size(); 

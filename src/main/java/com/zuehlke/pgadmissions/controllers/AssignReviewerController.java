@@ -1,13 +1,20 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,6 +29,7 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 @Controller
 @RequestMapping("/assignReviewers")
@@ -32,16 +40,22 @@ public class AssignReviewerController {
 	private final ApplicationsService applicationService;
 	private final ReviewService reviewService;
 	private final UserService userService;
+	private final MessageSource messageSource;
+
+	private final NewUserByAdminValidator userValidator;
 
 	AssignReviewerController() {
-		this(null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public AssignReviewerController(ApplicationsService applicationServiceMock, ReviewService reviewService, UserService userService) {
+	public AssignReviewerController(ApplicationsService applicationServiceMock, ReviewService reviewService,// 
+			UserService userService, NewUserByAdminValidator validator, MessageSource msgSource) {
 		this.applicationService = applicationServiceMock;
 		this.reviewService = reviewService;
 		this.userService = userService;
+		userValidator = validator;
+		messageSource = msgSource;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -71,24 +85,46 @@ public class AssignReviewerController {
 	}
 
 	@RequestMapping(value = "/createReviewer", method = RequestMethod.POST)
-	public String createReviewer(@ModelAttribute("programme") Program programme, @Valid RegisteredUser uiReviewer, ModelMap modelMap) {
+	public String createReviewer(@ModelAttribute("programme") Program programme, @Valid RegisteredUser uiReviewer,// 
+			ModelMap modelMap, BindingResult bindingResult) {
+
+		// fake functionality for javascript/mvc testing:
+		//		if (true) {
+		//			if(bindingResult.hasErrors()) {
+		//				System.out.println("EEEERRRROROOROROSSS");
+		//			} else {
+		//				System.out.println("NOOOOOOOOOOOOOOOOOOOOOO");
+		//			}
+		//			
+		//			modelMap.put("message", "some fancy message");
+		//			RegisteredUser reviewer = new RegisteredUser();
+		//			reviewer.setId(10102030);
+		//			reviewer.setFirstName(uiReviewer.getFirstName());
+		//			reviewer.setLastName(uiReviewer.getLastName());
+		//			reviewer.setUsername(uiReviewer.getEmail());
+		//			reviewer.setEmail(uiReviewer.getEmail());
+		//			modelMap.put("newReviewer", reviewer);
+		//			return NEW_REVIEWER_JSON;
+		//		}
+
 		checkAdminPermission(programme);
+		if (bindingResult.hasErrors()) {
+			modelMap.put("errormessage", createErrorMessage(bindingResult));
+			return NEW_REVIEWER_JSON;
+		}
 
 		RegisteredUser reviewer = userService.getUserByEmail(uiReviewer.getEmail());
 		if (programme.getReviewers().contains(reviewer)) {
-			modelMap.put("message", String.format("User '%s' (e-mail: %s) is already a reviewer for this programme.",// 
-					reviewer.getUsername(), reviewer.getEmail()));
+			modelMap.put("message", getMessage("assignReviewer.newReviewer.alreadyInProgramme", reviewer.getUsername(), reviewer.getEmail()));
 			return NEW_REVIEWER_JSON;
 		}
 		if (reviewer == null) {
 			reviewer = reviewService.createNewReviewerForProgramme(programme,// 
 					uiReviewer.getFirstName(), uiReviewer.getLastName(), uiReviewer.getEmail());
-			modelMap.put("message", String.format("Created user '%s' (e-mail: %s) and added as a reviewer for this programme.",//
-					reviewer.getUsername(), reviewer.getEmail()));
+			modelMap.put("message", getMessage("assignReviewer.newReviewer.created", reviewer.getUsername(), reviewer.getEmail()));
 		} else {
 			reviewService.addUserToProgramme(programme, reviewer);
-			modelMap.put("message", String.format("User '%s' (e-mail: %s) added as reviewer for this programme.",//
-					reviewer.getUsername(), reviewer.getEmail()));
+			modelMap.put("message", getMessage("assignReviewer.newReviewer.addedToProgramme", reviewer.getUsername(), reviewer.getEmail()));
 		}
 
 		modelMap.put("newReviewer", reviewer);
@@ -131,6 +167,11 @@ public class AssignReviewerController {
 		return getCurrentUser();
 	}
 
+	@InitBinder(value = "registeredUser")
+	public void registerValidators(WebDataBinder binder) {
+		binder.setValidator(userValidator);
+	}
+
 	private RegisteredUser getCurrentUser() {
 		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 	}
@@ -158,5 +199,18 @@ public class AssignReviewerController {
 		default:
 			throw new CannotUpdateApplicationException();
 		}
+	}
+
+	private String createErrorMessage(BindingResult bindingResult) {
+		List<ObjectError> errors = bindingResult.getAllErrors();
+		List<String> errorMessages = new ArrayList<String>();
+		for (ObjectError objectError : errors) {
+			errorMessages.add(objectError.getDefaultMessage());
+		}
+		return StringUtils.join(errorMessages, "\n");
+	}
+
+	private String getMessage(String code, Object... args) {
+		return messageSource.getMessage(code, args, null);
 	}
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.validation.Valid;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -29,12 +30,13 @@ import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
+import com.zuehlke.pgadmissions.timers.RefereeReminderTask;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
 
 @RequestMapping("/update")
 @Controller
 public class ProgrammeDetailsController {
-
+	private final Logger log = Logger.getLogger(ProgrammeDetailsController.class);
 	private static final String STUDENTS_FORM_PROGRAMME_DETAILS_VIEW = "/private/pgStudents/form/components/programme_details";
 	private final ApplicationsService applicationsService;
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
@@ -99,6 +101,7 @@ public class ProgrammeDetailsController {
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
+		log.info("Getting application form for " +  applicationId);
 		ApplicationForm application = applicationsService.getApplicationById(applicationId);
 		if (application == null || !getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();

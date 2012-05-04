@@ -58,7 +58,7 @@ function moveToApproval(data){
 }
 
 function moveToReview(data){
-	var application = $('#applicationId').val();
+	/*var application = $('#applicationId').val();
 	$.post(
 			"/pgadmissions/review",
 			{
@@ -68,8 +68,9 @@ function moveToReview(data){
 			function(data) {
 				window.location.href = "/pgadmissions/applications";
 			}
-		);
-	//window.location.href = "/pgadmissions/assignReviewers?applicationId=" + id;
+		);*/
+	var application = $('#applicationId').val();
+	window.location.href = "/pgadmissions/assignReviewers?applicationId=" + application;
 }
 
 function moveToRejected(data){

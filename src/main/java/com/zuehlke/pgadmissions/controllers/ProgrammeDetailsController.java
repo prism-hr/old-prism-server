@@ -90,8 +90,8 @@ public class ProgrammeDetailsController {
 	}
 
 	@ModelAttribute("studyOptions")
-	public StudyOption[] getStudyOptions(@ModelAttribute ApplicationForm applicationForm) {
-		return (StudyOption[]) programmeDetailsService.getAvailableStudyOptions(applicationForm.getProgram()).toArray(new StudyOption[]{});
+	public StudyOption[] getStudyOptions(@RequestParam Integer applicationId) {
+		return (StudyOption[]) programmeDetailsService.getAvailableStudyOptions(getApplicationForm(applicationId).getProgram()).toArray(new StudyOption[]{});
 	}
 
 	@ModelAttribute("referrers")
@@ -101,7 +101,7 @@ public class ProgrammeDetailsController {
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
-		log.info("Getting application form for " +  applicationId);
+		
 		ApplicationForm application = applicationsService.getApplicationById(applicationId);
 		if (application == null || !getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();

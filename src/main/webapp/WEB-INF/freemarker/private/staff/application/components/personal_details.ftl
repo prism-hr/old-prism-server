@@ -181,11 +181,7 @@
 				<div class="admin_row">
                 	<span class="admin_row_label">Skype Name</span>
                     <div class="field">
-                    	<#if applicationForm.personalDetails.messenger?has_content>
-	                    	${(applicationForm.personalDetails.messenger?html)}
-	                    <#else>
-	                    	<div class="field grey-label">Not Provided</div>
-	                    </#if>
+	                    ${(applicationForm.personalDetails.messenger?html)!"Not Provided"}
                     </div>
                 </div>
 

@@ -216,7 +216,7 @@ public class RefereeService {
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Responded",
-					"private/pgStudents/mail/reference_respond_notification.ftl", model));
+					"private/pgStudents/mail/reference_respond_confirmation.ftl", model));
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}

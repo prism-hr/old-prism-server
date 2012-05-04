@@ -1,5 +1,16 @@
 $(document).ready(function(){
 
+	
+	//Adjust CSS to display multiple values in one line, delimited by comma ','
+	// in admin view.
+	
+	$(".half,.multiples").each(function(){
+		
+		//alert($(this).text());
+		$(this).css('display','inline');
+		
+	});
+	
 	$("#acceptTermsPEDValue").val("NO");
 	$('#personalDetailsCloseButton').click(function(){		
 		$('#personalDetails-H2').trigger('click');

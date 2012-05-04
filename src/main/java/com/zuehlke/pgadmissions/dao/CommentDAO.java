@@ -42,10 +42,10 @@ public class CommentDAO {
 	
 	@SuppressWarnings("unchecked")
 	public List<ReviewComment> getReviewCommentsDueNotification() {
-		List<ReviewComment> list = ((List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class)
+		return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class)
 				.add(Restrictions.eq("type", CommentType.REVIEW))
-				.add(Restrictions.eq("adminsNotified", CheckedStatus.NO)).list());
-		return list;
+				.add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified", CheckedStatus.NO)))
+				.list();
 	}
 	
 	

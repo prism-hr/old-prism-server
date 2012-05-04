@@ -53,7 +53,7 @@
 				      <div class="content-box">
 				        <div class="content-box-inner">
 				       	 <!--	if user is reviewer in program and haven't already declined-->	
-				       	 	<#if !user.hasDeclinedToProvideReviewForApplication(applicationForm) >			        		
+				       	 	<#if !user.hasRespondedToProvideReviewForApplication(applicationForm)  >			        		
 							
 							    <h1>Add review feedback for application ${(applicationForm.id?string('#####'))!}</h1>
 							    <br/><br/>

@@ -50,19 +50,16 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private boolean accountNonLocked;
 	private boolean credentialsNonExpired;
 	private String activationCode;
-	
+
 	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "user_id")
 	private List<Comment> comments = new ArrayList<Comment>();
 
-
-
 	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "user_id")
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
-	
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -76,7 +73,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@OneToMany
 	@JoinTable(name = "USER_ROLE_LINK", joinColumns = { @JoinColumn(name = "REGISTERED_USER_ID") }, inverseJoinColumns = { @JoinColumn(name = "APPLICATION_ROLE_ID") })
 	private List<Role> roles = new ArrayList<Role>();
-	
+
 	@ManyToMany
 	@JoinTable(name = "PROGRAM_ADMINISTRATOR_LINK", joinColumns = { @JoinColumn(name = "administrator_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	private List<Program> programsOfWhichAdministrator = new ArrayList<Program>();
@@ -206,7 +203,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return false;
 		}
 	}
-	
+
 	public boolean isInRoleInProgram(String strAuthority, Program program) {
 		try {
 			return isInRoleInProgram(Authority.valueOf(strAuthority), program);
@@ -214,7 +211,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return false;
 		}
 	}
-	
+
 	public boolean canSee(ApplicationForm applicationForm) {
 
 		if (applicationForm.getStatus() == ApplicationFormStatus.UNSUBMITTED && !isInRole(Authority.APPLICANT)) {
@@ -355,6 +352,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		return false;
 	}
+
 	public boolean isAdminOrReviewerInProgramme(Program program) {
 		if (program.getAdministrators().contains(this) || program.getReviewers().contains(this)) {
 			return true;
@@ -382,11 +380,10 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return this.isInRole(Authority.REFEREE) && hasRefereesInApplicationForm(form);
 	}
 
-	
 	public boolean isReviewerOfApplicationForm(ApplicationForm form) {
 		return this.isInRole(Authority.REVIEWER) && form.getReviewers().contains(this);
 	}
-	
+
 	public boolean hasRefereesInApplicationForm(ApplicationForm form) {
 		return getRefereeForApplicationForm(form) != null;
 	}
@@ -432,7 +429,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public List<Comment> getComments() {
 		return comments;
 	}
-	
+
 	public List<NotificationRecord> getNotificationRecords() {
 		return notificationRecords;
 	}
@@ -440,24 +437,34 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public void setComments(List<Comment> comments) {
 		this.comments = comments;
 	}
+
 	public void setNotificationRecords(List<NotificationRecord> notificationRecords) {
 		this.notificationRecords.clear();
 		this.notificationRecords.addAll(notificationRecords);
 	}
-	
-	public boolean hasDeclinedToProvideReviewForApplication(ApplicationForm application){
-		if(this.isInRoleInProgram(Authority.REVIEWER, application.getProgram())){
-			for (Comment comment : comments) {
-				if(comment.getApplication().equals(application) && comment.getType().equals(CommentType.REVIEW)){
-					ReviewComment reviewComment = (ReviewComment)comment;
-					if(reviewComment.getDecline().equals(CheckedStatus.YES)){
-						return true;
-					}
-				}
+
+	public boolean hasRespondedToProvideReviewForApplication(ApplicationForm application) {
+		for (Comment comment : comments) {
+			if (comment.getApplication().equals(application) && comment.getType().equals(CommentType.REVIEW)) {
+				return true;
 			}
 		}
 		return false;
-		
+	}
+
+	public boolean hasDeclinedToProvideReviewForApplication(ApplicationForm application) {
+
+		for (Comment comment : comments) {
+			if (comment.getApplication().equals(application) && comment.getType().equals(CommentType.REVIEW)) {
+				ReviewComment reviewComment = (ReviewComment) comment;
+				if (reviewComment.getDecline().equals(CheckedStatus.YES)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+
 	}
 
 }

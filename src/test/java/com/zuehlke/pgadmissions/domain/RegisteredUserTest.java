@@ -460,37 +460,58 @@ public class RegisteredUserTest {
 		assertFalse(reviewer.hasDeclinedToProvideReviewForApplication(application));
 	}
 	
+	
+
+
+	
 	@Test
-	public void shouldReturnFalseIfUserIsReviewerButNotInApplicationAndHasDeclinedToProvideReview(){
+	public void shouldReturnTrueIfUserIsReviewerOfApplicationAndHasProvidedReview(){
+	
+		
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+	
+		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.NO).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
+		Comment comment1 = new CommentBuilder().id(3).application(application).comment("This is another generic Comment").toComment();
+	
+		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		assertTrue(reviewer.hasRespondedToProvideReviewForApplication(application));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfUserIsReviewerOfApplicationButHasNotProvidedReview(){
 		
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com").toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).id(1).toApplicationForm();
 		
-		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.YES).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
-		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").toComment();
+		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();	
+		Comment comment1 = new CommentBuilder().id(3).application(application).comment("This is another generic Comment").toComment();
 		
-		RegisteredUser reviewer = new RegisteredUserBuilder().comments(comment1, comment, reviewComment).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
-		assertFalse(reviewer.hasDeclinedToProvideReviewForApplication(application));
+		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		assertFalse(reviewer.hasRespondedToProvideReviewForApplication(application));
 	}
-	
 	
 	@Test
-	public void shouldReturnFalseIfUserIsNotReviewerInApplicationAndHasDeclinedToProvideReview(){
+	public void shouldReturnFalseIfUserIsReviewerButNotForThisInApplication(){
 		
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+		
 		Program program = new ProgramBuilder().id(1).toProgram();
-		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).id(1).toApplicationForm();
+		ApplicationForm application1 = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		ApplicationForm application2 = new ApplicationFormBuilder().program(program).id(2).toApplicationForm();
 		
-		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.YES).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
-		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").toComment();
+		Comment comment = new CommentBuilder().id(1).application(application1).comment("This is a generic Comment").toComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application2).id(2).decline(CheckedStatus.NO).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
+		Comment comment1 = new CommentBuilder().id(3).application(application1).comment("This is another generic Comment").toComment();
 		
-		RegisteredUser approver = new RegisteredUserBuilder().programsOfWhichApprover(program).comments(comment1, comment, reviewComment).roles(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
-		assertFalse(approver.hasDeclinedToProvideReviewForApplication(application));
+		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		assertFalse(reviewer.hasRespondedToProvideReviewForApplication(application1));
 	}
 	
 	
+
+	
+
 	
 }

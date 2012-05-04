@@ -91,7 +91,7 @@ public class ReviewCommentController {
 		if(result.hasErrors()){
 			return REVIEW_FEEDBACK_PAGE;
 		}
-		commentService.save(comment);
-		return "redirect:/reviewFeedback?applicationId=" + comment.getApplication().getId();
+		commentService.save(comment);		
+		return "redirect:/applications";
 	}
 }

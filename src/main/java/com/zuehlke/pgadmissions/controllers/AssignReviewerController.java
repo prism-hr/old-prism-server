@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -54,7 +56,7 @@ public class AssignReviewerController {
 		this.applicationService = applicationServiceMock;
 		this.reviewService = reviewService;
 		this.userService = userService;
-		userValidator = validator;
+		this.userValidator = validator;
 		messageSource = msgSource;
 	}
 
@@ -84,51 +86,37 @@ public class AssignReviewerController {
 		return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;
 	}
 
+	@ModelAttribute("uiReviewer")
+	public RegisteredUser getUiReviewer() {
+		RegisteredUser uiReviewer = new RegisteredUser();
+		return uiReviewer;
+	}
+
+	
+	
 	@RequestMapping(value = "/createReviewer", method = RequestMethod.POST)
-	public String createReviewer(@ModelAttribute("programme") Program programme, @Valid RegisteredUser uiReviewer,// 
-			ModelMap modelMap, BindingResult bindingResult) {
-
-		// fake functionality for javascript/mvc testing:
-		//		if (true) {
-		//			if(bindingResult.hasErrors()) {
-		//				System.out.println("EEEERRRROROOROROSSS");
-		//			} else {
-		//				System.out.println("NOOOOOOOOOOOOOOOOOOOOOO");
-		//			}
-		//			
-		//			modelMap.put("message", "some fancy message");
-		//			RegisteredUser reviewer = new RegisteredUser();
-		//			reviewer.setId(10102030);
-		//			reviewer.setFirstName(uiReviewer.getFirstName());
-		//			reviewer.setLastName(uiReviewer.getLastName());
-		//			reviewer.setUsername(uiReviewer.getEmail());
-		//			reviewer.setEmail(uiReviewer.getEmail());
-		//			modelMap.put("newReviewer", reviewer);
-		//			return NEW_REVIEWER_JSON;
-		//		}
-
+	public String createReviewer(@ModelAttribute("programme") Program programme, @Valid @ModelAttribute("uiReviewer") RegisteredUser uiReviewer,// 
+			 BindingResult bindingResult, ModelMap modelMap) {
 		checkAdminPermission(programme);
-		if (bindingResult.hasErrors()) {
-			modelMap.put("errormessage", createErrorMessage(bindingResult));
-			return NEW_REVIEWER_JSON;
-		}
 
-		RegisteredUser reviewer = userService.getUserByEmail(uiReviewer.getEmail());
-		if (programme.getReviewers().contains(reviewer)) {
-			modelMap.put("message", getMessage("assignReviewer.newReviewer.alreadyInProgramme", reviewer.getUsername(), reviewer.getEmail()));
-			return NEW_REVIEWER_JSON;
-		}
-		if (reviewer == null) {
-			reviewer = reviewService.createNewReviewerForProgramme(programme,// 
-					uiReviewer.getFirstName(), uiReviewer.getLastName(), uiReviewer.getEmail());
-			modelMap.put("message", getMessage("assignReviewer.newReviewer.created", reviewer.getUsername(), reviewer.getEmail()));
+		if(bindingResult.hasErrors()) {
+				return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;
 		} else {
-			reviewService.addUserToProgramme(programme, reviewer);
-			modelMap.put("message", getMessage("assignReviewer.newReviewer.addedToProgramme", reviewer.getUsername(), reviewer.getEmail()));
+				RegisteredUser reviewer = userService.getUserByEmail(uiReviewer.getEmail());
+				if (programme.getReviewers().contains(reviewer)) {
+					modelMap.put("message", getMessage("assignReviewer.newReviewer.alreadyInProgramme", reviewer.getUsername(), reviewer.getEmail()));
+//					return NEW_REVIEWER_JSON;
+				}
+				if (reviewer == null) {
+					reviewer = reviewService.createNewReviewerForProgramme(programme,// 
+							uiReviewer.getFirstName(), uiReviewer.getLastName(), uiReviewer.getEmail());
+					modelMap.put("message", getMessage("assignReviewer.newReviewer.created", reviewer.getUsername(), reviewer.getEmail()));
+				} else if (!programme.getReviewers().contains(reviewer)) {
+					reviewService.addUserToProgramme(programme, reviewer);
+					modelMap.put("message", getMessage("assignReviewer.newReviewer.addedToProgramme", reviewer.getUsername(), reviewer.getEmail()));
+				}
 		}
-
-		modelMap.put("newReviewer", reviewer);
-		return NEW_REVIEWER_JSON;
+		return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;
 	}
 
 	@ModelAttribute("applicationForm")
@@ -167,7 +155,7 @@ public class AssignReviewerController {
 		return getCurrentUser();
 	}
 
-	@InitBinder(value = "registeredUser")
+	@InitBinder(value = "uiReviewer")
 	public void registerValidators(WebDataBinder binder) {
 		binder.setValidator(userValidator);
 	}

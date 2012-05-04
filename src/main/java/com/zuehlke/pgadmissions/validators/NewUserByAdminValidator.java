@@ -1,14 +1,14 @@
 package com.zuehlke.pgadmissions.validators;
 
 import org.apache.commons.validator.routines.EmailValidator;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
-@Component
+@Service
 public class NewUserByAdminValidator implements Validator {
 
 	@Override
@@ -27,4 +27,6 @@ public class NewUserByAdminValidator implements Validator {
 			errors.rejectValue("email", "user.email.invalid");
 		}
 	}
+	
+	
 }

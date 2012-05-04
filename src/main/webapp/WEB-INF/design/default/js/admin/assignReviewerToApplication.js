@@ -12,18 +12,15 @@ $(document).ready(function() {
 	$('#createReviewer').click(function() {
 		var postData ={ 
 			applicationId : $('#applicationId').val(),
-			firstName : "",
-			lastName : "world",
-			email : "hello@world.com"
+			firstName : $('#newReviewerFirstName').val(),
+			lastName : $('#newReviewerLastName').val(),
+			email : $('#newReviewerEmail').val(),
 		};
 		
 		$.post("/pgadmissions/assignReviewers/createReviewer", 
 			$.param(postData),
 			function(data) {
-				alert("data: " + data);
-			},
-			function(data) {
-				alert("error: " + data);
+				$('#assignReviewersToAppSection').html(data);
 			}
 		);
 	});

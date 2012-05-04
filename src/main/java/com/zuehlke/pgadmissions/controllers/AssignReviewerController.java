@@ -95,7 +95,7 @@ public class AssignReviewerController {
 	
 	
 	@RequestMapping(value = "/createReviewer", method = RequestMethod.POST)
-	public String createReviewer(@ModelAttribute("programme") Program programme, @Valid @ModelAttribute("uiReviewer") RegisteredUser uiReviewer,// 
+	public String createReviewer(@ModelAttribute("programme") Program programme, @ModelAttribute("applicationForm") ApplicationForm form, @Valid @ModelAttribute("uiReviewer") RegisteredUser uiReviewer,// 
 			 BindingResult bindingResult, ModelMap modelMap) {
 		checkAdminPermission(programme);
 
@@ -103,17 +103,21 @@ public class AssignReviewerController {
 				return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;
 		} else {
 				RegisteredUser reviewer = userService.getUserByEmail(uiReviewer.getEmail());
-				if (programme.getReviewers().contains(reviewer)) {
-					modelMap.put("message", getMessage("assignReviewer.newReviewer.alreadyInProgramme", reviewer.getUsername(), reviewer.getEmail()));
-//					return NEW_REVIEWER_JSON;
-				}
 				if (reviewer == null) {
 					reviewer = reviewService.createNewReviewerForProgramme(programme,// 
 							uiReviewer.getFirstName(), uiReviewer.getLastName(), uiReviewer.getEmail());
 					modelMap.put("message", getMessage("assignReviewer.newReviewer.created", reviewer.getUsername(), reviewer.getEmail()));
-				} else if (!programme.getReviewers().contains(reviewer)) {
-					reviewService.addUserToProgramme(programme, reviewer);
-					modelMap.put("message", getMessage("assignReviewer.newReviewer.addedToProgramme", reviewer.getUsername(), reviewer.getEmail()));
+				} else{
+					if (form.getReviewers().contains(reviewer)) {
+						modelMap.put("message", getMessage("assignReviewer.reviewer.alreadyExistsInTheApplication", reviewer.getUsername(), reviewer.getEmail()));
+					}
+					else if (!programme.getReviewers().contains(reviewer)) {
+						reviewService.addUserToProgramme(programme, reviewer);
+						modelMap.put("message", getMessage("assignReviewer.newReviewer.addedToProgramme", reviewer.getUsername(), reviewer.getEmail()));
+					} else {
+						modelMap.put("message", getMessage("assignReviewer.newReviewer.alreadyInProgramme", reviewer.getUsername(), reviewer.getEmail()));
+					}
+					
 				}
 		}
 		return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;

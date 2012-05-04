@@ -83,12 +83,26 @@ public class ProgrammeDetailsControllerTest {
 
 	@Test
 	public void shouldReturnAvaialbeStudyOptionLevels() {
-		Program program = new ProgramBuilder().id(1).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).toApplicationForm();
+		final Integer applicationId = 1;
+		Program program = new ProgramBuilder().id(applicationId).toProgram();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(applicationId).program(program).toApplicationForm();
+		controller =  new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
+				supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock){
+
+					@Override
+					public ApplicationForm getApplicationForm(Integer id) {
+						if(applicationId == id){
+							return applicationForm;
+						}
+						return null;
+					}
+			
+		};
+
 		EasyMock.expect(programmeDetailsServiceMock.getAvailableStudyOptions(program)).andReturn(
 				Arrays.asList(StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE));
 		EasyMock.replay(programmeDetailsServiceMock);
-		StudyOption[] studyOptions = controller.getStudyOptions(applicationForm);
+		StudyOption[] studyOptions = controller.getStudyOptions(applicationId);
 		assertArrayEquals(studyOptions, new StudyOption[] { StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE });
 	}
 

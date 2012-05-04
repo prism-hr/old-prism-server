@@ -33,7 +33,7 @@
 						</div>
 					</div>	
 				</#if>
-		</p>ID: ${(applicationForm.id?html)!}</p>
+		
         <input type="hidden" name="programmeDetailsId" id="programmeDetailsId" value="${(programmeDetails.id?string("######"))!}"/>
 		<div>
 			<#if programError?? && programError=='true'>

@@ -79,18 +79,6 @@ public class ReviewServiceTest {
 	}
 
 	@Test
-	public void ignoreExistingReviewerInProgramme() {
-		EasyMock.replay(userDaoMock, roleDaoMock, applicationDaoMock);
-		reviewService.addUserToProgramme(programme, reviewer1);
-
-		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock);
-		// still same amount of reviewers:
-		Assert.assertEquals(1, programme.getReviewers().size());
-		Assert.assertTrue(programme.getReviewers().contains(reviewer1));
-		Assert.assertTrue(programme.getReviewers().contains(reviewer1));
-	}
-
-	@Test
 	public void addReviewerToProgramme() {
 		RegisteredUser reviewer2 = new RegisteredUserBuilder().id(101).role(reviewerRole).toUser();
 		userDaoMock.save(reviewer2);

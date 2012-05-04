@@ -1,3 +1,4 @@
+<section id="assignReviewersToAppSection" >	
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
 <html>
@@ -78,7 +79,7 @@
 						Available reviewers in programme: 
 						<select id="reviewers" multiple="multiple">
 							<#list availableReviewers as reviewer>
-							  <option value="${reviewer.id}">${reviewer.firstName?html} ${reviewer.lastName?html}</option>
+							  <option value="${reviewer.id}">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
 							</#list>
 						</select>
 						<div class="buttons">
@@ -91,6 +92,34 @@
 								<option value="${reviewer.id}">${reviewer.firstName?html} ${reviewer.lastName?html}</option>
 							</#list>
 						</select>
+						<p>${message!}</p>
+						  <div class="row">
+                               <label class="label">First Name<em>*</em></label>
+                                   <div class="field">
+                                   <input class="full" type="text" name="newReviewerFirstName" id="newReviewerFirstName"/>
+                                   <@spring.bind "uiReviewer.firstName" /> 
+	                			   <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                               </div>
+                               </div>
+                                <div class="row">
+                                    <label class="label">Last Name<em>*</em></label>
+                                    <div class="field">
+                                        <input class="full" type="text" name="newReviewerLastName" id="newReviewerLastName"/>
+                                        <@spring.bind "uiReviewer.lastName" /> 
+	                				    <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                                    </div>
+                                </div>
+                                
+                                 <div class="row">
+                                    <label class="label">Email<em>*</em></label>
+                                            <div class="field">
+                                             <input class="full" type="text"  name="newReviewerEmail" id="newReviewerEmail"/>
+                                             <@spring.bind "uiReviewer.email" /> 
+	                					     <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                                            </div>
+                                 </div>
+						
+						
 						<div class="buttons">
 							<button type="submit" id="moveToReviewBtn">Continue</button>
 						</div>
@@ -133,3 +162,4 @@
 		src="<@spring.url '/design/default/js/admin/assignReviewerToApplication.js'/>"></script>
 </body>
 </html>
+</section>

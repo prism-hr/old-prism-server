@@ -83,6 +83,7 @@ public class ReviewService {
 		newUser = createNewReviewer(firstName, lastName, email);
 		newUser.getProgramsOfWhichReviewer().add(programme);
 		programme.getReviewers().add(newUser);
+		System.out.println("NEW REVIEWER TO BE SAVE !!!!");
 		userDAO.save(newUser);
 		programmeDAO.save(programme);
 		return newUser;
@@ -93,9 +94,6 @@ public class ReviewService {
 	 */
 	@Transactional
 	public void addUserToProgramme(Program programme, RegisteredUser reviewer) {
-		if (programme.getReviewers().contains(reviewer)) {
-			return;
-		}
 		if (!reviewer.isInRole(Authority.REVIEWER)) {
 			Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
 			reviewer.getRoles().add(reviewerRole);

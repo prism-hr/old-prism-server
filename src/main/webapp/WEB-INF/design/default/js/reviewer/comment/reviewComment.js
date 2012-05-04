@@ -17,6 +17,7 @@ $(document).ready(function(){
 	});	
 	
 	$('#submitReviewFeedback').click(function() {
+		if(confirm("Submit review. Are you sure?")){
 			var application = $('#applicationId').val();
 			var willingSupervise = null;
 			if ($('#willingRB_true:checked').val() !== undefined) {
@@ -51,6 +52,7 @@ $(document).ready(function(){
 						$('#reviewcommentsectopm').html(data);
 					}
 				);
+		}
 	});	
 	
 	$("input[name*='declineCB']").click(function() {

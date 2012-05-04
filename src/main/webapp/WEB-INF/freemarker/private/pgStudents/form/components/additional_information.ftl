@@ -103,18 +103,24 @@
 				</#list>
 			
 		</div>
-				
-		<#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
-			       I understand that in accepting this declaration I am confirming
+       <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
+       <div>
+			<div class="row">
+				<span class="terms-label">
+					I understand that in accepting this declaration I am confirming
 					that the information contained in this application is true and accurate. 
 					I am aware that any subsequent offer of study may be retracted at any time
 					if any of the information contained is found to be misleading or false.
-		          	<input type="checkbox" name="acceptTermsAIDCB" id="acceptTermsAIDCB"/>
-	              <input type="hidden" name="acceptTermsAIDValue" id="acceptTermsAIDValue"/>
-	           <span class="invalid" name="nonAcceptedAID"></span>
-	   	</#if>
+				</span>
+				<div class="terms-field">
+		        	<input type="checkbox" name="acceptTermsAIDCB" id="acceptTermsAIDCB"/>
+		        </div>
+	            <input type="hidden" name="acceptTermsAIDValue" id="acceptTermsAIDValue"/>
+	           	<span class="invalid" name="nonAcceptedAID"></span>
+			</div>	        
+	    </div>
+	    </#if>  
 				
-		
         <div class="buttons">
         	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	        	<a class="button" id="informationCancelButton" name="informationCancelButton">Cancel</a>

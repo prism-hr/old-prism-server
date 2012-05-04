@@ -65,104 +65,79 @@
                     </div>
 				</div>
                 
-                <!-- My Nationality -->  	
-                	<#if (applicationForm.personalDetails.candidateNationalities?size > 0)>
-                  		<#list applicationForm.personalDetails.candidateNationalities as nationality >
-                  			<#assign index_k = nationality_index>
-	                  		<#if (index_k == 0)>
-	                  			<div class="admin_row">
-                					<label class="admin_row_label">My Nationality</label>
-	                    			<span name="existingCandidateNationality">
-	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
-	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
-	                            		</div>
-	                       			</span>
-	                       		</div>
-	                       	<#else>
-	                       		<div class="admin_row">
-	                    			<span name="existingCandidateNationality">
-	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
-	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
-	                            		</div>
-	                       			</span>
-	                       		</div>
-	                       	</#if>                         
-	                    </#list>
-                    <#else>
-                    	<div class="admin_row">
-                			<label class="admin_row_label">My Nationality</label>
-                    		<div class="field">Not Provided</div>
-                    	</div>
-                    </#if>
-                
+                <!-- My Nationality -->
+                <div class="admin_row">
+                	<label class="admin_row_label">My Nationality</label>
+                	<span name="existingCandidateNationality">
+		            	<div class="field">
+		            		<#assign size_cn = applicationForm.personalDetails.candidateNationalities?size>
+		                	<#if ( size_cn > 0)>
+		                  		<#list applicationForm.personalDetails.candidateNationalities as nationality >
+		                  			<#assign index_i = nationality_index>
+		                  			<#if (index_i < (size_cn - 1))>
+			                        	<label class="half multiples">${nationality.name!"Not Provided"},</label>  
+			                        <#else>
+			                        	<label class="half multiples">${nationality.name!"Not Provided"}.</label>
+			                       	</#if>
+									<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
+			                    </#list>
+			                <#else>
+			                	<label class="admin_row_label">My Nationality</label>
+			                    <div class="field">Not Provided</div>
+			                </#if>
+						</div>
+					</span>
+                </div>
                  
-                 <!--Maternal guardian nationality -->   
-                	<#if (applicationForm.personalDetails.maternalGuardianNationalities?size > 0)>
-                  		<#list applicationForm.personalDetails.maternalGuardianNationalities as nationality >
-                  			<#assign index_i = nationality_index>
-	                  		<#if (index_i == 0)>
-	                  			<div class="admin_row">
-                					<label class="admin_row_label">Maternal Guardian Nationality</label>
-	                    			<span name="existingCandidateNationality">
-	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
-	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
-	                            		</div>
-	                       			</span>
-	                       		</div>
-	                       	<#else>
-	                       		<div class="admin_row">
-	                    			<span name="existingCandidateNationality">
-	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
-	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
-	                            		</div>
-	                       			</span>
-	                       		</div>
-	                       	</#if>                         
-	                    </#list>
-                    <#else>
-                    	<div class="admin_row">
-                			<label class="admin_row_label">Maternal Guardian Nationality</label>
-                    		<div class="field">Not Provided</div>
-                    	</div>
-                    </#if>
+                 <!--Maternal guardian nationality -->
+                 
+                <div class="admin_row">
+                	<label class="admin_row_label">Maternal Guardian Nationality</label>
+                	<span name="existingCandidateNationality">
+		            	<div class="field">
+		            		<#assign size_mn = applicationForm.personalDetails.maternalGuardianNationalities?size>
+		                	<#if ( size_mn > 0)>
+		                  		<#list applicationForm.personalDetails.maternalGuardianNationalities as nationality >
+		                  			<#assign index_i = nationality_index>
+		                  			<#if (index_i < (size_mn - 1))>
+			                        	<label class="half multiples">${nationality.name!"Not Provided"},</label>  
+			                        <#else>
+			                        	<label class="half multiples">${nationality.name!"Not Provided"}.</label>
+			                       	</#if>
+									<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
+			                    </#list>
+			                <#else>
+			                    Not Provided
+			                </#if>
+						</div>
+					</span>
+                </div>
                     
                   <!--Paternal guardian nationality -->
-                	<#if (applicationForm.personalDetails.paternalGuardianNationalities?size > 0)>
-                  		<#list applicationForm.personalDetails.paternalGuardianNationalities as nationality >
-                  			<#assign index_j = nationality_index>
-	                  		<#if (index_j == 0)>
-	                  			<div class="admin_row">
-                					<label class="admin_row_label">Paternal Guardian Nationality</label>
-	                    			<span name="existingCandidateNationality">
-	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
-	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
-	                            		</div>
-	                       			</span>
-	                       		</div>
-	                       	<#else>
-	                       		<div class="admin_row">
-	                    			<span name="existingCandidateNationality">
-	                        			<div class="field">
-	                            			<label class="full">${nationality.name!"Not Provided"}</label>  
-	                                		<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
-	                            		</div>
-	                       			</span>
-	                       		</div>
-	                       	</#if>                         
-	                    </#list>
-                    <#else>
-                    	<div class="admin_row">
-                			<label class="admin_row_label">Paternal Guardian Nationality</label>
-                    		<div class="field">Not Provided</div>
-                    	</div>
-                    </#if>                  
                   
-
+				<div class="admin_row">
+                	<label class="admin_row_label">Paternal Guardian Nationality</label>
+                	<span name="existingCandidateNationality">
+		            	<div class="field">
+		            		<#assign size_cp = applicationForm.personalDetails.paternalGuardianNationalities?size>
+		                	<#if ( size_cp > 0)>
+		                  		<#list applicationForm.personalDetails.paternalGuardianNationalities as nationality >
+		                  			<#assign index_i = nationality_index>
+		                  			<#if (index_i < (size_cp - 1))>
+			                        	<label class="half multiples">${nationality.name!"Not Provided"},</label>  
+			                        <#else>
+			                        	<label class="half multiples">${nationality.name!"Not Provided"}.</label>
+			                       	</#if>
+									<input type="hidden" name="candidateNationalities" value='${nationality.id}'/>
+			                    </#list>
+			                <#else>
+			                    Not Provided
+			                </#if>
+						</div>
+					</span>
+                </div>
+                  
+                  
 				<div class="admin_row">
 					<span class="admin_row_label">Is English your first language?</span>
 					<div class="field">
@@ -206,7 +181,11 @@
 				<div class="admin_row">
                 	<span class="admin_row_label">Skype Name</span>
                     <div class="field">
-	                    ${(applicationForm.personalDetails.messenger?html)!"Not Provided"}
+                    	<#if applicationForm.personalDetails.messenger?has_content>
+	                    	${(applicationForm.personalDetails.messenger?html)}
+	                    <#else>
+	                    	<div class="field grey-label">Not Provided</div>
+	                    </#if>
                     </div>
                 </div>
 

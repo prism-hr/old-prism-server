@@ -44,7 +44,7 @@
             	<label class="plain-label grey-label">Programme<em class="grey-label">*</em></label>
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.programme'/>"></span>
                 <div class="field">
-                	<input class="full" id="programmeName" name="programmeName" type="text" value="${applicationForm.program.title?html}" disabled="disabled" />
+                	<input class="full" id="programmeName" name="programmeName" type="text" value="${(applicationForm.program.title?html)!}" disabled="disabled" />
                 	<@spring.bind "programmeDetails.programmeName" /> 
                 </div>
 			</div>

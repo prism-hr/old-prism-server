@@ -30,7 +30,7 @@ public class WithdrawController {
 	public WithdrawController() {
 		this(null, null);
 	}
-	
+
 	@Autowired
 	public WithdrawController(ApplicationsService applicationService, WithdrawService withdrawService) {
 		this.applicationService = applicationService;
@@ -39,29 +39,27 @@ public class WithdrawController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String withdrawApplicationAndGetApplicationList(@ModelAttribute ApplicationForm applicationForm) {
-		if(applicationForm.getStatus() != ApplicationFormStatus.VALIDATION ){
+		if (applicationForm.getStatus() == ApplicationFormStatus.UNSUBMITTED || applicationForm.getStatus() == ApplicationFormStatus.APPROVED
+				|| applicationForm.getStatus() == ApplicationFormStatus.REJECTED | applicationForm.getStatus() == ApplicationFormStatus.WITHDRAWN) {
 			throw new CannotWithdrawApplicationException();
 		}
 		applicationForm.setStatus(ApplicationFormStatus.WITHDRAWN);
 		withdrawService.saveApplicationFormAndSendMailNotifications(applicationForm);
 		return "redirect:/applications";
 	}
-	
-	
+
 	@ModelAttribute
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
 		ApplicationForm applicationForm = applicationService.getApplicationById(applicationId);
-		if(applicationForm == null || !getCurrentUser().canSee(applicationForm) ){
+		if (applicationForm == null || !getCurrentUser().canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;
-		
+
 	}
-	
+
 	private RegisteredUser getCurrentUser() {
 		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 	}
-
-	
 
 }

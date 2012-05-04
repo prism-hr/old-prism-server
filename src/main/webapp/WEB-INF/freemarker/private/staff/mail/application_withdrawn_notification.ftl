@@ -35,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">User  ${applicant.firstName} ${applicant.lastName} has just withdrawn the application ${application.program.title}. </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to inform you that applicant ${applicant.firstName} ${applicant.lastName} has just withdrawn their application ${application.id?string('######')} to ${application.program.title}. </font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards, <br />UCL Portal</font>

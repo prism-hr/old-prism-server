@@ -42,20 +42,21 @@
                     	<div class="field">
                     	   <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                       		<textarea id="currentAddressLocation" class="max" rows="6" cols="80" maxlength='2000'>${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
-                      			<@spring.bind "addressSectionDTO.currentAddressLocation" /> 
+                      			
                 				  
 				             <#else>
                       		    <textarea readonly="readonly" id="currentAddressLocation" class="max" rows="6" cols="80">${(addressSectionDTO.currentAddressLocation?html)!}</textarea>
                             </#if>
                     	</div>
                   	</div>
-				<#list spring.status.errorMessages as error>
-					<div class="row">
-						<div class="field">
-							<span class="invalid">${error}</span>
+                  	<@spring.bind "addressSectionDTO.currentAddressLocation" /> 
+					<#list spring.status.errorMessages as error>
+						<div class="row">
+							<div class="field">
+								<span class="invalid">${error}</span>
+							</div>
 						</div>
-					</div>
-				</#list>
+					</#list>
 
                   	<!-- Country -->
                   	<div class="row">

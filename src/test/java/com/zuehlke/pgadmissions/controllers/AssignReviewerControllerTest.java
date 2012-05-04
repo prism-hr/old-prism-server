@@ -266,7 +266,7 @@ public class AssignReviewerControllerTest {
 
 		RegisteredUser inputUser = new RegisteredUserBuilder().firstName("fresh").lastName("reviewer").email("bla@blu.com").toUser();
 		ModelMap mmap = new ModelMap();
-		String view = controllerUT.createReviewer(program, inputUser, bindingResultMock, mmap);
+		String view = controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock, mmap);
 
 		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
 //		Assert.assertEquals(REVIEWER_AS_JSON_VIEW, view);
@@ -290,7 +290,7 @@ public class AssignReviewerControllerTest {
 
 		RegisteredUser inputUser = new RegisteredUserBuilder().firstName("fresh").lastName("reviewer").email("bla@blu.com").toUser();
 		ModelMap mmap = new ModelMap();
-		String view = controllerUT.createReviewer(program, inputUser, bindingResultMock,  mmap);
+		String view = controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock,  mmap);
 
 		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
 //		Assert.assertEquals(REVIEWER_AS_JSON_VIEW, view);
@@ -316,7 +316,7 @@ public class AssignReviewerControllerTest {
 
 		RegisteredUser inputUser = new RegisteredUserBuilder().firstName("fresh").lastName("reviewer").email("bla@blu.com").toUser();
 		ModelMap mmap = new ModelMap();
-		String view = controllerUT.createReviewer(program, inputUser, bindingResultMock,  mmap);
+		String view = controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock,  mmap);
 
 		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
 //		Assert.assertEquals(REVIEWER_AS_JSON_VIEW, view);
@@ -334,7 +334,7 @@ public class AssignReviewerControllerTest {
 
 		RegisteredUser inputUser = new RegisteredUserBuilder().email("hui@blu.com").toUser();
 		ModelMap mmap = new ModelMap();
-		controllerUT.createReviewer(program, inputUser, bindingResultMock,  mmap);
+		controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock,  mmap);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -342,7 +342,7 @@ public class AssignReviewerControllerTest {
 		authenticationToken.setDetails(otherReviewer);
 		RegisteredUser inputUser = new RegisteredUserBuilder().email("hui@blu.com").toUser();
 		ModelMap mmap = new ModelMap();
-		controllerUT.createReviewer(program, inputUser, bindingResultMock, mmap);
+		controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock, mmap);
 	}
 
 	@Test
@@ -354,8 +354,24 @@ public class AssignReviewerControllerTest {
 
 		RegisteredUser inputUser = new RegisteredUserBuilder().email("hui@blu.com").toUser();
 		ModelMap mmap = new ModelMap();
-		String view = controllerUT.createReviewer(program, inputUser, bindingResultMock, mmap);
+		String view = controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock, mmap);
 
+		Assert.assertEquals(ASSIGN_REVIEWERS_TO_APPLICATION_VIEW, view);
+		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
+		Assert.assertEquals("SDFSDFSDFSDF", mmap.get("message"));
+		Assert.assertNull(mmap.get("newReviewer"));
+	}
+	@Test
+	public void shouldNotAddOrCreateExistingReviewerInApplication() {
+		reviewer1.setEmail("rev1@bla.com");
+		EasyMock.expect(userServiceMock.getUserByEmail("hui@blu.com")).andReturn(reviewer1);
+		prepareMessageSourceMock("assignReviewer.reviewer.alreadyExistsInTheApplication", new Object[] { "rev 1", "rev1@bla.com" }, "SDFSDFSDFSDF");
+		EasyMock.replay(reviewServiceMock, userServiceMock, messageSourceMock);
+		RegisteredUser inputUser = new RegisteredUserBuilder().id(3).email("hui@blu.com").toUser();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).reviewers(reviewer1).toApplicationForm();
+		ModelMap mmap = new ModelMap();
+		String view = controllerUT.createReviewer(program, application, inputUser, bindingResultMock, mmap);
+		
 		Assert.assertEquals(ASSIGN_REVIEWERS_TO_APPLICATION_VIEW, view);
 		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
 		Assert.assertEquals("SDFSDFSDFSDF", mmap.get("message"));
@@ -373,7 +389,7 @@ public class AssignReviewerControllerTest {
 
 		RegisteredUser inputUser = new RegisteredUserBuilder().email("woi@blu.com").toUser();
 		ModelMap mmap = new ModelMap();
-		String view = controllerUT.createReviewer(program, inputUser, bindingResultMock, mmap);
+		String view = controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock, mmap);
 		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
 
 //		Assert.assertEquals(REVIEWER_AS_JSON_VIEW, view);
@@ -393,7 +409,7 @@ public class AssignReviewerControllerTest {
 		EasyMock.replay(bindingResultMock);
 
 		ModelMap mmap = new ModelMap();
-		String view = controllerUT.createReviewer(program, null, bindingResultMock,  mmap);
+		String view = controllerUT.createReviewer(program, new ApplicationForm(), null, bindingResultMock,  mmap);
 
 		EasyMock.verify(bindingResultMock);
 		Assert.assertEquals("First name invalid!\nEmail invalid!", mmap.get("errormessage"));

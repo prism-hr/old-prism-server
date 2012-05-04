@@ -1,14 +1,13 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -156,7 +155,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldGetAllCommentsDueAdminEmailNotification() {
 		
-		int noOfReviewCommentsBefore = commentDAO.getReviewCommentsDueNotification().size(); 
+		
 		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
 		save(application);
@@ -165,25 +164,20 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		Comment comment = new CommentBuilder().user(user).comment("comment").application(application).toComment();
 		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.NO).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
 		ReviewComment reviewComment1 = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.YES).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
-		ReviewComment reviewComment2 = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.YES).comment("comment").user(user).commentType(CommentType.GENERIC).toReviewComment();
+		ReviewComment reviewComment2 = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.NO).comment("comment").user(user).commentType(CommentType.GENERIC).toReviewComment();
+		ReviewComment reviewComment3 = new ReviewCommentBuilder().application(application).adminsNotified(null).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
 		
-		assertNull(reviewComment.getId());
-		
-		commentDAO.save(comment);
-		commentDAO.save(reviewComment);
-		commentDAO.save(reviewComment1);
-		commentDAO.save(reviewComment2);
+		save(comment, reviewComment, reviewComment1,reviewComment2, reviewComment3);
+				
+		flushAndClearSession();
 		
 		List<ReviewComment> reloadedComments = commentDAO.getReviewCommentsDueNotification();
 		
-		flushAndClearSession();
-		
-		reloadedComments = commentDAO.getReviewCommentsDueNotification();
-		
-		
-		assertEquals(noOfReviewCommentsBefore+1, reloadedComments.size());
 		assertFalse(reloadedComments.contains(comment));
+		assertFalse(reloadedComments.contains(reviewComment2));
+		assertFalse(reloadedComments.contains(reviewComment1));
 		assertTrue(reloadedComments.contains(reviewComment));
+		assertTrue(reloadedComments.contains(reviewComment3));
 	}
 
 

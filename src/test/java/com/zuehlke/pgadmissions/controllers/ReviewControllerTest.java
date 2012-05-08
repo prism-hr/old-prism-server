@@ -1,10 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
-
-import java.util.Arrays;
-
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
@@ -35,7 +31,6 @@ public class ReviewControllerTest {
 
 	private RegisteredUser reviewer;
 	private ReviewController controller;
-	private ApplicationForm form;
 	private UserService userServiceMock;
 	private ApplicationsService applicationsServiceMock;
 	private UserPropertyEditor userPropertyEditorMock;
@@ -52,14 +47,12 @@ public class ReviewControllerTest {
 
 	@Test
 	public void shouldReturnReviwersViewName() {
-	
+
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(reviewer);
 		EasyMock.replay(userServiceMock);
 		assertEquals("private/staff/admin/assign_reviewers_page",
 				controller.getReviewerPage(new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm()).getViewName());
 	}
-
-
 
 	@Test
 	public void shouldAddCurrentUserToAModel() {
@@ -135,8 +128,6 @@ public class ReviewControllerTest {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
 		controller = new ReviewController(applicationsServiceMock, userServiceMock, userPropertyEditorMock);
-
-		form = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 
 	}
 

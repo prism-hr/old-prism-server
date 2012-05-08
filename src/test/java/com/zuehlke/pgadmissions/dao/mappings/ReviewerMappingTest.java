@@ -15,11 +15,14 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 
@@ -28,7 +31,7 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 
 	@Test
 	public void shouldSaveAndLoadReviewer() throws ParseException{
-		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");
+		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");		
 		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(rewiewerUser).lastNotified(lastNotified).toReviewer();
 		save(reviewer);
 		assertNotNull(reviewer.getId());
@@ -45,7 +48,21 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 		assertEquals(lastNotified, reloadedReviewer.getLastNotified());
 	}
 	
-
+	@Test
+	public void shoulLoadReviewWithReviewer() throws ParseException{
+		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(rewiewerUser).toReviewer();
+		ReviewComment review = new ReviewCommentBuilder().application(applicationForm).user(rewiewerUser).comment("hi").reviewer(reviewer).commentType(CommentType.REVIEW).toReviewComment();
+		
+		
+		save(reviewer, review);		
+		assertNotNull(review.getId());
+		flushAndClearSession();
+		
+		Reviewer reloadedReviewer = (Reviewer) sessionFactory.getCurrentSession().get(Reviewer.class,reviewer.getId());	
+		assertEquals(review, reloadedReviewer.getReview());
+		
+	}
+	
 	@Before
 	public void setUp() {
 		super.setUp();

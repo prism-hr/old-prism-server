@@ -4,13 +4,20 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 
 public class ReviewerBuilder {
 	private Integer id;
 	private RegisteredUser user;
 	private ApplicationForm application;
-	private Date lastNotified;
+	private Date lastNotified;	
+	private ReviewComment review;
+	
+	public ReviewerBuilder review(ReviewComment review){
+		this.review = review;
+		return this;
+	}
 	
 	public ReviewerBuilder lastNotified(Date lastNotified){
 		this.lastNotified = lastNotified;
@@ -38,6 +45,7 @@ public class ReviewerBuilder {
 		reviewer.setApplication(application);
 		reviewer.setUser(user);
 		reviewer.setLastNotified(lastNotified);
+		reviewer.setReview(review);
 		return reviewer;
 	}
 }

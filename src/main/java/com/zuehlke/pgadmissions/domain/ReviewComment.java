@@ -4,6 +4,8 @@ import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Type;
 
@@ -23,6 +25,11 @@ public class ReviewComment extends Comment{
 	 */
 	private static final long serialVersionUID = 9120577563568889651L;
 
+	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "reviewer_id")
+	private Reviewer reviewer;
+	
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
 	@Column(name = "willing_to_supervise")
 	private CheckedStatus willingToSupervice;
@@ -81,6 +88,14 @@ public class ReviewComment extends Comment{
 
 	public void setDecline(CheckedStatus decline) {
 		this.decline = decline;
+	}
+
+	public Reviewer getReviewer() {
+		return reviewer;
+	}
+
+	public void setReviewer(Reviewer reviewer) {
+		this.reviewer = reviewer;
 	}
 
 	

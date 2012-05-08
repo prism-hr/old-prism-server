@@ -14,7 +14,7 @@ public class CommentBuilder {
 	private Integer id;
 	private Date createdTimeStamp;
 	
-	public CommentBuilder createdTimeStamp(Date createdTimeStamp) {
+	public CommentBuilder date(Date createdTimeStamp) {
 		this.createdTimeStamp = createdTimeStamp;
 		return this;
 	}
@@ -43,7 +43,7 @@ public class CommentBuilder {
 		comment.setComment(strComment);
 		comment.setId(id);
 		comment.setUser(user);
-		comment.setCreatedTimestamp(createdTimeStamp);
+		comment.setDate(createdTimeStamp);
 		return comment;
 	}
 }

@@ -61,9 +61,10 @@
 						</#if> 
 						 <#if applicationForm.isDecided()>disabled="disabled"</#if>									   
 					/> No</label>
-					<@spring.bind "additionalInformation.convictions" /> 
+					
 				</div>
 			</div>
+				<@spring.bind "additionalInformation.convictions" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -87,13 +88,13 @@
 	        		    disabled="disabled"
 	        		</#if>
 	        		class="max" rows="6" cols="80" maxlength='5000'>${(additionalInformation.convictionsText?html)!}</textarea>
-					<@spring.bind "additionalInformation.convictionsText" /> 
+					 
 	            <#else>
 	                <textarea readonly="readonly" id="convictionsText" name="convictionsText" class="max" rows="10" cols=80" >${(additionalInformation.convictionsText?html)!}</textarea>
 	            </#if>
 	            </div>
 			</div>
-			
+				<@spring.bind "additionalInformation.convictionsText" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">

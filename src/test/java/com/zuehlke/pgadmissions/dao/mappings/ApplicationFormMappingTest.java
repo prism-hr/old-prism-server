@@ -276,8 +276,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadEventsWithApplication() throws ParseException {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-		Event eventOne = new EventBuilder().eventDate(simpleDateFormat.parse("01 12 2011 14:09:26")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
-		Event eventTwo = new EventBuilder().eventDate(simpleDateFormat.parse("03 12 2011 14:09:26")).newStatus(ApplicationFormStatus.UNSUBMITTED).toEvent();
+		Event eventOne = new EventBuilder().date(simpleDateFormat.parse("01 12 2011 14:09:26")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
+		Event eventTwo = new EventBuilder().date(simpleDateFormat.parse("03 12 2011 14:09:26")).newStatus(ApplicationFormStatus.UNSUBMITTED).toEvent();
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).events(eventOne, eventTwo).toApplicationForm();
 		
 		save(application);

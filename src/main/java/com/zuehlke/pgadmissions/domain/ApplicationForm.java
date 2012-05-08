@@ -356,20 +356,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 			}
 		}
 
-		Collections.sort(visibleComments, new Comparator<Comment>() {
-			@Override
-			public int compare(Comment commentOne, Comment commentTwo) {
-				if(commentTwo.getCreatedTimestamp() == null){
-					return -1;
-				}
-				if(commentOne.getCreatedTimestamp() == null){
-					return 1;
-				}
-				return commentTwo.getCreatedTimestamp().compareTo(commentOne.getCreatedTimestamp());
-			}
-
-		});
-
 		return visibleComments;
 	}
 
@@ -412,7 +398,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		
 		Event event = new Event();
 		event.setNewStatus(status);
-		event.setEventDate(new Date());
+		event.setDate(new Date());
 		this.events.add(event);	
 	
 		this.status = status;

@@ -16,7 +16,7 @@ public class EventBuilder {
 		return this;
 	}
 	
-	public EventBuilder eventDate(Date eventDate){
+	public EventBuilder date(Date eventDate){
 		this.eventDate = eventDate;
 		return this;
 	}
@@ -29,7 +29,7 @@ public class EventBuilder {
 	public Event toEvent(){
 		Event event = new Event();
 		event.setId(id);
-		event.setEventDate(eventDate);
+		event.setDate(eventDate);
 		event.setNewStatus(newStatus);
 		return event;
 	}

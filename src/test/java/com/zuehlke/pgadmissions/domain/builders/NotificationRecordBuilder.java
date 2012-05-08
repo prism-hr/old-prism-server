@@ -27,7 +27,7 @@ public class NotificationRecordBuilder {
 
 	public NotificationRecord toNotificationRecord() {
 		NotificationRecord notifiationRecord = new NotificationRecord();
-		notifiationRecord.setNotificationDate(notificationDate);
+		notifiationRecord.setDate(notificationDate);
 		notifiationRecord.setNotificationType(notificationType);
 		notifiationRecord.setId(id);
 		return notifiationRecord;

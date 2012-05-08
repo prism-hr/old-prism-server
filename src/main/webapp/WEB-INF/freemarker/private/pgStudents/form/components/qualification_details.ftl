@@ -94,10 +94,11 @@
              				<option value="${country.id?string('#######')}"  <#if qualification.institutionCountry?? && qualification.institutionCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>
              			</#list>
           			</select>
-					<@spring.bind "qualification.institutionCountry" /> 
+					
                 	
         		</div>
       		</div>
+      		<@spring.bind "qualification.institutionCountry" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -114,7 +115,7 @@
                 <div class="field">
                 	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 		<input id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL"  value="${(qualification.qualificationInstitution?html)!}" />
-                		 <@spring.bind "qualification.qualificationInstitution" /> 
+                		 
                 	 	                	
         			<#else>
         			     <input readonly="readonly" id="qualificationInstitution" class="full" type="text" placeholder="e.g. UCL" value="${(qualification.qualificationInstitution?html)!}" />
@@ -122,7 +123,7 @@
                     									
                 </div>
           	</div>
-
+				<@spring.bind "qualification.qualificationInstitution" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -139,14 +140,14 @@
         		<div class="field">
         			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
           				<input id="qualificationType" class="full" type="text" value="${(qualification.qualificationType?html)!}"/>
-						<@spring.bind "qualification.qualificationType" /> 
+						 
 
         			<#else>
         			 	<input readonly="readonly" id="qualificationType" class="full" type="text" value="${(qualification.qualificationType?html)!}"/>
         			</#if>
         		</div>
       		</div>
-
+				<@spring.bind "qualification.qualificationType" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -162,14 +163,14 @@
                 <div class="field">
                 	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 		<input id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering"  value="${(qualification.qualificationSubject?html)!}"/>
-   					 	<@spring.bind "qualification.qualificationSubject" /> 
+   					 	 
 
    					<#else>
    					  	<input readonly="readonly" id="qualificationSubject" class="full" type="text" placeholder="e.g. Civil Engineering" value="${(qualification.qualificationSubject?html)!}"/>
    					</#if>					
                 </div>
      		</div>
-
+				<@spring.bind "qualification.qualificationSubject" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -193,10 +194,11 @@
              				<option value="${language.id?string('#######')}"  <#if qualification.qualificationLanguage?? && qualification.qualificationLanguage.id == language.id> selected="selected"</#if>>${language.name?html}</option>
              			</#list>
           			</select>
-					<@spring.bind "qualification.qualificationLanguage" /> 
+ 
 
         		</div>
       		</div>
+					<@spring.bind "qualification.qualificationLanguage" />      		
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -215,11 +217,11 @@
                         	disabled="disabled"
                          </#if>>
                 	</input>
-               		<@spring.bind "qualification.qualificationStartDate" /> 
+
 
                 </div>
          	</div>
-         	
+                <@spring.bind "qualification.qualificationStartDate" />         	
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -257,13 +259,14 @@
         		<div class="field">
 	        		<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	          			<input id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction" value="${(qualification.qualificationGrade?html)!}"/>
-						<@spring.bind "qualification.qualificationGrade" /> 
+
 
 	        		<#else>
 	        			  <input readonly="readonly" id="qualificationGrade" class="full" type="text" placeholder="e.g. 2.1, Distinction" value="${(qualification.qualificationGrade?html)!}"/>
 	        		</#if>
         		</div>
       		</div>
+						<@spring.bind "qualification.qualificationGrade" />       		
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -281,10 +284,11 @@
         			<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"
         				 <#if !qualification.isQualificationCompleted()>disabled="disabled"</#if>>
                 	</input>
-               	 	<@spring.bind "qualification.qualificationAwardDate" /> 
+
 
         		</div>
       		</div>
+      		    <@spring.bind "qualification.qualificationAwardDate" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">

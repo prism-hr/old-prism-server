@@ -30,7 +30,7 @@ public class EventMappingTest extends AutomaticRollbackTestCase {
 
 		ApplicationFormStatus newStatus = ApplicationFormStatus.APPROVAL;
 		Date eventDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 12 2011 14:09:26");
-		Event event = new EventBuilder().newStatus(newStatus).eventDate(eventDate).toEvent();
+		Event event = new EventBuilder().newStatus(newStatus).date(eventDate).toEvent();
 		sessionFactory.getCurrentSession().saveOrUpdate(event);
 		assertNotNull(event.getId());
 		Event reloadedEvent = (Event) sessionFactory.getCurrentSession().get(Event.class, event.getId());
@@ -41,7 +41,7 @@ public class EventMappingTest extends AutomaticRollbackTestCase {
 		assertNotSame(event, reloadedEvent);
 		assertEquals(event, reloadedEvent);
 
-		assertEquals(eventDate, reloadedEvent.getEventDate());
+		assertEquals(eventDate, reloadedEvent.getDate());
 		assertEquals(newStatus, reloadedEvent.getNewStatus());
 
 	}
@@ -56,7 +56,7 @@ public class EventMappingTest extends AutomaticRollbackTestCase {
 		save(applicant, program);
 		ApplicationFormStatus newStatus = ApplicationFormStatus.APPROVAL;
 		Date eventDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 12 2011 14:09:26");
-		Event event = new EventBuilder().newStatus(newStatus).eventDate(eventDate).toEvent();
+		Event event = new EventBuilder().newStatus(newStatus).date(eventDate).toEvent();
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).events(event).toApplicationForm();
 
 		save(application);

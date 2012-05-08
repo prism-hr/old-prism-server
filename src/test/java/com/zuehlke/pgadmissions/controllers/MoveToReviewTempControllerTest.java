@@ -90,7 +90,7 @@ public class MoveToReviewTempControllerTest {
 
 	@Test
 	public void shouldChangeStateToReviewAndSave(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().toProgram()).toApplicationForm();
 		List<Referee> referees = Arrays.asList(new RefereeBuilder().id(1).toReferee(), new RefereeBuilder().id(2).toReferee());
 		applicationForm.setReferees(referees);
 		StageDuration stageDuration = new StageDuration();

@@ -175,43 +175,43 @@ $(document).ready(function(){
 	
 	
 	/// delete collection items
-	if($('#submissionStatus').val()=="UNSUBMITTED"){
+
 		
-		$("#existingCandidateNationalities").on("click", "a", function(){	
-			$(this).parent("div").remove();
-			
-			if ( $('#existingCandidateNationalities').children().length <= 1 ) {
-				$('#candidateNationalitiesLabel').remove();
-				$('#my-nationality-lb').html("My Nationality");
-			}
-			
-			if($('#existingCandidateNationalities').children().length == 1 ) {
-				
-				$('#my-hint').remove();
-				$('#my-nationality-hint').show();
-			}
-						
-		});
+	$("#existingCandidateNationalities").on("click", "a", function(){	
+		$(this).parent("div").remove();
 		
-		$("#existingMaternalNationalities").on("click", "a", function(){	
-			$(this).parent("div").remove();
-			
-			if ( $('#existingMaternalNationalities').children().length <= 1 ) {
-				$('#maternalNationalitiesLabel').remove();
-				$('#maternal-nationality-lb').html("Mother's Nationality");
-			}
-		});
+		if ( $('#existingCandidateNationalities').children().length <= 1 ) {
+			$('#candidateNationalitiesLabel').remove();
+			$('#my-nationality-lb').html("My Nationality");
+		}
 		
-		$("#existingPaternalNationalities").on("click", "a", function(){	
-			$(this).parent("div").remove();
+		if($('#existingCandidateNationalities').children().length == 1 ) {
 			
-			if ( $('#existingPaternalNationalities').children().length <= 1 ) {
-				$('#paternalNationalitiesLabel').remove();
-				$('#paternal-nationality-lb').html("Father's Nationality");
-			}
-		});
+			$('#my-hint').remove();
+			$('#my-nationality-hint').show();
+		}
+					
+	});
+	
+	$("#existingMaternalNationalities").on("click", "a", function(){	
+		$(this).parent("div").remove();
 		
-	}
+		if ( $('#existingMaternalNationalities').children().length <= 1 ) {
+			$('#maternalNationalitiesLabel').remove();
+			$('#maternal-nationality-lb').html("Mother's Nationality");
+		}
+	});
+	
+	$("#existingPaternalNationalities").on("click", "a", function(){	
+		$(this).parent("div").remove();
+		
+		if ( $('#existingPaternalNationalities').children().length <= 1 ) {
+			$('#paternalNationalitiesLabel').remove();
+			$('#paternal-nationality-lb').html("Father's Nationality");
+		}
+	});
+		
+	
 	
 	bindDatePicker('#dateOfBirth');
 	addToolTips();

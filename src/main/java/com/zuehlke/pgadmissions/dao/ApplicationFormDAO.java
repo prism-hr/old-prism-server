@@ -75,7 +75,7 @@ public class ApplicationFormDAO {
 				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 
 		DetachedCriteria overDueRemindersCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", notificationType)).add(Restrictions.lt("notificationRecord.notificationDate", oneWeekAgo)).add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+				.add(Restrictions.eq("notificationType", notificationType)).add(Restrictions.lt("notificationRecord.date", oneWeekAgo)).add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 		
 
 		return (List<ApplicationForm>) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
@@ -97,8 +97,8 @@ public class ApplicationFormDAO {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
 				.createAlias("notificationRecords", "notificationRecord")
 				.add(Restrictions.eq("notificationRecord.notificationType", NotificationType.UPDATED_NOTIFICATION))
-				.add(Restrictions.lt("notificationRecord.notificationDate", twentyFourHoursAgo))
-				.add(Restrictions.ltProperty("notificationRecord.notificationDate", "lastUpdated"))
+				.add(Restrictions.lt("notificationRecord.date", twentyFourHoursAgo))
+				.add(Restrictions.ltProperty("notificationRecord.date", "lastUpdated"))
 				.list();
 		
 	}
@@ -118,7 +118,7 @@ public class ApplicationFormDAO {
 		
 		DetachedCriteria reviewEventsCriteria = DetachedCriteria.forClass(Event.class, "event")
 				.add(Restrictions.eq("newStatus", newStatus))
-				.add(Restrictions.or(Subqueries.notExists(notificationCriteriaOne.setProjection(Projections.property("notificationRecord.id"))), Subqueries.propertyGt("eventDate", notificationCriteriaTwo.setProjection(Projections.max("notificationRecord.notificationDate")))))
+				.add(Restrictions.or(Subqueries.notExists(notificationCriteriaOne.setProjection(Projections.property("notificationRecord.id"))), Subqueries.propertyGt("date", notificationCriteriaTwo.setProjection(Projections.max("notificationRecord.date")))))
 				.add(Property.forName("event.application").eqProperty("applicationForm.id"));
 		
 		

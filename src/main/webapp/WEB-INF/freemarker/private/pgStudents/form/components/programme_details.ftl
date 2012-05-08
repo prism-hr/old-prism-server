@@ -45,9 +45,10 @@
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.programme'/>"></span>
                 <div class="field">
                 	<input class="full" id="programmeName" name="programmeName" type="text" value="${(applicationForm.program.title?html)!}" disabled="disabled" />
-                	<@spring.bind "programmeDetails.programmeName" /> 
+                	 
                 </div>
 			</div>
+			<@spring.bind "programmeDetails.programmeName" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -75,13 +76,13 @@
                           >${studyOption.freeVal}</option>               
                     </#list>
                   	</select>     
-                  	<@spring.bind "programmeDetails.studyOption" /> 
+                  	
                 	<#if studyOptionError?? && studyOptionError=='true'>
                 		 <span class="invalid"><@spring.message  'programmeDetails.studyOption.invalid'/></span>
                 	</#if>
                 </div>
 			</div>
-
+				<@spring.bind "programmeDetails.studyOption" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -110,9 +111,10 @@
                     	disabled="disabled"
                     </#if>>
                 	</input> 
-                	<@spring.bind "programmeDetails.startDate" /> 
+                	 
                 </div>
             </div>
+            <@spring.bind "programmeDetails.startDate" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -139,10 +141,10 @@
                           >${referrer.freeVal}</option>               
                     </#list>
                     </select>    
-                   <@spring.bind "programmeDetails.referrer" /> 
+                   
                 </div>
 			</div>
-			
+			<@spring.bind "programmeDetails.referrer" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">

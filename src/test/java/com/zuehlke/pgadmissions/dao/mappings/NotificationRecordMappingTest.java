@@ -39,7 +39,7 @@ public class NotificationRecordMappingTest extends AutomaticRollbackTestCase {
 		assertNotSame(notificationRecord, reloadedNotificationRecord);
 		assertEquals(notificationRecord, reloadedNotificationRecord);
 		
-		assertEquals(notificationDate.getTime(), reloadedNotificationRecord.getNotificationDate().getTime());
+		assertEquals(notificationDate.getTime(), reloadedNotificationRecord.getDate().getTime());
 		assertEquals(validationReminder, reloadedNotificationRecord.getNotificationType());
 		
 	}

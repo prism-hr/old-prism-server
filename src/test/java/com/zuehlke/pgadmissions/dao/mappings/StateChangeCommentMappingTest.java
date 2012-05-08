@@ -63,7 +63,7 @@ public class StateChangeCommentMappingTest extends AutomaticRollbackTestCase {
 		assertEquals("This is a validationComment", reloadedComment.getComment());
 		assertEquals(CommentType.REVIEW_EVALUATION, reloadedComment.getType());
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE),
-				DateUtils.truncate(reloadedComment.getCreatedTimestamp(), Calendar.DATE));
+				DateUtils.truncate(reloadedComment.getDate(), Calendar.DATE));
 
 	}
 

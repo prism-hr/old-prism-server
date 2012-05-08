@@ -92,7 +92,7 @@ public class SubmitApplicationFormControllerTest {
 		assertEquals(DateUtils.truncate(DateUtils.addDays(new Date(), 8), Calendar.DATE), applicationForm.getDueDate());
 		assertEquals(2, applicationForm.getEvents().size());
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getEvents().get(1).getNewStatus());
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(1).getEventDate(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(1).getDate(), Calendar.DATE));
 		
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getSubmittedDate(), Calendar.DATE));
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));		

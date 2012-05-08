@@ -355,7 +355,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 				visibleComments.add(comment);
 			}
 		}
-
+		Collections.sort(visibleComments);
 		return visibleComments;
 	}
 

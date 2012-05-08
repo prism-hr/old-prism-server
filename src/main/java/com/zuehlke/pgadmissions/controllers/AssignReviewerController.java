@@ -193,14 +193,7 @@ public class AssignReviewerController {
 		}
 	}
 
-	private String createErrorMessage(BindingResult bindingResult) {
-		List<ObjectError> errors = bindingResult.getAllErrors();
-		List<String> errorMessages = new ArrayList<String>();
-		for (ObjectError objectError : errors) {
-			errorMessages.add(objectError.getDefaultMessage());
-		}
-		return StringUtils.join(errorMessages, "\n");
-	}
+	
 
 	private String getMessage(String code, Object... args) {
 		return messageSource.getMessage(code, args, null);

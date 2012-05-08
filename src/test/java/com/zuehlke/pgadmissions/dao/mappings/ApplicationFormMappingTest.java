@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
@@ -41,6 +42,7 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
@@ -51,6 +53,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 	private RegisteredUser user;
 	private Program program;
+	private RegisteredUser reviewerUser;
 
 	@Test
 	public void shouldSaveAndLoadApplicationForm() throws ParseException {
@@ -143,6 +146,29 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		Assert.assertTrue(reloadedApplication.getReviewerUsers().contains(user));
 	}
 
+	@Test
+	public void shouldSaveLoadApplicationFormWithReviewer() {
+		
+		ApplicationForm application = new ApplicationForm();
+		application.setProgram(program);
+		application.setApplicant(user);
+		
+		application.getReviewers().add(new ReviewerBuilder().user(reviewerUser).toReviewer());
+
+		sessionFactory.getCurrentSession().save(application);
+
+		flushAndClearSession();
+
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertNotSame(application, reloadedApplication);
+		assertEquals(application, reloadedApplication);
+		
+		Assert.assertEquals(1, reloadedApplication.getReviewers().size());
+		Reviewer reviewer = reloadedApplication.getReviewers().get(0);
+		assertEquals(reviewerUser,reviewer.getUser());
+		assertEquals(reloadedApplication, reviewer.getApplication());
+		
+	}
 	@Test
 	public void shouldSaveAndLoadApplicationFormWithAddress() {
 		ApplicationForm application = new ApplicationForm();
@@ -306,10 +332,13 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		
+		reviewerUser = new RegisteredUserBuilder().firstName("hanna").lastName("hoopla").email("hoopla@test.com").username("hoopla").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
 		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
 
-		save(user, program);
+		save(user, reviewerUser, program);
 
 		flushAndClearSession();
 	}

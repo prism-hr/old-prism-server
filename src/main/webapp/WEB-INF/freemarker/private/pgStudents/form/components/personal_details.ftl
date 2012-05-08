@@ -105,10 +105,11 @@
 								/> ${gender.displayValue}</label>
 											 
 						</#list>          		
-            			<@spring.bind "personalDetails.gender" /> 
+            			
                 		 
 					</div>
 				</div>
+				<@spring.bind "personalDetails.gender" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -123,12 +124,13 @@
 					<div class="field">
 					<#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>
 						<input class="half date" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>
-						<@spring.bind "personalDetails.dateOfBirth" /> 
+						
 					<#else>
 						<input class="full" readonly="readonly" type="text" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
 					</#if>    
 					</div>               
 				</div>
+				<@spring.bind "personalDetails.dateOfBirth" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -158,11 +160,11 @@
                           >${country.name}</option>               
                     	</#list>
                  	 	</select>
-						<@spring.bind "personalDetails.country" /> 
+						
                 			
                	 	</div>
               	</div>
-              	
+              	<@spring.bind "personalDetails.country" /> 
               	<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -204,9 +206,10 @@
 							  <option value="${country.id?string('#######')}">${country.name}</option>               
 						 </#list>
 						 </select>             	 
-						<@spring.bind "personalDetails.candidateNationalities" /> 
+						 
 					 </div>
             	</div>
+            	<@spring.bind "personalDetails.candidateNationalities" />
             	<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -334,9 +337,9 @@
 								  >${country.name}</option>               
 								</#list>
 						 </select>
-						<@spring.bind "personalDetails.residenceCountry" /> 
+						
 					</div>
-					
+					<@spring.bind "personalDetails.residenceCountry" /> 
 					<#list spring.status.errorMessages as error>
 						<div class="row">
 							<div class="field">
@@ -382,13 +385,13 @@
                 	<div class="field">                    	
                 		<#if !applicationForm.isDecided()  && !applicationForm.isWithdrawn()>
                 			<input class="full" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone"/>
-						<@spring.bind "personalDetails.phoneNumber" /> 
+						 
                 		<#else>
                 			<input class="full" readonly="readonly" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone" />	          
                 		</#if>
                 	</div>
             	</div>
-            	
+            	<@spring.bind "personalDetails.phoneNumber" />
             	<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -429,9 +432,10 @@
                           >${ethnicity.name}</option>               
                     	</#list>
                  	 	</select>
-						<@spring.bind "personalDetails.ethnicity" /> 
+						
                	 	</div>
               	</div>
+              	<@spring.bind "personalDetails.ethnicity" /> 
               	<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -454,9 +458,10 @@
                           >${disability.name}</option>               
                     	</#list>
                  	 	</select>
-						<@spring.bind "personalDetails.disability" /> 
+						 
                	 	</div>
               	</div>
+              	<@spring.bind "personalDetails.disability" />
               	<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">

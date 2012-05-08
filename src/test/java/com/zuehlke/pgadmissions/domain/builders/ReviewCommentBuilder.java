@@ -70,7 +70,7 @@ public class ReviewCommentBuilder {
 		reviewComment.setApplication(applicationForm);
 		reviewComment.setComment(comment);
 		reviewComment.setType(commentType);
-		reviewComment.setCreatedTimestamp(createdTimeStamp);
+		reviewComment.setDate(createdTimeStamp);
 		reviewComment.setDecline(decline);
 		reviewComment.setId(id);
 		reviewComment.setSuitableCandidate(suitableCandidate);

@@ -89,30 +89,7 @@
 			      <div class="content-box">
 			        <div class="content-box-inner">
 			
-						<div id="programme-details">
-			          
-				          	<div class="row">
-				            	<label>Programme</label>
-				                ${applicationForm.program.code} - ${applicationForm.program.title}
-				            </div>
-				            
-				          	<div class="row">
-				            	<label>Application Number</label>
-				                ${applicationForm.id?string("######")}
-				            </div>
-				            
-				              <#if applicationForm.isSubmitted()>
-						          	<div class="row">
-						            	<label>Date Submitted</label>
-						                ${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}
-						            </div>
-						     </#if>
-				        <!--    
-				            <#include "/private/staff/application/parts/supervisor_info.ftl"/>
-				            -->
-			          	</div>
-			          
-			          <hr />
+				 	 <#include "/private/common/parts/application_info.ftl"/>
 			
 					  <!-- Programme -->
 					  <section id="programmeDetailsSection" class="folding violet">

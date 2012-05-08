@@ -109,24 +109,6 @@ public class ApplicationFormTest {
 		assertTrue(applicationForm.getVisibleComments(user).isEmpty());
 	}
 
-	@Test
-	public void shouldSeeAllCommentsOrderedByTime() throws ParseException{
-		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-		RegisteredUser user = new RegisteredUserBuilder().id(6).toUser();
-		Program program = new ProgramBuilder().id(5).administrators(user).toProgram();
-		Comment commentOne = new CommentBuilder().createdTimeStamp(format.parse("01 01 2011")).id(4).toComment();
-		Comment commentTwo = new CommentBuilder().createdTimeStamp(format.parse("01 10 2011")).id(6).toComment();
-		Comment commentThree = new CommentBuilder().createdTimeStamp(format.parse("01 05 2011")).id(9).toComment();
-		Comment commentFour = new CommentBuilder().id(5).toComment();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).comments(commentOne, commentTwo, commentThree, commentFour).toApplicationForm();
-		
-		List<Comment> visibleComments = applicationForm.getVisibleComments(user);
-		assertEquals(4, visibleComments.size());
-		assertEquals(commentTwo, visibleComments.get(0));
-		assertEquals(commentThree, visibleComments.get(1));
-		assertEquals(commentOne, visibleComments.get(2));
-		assertEquals(commentFour, visibleComments.get(3));
-	}
 
 	
 	@Test
@@ -135,9 +117,9 @@ public class ApplicationFormTest {
 		RegisteredUser reviewerOne = new RegisteredUserBuilder().id(6).toUser();
 		RegisteredUser reviewerTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).id(7).toUser();
 		
-		Comment commentOne = new CommentBuilder().createdTimeStamp(format.parse("01 01 2011")).id(4).user(reviewerTwo).toComment();
-		Comment commentTwo = new CommentBuilder().createdTimeStamp(format.parse("01 10 2011")).id(6).user(reviewerOne).toComment();
-		Comment commentThree = new CommentBuilder().createdTimeStamp(format.parse("01 05 2011")).id(9).user(reviewerTwo).toComment();
+		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerTwo).toComment();
+		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerOne).toComment();
+		Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerTwo).toComment();
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewerOne, reviewerTwo).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
 		
@@ -153,9 +135,9 @@ public class ApplicationFormTest {
 		RegisteredUser reviewerOne = new RegisteredUserBuilder().id(6).toUser();
 		RegisteredUser reviewerTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(7).toUser();
 		
-		Comment commentOne = new CommentBuilder().createdTimeStamp(format.parse("01 01 2011")).id(4).user(reviewerTwo).toComment();
-		Comment commentTwo = new CommentBuilder().createdTimeStamp(format.parse("01 10 2011")).id(6).user(reviewerOne).toComment();
-		Comment commentThree = new CommentBuilder().createdTimeStamp(format.parse("01 05 2011")).id(9).user(reviewerTwo).toComment();
+		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerTwo).toComment();
+		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerOne).toComment();
+		Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerTwo).toComment();
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewerOne, reviewerTwo).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
 		
@@ -172,7 +154,7 @@ public class ApplicationFormTest {
 		assertEquals(2, applicationForm.getEvents().size());
 		assertEquals(ApplicationFormStatus.UNSUBMITTED, applicationForm.getEvents().get(0).getNewStatus());
 		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getEvents().get(1).getNewStatus());
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(0).getEventDate(), Calendar.DATE));		
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(0).getDate(), Calendar.DATE));		
 		
 	}
 	

@@ -1,20 +1,52 @@
+<#import "/spring.ftl" as spring />
+<!-- Styles for Application List Page -->
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/timeline.css' />"/>
+
+
  <table>
+         	<colgroup>
+              	<col style="width: 100px" />
+              	<col style="width: 100px" />
+              	<col style="width: 100px" />
+              	<col style="width: 200px" />
+              	<col />          
+              	<col />
+              	<col  />
+        	</colgroup>
+	 <thead>
+	 	<tr>
+	 		<th>Author</th>
+	 		<th>Date</th>	 		
+	 		<th>Type</th>
+	 		<th>Comment</th>
+	 		<th/>
+	 		<th/>
+	 		<th/>
+	 	</tr>
+ 	</thead>
+ <#list timelineEntities as timelineEntity>
  	<tr>
- 		<th>Author</th>
- 		<th>Date</th>
- 		<th>Comment</th>
- 		<th>Type</th>
- 	</tr>
- <#list comments as comment>
- 	<tr>
- 		<td>${(comment.user.firstName)!} ${(comment.user.lastName)!}</td>
- 		<td>${(comment.createdTimestamp?string('dd-MMM-yyyy hh:mm a'))!}</td>
- 		<td>${(comment.comment?html)!}</td>
- 		<td>${(comment.type?html)!}</td>
- 		<#if comment.type?? && comment.type ==  "REVIEW">
- 			<td>Supervise: ${(comment.willingToSupervice.displayValue()?html)!}</td>
- 			<td>Suitable: ${(comment.suitableCandidate.displayValue()?html)!}</td>
- 			<td>Decline: ${(comment.decline.displayValue()?html)!}</td>
+ 		<td>${(timelineEntity.user.firstName)!} ${(timelineEntity.user.lastName)!}</td>
+ 		
+ 		<td>${(timelineEntity.date?string('d/M/yy HH:mm'))!}</td>
+ 		
+ 		
+ 		<td>${(timelineEntity.type?html)!}</td>
+ 		<#if timelineEntity.newStatus?? >
+ 		<td>Application entered ${timelineEntity.newStatus.displayValue()}</td>
+ 		<#else>
+ 		<td>${(timelineEntity.comment?html)!}</td>
+ 		</#if>
+ 		
+ 		<#if timelineEntity.type?? && timelineEntity.type ==  "REVIEW">
+ 			<td>Supervise: ${(timelineEntity.willingToSupervice.displayValue()?html)!}</td>
+ 			<td>Suitable: ${(timelineEntity.suitableCandidate.displayValue()?html)!}</td>
+ 			<td>Decline: ${(timelineEntity.decline.displayValue()?html)!}</td>
+		<#else>
+		<td/>
+		<td/>
+		<td/> 			
  		</#if>
 	</tr>	 
 </#list>

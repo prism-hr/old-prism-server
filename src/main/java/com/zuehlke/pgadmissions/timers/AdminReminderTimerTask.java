@@ -58,7 +58,7 @@ public class AdminReminderTimerTask extends TimerTask {
 					notificationRecord = new NotificationRecord(notificationType);
 					application.getNotificationRecords().add(notificationRecord);
 				}
-				notificationRecord.setNotificationDate(new Date());
+				notificationRecord.setDate(new Date());
 				applicationFormDAO.save(application);
 				transaction.commit();
 				log.info(status + " reminders send to " + application.getId());

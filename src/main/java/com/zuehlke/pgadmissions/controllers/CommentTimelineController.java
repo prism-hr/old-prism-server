@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.TimelineEntity;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -47,14 +49,20 @@ public class CommentTimelineController {
 		return applicationForm;
 	}
 
-	@ModelAttribute("comments")
-	public List<Comment> getComments(@RequestParam Integer id) {
-		return getApplicationForm(id).getVisibleComments(userService.getCurrentUser());
-	}
 
 	@RequestMapping(value = { "/view" }, method = RequestMethod.GET)
 	public String getCommentsView() {
 		return COMMENTS_VIEW;
+	}
+
+
+	@ModelAttribute("timelineEntities")
+	public List<TimelineEntity> getSortedTimelineList(@RequestParam Integer id) {
+		List<TimelineEntity> timelineList = new ArrayList<TimelineEntity>();
+		timelineList.addAll(getApplicationForm(id).getVisibleComments(userService.getCurrentUser()));
+		timelineList.addAll(getApplicationForm(id).getEvents());
+		Collections.sort(timelineList);
+		return timelineList;
 	}
 
 }

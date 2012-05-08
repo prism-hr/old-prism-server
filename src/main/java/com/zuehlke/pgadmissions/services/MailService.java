@@ -47,7 +47,7 @@ public class MailService {
 			notificationRecord.setNotificationType(NotificationType.UPDATED_NOTIFICATION);
 			form.getNotificationRecords().add(notificationRecord);
 		}
-		notificationRecord.setNotificationDate(new Date());
+		notificationRecord.setDate(new Date());
 		applicationsService.save(form);
 	}
 

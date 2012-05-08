@@ -52,36 +52,40 @@
 				      <!-- content box -->				      
 				      <div class="content-box">
 				        <div class="content-box-inner">
+				         <#include "/private/common/parts/application_info.ftl"/>
 				       	 <!--	if user is reviewer in program and haven't already declined-->	
 				       	 	<#if !user.hasRespondedToProvideReviewForApplication(applicationForm)  >			        		
 							
-							    <h1>Add review feedback for application ${(applicationForm.id?string('#####'))!}</h1>
+							    <h1>Review feedback</h1>
 							    <br/><br/>
 							     <form>
 							   
 							    	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 			            			<div class="row">
-										<label class="plain-label">Decline<em>*</em></label>
+										<label class="plain-label">Decline</label>
 										<div class="field">        
 	           								<input type="checkbox" name="declineCB" id="declineCB"/>
 	           								<input type="hidden" name="declineValue" id="declineValue"/>
 	   								 	</div>
-	   								 
-			            				<span id="comment-lbl" class="plain-label">Comment<em>*</em></span>
+	   								 </div>
+	   								<div class="row"> 
+			           					<span id="comment-lbl" class="plain-label">Comment<em>*</em></span>
 			            				<div class="field">		            				
 			            					<textarea name="comment" id="review-comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 			            					<@spring.bind "comment.comment" /> 
 	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 			            				</div>
-	
-			            			<span id="supervise-lbl" class="plain-label">Willing to supervise?<em>*</em></span>
+									</div>
+	   								<div class="row">
+			            				<span id="supervise-lbl" class="plain-label">Willing to supervise?<em>*</em></span>
 										<div class="field">
 											<label><input type="radio"   name="willingRB" value="TRUE" id="willingRB_true"/> Yes</label> 
 											<label><input type="radio"  name="willingRB" value="FALSE" id="willingRB_false"/> No</label> 
 											<@spring.bind "comment.willingToSupervice" /> 
 	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
-			    					
+			    					</div>
+	   								<div class="row">
 			    					<span id="suitable-lbl" class="plain-label">Is candidate suitable for UCL?<em>*</em></span>
 										<div class="field">
 											<label><input type="radio"  name="suitableRB" value="TRUE" id="suitableRB_true"/> Yes</label> 
@@ -89,9 +93,9 @@
 											<@spring.bind "comment.suitableCandidate" /> 
 	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
-									
+									</div>
+	   				
 			    
-			            			</div>
 			            			<div class="buttons">						        		
 			            				<button type="button" id="cancelReviewBtn" value="cancel">Cancel</button>
 							       		<button class="blue" id="submitReviewFeedback" type="button" value="Submit">Submit</button>						        

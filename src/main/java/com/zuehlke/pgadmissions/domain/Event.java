@@ -19,14 +19,14 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Entity(name = "EVENT")
 @Access(AccessType.FIELD)
-public class Event extends DomainObject<Integer> {
+public class Event extends TimelineEntity {
 	
 
 	private static final long serialVersionUID = 3927731824429659338L;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "event_date")
-	private Date eventDate;
+	private Date date;
 	
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
 	@Column(name = "new_status")
@@ -49,12 +49,16 @@ public class Event extends DomainObject<Integer> {
 		return id;
 	}
 
-	public Date getEventDate() {
-		return eventDate;
+	/* (non-Javadoc)
+	 * @see com.zuehlke.pgadmissions.domain.TimelineEntity#getDate()
+	 */
+	@Override
+	public Date getDate() {
+		return date;
 	}
 
-	public void setEventDate(Date eventDate) {
-		this.eventDate = eventDate;
+	public void setDate(Date eventDate) {
+		this.date = eventDate;
 	}
 
 	public ApplicationFormStatus getNewStatus() {
@@ -72,6 +76,8 @@ public class Event extends DomainObject<Integer> {
 	public void setApplication(ApplicationForm application) {
 		this.application = application;
 	}
+
+	
 
 
 }

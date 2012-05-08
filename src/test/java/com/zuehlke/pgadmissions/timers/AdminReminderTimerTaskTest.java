@@ -75,9 +75,9 @@ public class AdminReminderTimerTaskTest {
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, adminMailSenderMock, applicationFormDAOMock);
 
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
-				DateUtils.truncate(applicationFormOne.getNotificationForType(NotificationType.VALIDATION_REMINDER).getNotificationDate(), Calendar.DATE));
+				DateUtils.truncate(applicationFormOne.getNotificationForType(NotificationType.VALIDATION_REMINDER).getDate(), Calendar.DATE));
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
-				DateUtils.truncate(applicationFormTwo.getNotificationForType(NotificationType.VALIDATION_REMINDER).getNotificationDate(), Calendar.DATE));
+				DateUtils.truncate(applicationFormTwo.getNotificationForType(NotificationType.VALIDATION_REMINDER).getDate(), Calendar.DATE));
 	}
 
 	@Test
@@ -113,7 +113,7 @@ public class AdminReminderTimerTaskTest {
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, adminMailSenderMock, applicationFormDAOMock);
 		assertNull(applicationFormOne.getNotificationForType(NotificationType.VALIDATION_REMINDER));
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(
-				applicationFormTwo.getNotificationForType(NotificationType.VALIDATION_REMINDER).getNotificationDate(), Calendar.DATE));
+				applicationFormTwo.getNotificationForType(NotificationType.VALIDATION_REMINDER).getDate(), Calendar.DATE));
 	}
 
 	@Before

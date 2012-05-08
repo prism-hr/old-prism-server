@@ -52,12 +52,13 @@
 				      <!-- content box -->				      
 				      <div class="content-box">
 				        <div class="content-box-inner">
+							  <#include "/private/common/parts/application_info.ftl"/>
 				        		<input type="hidden" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 				        		
 				        		<#if applicationForm.isInState('VALIDATION')>
-							    	<h1>Validate application ${(applicationForm.id?string('#####'))!}</h1>
+							    	<h1>Validate application</h1>
 							    <#elseif applicationForm.isInState('REVIEW')>
-							    	<h1>Evaluate reviews for application ${(applicationForm.id?string('#####'))!}</h1>
+							    	<h1>Evaluate reviews</h1>
 							    </#if>
 							    <br/><br/>
 		            			<div class="row">

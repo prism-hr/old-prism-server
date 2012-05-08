@@ -73,10 +73,10 @@
                                 	<option value="${country.id?string('#######')}" <#if addressSectionDTO.currentAddressCountry?? && addressSectionDTO.currentAddressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
                             	</#list>
                             </select>
-                      	        	<@spring.bind "addressSectionDTO.currentAddressCountry" /> 
+                      	         
 						</div>
 					</div>
-					
+				<@spring.bind "addressSectionDTO.currentAddressCountry" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -122,7 +122,7 @@
                                           disabled="disabled"
                                 </#if>
                             >${(addressSectionDTO.contactAddressLocation?html)!}</textarea>
-                            	        	<@spring.bind "addressSectionDTO.contactAddressLocation" /> 
+                            	        	 
                           
                             <#else>
                                 <textarea readonly="readonly" id="contactAddressLocation" class="max" rows="6" cols="80"
@@ -133,7 +133,7 @@
                             </#if>
                         </div>
                     </div>
-                    
+                 <@spring.bind "addressSectionDTO.contactAddressLocation" /> 
                	<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -157,12 +157,12 @@
                                     <option value="${country.id?string('#######')}" <#if addressSectionDTO.contactAddressCountry?? && addressSectionDTO.contactAddressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
                                 </#list>
                             </select>            
-                            	        	<@spring.bind "addressSectionDTO.contactAddressCountry" /> 
+                            	        	 
                 				                    
                         </div>
                     </div>
                     
-                    
+                    <@spring.bind "addressSectionDTO.contactAddressCountry" />
 					<#list spring.status.errorMessages as error>
 						<div class="row">
 							<div class="field">

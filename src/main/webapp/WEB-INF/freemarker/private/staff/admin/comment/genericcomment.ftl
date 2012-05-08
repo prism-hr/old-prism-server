@@ -51,8 +51,11 @@
 				      <!-- content box -->				      
 				      <div class="content-box">
 				        <div class="content-box-inner">
+				         <#include "/private/common/parts/application_info.ftl"/>
+				        
+				        
 				       	 	<#if user.isInRoleInProgram('ADMINISTRATOR', applicationForm.program) >			        		
-							    <h1>Add comment for application ${(applicationForm.id?string('#####'))!}</h1>
+							    <h1>Add comment</h1>
 							    <br/><br/>
 							    <form method="POST" action= "<@spring.url '/comment'/>">
 							    	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>

@@ -63,6 +63,7 @@ public class MoteToReviewTempController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String moveToReview(@ModelAttribute ApplicationForm applicationForm) {
 		applicationForm.setStatus(ApplicationFormStatus.REVIEW);
+		applicationForm.getReviewers().addAll(applicationForm.getProgram().getReviewers());
 		applicationForm.setDueDate(DateUtils.truncate(DateUtils.addDays(new Date(), stageDurationDAO.getByStatus(ApplicationFormStatus.REVIEW).getDurationInDays()), Calendar.DATE));
 		applicationsService.save(applicationForm);
 		return "redirect:/applications";

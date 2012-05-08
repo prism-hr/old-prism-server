@@ -98,10 +98,11 @@
                          	>${type.displayValue}</option>               
                     	</#list>
                   	</select>
-            		<@spring.bind "funding.type" /> 
+     
                 	
 				</div>
 			</div>
+			       		<@spring.bind "funding.type" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -117,7 +118,7 @@
 				<div class="field">
 			    <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>		
                 	<textarea id="fundingDescription" name="fundingDescription" class="max" cols="70" rows="6" maxlength='2000'>${(funding.description?html)!}</textarea>
-            		<@spring.bind "funding.description" /> 
+            		 
   
                   <#else>
                     <textarea id="fundingDescription" name="fundingDescription" class="full" readonly="readonly">${(funding.description?html)!}</textarea>
@@ -125,6 +126,7 @@
                 </div>
                 
 			</div>
+			<@spring.bind "funding.description" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -141,14 +143,14 @@
                 <div class="field">
                 <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${(funding.value?html)!}" />
-             		<@spring.bind "funding.value" /> 
+             	 
                 	     
                 <#else>
                    <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${(funding.value?html)!}" />
                 </#if>
                 </div>
 			</div>
-
+				<@spring.bind "funding.value" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -167,11 +169,11 @@
                                             disabled="disabled"
                                         </#if>>
                                 </input>
-              		<@spring.bind "funding.awardDate" /> 
+             
                 </div>
                 
             </div>
-          
+            		<@spring.bind "funding.awardDate" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -187,13 +189,14 @@
         		<div class="field" id="fundingUploadFields">        	
           			<input id="fundingDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="fundingUploadedDocument" ><input type="hidden" id="document_SUPPORTING_FUNDING" value = "${(funding.document.id?string('######'))!}"/>
-					 <@spring.bind "funding.document" /> 
+					
                 	  
 					<a href="<@spring.url '/download?documentId=${(funding.document.id?string("#######"))!}'/>">${(funding.document.fileName)!}</a></span>
 					<span id="fundingDocumentProgress" style="display: none;" ></span>					
         		</div>  
         		
       		</div>
+      		 	<@spring.bind "funding.document" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">

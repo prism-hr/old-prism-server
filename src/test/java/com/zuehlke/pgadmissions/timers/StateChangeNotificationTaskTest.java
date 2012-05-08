@@ -80,9 +80,9 @@ public class StateChangeNotificationTaskTest {
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
 
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
-				DateUtils.truncate(applicationFormOne.getNotificationForType(notificationType).getNotificationDate(), Calendar.DATE));
+				DateUtils.truncate(applicationFormOne.getNotificationForType(notificationType).getDate(), Calendar.DATE));
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
-				DateUtils.truncate(applicationFormTwo.getNotificationForType(notificationType).getNotificationDate(), Calendar.DATE));
+				DateUtils.truncate(applicationFormTwo.getNotificationForType(notificationType).getDate(), Calendar.DATE));
 	}
 
 	@Test
@@ -120,7 +120,7 @@ public class StateChangeNotificationTaskTest {
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, applicationMailSenderMock, applicationFormDAOMock);
 		assertNull(applicationFormOne.getNotificationForType(notificationType));
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE),
-				DateUtils.truncate(applicationFormTwo.getNotificationForType(notificationType).getNotificationDate(), Calendar.DATE));
+				DateUtils.truncate(applicationFormTwo.getNotificationForType(notificationType).getDate(), Calendar.DATE));
 	}
 
 	@Before

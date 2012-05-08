@@ -56,7 +56,7 @@ public class CommentMappingTest extends AutomaticRollbackTestCase{
 
 		assertEquals(reviewer, reloadedComment.getUser());
 		assertEquals("comment", reloadedComment.getComment());
-		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(reloadedComment.getCreatedTimestamp(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(reloadedComment.getDate(), Calendar.DATE));
 		
 	
 	}

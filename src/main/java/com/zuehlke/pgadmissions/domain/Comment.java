@@ -24,14 +24,14 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 @Entity(name="COMMENT")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Access(AccessType.FIELD) 
-public class Comment extends DomainObject<Integer>{
+public class Comment extends TimelineEntity {
 
 	private static final long serialVersionUID = 2861325991249900547L;
 
 	@Column(name = "created_timestamp", insertable = false)
 	@Generated(GenerationTime.INSERT)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdTimestamp;
+	private Date date;
 	
 	private String comment;
 	
@@ -70,8 +70,7 @@ public class Comment extends DomainObject<Integer>{
 	
 	@Override
 	public void setId(Integer id) {
-		this.id = id;
-		
+		this.id = id;		
 	}
 
 	@Override
@@ -82,17 +81,19 @@ public class Comment extends DomainObject<Integer>{
 		return id;
 	}
 
-	public Date getCreatedTimestamp() {
-		return createdTimestamp;
+	public Date getDate() {
+		return date;
 	}
 
-	public void setCreatedTimestamp(Date createdTimestamp) {
-		this.createdTimestamp = createdTimestamp;
+	public void setDate(Date createdTimestamp) {
+		this.date = createdTimestamp;
 	}
 
 	public CommentType getType() {
 		return CommentType.GENERIC;
 	}
+
+
 	
 
 }

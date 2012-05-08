@@ -16,6 +16,11 @@
 		<constructor-arg index="1" ref="mailSender" />
 	</bean>
 
+	<bean id="reviewerMailSender" class="com.zuehlke.pgadmissions.mail.ReviewerMailSender"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+	</bean>
 	<bean id="mailAdminMailSender" class="com.zuehlke.pgadmissions.mail.AdminMailSender"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
@@ -43,7 +48,10 @@
 		autowire-candidate="false">
 		<constructor-arg ref="sessionFactoryMail" />
 	</bean>
-
+	<bean id="mailReviewerDAO" class="com.zuehlke.pgadmissions.dao.ReviewerDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
 	<bean id="mailRoleDAO" class="com.zuehlke.pgadmissions.dao.RoleDAO"
 		autowire-candidate="false">
 		<constructor-arg ref="sessionFactoryMail" />
@@ -233,7 +241,18 @@
 		<property name="timerTask" ref="moveToReviewNotificationTimerTask" />
 	</bean>
 
+	<!-- reviewer notification -->
+	<bean id="reviewerNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.ReviewerNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="reviewerMailSender" />
+		<constructor-arg index="2" ref="mailReviewerDAO" />		
+	</bean>
 
+	<bean id="reviewerNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="3000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="reviewerNotificationTimerTask" />
+	</bean>
 
 	<!-- The main schedule -->
 	<bean class="org.springframework.scheduling.timer.TimerFactoryBean">
@@ -248,6 +267,7 @@
 				<ref bean="applicantSubmissionNotificationSchedule" />
 				<ref bean="adminReviewFeedbackNotificationSchedule" />
 				<ref bean="adminSubmissionNotificationSchedule"/>
+				<ref bean="reviewerNotificationSchedule"/>
 			</list>
 		</property>
 	</bean>

@@ -3,26 +3,16 @@ $(document).ready(function(){
 	$('#changeStateButton').click(
 		function(){
 			
-			if($('#status').val() == 'APPROVAL'){			
-				if(confirm("Are you sure you want to move this application to the approval stage?"))
-				{
-					saveComment(moveToApproval);					
-				}
-				
+			if($('#status').val() == 'APPROVAL'){						
+				saveComment(moveToApproval);					
 			}
 		
-			if($('#status').val() == 'REJECTED'){
-				if(confirm("Are you sure you want to reject this application?"))
-				{
-					saveComment(moveToRejected);
-				}
+			if($('#status').val() == 'REJECTED'){			
+				saveComment(moveToRejected);				
 			}
 			
-			if($('#status').val() == 'REVIEW'){
-				if(confirm("Are you sure you want to move this application to the review stage?"))
-				{
-					saveComment(moveToReview);
-				}
+			if($('#status').val() == 'REVIEW'){				
+				saveComment(moveToReview);
 			}
 			
 		});
@@ -58,7 +48,7 @@ function moveToApproval(data){
 }
 
 function moveToReview(data){
-	/*var application = $('#applicationId').val();
+	var application = $('#applicationId').val();
 	$.post(
 			"/pgadmissions/review",
 			{
@@ -68,9 +58,9 @@ function moveToReview(data){
 			function(data) {
 				window.location.href = "/pgadmissions/applications";
 			}
-		);*/
-	var application = $('#applicationId').val();
-	window.location.href = "/pgadmissions/assignReviewers?applicationId=" + application;
+		);
+	//var application = $('#applicationId').val();
+	//window.location.href = "/pgadmissions/assignReviewers?applicationId=" + application;
 }
 
 function moveToRejected(data){

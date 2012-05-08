@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -18,19 +19,22 @@ import javax.persistence.TemporalType;
 public class Reviewer extends DomainObject<Integer> {
 
 	private static final long serialVersionUID = 7813331086711135352L;
-	
+
+	@OneToOne(mappedBy = "reviewer")
+	private ReviewComment review;
+
 	@Column(name = "last_notified")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastNotified;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "registered_user_id")
 	private RegisteredUser user;
-	
+
 	@ManyToOne
-	@JoinColumn(name = "application_form_id")	
+	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application;
-	
+
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
@@ -66,6 +70,14 @@ public class Reviewer extends DomainObject<Integer> {
 
 	public void setLastNotified(Date lastNotified) {
 		this.lastNotified = lastNotified;
+	}
+
+	public ReviewComment getReview() {
+		return review;
+	}
+
+	public void setReview(ReviewComment review) {
+		this.review = review;
 	}
 
 }

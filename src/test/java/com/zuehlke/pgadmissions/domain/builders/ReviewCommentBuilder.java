@@ -6,6 +6,7 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -21,6 +22,12 @@ public class ReviewCommentBuilder {
 	private Date createdTimeStamp;
 	private RegisteredUser user;
 	private CommentType commentType;
+	private Reviewer reviewer;
+	
+	public ReviewCommentBuilder reviewer(Reviewer reviewer) {
+		this.reviewer = reviewer;
+		return this;
+	}
 	
 	public ReviewCommentBuilder willingToSupervice(CheckedStatus willingToSupervice) {
 		this.willingToSupervice = willingToSupervice;
@@ -77,6 +84,7 @@ public class ReviewCommentBuilder {
 		reviewComment.setUser(user);
 		reviewComment.setWillingToSupervice(willingToSupervice);
 		reviewComment.setAdminsNotified(adminsNotified);
+		reviewComment.setReviewer(reviewer);
 		return reviewComment;
 		
 	}

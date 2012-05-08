@@ -45,17 +45,6 @@ public class UserService {
 	}
 	
 
-	public List<RegisteredUser> getReviewersForApplication(ApplicationForm application){
-		List<RegisteredUser> users = userDAO.getAllUsers();
-		List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
-		for (RegisteredUser user : users) {
-			if (user.isInRole(Authority.REVIEWER) && !application.getReviewerUsers().contains(user)) {
-				reviewers.add(user);
-			}
-		}
-		
-		return reviewers;
-	}
 
 
 	public RegisteredUser getUser(Integer id) {

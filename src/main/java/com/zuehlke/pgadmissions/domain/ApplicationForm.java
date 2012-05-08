@@ -46,7 +46,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
 	private List<Event> events = new ArrayList<Event>();
-	
+
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
 	private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 
@@ -109,15 +109,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne(mappedBy = "application")
 	private ProgrammeDetails programmeDetails;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
-	private List<RegisteredUser> reviewerUsers = new ArrayList<RegisteredUser>();
-
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
 	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
-	
+
 	@OneToMany(mappedBy = "application")
 	private List<Comment> applicationComments = new ArrayList<Comment>();
 
@@ -152,7 +148,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.qualifications.clear();
 		this.qualifications.addAll(qualifications);
 	}
-
 
 	@Override
 	public void setId(Integer id) {
@@ -189,10 +184,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setApplicationTimestamp(Date applicationTimestamp) {
 		this.applicationTimestamp = applicationTimestamp;
-	}
-
-	public boolean isUnderReview() {
-		return !reviewerUsers.isEmpty();
 	}
 
 	public boolean isModifiable() {
@@ -349,7 +340,8 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 
 		for (Comment comment : applicationComments) {
-			if ( !user.isInRole(Authority.REVIEWER) || !reviewerUsers.contains(comment.getUser()) || comment.getUser().equals(user) ) {			
+			if (!user.isInRole(Authority.REVIEWER) || !comment.getUser().isReviewerOfApplicationForm(this) || comment.getUser().equals(user)) {
+
 				visibleComments.add(comment);
 			}
 		}
@@ -393,14 +385,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public void setStatus(ApplicationFormStatus status) {
-		
+
 		Event event = new Event();
 		event.setNewStatus(status);
 		event.setDate(new Date());
-		this.events.add(event);	
-	
+		this.events.add(event);
+
 		this.status = status;
-		
+
 	}
 
 	public boolean isInValidationStage() {
@@ -464,14 +456,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setReviewers(List<Reviewer> reviewers) {
 		this.reviewers = reviewers;
-	}
-
-	public List<RegisteredUser> getReviewerUsers() {
-		return reviewerUsers;
-	}
-
-	public void setReviewerUsers(List<RegisteredUser> reviewerUsers) {
-		this.reviewerUsers = reviewerUsers;
 	}
 
 	public List<Reviewer> getReviewers() {

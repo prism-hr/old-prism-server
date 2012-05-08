@@ -6,9 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Test;
 
@@ -19,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -83,7 +82,7 @@ public class RegisteredUserTest {
 		assertTrue(refereeUser.canSee(applicationForm));
 
 	}
-	
+
 	@Test
 	public void shouldReturnTrueIfUserIsRefereeOfTheApplicationFormButHasDeclined() {
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();
@@ -92,6 +91,7 @@ public class RegisteredUserTest {
 		assertFalse(refereeUser.canSee(applicationForm));
 
 	}
+
 	@Test
 	public void shouldReturnFalseIfUserIsRefereeOfButNotOnApplicationForm() {
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REFEREE).toRole()).toUser();
@@ -116,41 +116,45 @@ public class RegisteredUserTest {
 		assertTrue(administrator.canSee(applicationForm));
 
 	}
-	
+
 	@Test
 	public void shouldReturnTrueIfUserReviewerAndApplicationInReviewStage() {
-		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		reviewers.add(reviewer);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewers).status(ApplicationFormStatus.REVIEW).toApplicationForm();
-		assertTrue(reviewer.canSee(applicationForm));
-		
+
+		RegisteredUser revieweruser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(new ReviewerBuilder().user(revieweruser).toReviewer())
+				.status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		assertTrue(revieweruser.canSee(applicationForm));
+
 	}
-	
+
 	@Test
 	public void shouldReturnFalseIfUserApproverAndApplicationInValidateStage() {
 		Program program = new ProgramBuilder().id(1).toProgram();
-		RegisteredUser approver = new RegisteredUserBuilder().programsOfWhichApprover(program).roles(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).approver(approver).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		RegisteredUser approver = new RegisteredUserBuilder().programsOfWhichApprover(program)
+				.roles(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).approver(approver).status(ApplicationFormStatus.VALIDATION)
+				.toApplicationForm();
 		assertFalse(approver.canSee(applicationForm));
-		
+
 	}
+
 	@Test
 	public void shouldReturnTrueIfUserAdminAndApplicationInValidateStage() {
 		RegisteredUser administrator = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertTrue(administrator.canSee(applicationForm));
-		
+
 	}
 
 	@Test
-	public void shouldReturnTrueIfUserIsItsReviewer() {
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
-		reviewers.add(reviewer);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewers).status(ApplicationFormStatus.REVIEW).toApplicationForm();
-		assertTrue(reviewer.canSee(applicationForm));
+	public void shouldReturnTrueIfUserIsReviewerOfForm() {
+		RegisteredUser revieweruser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(new ReviewerBuilder().user(revieweruser).toReviewer())
+				.status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		assertTrue(revieweruser.canSee(applicationForm));
 
 	}
 
@@ -164,11 +168,10 @@ public class RegisteredUserTest {
 
 	@Test
 	public void shouldReturnFalseForAnyoneNotAnApplicantIfUnsubmittedApplication() {
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
-		reviewers.add(reviewer);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewers).toApplicationForm();
-		assertFalse(reviewer.canSee(applicationForm));
+		RegisteredUser revieweruser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(new ReviewerBuilder().user(revieweruser).toReviewer()).toApplicationForm();
+		assertFalse(revieweruser.canSee(applicationForm));
 	}
 
 	@Test
@@ -181,7 +184,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserIsItsApproverOfProgramToWhichApplicationBelongsAndApplicatioIsInApproval() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).approver(approver).toProgram();		
+		Program program = new ProgramBuilder().id(1).approver(approver).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertFalse(approver.canSee(applicationForm));
 		applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
@@ -193,40 +196,39 @@ public class RegisteredUserTest {
 	public void shouldReturnFalseIfUserIsNotApproverOfProgramToWhichApplicationBelongs() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
-	
+
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertFalse(approver.canSee(applicationForm));
 	}
 
-	
 	@Test
 	public void shouldReturnTrueIfUserIsReviewerTApplication() {
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).toProgram();
-		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewer).program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		assertTrue(reviewer.isReviewerOfApplicationForm(applicationForm));
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).toReviewer())
+				.status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertTrue(reviewerUser.isReviewerOfApplicationForm(applicationForm));
 	}
-	
+
 	@Test
 	public void shouldReturnFalseIfUserIsReviewerButNotInApplication() {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
-		
+
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertFalse(reviewer.isReviewerOfApplicationForm(applicationForm));
 	}
-	
-	
+
 	@Test
 	public void shouldReturnFalseIfUserIsApproverInApplication() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
-		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().approver(approver).program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().approver(approver).program(program).status(ApplicationFormStatus.VALIDATION)
+				.toApplicationForm();
 		assertFalse(approver.isReviewerOfApplicationForm(applicationForm));
 	}
-	
+
 	@Test
 	public void shouldReturnListOfAuthoritiesForProgram() {
 		Program program = new ProgramBuilder().id(1).toProgram();
@@ -334,184 +336,192 @@ public class RegisteredUserTest {
 		@SuppressWarnings("serial")
 		RegisteredUser user = new RegisteredUser() {
 			@Override
-			public boolean canSee(ApplicationForm application) {				
-				return false;				
+			public boolean canSee(ApplicationForm application) {
+				return false;
 			}
 		};
-		
+
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
 		Reference reference = new ReferenceBuilder().id(1).referee(referee).toReference();
 		assertFalse(user.canSeeReference(reference));
 	}
-	
+
 	@Test
 	public void shouldReturnTrueIfUserCanSeeFormAndIsNotReferee() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		@SuppressWarnings("serial")
 		RegisteredUser user = new RegisteredUser() {
 			@Override
-			public boolean canSee(ApplicationForm application) {				
-				return true;				
+			public boolean canSee(ApplicationForm application) {
+				return true;
 			}
+
 			@Override
 			public boolean isRefereeOfApplicationForm(ApplicationForm form) {
 				return false;
 			}
 		};
-		
+
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
 		Reference reference = new ReferenceBuilder().id(1).referee(referee).toReference();
 		assertTrue(user.canSeeReference(reference));
 	}
-	
+
 	@Test
 	public void shouldReturnFalseIfUserIsRefereeAndNotUploadingReferee() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		@SuppressWarnings("serial")
-		RegisteredUser user = new RegisteredUser() {		
+		RegisteredUser user = new RegisteredUser() {
 			@Override
 			public boolean isRefereeOfApplicationForm(ApplicationForm form) {
 				return true;
 			}
-			 
+
 		};
-		
+
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).user(new RegisteredUserBuilder().id(8).toUser()).toReferee();
 		Reference reference = new ReferenceBuilder().id(1).referee(referee).toReference();
 		assertFalse(user.canSeeReference(reference));
 	}
-	
+
 	@Test
 	public void shouldReturnTrueIfUserIsRefereeAndUploadingReferee() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		@SuppressWarnings("serial")
-		RegisteredUser user = new RegisteredUser() {		
+		RegisteredUser user = new RegisteredUser() {
 			@Override
 			public boolean isRefereeOfApplicationForm(ApplicationForm form) {
 				return true;
 			}
+
 			@Override
-			public boolean canSee(ApplicationForm application) {				
-				return true;				
+			public boolean canSee(ApplicationForm application) {
+				return true;
 			}
-			 
+
 		};
 		user.setId(1);
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).user(user).toReferee();
 		Reference reference = new ReferenceBuilder().id(1).referee(referee).toReference();
 		assertTrue(user.canSeeReference(reference));
 	}
-	
+
 	@Test
-	public void shouldReturnRefereeForApplicationForm(){
-		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();	
+	public void shouldReturnRefereeForApplicationForm() {
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
 		Referee refereeOne = new RefereeBuilder().id(7).user(user).application(applicationForm).toReferee();
-		Referee refereeTwo = new RefereeBuilder().id(8).user(new RegisteredUserBuilder().id(9).toUser()).application(new ApplicationFormBuilder().id(78).toApplicationForm()).toReferee();
+		Referee refereeTwo = new RefereeBuilder().id(8).user(new RegisteredUserBuilder().id(9).toUser())
+				.application(new ApplicationFormBuilder().id(78).toApplicationForm()).toReferee();
 		user.setReferees(Arrays.asList(refereeOne, refereeTwo));
 		Referee referee = user.getRefereeForApplicationForm(applicationForm);
 		assertEquals(refereeOne, referee);
 	}
-	
+
 	@Test
-	public void shouldReturnNullIfNotRefereeForApplicationForm(){
-		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();	
+	public void shouldReturnNullIfNotRefereeForApplicationForm() {
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
 		assertNull(user.getRefereeForApplicationForm(applicationForm));
 	}
-	
+
 	@Test
-	public void shouldReturnNullIfDeclinedToRefereeForApplicationForm(){
-		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();	
+	public void shouldReturnNullIfDeclinedToRefereeForApplicationForm() {
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
 		Referee refereeOne = new RefereeBuilder().id(7).user(user).declined(true).application(applicationForm).toReferee();
-		Referee refereeTwo = new RefereeBuilder().id(8).user(new RegisteredUserBuilder().id(9).toUser()).application(new ApplicationFormBuilder().id(78).toApplicationForm()).toReferee();
+		Referee refereeTwo = new RefereeBuilder().id(8).user(new RegisteredUserBuilder().id(9).toUser())
+				.application(new ApplicationFormBuilder().id(78).toApplicationForm()).toReferee();
 		user.setReferees(Arrays.asList(refereeOne, refereeTwo));
 		assertNull(user.getRefereeForApplicationForm(applicationForm));
 	}
-	
+
 	@Test
-	public void shouldReturnTrueIfUserIsReviewerOfApplicationAndHasDeclinedToProvideReview(){
-	
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+	public void shouldReturnTrueIfUserIsReviewerOfApplicationAndHasDeclinedToProvideReview() {
+
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com")
+				.toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).id(1).toApplicationForm();
-	
+
 		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.YES).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.YES).comment("This is a review comment")
+				.commentType(CommentType.REVIEW).toReviewComment();
 		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").toComment();
-	
-		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+
+		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment)
+				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).username("email").firstName("bob").lastName("bobson")
+				.email("email@test.com").toUser();
 		assertTrue(reviewer.hasDeclinedToProvideReviewForApplication(application));
 	}
-	
+
 	@Test
-	public void shouldReturnFalseIfUserIsReviewerOfApplicationButHasNotDeclinedToProvideReview(){
-		
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+	public void shouldReturnFalseIfUserIsReviewerOfApplicationButHasNotDeclinedToProvideReview() {
+
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com")
+				.toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).id(1).toApplicationForm();
-		
+
 		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.NO).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.NO).comment("This is a review comment")
+				.commentType(CommentType.REVIEW).toReviewComment();
 		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").toComment();
-		
-		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+
+		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment)
+				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).username("email").firstName("bob").lastName("bobson")
+				.email("email@test.com").toUser();
 		assertFalse(reviewer.hasDeclinedToProvideReviewForApplication(application));
 	}
-	
-	
 
-
-	
 	@Test
-	public void shouldReturnTrueIfUserIsReviewerOfApplicationAndHasProvidedReview(){
-	
-		
+	public void shouldReturnTrueIfUserIsReviewerOfApplicationAndHasProvidedReview() {
+
 		Program program = new ProgramBuilder().id(1).toProgram();
 		ApplicationForm application = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
-	
+
 		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.NO).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.NO).comment("This is a review comment")
+				.commentType(CommentType.REVIEW).toReviewComment();
 		Comment comment1 = new CommentBuilder().id(3).application(application).comment("This is another generic Comment").toComment();
-	
-		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+
+		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment)
+				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		assertTrue(reviewer.hasRespondedToProvideReviewForApplication(application));
 	}
-	
+
 	@Test
-	public void shouldReturnFalseIfUserIsReviewerOfApplicationButHasNotProvidedReview(){
-		
-		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+	public void shouldReturnFalseIfUserIsReviewerOfApplicationButHasNotProvidedReview() {
+
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com")
+				.toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).id(1).toApplicationForm();
-		
-		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();	
+
+		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
 		Comment comment1 = new CommentBuilder().id(3).application(application).comment("This is another generic Comment").toComment();
-		
-		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();
+
+		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment)
+				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).username("email").firstName("bob").lastName("bobson")
+				.email("email@test.com").toUser();
 		assertFalse(reviewer.hasRespondedToProvideReviewForApplication(application));
 	}
-	
+
 	@Test
-	public void shouldReturnFalseIfUserIsReviewerButNotForThisInApplication(){
-		
-		
+	public void shouldReturnFalseIfUserIsReviewerButNotForThisInApplication() {
+
 		Program program = new ProgramBuilder().id(1).toProgram();
 		ApplicationForm application1 = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
 		ApplicationForm application2 = new ApplicationFormBuilder().program(program).id(2).toApplicationForm();
-		
+
 		Comment comment = new CommentBuilder().id(1).application(application1).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application2).id(2).decline(CheckedStatus.NO).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application2).id(2).decline(CheckedStatus.NO).comment("This is a review comment")
+				.commentType(CommentType.REVIEW).toReviewComment();
 		Comment comment1 = new CommentBuilder().id(3).application(application1).comment("This is another generic Comment").toComment();
-		
-		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+
+		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment)
+				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		assertFalse(reviewer.hasRespondedToProvideReviewForApplication(application1));
 	}
-	
-	
 
-	
-
-	
 }

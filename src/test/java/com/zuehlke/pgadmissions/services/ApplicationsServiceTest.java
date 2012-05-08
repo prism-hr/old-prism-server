@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -46,7 +47,6 @@ public class ApplicationsServiceTest {
 		Assert.assertEquals(1, visibleApplications.size());
 	}
 
-	
 	@Test
 	public void shouldGetAllApplicationsDueAndUpdatedNotificationToAdmin() {
 		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2)
@@ -56,17 +56,17 @@ public class ApplicationsServiceTest {
 		List<ApplicationForm> appsDueUpdateNotification = applicationsService.getApplicationsDueUpdateNotification();
 		assertSame(applicationsList, appsDueUpdateNotification);
 	}
-	
+
 	@Test
 	public void shouldGetListOfApplicationsForAssignedReviewer() {
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole())
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(2).username("tom").roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole())
 				.toUser();
-		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
-		reviewers.add(reviewer);
-		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).reviewerUsers(reviewers).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+
+		ApplicationForm underReviewForm = new ApplicationFormBuilder().id(1).reviewers(new ReviewerBuilder().user(reviewerUser).toReviewer())
+				.status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getAllApplications()).andReturn(Arrays.asList(underReviewForm));
 		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(reviewer);
+		List<ApplicationForm> visibleApplications = applicationsService.getVisibleApplications(reviewerUser);
 		Assert.assertEquals(1, visibleApplications.size());
 		Assert.assertTrue(visibleApplications.contains(underReviewForm));
 	}

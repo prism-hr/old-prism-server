@@ -39,7 +39,6 @@ public class ApplicationFormBuilder {
 	private RegisteredUser applicant;
 	private String projectTitle;
 	private Program program;
-	private Set<RegisteredUser> reviewerUsers = new HashSet<RegisteredUser>();
 	private Date appDate;
 	private Date submittedDate;
 	private Date validationDueDate;
@@ -194,19 +193,6 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
-	public ApplicationFormBuilder reviewerUsers(Set<RegisteredUser> reviewers) {
-		for(RegisteredUser user : reviewers){
-			this.reviewerUsers.add(user);
-		}
-		return this;
-	}
-	
-	public ApplicationFormBuilder reviewerUsers(RegisteredUser... reviewers) {
-		for(RegisteredUser user : reviewers){
-			this.reviewerUsers.add(user);
-		}
-		return this;
-	}
 
 	public ApplicationFormBuilder appDate(Date date) {
 		this.appDate = date;
@@ -232,9 +218,7 @@ public class ApplicationFormBuilder {
 		ApplicationForm application = new ApplicationForm();
 		application.setId(id);
 		application.setApplicant(applicant);
-		if (reviewerUsers != null) {
-			application.getReviewerUsers().addAll(reviewerUsers);
-		}
+		
 		application.getReviewers().addAll(reviewers);
 		application.setSubmittedDate(submittedDate);
 

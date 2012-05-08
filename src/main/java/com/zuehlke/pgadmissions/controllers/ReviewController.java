@@ -47,7 +47,7 @@ public class ReviewController {
 
 		ReviewersListModel model = new ReviewersListModel();
 		model.setApplicationForm(applicationForm);
-		model.setReviewers(userService.getReviewersForApplication(applicationForm));
+		//model.setReviewers(userService.getReviewersForApplication(applicationForm));
 		model.setUser(userService.getCurrentUser());
 		return new ModelAndView(ADD_REVIEWER_VIEW_NAME, "model", model);
 	}

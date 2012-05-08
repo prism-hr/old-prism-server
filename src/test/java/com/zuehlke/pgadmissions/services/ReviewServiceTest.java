@@ -13,10 +13,12 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -153,7 +155,8 @@ public class ReviewServiceTest {
 
 	@Test
 	public void shouldNotAddReviewerIfAlreadyInApplication() {
-		application.getReviewerUsers().add(reviewer1);
+		Reviewer reviewer = new ReviewerBuilder().user(reviewer1).id(1).toReviewer();
+		application.getReviewers().add(reviewer);
 
 		applicationDaoMock.save(application);
 		EasyMock.expectLastCall().andDelegateTo(new CheckReviewersAndSimulateSaveDAO(reviewer1));
@@ -161,13 +164,14 @@ public class ReviewServiceTest {
 		reviewService.moveApplicationToReview(application, reviewer1);
 
 		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock);
-		Assert.assertEquals(1, application.getReviewerUsers().size());
+		Assert.assertEquals(1, application.getReviewers().size());
+		Assert.assertEquals(reviewer, application.getReviewers().get(0));
 		Assert.assertEquals(ApplicationFormStatus.REVIEW, application.getStatus());
 	}
 
 	@Test
 	public void shouldAddOnlyReviewersNotAlreadyInApplication() {
-		application.getReviewerUsers().add(reviewer1);
+		application.getReviewers().add(new ReviewerBuilder().user(reviewer1).toReviewer());
 
 		RegisteredUser reviewer2 = new RegisteredUserBuilder().id(101).email("rev2@bla.com")//
 				.role(reviewerRole)//
@@ -253,7 +257,7 @@ public class ReviewServiceTest {
 		@Override
 		public void save(ApplicationForm applToSave) {
 			for (RegisteredUser expectedReviewer : expectedReviewers) {
-				Assert.assertTrue(applToSave.getReviewerUsers().contains(expectedReviewer));
+				Assert.assertTrue(expectedReviewer.isReviewerOfApplicationForm(applToSave));
 			}
 		}
 	}

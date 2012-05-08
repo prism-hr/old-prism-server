@@ -60,34 +60,6 @@ public class UserServiceTest {
 	}
 
 	@Test
-	public void shouldgetListOfReviewersForApplication() {
-		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).username("tom").role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-		EasyMock.expect(userDAOMock.getAllUsers()).andReturn(Arrays.asList(reviewer));
-		EasyMock.replay(userDAOMock);
-		List<RegisteredUser> reviewersForApplication = userService.getReviewersForApplication(form);
-		Assert.assertTrue(reviewersForApplication.contains(reviewer));
-		Assert.assertEquals(1, reviewersForApplication.size());
-	}
-
-	@Test
-	public void shouldgetEmptyListOfReviewersForApplication() {
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).username("tom").role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-
-		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
-		reviewers.add(reviewer);
-
-		ApplicationForm form = new ApplicationFormBuilder().id(1).reviewerUsers(reviewers).toApplicationForm();
-		EasyMock.expect(userDAOMock.getAllUsers()).andReturn(Arrays.asList(reviewer));
-		EasyMock.replay(userDAOMock);
-
-		List<RegisteredUser> reviewersForApplication = userService.getReviewersForApplication(form);
-
-		Assert.assertFalse(reviewersForApplication.contains(reviewer));
-		Assert.assertEquals(0, reviewersForApplication.size());
-	}
-
-	@Test
 	public void shouldGetAllUsersWithAuthority() {
 		RegisteredUser userOne = new RegisteredUserBuilder().id(1).toUser();
 		RegisteredUser userTwo = new RegisteredUserBuilder().id(2).toUser();
@@ -96,19 +68,19 @@ public class UserServiceTest {
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(auth)).andReturn(role);
 		EasyMock.expect(userDAOMock.getUsersInRole(role)).andReturn(Arrays.asList(userOne, userTwo));
 		EasyMock.replay(roleDAOMock, userDAOMock);
-		
-		List<RegisteredUser>users = userService.getUsersInRole(auth);
+
+		List<RegisteredUser> users = userService.getUsersInRole(auth);
 		assertEquals(2, users.size());
 		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
 	}
 
 	@Test
-	public void shouldGetSuperAdministrators(){
-		Role superAdminRole = new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).id(1).toRole();		
-		
+	public void shouldGetSuperAdministrators() {
+		Role superAdminRole = new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).id(1).toRole();
+
 		RegisteredUser superAdmin1 = new RegisteredUserBuilder().id(2).role(superAdminRole).toUser();
 		RegisteredUser superAdmin2 = new RegisteredUserBuilder().id(3).roles(superAdminRole).toUser();
-		
+
 		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.SUPERADMINISTRATOR)).andReturn(superAdminRole);
 		EasyMock.replay(roleDAOMock);
 		EasyMock.expect(userDAOMock.getUsersInRole(superAdminRole)).andReturn(Arrays.asList(superAdmin1, superAdmin2));
@@ -117,9 +89,9 @@ public class UserServiceTest {
 		assertEquals(2, superAdmins.size());
 		assertTrue(superAdmins.containsAll(Arrays.asList(superAdmin1, superAdmin2)));
 	}
-	
+
 	@Test
-	public void shouldGetAllUsersForProgram(){
+	public void shouldGetAllUsersForProgram() {
 		RegisteredUser userOne = new RegisteredUserBuilder().id(2).toUser();
 		RegisteredUser userTow = new RegisteredUserBuilder().id(3).toUser();
 		Program program = new ProgramBuilder().id(7).toProgram();
@@ -129,46 +101,45 @@ public class UserServiceTest {
 		assertEquals(2, users.size());
 		assertTrue(users.containsAll(Arrays.asList(userOne, userTow)));
 	}
-	
+
 	@Test
-	public void shouldGetAllInternalUsers(){
+	public void shouldGetAllInternalUsers() {
 		final RegisteredUser userOne = new RegisteredUserBuilder().id(1).toUser();
 		final RegisteredUser userTwo = new RegisteredUserBuilder().id(2).toUser();
 		final RegisteredUser userThree = new RegisteredUserBuilder().id(3).toUser();
 		final RegisteredUser userFour = new RegisteredUserBuilder().id(4).toUser();
 		final RegisteredUser userFive = new RegisteredUserBuilder().id(5).toUser();
-		userService = new UserService(userDAOMock, roleDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock){
+		userService = new UserService(userDAOMock, roleDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock) {
 
 			@SuppressWarnings("unchecked")
 			@Override
 			public List<RegisteredUser> getUsersInRole(Authority auth) {
-				if(auth == Authority.ADMINISTRATOR){
+				if (auth == Authority.ADMINISTRATOR) {
 					return Arrays.asList(userOne, userTwo);
 				}
-				if(auth == Authority.APPROVER){
-					 return Arrays.asList(userTwo, userThree);
+				if (auth == Authority.APPROVER) {
+					return Arrays.asList(userTwo, userThree);
 				}
-				if(auth == Authority.REVIEWER){
-					 return Arrays.asList(userThree, userFour);
+				if (auth == Authority.REVIEWER) {
+					return Arrays.asList(userThree, userFour);
 				}
-				if(auth == Authority.SUPERADMINISTRATOR){
-					 return Arrays.asList(userFour, userOne);
+				if (auth == Authority.SUPERADMINISTRATOR) {
+					return Arrays.asList(userFour, userOne);
 				}
-				if(auth == Authority.APPLICANT){
-					 return Arrays.asList(userFour, userFive);
+				if (auth == Authority.APPLICANT) {
+					return Arrays.asList(userFour, userFive);
 				}
 				return Collections.EMPTY_LIST;
 			}
-			
-		};
-		
 
-		List<RegisteredUser> internalUsers= userService.getAllInternalUsers();
-	
+		};
+
+		List<RegisteredUser> internalUsers = userService.getAllInternalUsers();
+
 		assertEquals(4, internalUsers.size());
 		assertTrue(internalUsers.containsAll(Arrays.asList(userOne, userTwo, userThree, userFour)));
 	}
-	
+
 	@Test
 	public void shouldDelegateSaveToDAO() {
 		RegisteredUser user = EasyMock.createMock(RegisteredUser.class);
@@ -177,61 +148,60 @@ public class UserServiceTest {
 		userService.save(user);
 		EasyMock.verify(userDAOMock);
 	}
-	
-	
+
 	@Test
 	public void shouldGetAllUsers() {
 		RegisteredUser userOne = EasyMock.createMock(RegisteredUser.class);
 		RegisteredUser userTwo = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userDAOMock.getAllUsers()).andReturn(Arrays.asList(userOne, userTwo));
-		
+
 		EasyMock.replay(userOne, userTwo, userDAOMock);
 		List<RegisteredUser> allUsers = userService.getAllUsers();
-		
+
 		Assert.assertEquals(2, allUsers.size());
 		Assert.assertTrue(allUsers.contains(userOne));
 		Assert.assertTrue(allUsers.contains(userTwo));
 	}
-	
+
 	@Test
 	public void shouldGetUserByUsername() {
 		RegisteredUser user = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userDAOMock.getUserByUsername("mike")).andReturn(user);
-		
+
 		EasyMock.replay(user, userDAOMock);
 		Assert.assertEquals(user, userService.getUserByUsername("mike"));
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
-	public void shouldSaveRefereeAndSendEmailToReferee() throws UnsupportedEncodingException{
-	
+	public void shouldSaveRefereeAndSendEmailToReferee() throws UnsupportedEncodingException {
+
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		Program program = new ProgramBuilder().administrators(administrator).toProgram();
-		
+
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("applicant").lastName("hen").email("applicant@test.com").toUser();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).program(program).toApplicationForm();
 		Referee referee = new RefereeBuilder().application(form).toReferee();
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referees(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
 		refereeUser.setCurrentReferee(referee);
-		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		userService.save(refereeUser);
-		
+
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress1 = new InternetAddress("hh@test.com", "harry hen");
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Referee Registration"),EasyMock.eq("private/referees/mail/register_referee_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Referee Registration"),
+						EasyMock.eq("private/referees/mail/register_referee_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
 		mailsenderMock.send(preparatorMock1);
-	
+
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock);
-	
-		
+
 		userService.saveAndEmailRegisterConfirmationToReferee(refereeUser);
 		EasyMock.verify(mimeMessagePreparatorFactoryMock, mailsenderMock);
 	}
-	
+
 	@Test
 	public void shouldNotSendEmailIfSaveFails() throws UnsupportedEncodingException {
 		userService.save(null);
@@ -246,19 +216,19 @@ public class UserServiceTest {
 
 		EasyMock.verify(mimeMessagePreparatorFactoryMock, mailsenderMock);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
 		Program program = new ProgramBuilder().administrators(administrator).toProgram();
-		
+
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("applicant").lastName("hen").email("applicant@test.com").toUser();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).program(program).toApplicationForm();
 		Referee referee = new RefereeBuilder().application(form).toReferee();
 		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referees(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
 		refereeUser.setCurrentReferee(referee);
-		ProgrammeDetails programmeDetails = new ProgrammeDetails();	
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		userService.save(refereeUser);
@@ -266,8 +236,9 @@ public class UserServiceTest {
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress1 = new InternetAddress("hh@test.com", "harry hen");
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Referee Registration"),EasyMock.eq("private/referees/mail/register_referee_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
-	
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Referee Registration"),
+						EasyMock.eq("private/referees/mail/register_referee_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock1);
+
 		mailsenderMock.send(preparatorMock1);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock);
@@ -276,29 +247,29 @@ public class UserServiceTest {
 		EasyMock.verify(mimeMessagePreparatorFactoryMock);
 
 	}
-	
+
 	@Test
-	public void shouldGetUserFromSecurityContextAndRefresh(){
+	public void shouldGetUserFromSecurityContextAndRefresh() {
 		RegisteredUser refreshedUser = new RegisteredUser();
 		EasyMock.expect(userDAOMock.get(8)).andReturn(refreshedUser);
 		EasyMock.replay(userDAOMock);
 		RegisteredUser user = userService.getCurrentUser();
 		assertSame(refreshedUser, user);
 		EasyMock.verify(userDAOMock);
-		
+
 	}
-	
+
 	@Before
 	public void setUp() {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		mailsenderMock =EasyMock.createMock(JavaMailSender.class);
+		mailsenderMock = EasyMock.createMock(JavaMailSender.class);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		currentUser = new RegisteredUserBuilder().id(8).username("bob").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		authenticationToken.setDetails(currentUser);
 		SecurityContextImpl secContext = new SecurityContextImpl();
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
-		
+
 		userDAOMock = EasyMock.createMock(UserDAO.class);
 		roleDAOMock = EasyMock.createMock(RoleDAO.class);
 		userService = new UserService(userDAOMock, roleDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock);

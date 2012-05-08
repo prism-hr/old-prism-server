@@ -108,7 +108,7 @@ public class AssignReviewerController {
 							uiReviewer.getFirstName(), uiReviewer.getLastName(), uiReviewer.getEmail());
 					modelMap.put("message", getMessage("assignReviewer.newReviewer.created", reviewer.getUsername(), reviewer.getEmail()));
 				} else{
-					if (form.getReviewers().contains(reviewer)) {
+					if (form.getReviewerUsers().contains(reviewer)) {
 						modelMap.put("message", getMessage("assignReviewer.reviewer.alreadyExistsInTheApplication", reviewer.getUsername(), reviewer.getEmail()));
 					}
 					else if (!programme.getReviewers().contains(reviewer)) {
@@ -144,14 +144,14 @@ public class AssignReviewerController {
 
 		checkPermissionForApplication(application);
 		List<RegisteredUser> programmeReviewers = program.getReviewers();
-		programmeReviewers.removeAll(application.getReviewers());
+		programmeReviewers.removeAll(application.getReviewerUsers());
 		return programmeReviewers;
 	}
 
 	@ModelAttribute("applicationReviewers")
 	public List<RegisteredUser> getApplicationReviewers(@ModelAttribute("applicationForm") ApplicationForm application) {
 		checkPermissionForApplication(application);
-		return application.getReviewers();
+		return application.getReviewerUsers();
 	}
 
 	@ModelAttribute("user")

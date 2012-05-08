@@ -121,7 +121,7 @@ public class ApplicationFormTest {
 		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerOne).toComment();
 		Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerTwo).toComment();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewerOne, reviewerTwo).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewerOne, reviewerTwo).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
 		
 		List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerTwo);
 		assertEquals(2, visibleComments.size());		
@@ -139,7 +139,7 @@ public class ApplicationFormTest {
 		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerOne).toComment();
 		Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerTwo).toComment();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewerOne, reviewerTwo).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewerOne, reviewerTwo).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
 		
 		List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerTwo);
 		assertEquals(3, visibleComments.size());		

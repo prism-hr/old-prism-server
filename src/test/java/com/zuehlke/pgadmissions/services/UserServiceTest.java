@@ -77,7 +77,7 @@ public class UserServiceTest {
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		reviewers.add(reviewer);
 
-		ApplicationForm form = new ApplicationFormBuilder().id(1).reviewers(reviewers).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(1).reviewerUsers(reviewers).toApplicationForm();
 		EasyMock.expect(userDAOMock.getAllUsers()).andReturn(Arrays.asList(reviewer));
 		EasyMock.replay(userDAOMock);
 

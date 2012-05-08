@@ -221,7 +221,7 @@ public class AssignReviewerControllerTest {
 
 	@Test
 	public void getAvailableReviewersMinusAlreadyReviewerOfApplication() {
-		application.getReviewers().add(reviewer1);
+		application.getReviewerUsers().add(reviewer1);
 
 		List<RegisteredUser> availableReviewers = controllerUT.getAvailableReviewers(program, application);
 		Assert.assertNotNull(availableReviewers);
@@ -231,7 +231,7 @@ public class AssignReviewerControllerTest {
 
 	@Test
 	public void getExistingApplicationReviewerList() {
-		application.setReviewers(Arrays.asList(reviewer2));
+		application.setReviewerUsers(Arrays.asList(reviewer2));
 
 		List<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(application);
 		Assert.assertNotNull(applReviewers);
@@ -368,7 +368,7 @@ public class AssignReviewerControllerTest {
 		prepareMessageSourceMock("assignReviewer.reviewer.alreadyExistsInTheApplication", new Object[] { "rev 1", "rev1@bla.com" }, "SDFSDFSDFSDF");
 		EasyMock.replay(reviewServiceMock, userServiceMock, messageSourceMock);
 		RegisteredUser inputUser = new RegisteredUserBuilder().id(3).email("hui@blu.com").toUser();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).reviewers(reviewer1).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).reviewerUsers(reviewer1).toApplicationForm();
 		ModelMap mmap = new ModelMap();
 		String view = controllerUT.createReviewer(program, application, inputUser, bindingResultMock, mmap);
 		

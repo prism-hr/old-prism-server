@@ -4,7 +4,7 @@
 	<head>
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Shell template</title>
+		<title>UCL Postgraduate Admissions</title>
 		
 		<!-- Styles for Login List Page -->
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/global_public.css' />"/>

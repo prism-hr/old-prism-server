@@ -25,6 +25,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Disability</value>
 	     		<value>com.zuehlke.pgadmissions.domain.EmploymentPosition</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Referee</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Reviewer</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Reference</value>	     		
 	     		<value>com.zuehlke.pgadmissions.domain.PersonalDetails</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ProgrammeDetails</value>

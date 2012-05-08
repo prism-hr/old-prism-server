@@ -122,7 +122,7 @@ public class RegisteredUserTest {
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		reviewers.add(reviewer);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewers).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewers).status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		assertTrue(reviewer.canSee(applicationForm));
 		
 	}
@@ -149,7 +149,7 @@ public class RegisteredUserTest {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		reviewers.add(reviewer);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewers).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewers).status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		assertTrue(reviewer.canSee(applicationForm));
 
 	}
@@ -167,7 +167,7 @@ public class RegisteredUserTest {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
 		reviewers.add(reviewer);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewers).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewers).toApplicationForm();
 		assertFalse(reviewer.canSee(applicationForm));
 	}
 
@@ -204,7 +204,7 @@ public class RegisteredUserTest {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(reviewer).program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewer).program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertTrue(reviewer.isReviewerOfApplicationForm(applicationForm));
 	}
 	

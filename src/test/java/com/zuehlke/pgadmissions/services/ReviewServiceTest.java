@@ -153,7 +153,7 @@ public class ReviewServiceTest {
 
 	@Test
 	public void shouldNotAddReviewerIfAlreadyInApplication() {
-		application.getReviewers().add(reviewer1);
+		application.getReviewerUsers().add(reviewer1);
 
 		applicationDaoMock.save(application);
 		EasyMock.expectLastCall().andDelegateTo(new CheckReviewersAndSimulateSaveDAO(reviewer1));
@@ -161,13 +161,13 @@ public class ReviewServiceTest {
 		reviewService.moveApplicationToReview(application, reviewer1);
 
 		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock);
-		Assert.assertEquals(1, application.getReviewers().size());
+		Assert.assertEquals(1, application.getReviewerUsers().size());
 		Assert.assertEquals(ApplicationFormStatus.REVIEW, application.getStatus());
 	}
 
 	@Test
 	public void shouldAddOnlyReviewersNotAlreadyInApplication() {
-		application.getReviewers().add(reviewer1);
+		application.getReviewerUsers().add(reviewer1);
 
 		RegisteredUser reviewer2 = new RegisteredUserBuilder().id(101).email("rev2@bla.com")//
 				.role(reviewerRole)//
@@ -253,7 +253,7 @@ public class ReviewServiceTest {
 		@Override
 		public void save(ApplicationForm applToSave) {
 			for (RegisteredUser expectedReviewer : expectedReviewers) {
-				Assert.assertTrue(applToSave.getReviewers().contains(expectedReviewer));
+				Assert.assertTrue(applToSave.getReviewerUsers().contains(expectedReviewer));
 			}
 		}
 	}

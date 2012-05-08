@@ -111,8 +111,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
-	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
+	private List<RegisteredUser> reviewerUsers = new ArrayList<RegisteredUser>();
 
+	@OneToMany(mappedBy = "application")
+	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
+	
 	@OneToMany(mappedBy = "application")
 	private List<Comment> applicationComments = new ArrayList<Comment>();
 
@@ -148,13 +151,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.qualifications.addAll(qualifications);
 	}
 
-	public List<RegisteredUser> getReviewers() {
-		return reviewers;
-	}
-
-	public void setReviewers(List<RegisteredUser> reviewers) {
-		this.reviewers = reviewers;
-	}
 
 	@Override
 	public void setId(Integer id) {
@@ -194,7 +190,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public boolean isUnderReview() {
-		return !reviewers.isEmpty();
+		return !reviewerUsers.isEmpty();
 	}
 
 	public boolean isModifiable() {
@@ -351,7 +347,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 
 		for (Comment comment : applicationComments) {
-			if ( !user.isInRole(Authority.REVIEWER) || !reviewers.contains(comment.getUser()) || comment.getUser().equals(user) ) {			
+			if ( !user.isInRole(Authority.REVIEWER) || !reviewerUsers.contains(comment.getUser()) || comment.getUser().equals(user) ) {			
 				visibleComments.add(comment);
 			}
 		}
@@ -462,5 +458,21 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public void setEvents(List<Event> events) {
 		this.events.clear();
 		this.events.addAll(events);
+	}
+
+	public void setReviewers(List<Reviewer> reviewers) {
+		this.reviewers = reviewers;
+	}
+
+	public List<RegisteredUser> getReviewerUsers() {
+		return reviewerUsers;
+	}
+
+	public void setReviewerUsers(List<RegisteredUser> reviewerUsers) {
+		this.reviewerUsers = reviewerUsers;
+	}
+
+	public List<Reviewer> getReviewers() {
+		return reviewers;
 	}
 }

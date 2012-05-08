@@ -14,7 +14,7 @@
 	<head>
 	
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Shell template</title>
+		<title>UCL Postgraduate Admissions</title>
 		
 		<!-- Styles for Application Page -->
 		

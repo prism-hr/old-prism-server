@@ -113,13 +113,13 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldSaveAndLoadApplicationFormWithReviewer() {
+	public void shouldSaveAndLoadApplicationFormWithReviewerUser() {
 
 		ApplicationForm application = new ApplicationForm();
 		application.setProgram(program);
 		application.setApplicant(user);
 		
-		application.setReviewers(Arrays.asList(user));
+		application.setReviewerUsers(Arrays.asList(user));
 
 		assertNull(application.getId());
 
@@ -139,8 +139,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(user, reloadedApplication.getApplicant());
 		assertEquals(program, reloadedApplication.getProgram());
 		
-		Assert.assertEquals(1, reloadedApplication.getReviewers().size());
-		Assert.assertTrue(reloadedApplication.getReviewers().contains(user));
+		Assert.assertEquals(1, reloadedApplication.getReviewerUsers().size());
+		Assert.assertTrue(reloadedApplication.getReviewerUsers().contains(user));
 	}
 
 	@Test

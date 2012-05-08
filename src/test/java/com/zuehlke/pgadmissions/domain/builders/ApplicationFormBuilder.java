@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bouncycastle.ocsp.RevokedStatus;
+
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -21,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
@@ -36,7 +39,7 @@ public class ApplicationFormBuilder {
 	private RegisteredUser applicant;
 	private String projectTitle;
 	private Program program;
-	private Set<RegisteredUser> reviewers = new HashSet<RegisteredUser>();
+	private Set<RegisteredUser> reviewerUsers = new HashSet<RegisteredUser>();
 	private Date appDate;
 	private Date submittedDate;
 	private Date validationDueDate;
@@ -50,9 +53,17 @@ public class ApplicationFormBuilder {
 	private List<Funding> fundings = new ArrayList<Funding>();
 	private Document cv = null;
 	private Document personalStatement = null;
-	private AdditionalInformation info;
-	
+	private AdditionalInformation info;	
 	private Date lastUpdated;
+	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
+	
+	public ApplicationFormBuilder reviewers(Reviewer...reviewers) {
+		for (Reviewer reviewer : reviewers) {
+			this.reviewers.add(reviewer);
+		}
+		return this;
+	}
+
 	
 	public ApplicationFormBuilder lastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
@@ -183,16 +194,16 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
-	public ApplicationFormBuilder reviewers(Set<RegisteredUser> reviewers) {
+	public ApplicationFormBuilder reviewerUsers(Set<RegisteredUser> reviewers) {
 		for(RegisteredUser user : reviewers){
-			this.reviewers.add(user);
+			this.reviewerUsers.add(user);
 		}
 		return this;
 	}
 	
-	public ApplicationFormBuilder reviewers(RegisteredUser... reviewers) {
+	public ApplicationFormBuilder reviewerUsers(RegisteredUser... reviewers) {
 		for(RegisteredUser user : reviewers){
-			this.reviewers.add(user);
+			this.reviewerUsers.add(user);
 		}
 		return this;
 	}
@@ -221,14 +232,15 @@ public class ApplicationFormBuilder {
 		ApplicationForm application = new ApplicationForm();
 		application.setId(id);
 		application.setApplicant(applicant);
-		if (reviewers != null) {
-			application.getReviewers().addAll(reviewers);
+		if (reviewerUsers != null) {
+			application.getReviewerUsers().addAll(reviewerUsers);
 		}
+		application.getReviewers().addAll(reviewers);
 		application.setSubmittedDate(submittedDate);
 
 		application.setApprover(approver);
 		application.setReferees(referees);
-
+		
 		application.setApplicationTimestamp(appDate);
 		application.getQualifications().addAll(qualifications);
 		application.setProgrammeDetails(programmeDetails);

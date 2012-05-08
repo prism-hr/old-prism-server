@@ -49,7 +49,7 @@ public class ReviewService {
 	public void moveApplicationToReview(ApplicationForm application, RegisteredUser... reviewers) {
 		checkApplicationStatus(application);
 
-		List<RegisteredUser> applicationReviewers = application.getReviewers();
+		List<RegisteredUser> applicationReviewers = application.getReviewerUsers();
 		Program programme = application.getProgram();
 		for (RegisteredUser reviewer : reviewers) {
 			if (!reviewer.isInRole(Authority.REVIEWER)) {

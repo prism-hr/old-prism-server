@@ -76,7 +76,7 @@
 	<head>
 		
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>Shell template</title>
+		<title>UCL Postgraduate Admissions</title>
 		
 		<!-- Styles for Application Page -->		
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>

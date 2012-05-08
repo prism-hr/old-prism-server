@@ -115,36 +115,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 	}
 
-	@Test
-	public void shouldSaveAndLoadApplicationFormWithReviewerUser() {
 
-		ApplicationForm application = new ApplicationForm();
-		application.setProgram(program);
-		application.setApplicant(user);
-		
-		application.setReviewerUsers(Arrays.asList(user));
-
-		assertNull(application.getId());
-
-		sessionFactory.getCurrentSession().save(application);
-
-		assertNotNull(application.getId());
-		Integer id = application.getId();
-		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
-		assertSame(application, reloadedApplication);
-
-		flushAndClearSession();
-
-		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
-		assertNotSame(application, reloadedApplication);
-		assertEquals(application, reloadedApplication);
-
-		assertEquals(user, reloadedApplication.getApplicant());
-		assertEquals(program, reloadedApplication.getProgram());
-		
-		Assert.assertEquals(1, reloadedApplication.getReviewerUsers().size());
-		Assert.assertTrue(reloadedApplication.getReviewerUsers().contains(user));
-	}
 
 	@Test
 	public void shouldSaveLoadApplicationFormWithReviewer() {

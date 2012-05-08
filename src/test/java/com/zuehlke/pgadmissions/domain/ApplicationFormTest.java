@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -114,16 +115,16 @@ public class ApplicationFormTest {
 	@Test
 	public void shouldNotSeeOtherReviewersCommentsIfReviewer() throws ParseException{
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-		RegisteredUser reviewerOne = new RegisteredUserBuilder().id(6).toUser();
-		RegisteredUser reviewerTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).id(7).toUser();
+		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).toUser();
+		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).id(7).toUser();
 		
-		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerTwo).toComment();
-		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerOne).toComment();
-		Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerTwo).toComment();
+		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
+		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
+		Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerUserTwo).toComment();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewerOne, reviewerTwo).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(new ReviewerBuilder().user(reviewerUserOne).toReviewer(),new ReviewerBuilder().user( reviewerUserTwo).toReviewer()).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
 		
-		List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerTwo);
+		List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerUserTwo);
 		assertEquals(2, visibleComments.size());		
 		assertEquals(commentThree, visibleComments.get(0));
 		assertEquals(commentOne, visibleComments.get(1));
@@ -132,16 +133,16 @@ public class ApplicationFormTest {
 	@Test
 	public void shouldNotSeeAllCommentsIfNotReviewer() throws ParseException{
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
-		RegisteredUser reviewerOne = new RegisteredUserBuilder().id(6).toUser();
-		RegisteredUser reviewerTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(7).toUser();
+		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).toUser();
+		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(7).toUser();
 		
-		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerTwo).toComment();
-		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerOne).toComment();
-		Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerTwo).toComment();
+		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
+		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
+		Comment commentThree = new CommentBuilder().date(format.parse("01 05 2011")).id(9).user(reviewerUserTwo).toComment();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewerUsers(reviewerOne, reviewerTwo).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(new ReviewerBuilder().user(reviewerUserOne).toReviewer(),new ReviewerBuilder().user( reviewerUserTwo).toReviewer()).id(5).comments(commentOne, commentTwo, commentThree).toApplicationForm();
 		
-		List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerTwo);
+		List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerUserTwo);
 		assertEquals(3, visibleComments.size());		
 	}
 	

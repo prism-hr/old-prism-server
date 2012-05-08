@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -38,31 +39,34 @@ public class ReviewService {
 	}
 
 	/**
-	 * Associates the given reviewers to the application and updates the application record(s) if
-	 * necessary. Silently handles reviewers already associated with the application, but 
-	 * throws {@link IllegalStateException}s when the users don't have the role reviewer or
-	 * are not reviewer of the programme of the application.
+	 * Associates the given reviewers to the application and updates the
+	 * application record(s) if necessary. Silently handles reviewers already
+	 * associated with the application, but throws {@link IllegalStateException}
+	 * s when the users don't have the role reviewer or are not reviewer of the
+	 * programme of the application.
+	 * 
 	 * @param application
-	 * @param reviewers
+	 * @param reviewerUsers
 	 */
 	@Transactional
-	public void moveApplicationToReview(ApplicationForm application, RegisteredUser... reviewers) {
+	public void moveApplicationToReview(ApplicationForm application, RegisteredUser... reviewerUsers) {
 		checkApplicationStatus(application);
-
-		List<RegisteredUser> applicationReviewers = application.getReviewerUsers();
 		Program programme = application.getProgram();
-		for (RegisteredUser reviewer : reviewers) {
-			if (!reviewer.isInRole(Authority.REVIEWER)) {
+		for (RegisteredUser reviewerUser : reviewerUsers) {
+			if (!reviewerUser.isInRole(Authority.REVIEWER)) {
 				throw new IllegalStateException(//
-						String.format("User '%s' is not a reviewer!", reviewer.getUsername()));
+						String.format("User '%s' is not a reviewer!", reviewerUser.getUsername()));
 			}
-			if (!reviewer.isReviewerInProgramme(programme)) {
+			if (!reviewerUser.isReviewerInProgramme(programme)) {
 				throw new IllegalStateException(//
-						String.format("User '%s' is not a reviewer in programme '%s'!", reviewer.getUsername(), programme.getTitle()));
+						String.format("User '%s' is not a reviewer in programme '%s'!", reviewerUser.getUsername(), programme.getTitle()));
 			}
 
-			if (!applicationReviewers.contains(reviewer)) {
-				applicationReviewers.add(reviewer);
+			if (!reviewerUser.isReviewerOfApplicationForm(application)) {
+				Reviewer reviewer = new Reviewer();
+				reviewer.setUser(reviewerUser);
+				application.getReviewers().add(reviewer);
+				
 			}
 		}
 		application.setStatus(ApplicationFormStatus.REVIEW);
@@ -70,9 +74,11 @@ public class ReviewService {
 	}
 
 	/**
-	 * Creates a new user with role {@link Authority#REVIEWER} and associates it with the given programme.
+	 * Creates a new user with role {@link Authority#REVIEWER} and associates it
+	 * with the given programme.
 	 * 
-	 * @throws IllegalStateException if user already exists.
+	 * @throws IllegalStateException
+	 *             if user already exists.
 	 */
 	@Transactional
 	public RegisteredUser createNewReviewerForProgramme(Program programme, String firstName, String lastName, String email) {
@@ -130,4 +136,6 @@ public class ReviewService {
 			throw new IllegalStateException(String.format("Application in invalid status: '%s'!", status));
 		}
 	}
+	
+	
 }

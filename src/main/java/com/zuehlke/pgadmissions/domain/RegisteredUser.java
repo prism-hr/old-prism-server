@@ -229,8 +229,10 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 
 		if (isInRole(Authority.REVIEWER) && applicationForm.getStatus() == ApplicationFormStatus.REVIEW) {
-			if (applicationForm.getReviewerUsers().contains(this)) {
-				return true;
+			for (Reviewer reviewer : applicationForm.getReviewers()) {
+				if (this.equals(reviewer.getUser())) {
+					return true;
+				}
 			}
 		}
 
@@ -380,8 +382,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return this.isInRole(Authority.REFEREE) && hasRefereesInApplicationForm(form);
 	}
 
-	public boolean isReviewerOfApplicationForm(ApplicationForm form) {
-		return this.isInRole(Authority.REVIEWER) && form.getReviewerUsers().contains(this);
+	public boolean isReviewerOfApplicationForm(ApplicationForm form) {		
+		for (Reviewer reviewer : form.getReviewers()) {
+			if (this.equals(reviewer.getUser())) {
+				return true;
+			}
+		}
+		return false;
+
 	}
 
 	public boolean hasRefereesInApplicationForm(ApplicationForm form) {

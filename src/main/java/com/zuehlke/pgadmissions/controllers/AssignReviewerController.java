@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
@@ -108,7 +109,7 @@ public class AssignReviewerController {
 							uiReviewer.getFirstName(), uiReviewer.getLastName(), uiReviewer.getEmail());
 					modelMap.put("message", getMessage("assignReviewer.newReviewer.created", reviewer.getUsername(), reviewer.getEmail()));
 				} else{
-					if (form.getReviewerUsers().contains(reviewer)) {
+					if (reviewer.isReviewerOfApplicationForm(form)) {
 						modelMap.put("message", getMessage("assignReviewer.reviewer.alreadyExistsInTheApplication", reviewer.getUsername(), reviewer.getEmail()));
 					}
 					else if (!programme.getReviewers().contains(reviewer)) {
@@ -143,15 +144,26 @@ public class AssignReviewerController {
 			@ModelAttribute("applicationForm") ApplicationForm application) {
 
 		checkPermissionForApplication(application);
-		List<RegisteredUser> programmeReviewers = program.getReviewers();
-		programmeReviewers.removeAll(application.getReviewerUsers());
-		return programmeReviewers;
+		List<RegisteredUser> availableReviewers = new ArrayList<RegisteredUser>();
+		for (RegisteredUser registeredUser : program.getReviewers()) {
+			if(!registeredUser.isReviewerOfApplicationForm(application)){
+				availableReviewers.add(registeredUser);
+			}
+		}
+				
+		return availableReviewers;
 	}
 
 	@ModelAttribute("applicationReviewers")
 	public List<RegisteredUser> getApplicationReviewers(@ModelAttribute("applicationForm") ApplicationForm application) {
 		checkPermissionForApplication(application);
-		return application.getReviewerUsers();
+		List<RegisteredUser> existingReviewers = new ArrayList<RegisteredUser>();
+		for (Reviewer reviewer : application.getReviewers()) {
+			if(!existingReviewers.contains(reviewer.getUser())){
+				existingReviewers.add(reviewer.getUser());
+			}
+		}
+		return existingReviewers;
 	}
 
 	@ModelAttribute("user")

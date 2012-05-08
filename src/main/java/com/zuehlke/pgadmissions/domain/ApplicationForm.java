@@ -113,7 +113,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
 	private List<RegisteredUser> reviewerUsers = new ArrayList<RegisteredUser>();
 
-	@OneToMany(mappedBy = "application")
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "application_form_id")
 	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
 	
 	@OneToMany(mappedBy = "application")

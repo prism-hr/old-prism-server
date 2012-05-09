@@ -65,7 +65,7 @@ public class MoteToReviewTempController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String moveToReview(@ModelAttribute ApplicationForm applicationForm) {
 		applicationForm.setStatus(ApplicationFormStatus.REVIEW);
-		List<RegisteredUser> reviewers = applicationForm.getProgram().getReviewers();
+		List<RegisteredUser> reviewers = applicationForm.getProgram().getProgramReviewers();
 		for (RegisteredUser registeredUser : reviewers) {
 			Reviewer reviewer = new Reviewer();
 			reviewer.setUser(registeredUser);

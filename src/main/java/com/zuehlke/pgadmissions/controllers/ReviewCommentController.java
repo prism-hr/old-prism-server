@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -51,7 +50,7 @@ public class ReviewCommentController {
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
 		RegisteredUser currentUser = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
-		if (applicationForm == null || !currentUser.isInRole(Authority.REVIEWER) ||  !currentUser.canSee(applicationForm) ){
+		if (applicationForm == null  || !currentUser.isReviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm) ){
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;
@@ -72,9 +71,11 @@ public class ReviewCommentController {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		ReviewComment reviewComment = new ReviewComment();
 		reviewComment.setApplication(applicationForm);
-		reviewComment.setUser(getUser());
+		RegisteredUser currentUser = getUser();
+		reviewComment.setUser(currentUser);
 		reviewComment.setComment("");
 		reviewComment.setType(CommentType.REVIEW);
+		reviewComment.setReviewer(currentUser.getReviewersForApplicationForm(applicationForm).get(0));
 		return reviewComment;
 	}
 

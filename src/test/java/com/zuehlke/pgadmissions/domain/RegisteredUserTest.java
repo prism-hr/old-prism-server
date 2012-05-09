@@ -406,24 +406,7 @@ public class RegisteredUserTest {
 		assertTrue(user.canSeeReference(reference));
 	}
 
-	@Test
-	public void shouldReturnRefereeForApplicationForm() {
-		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
-		Referee refereeOne = new RefereeBuilder().id(7).user(user).application(applicationForm).toReferee();
-		Referee refereeTwo = new RefereeBuilder().id(8).user(new RegisteredUserBuilder().id(9).toUser())
-				.application(new ApplicationFormBuilder().id(78).toApplicationForm()).toReferee();
-		user.setReferees(Arrays.asList(refereeOne, refereeTwo));
-		Referee referee = user.getRefereeForApplicationForm(applicationForm);
-		assertEquals(refereeOne, referee);
-	}
 
-	@Test
-	public void shouldReturnNullIfNotRefereeForApplicationForm() {
-		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
-		assertNull(user.getRefereeForApplicationForm(applicationForm));
-	}
 
 	@Test
 	public void shouldReturnNullIfDeclinedToRefereeForApplicationForm() {
@@ -522,6 +505,28 @@ public class RegisteredUserTest {
 		RegisteredUser reviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, reviewComment)
 				.roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		assertFalse(reviewer.hasRespondedToProvideReviewForApplication(application1));
+	}
+	
+	@Test
+	public void shouldReturnReviewersForApplicationForm() {
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
+		Reviewer reviewerOne = new ReviewerBuilder().id(7).user(user).toReviewer();
+		Reviewer reviewerTwo = new ReviewerBuilder().id(8).user(new RegisteredUserBuilder().id(9).toUser()).toReviewer();
+		Reviewer reviewerThree = new ReviewerBuilder().id(9).user(user).toReviewer();
+		
+		
+		applicationForm.getReviewers().addAll(Arrays.asList(reviewerOne, reviewerTwo,reviewerThree));
+		List<Reviewer> reviewers = user.getReviewersForApplicationForm(applicationForm);
+		assertEquals(2, reviewers.size());
+		assertTrue(reviewers.containsAll(Arrays.asList(reviewerOne, reviewerThree)));
+	}
+
+	@Test
+	public void shouldReturnEmptyListfNotReviewerForApplicationForm() {
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
+		assertTrue(user.getReviewersForApplicationForm(applicationForm).isEmpty());
 	}
 
 }

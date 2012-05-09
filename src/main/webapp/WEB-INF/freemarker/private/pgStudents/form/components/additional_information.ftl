@@ -2,6 +2,7 @@
 
 <#import "/spring.ftl" as spring />
 
+<a name="additional-info"></a>
 <h2 id="additional-H2" class="empty open">
 	<span class="left"></span><span class="right"></span><span class="status"></span>
     Additional Information<em>*</em>

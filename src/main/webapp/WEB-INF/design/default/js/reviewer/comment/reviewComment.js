@@ -49,7 +49,8 @@ $(document).ready(function(){
 					"/pgadmissions/reviewFeedback",
 					postParams,
 					function(data) {
-						$('#reviewcommentsectopm').html(data);
+						window.location.href = "/pgadmissions/applications";
+						
 					}
 				);
 		}

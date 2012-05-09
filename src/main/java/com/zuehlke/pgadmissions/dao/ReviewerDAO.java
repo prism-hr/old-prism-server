@@ -7,6 +7,8 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
@@ -36,4 +38,14 @@ public class ReviewerDAO {
 		sessionFactory.getCurrentSession().saveOrUpdate(reviewer);
 		
 	}
+	
+	public Reviewer getReviewerById(Integer id) {
+		return (Reviewer) sessionFactory.getCurrentSession().get(Reviewer.class, id);
+	}
+
+	public Reviewer getReviewerByUser(RegisteredUser user) {
+		return (Reviewer)sessionFactory.getCurrentSession().createCriteria(Reviewer.class)
+				.add(Restrictions.eq("user", user)).uniqueResult();
+	}
+
 }

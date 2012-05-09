@@ -6,10 +6,18 @@ $(document).ready(function() {
 			var selText = $("#reviewers option[value='" + id + "']").text();
 			$("#reviewers option[value='" + id + "']").remove();
 			$("#assignedReviewers").append('<option value="'+ id +'">'+ selText +'</option>');
+			$("#appReviewers").append('<input type="hidden" name="reviewers" value=' +"'" + '{"id":"' +  id + '"} ' + "'" + "/>");
+			$("#assRev").append('<input type="hidden" name="assignedReviewers" value=' +"'" + '{"id":"' +  id + '"} ' + "'" + "/>");
 		});
 	});
 
 	$('#createReviewer').click(function() {
+		var assignedReviewerOptions = document.getElementById('assignedReviewers').options;
+		var assignedReviewersr = new Array(assignedReviewerOptions.length);
+		for(i = 0; i < assignedReviewerOptions.length; i++) {
+			assignedReviewersr[i] = assignedReviewerOptions[i].value;
+		}
+		var assignedReviewers = $('[input[name="assignedReviewers"]');
 		var postData ={ 
 			applicationId : $('#applicationId').val(),
 			firstName : $('#newReviewerFirstName').val(),
@@ -18,7 +26,7 @@ $(document).ready(function() {
 		};
 		
 		$.post("/pgadmissions/assignReviewers/createReviewer", 
-			$.param(postData),
+			$.param(postData)+"&" + assignedReviewers.serialize(),
 			function(data) {
 				$('#assignReviewersToAppSection').html(data);
 			}
@@ -26,14 +34,15 @@ $(document).ready(function() {
 	});
 	
 	$('#moveToReviewBtn').click(function() {
-		alert("doesn't work yet...\n(reviewerids need to be assigned to post request");
-		var selectedReviewers = $('#assignedReviewers').val();
-		alert("items: " + selectedReviewer.length);
-		$.post("/pgadmissions/assignReviewers/moveApplicationToReview", {
-			applicationId : $('#applicationId').val(),
-			reviewerIds : selectedReviewers
-		}, function(data) {
-			alert("data: " + data);
-		});
+		var postData = {
+				applicationId : $('#applicationId').val()
+			};
+			
+			$.post( "/pgadmissions/assignReviewers/moveApplicationToReview" ,$.param(postData) +"&" + $('[input[name="reviewers"]').serialize(),
+			function(data) {
+				$('#assignReviewersToAppSection').html(data);
+			});
+		
+		
 	});
 });

@@ -137,8 +137,8 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 
 		Program reloadedProgramOne = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
-		assertEquals(2, reloadedProgramOne.getReviewers().size());
-		assertTrue(reloadedProgramOne.getReviewers().containsAll(Arrays.asList(reviewerOne, reviewerTwo)));
+		assertEquals(2, reloadedProgramOne.getProgramReviewers().size());
+		assertTrue(reloadedProgramOne.getProgramReviewers().containsAll(Arrays.asList(reviewerOne, reviewerTwo)));
 
 	}
 }

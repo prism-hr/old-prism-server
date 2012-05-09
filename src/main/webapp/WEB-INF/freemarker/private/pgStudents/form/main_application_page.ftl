@@ -93,6 +93,7 @@
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/qualifications.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/references.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/terms_and_condition.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/modal_window.css' />"/>
 		
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -221,6 +222,9 @@
 			          				</div>
 			          				
 			          				<#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
+			          				
+			          					<#include "/private/common/modal_window.ftl">
+			          				
 										<form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
 											<input type="hidden" id="wapplicationFormId" name="applicationId" 	value="${applicationForm.id?string("######")}"/>
 											<button id="withdrawButton" class="blue">Withdraw</button>
@@ -258,6 +262,7 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>	
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
+		<script type="text/javascript" src="<@spring.url '/design/default/js/application/withdraw_modal_window.js'/>"></script>
 
 	</body>
 	

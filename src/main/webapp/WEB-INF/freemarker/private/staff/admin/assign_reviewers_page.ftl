@@ -73,42 +73,6 @@
 		            </div>
 		          </div>
 				<div id ="actions">
-				   	<div class="row">
-		            	<label>Assigned Reviewers</label>
-		               <#if model.applicationForm.isUnderReview()>
-		                    <table>
-                            <#list model.applicationForm.reviewers as reviewer>
-                                <td>- ${reviewer.firstName?html} ${reviewer.lastName?html}</td><tr>
-                            </#list>
-                            </table>
-                       <#else>
-                                <p>Not yet assigned.</p>
-                       </#if>
-		            </div>
-		       <#if model.applicationForm.isModifiable()  && (model.user.isInRole('SUPERADMINISTRATOR')|| model.user.isAdminOrReviewerInProgramme(model.applicationForm.program))>	<form  action="<@spring.url '/reviewer/reviewerSuccess'/>" method = "POST">		                    
-			            <input type="hidden" name="id" value="${model.applicationForm.id?string("######")}"/>
-			          	<div class="row">
-			            	<label>Assign Reviewer</label>
-			            	<select name="reviewers" multiple="multiple">
-					        
-						        <#list model.reviewers as reviewer>
-						            <option value="${reviewer.id?string("######")}">${reviewer.firstName?html} ${reviewer.lastName?html}</option>               
-						        </#list>
-				             <select>
-						        
-						        <#list model.applicationForm.reviewers as reviewer>
-						             <input type="hidden" name="reviewers" value="${reviewer.id?string("######")}"/>
-                                </#list>
-			            	
-			            </div>
-			            
-			            <div class="buttons">
-			              <button type="submit">Assign</button>
-			            </div>
-			          
-			        </form>
-			        <br />
-  				</#if> 
 
 			<#if model.applicationForm.isModifiable()  && (model.user.isInRole('SUPERADMINISTRATOR')||  model.user.isInRoleInProgram('ADMINISTRATOR',model.applicationForm.program) ||  model.user.isInRoleInProgram('APPROVER', model.applicationForm.program))>
 					<form id="approvalForm" action="<@spring.url '/approveOrReject'/>" method = "POST">

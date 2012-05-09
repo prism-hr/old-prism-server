@@ -35,6 +35,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.AdditionalInformation</value>
 	     		<value>com.zuehlke.pgadmissions.domain.NotificationRecord</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Event</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Interviewer</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

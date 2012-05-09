@@ -87,7 +87,7 @@ public class MoveToReviewTempControllerTest {
 
 		controller.getApplicationForm(5);
 	}
-
+	
 	@Test
 	public void shouldChangeStateToReviewAndSave(){
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().toProgram()).toApplicationForm();

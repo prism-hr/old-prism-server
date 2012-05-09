@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -9,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -22,6 +28,8 @@ public class MoveToInterviewController {
 
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
+	private static final String INTERVIEW_DETAILS_VIEW_NAME = "/private/staff/interviewers/interview_details";
+
 	
 	MoveToInterviewController() {
 		this(null, null);
@@ -50,10 +58,7 @@ public class MoveToInterviewController {
 	
 	@RequestMapping(method = RequestMethod.POST)
 	public String getInterviewDetailsPage(@ModelAttribute ApplicationForm applicationForm) {
-		applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
-		applicationsService.save(applicationForm);
-		return "redirect:/applications";
-
+		return INTERVIEW_DETAILS_VIEW_NAME;
 	}
 	
 	@RequestMapping(value="move",method = RequestMethod.POST)
@@ -63,4 +68,40 @@ public class MoveToInterviewController {
 		return "redirect:/applications";
 
 	}
+	
+	@ModelAttribute("programmeInterviewers")
+	public List<RegisteredUser> getProgrammeInterviewers(@ModelAttribute("programme") Program program,
+			@ModelAttribute("applicationForm") ApplicationForm application) {
+
+		if (application == null || !getCurrentUser().canSee(application)) {
+			throw new ResourceNotFoundException();
+		}
+		List<RegisteredUser> availableInterviewers = new ArrayList<RegisteredUser>();
+		List<RegisteredUser> programmeInterviewers = program.getInterviewers();
+		for (RegisteredUser registeredUser : programmeInterviewers) {
+			if(!registeredUser.isInterviewerOfApplicationForm(application)){
+				availableInterviewers.add(registeredUser);
+			}
+		}
+				
+		return availableInterviewers;
+	}
+	
+	
+	@ModelAttribute("applicationInterviewers")
+	public List<RegisteredUser> getApplicationInterviewersAsUsers(@ModelAttribute("applicationForm") ApplicationForm application) {
+		if (application == null || !getCurrentUser().canSee(application)) {
+			throw new ResourceNotFoundException();
+		}
+		List<RegisteredUser> existingInterviewers = new ArrayList<RegisteredUser>();
+		List<Interviewer> appInterviewers = application.getInterviewers();
+		for (Interviewer interviewer : appInterviewers) {
+			if(!existingInterviewers.contains(interviewer.getUser())){
+				existingInterviewers.add(interviewer.getUser());
+			}
+		}
+		return existingInterviewers;
+	}
+
+	
 }

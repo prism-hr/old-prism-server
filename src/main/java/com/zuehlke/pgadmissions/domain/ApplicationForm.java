@@ -118,6 +118,12 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "application_form_id")
 	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
 	
+	
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "application_form_id")
+	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
+	
 	@OneToMany(mappedBy = "application")
 	private List<Comment> applicationComments = new ArrayList<Comment>();
 
@@ -476,5 +482,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public List<Reviewer> getReviewers() {
 		return reviewers;
+	}
+
+	public List<Interviewer> getInterviewers() {
+		return interviewers;
+	}
+
+	public void setInterviewers(List<Interviewer> interviewers) {
+		this.interviewers = interviewers;
 	}
 }

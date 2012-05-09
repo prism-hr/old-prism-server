@@ -149,6 +149,7 @@ public class ManageUsersControllerTest {
 		EasyMock.expect(selectedUser.isInRole(Authority.APPROVER)).andReturn(false);
 		EasyMock.expect(selectedUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false);
 		EasyMock.expect(selectedUser.isInRole(Authority.REFEREE)).andReturn(false);
+		EasyMock.expect(selectedUser.isInRole(Authority.INTERVIEWER)).andReturn(false);
 		EasyMock.expect(selectedUser.getProgramsOfWhichAdministrator()).andReturn(new ArrayList<Program>());
 		EasyMock.expect(selectedUser.getProgramsOfWhichApprover()).andReturn(new ArrayList<Program>());
 		EasyMock.expect(selectedUser.getProgramsOfWhichReviewer()).andReturn(new ArrayList<Program>());

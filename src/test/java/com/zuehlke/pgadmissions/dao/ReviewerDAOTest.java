@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;

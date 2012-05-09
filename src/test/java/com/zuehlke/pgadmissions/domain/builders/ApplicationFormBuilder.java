@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -55,10 +56,18 @@ public class ApplicationFormBuilder {
 	private AdditionalInformation info;	
 	private Date lastUpdated;
 	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
+	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
 	
 	public ApplicationFormBuilder reviewers(Reviewer...reviewers) {
 		for (Reviewer reviewer : reviewers) {
 			this.reviewers.add(reviewer);
+		}
+		return this;
+	}
+	
+	public ApplicationFormBuilder interviewers(Interviewer...interviewers) {
+		for (Interviewer interviewer : interviewers) {
+			this.interviewers.add(interviewer);
 		}
 		return this;
 	}
@@ -220,6 +229,7 @@ public class ApplicationFormBuilder {
 		application.setApplicant(applicant);
 		
 		application.getReviewers().addAll(reviewers);
+		application.getInterviewers().addAll(interviewers);
 		application.setSubmittedDate(submittedDate);
 
 		application.setApprover(approver);

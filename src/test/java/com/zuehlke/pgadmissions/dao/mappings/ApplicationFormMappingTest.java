@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -37,6 +38,7 @@ import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -54,6 +56,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	private RegisteredUser user;
 	private Program program;
 	private RegisteredUser reviewerUser;
+	private RegisteredUser interviewerUser;
 
 	@Test
 	public void shouldSaveAndLoadApplicationForm() throws ParseException {
@@ -138,6 +141,30 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		Reviewer reviewer = reloadedApplication.getReviewers().get(0);
 		assertEquals(reviewerUser,reviewer.getUser());
 		assertEquals(reloadedApplication, reviewer.getApplication());
+		
+	}
+	
+	@Test
+	public void shouldSaveLoadApplicationFormWithInterviewer() {
+		
+		ApplicationForm application = new ApplicationForm();
+		application.setProgram(program);
+		application.setApplicant(user);
+		
+		application.getInterviewers().add(new InterviewerBuilder().user(interviewerUser).toInterviewer());
+		
+		sessionFactory.getCurrentSession().save(application);
+		
+		flushAndClearSession();
+		
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertNotSame(application, reloadedApplication);
+		assertEquals(application, reloadedApplication);
+		
+		Assert.assertEquals(1, reloadedApplication.getInterviewers().size());
+		Interviewer interviewer = reloadedApplication.getInterviewers().get(0);
+		assertEquals(interviewerUser, interviewer.getUser());
+		assertEquals(reloadedApplication, interviewer.getApplication());
 		
 	}
 	@Test
@@ -306,10 +333,13 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 		reviewerUser = new RegisteredUserBuilder().firstName("hanna").lastName("hoopla").email("hoopla@test.com").username("hoopla").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+	
+		interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com").username("brady").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
 		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
 
-		save(user, reviewerUser, program);
+		save(user, reviewerUser, program, interviewerUser);
 
 		flushAndClearSession();
 	}

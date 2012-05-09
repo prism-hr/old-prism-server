@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.easymock.EasyMock;
@@ -8,6 +10,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -30,8 +33,8 @@ public class ReviewServiceTest {
 	private UserDAO userDaoMock;
 	private RoleDAO roleDaoMock;
 	private ProgramDAO programmeDaoMock;
+	private ReviewerDAO reviewerDaoMock;
 	private ApplicationFormDAO applicationDaoMock;
-	private ReviewerService reviewerServiceMock;
 
 	private Program programme;
 	private RegisteredUser reviewer1;
@@ -44,7 +47,7 @@ public class ReviewServiceTest {
 		roleDaoMock = EasyMock.createMock(RoleDAO.class);
 		programmeDaoMock = EasyMock.createMock(ProgramDAO.class);
 		applicationDaoMock = EasyMock.createMock(ApplicationFormDAO.class);
-		reviewerServiceMock = EasyMock.createMock(ReviewerService.class);
+		reviewerDaoMock = EasyMock.createMock(ReviewerDAO.class);
 
 		reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole();
 		reviewer1 = new RegisteredUserBuilder().id(100).email("rev1@bla.com")//
@@ -54,7 +57,7 @@ public class ReviewServiceTest {
 		programme = new ProgramBuilder().id(1).title("super prog").reviewers(reviewer1).toProgram();
 		application = new ApplicationFormBuilder().id(200).program(programme).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 
-		reviewService = new ReviewService(userDaoMock, roleDaoMock, programmeDaoMock, applicationDaoMock, reviewerServiceMock);
+		reviewService = new ReviewService(userDaoMock, roleDaoMock, programmeDaoMock, applicationDaoMock, reviewerDaoMock);
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -124,13 +127,22 @@ public class ReviewServiceTest {
 				.toUser();
 		programme.getProgramReviewers().add(reviewer2);
 
+		reviewerDaoMock.save((Reviewer) EasyMock.anyObject());
+		EasyMock.expectLastCall().times(2);
+
 		applicationDaoMock.save(application);
 		EasyMock.expectLastCall().andDelegateTo(new CheckReviewersAndSimulateSaveDAO(reviewer1, reviewer2));
 
-		EasyMock.replay(userDaoMock, roleDaoMock, applicationDaoMock);
+		EasyMock.replay(userDaoMock, roleDaoMock, applicationDaoMock, reviewerDaoMock);
 		reviewService.moveApplicationToReview(application, reviewer1, reviewer2);
-		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock);
+		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock, reviewerDaoMock);
 
+		List<Reviewer> reviewers = application.getReviewers();
+		Assert.assertNotNull(reviewers);
+		Assert.assertEquals(2, reviewers.size());
+		for (Reviewer reviewer : reviewers) {
+			Assert.assertEquals(application, reviewer.getApplication());
+		}
 		Assert.assertTrue(reviewer1.isReviewerOfApplicationForm(application));
 		Assert.assertTrue(reviewer2.isReviewerOfApplicationForm(application));
 		Assert.assertEquals(ApplicationFormStatus.REVIEW, application.getStatus());
@@ -189,6 +201,9 @@ public class ReviewServiceTest {
 		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock);
 		Assert.assertTrue(reviewer1.isReviewerOfApplicationForm(application));
 		Assert.assertTrue(reviewer2.isReviewerOfApplicationForm(application));
+		List<Reviewer> reviewers = application.getReviewers();
+		Assert.assertNotNull(reviewers);
+		Assert.assertEquals(2, reviewers.size());
 		Assert.assertEquals(ApplicationFormStatus.REVIEW, application.getStatus());
 	}
 

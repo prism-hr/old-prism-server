@@ -1,13 +1,12 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -25,26 +24,26 @@ public class ReviewService {
 	private final UserDAO userDAO;
 	private final ProgramDAO programmeDAO;
 	private final ApplicationFormDAO applicationDAO;
-	private final ReviewerService reviewerService;
+	private final ReviewerDAO reviewerDAO;
 
 	ReviewService() {
 		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public ReviewService(UserDAO userDAO, RoleDAO roleDAO, ProgramDAO programmeDAO, ApplicationFormDAO applicationDAO, ReviewerService reviewerService) {
+	public ReviewService(UserDAO userDAO, RoleDAO roleDAO, ProgramDAO programmeDAO, ApplicationFormDAO applicationDAO, ReviewerDAO reviewerDAO) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
 		this.programmeDAO = programmeDAO;
 		this.applicationDAO = applicationDAO;
-		this.reviewerService = reviewerService;
+		this.reviewerDAO = reviewerDAO;
 	}
 
 	/**
 	 * Associates the given reviewers to the application and updates the
 	 * application record(s) if necessary. Silently handles reviewers already
-	 * associated with the application, but throws {@link IllegalStateException}
-	 * s when the users don't have the role reviewer or are not reviewer of the
+	 * associated with the application, but throws {@link IllegalStateException}s 
+	 * when the users don't have the role reviewer or are not reviewer of the
 	 * programme of the application.
 	 * 
 	 * @param application
@@ -69,7 +68,7 @@ public class ReviewService {
 				reviewer.setUser(reviewerUser);
 				reviewer.setApplication(application);
 				application.getReviewers().add(reviewer);
-				
+				reviewerDAO.save(reviewer);
 			}
 		}
 		application.setStatus(ApplicationFormStatus.REVIEW);
@@ -94,9 +93,6 @@ public class ReviewService {
 		programme.getProgramReviewers().add(newUser);
 		userDAO.save(newUser);
 		programmeDAO.save(programme);
-		Reviewer reviewer = new Reviewer();
-		reviewer.setUser(newUser);
-		reviewerService.save(reviewer);
 		return newUser;
 	}
 

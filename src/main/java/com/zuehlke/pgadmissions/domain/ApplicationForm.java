@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -195,10 +194,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setApplicationTimestamp(Date applicationTimestamp) {
 		this.applicationTimestamp = applicationTimestamp;
-	}
-
-	public boolean isUnderReview() {
-		return !reviewerUsers.isEmpty();
 	}
 
 	public boolean isModifiable() {
@@ -471,15 +466,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public void setReviewers(List<Reviewer> reviewers) {
 		this.reviewers = reviewers;
 	}
-
-	public List<RegisteredUser> getReviewerUsers() {
-		return reviewerUsers;
-	}
-
-	public void setReviewerUsers(List<RegisteredUser> reviewerUsers) {
-		this.reviewerUsers = reviewerUsers;
-	}
-
+	
 	public List<Reviewer> getReviewers() {
 		return reviewers;
 	}

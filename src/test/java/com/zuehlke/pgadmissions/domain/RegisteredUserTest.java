@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
@@ -229,6 +230,35 @@ public class RegisteredUserTest {
 		assertFalse(approver.isReviewerOfApplicationForm(applicationForm));
 	}
 
+	@Test
+	public void shouldReturnFalseForInterviewersIfUserIsApproverInApplication() {
+		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().approver(approver).program(program).status(ApplicationFormStatus.VALIDATION)
+				.toApplicationForm();
+		assertFalse(approver.isInterviewerOfApplicationForm(applicationForm));
+	}
+	
+	@Test
+	public void shouldReturnFalseForInterviewersIfUserIsReviewerButNotInApplication() {
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertFalse(reviewer.isInterviewerOfApplicationForm(applicationForm));
+	}
+	
+	@Test
+	public void shouldReturnTrueForInterviewersIfUserIsInterviewerTApplication() {
+		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer())
+				.status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertTrue(interviewerUser.isInterviewerOfApplicationForm(applicationForm));
+	}
+
+	
 	@Test
 	public void shouldReturnListOfAuthoritiesForProgram() {
 		Program program = new ProgramBuilder().id(1).toProgram();

@@ -277,6 +277,28 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	
 	
 	@Test
+	public void shouldSaveAndLoadProgramsOfWhichInterviewer() throws Exception {
+		
+		Program program = new ProgramBuilder().code("111111").title("hello").toProgram();
+		save(program);
+		flushAndClearSession();
+		
+		RegisteredUser interviewer = new RegisteredUserBuilder().programsOfWhichInterviewer(program).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(false).toUser();
+		
+		save(interviewer);
+		
+		flushAndClearSession();
+		
+		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, interviewer.getId());
+		assertEquals(1, reloadedUser.getProgramsOfWhichInterviewer().size());
+		assertTrue(reloadedUser.getProgramsOfWhichInterviewer().containsAll(Arrays.asList(program)));
+		
+	}
+	
+	
+	@Test
 	public void shouldLoadRegisteredUserWithComments() {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com").toUser();
 		

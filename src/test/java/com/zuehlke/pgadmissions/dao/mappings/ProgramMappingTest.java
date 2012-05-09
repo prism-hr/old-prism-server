@@ -141,4 +141,29 @@ public class ProgramMappingTest extends AutomaticRollbackTestCase {
 		assertTrue(reloadedProgramOne.getProgramReviewers().containsAll(Arrays.asList(reviewerOne, reviewerTwo)));
 
 	}
+	
+	@Test
+	public void shouldLoadProgramsWithInterviewers() {
+		Program program = new Program();
+		program.setCode("abcD");
+		
+		program.setTitle("Program's title");
+		save(program);
+		
+		RegisteredUser interviewerOne = new RegisteredUserBuilder().programsOfWhichInterviewer(program).firstName("Jane").lastName("Doe").email("email@test.com")
+				.username("usernameOne").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+				.toUser();
+		
+		RegisteredUser interviewerTwo = new RegisteredUserBuilder().programsOfWhichInterviewer(program).firstName("Jane").lastName("Doe").email("email@test.com")
+				.username("usernameTwo").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false)
+				.toUser();
+		
+		save(interviewerOne, interviewerTwo);
+		flushAndClearSession();
+		
+		Program reloadedProgramOne = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
+		assertEquals(2, reloadedProgramOne.getInterviewers().size());
+		assertTrue(reloadedProgramOne.getInterviewers().containsAll(Arrays.asList(interviewerOne, interviewerTwo)));
+		
+	}
 }

@@ -86,6 +86,10 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@JoinTable(name = "PROGRAM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "reviewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	private List<Program> programsOfWhichReviewer = new ArrayList<Program>();
 
+	@ManyToMany
+	@JoinTable(name = "PROGRAM_INTERVIEWER_LINK", joinColumns = { @JoinColumn(name = "interviewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
+	private List<Program> programsOfWhichInterviewer = new ArrayList<Program>();
+	
 	public List<Role> getRoles() {
 		return roles;
 	}
@@ -392,6 +396,16 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	}
 
+	public boolean isInterviewerOfApplicationForm(ApplicationForm form) {		
+		for (Interviewer interviewer : form.getInterviewers()) {
+			if (interviewer!=null && this.equals(interviewer.getUser())) {
+				return true;
+			}
+		}
+		return false;
+		
+	}
+	
 	public boolean hasRefereesInApplicationForm(ApplicationForm form) {
 		return getRefereeForApplicationForm(form) != null;
 	}
@@ -473,6 +487,15 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 		return false;
 
+	}
+
+	public List<Program> getProgramsOfWhichInterviewer() {
+		return programsOfWhichInterviewer;
+	}
+
+	public void setProgramsOfWhichInterviewer(
+			List<Program> programsOfWhichInterviewer) {
+		this.programsOfWhichInterviewer = programsOfWhichInterviewer;
 	}
 
 	public List<Reviewer> getReviewersForApplicationForm(ApplicationForm applicationForm) {

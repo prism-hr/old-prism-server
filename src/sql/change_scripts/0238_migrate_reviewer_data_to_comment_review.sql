@@ -1,1 +1,1 @@
-UPDATE review_comment SET reviewer_id =( SELECT reviewer.id FROM reviewer, comment where review_comment.id = comment.id and comment.user_id = reviewer.registered_user_id and comment.application_form_id = reviewer.application_form_id);
+UPDATE REVIEW_COMMENT SET reviewer_id =( SELECT REVIEWER.id FROM REVIEWER, COMMENT where REVIEW_COMMENT.id = COMMENT.id and COMMENT.user_id = REVIEWER.registered_user_id and COMMENT.application_form_id = REVIEWER.application_form_id);

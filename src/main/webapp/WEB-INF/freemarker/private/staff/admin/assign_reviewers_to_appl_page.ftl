@@ -79,19 +79,45 @@
 						Available reviewers in programme: 
 						<select id="reviewers" multiple="multiple">
 							<#list availableReviewers as reviewer>
-							  <option value="${reviewer.id}">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+							  <option value="${reviewer.id?string('#####')}">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
 							</#list>
+							
 						</select>
 						<div class="buttons">
 							<button type="submit" id="addReviewerBtn">Add reviewer</button>
 						</div>
 						<br></br> 
-						Already reviewer of this application: 
+						Already reviewers of this application: 
 						<select id="assignedReviewers" multiple="multiple">
 							<#list applicationReviewers as reviewer>
-								<option value="${reviewer.id}">${reviewer.firstName?html} ${reviewer.lastName?html}</option>
+								<option value="${reviewer.id?string('#####')}">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
 							</#list>
+							<#if unsavedApplicationReviewers??>
+								<#list unsavedApplicationReviewers as unsavedReviewer>
+							  		<option value="${unsavedReviewer.id?string('#####')}">${unsavedReviewer.firstName?html} ${unsavedReviewer.lastName?html} <#if !unsavedReviewer.enabled> - Pending</#if></option>
+								</#list>
+							</#if>
 						</select>
+						<span id="appReviewers">
+						  <#list applicationForm.reviewers as reviewer>
+						             <input type="hidden" name="reviewers" value='{"id" :"${reviewer.id?string("######")}"}' />       
+                           </#list>
+                           <#if unsavedApplicationReviewers??>
+								<#list unsavedApplicationReviewers as unsavedReviewer>
+							  		<input type="hidden" name="reviewers" value='{"id" :"${unsavedReviewer.id?string("######")}"}' />      
+								</#list>
+							</#if>
+						</span>
+						<span id="assRev">
+						  <#list applicationForm.reviewers as reviewer>
+						             <input type="hidden" name="assignedReviewers" value='{"id" :"${reviewer.id?string("######")}"}' />       
+                           </#list>
+                           <#if unsavedApplicationReviewers??>
+								<#list unsavedApplicationReviewers as unsavedReviewer>
+							  		<input type="hidden" name="assignedReviewers" value='{"id" :"${unsavedReviewer.id?string("######")}"}' />      
+								</#list>
+							</#if>
+						</span>
 						<p>${message!}</p>
 						  <div class="row">
                                <label class="label">First Name<em>*</em></label>
@@ -110,21 +136,20 @@
                                     </div>
                                 </div>
                                 
-                                 <div class="row">
-                                    <label class="label">Email<em>*</em></label>
-                                            <div class="field">
-                                             <input class="full" type="text"  name="newReviewerEmail" id="newReviewerEmail"/>
-                                             <@spring.bind "uiReviewer.email" /> 
-	                					     <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-                                            </div>
-                                 </div>
-						
-						
-						<div class="buttons">
-							<button type="submit" id="moveToReviewBtn">Continue</button>
-						</div>
+                             <div class="row">
+                                <label class="label">Email<em>*</em></label>
+                                        <div class="field">
+                                         <input class="full" type="text"  name="newReviewerEmail" id="newReviewerEmail"/>
+                                         <@spring.bind "uiReviewer.email" /> 
+             					     <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                                        </div>
+                             </div>
+							
 						<div class="buttons">
 							<button type="submit" id="createReviewer">Create reviewer</button>
+						</div>
+						<div class="buttons">
+							<button type="button" id="moveToReviewBtn">Continue</button>
 						</div>
 						<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/> 
 					</div>

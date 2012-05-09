@@ -29,7 +29,7 @@ public class Program extends DomainObject<Integer> {
 	private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
 
 	@ManyToMany(mappedBy = "programsOfWhichReviewer")
-	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
+	private List<RegisteredUser> programReviewers = new ArrayList<RegisteredUser>();
 
 	@OneToMany(mappedBy = "program")
 	private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
@@ -86,13 +86,13 @@ public class Program extends DomainObject<Integer> {
 
 	}
 
-	public List<RegisteredUser> getReviewers() {
-		return reviewers;
+	public List<RegisteredUser> getProgramReviewers() {
+		return programReviewers;
 	}
 
-	public void setReviewers(List<RegisteredUser> reviewers) {
-		this.reviewers.clear();
-		this.reviewers.addAll(reviewers);
+	public void setProgramReviewers(List<RegisteredUser> reviewers) {
+		this.programReviewers.clear();
+		this.programReviewers.addAll(reviewers);
 	}
 
 	public boolean isApprover(RegisteredUser user) {

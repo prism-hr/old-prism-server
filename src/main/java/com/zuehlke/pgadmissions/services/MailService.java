@@ -115,7 +115,7 @@ public class MailService {
 	}
 
 	public void sendWithdrawToReviewers(ApplicationForm form) {
-		List<RegisteredUser> reviewers = form.getProgram().getReviewers();
+		List<RegisteredUser> reviewers = form.getProgram().getProgramReviewers();
 		for (RegisteredUser reviewer : reviewers) {
 		
 				try {

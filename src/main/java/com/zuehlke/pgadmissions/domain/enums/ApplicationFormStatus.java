@@ -8,6 +8,7 @@ public enum ApplicationFormStatus {
 	APPROVAL("Approval"), //
 	APPROVED("Approved"), //
 	WITHDRAWN("Withdrawn"), //
+	INTERVIEW("Interview"), //
 	REVIEW("Review");
 
 	private final String displayValue;
@@ -22,8 +23,8 @@ public enum ApplicationFormStatus {
 	}
 
 	public static ApplicationFormStatus[] getAvailableNextStati(ApplicationFormStatus status) {
-		if (status == VALIDATION || status == REVIEW) {
-			return new ApplicationFormStatus[] { REJECTED, REVIEW, APPROVAL };
+		if (status == VALIDATION || status == REVIEW || status == INTERVIEW) {
+			return new ApplicationFormStatus[] { REJECTED, REVIEW, APPROVAL, INTERVIEW };
 		}
 		return new ApplicationFormStatus[] {};
 	}

@@ -73,7 +73,7 @@ public class ProgramBuilder {
 
 		program.getApprovers().addAll(approvers);
 		program.getAdministrators().addAll(administrators);
-		program.getReviewers().addAll(reviewers);
+		program.getProgramReviewers().addAll(reviewers);
 		program.getInstances().addAll(instances);
 		return program;
 	}

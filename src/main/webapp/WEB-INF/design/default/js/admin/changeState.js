@@ -15,6 +15,10 @@ $(document).ready(function(){
 				saveComment(moveToReview);
 			}
 			
+			if($('#status').val() == 'INTERVIEW'){				
+				saveComment(moveToInterview);
+			}
+			
 		});
 });
 
@@ -44,6 +48,19 @@ function moveToApproval(data){
 		function(data) {
 			window.location.href = "/pgadmissions/applications";
 		}
+	);
+}
+function moveToInterview(data){
+	
+	var application = $('#applicationId').val();
+	$.post(
+			"/pgadmissions/moveToInterview",
+			{
+				application: application,
+			}, 
+			function(data) {
+				window.location.href = "/pgadmissions/applications";
+			}
 	);
 }
 

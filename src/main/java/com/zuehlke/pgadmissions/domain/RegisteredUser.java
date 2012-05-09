@@ -349,14 +349,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	}
 
 	public boolean isReviewerInProgramme(Program program) {
-		if (program.getReviewers().contains(this)) {
+		if (program.getProgramReviewers().contains(this)) {
 			return true;
 		}
 		return false;
 	}
 
 	public boolean isAdminOrReviewerInProgramme(Program program) {
-		if (program.getAdministrators().contains(this) || program.getReviewers().contains(this)) {
+		if (program.getAdministrators().contains(this) || program.getProgramReviewers().contains(this)) {
 			return true;
 		}
 		return false;
@@ -384,7 +384,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public boolean isReviewerOfApplicationForm(ApplicationForm form) {		
 		for (Reviewer reviewer : form.getReviewers()) {
-			if (this.equals(reviewer.getUser())) {
+			if (reviewer!=null && this.equals(reviewer.getUser())) {
 				return true;
 			}
 		}

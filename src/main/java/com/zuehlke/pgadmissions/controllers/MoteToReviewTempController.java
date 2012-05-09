@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -63,7 +65,13 @@ public class MoteToReviewTempController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String moveToReview(@ModelAttribute ApplicationForm applicationForm) {
 		applicationForm.setStatus(ApplicationFormStatus.REVIEW);
-		//applicationForm.getReviewerUsers().addAll(applicationForm.getProgram().getReviewers());
+		List<RegisteredUser> reviewers = applicationForm.getProgram().getReviewers();
+		for (RegisteredUser registeredUser : reviewers) {
+			Reviewer reviewer = new Reviewer();
+			reviewer.setUser(registeredUser);
+			applicationForm.getReviewers().add(reviewer);
+		}
+	
 		applicationForm.setDueDate(DateUtils.truncate(DateUtils.addDays(new Date(), stageDurationDAO.getByStatus(ApplicationFormStatus.REVIEW).getDurationInDays()), Calendar.DATE));
 		applicationsService.save(applicationForm);
 		return "redirect:/applications";

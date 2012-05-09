@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<beans>
+
+	<bean id="mailServiceForTimers" class="com.zuehlke.pgadmissions.services.MailService"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+		<constructor-arg index="2" ref="mailApplicationsService" />
+	</bean>
+
+	<bean id="refereeMailSender" class="com.zuehlke.pgadmissions.mail.RefereeMailSender"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+	</bean>
+
+	<bean id="reviewerMailSender" class="com.zuehlke.pgadmissions.mail.ReviewerMailSender"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+	</bean>
+	<bean id="mailAdminMailSender" class="com.zuehlke.pgadmissions.mail.AdminMailSender"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+	</bean>
+
+
+	<bean id="applicantMailSender" class="com.zuehlke.pgadmissions.mail.ApplicantMailSender"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+	</bean>
+
+	<bean id="adminMailSender" class="com.zuehlke.pgadmissions.mail.AdminMailSender"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+	</bean>
+
+	<bean id="mailApplicationDAO" class="com.zuehlke.pgadmissions.dao.ApplicationFormDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+	<bean id="mainRefereeDAO" class="com.zuehlke.pgadmissions.dao.RefereeDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+	<bean id="mailReviewerDAO" class="com.zuehlke.pgadmissions.dao.ReviewerDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+	<bean id="mailRoleDAO" class="com.zuehlke.pgadmissions.dao.RoleDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+	
+	<bean id="mailCommentDAO" class="com.zuehlke.pgadmissions.dao.CommentDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+
+	<bean id="mailUserDAO" class="com.zuehlke.pgadmissions.dao.UserDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+	<bean id="mailUserService" class="com.zuehlke.pgadmissions.services.UserService"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mailUserDAO" />
+		<constructor-arg index="1" ref="mailRoleDAO" />
+		<constructor-arg index="2" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="3" ref="mailSender" />
+	</bean>
+	<bean id="mailCommentService" class="com.zuehlke.pgadmissions.services.CommentService"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mailCommentDAO" />
+	</bean>
+	<bean id="mailRefereeService" class="com.zuehlke.pgadmissions.services.RefereeService"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mainRefereeDAO" />
+		<constructor-arg index="1" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="2" ref="mailSender" />
+		<constructor-arg index="3" ref="mailUserService" />
+		<constructor-arg index="4" ref="mailRoleDAO" />
+	</bean>
+	<bean id="mailApplicationsService" class="com.zuehlke.pgadmissions.services.ApplicationsService"
+		autowire-candidate="false">
+		<constructor-arg ref="mailApplicationDAO" />
+	</bean>
+
+	<!-- admin reminders -->
+	<bean id="adminValidationReminderTimerTask" class="com.zuehlke.pgadmissions.timers.AdminReminderTimerTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="mailApplicationDAO" />
+		<constructor-arg index="2" ref="adminMailSender" />
+		<constructor-arg index="3" value="VALIDATION_REMINDER" />
+		<constructor-arg index="4" value="VALIDATION" />
+		<constructor-arg index="5" value="is overdue validation." />
+		<constructor-arg index="6"
+			value="private/staff/admin/mail/application_validation_reminder.ftl" />
+	</bean>
+
+	<bean id="adminValidationReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="2000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="adminValidationReminderTimerTask" />
+	</bean>
+	
+	<!-- admin notifications -->
+	<bean id="adminReviewFeedbackNotificationTimerTask"
+		class="com.zuehlke.pgadmissions.timers.AdminReviewFeedbackNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="mailAdminMailSender" />
+		<constructor-arg index="2" ref="mailCommentService" />
+	</bean>
+
+	<bean id="adminReviewFeedbackNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="2000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="adminReviewFeedbackNotificationTimerTask" />
+	</bean>
+
+
+	<bean id="adminReviewReminderTimerTask" class="com.zuehlke.pgadmissions.timers.AdminReminderTimerTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="mailApplicationDAO" />
+		<constructor-arg index="2" ref="adminMailSender" />
+		<constructor-arg index="3" value="REVIEW_REMINDER" />
+		<constructor-arg index="4" value="REVIEW" />
+		<constructor-arg index="5"
+			value="review feedback evaluation overdue" />
+		<constructor-arg index="6"
+			value="private/staff/admin/mail/application_review_reminder.ftl" />
+	</bean>
+
+	<bean id="adminReviewReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="2000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="adminReviewReminderTimerTask" />
+	</bean>
+	<!-- referee notification -->
+	<bean id="refereeNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.RefereeNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="refereeMailSender" />
+		<constructor-arg index="2" ref="mainRefereeDAO" />
+		<constructor-arg index="3" ref="mailRefereeService" />
+	</bean>
+
+	<bean id="refereeNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="3000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="refereeNotificationTimerTask" />
+	</bean>
+
+	<!-- referee remindeers -->
+	<bean id="refereeReminderTimerTask" class="com.zuehlke.pgadmissions.timers.RefereeReminderTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="refereeMailSender" />
+		<constructor-arg index="2" ref="mainRefereeDAO" />
+	</bean>
+
+	<bean id="refereeReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="4000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="refereeReminderTimerTask" />
+	</bean>
+	
+
+	<!-- update notifications -->
+	<bean id="updateNotificationTimerTask"
+		class="com.zuehlke.pgadmissions.timers.ApplicationUpdatedNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="mailServiceForTimers" />
+		<constructor-arg index="2" ref="mailApplicationsService" />
+	</bean>
+
+	<bean id="updateNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="5000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="updateNotificationTimerTask" />
+	</bean>
+
+	<!-- applicant submitted notifications -->
+	<bean id="applicantSubmissionNotificationTimerTask"
+		class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="mailApplicationDAO" />
+		<constructor-arg index="2" ref="applicantMailSender" />
+		<constructor-arg index="3"
+			value="APPLICANT_SUBMISSION_NOTIFICATION" />
+		<constructor-arg index="4" value="VALIDATION" />
+		<constructor-arg index="5" value="has been recieved" />
+		<constructor-arg index="6"
+			value="private/pgStudents/mail/application_submit_confirmation.ftl" />
+	</bean>
+
+	<bean id="applicantSubmissionNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="10500" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="applicantSubmissionNotificationTimerTask" />
+	</bean>
+	<!-- admin submitted notifications -->
+	<bean id="adminSubmissionNotificationTimerTask"
+		class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="mailApplicationDAO" />
+		<constructor-arg index="2" ref="adminMailSender" />
+		<constructor-arg index="3"
+			value="UPDATED_NOTIFICATION" />
+		<constructor-arg index="4" value="VALIDATION" />
+		<constructor-arg index="5" value="has been been submitted" />
+		<constructor-arg index="6"
+			value="private/staff/admin/mail/application_submit_confirmation.ftl" />
+	</bean>
+
+	<bean id="adminSubmissionNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="10500" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="adminSubmissionNotificationTimerTask" />
+	</bean>
+
+	<!-- move to review notifications -->
+	<bean id="moveToReviewNotificationTimerTask"
+		class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="mailApplicationDAO" />
+		<constructor-arg index="2" ref="applicantMailSender" />
+		<constructor-arg index="3"
+			value="APPLICANT_MOVED_TO_REVIEW_NOTIFICATION" />
+		<constructor-arg index="4" value="REVIEW" />
+		<constructor-arg index="5" value="now being reviewed" />
+		<constructor-arg index="6"
+			value="private/pgStudents/mail/moved_to_review_notification.ftl" />
+	</bean>
+
+	<bean id="moveToReviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="10000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="moveToReviewNotificationTimerTask" />
+	</bean>
+
+	<!-- reviewer notification -->
+	<bean id="reviewerNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.ReviewerNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="reviewerMailSender" />
+		<constructor-arg index="2" ref="mailReviewerDAO" />		
+	</bean>
+
+	<bean id="reviewerNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="3000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="reviewerNotificationTimerTask" />
+	</bean>
+
+	<!-- The main schedule -->
+	<bean class="org.springframework.scheduling.timer.TimerFactoryBean">
+		<property name="scheduledTimerTasks">
+			<list>
+				<ref bean="adminValidationReminderSchedule" />
+				<ref bean="adminReviewReminderSchedule" />
+				<ref bean="refereeReminderSchedule" />
+				<ref bean="refereeNotificationSchedule" />
+				<ref bean="updateNotificationSchedule" />
+				<ref bean="moveToReviewNotificationSchedule" />
+				<ref bean="applicantSubmissionNotificationSchedule" />
+				<ref bean="adminReviewFeedbackNotificationSchedule" />
+				<ref bean="adminSubmissionNotificationSchedule"/>
+				<ref bean="reviewerNotificationSchedule"/>
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="sessionFactoryMail"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean"
+		autowire-candidate="false">
+
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses" ref="entities" />
+
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.current_session_context_class">thread</prop>
+				<prop key="javax.persistence.validation.mode">NONE</prop>
+
+			</props>
+		</property>
+	</bean>
+</beans>

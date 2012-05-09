@@ -475,4 +475,15 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	}
 
+	public List<Reviewer> getReviewersForApplicationForm(ApplicationForm applicationForm) {
+		List<Reviewer> reviewers = new ArrayList<Reviewer>();
+		List<Reviewer> formReviewers = applicationForm.getReviewers();
+		for (Reviewer reviewer : formReviewers) {
+			if(this.equals(reviewer.getUser())){
+				reviewers.add(reviewer);
+			}
+		}
+		return reviewers;
+	}
+
 }

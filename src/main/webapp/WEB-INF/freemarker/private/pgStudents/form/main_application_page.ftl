@@ -145,6 +145,17 @@
                   	<ul id="view-toolbar">
                     	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
                    		 <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
+                   		 
+						<li id="tool-programme" class="tool-button"><a href="javascript:backToTop();" title="Back to Programme">Back to Programme</a></li>
+                   		<li id="tool-personal" class="tool-button"><a href="javascript:backToTop();" title="Back to Personal Details">Back to Personal Details</a></li> 
+                   		<li id="tool-address" class="tool-button"><a href="javascript:backToTop();" title="Back to Address">Back to Address</a></li>
+						<li id="tool-qualification" class="tool-button"><a href="javascript:backToTop();" title="Back to Qualifications">Back to Qualifications</a></li>
+                   		<li id="tool-employment" class="tool-button"><a href="javascript:backToTop();" title="Back to Employment">Back to Employment</a></li> 
+                   		<li id="tool-funding" class="tool-button"><a href="javascript:backToTop();" title="Back to Funding">Back to Funding</a></li> 
+						<li id="tool-references" class="tool-button"><a href="javascript:backToTop();" title="Back to References">Back to References</a></li>
+                   		<li id="tool-documents" class="tool-button"><a href="javascript:backToTop();" title="Back to Documents">Back to Documents</a></li> 
+                   		<li id="tool-information" class="tool-button tool-information"><a href="javascript:backToTop();" title="Back to Additional Information">Back to Additional Information</a></li> 
+                   		 
                   	</ul>
 			      
 			      		<!-- content box -->

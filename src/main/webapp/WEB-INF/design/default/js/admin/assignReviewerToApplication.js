@@ -6,27 +6,21 @@ $(document).ready(function() {
 			var selText = $("#reviewers option[value='" + id + "']").text();
 			$("#reviewers option[value='" + id + "']").remove();
 			$("#assignedReviewers").append('<option value="'+ id +'">'+ selText +'</option>');
-			$("#appReviewers").append('<input type="hidden" name="reviewers" value=' +"'" + '{"id":"' +  id + '"} ' + "'" + "/>");
-			$("#assRev").append('<input type="hidden" name="assignedReviewers" value=' +"'" + '{"id":"' +  id + '"} ' + "'" + "/>");
 		});
 	});
 
 	$('#createReviewer').click(function() {
-		var assignedReviewerOptions = document.getElementById('assignedReviewers').options;
-		var assignedReviewersr = new Array(assignedReviewerOptions.length);
-		for(i = 0; i < assignedReviewerOptions.length; i++) {
-			assignedReviewersr[i] = assignedReviewerOptions[i].value;
-		}
-		var assignedReviewers = $('[input[name="assignedReviewers"]');
+		var idString = getAssignedReviewerIdString(); 
 		var postData ={ 
 			applicationId : $('#applicationId').val(),
 			firstName : $('#newReviewerFirstName').val(),
 			lastName : $('#newReviewerLastName').val(),
 			email : $('#newReviewerEmail').val(),
+			unsavedReviewersRaw : idString
 		};
 		
 		$.post("/pgadmissions/assignReviewers/createReviewer", 
-			$.param(postData)+"&" + assignedReviewers.serialize(),
+			$.param(postData),
 			function(data) {
 				$('#assignReviewersToAppSection').html(data);
 			}
@@ -34,15 +28,28 @@ $(document).ready(function() {
 	});
 	
 	$('#moveToReviewBtn').click(function() {
+		var idString = getAssignedReviewerIdString(); 
 		var postData = {
-				applicationId : $('#applicationId').val()
+				applicationId : $('#applicationId').val(),
+				unsavedReviewersRaw : idString
 			};
 			
-			$.post( "/pgadmissions/assignReviewers/moveApplicationToReview" ,$.param(postData) +"&" + $('[input[name="reviewers"]').serialize(),
+		$.post( "/pgadmissions/assignReviewers/moveApplicationToReview" , $.param(postData),
 			function(data) {
 				$('#assignReviewersToAppSection').html(data);
-			});
-		
-		
+			}
+		);
 	});
 });
+
+function getAssignedReviewerIdString() {
+	var assignedReviewers = document.getElementById("assignedReviewers").options;
+	var revIds = "";
+	for(i = 0; i < assignedReviewers.length; i = i + 1) {
+		if( i != 0) {
+			revIds += "|";
+		}
+		revIds += assignedReviewers.item(i).value;
+	}
+	return revIds;
+}

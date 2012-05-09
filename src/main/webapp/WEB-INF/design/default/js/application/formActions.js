@@ -104,18 +104,19 @@ $(document).ready(function(){
 			}
 	);
 	
-	$('#withdrawButton').click(function(){
-		if(confirm("Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application."))
-		{
-			$.post("/pgadmissions/withdraw",
-			{
-				applicationId:  $('#wapplicationFormId').val()
-			}, 
-			function(data) {
-			}	
-		);
-		}
-	});
+	// Moved to withdraw_modal_window.js
+//	$('#withdrawButton1').click(function(){
+//		if(confirm("Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application."))
+//		{
+//			$.post("/pgadmissions/withdraw",
+//			{
+//				applicationId:  $('#wapplicationFormId').val()
+//			}, 
+//			function(data) {
+//			}	
+//		);
+//		}
+//	});
 
 	
 	/*

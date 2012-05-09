@@ -183,6 +183,12 @@
 					return false;
 				});
 
+				$(document).keypress(function(e){  
+					if( e.keyCode == 27 ){  
+						$('#dialog-overlay, #dialog-box').hide();		
+						return false;
+					}  
+				});	
 	
 			});
 

@@ -15,7 +15,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -42,8 +41,8 @@ public class MoveToInterviewController {
 	}
 	
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer application) {
-		ApplicationForm applicationForm = applicationsService.getApplicationById(application);
+	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
+		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
 		if (applicationForm == null || !getCurrentUser().isInRoleInProgram(Authority.ADMINISTRATOR, applicationForm.getProgram())) {
 			throw new ResourceNotFoundException();
 		}
@@ -56,8 +55,8 @@ public class MoveToInterviewController {
 		return userService.getUser(currentUser.getId());
 	}
 	
-	@RequestMapping(method = RequestMethod.POST)
-	public String getInterviewDetailsPage(@ModelAttribute ApplicationForm applicationForm) {
+	@RequestMapping(method = RequestMethod.GET)
+	public String getInterviewDetailsPage(@ModelAttribute("applicationForm") ApplicationForm applicationForm) {
 		return INTERVIEW_DETAILS_VIEW_NAME;
 	}
 	
@@ -69,13 +68,14 @@ public class MoveToInterviewController {
 
 	}
 	
+	@ModelAttribute("programme")
+	public Program getProgrammeForApplication(@ModelAttribute("applicationForm") ApplicationForm application) {
+		return application.getProgram();
+	}
+	
 	@ModelAttribute("programmeInterviewers")
 	public List<RegisteredUser> getProgrammeInterviewers(@ModelAttribute("programme") Program program,
 			@ModelAttribute("applicationForm") ApplicationForm application) {
-
-		if (application == null || !getCurrentUser().canSee(application)) {
-			throw new ResourceNotFoundException();
-		}
 		List<RegisteredUser> availableInterviewers = new ArrayList<RegisteredUser>();
 		List<RegisteredUser> programmeInterviewers = program.getInterviewers();
 		for (RegisteredUser registeredUser : programmeInterviewers) {
@@ -87,12 +87,13 @@ public class MoveToInterviewController {
 		return availableInterviewers;
 	}
 	
-	
+	@ModelAttribute("user")
+	public RegisteredUser getUser() {
+		return getCurrentUser();
+	}
+
 	@ModelAttribute("applicationInterviewers")
 	public List<RegisteredUser> getApplicationInterviewersAsUsers(@ModelAttribute("applicationForm") ApplicationForm application) {
-		if (application == null || !getCurrentUser().canSee(application)) {
-			throw new ResourceNotFoundException();
-		}
 		List<RegisteredUser> existingInterviewers = new ArrayList<RegisteredUser>();
 		List<Interviewer> appInterviewers = application.getInterviewers();
 		for (Interviewer interviewer : appInterviewers) {

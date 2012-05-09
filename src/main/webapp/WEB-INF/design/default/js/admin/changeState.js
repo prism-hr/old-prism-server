@@ -53,15 +53,7 @@ function moveToApproval(data){
 function moveToInterview(data){
 	
 	var application = $('#applicationId').val();
-	$.post(
-			"/pgadmissions/moveToInterview",
-			{
-				application: application,
-			}, 
-			function(data) {
-				window.location.href = "/pgadmissions/applications";
-			}
-	);
+	window.location.href = "/pgadmissions/moveToInterview?applicationId=" + application;
 }
 
 function moveToReview(data){

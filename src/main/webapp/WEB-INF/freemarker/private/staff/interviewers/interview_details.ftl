@@ -68,8 +68,8 @@
 				<div class="content-box">
 					<div class="content-box-inner">
 						<@spring.bind "applicationForm.*" />
-						<@spring.bind "availableReviewers.*" />
-						<@spring.bind "applicationReviewers.*" />
+						<@spring.bind "programmeInterviewers.*" />
+						<@spring.bind "applicationInterviewers.*" />
 						<@spring.bind "programme.*" />
 						<div id="messageSection"></div>
 						Application ID: ${(applicationForm.id?string('#####'))!} 
@@ -78,8 +78,8 @@
 						<br></br> 
 						Available interviewers in programme: 
 						<select id="interviewers" multiple="multiple">
-							<#list availableInterviewrs as interviewer>
-							  <option value="${interviewer.id?string('#####')}">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+							<#list programmeInterviewers as interviewer>
+							  <option value="${interviewer.id?string('#####')}">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
 							</#list>
 							
 						</select>
@@ -98,16 +98,12 @@
                                <label class="label">Interview Date<em>*</em></label>
                                    <div class="field">
                                    <input class="full" type="text" name="interviewDate" id="interviewDate"/>
-                                   <@spring.bind "interview.date" /> 
-	                			   <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                </div>
                                </div>
                                 <div class="row">
                                     <label class="label">Further Details<em>*</em></label>
                                     <div class="field">
                                         <input class="full" type="text" name="furtherDetails" id="furtherDetails"/>
-                                        <@spring.bind "interview.furtherDetails" /> 
-	                				    <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                     </div>
                                 </div>
                                 
@@ -115,8 +111,6 @@
                                 <label class="label">Location (Link)<em>*</em></label>
                                         <div class="field">
                                          <input class="full" type="text"  name="interviewLocation" id="interviewLocation"/>
-                                         <@spring.bind "interview.location" /> 
-             					     <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                         </div>
                              </div>
 							

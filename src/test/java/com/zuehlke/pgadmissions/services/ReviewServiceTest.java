@@ -31,6 +31,7 @@ public class ReviewServiceTest {
 	private RoleDAO roleDaoMock;
 	private ProgramDAO programmeDaoMock;
 	private ApplicationFormDAO applicationDaoMock;
+	private ReviewerService reviewerServiceMock;
 
 	private Program programme;
 	private RegisteredUser reviewer1;
@@ -43,6 +44,7 @@ public class ReviewServiceTest {
 		roleDaoMock = EasyMock.createMock(RoleDAO.class);
 		programmeDaoMock = EasyMock.createMock(ProgramDAO.class);
 		applicationDaoMock = EasyMock.createMock(ApplicationFormDAO.class);
+		reviewerServiceMock = EasyMock.createMock(ReviewerService.class);
 
 		reviewerRole = new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole();
 		reviewer1 = new RegisteredUserBuilder().id(100).email("rev1@bla.com")//
@@ -52,7 +54,7 @@ public class ReviewServiceTest {
 		programme = new ProgramBuilder().id(1).title("super prog").reviewers(reviewer1).toProgram();
 		application = new ApplicationFormBuilder().id(200).program(programme).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 
-		reviewService = new ReviewService(userDaoMock, roleDaoMock, programmeDaoMock, applicationDaoMock);
+		reviewService = new ReviewService(userDaoMock, roleDaoMock, programmeDaoMock, applicationDaoMock, reviewerServiceMock);
 	}
 
 	@Test(expected = IllegalStateException.class)
@@ -73,9 +75,9 @@ public class ReviewServiceTest {
 		RegisteredUser newReviewer = reviewService.createNewReviewerForProgramme(programme, "la", "le", "some@email.com");
 
 		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock);
-		Assert.assertEquals(2, programme.getReviewers().size());
-		Assert.assertTrue(programme.getReviewers().contains(reviewer1));
-		Assert.assertTrue(programme.getReviewers().contains(newReviewer));
+		Assert.assertEquals(2, programme.getProgramReviewers().size());
+		Assert.assertTrue(programme.getProgramReviewers().contains(reviewer1));
+		Assert.assertTrue(programme.getProgramReviewers().contains(newReviewer));
 		Assert.assertTrue(newReviewer.getProgramsOfWhichReviewer().contains(programme));
 		Assert.assertTrue(newReviewer.isInRole(Authority.REVIEWER));
 	}
@@ -90,9 +92,9 @@ public class ReviewServiceTest {
 		reviewService.addUserToProgramme(programme, reviewer2);
 
 		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock);
-		Assert.assertEquals(2, programme.getReviewers().size());
-		Assert.assertTrue(programme.getReviewers().contains(reviewer1));
-		Assert.assertTrue(programme.getReviewers().contains(reviewer2));
+		Assert.assertEquals(2, programme.getProgramReviewers().size());
+		Assert.assertTrue(programme.getProgramReviewers().contains(reviewer1));
+		Assert.assertTrue(programme.getProgramReviewers().contains(reviewer2));
 		Assert.assertTrue(reviewer2.getProgramsOfWhichReviewer().contains(programme));
 	}
 
@@ -107,9 +109,9 @@ public class ReviewServiceTest {
 		reviewService.addUserToProgramme(programme, reviewer2);
 
 		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock);
-		Assert.assertEquals(2, programme.getReviewers().size());
-		Assert.assertTrue(programme.getReviewers().contains(reviewer1));
-		Assert.assertTrue(programme.getReviewers().contains(reviewer2));
+		Assert.assertEquals(2, programme.getProgramReviewers().size());
+		Assert.assertTrue(programme.getProgramReviewers().contains(reviewer1));
+		Assert.assertTrue(programme.getProgramReviewers().contains(reviewer2));
 
 		Assert.assertTrue(reviewer2.getProgramsOfWhichReviewer().contains(programme));
 		Assert.assertTrue(reviewer2.isInRole(Authority.REVIEWER));
@@ -120,7 +122,7 @@ public class ReviewServiceTest {
 		RegisteredUser reviewer2 = new RegisteredUserBuilder().id(101).email("rev2@bla.com")//
 				.role(reviewerRole)//
 				.toUser();
-		programme.getReviewers().add(reviewer2);
+		programme.getProgramReviewers().add(reviewer2);
 
 		applicationDaoMock.save(application);
 		EasyMock.expectLastCall().andDelegateTo(new CheckReviewersAndSimulateSaveDAO(reviewer1, reviewer2));
@@ -176,7 +178,7 @@ public class ReviewServiceTest {
 		RegisteredUser reviewer2 = new RegisteredUserBuilder().id(101).email("rev2@bla.com")//
 				.role(reviewerRole)//
 				.toUser();
-		programme.getReviewers().add(reviewer2);
+		programme.getProgramReviewers().add(reviewer2);
 
 		applicationDaoMock.save(application);
 		EasyMock.expectLastCall().andDelegateTo(new CheckReviewersAndSimulateSaveDAO(reviewer1, reviewer2));
@@ -192,7 +194,7 @@ public class ReviewServiceTest {
 
 	@Test
 	public void shouldNotAddReviewerIfNotInProgramme() {
-		programme.getReviewers().clear();
+		programme.getProgramReviewers().clear();
 
 		EasyMock.replay(userDaoMock, roleDaoMock, applicationDaoMock);
 		boolean threwException = false;
@@ -209,7 +211,7 @@ public class ReviewServiceTest {
 
 	@Test
 	public void shouldNotAddUserIfNotReviewer() {
-		programme.getReviewers().clear();
+		programme.getProgramReviewers().clear();
 		RegisteredUser anyUser = new RegisteredUserBuilder().id(23904)//
 				.username("some other user")//
 				.role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole())//

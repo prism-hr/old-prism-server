@@ -21,7 +21,7 @@ public class ProgramTest {
 		Assert.assertNotNull(program.getTitle());
 		Assert.assertNotNull(program.getAdministrators());
 		Assert.assertNotNull(program.getApprovers());
-		Assert.assertNotNull(program.getReviewers());
+		Assert.assertNotNull(program.getProgramReviewers());
 		Assert.assertNotNull(program.getId());
 	}
 

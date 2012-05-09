@@ -14,19 +14,26 @@ public class ApplicationFormStatusTest {
 		assertEquals("Validation", ApplicationFormStatus.VALIDATION.displayValue());
 		assertEquals("Not Submitted", ApplicationFormStatus.UNSUBMITTED.displayValue());
 		assertEquals("Withdrawn", ApplicationFormStatus.WITHDRAWN.displayValue());
+		assertEquals("Interview", ApplicationFormStatus.INTERVIEW.displayValue());
 		assertEquals("Review", ApplicationFormStatus.REVIEW.displayValue());
 	}
 
 	@Test
-	public void shouldReturnRejectedReviewAndApprovedForValidationState(){
+	public void shouldReturnRejectedReviewApprovedAndInterviewForValidationState(){
 		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.VALIDATION);
-		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL},avaialbleStati);
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.INTERVIEW},avaialbleStati);
 	}
 	
 	@Test
-	public void shouldReturnRejectedReviewAndApprovedForReviewState(){
+	public void shouldReturnRejectedReviewApprovedAndInterviewForReviewState(){
 		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.REVIEW);
-		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL},avaialbleStati);
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.INTERVIEW},avaialbleStati);
+	}
+	
+	@Test
+	public void shouldReturnRejectedReviewApprovedAndInterviewForInterviewState(){
+		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.INTERVIEW);
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.INTERVIEW},avaialbleStati);
 	}
 	
 	@Test

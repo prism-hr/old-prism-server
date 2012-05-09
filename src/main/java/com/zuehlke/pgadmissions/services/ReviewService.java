@@ -25,17 +25,19 @@ public class ReviewService {
 	private final UserDAO userDAO;
 	private final ProgramDAO programmeDAO;
 	private final ApplicationFormDAO applicationDAO;
+	private final ReviewerService reviewerService;
 
 	ReviewService() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public ReviewService(UserDAO userDAO, RoleDAO roleDAO, ProgramDAO programmeDAO, ApplicationFormDAO applicationDAO) {
+	public ReviewService(UserDAO userDAO, RoleDAO roleDAO, ProgramDAO programmeDAO, ApplicationFormDAO applicationDAO, ReviewerService reviewerService) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
 		this.programmeDAO = programmeDAO;
 		this.applicationDAO = applicationDAO;
+		this.reviewerService = reviewerService;
 	}
 
 	/**
@@ -65,6 +67,7 @@ public class ReviewService {
 			if (!reviewerUser.isReviewerOfApplicationForm(application)) {
 				Reviewer reviewer = new Reviewer();
 				reviewer.setUser(reviewerUser);
+				reviewer.setApplication(application);
 				application.getReviewers().add(reviewer);
 				
 			}
@@ -88,10 +91,12 @@ public class ReviewService {
 		}
 		newUser = createNewReviewer(firstName, lastName, email);
 		newUser.getProgramsOfWhichReviewer().add(programme);
-		programme.getReviewers().add(newUser);
-		System.out.println("NEW REVIEWER TO BE SAVE !!!!");
+		programme.getProgramReviewers().add(newUser);
 		userDAO.save(newUser);
 		programmeDAO.save(programme);
+		Reviewer reviewer = new Reviewer();
+		reviewer.setUser(newUser);
+		reviewerService.save(reviewer);
 		return newUser;
 	}
 
@@ -105,7 +110,7 @@ public class ReviewService {
 			reviewer.getRoles().add(reviewerRole);
 		}
 		reviewer.getProgramsOfWhichReviewer().add(programme);
-		programme.getReviewers().add(reviewer);
+		programme.getProgramReviewers().add(reviewer);
 		userDAO.save(reviewer);
 		programmeDAO.save(programme);
 	}

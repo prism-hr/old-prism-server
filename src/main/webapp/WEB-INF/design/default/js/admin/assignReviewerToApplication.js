@@ -8,6 +8,15 @@ $(document).ready(function() {
 			$("#assignedReviewers").append('<option value="'+ id +'">'+ selText +'</option>');
 		});
 	});
+	
+	$('#removeReviewerBtn').click(function() {
+		var selectedReviewers = $('#assignedReviewers').val();
+		selectedReviewers.forEach(function(id) {
+			var selText = $("#assignedReviewers option[value='" + id + "']").text();
+			$("#assignedReviewers option[value='" + id + "']").remove();
+			$("#reviewers").append('<option value="'+ id +'">'+ selText +'</option>');
+		});
+	});
 
 	$('#createReviewer').click(function() {
 		var idString = getAssignedReviewerIdString(); 

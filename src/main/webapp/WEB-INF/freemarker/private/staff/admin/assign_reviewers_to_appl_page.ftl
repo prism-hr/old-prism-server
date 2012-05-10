@@ -85,6 +85,9 @@
 						<div class="buttons">
 							<button type="submit" id="addReviewerBtn">Add reviewer</button>
 						</div>
+						<div class="buttons">
+							<button type="submit" id="removeReviewerBtn">Remove reviewer</button>
+						</div>
 						<br></br> 
 						Already reviewers of this application: 
 						<select id="assignedReviewers" multiple="multiple">

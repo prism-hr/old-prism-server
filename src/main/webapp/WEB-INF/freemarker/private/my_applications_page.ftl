@@ -87,9 +87,6 @@
 							                		<option>Select...</option>
 							                		<option value="view">View</option>
 							                		<option value="print">Print</option>
-							                	    <#if (model.user.isInRole('ADMINISTRATOR') || model.user.isInRole('REVIEWER')) && false>
-      													<option value="assignReviewer">Assign Reviewer</option>
-        		  									</#if>
 							                	    <#if model.user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
 							                	    	<option value="approve">Approve</option>
       												</#if>
@@ -102,6 +99,9 @@
 									    			<#if !model.user.isInRole('APPLICANT') && !model.user.isRefereeOfApplicationForm(application)>
 								    					<option value="comment">Comment</option>								    				
 								      				</#if>      												
+							                	    <#if model.user.isReviewerOfApplicationForm(application) >
+      													<option value="assignReviewer">Assign Reviewer</option>
+        		  									</#if>
 									    			<#if model.user.isInRoleInProgram('REVIEWER', application.program) && application.isInState('REVIEW') && !model.user.hasRespondedToProvideReviewForApplication(application)> 
 								    					<option value="review">Add Review</option>								    				
 								      				</#if>      												

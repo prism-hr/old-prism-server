@@ -224,7 +224,7 @@ public class AssignReviewerControllerTest {
 	// ------- existing reviewers of an application:
 	@Test
 	public void getEmptyApplicationReviewerList() {
-		Set<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(application, null);
+		Set<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(application);
 		Assert.assertNotNull(applReviewers);
 		Assert.assertTrue(applReviewers.isEmpty());
 	}
@@ -244,19 +244,9 @@ public class AssignReviewerControllerTest {
 		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser2).toReviewer();
 		application.setReviewers(Arrays.asList(reviewer));
 
-		Set<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(application, null);
+		Set<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(application);
 		Assert.assertNotNull(applReviewers);
 		Assert.assertTrue(applReviewers.contains(reviewerUser2));
-	}
-
-	@Test
-	public void getExistingApplicationReviewerPlusUnsavedReviewerList() {
-		ArrayList<RegisteredUser> unsavedReviewers = new ArrayList<RegisteredUser>();
-		unsavedReviewers.add(reviewerUser1);
-
-		Set<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(application, unsavedReviewers);
-		Assert.assertNotNull(applReviewers);
-		Assert.assertTrue(applReviewers.contains(reviewerUser1));
 	}
 
 	@Test

@@ -6,7 +6,7 @@ $(document).ready(function() {
 		if ($(this).val() == 'view') {
 			window.location.href = "/pgadmissions/application?view=view&applicationId=" + id;
 		}else if($(this).val() == 'assignReviewer') {
-			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
+			window.location.href = "/pgadmissions/assignReviewers?applicationId=" + id;
 		}else if($(this).val() == 'approve') {
 			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
 		}else if($(this).val() == 'reject') {

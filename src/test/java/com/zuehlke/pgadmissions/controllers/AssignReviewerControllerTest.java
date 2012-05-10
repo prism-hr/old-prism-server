@@ -40,7 +40,6 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 public class AssignReviewerControllerTest {
 	private static final String VIEW_RESULT = "private/staff/admin/assign_reviewers_to_appl_page";
-	private static final String ASSIGN_REVIEWERS_TO_APPLICATION_VIEW = "private/staff/admin/assign_reviewers_to_appl_page";
 	private static final String AFTER_MOVE_TO_REVIEW_VIEW = "redirect:/applications";
 	private AssignReviewerController controllerUT;
 
@@ -280,7 +279,7 @@ public class AssignReviewerControllerTest {
 		String view = controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock, new ArrayList<RegisteredUser>(), mmap);
 
 		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
-		Assert.assertEquals(ASSIGN_REVIEWERS_TO_APPLICATION_VIEW, view);
+		Assert.assertEquals(VIEW_RESULT, view);
 		Assert.assertEquals("blabla", mmap.get("message"));
 	}
 
@@ -302,7 +301,7 @@ public class AssignReviewerControllerTest {
 		String view = controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock, new ArrayList<RegisteredUser>(), mmap);
 
 		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
-		Assert.assertEquals(ASSIGN_REVIEWERS_TO_APPLICATION_VIEW, view);
+		Assert.assertEquals(VIEW_RESULT, view);
 		Assert.assertEquals("blabla", mmap.get("message"));
 	}
 
@@ -326,9 +325,7 @@ public class AssignReviewerControllerTest {
 		String view = controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock, new ArrayList<RegisteredUser>(), mmap);
 
 		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
-		// Assert.assertEquals(REVIEWER_AS_JSON_VIEW, view);
-		Assert.assertEquals(ASSIGN_REVIEWERS_TO_APPLICATION_VIEW, view);
-		// Assert.assertEquals(storedUser, mmap.get("newReviewer"));
+		Assert.assertEquals(VIEW_RESULT, view);
 		Assert.assertEquals("BLUBLU", mmap.get("message"));
 	}
 
@@ -363,7 +360,7 @@ public class AssignReviewerControllerTest {
 		ModelMap mmap = new ModelMap();
 		String view = controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock, new ArrayList<RegisteredUser>(), mmap);
 
-		Assert.assertEquals(ASSIGN_REVIEWERS_TO_APPLICATION_VIEW, view);
+		Assert.assertEquals(VIEW_RESULT, view);
 		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
 		Assert.assertEquals("SDFSDFSDFSDF", mmap.get("message"));
 		Assert.assertNull(mmap.get("newReviewer"));
@@ -380,7 +377,7 @@ public class AssignReviewerControllerTest {
 		ModelMap mmap = new ModelMap();
 		String view = controllerUT.createReviewer(program, newApplication, inputUser, bindingResultMock, null, mmap);
 
-		Assert.assertEquals(ASSIGN_REVIEWERS_TO_APPLICATION_VIEW, view);
+		Assert.assertEquals(VIEW_RESULT, view);
 		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
 		Assert.assertEquals("SDFSDFSDFSDF", mmap.get("message"));
 		Assert.assertNull(mmap.get("newReviewer"));
@@ -400,8 +397,7 @@ public class AssignReviewerControllerTest {
 		String view = controllerUT.createReviewer(program, new ApplicationForm(), inputUser, bindingResultMock, new ArrayList<RegisteredUser>(), mmap);
 		EasyMock.verify(reviewServiceMock, userServiceMock, messageSourceMock);
 
-		// Assert.assertEquals(REVIEWER_AS_JSON_VIEW, view);
-		Assert.assertEquals(ASSIGN_REVIEWERS_TO_APPLICATION_VIEW, view);
+		Assert.assertEquals(VIEW_RESULT, view);
 		Assert.assertEquals("SDFSDFSDFSDF", mmap.get("message"));
 	}
 

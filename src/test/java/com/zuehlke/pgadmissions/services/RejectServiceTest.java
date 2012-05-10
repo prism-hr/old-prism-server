@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -9,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
+import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -19,6 +21,7 @@ public class RejectServiceTest {
 
 	private RejectService rejectService;
 
+	private RejectReasonDAO rejectDaoMock;
 	private ApplicationFormDAO applicationDaoMock;
 
 	private ApplicationForm application;
@@ -28,11 +31,13 @@ public class RejectServiceTest {
 	@Before
 	public void setUp() {
 		applicationDaoMock = EasyMock.createMock(ApplicationFormDAO.class);
+		rejectDaoMock = EasyMock.createMock(RejectReasonDAO.class);
+
 		application = new ApplicationFormBuilder().id(200).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 
 		reason1 = new RejectReasonBuilder().id(1).text("idk").toRejectReason();
 		reason2 = new RejectReasonBuilder().id(2).text("idc").toRejectReason();
-		rejectService = new RejectService(applicationDaoMock);
+		rejectService = new RejectService(applicationDaoMock, rejectDaoMock);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -67,7 +72,17 @@ public class RejectServiceTest {
 
 	@Test
 	public void loadAllRejections() {
-		
-//		List<RejectReason> reasons = rejectService.getAllRejectionReasons();
+		List<RejectReason> values = new ArrayList<RejectReason>();
+		values.add(reason1);
+		values.add(reason2);
+		EasyMock.expect(rejectDaoMock.getAllReasons()).andReturn(values);
+		EasyMock.replay(rejectDaoMock);
+
+		List<RejectReason> reasons = rejectService.getAllRejectionReasons();
+
+		EasyMock.verify(rejectDaoMock);
+		Assert.assertNotNull(reasons);
+		Assert.assertEquals(2, reasons.size());
+		Assert.assertEquals("idc", reasons.get(1).getText());
 	}
 }

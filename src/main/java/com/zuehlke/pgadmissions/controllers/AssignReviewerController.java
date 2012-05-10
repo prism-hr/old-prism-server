@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 @RequestMapping("/assignReviewers")
 public class AssignReviewerController {
 	private static final String ASSIGN_REVIEWERS_TO_APPLICATION_VIEW = "private/staff/admin/assign_reviewers_to_appl_page";
+	private static final String NEXT_VIEW = "redirect:/applications";
 
 	private final ApplicationsService applicationService;
 	private final ReviewService reviewService;
@@ -79,7 +80,7 @@ public class AssignReviewerController {
 		if (unsavedReviewers != null && !unsavedReviewers.isEmpty()) {
 			reviewService.moveApplicationToReview(application, unsavedReviewers.toArray(new RegisteredUser[unsavedReviewers.size()]));
 		}
-		return "redirect:/applications";
+		return NEXT_VIEW;
 	}
 
 	@RequestMapping(value = "/createReviewer", method = RequestMethod.POST)
@@ -99,7 +100,7 @@ public class AssignReviewerController {
 		RegisteredUser reviewer = userService.getUserByEmailIncludingDisabledAccounts(uiReviewer.getEmail());
 		@SuppressWarnings("unchecked")
 		List<RegisteredUser> availableRevs = (List<RegisteredUser>) modelMap.get("availableReviewers");
-		if( availableRevs == null) {
+		if (availableRevs == null) {
 			availableRevs = new ArrayList<RegisteredUser>();
 		}
 		if (reviewer == null) {

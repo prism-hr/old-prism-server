@@ -36,4 +36,10 @@ public class RejectReason extends DomainObject<Integer> {
 	public void setText(String text) {
 		this.text = text;
 	}
+
+	@Override
+	public String toString() {
+		return "RejectReason [" + (id != null ? "id=" + id + ", " : "id=<null>") + "text=" + text + "]";
+	}
+
 }

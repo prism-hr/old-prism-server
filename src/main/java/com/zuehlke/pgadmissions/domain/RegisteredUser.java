@@ -374,6 +374,13 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return false;
 	}
 
+	public boolean isAdminInProgramme(Program program) {
+		if (program.getAdministrators().contains(this)) {
+			return true;
+		}
+		return false;
+	}
+
 	public List<Referee> getReferees() {
 		return referees;
 	}
@@ -421,9 +428,17 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 		return false;
-
 	}
 
+	public boolean isApproverOfApplicationForm(ApplicationForm form) {
+		RegisteredUser approver = form.getApprover();
+		if (approver != null && this.equals(approver)) {
+			return true;
+		}
+		return false;
+	}
+
+	
 	public boolean hasRefereesInApplicationForm(ApplicationForm form) {
 		return getRefereeForApplicationForm(form) != null;
 	}

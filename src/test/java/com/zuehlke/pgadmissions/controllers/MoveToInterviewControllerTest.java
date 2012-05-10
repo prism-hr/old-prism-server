@@ -27,12 +27,14 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -43,6 +45,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.InterviewerService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
@@ -55,7 +58,8 @@ public class MoveToInterviewControllerTest {
 	private UserService userServiceMock;
 	private StageDurationDAO stageDurationDAOMock;
 	private NewUserByAdminValidator userValidatorMock;
-	private InterviewerService interviewServiceMock;
+	private InterviewerService interviewerServiceMock;
+	private InterviewService interviewServiceMock;
 	private MessageSource messageSourceMock;
 	private RegisteredUser interviewerUser1;
 	private RegisteredUser interviewerUser2;
@@ -120,19 +124,6 @@ public class MoveToInterviewControllerTest {
 		controller.getApplicationForm(5);
 	}
 
-	@Test
-	public void shouldChangeStateToApprovalAndSave() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		List<Referee> referees = Arrays.asList(new RefereeBuilder().id(1).toReferee(), new RefereeBuilder().id(2).toReferee());
-		applicationForm.setReferees(referees);
-		applicationServiceMock.save(applicationForm);
-		EasyMock.replay(applicationServiceMock);
-		String view = controller.moveToInterview(applicationForm);
-		EasyMock.verify(applicationServiceMock);
-		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getStatus());
-		assertEquals("redirect:/applications", view);
-	}
-	
 
 	@Test
 	public void shouldChangeStateToInterviewAndSave(){
@@ -142,11 +133,12 @@ public class MoveToInterviewControllerTest {
 		applicationServiceMock.save(applicationForm);
 		EasyMock.replay(applicationServiceMock,stageDurationDAOMock);
 		
-		String view = controller.moveToInterview(applicationForm);
+		String view = controller.moveToInterview(applicationForm, new Interview());
 		
 		EasyMock.verify(applicationServiceMock);
 		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getStatus());
-		assertEquals("redirect:/applications", view);
+//		assertEquals("redirect:/applications", view);
+		assertEquals(INTERVIEW_DETAILS_VIEW_NAME, view);
 	}
 	
 	@Test
@@ -185,6 +177,19 @@ public class MoveToInterviewControllerTest {
 		List<RegisteredUser> interviewersUsers = controller.getProgrammeInterviewers(program, applicationForm);
 		assertEquals(2, interviewersUsers.size());
 	}
+	
+	@Test
+	public void shouldSaveInterview(){
+		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		Interview interview = new InterviewBuilder().furtherDetails("9 pm").locationURL("pgadmissions.com").dueDate(new Date()).toInterview();
+		interviewServiceMock.save(interview);
+		applicationServiceMock.save(application);
+		EasyMock.replay(interviewerServiceMock, applicationServiceMock);
+		controller.moveToInterview(application, interview);
+		EasyMock.verify(interviewerServiceMock, applicationServiceMock);
+//		Assert.assertNotNull(application.getInterview());
+//		Assert.assertEquals("9 pm", application.getInterview().getFurtherDetails());
+	}
 
 	private RegisteredUser expectCurrentUser(ApplicationForm applicationForm) {
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
@@ -218,13 +223,13 @@ public class MoveToInterviewControllerTest {
 		applicationForm.setProgram(program);
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("hui@blu.com")).andReturn(interviewerUser1);
 		prepareMessageSourceMock("assignInterviewer.user.alreadyInProgramme", new Object[] { "rev 1", "rev1@bla.com" }, "SDFSDFSDFSDF");
-		EasyMock.replay(interviewServiceMock, userServiceMock, messageSourceMock, currentUserMock);
+		EasyMock.replay(interviewerServiceMock, userServiceMock, messageSourceMock, currentUserMock);
 
 		RegisteredUser inputUser = new RegisteredUserBuilder().email("hui@blu.com").toUser();
 		ModelMap mmap = new ModelMap();
 		String view = controller.createInterviewer(applicationForm, inputUser, bindingResultMock, mmap);
 		Assert.assertEquals(INTERVIEW_DETAILS_VIEW_NAME, view);
-		EasyMock.verify(interviewServiceMock, userServiceMock, messageSourceMock);
+		EasyMock.verify(interviewerServiceMock, userServiceMock, messageSourceMock);
 		Assert.assertEquals("SDFSDFSDFSDF", mmap.get("message"));
 		Assert.assertNull(mmap.get("interviewer"));
 	}
@@ -236,7 +241,8 @@ public class MoveToInterviewControllerTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
 		userValidatorMock = EasyMock.createMock(NewUserByAdminValidator.class);
-		interviewServiceMock = EasyMock.createMock(InterviewerService.class);
+		interviewerServiceMock = EasyMock.createMock(InterviewerService.class);
+		interviewServiceMock = EasyMock.createMock(InterviewService.class);
 		messageSourceMock = EasyMock.createMock(MessageSource.class);
 		interviewerUser1 = new RegisteredUserBuilder().id(7).username("rev 1").role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
 		interviewerUser2 = new RegisteredUserBuilder().id(8).username("rev 2").role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
@@ -248,7 +254,7 @@ public class MoveToInterviewControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 		
-		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewServiceMock, messageSourceMock);
+		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock, interviewServiceMock);
 		
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		SecurityContextImpl secContext = new SecurityContextImpl();

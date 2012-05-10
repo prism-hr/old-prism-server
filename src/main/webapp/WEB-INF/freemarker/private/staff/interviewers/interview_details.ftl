@@ -1,4 +1,4 @@
-<section id="assignReviewersToAppSection" >	
+<section id="interviewSection" >	
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
 <html>
@@ -84,7 +84,7 @@
 							
 						</select>
 						<div class="buttons">
-							<button type="submit" id="addReviewerBtn">Add interviewer</button>
+							<button type="submit" id="addInterviewerBtn">Add interviewer</button>
 						</div>
 						<br></br> 
 						Already interviewers of this application: 
@@ -95,15 +95,47 @@
 						</select>
 						<p>${message!}</p>
 						  <div class="row">
+                               <label class="label">First Name<em>*</em></label>
+                                   <div class="field">
+                                   <input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"/>
+                              		<@spring.bind "interviewer.firstName" /> 
+	                			   <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                             
+                               </div>
+                               </div>
+                                <div class="row">
+                                    <label class="label">Last Name<em>*</em></label>
+                                    <div class="field">
+                                        <input class="full" type="text" name="newInterviewerLastName" id="newInterviewerLastName"/>
+                                        <@spring.bind "interviewer.lastName" /> 
+	                			   		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                                    </div>
+                                </div>
+                                
+                             <div class="row">
+                                <label class="label">Email<em>*</em></label>
+                                        <div class="field">
+                                         <input class="full" type="text"  name="newInterviewerEmail" id="newInterviewerEmail"/>
+                                          <@spring.bind "interviewer.email" /> 
+	                			   		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+                                        </div>
+                             </div>
+						
+						<div class="buttons">
+							<button type="button" id="createInterviewer">Create Interviewer</button>
+						</div>
+						
+						
+						  <div class="row">
                                <label class="label">Interview Date<em>*</em></label>
                                    <div class="field">
-                                   <input class="full" type="text" name="interviewDate" id="interviewDate"/>
+                                   <input class="full date" type="text" name="interviewDate" id="interviewDate"/>
                                </div>
                                </div>
                                 <div class="row">
                                     <label class="label">Further Details<em>*</em></label>
                                     <div class="field">
-                                        <input class="full" type="text" name="furtherDetails" id="furtherDetails"/>
+                                    <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'></textarea>
                                     </div>
                                 </div>
                                 
@@ -115,10 +147,7 @@
                              </div>
 							
 						<div class="buttons">
-							<button type="submit" id="createInterviewer">Create Interviewer</button>
-						</div>
-						<div class="buttons">
-							<button type="button" id="moveToInterviewBtn">Continue</button>
+							<button type="button" id="moveToInterviewBtn">Save</button>
 						</div>
 						<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/> 
 					</div>
@@ -153,7 +182,7 @@
 	<script type="text/javascript"
 		src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 	<script type="text/javascript"
-		src="<@spring.url '/design/default/js/admin/assignReviewerToApplication.js'/>"></script>
+		src="<@spring.url '/design/default/js/interviewer/interview.js'/>"></script>
 </body>
 </html>
 </section>

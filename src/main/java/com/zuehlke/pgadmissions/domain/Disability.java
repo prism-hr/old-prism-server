@@ -6,7 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.Immutable;
+
 @Entity(name = "DISABILITY")
+@Immutable
 @Access(AccessType.FIELD)
 public class Disability extends DomainObject<Integer> {
 	private static final long serialVersionUID = 6141410638125684970L;

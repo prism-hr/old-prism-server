@@ -167,18 +167,13 @@ public class AssignReviewerController {
 
 	@ModelAttribute("applicationReviewers")
 	public Set<RegisteredUser> getApplicationReviewers(//
-			@ModelAttribute("applicationForm") ApplicationForm application,//
-			@ModelAttribute("unsavedReviewers") ArrayList<RegisteredUser> unsavedReviewers) {
+			@ModelAttribute("applicationForm") ApplicationForm application) {
 
 		checkPermissionForApplication(application);
 
 		Set<RegisteredUser> existingReviewers = new HashSet<RegisteredUser>();
 		for (Reviewer reviewer : application.getReviewers()) {
 			existingReviewers.add(reviewer.getUser());
-		}
-
-		if (unsavedReviewers != null) {
-			existingReviewers.addAll(unsavedReviewers);
 		}
 		return existingReviewers;
 	}

@@ -71,6 +71,7 @@
 						<@spring.bind "availableReviewers.*" />
 						<@spring.bind "applicationReviewers.*" />
 						<@spring.bind "programme.*" />
+						<@spring.bind "unsavedReviewers.*" />
 						<div id="messageSection"></div>
 						Application ID: ${(applicationForm.id?string('#####'))!} 
 						<br></br>
@@ -92,7 +93,12 @@
 						Already reviewers of this application: 
 						<select id="assignedReviewers" multiple="multiple">
 							<#list applicationReviewers as reviewer>
-								<option value="${reviewer.id?string('#####')}">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+								<option disabled="disabled" value="${reviewer.id?string('#####')}">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+							</#list>
+							<#list unsavedReviewers as unsaved>
+							   <#if applicationReviewers?seq_index_of(unsaved) < 0>
+								<option value="${unsaved.id?string('#####')}">${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if></option>
+							   </#if>
 							</#list>
 						</select>
 						<p>${message!}</p>

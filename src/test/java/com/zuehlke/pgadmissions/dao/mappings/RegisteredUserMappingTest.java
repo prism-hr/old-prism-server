@@ -17,9 +17,11 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -28,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -360,6 +363,45 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		assertTrue(reloadedUser.getNotificationRecords().containsAll(Arrays.asList(recordTwo)));
 		
 		assertNull(sessionFactory.getCurrentSession().get(NotificationRecord.class, recordOneId));
+
+	}
+	
+	@Test
+	public void shouldSaveAndLoadPendingRoleNotificationsWithUser() throws ParseException {
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
+		Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		save(program);
+		
+		PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).toPendingRoleNotification();
+		PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).toPendingRoleNotification();
+		
+		
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).toUser();
+		
+		save(user);
+		Integer recordOneId = pendingOne.getId();
+		assertNotNull(recordOneId);
+		assertNotNull(pendingTwo.getId());
+		flushAndClearSession();
+		
+		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
+		assertEquals(2, reloadedUser.getPendingRoleNotifications().size());
+		assertTrue(reloadedUser.getPendingRoleNotifications().containsAll(Arrays.asList(pendingOne, pendingTwo)));
+		
+		pendingOne = (PendingRoleNotification) sessionFactory.getCurrentSession().get(PendingRoleNotification.class, recordOneId);
+		reloadedUser.getPendingRoleNotifications().remove(pendingOne);
+		save(reloadedUser);
+		flushAndClearSession();
+		
+		reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, user.getId());
+		assertEquals(1, reloadedUser.getPendingRoleNotifications().size());
+		assertTrue(reloadedUser.getPendingRoleNotifications().containsAll(Arrays.asList(pendingTwo)));
+		
+		assertNull(sessionFactory.getCurrentSession().get(PendingRoleNotification.class, recordOneId));
 
 
 	}

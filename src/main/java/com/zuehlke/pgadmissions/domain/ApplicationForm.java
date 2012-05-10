@@ -117,7 +117,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
 	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
-
+	
+	@OneToOne(mappedBy = "application")
+	private Interview interview;
+	
 	@OneToMany(mappedBy = "application")
 	private List<Comment> applicationComments = new ArrayList<Comment>();
 
@@ -492,4 +495,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 		return appForm.getSubmittedDate().compareTo(this.submittedDate);
 	}
+
+	public Interview getInterview() {
+		return interview;
+	}
+
+	public void setInterview(Interview interview) {
+		this.interview = interview;
+	}
+
 }

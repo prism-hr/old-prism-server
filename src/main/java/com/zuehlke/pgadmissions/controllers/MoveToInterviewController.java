@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -26,6 +27,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.InterviewerService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
@@ -40,18 +42,21 @@ public class MoveToInterviewController {
 	private final NewUserByAdminValidator validator;
 	private final InterviewerService interviewerService;
 	private final MessageSource messageSource;
+	private final InterviewService interviewService;
 	
 	MoveToInterviewController() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 	
 	@Autowired
-	public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator, InterviewerService interviewerService, MessageSource messageSource) {
+	public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator, 
+			InterviewerService interviewerService, MessageSource messageSource, InterviewService interviewService) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.validator = validator;
 		this.interviewerService = interviewerService;
 		this.messageSource = messageSource;
+		this.interviewService = interviewService;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -103,10 +108,14 @@ public class MoveToInterviewController {
 	}
 	
 	@RequestMapping(value="/move",method = RequestMethod.POST)
-	public String moveToInterview(@ModelAttribute ApplicationForm applicationForm) {
+	public String moveToInterview(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("interview") Interview interview) {
+		interview.setApplication(applicationForm);
+//		interview.setDueDate(interview.getDueDate());   // add one day more
+		interviewService.save(interview);
 		applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
 		applicationsService.save(applicationForm);
-		return "redirect:/applications";
+//		return "redirect:/applications";
+		return INTERVIEW_DETAILS_VIEW_NAME;
 
 	}
 	
@@ -140,6 +149,13 @@ public class MoveToInterviewController {
 	public RegisteredUser getInterviewer() {
 		RegisteredUser interviewer = new RegisteredUser();
 		return interviewer;
+	}
+	
+	
+	@ModelAttribute("interview")
+	public Interview getInterview() {
+		Interview interview = new Interview();
+		return interview;
 	}
 	
 	@ModelAttribute("programmeInterviewers")

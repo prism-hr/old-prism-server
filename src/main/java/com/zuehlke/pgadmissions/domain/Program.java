@@ -109,6 +109,10 @@ public class Program extends DomainObject<Integer> {
 		}
 		return false;
 	}
+	
+	public boolean isInterviewerOfProgram(RegisteredUser interviewer) {
+		return interviewers.contains(interviewer);
+	}
 
 	public List<ProgramInstance> getInstances() {
 		return instances;

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -7,14 +8,11 @@ import java.util.List;
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Subqueries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
@@ -56,20 +54,21 @@ public class ReviewerDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Reviewer> getReviewersDueReminder() {
-		DetachedCriteria reviewCriteria = DetachedCriteria.forClass(ReviewComment.class, "review")
-				.add(Restrictions.isNotNull("reviewer"))
-				.add(Property.forName("review.reviewer").eqProperty("reviewer.id"));
-		
+		List<Reviewer> reviewersDueReminder = new ArrayList<Reviewer>();
 		Date now = Calendar.getInstance().getTime();
 		Date today = DateUtils.truncate(now, Calendar.DATE);
 		Date oneWeekAgo = DateUtils.addDays(today, -6);	
-		return sessionFactory.getCurrentSession()
+		List<Reviewer> reviewers = sessionFactory.getCurrentSession()
 				.createCriteria(Reviewer.class, "reviewer")
 				.add(Restrictions.le("lastNotified", oneWeekAgo))
 				.createAlias("application", "application").add(Restrictions.eq("application.status", ApplicationFormStatus.REVIEW))
-				//.add(Subqueries.notExists(reviewCriteria.setProjection(Projections.property("review.id"))))				
-				.add(Restrictions.isNull("review"))
 				.list();
+		for (Reviewer reviewer : reviewers) {
+			if(reviewer.getReview() == null){
+				reviewersDueReminder.add(reviewer);
+			}
+		}
+		return reviewersDueReminder;
 	}
 
 }

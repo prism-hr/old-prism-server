@@ -409,6 +409,17 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		
 	}
 	
+	
+	public boolean isInterviewerOfProgram(Program program) {		
+		for (RegisteredUser interviewer : program.getInterviewers()) {
+			if (this.equals(interviewer)) {
+				return true;
+			}
+		}
+		return false;
+		
+	}
+	
 	public boolean hasRefereesInApplicationForm(ApplicationForm form) {
 		return getRefereeForApplicationForm(form) != null;
 	}

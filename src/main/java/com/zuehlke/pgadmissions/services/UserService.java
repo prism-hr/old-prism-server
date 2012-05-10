@@ -159,5 +159,22 @@ public class UserService {
 		return userDAO.get(currentUser.getId());
 	}
 
+	public RegisteredUser createNewUser(String firstname, String lastname, String email) {
+		RegisteredUser user = new RegisteredUser();
+		user.setFirstName(firstname);
+		user.setLastName(lastname);
+		user.setUsername(email);
+		user.setEmail(email);
+		user.setAccountNonExpired(true);
+		user.setAccountNonLocked(true);
+		user.setEnabled(false);
+		user.setCredentialsNonExpired(true);
+		return user;
+	}
+	
+	public void addRoleToUser (RegisteredUser user, Authority authority){
+		user.getRoles().add(roleDAO.getRoleByAuthority(authority));
+	}
+
 
 }

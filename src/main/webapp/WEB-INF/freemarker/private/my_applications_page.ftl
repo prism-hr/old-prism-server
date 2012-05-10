@@ -67,9 +67,9 @@
 					                <th scope="col">First Name</th>
 					                <th scope="col">Surname</th>
 					                <th scope="col">Programme</th>					
-					            	<th scope="col" class="centre">Status</th>
+					            	<th scope="col">Status</th>
 					                <th scope="col">Actions</th>
-					                <th class="centre" scope="col">Date Submitted</th>					                
+					                <th scope="col">Date Submitted</th>					                
 					                <th class="centre" scope="col">Select</th>
 					              </tr>
 					            </thead>
@@ -113,9 +113,8 @@
 								      				</#if>      												
 							                  	</select>
 							                </td>
-							                <td> <#if application.isSubmitted()>
-							                	${(application.submittedDate?string("dd MMM yyyy"))!} 
-							               		 </#if>
+							                <td>
+												${(application.submittedDate?string("dd MMM yyyy"))!}
 							               	</td>							  
 							                <td class="centre"><input type="checkbox" name="appDownload" id="appDownload_${application.id?string("######")}"/></td>
 						              	</tr>

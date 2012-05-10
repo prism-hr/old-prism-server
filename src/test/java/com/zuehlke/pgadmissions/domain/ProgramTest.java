@@ -45,4 +45,18 @@ public class ProgramTest {
 		Program program = new ProgramBuilder().id(1).approver(approver).toProgram();
 		assertFalse(program.isApprover(approver));
 	}
+	
+	@Test
+	public void shouldReturnTrueIfUserInterviewerOfProgram(){
+		RegisteredUser interviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).interviewers(interviewer).toProgram();
+		assertTrue(program.isInterviewerOfProgram(interviewer));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfUserIsNotInterviewerOfProgram(){
+		RegisteredUser interviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		assertFalse(program.isInterviewerOfProgram(interviewer));
+	}
 }

@@ -256,7 +256,31 @@ public class UserServiceTest {
 		RegisteredUser user = userService.getCurrentUser();
 		assertSame(refreshedUser, user);
 		EasyMock.verify(userDAOMock);
-
+	}
+	
+	@Test
+	public void shouldCreateAndReturnNewRegisteredUser() {
+		RegisteredUser user = userService.createNewUser("Bob", "Bobson", "email@test.com");
+		Assert.assertNotNull(user);
+		Assert.assertEquals("Bob", user.getFirstName());
+		Assert.assertEquals("Bobson", user.getLastName());
+		Assert.assertEquals("email@test.com", user.getEmail());
+		Assert.assertEquals("email@test.com", user.getUsername());
+		Assert.assertTrue(user.isAccountNonExpired());
+		Assert.assertTrue(user.isAccountNonLocked());
+		Assert.assertFalse(user.isEnabled());
+		Assert.assertTrue(user.isCredentialsNonExpired());
+	}
+	
+	@Test
+	public void shouldAddRoleToUser() {
+		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.ADMINISTRATOR)).andReturn(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole());
+		EasyMock.replay(roleDAOMock);
+		RegisteredUser user = new RegisteredUserBuilder().toUser();
+		userService.addRoleToUser(user, Authority.ADMINISTRATOR);
+		assertEquals(1, user.getRoles().size());
+		assertEquals(Authority.ADMINISTRATOR, user.getRoles().get(0).getAuthorityEnum());
+		
 	}
 
 	@Before

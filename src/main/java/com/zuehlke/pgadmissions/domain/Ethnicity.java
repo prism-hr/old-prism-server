@@ -6,7 +6,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.Immutable;
+
 @Entity(name = "ETHNICITY")
+@Immutable
 @Access(AccessType.FIELD)
 public class Ethnicity extends DomainObject<Integer> {
 	private static final long serialVersionUID = -3605895863492842105L;

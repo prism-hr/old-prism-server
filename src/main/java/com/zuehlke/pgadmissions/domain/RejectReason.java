@@ -8,13 +8,13 @@ import javax.persistence.Id;
 
 import org.hibernate.annotations.Immutable;
 
-@Entity(name = "DISABILITY")
+@Entity(name = "REJECT_REASON")
 @Immutable
 @Access(AccessType.FIELD)
-public class Disability extends DomainObject<Integer> {
-	private static final long serialVersionUID = 6141410638125684970L;
+public class RejectReason extends DomainObject<Integer> {
+	private static final long serialVersionUID = 2745896114174369017L;
 
-	private String name;
+	private String text;
 
 	@Override
 	public void setId(Integer id) {
@@ -29,11 +29,11 @@ public class Disability extends DomainObject<Integer> {
 		return id;
 	}
 
-	public String getName() {
-		return name;
+	public String getText() {
+		return text;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setText(String text) {
+		this.text = text;
 	}
 }

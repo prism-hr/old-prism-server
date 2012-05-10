@@ -45,7 +45,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
 	private List<Event> events = new ArrayList<Event>();
-	
+
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
 	private ApplicationFormStatus status = ApplicationFormStatus.UNSUBMITTED;
 
@@ -108,21 +108,16 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne(mappedBy = "application")
 	private ProgrammeDetails programmeDetails;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APPLICATION_FORM_REVIEWER_LINK", joinColumns = { @JoinColumn(name = "application_form_id") }, inverseJoinColumns = { @JoinColumn(name = "reviewer_id") })
-	private List<RegisteredUser> reviewerUsers = new ArrayList<RegisteredUser>();
-
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
 	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
-	
-	
+
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
 	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
-	
+
 	@OneToMany(mappedBy = "application")
 	private List<Comment> applicationComments = new ArrayList<Comment>();
 
@@ -149,6 +144,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne(mappedBy = "application")
 	private AdditionalInformation additionalInformation;
 
+	@ManyToMany(fetch = FetchType.LAZY)
+	@JoinTable(name = "APPLICATION_FORM_REJECT_REASON",// 
+	joinColumns = { @JoinColumn(name = "application_id") },// 
+	inverseJoinColumns = { @JoinColumn(name = "reason_id") })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	private List<RejectReason> rejectReasons = new ArrayList<RejectReason>();
+
 	public List<Qualification> getQualifications() {
 		return qualifications;
 	}
@@ -157,7 +159,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.qualifications.clear();
 		this.qualifications.addAll(qualifications);
 	}
-
 
 	@Override
 	public void setId(Integer id) {
@@ -207,17 +208,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return status != ApplicationFormStatus.UNSUBMITTED;
 	}
 
-	@Override
-	public int compareTo(ApplicationForm appForm) {
-		if (this.applicationTimestamp == null) {
-			return -1;
-		}
 
-		if (appForm.getApplicationTimestamp() == null) {
-			return 1;
-		}
-		return (-1) * this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
-	}
 
 	public boolean isDecided() {
 		if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED) {
@@ -393,15 +384,23 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return status;
 	}
 
+	public List<RejectReason> getRejectReasons() {
+		return rejectReasons;
+	}
+
+	public void setRejectReasons(List<RejectReason> rejectReasons) {
+		this.rejectReasons = rejectReasons;
+	}
+
 	public void setStatus(ApplicationFormStatus status) {
-		
+
 		Event event = new Event();
 		event.setNewStatus(status);
 		event.setDate(new Date());
-		this.events.add(event);	
-	
+		this.events.add(event);
+
 		this.status = status;
-		
+
 	}
 
 	public boolean isInValidationStage() {
@@ -466,7 +465,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public void setReviewers(List<Reviewer> reviewers) {
 		this.reviewers = reviewers;
 	}
-	
+
 	public List<Reviewer> getReviewers() {
 		return reviewers;
 	}
@@ -477,5 +476,20 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setInterviewers(List<Interviewer> interviewers) {
 		this.interviewers = interviewers;
+	}
+	
+	@Override
+	public int compareTo(ApplicationForm appForm) {
+	
+		if(appForm.getSubmittedDate() != null && this.getSubmittedDate() == null){
+			return 1;
+		}
+		if(appForm.getSubmittedDate() == null && this.getSubmittedDate() != null){
+			return -1;
+		}
+		if(appForm.getSubmittedDate() == null && this.getSubmittedDate() == null){
+			return appForm.getApplicationTimestamp().compareTo(this.applicationTimestamp);
+		}
+		return appForm.getSubmittedDate().compareTo(this.submittedDate);
 	}
 }

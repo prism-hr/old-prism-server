@@ -22,16 +22,22 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
@@ -87,15 +93,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertEquals(application.getApplicant(), user);
 	}
 
-	@Test
-	public void shouldFindAllApplicationsBelongingToSameUser() {
-		List<ApplicationForm> applications = getApplicationFormsBelongingToSameUser();
-		List<ApplicationForm> applicationsByUser = applicationDAO.getApplicationsByApplicant(user);
-		assertNotSame(applications, applicationsByUser);
-		assertEquals(applications, applicationsByUser);
-		assertEquals(applications.get(0).getApplicant(), applications.get(1).getApplicant());
-	}
-
+	
+	
 	@Test
 	public void shouldFindAllQualificationsBelongingToSameApplication() throws ParseException {
 		List<Qualification> qualifications = getQualificationsBelongingToSameApplication();
@@ -463,6 +462,263 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 
+	@Test
+	public void shouldReturnAllSubmittedApplicationsForSuperAdmin(){
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		save(applicationFormOne, applicationFormTwo);
+		flushAndClearSession();
+		RegisteredUser superAdmin = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(superAdmin);
+		assertTrue(applications.contains(applicationFormOne));
+		assertFalse(applications.contains(applicationFormTwo));				
+	}
+	
+	@Test
+	public void shouldReturnOwnApplicationsIfApplicant(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
+		
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+				
+		save(applicant, applicationFormOne);	
+		flushAndClearSession();
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(applicant);
+		assertTrue(applications.contains(applicationFormOne));
+						
+	}
+	@Test
+	public void shouldNotReturnApplicationsByOtherApplicant(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleDAO.getRoleByAuthority(Authority.APPLICANT)).toUser();
+		
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+				
+		save(applicant, applicationFormOne);	
+		flushAndClearSession();
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(applicant);
+		assertFalse(applications.contains(applicationFormOne));
+						
+	}
+	@Test
+	public void shouldReturnAllSubmittedApplicationsInProgramForAdmin(){		
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		RegisteredUser admin = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
+
+		save(admin);
+		
+		save(applicationFormOne, applicationFormTwo);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(admin);
+		assertTrue(applications.contains(applicationFormOne));
+		assertFalse(applications.contains(applicationFormTwo));
+				
+	}
+	
+	@Test
+	public void shouldReturnNotReturnApplicationsSubmittedToOtherProgramsForAdmin(){
+		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(otherProgram);
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();		
+		RegisteredUser admin = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
+
+		save(admin);
+		
+		save(applicationFormOne);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(admin);
+		
+		assertFalse(applications.contains(applicationFormOne));
+				
+	}
+
+	@Test
+	public void shouldReturnAppsOfWhichReviewerEvenIfNotCurrentlyInRole(){
+		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(otherProgram);
+		
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();			
+		save(applicationForm, reviewerUser);
+		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(reviewerUser).toReviewer();
+		applicationForm.getReviewers().add(reviewer);
+		save(applicationForm);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(reviewerUser);
+		assertTrue(applications.contains(applicationForm));		
+				
+	}	
+	@Test
+	public void shouldNotReturnAppsOfWhichReviewerNotInReviewState(){
+		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(otherProgram);
+		
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();			
+		save(applicationForm, reviewerUser);
+		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(reviewerUser).toReviewer();
+		applicationForm.getReviewers().add(reviewer);
+		save(applicationForm);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(reviewerUser);
+		assertFalse(applications.contains(applicationForm));		
+				
+	}	
+	
+	@Test
+	public void shouldReturnAppsSubmittedToUsersProgramsAndAppsOfWhichReviewerIfAdminAndReviewer(){
+		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(otherProgram);
+		
+		RegisteredUser reviewerAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
+		
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();			
+		save(applicationFormOne, reviewerAndAdminUser);
+		Reviewer reviewer = new ReviewerBuilder().application(applicationFormOne).user(reviewerAndAdminUser).toReviewer();
+		applicationFormOne.getReviewers().add(reviewer);
+		save(applicationFormOne);
+		
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		save(applicationFormTwo);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(reviewerAndAdminUser);
+		
+		assertTrue(applications.contains(applicationFormOne));
+		assertTrue(applications.contains(applicationFormTwo));
+				
+	}
+	@Test
+	public void shouldReturnAppsOfWhichInterviewerEvenIfNotCurrentlyInRole(){
+		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(otherProgram);
+		
+		RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();			
+		save(applicationForm, interviewerUser);
+		Interviewer reviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).toInterviewer();
+		applicationForm.getInterviewers().add(reviewer);
+		save(applicationForm);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(interviewerUser);
+		assertTrue(applications.contains(applicationForm));		
+				
+	}
+	
+	@Test
+	public void shouldNotReturnAppsOfWhichInterviewerNotInInterviewState(){
+		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(otherProgram);
+		
+		RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();			
+		save(applicationForm, interviewerUser);
+		Interviewer interviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).toInterviewer();
+		applicationForm.getInterviewers().add(interviewer);
+		save(applicationForm);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(interviewerUser);
+		assertFalse(applications.contains(applicationForm));		
+				
+	}	
+	
+	@Test
+	public void shouldReturnAppsSubmittedToUsersProgramsAndAppsOfWhichInterviewerIfAdminAndInterviewer(){
+		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(otherProgram);
+
+		RegisteredUser interviewerAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
+		
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();			
+		save(applicationFormOne, interviewerAndAdminUser);
+		Interviewer interviewer = new InterviewerBuilder().application(applicationFormOne).user(interviewerAndAdminUser).toInterviewer();
+		applicationFormOne.getInterviewers().add(interviewer);
+		save(applicationFormOne);
+		
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		save(applicationFormTwo);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(interviewerAndAdminUser);
+		
+		assertTrue(applications.contains(applicationFormOne));
+		assertTrue(applications.contains(applicationFormTwo));
+				
+	}
+	
+
+	@Test
+	public void shouldReturnApplicationsInProgramForApprover(){
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
+		RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichApprover(program).toUser();
+
+		save(approver, applicationForm);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(approver);
+		assertTrue(applications.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldNotReturnApplicationsInProgramForApproverInNotInApproval(){
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		
+		RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichApprover(program).toUser();
+
+		save(approver, applicationForm);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(approver);
+		assertFalse(applications.contains(applicationForm));
+		
+	}
+	
+	@Test
+	public void shouldReturnAppsSubmittedToUsersProgramsAsAdminAndAprrover(){
+		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(otherProgram);
+		
+		RegisteredUser approverAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).programsOfWhichApprover(otherProgram).toUser();
+		
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		save(approverAndAdminUser, applicationFormOne,applicationFormTwo);
+
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(approverAndAdminUser);
+		
+		assertTrue(applications.contains(applicationFormOne));
+		assertTrue(applications.contains(applicationFormTwo));
+				
+	}
 	public List<ApplicationForm> getApplicationFormsBelongingToSameUser() {
 		List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
 

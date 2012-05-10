@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.controllers.usermanagement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,11 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.internet.InternetAddress;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -33,11 +30,9 @@ import com.zuehlke.pgadmissions.dto.NewRolesDTO;
 import com.zuehlke.pgadmissions.dto.UpdateUserForProgramWithRolesDTO;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.propertyeditors.RolePropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.validators.NewAdminUserDTOValidator;
 import com.zuehlke.pgadmissions.validators.UpdateUserForProgramWithRolesDTOValidator;
 
@@ -51,62 +46,29 @@ public class ManageUsersController {
 	private final UserService userService;
 	private final RolePropertyEditor rolePropertyEditor;
 
-	private final JavaMailSender mailsender;
-	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final Logger log = Logger.getLogger(ManageUsersController.class);
 
 	ManageUsersController() {
-		this(null, null, null, null, null);
+		this(null, null,  null);
 	}
 
 	@Autowired
-	public ManageUsersController(ProgramsService programsService, UserService userService, RolePropertyEditor rolePropertyEditor,
-			MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
+	public ManageUsersController(ProgramsService programsService, UserService userService, RolePropertyEditor rolePropertyEditor) {
 		this.programsService = programsService;
 		this.userService = userService;
 		this.rolePropertyEditor = rolePropertyEditor;
-		this.mailsender = mailsender;
-		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
+
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/showPage")
-	public String getUsersPage(@ModelAttribute("selectedProgram") Program program, ModelMap modelMap) {
-
-		putUserInRolesInternal(program, modelMap);
-
-		return ROLES_PAGE_VIEW_NAME;
-
-	}
-
-	private void putUserInRolesInternal(Program program, ModelMap modelMap) {
+	public String getUsersPage() {
 		RegisteredUser user = getCurrentUser();
 
 		if (!(user.isInRole(Authority.SUPERADMINISTRATOR) || user.isInRole(Authority.ADMINISTRATOR))) {
 			throw new AccessDeniedException();
 		}
+		return ROLES_PAGE_VIEW_NAME;
 
-		if (program != null) {
-			modelMap.put("usersInRoles", userService.getAllUsersForProgram(program));
-		} else {
-			modelMap.put("usersInRoles", new ArrayList<RegisteredUser>());
-		}
-	}
-
-	@RequestMapping(method = RequestMethod.GET, value = "/createNewUser")
-	public ModelAndView createNewUser(@RequestParam(required = false) Integer selectedProgramForNewUser, ModelMap modelMap) {
-		if (selectedProgramForNewUser != null && selectedProgramForNewUser == -1) {
-			modelMap.put("allProgramsSelected", "yes");
-			if (getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-				modelMap.put("authorities", Arrays.asList(Authority.SUPERADMINISTRATOR));
-			} else {
-				modelMap.put("authorities", Arrays.asList());
-			}
-		} else {
-			modelMap.put("selectedProgram", getProgram(selectedProgramForNewUser));
-			modelMap.put("authorities", getAuthoritiesInternal());
-		}
-
-		return new ModelAndView(NEW_USER_VIEW_NAME);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/createNewUser")
@@ -137,10 +99,14 @@ public class ManageUsersController {
 		boolean isNewUser = false;
 		if (potentiallyNewUser == null) {
 			isNewUser = true;
-			potentiallyNewUser = createNewRegisteredUser(adminUser);
+			//potentiallyNewUser = createNewRegisteredUser(adminUser);
 		}
-		String view = updateSelectedUserInternal(potentiallyNewUser, selectedProgram, newRolesDTO);
-		if (isNewUser) {
+		String id = "";
+		if (selectedProgram != null && selectedProgram.getId() != null) {
+			id = Integer.toString(selectedProgram.getId());
+		}
+		String view = "redirect:/manageUsers/showPage?programId=" + id;
+		/*if (isNewUser) {
 			try {
 				Map<String, Object> model = modelMap();
 				model.put("host", Environment.getInstance().getApplicationHostName());
@@ -155,11 +121,11 @@ public class ManageUsersController {
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
 			}
-		}
+		}*/
 
 		return new ModelAndView(view);
 	}
-
+/*
 	private String createRolesString(List<Role> roles) {
 		StringBuilder rolesString = new StringBuilder();
 		for (Role role : roles) {
@@ -167,7 +133,7 @@ public class ManageUsersController {
 		}
 
 		return rolesString.toString();
-	}
+	
 
 	private Object createProgramString(Integer selectedProgramForNewUser) {
 		if (selectedProgramForNewUser != -1) {
@@ -177,21 +143,21 @@ public class ManageUsersController {
 
 		return "all programs";
 	}
-
-	private RegisteredUser createNewRegisteredUser(NewAdminUserDTO adminUser) {
+*/
+/*	private RegisteredUser createNewRegisteredUser(NewAdminUserDTO adminUser) {
 		RegisteredUser user = new RegisteredUser();
 
 		user.setUsername(adminUser.getNewUserEmail());
-		user.setFirstName(adminUser.getNewUserFirstName());
+		//user.setFirstName(adminUser.getNewUserFirstName());
 		user.setLastName(adminUser.getNewUserLastName());
 		user.setEmail(adminUser.getNewUserEmail());
 		user.setAccountNonExpired(true);
 		user.setAccountNonLocked(true);
-		user.setEnabled(false);
+		//user.setEnabled(false);
 		user.setCredentialsNonExpired(true);
 
 		return user;
-	}
+	}*/
 
 	Map<String, Object> modelMap() {
 		return new HashMap<String, Object>();
@@ -278,88 +244,26 @@ public class ManageUsersController {
 
 		if (result.hasErrors()) {
 			modelMap.put("result", result);
-			putUserInRolesInternal(selectedProgram, modelMap);
+			//putUserInRolesInternal(selectedProgram, modelMap);
 			return new ModelAndView(ROLES_PAGE_VIEW_NAME, modelMap);
 		}
-
-		return new ModelAndView(updateSelectedUserInternal(selectedUser, selectedProgram, newRolesDTO));
-	}
-
-	private String updateSelectedUserInternal(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
-		
-		if (getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-			removeFromSuperadminRoleIfRequired(selectedUser, newRolesDTO);
-		}
-		for (Authority authority : Authority.values()) {
-			addToRoleIfRequired(selectedUser, newRolesDTO, authority);
-		}
-
-		addOrRemoveFromProgramsOfWhichAdministratorIfRequired(selectedUser, selectedProgram, newRolesDTO);
-		addOrRemoveFromProgramsOfWhichApproverIfRequired(selectedUser, selectedProgram, newRolesDTO);
-		addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newRolesDTO);
-		addOrRemoveFromProgramsOfWhichInterviewerIfRequired(selectedUser, selectedProgram, newRolesDTO);
-		userService.save(selectedUser);
+		userService.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO);
 		String id = "";
 		if (selectedProgram != null && selectedProgram.getId() != null) {
 			id = Integer.toString(selectedProgram.getId());
 		}
-		return "redirect:/manageUsers/showPage?programId=" + id;
+		return new ModelAndView("redirect:/manageUsers/showPage?programId=" + id);
 	}
-
-	private void removeFromSuperadminRoleIfRequired(RegisteredUser selectedUser, NewRolesDTO newRolesDTO) {
-		if (getRole(newRolesDTO, Authority.SUPERADMINISTRATOR) == null) {
-			Role superAdminRole = selectedUser.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
-			selectedUser.getRoles().remove(superAdminRole);
+	
+	@ModelAttribute("usersInRoles")
+	public List<RegisteredUser> getUsersInRoles(@RequestParam(required = false) Integer programId) {
+		Program selectedProgram = getSelectedProgram(programId);
+		if(selectedProgram == null){
+			return new ArrayList<RegisteredUser>();
 		}
+		return userService.getAllUsersForProgram(selectedProgram);
 	}
-
-	private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
-		if (getRole(newRolesDTO, Authority.ADMINISTRATOR) != null && !selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichAdministrator().add(selectedProgram);
-		} else if (getRole(newRolesDTO, Authority.ADMINISTRATOR) == null && selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
-		}
-
-	}
-
-	private void addOrRemoveFromProgramsOfWhichApproverIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
-		if (getRole(newRolesDTO, Authority.APPROVER) != null && !selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichApprover().add(selectedProgram);
-		} else if (getRole(newRolesDTO, Authority.APPROVER) == null && selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
-		}
-	}
-
-	private void addOrRemoveFromProgramsOfWhichReviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
-		if (getRole(newRolesDTO, Authority.REVIEWER) != null && !selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichReviewer().add(selectedProgram);
-		} else if (getRole(newRolesDTO, Authority.REVIEWER) == null && selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichReviewer().remove(selectedProgram);
-		}
-	}
-
-	private void addOrRemoveFromProgramsOfWhichInterviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
-		
-		if (getRole(newRolesDTO, Authority.INTERVIEWER) != null && !selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichInterviewer().add(selectedProgram);
-		} else if (getRole(newRolesDTO, Authority.INTERVIEWER) == null && selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichInterviewer().remove(selectedProgram);
-		}
-	}
-
-	private void addToRoleIfRequired(RegisteredUser selectedUser, NewRolesDTO newRolesDTO, Authority authority) {
-		if (!selectedUser.isInRole(authority) && getRole(newRolesDTO, authority) != null) {
-			selectedUser.getRoles().add(getRole(newRolesDTO, authority));
-		}
-	}
-
-	private Role getRole(NewRolesDTO newRolesDTO, Authority authority) {
-		
-		for (Role role : newRolesDTO.getNewRoles()) {
-			if (role.getAuthorityEnum() == authority) {
-				return role;
-			}
-		}
-		return null;
-	}
+	
+	
+	
 }

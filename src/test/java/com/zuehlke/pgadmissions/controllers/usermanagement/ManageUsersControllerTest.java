@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.controllers.usermanagement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -15,7 +15,6 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -24,6 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.controllers.usermanagement.ManageUsersController;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -35,7 +35,6 @@ import com.zuehlke.pgadmissions.dto.NewAdminUserDTO;
 import com.zuehlke.pgadmissions.dto.NewRolesDTO;
 import com.zuehlke.pgadmissions.exceptions.AccessDeniedException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.propertyeditors.RolePropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -48,8 +47,7 @@ public class ManageUsersControllerTest {
 	private UserService userServiceMock;
 	private RolePropertyEditor rolePropertyEditorMock;
 	private ManageUsersController manageUsersControllerWithCurrentUserOverride;
-	private JavaMailSender javaMailSenderMock;
-	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
+	
 
 	@Test
 	public void shouldGetSelectedUserIfIdProvided() {
@@ -95,11 +93,6 @@ public class ManageUsersControllerTest {
 		manageUsersController.getSelectedProgram(5);
 	}
 	
-	@Test
-	public void shouldReturnCorrectViewForAddingNewUser() {
-		ModelAndView createNewUserView = manageUsersControllerWithCurrentUserOverride.createNewUser(null, new ModelMap());
-		Assert.assertEquals("private/staff/superAdmin/create_new_user_in_role_page", createNewUserView.getViewName());
-	}
 
 	@Test
 	public void shouldReturnAllInternalusers() {
@@ -192,29 +185,28 @@ public class ManageUsersControllerTest {
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(false).anyTimes();
 		EasyMock.expect(currentUser.getId()).andReturn(1);
 		EasyMock.replay(currentUser);
-		manageUsersControllerWithCurrentUserOverride.getUsersPage(null, null);
+		manageUsersControllerWithCurrentUserOverride.getUsersPage();
 	}
 
 	@Test
 	public void shouldReturnCorrectView() {
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
 		EasyMock.replay(currentUser);
-		assertEquals("private/staff/superAdmin/assign_roles_page", manageUsersControllerWithCurrentUserOverride.getUsersPage(null, new ModelMap()));
+		assertEquals("private/staff/superAdmin/assign_roles_page", manageUsersControllerWithCurrentUserOverride.getUsersPage());
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@Test
 	public void shouldReturnEmptyUserInRoleListIfNoProgram() {
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
 		EasyMock.expect(currentUser.getId()).andReturn(1);
 		EasyMock.replay(currentUser);
-		ModelMap modelMap = new ModelMap();
-		manageUsersControllerWithCurrentUserOverride.getUsersPage(null, modelMap);
-		List<RegisteredUser> users = (List<RegisteredUser>) modelMap.get("usersInRoles");
+		
+		List<RegisteredUser> users = manageUsersControllerWithCurrentUserOverride.getUsersInRoles(null);
 		assertTrue(users.isEmpty());
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@Test
 	public void shouldReturnAllUsersForProgramIfProgamProvided() {
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
@@ -223,10 +215,10 @@ public class ManageUsersControllerTest {
 		RegisteredUser userOne = new RegisteredUserBuilder().id(3).toUser();
 		RegisteredUser userTwo = new RegisteredUserBuilder().id(4).toUser();
 		EasyMock.expect(userServiceMock.getAllUsersForProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
-		EasyMock.replay(userServiceMock);
-		ModelMap modelMap = new ModelMap();
-		manageUsersControllerWithCurrentUserOverride.getUsersPage(program, modelMap);
-		List<RegisteredUser> users = (List<RegisteredUser>) modelMap.get("usersInRoles");
+		EasyMock.replay(userServiceMock);		
+		EasyMock.expect(programsServiceMock.getProgramById(5)).andReturn(program);
+		EasyMock.replay(programsServiceMock);
+		List<RegisteredUser> users = manageUsersControllerWithCurrentUserOverride.getUsersInRoles(5);		
 		assertEquals(2, users.size());
 		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
 	}
@@ -301,175 +293,16 @@ public class ManageUsersControllerTest {
 		EasyMock.verify(binderMock);
 	}
 
-	@Test
-	public void shouldSaveSelectedUser() {
-		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();
-		userServiceMock.save(selectedUser);
-		EasyMock.replay(userServiceMock);
-		Program selectedProgram = new ProgramBuilder().id(4).toProgram();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, new NewRolesDTO(), new ModelMap());
-		EasyMock.verify(userServiceMock);
-	}
-
-	@Test
-	public void shouldAddUserRoleAdminIfNotAlreadyAdminAndAdminInNewRoles() {
-		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();		
-		Role role = new RoleBuilder().id(1).authorityEnum(Authority.ADMINISTRATOR).toRole();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		newRolesDTO.getNewRoles().add(role);		
-		Program selectedProgram = new ProgramBuilder().id(4).toProgram();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertTrue(selectedUser.isInRole(Authority.ADMINISTRATOR));
-	}	
-	
-	@Test
-	public void shouldAddUserRoleApproverIfNotAlreadyApproverAndAproverInNewRoles() {
-		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();		
-		Role role = new RoleBuilder().id(1).authorityEnum(Authority.APPROVER).toRole();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		newRolesDTO.getNewRoles().add(role);
-		Program selectedProgram = new ProgramBuilder().id(4).toProgram();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertTrue(selectedUser.isInRole(Authority.APPROVER));
-	}
-
-	@Test
-	public void shouldAddUserRoleReviewerIfNotAlreadyRevieweAndRevieweInNewRoles() {
-		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();		
-		Role role = new RoleBuilder().id(1).authorityEnum(Authority.REVIEWER).toRole();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		newRolesDTO.getNewRoles().add(role);		
-		Program selectedProgram = new ProgramBuilder().id(4).toProgram();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertTrue(selectedUser.isInRole(Authority.REVIEWER));
-	}
-	
-	@Test
-	public void shouldAddUserRoleSuperAdmimnIfNotAlreadySuperadminAndSuperadminInNewRoles() {
-		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();		
-		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		newRolesDTO.getNewRoles().add(role);		
-		Program selectedProgram = new ProgramBuilder().id(4).toProgram();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertTrue(selectedUser.isInRole(Authority.SUPERADMINISTRATOR));
-	}
-	
-	@Test
-	public void shouldRemoveSuperadminRoleIfNotInNewListAndUserIsSuperadmin() {
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
-		EasyMock.replay(currentUser);
-		Role role= new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
-		RegisteredUser selectedUser = new RegisteredUserBuilder().role(role).id(1).toUser();		
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-
-		Program selectedProgram = new ProgramBuilder().id(3).toProgram();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertFalse(selectedUser.isInRole(Authority.SUPERADMINISTRATOR));
-	}
-	
-	@Test
-	public void shouldNotRemoveSuperadminRoleIfNotInNewListAndUserIsNotSuperadmin() {
-		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
-		EasyMock.replay(currentUser);
-		Role role= new RoleBuilder().id(1).authorityEnum(Authority.SUPERADMINISTRATOR).toRole();
-		RegisteredUser selectedUser = new RegisteredUserBuilder().role(role).id(1).toUser();		
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-
-		Program selectedProgram = new ProgramBuilder().id(3).toProgram();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertTrue(selectedUser.isInRole(Authority.SUPERADMINISTRATOR));
-	}
-	
-	@Test
-	public void shouldAddProgramToAdminlistIfNew(){
-		Program selectedProgram = new ProgramBuilder().id(1).toProgram();
-		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();		
-		Role role = new RoleBuilder().id(1).authorityEnum(Authority.ADMINISTRATOR).toRole();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		newRolesDTO.getNewRoles().add(role);		
 		
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertTrue(selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram));
-	}
-	
 	@Test
-	public void shouldAddProgramToApproverlistIfNew(){
-		Program selectedProgram = new ProgramBuilder().id(1).toProgram();
-		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();		
-		Role role = new RoleBuilder().id(1).authorityEnum(Authority.APPROVER).toRole();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		newRolesDTO.getNewRoles().add(role);		
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertTrue(selectedUser.getProgramsOfWhichApprover().contains(selectedProgram));
-	}
-	
-	
-	@Test
-	public void shouldAddProgramToReviewerListIfNew(){
-		Program selectedProgram = new ProgramBuilder().id(1).toProgram();
-		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();		
-		Role role = new RoleBuilder().id(1).authorityEnum(Authority.REVIEWER).toRole();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		newRolesDTO.getNewRoles().add(role);		
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertTrue(selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram));
-	}
-	
-	@Test
-	public void shouldAddProgramToInterviewerListIfNew(){
-		Program selectedProgram = new ProgramBuilder().id(1).toProgram();
-		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();		
-		Role role = new RoleBuilder().id(1).authorityEnum(Authority.INTERVIEWER).toRole();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		newRolesDTO.getNewRoles().add(role);		
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertTrue(selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram));
-	}
-	
-	@Test
-	public void shouldRemoveFromProgramsOfWhichAdministratorIfNoLongerInList(){
-		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
-		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichAdministrator(selectedProgram).id(1).toUser();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertFalse(selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram));
-	}
-	
-	@Test
-	public void shouldRemoveFromProgramsOfWhichApproverIfNoLongerInList(){
-		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
-		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichApprover(selectedProgram).id(1).toUser();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertFalse(selectedUser.getProgramsOfWhichApprover().contains(selectedProgram));
-	}
-	
-	
-	@Test
-	public void shouldRemoveFromProgramsOfWhichReviewerIfNoLongerInList(){
+	public void shouldUpdateUserAndRedirectToPageForProgram(){
 		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
 		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichReviewer(selectedProgram).id(1).toUser();
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertFalse(selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram));
-	}
-	
-	@Test
-	public void shouldRemoveFromProgramsOfWhichInterviewerIfNoLongerInList(){
-		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
-		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichInterviewer(selectedProgram).id(1).toUser();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
-		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
-		assertFalse(selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram));
-	}
-	
-	@Test
-	public void shouldRedirectToPageForProgram(){
-		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
-		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichReviewer(selectedProgram).id(1).toUser();
-		NewRolesDTO newRolesDTO = new NewRolesDTO();
+		userServiceMock.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO);
+		EasyMock.replay(userServiceMock);
 		assertEquals("redirect:/manageUsers/showPage?programId=1", manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap()).getViewName());
+		EasyMock.verify(userServiceMock);
 	
 	}
 	@Before
@@ -481,13 +314,10 @@ public class ManageUsersControllerTest {
 		programsServiceMock = EasyMock.createMock(ProgramsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		rolePropertyEditorMock = EasyMock.createMock(RolePropertyEditor.class);
-		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
-		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		manageUsersController = new ManageUsersController(programsServiceMock, userServiceMock, rolePropertyEditorMock,
-				mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+
+		manageUsersController = new ManageUsersController(programsServiceMock, userServiceMock, rolePropertyEditorMock);
 		
-		manageUsersControllerWithCurrentUserOverride = new ManageUsersController(programsServiceMock, userServiceMock, rolePropertyEditorMock,
-				mimeMessagePreparatorFactoryMock,javaMailSenderMock){
+		manageUsersControllerWithCurrentUserOverride = new ManageUsersController(programsServiceMock, userServiceMock, rolePropertyEditorMock){
 
 			@Override
 			public RegisteredUser getCurrentUser() {

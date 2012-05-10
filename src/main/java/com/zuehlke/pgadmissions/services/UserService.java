@@ -19,7 +19,9 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.NewRolesDTO;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.Environment;
 
@@ -176,5 +178,77 @@ public class UserService {
 		user.getRoles().add(roleDAO.getRoleByAuthority(authority));
 	}
 
+	@Transactional
+	public void updateUserWithNewRoles(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
+		if (getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+			removeFromSuperadminRoleIfRequired(selectedUser, newRolesDTO);
+		}
+		for (Authority authority : Authority.values()) {
+			addToRoleIfRequired(selectedUser, newRolesDTO, authority);
+		}
+
+		addOrRemoveFromProgramsOfWhichAdministratorIfRequired(selectedUser, selectedProgram, newRolesDTO);
+		addOrRemoveFromProgramsOfWhichApproverIfRequired(selectedUser, selectedProgram, newRolesDTO);
+		addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newRolesDTO);
+		addOrRemoveFromProgramsOfWhichInterviewerIfRequired(selectedUser, selectedProgram, newRolesDTO);
+		userDAO.save(selectedUser);
+		
+	}
+	private void removeFromSuperadminRoleIfRequired(RegisteredUser selectedUser, NewRolesDTO newRolesDTO) {
+		if (getRole(newRolesDTO, Authority.SUPERADMINISTRATOR) == null) {
+			Role superAdminRole = selectedUser.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
+			selectedUser.getRoles().remove(superAdminRole);
+		}
+	}
+
+	private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
+		if (getRole(newRolesDTO, Authority.ADMINISTRATOR) != null && !selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichAdministrator().add(selectedProgram);
+		} else if (getRole(newRolesDTO, Authority.ADMINISTRATOR) == null && selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
+		}
+
+	}
+
+	private void addOrRemoveFromProgramsOfWhichApproverIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
+		if (getRole(newRolesDTO, Authority.APPROVER) != null && !selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichApprover().add(selectedProgram);
+		} else if (getRole(newRolesDTO, Authority.APPROVER) == null && selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
+		}
+	}
+
+	private void addOrRemoveFromProgramsOfWhichReviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
+		if (getRole(newRolesDTO, Authority.REVIEWER) != null && !selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichReviewer().add(selectedProgram);
+		} else if (getRole(newRolesDTO, Authority.REVIEWER) == null && selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichReviewer().remove(selectedProgram);
+		}
+	}
+
+	private void addOrRemoveFromProgramsOfWhichInterviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
+		
+		if (getRole(newRolesDTO, Authority.INTERVIEWER) != null && !selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichInterviewer().add(selectedProgram);
+		} else if (getRole(newRolesDTO, Authority.INTERVIEWER) == null && selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichInterviewer().remove(selectedProgram);
+		}
+	}
+
+	private void addToRoleIfRequired(RegisteredUser selectedUser, NewRolesDTO newRolesDTO, Authority authority) {
+		if (!selectedUser.isInRole(authority) && getRole(newRolesDTO, authority) != null) {
+			selectedUser.getRoles().add(getRole(newRolesDTO, authority));
+		}
+	}
+
+	private Role getRole(NewRolesDTO newRolesDTO, Authority authority) {
+		
+		for (Role role : newRolesDTO.getNewRoles()) {
+			if (role.getAuthorityEnum() == authority) {
+				return role;
+			}
+		}
+		return null;
+	}
 
 }

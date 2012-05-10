@@ -259,6 +259,22 @@ public class RegisteredUserTest {
 	}
 
 	
+	
+	@Test
+	public void shouldReturnFalseForInterviewersIfUserIsInterviewerButNotInProgram() {
+		RegisteredUser interviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		assertFalse(interviewer.isInterviewerOfProgram(program));
+	}
+	
+	@Test
+	public void shouldReturnTrueForInterviewersIfUserIsInterviewerOfProgram() {
+		RegisteredUser interviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		Program program = new ProgramBuilder().interviewers(interviewer).id(1).toProgram();
+		assertTrue(interviewer.isInterviewerOfProgram(program));
+	}
+	
+	
 	@Test
 	public void shouldReturnListOfAuthoritiesForProgram() {
 		Program program = new ProgramBuilder().id(1).toProgram();

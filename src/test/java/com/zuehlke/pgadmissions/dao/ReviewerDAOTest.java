@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -96,6 +97,7 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 
 	}
 
+	@Ignore
 	@Test
 	public void shouldReturnReviewerReminded7Minus5minDaysAgo() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
@@ -113,6 +115,7 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 		assertTrue(reviewers.contains(reviewer));
 	}
 
+	@Ignore
 	@Test
 	public void shouldReturnReviewerReminded7Plus5minDaysAgo() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)

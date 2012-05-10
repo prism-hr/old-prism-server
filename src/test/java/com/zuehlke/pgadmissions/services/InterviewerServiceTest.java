@@ -8,13 +8,19 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.Interviewer;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class InterviewerServiceTest {
 
 	private InterviewerDAO interviewerDAOMock;
 	private InterviewerService interviewerService;
+	private UserService userServiceMock;
+	private ProgramsService programsServiceMock;
 
 	@Test
 	public void shouldGetInterviewerById() {
@@ -44,10 +50,67 @@ public class InterviewerServiceTest {
 		EasyMock.verify(interviewerDAOMock);
 	}
 	
+	@Test
+	public void shouldCreateNewUserWithInterviewerRoleInProgram() {
+		RegisteredUser interviewer = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		EasyMock.expect(userServiceMock.createNewUser(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail())).andReturn(interviewer);
+		userServiceMock.addRoleToUser(interviewer, Authority.INTERVIEWER);
+		userServiceMock.save(interviewer);
+		programsServiceMock.save(program);
+		EasyMock.replay(userServiceMock, programsServiceMock);
+		
+		interviewerService.createNewUserWithInterviewerRoleInProgram(interviewer, program);
+		
+		EasyMock.verify(userServiceMock, programsServiceMock);
+		Assert.assertEquals(1, program.getInterviewers().size());
+		Assert.assertTrue(program.getInterviewers().contains(interviewer));
+		Assert.assertEquals(1, interviewer.getProgramsOfWhichInterviewer().size());
+		Assert.assertTrue(interviewer.getProgramsOfWhichInterviewer().contains(program));
+	}
+	
+	
+	@Test
+	public void shouldAddExistingInterviewerToProgram() {
+		RegisteredUser interviewer = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		userServiceMock.save(interviewer);
+		programsServiceMock.save(program);
+		EasyMock.replay(userServiceMock, programsServiceMock);
+		
+		interviewerService.addInterviewerToProgram(interviewer, program);
+		
+		EasyMock.verify(userServiceMock, programsServiceMock);
+		Assert.assertEquals(1, program.getInterviewers().size());
+		Assert.assertTrue(program.getInterviewers().contains(interviewer));
+		Assert.assertEquals(1, interviewer.getProgramsOfWhichInterviewer().size());
+		Assert.assertTrue(interviewer.getProgramsOfWhichInterviewer().contains(program));
+	}
+	
+	@Test
+	public void shouldAddExistingUserToProgramAndAddInterviewerRole() {
+		RegisteredUser interviewer = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		userServiceMock.addRoleToUser(interviewer, Authority.INTERVIEWER);
+		userServiceMock.save(interviewer);
+		programsServiceMock.save(program);
+		EasyMock.replay(userServiceMock, programsServiceMock);
+		
+		interviewerService.addInterviewerToProgram(interviewer, program);
+		
+		EasyMock.verify(userServiceMock, programsServiceMock);
+		Assert.assertEquals(1, program.getInterviewers().size());
+		Assert.assertTrue(program.getInterviewers().contains(interviewer));
+		Assert.assertEquals(1, interviewer.getProgramsOfWhichInterviewer().size());
+		Assert.assertTrue(interviewer.getProgramsOfWhichInterviewer().contains(program));
+	}
+	
 	@Before
 	public void setUp() {
 		interviewerDAOMock = EasyMock.createMock(InterviewerDAO.class);
-		interviewerService = new InterviewerService(interviewerDAOMock);
+		userServiceMock =  EasyMock.createMock(UserService.class);
+		programsServiceMock =  EasyMock.createMock(ProgramsService.class);
+		interviewerService = new InterviewerService(interviewerDAOMock, userServiceMock, programsServiceMock);
 	}
 	
 }

@@ -153,6 +153,7 @@ public class ManageUsersControllerTest {
 		EasyMock.expect(selectedUser.getProgramsOfWhichAdministrator()).andReturn(new ArrayList<Program>());
 		EasyMock.expect(selectedUser.getProgramsOfWhichApprover()).andReturn(new ArrayList<Program>());
 		EasyMock.expect(selectedUser.getProgramsOfWhichReviewer()).andReturn(new ArrayList<Program>());
+		EasyMock.expect(selectedUser.getProgramsOfWhichInterviewer()).andReturn(new ArrayList<Program>());
 		EasyMock.expect(selectedUser.getRoles()).andReturn(new ArrayList<Role>());
 		
 		userServiceMock.save(selectedUser);
@@ -245,8 +246,8 @@ public class ManageUsersControllerTest {
 		EasyMock.expect(currentUser.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
 		EasyMock.replay(currentUser);
 		List<Authority> authorities = manageUsersControllerWithCurrentUserOverride.getAuthorities();
-		assertEquals(4, authorities.size());
-		assertTrue(authorities.containsAll(Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.SUPERADMINISTRATOR)));
+		assertEquals(5, authorities.size());
+		assertTrue(authorities.containsAll(Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.SUPERADMINISTRATOR, Authority.INTERVIEWER)));
 	}
 
 	@Test
@@ -255,8 +256,8 @@ public class ManageUsersControllerTest {
 		EasyMock.expect(currentUser.isInRole(Authority.ADMINISTRATOR)).andReturn(true).anyTimes();
 		EasyMock.replay(currentUser);		
 		List<Authority> authorities = manageUsersControllerWithCurrentUserOverride.getAuthorities();
-		assertEquals(3, authorities.size());
-		assertTrue(authorities.containsAll(Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER)));
+		assertEquals(4, authorities.size());
+		assertTrue(authorities.containsAll(Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER,  Authority.INTERVIEWER)));
 	}
 
 	@Test
@@ -405,7 +406,7 @@ public class ManageUsersControllerTest {
 	
 	
 	@Test
-	public void shouldAddProgramToRevieerListIfNew(){
+	public void shouldAddProgramToReviewerListIfNew(){
 		Program selectedProgram = new ProgramBuilder().id(1).toProgram();
 		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();		
 		Role role = new RoleBuilder().id(1).authorityEnum(Authority.REVIEWER).toRole();
@@ -415,6 +416,16 @@ public class ManageUsersControllerTest {
 		assertTrue(selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram));
 	}
 	
+	@Test
+	public void shouldAddProgramToInterviewerListIfNew(){
+		Program selectedProgram = new ProgramBuilder().id(1).toProgram();
+		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();		
+		Role role = new RoleBuilder().id(1).authorityEnum(Authority.INTERVIEWER).toRole();
+		NewRolesDTO newRolesDTO = new NewRolesDTO();
+		newRolesDTO.getNewRoles().add(role);		
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
+		assertTrue(selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram));
+	}
 	
 	@Test
 	public void shouldRemoveFromProgramsOfWhichAdministratorIfNoLongerInList(){
@@ -442,6 +453,15 @@ public class ManageUsersControllerTest {
 		NewRolesDTO newRolesDTO = new NewRolesDTO();
 		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
 		assertFalse(selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram));
+	}
+	
+	@Test
+	public void shouldRemoveFromProgramsOfWhichInterviewerIfNoLongerInList(){
+		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
+		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichInterviewer(selectedProgram).id(1).toUser();
+		NewRolesDTO newRolesDTO = new NewRolesDTO();
+		manageUsersControllerWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, newRolesDTO, new ModelMap());
+		assertFalse(selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram));
 	}
 	
 	@Test

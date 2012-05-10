@@ -85,6 +85,14 @@ public class UserDAO {
 				users.add(reviewer);
 			}
 		}
+		List<RegisteredUser> interviewers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).add(Restrictions.eq("enabled", true))
+				.createCriteria("programsOfWhichInterviewer")
+						.add(Restrictions.eq("id", program.getId())).list();
+				for (RegisteredUser interviewer : interviewers) {
+					if (!users.contains(interviewer)) {
+						users.add(interviewer);
+					}
+				}
 		return users;
 	}
 

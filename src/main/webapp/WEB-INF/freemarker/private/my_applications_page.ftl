@@ -46,7 +46,7 @@
 				
 				    <!-- Main content area. -->
 				    <article id="content" role="main">
-				      <#if !model.user.isInRole('APPLICANT')>
+				      <#if !user.isInRole('APPLICANT')>
 				      	<#include "/private/common/parts/tools.ftl"/>
 				      </#if>
 				      
@@ -54,8 +54,8 @@
 				      <input type="hidden" id="appList" name="appList" />
 				      <div class="content-box">
 				        <div class="content-box-inner">
-							<!-- confirmation message if application just submitted with email coming soon confirmation -->
-							<p style="color:red;">${model.message}</p>
+							
+							<p style="color:red;">${(message?html)!}</p>
 							<table class="data" border="0" >
 					          	<colgroup>
 					            	<col style="width: 30px" />
@@ -74,7 +74,7 @@
 					              </tr>
 					            </thead>
 					            <tbody>
-					            	<#list model.applications as application>
+					            	<#list applications as application>
 							        	<tr id="row_${application.id?string("######")}" name="applicationRow">
 							                <td><a class="row-arrow" href="#">&gt;</a></td>
 							                <td name="idColumn">${application.id?string("######")}</td>
@@ -87,28 +87,28 @@
 							                		<option>Select...</option>
 							                		<option value="view">View</option>
 							                		<option value="print">Print</option>
-							                	    <#if model.user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
+							                	    <#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
 							                	    	<option value="approve">Approve</option>
       												</#if>
-      												<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('VALIDATION')> 
+      												<#if user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('VALIDATION')> 
 									    				<option value="validate">Validate</option>
 									      			</#if>
-									      			<#if model.user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('REVIEW')> 
+									      			<#if user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('REVIEW')> 
 									    				<option value="validate">Evaluate reviews</option>
 									      			</#if>
-									    			<#if !model.user.isInRole('APPLICANT') && !model.user.isRefereeOfApplicationForm(application)>
+									    			<#if !user.isInRole('APPLICANT') && !user.isRefereeOfApplicationForm(application)>
 								    					<option value="comment">Comment</option>								    				
 								      				</#if>      												
-							                	    <#if model.user.isReviewerOfApplicationForm(application) >
+							                	    <#if user.isReviewerOfApplicationForm(application) >
       													<option value="assignReviewer">Assign Reviewer</option>
         		  									</#if>
-									    			<#if model.user.isInRoleInProgram('REVIEWER', application.program) && application.isInState('REVIEW') && !model.user.hasRespondedToProvideReviewForApplication(application)> 
+									    			<#if user.isInRoleInProgram('REVIEWER', application.program) && application.isInState('REVIEW') && !user.hasRespondedToProvideReviewForApplication(application)> 
 								    					<option value="review">Add Review</option>								    				
 								      				</#if>      												
-								      				<#if (model.user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isDecided() )>
+								      				<#if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isDecided() )>
 								    					<option value="reference">Add Reference</option>
 								      				</#if>      												
-								      				<#if (model.user.isInRole('APPLICANT') && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn())>
+								      				<#if (user.isInRole('APPLICANT') && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn())>
 								    					<option value="withdraw">Withdraw</option>
 								      				</#if>      												
 							                  	</select>
@@ -124,10 +124,10 @@
 				          </table>
 				          
 				          <p class="right">
-				            <#if (model.user.isInRole('SUPERADMINISTRATOR') || model.user.isInRole('ADMINISTRATOR'))>
+				            <#if (user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR'))>
                                 <a id="manageUsersButton" class="button">Manage Users</a>
                             </#if>
-                            <#if (model.hasApplications())>
+                            <#if (applications?size > 0)>
 				          		<a class="button" name="downloadAll" id="downloadAll">Download</a>
 				          	</#if>
 				          	<#include "/private/common/feedback.ftl"/>

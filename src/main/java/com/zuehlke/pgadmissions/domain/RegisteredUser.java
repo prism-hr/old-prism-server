@@ -304,6 +304,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		if (getProgramsOfWhichReviewer().contains(program)) {
 			authorities.add(Authority.REVIEWER);
 		}
+		if (getProgramsOfWhichInterviewer().contains(program)) {
+			authorities.add(Authority.INTERVIEWER);
+		}
 		if (getProgramsOfWhichApprover().contains(program)) {
 			authorities.add(Authority.APPROVER);
 		}

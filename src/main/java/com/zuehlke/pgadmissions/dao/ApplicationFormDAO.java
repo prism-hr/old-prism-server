@@ -75,7 +75,8 @@ public class ApplicationFormDAO {
 				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 
 		DetachedCriteria overDueRemindersCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", notificationType)).add(Restrictions.lt("notificationRecord.date", oneWeekAgo)).add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+				.add(Restrictions.eq("notificationType", notificationType)).add(Restrictions.lt("notificationRecord.date", oneWeekAgo))
+				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 		
 
 		return (List<ApplicationForm>) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")

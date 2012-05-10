@@ -275,8 +275,8 @@ public class RegisteredUserTest {
 	public void shouldReturnCommaSeparatedListOfAuthoritiesForProgram() {
 		Program program = new ProgramBuilder().id(1).toProgram();
 		RegisteredUser user = new RegisteredUserBuilder().programsOfWhichAdministrator(program).programsOfWhichApprover(program)
-				.programsOfWhichReviewer(program).toUser();
-		assertEquals("Administrator, Reviewer, Approver", user.getAuthoritiesForProgramAsString(program));
+				.programsOfWhichReviewer(program).programsOfWhichInterviewer(program).toUser();
+		assertEquals("Administrator, Reviewer, Interviewer, Approver", user.getAuthoritiesForProgramAsString(program));
 
 	}
 
@@ -284,8 +284,8 @@ public class RegisteredUserTest {
 	public void shouldAddSuperAdminToReturnCommaSeparatedListIfSuperadmin() {
 		Program program = new ProgramBuilder().id(1).toProgram();
 		RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole())
-				.programsOfWhichAdministrator(program).programsOfWhichApprover(program).programsOfWhichReviewer(program).toUser();
-		assertEquals("Superadministrator, Administrator, Reviewer, Approver", user.getAuthoritiesForProgramAsString(program));
+				.programsOfWhichAdministrator(program).programsOfWhichApprover(program).programsOfWhichReviewer(program).programsOfWhichInterviewer(program).toUser();
+		assertEquals("Superadministrator, Administrator, Reviewer, Interviewer, Approver", user.getAuthoritiesForProgramAsString(program));
 
 	}
 

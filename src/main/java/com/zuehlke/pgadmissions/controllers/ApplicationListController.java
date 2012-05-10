@@ -1,16 +1,16 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.pagemodels.ApplicationListModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -33,22 +33,28 @@ public class ApplicationListController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getApplicationListPage(@RequestParam(required=false) boolean submissionSuccess, String decision) {
-		
-		SecurityContext context = SecurityContextHolder.getContext();
-		RegisteredUser user = (RegisteredUser) context.getAuthentication().getDetails();
-		
-		ApplicationListModel model = new ApplicationListModel();
-		model.setUser(userService.getUser(user.getId()));
-		model.setApplications(applicationsService.getVisibleApplications(user));
+	public String getApplicationListPage() {			
+		return APPLICATION_LIST_VIEW_NAME;
+	}
+
+	@ModelAttribute("user")
+	public RegisteredUser getUser() {
+		return userService.getCurrentUser();
+	}
+	
+	@ModelAttribute("applications")
+	public List<ApplicationForm> getApplications() {
+		return applicationsService.getVisibleApplications(getUser());
+	}
+
+	@ModelAttribute("message")
+	public String getMessage(@RequestParam(required=false) boolean submissionSuccess, @RequestParam(required=false) String decision) {
 		if(submissionSuccess){
-		        model.setMessage("Your application is submitted successfully.");
+	       return "Your application has been successfully submitted.";
 		}
 		if(decision != null){
-		    model.setMessage("The application was successfully " + decision +".");
-		}
-		ModelAndView modelAndView = new ModelAndView(APPLICATION_LIST_VIEW_NAME, "model", model);
-		
-		return modelAndView;
-	}	
+		    return "The application was successfully " + decision +".";
+		}	
+		return null;
+	}
 }

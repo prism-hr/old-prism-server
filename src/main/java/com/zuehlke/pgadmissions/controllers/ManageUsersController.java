@@ -94,7 +94,7 @@ public class ManageUsersController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/createNewUser")
 	public ModelAndView createNewUser(@RequestParam(required = false) Integer selectedProgramForNewUser, ModelMap modelMap) {
-		if (selectedProgramForNewUser!= null && selectedProgramForNewUser == -1) {
+		if (selectedProgramForNewUser != null && selectedProgramForNewUser == -1) {
 			modelMap.put("allProgramsSelected", "yes");
 			if (getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
 				modelMap.put("authorities", Arrays.asList(Authority.SUPERADMINISTRATOR));
@@ -110,13 +110,13 @@ public class ManageUsersController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/createNewUser")
-	public ModelAndView addNewUser(@ModelAttribute NewAdminUserDTO adminUser,
-			@RequestParam Integer selectedProgramForNewUser, @ModelAttribute NewRolesDTO newRolesDTO, ModelMap modelMap) {
+	public ModelAndView addNewUser(@ModelAttribute NewAdminUserDTO adminUser, @RequestParam Integer selectedProgramForNewUser,
+			@ModelAttribute NewRolesDTO newRolesDTO, ModelMap modelMap) {
 
 		Program selectedProgram = null;
 		if (selectedProgramForNewUser != null && selectedProgramForNewUser != -1) {
 			selectedProgram = getProgram(selectedProgramForNewUser);
-		} 
+		}
 
 		adminUser.setProgramForNewUser(selectedProgramForNewUser);
 		NewAdminUserDTOValidator validator = new NewAdminUserDTOValidator();
@@ -131,7 +131,7 @@ public class ManageUsersController {
 			modelMap.put("newUserEmail", adminUser.getNewUserEmail());
 
 			return new ModelAndView(NEW_USER_VIEW_NAME, modelMap);
-		} 
+		}
 
 		RegisteredUser potentiallyNewUser = userService.getUserByEmail(adminUser.getNewUserEmail());
 		boolean isNewUser = false;
@@ -148,10 +148,12 @@ public class ManageUsersController {
 				model.put("suggestingUser", getCurrentUser());
 				model.put("programString", createProgramString(selectedProgramForNewUser));
 				model.put("newUserRoles", createRolesString(potentiallyNewUser.getRoles()));
-				InternetAddress toAddress = new InternetAddress(adminUser.getNewUserEmail(), adminUser.getNewUserFirstName() + " "+ adminUser.getNewUserLastName());
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "UCL Portal Registration", "private/staff/mail/new_user_suggestion.ftl", model));
+				InternetAddress toAddress = new InternetAddress(adminUser.getNewUserEmail(), adminUser.getNewUserFirstName() + " "
+						+ adminUser.getNewUserLastName());
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "UCL Portal Registration",
+						"private/staff/mail/new_user_suggestion.ftl", model));
 			} catch (Throwable e) {
-				log.warn("error while sending email",e);
+				log.warn("error while sending email", e);
 			}
 		}
 
@@ -241,10 +243,10 @@ public class ManageUsersController {
 
 	private List<Authority> getAuthoritiesInternal() {
 		if (getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-			return Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER);
+			return Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER);
 
 		}
-		return Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER);
+		return Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER);
 	}
 
 	@ModelAttribute("programs")
@@ -265,36 +267,38 @@ public class ManageUsersController {
 	@RequestMapping(method = RequestMethod.POST, value = "/updateRoles")
 	public ModelAndView updateUserWithNewRoles(@ModelAttribute("selectedUser") RegisteredUser selectedUser,
 			@ModelAttribute("selectedProgram") Program selectedProgram, @ModelAttribute NewRolesDTO newRolesDTO, ModelMap modelMap) {
-
+		
 		UpdateUserForProgramWithRolesDTO dto = new UpdateUserForProgramWithRolesDTO();
 		dto.setSelectedProgram(selectedProgram);
 		dto.setSelectedUser(selectedUser);
-		
+
 		UpdateUserForProgramWithRolesDTOValidator validator = new UpdateUserForProgramWithRolesDTOValidator();
 		BindingResult result = new DirectFieldBindingResult(dto, "dto");
 		validator.validate(dto, result);
-		
+
 		if (result.hasErrors()) {
 			modelMap.put("result", result);
 			putUserInRolesInternal(selectedProgram, modelMap);
 			return new ModelAndView(ROLES_PAGE_VIEW_NAME, modelMap);
 		}
-		
-		return new ModelAndView(updateSelectedUserInternal(selectedUser, selectedProgram, newRolesDTO), modelMap);
+
+		return new ModelAndView(updateSelectedUserInternal(selectedUser, selectedProgram, newRolesDTO));
 	}
 
 	private String updateSelectedUserInternal(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
-			if(getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)){
-				removeFromSuperadminRoleIfRequired(selectedUser, newRolesDTO);
-			}
-			for (Authority authority : Authority.values()) {
-				addToRoleIfRequired(selectedUser, newRolesDTO, authority);
-			}
+		
+		if (getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+			removeFromSuperadminRoleIfRequired(selectedUser, newRolesDTO);
+		}
+		for (Authority authority : Authority.values()) {
+			addToRoleIfRequired(selectedUser, newRolesDTO, authority);
+		}
 
-			addOrRemoveFromProgramsOfWhichAdministratorIfRequired(selectedUser, selectedProgram, newRolesDTO);
-			addOrRemoveFromProgramsOfWhichApproverIfRequired(selectedUser, selectedProgram, newRolesDTO);
-			addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newRolesDTO);
-			userService.save(selectedUser);
+		addOrRemoveFromProgramsOfWhichAdministratorIfRequired(selectedUser, selectedProgram, newRolesDTO);
+		addOrRemoveFromProgramsOfWhichApproverIfRequired(selectedUser, selectedProgram, newRolesDTO);
+		addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newRolesDTO);
+		addOrRemoveFromProgramsOfWhichInterviewerIfRequired(selectedUser, selectedProgram, newRolesDTO);
+		userService.save(selectedUser);
 		String id = "";
 		if (selectedProgram != null && selectedProgram.getId() != null) {
 			id = Integer.toString(selectedProgram.getId());
@@ -334,6 +338,15 @@ public class ManageUsersController {
 		}
 	}
 
+	private void addOrRemoveFromProgramsOfWhichInterviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
+		
+		if (getRole(newRolesDTO, Authority.INTERVIEWER) != null && !selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichInterviewer().add(selectedProgram);
+		} else if (getRole(newRolesDTO, Authority.INTERVIEWER) == null && selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichInterviewer().remove(selectedProgram);
+		}
+	}
+
 	private void addToRoleIfRequired(RegisteredUser selectedUser, NewRolesDTO newRolesDTO, Authority authority) {
 		if (!selectedUser.isInRole(authority) && getRole(newRolesDTO, authority) != null) {
 			selectedUser.getRoles().add(getRole(newRolesDTO, authority));
@@ -341,6 +354,7 @@ public class ManageUsersController {
 	}
 
 	private Role getRole(NewRolesDTO newRolesDTO, Authority authority) {
+		
 		for (Role role : newRolesDTO.getNewRoles()) {
 			if (role.getAuthorityEnum() == authority) {
 				return role;

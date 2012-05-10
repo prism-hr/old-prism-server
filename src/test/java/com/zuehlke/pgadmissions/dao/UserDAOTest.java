@@ -115,70 +115,84 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		assertTrue(usersInRole.containsAll(Arrays.asList(userOne, userTwo)));
 
 	}
-	
+
 	@Test
 	public void shouldGetUsersByProgramme() {
-		
 
 		Program programOne = new ProgramBuilder().code("111111").title("hello").toProgram();
 		Program programTwo = new ProgramBuilder().code("222222").title("hello").toProgram();
-		
+
 		save(programOne, programTwo);
-		
+
 		flushAndClearSession();
 
 		RoleDAO roleDAO = new RoleDAO(sessionFactory);
 		Role superAdminRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
-		
+
 		int numberOfExistingSuperAdminUsers = userDAO.getUsersInRole(superAdminRole).size();
-		
+
 		RegisteredUser superAdminOne = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole)
-				.toUser();
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).toUser();
 		RegisteredUser superAdminTwo = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).roles(superAdminRole)
 				.toUser();
 		RegisteredUser superAdminThree = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username3")
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).roles(superAdminRole)
 				.toUser();
-		
-		RegisteredUser approverOne = new RegisteredUserBuilder().programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username4")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
-		RegisteredUser approverTwo = new RegisteredUserBuilder().programsOfWhichApprover(programTwo).firstName("Jane").lastName("Doe").email("email@test.com").username("username5")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
-		RegisteredUser approverThree = new RegisteredUserBuilder().programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username6")				
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
-		
-		
-		
-		RegisteredUser reviewerOne = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username7")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
-		RegisteredUser reviewerTwo = new RegisteredUserBuilder().programsOfWhichReviewer(programTwo).firstName("Jane").lastName("Doe").email("email@test.com").username("username8")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
-		RegisteredUser reviewerThree = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username9")				
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
-		
-		
-		RegisteredUser administratorOne = new RegisteredUserBuilder().programsOfWhichAdministrator(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username10")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
-		RegisteredUser administratorTwo = new RegisteredUserBuilder().programsOfWhichAdministrator(programTwo).firstName("Jane").lastName("Doe").email("email@test.com").username("username11")
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
-		RegisteredUser administratorThree = new RegisteredUserBuilder().programsOfWhichAdministrator(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username12")				
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
 
-		RegisteredUser reviewerAndApprover = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe").email("email@test.com").username("username13")				
-				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
+		RegisteredUser approverOne = new RegisteredUserBuilder().programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe").email("email@test.com")
+				.username("username4").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true)
+				.toUser();
+		RegisteredUser approverTwo = new RegisteredUserBuilder().programsOfWhichApprover(programTwo).firstName("Jane").lastName("Doe").email("email@test.com")
+				.username("username5").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true)
+				.toUser();
+		RegisteredUser approverThree = new RegisteredUserBuilder().programsOfWhichApprover(programOne).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username6").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(true).toUser();
 
-		
-		
-		save(superAdminOne, superAdminTwo, superAdminThree, administratorOne, administratorThree,administratorTwo, approverOne, approverThree,approverTwo, reviewerOne, reviewerThree, reviewerTwo, reviewerAndApprover);
-		
-		
+		RegisteredUser reviewerOne = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).firstName("Jane").lastName("Doe").email("email@test.com")
+				.username("username7").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true)
+				.toUser();
+		RegisteredUser reviewerTwo = new RegisteredUserBuilder().programsOfWhichReviewer(programTwo).firstName("Jane").lastName("Doe").email("email@test.com")
+				.username("username8").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true)
+				.toUser();
+		RegisteredUser reviewerThree = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username9").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(true).toUser();
+
+		RegisteredUser interviewerOne = new RegisteredUserBuilder().programsOfWhichInterviewer(programOne).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username14").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(true).toUser();
+		RegisteredUser interviewerTwo = new RegisteredUserBuilder().programsOfWhichInterviewer(programTwo).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username15").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(true).toUser();
+		RegisteredUser interviewerThree = new RegisteredUserBuilder().programsOfWhichInterviewer(programOne).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username16").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(true).toUser();
+
+		RegisteredUser administratorOne = new RegisteredUserBuilder().programsOfWhichAdministrator(programOne).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(true).toUser();
+		RegisteredUser administratorTwo = new RegisteredUserBuilder().programsOfWhichAdministrator(programTwo).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username11").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(true).toUser();
+		RegisteredUser administratorThree = new RegisteredUserBuilder().programsOfWhichAdministrator(programOne).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username12").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(true).toUser();
+
+		RegisteredUser reviewerAndApprover = new RegisteredUserBuilder().programsOfWhichReviewer(programOne).programsOfWhichApprover(programOne)
+				.firstName("Jane").lastName("Doe").email("email@test.com").username("username13").password("password").accountNonExpired(false)
+				.accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
+
+		save(superAdminOne, superAdminTwo, superAdminThree, administratorOne, administratorThree, administratorTwo, approverOne, approverThree, approverTwo,
+				reviewerOne, reviewerThree, reviewerTwo,interviewerOne, interviewerTwo, interviewerThree, reviewerAndApprover);
+
 		flushAndClearSession();
-		
+
 		List<RegisteredUser> usersInProgram = userDAO.getUsersForProgram(programOne);
-		assertEquals(numberOfExistingSuperAdminUsers + 10, usersInProgram.size());
-		assertTrue(usersInProgram.containsAll(Arrays.asList(reviewerAndApprover, superAdminOne, superAdminThree, superAdminTwo, reviewerOne,reviewerThree, approverOne, approverThree, administratorOne, administratorThree)));
+		assertEquals(numberOfExistingSuperAdminUsers + 12, usersInProgram.size());
+		assertTrue(usersInProgram.containsAll(Arrays.asList(reviewerAndApprover, superAdminOne, superAdminThree, superAdminTwo, reviewerOne, reviewerThree,interviewerOne, interviewerThree,
+				approverOne, approverThree, administratorOne, administratorThree)));
 
 	}
 

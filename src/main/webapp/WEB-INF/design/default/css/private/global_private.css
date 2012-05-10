@@ -744,3 +744,5 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 .ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
 .ui-slider-vertical .ui-slider-range-min { bottom: 0; }
 .ui-slider-vertical .ui-slider-range-max { top: 0; }
+
+#uploadFields a { display: none; } /* hide the displayed name of uploaded files */

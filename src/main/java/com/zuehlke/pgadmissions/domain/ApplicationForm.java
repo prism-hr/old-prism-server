@@ -207,17 +207,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return status != ApplicationFormStatus.UNSUBMITTED;
 	}
 
-	@Override
-	public int compareTo(ApplicationForm appForm) {
-		if (this.applicationTimestamp == null) {
-			return -1;
-		}
 
-		if (appForm.getApplicationTimestamp() == null) {
-			return 1;
-		}
-		return (-1) * this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
-	}
 
 	public boolean isDecided() {
 		if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED) {
@@ -477,5 +467,19 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setInterviewers(List<Interviewer> interviewers) {
 		this.interviewers = interviewers;
+	}
+	
+	@Override
+	public int compareTo(ApplicationForm appForm) {
+		if(appForm.getSubmittedDate() != null && this.getSubmittedDate() == null){
+			return 1;
+		}
+		if(appForm.getSubmittedDate() == null && this.getSubmittedDate() != null){
+			return -1;
+		}
+		if(appForm.getSubmittedDate() == null && this.getSubmittedDate() == null){
+			return appForm.getApplicationTimestamp().compareTo(this.applicationTimestamp);
+		}
+		return appForm.getSubmittedDate().compareTo(this.submittedDate);
 	}
 }

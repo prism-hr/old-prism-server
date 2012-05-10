@@ -23,21 +23,22 @@ section.folding.lightgrey h2, section.folding.lightblue div.add a.button {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#97bfdf', endColorstr='#97bfdf',GradientType=0 ); /* IE6-8 */
 }
 
-.terms-label{
-	
-	width: 565px;
-	float: left;
-    font-weight: normal;
-    line-height: 1.2;
+.terms-label {
+	margin-left: 2em;
+	/*width: 565px;*/
+	float: right;
+	font-weight: normal;
+	line-height: 1.2;
 	padding-right: 10px;
-    text-align: justify;
-
+	text-align: justify;
 }
 
 .terms-field{
-    clear: right;
-    margin-bottom: -29px;
-    margin-left: 574px;
-    padding-top: 27px;
+	/*clear: right;*/
+	line-height: 1.5;
+	/*margin-bottom: -29px;
+	margin-left: 574px;
+	padding-top: 27px;*/
+	position: absolute;
 }
 

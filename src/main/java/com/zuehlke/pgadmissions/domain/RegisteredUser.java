@@ -61,6 +61,11 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@JoinColumn(name = "user_id")
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 
+	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "user_id")
+	private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
+
 	@OneToMany(fetch = FetchType.EAGER, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "registered_user_id")
@@ -89,7 +94,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@ManyToMany
 	@JoinTable(name = "PROGRAM_INTERVIEWER_LINK", joinColumns = { @JoinColumn(name = "interviewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	private List<Program> programsOfWhichInterviewer = new ArrayList<Program>();
-	
+
 	public List<Role> getRoles() {
 		return roles;
 	}
@@ -389,9 +394,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return this.isInRole(Authority.REFEREE) && hasRefereesInApplicationForm(form);
 	}
 
-	public boolean isReviewerOfApplicationForm(ApplicationForm form) {		
+	public boolean isReviewerOfApplicationForm(ApplicationForm form) {
 		for (Reviewer reviewer : form.getReviewers()) {
-			if (reviewer!=null && this.equals(reviewer.getUser())) {
+			if (reviewer != null && this.equals(reviewer.getUser())) {
 				return true;
 			}
 		}
@@ -399,27 +404,26 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	}
 
-	public boolean isInterviewerOfApplicationForm(ApplicationForm form) {		
+	public boolean isInterviewerOfApplicationForm(ApplicationForm form) {
 		for (Interviewer interviewer : form.getInterviewers()) {
-			if (interviewer!=null && this.equals(interviewer.getUser())) {
+			if (interviewer != null && this.equals(interviewer.getUser())) {
 				return true;
 			}
 		}
 		return false;
-		
+
 	}
-	
-	
-	public boolean isInterviewerOfProgram(Program program) {		
+
+	public boolean isInterviewerOfProgram(Program program) {
 		for (RegisteredUser interviewer : program.getInterviewers()) {
 			if (this.equals(interviewer)) {
 				return true;
 			}
 		}
 		return false;
-		
+
 	}
-	
+
 	public boolean hasRefereesInApplicationForm(ApplicationForm form) {
 		return getRefereeForApplicationForm(form) != null;
 	}
@@ -507,8 +511,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return programsOfWhichInterviewer;
 	}
 
-	public void setProgramsOfWhichInterviewer(
-			List<Program> programsOfWhichInterviewer) {
+	public void setProgramsOfWhichInterviewer(List<Program> programsOfWhichInterviewer) {
 		this.programsOfWhichInterviewer = programsOfWhichInterviewer;
 	}
 
@@ -516,11 +519,20 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		List<Reviewer> reviewers = new ArrayList<Reviewer>();
 		List<Reviewer> formReviewers = applicationForm.getReviewers();
 		for (Reviewer reviewer : formReviewers) {
-			if(this.equals(reviewer.getUser())){
+			if (this.equals(reviewer.getUser())) {
 				reviewers.add(reviewer);
 			}
 		}
 		return reviewers;
+	}
+
+	public List<PendingRoleNotification> getPendingRoleNotifications() {
+		return pendingRoleNotifications;
+	}
+
+	public void setPendingRoleNotifications(List<PendingRoleNotification> pendingRoleNotifications) {
+		this.pendingRoleNotifications.clear();
+		this.pendingRoleNotifications.addAll(pendingRoleNotifications);
 	}
 
 }

@@ -34,6 +34,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Language</value>
 	     		<value>com.zuehlke.pgadmissions.domain.AdditionalInformation</value>
 	     		<value>com.zuehlke.pgadmissions.domain.NotificationRecord</value>
+	     		<value>com.zuehlke.pgadmissions.domain.PendingRoleNotification</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Event</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Interviewer</value>
 	     		<value>com.zuehlke.pgadmissions.domain.RejectReason</value>

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -36,8 +37,13 @@ public class RegisteredUserBuilder {
 	private List<Program> programsOfWhichInterviewer = new ArrayList<Program>();
 	
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
+	private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
 	
 	
+	public RegisteredUserBuilder pendingRoleNotifications(PendingRoleNotification...pendingRoleNotifications) {
+		this.pendingRoleNotifications.addAll(Arrays.asList(pendingRoleNotifications));
+		return this;
+	}  
 	public RegisteredUserBuilder notificationRecords(NotificationRecord...notifications) {
 		this.notificationRecords.addAll(Arrays.asList(notifications));
 		return this;
@@ -176,6 +182,7 @@ public class RegisteredUserBuilder {
 		user.setReferees(referees);
 		user.setComments(comments);
 		user.setNotificationRecords(notificationRecords);
+		user.setPendingRoleNotifications(pendingRoleNotifications);
 		return user;
 	}
 

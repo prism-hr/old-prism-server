@@ -38,6 +38,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Event</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Interviewer</value>
 	     		<value>com.zuehlke.pgadmissions.domain.RejectReason</value>
+	     		<value>com.zuehlke.pgadmissions.domain.Interview</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

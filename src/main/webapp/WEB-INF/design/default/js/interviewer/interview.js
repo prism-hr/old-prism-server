@@ -18,4 +18,19 @@ $(document).ready(function(){
 		);
 	});
 	
+	$('#moveToInterviewBtn').click(function() {
+		var postData ={ 
+			applicationId : $('#applicationId').val(),
+			furtherDetails : $('#furtherDetails').val(),
+			dueDate : $('#interviewDate').val(),
+			locationURL : $('#interviewLocation').val()
+		};
+		
+		$.post("/pgadmissions/moveToInterview/move", 
+			$.param(postData),
+			function(data) {
+				$('#interviewSection').html(data);
+			}
+		);
+	});
 });

@@ -63,11 +63,11 @@ public class RoleDAOTest extends AutomaticRollbackTestCase {
 		
 	}
 	@Test
-	public void shoudlGetRoleByRefereeAuthority() {
+	public void shoudlGetRoleByInterviewerAuthority() {
 		flushAndClearSession();
 		RoleDAO roleDAO = new RoleDAO(sessionFactory);
-		Role relaodedRole = roleDAO.getRoleByAuthority(Authority.REFEREE);
-		assertEquals(Authority.REFEREE, relaodedRole.getAuthorityEnum());
+		Role relaodedRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+		assertEquals(Authority.INTERVIEWER, relaodedRole.getAuthorityEnum());
 		assertNotNull(relaodedRole);
 		
 	}

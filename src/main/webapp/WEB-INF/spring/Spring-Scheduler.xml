@@ -253,7 +253,18 @@
 		<property name="period" value="60000" />
 		<property name="timerTask" ref="reviewerNotificationTimerTask" />
 	</bean>
+<!-- reviewer remindeers -->
+	<bean id="reviewerReminderTimerTask" class="com.zuehlke.pgadmissions.timers.ReviewerReminderTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="reviewerMailSender" />
+		<constructor-arg index="2" ref="mailReviewerDAO" />
+	</bean>
 
+	<bean id="reviewerReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="4000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="reviewerReminderTimerTask" />
+	</bean>
 	<!-- The main schedule -->
 	<bean class="org.springframework.scheduling.timer.TimerFactoryBean">
 		<property name="scheduledTimerTasks">
@@ -268,6 +279,7 @@
 				<ref bean="adminReviewFeedbackNotificationSchedule" />
 				<ref bean="adminSubmissionNotificationSchedule"/>
 				<ref bean="reviewerNotificationSchedule"/>
+				<ref bean="reviewerReminderSchedule"/>
 			</list>
 		</property>
 	</bean>

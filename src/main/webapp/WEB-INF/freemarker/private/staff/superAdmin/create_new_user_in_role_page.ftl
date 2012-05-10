@@ -107,7 +107,7 @@
 					            
 					            	<div class="row">
 					                	<label>Role(s) in application process</label>
-					                	<select multiple size="4" id="roles" name="newRoles" >
+					                	<select multiple size="5" id="roles" name="newRoles" >
                         				<#list authorities as authority>
                       						<option value="${authority}">${authority}</option>
                       					</#list>

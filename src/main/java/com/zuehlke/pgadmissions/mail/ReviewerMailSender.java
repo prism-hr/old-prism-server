@@ -43,4 +43,14 @@ public class ReviewerMailSender extends MailSender {
 
 	}
 
+	public void sendReviewerReminder(Reviewer reviewer) throws UnsupportedEncodingException {
+		InternetAddress toAddress = new InternetAddress(reviewer.getUser().getEmail(), reviewer.getUser().getFirstName() + " "
+				+ reviewer.getUser().getLastName());
+		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + reviewer.getApplication().getId() + " for "
+				+ reviewer.getApplication().getProgram().getTitle() + " - Review Reminder",
+				"private/reviewers/mail/reviewer_reminder_email.ftl", createModel(reviewer)));
+
+		
+	}
+
 }

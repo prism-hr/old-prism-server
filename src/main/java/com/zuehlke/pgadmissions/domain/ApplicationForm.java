@@ -471,6 +471,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	
 	@Override
 	public int compareTo(ApplicationForm appForm) {
+	
 		if(appForm.getSubmittedDate() != null && this.getSubmittedDate() == null){
 			return 1;
 		}

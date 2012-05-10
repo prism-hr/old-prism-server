@@ -26,6 +26,7 @@ section.folding table.existing th { background: url(../../images/bg_table_head.p
 section.folding table.existing td { 
 	background: url("../../images/bg_table_row.jpg") repeat-x scroll left bottom #E6E8E7;
 	/* background: url(../../images/bg_table_row.jpg) repeat-x; text-align: left; */
+	padding: 3px;
 }
 
 /* Make the extra text hidden*/

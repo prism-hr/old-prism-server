@@ -10,6 +10,12 @@ a { text-decoration: none; }
 a img { border: none; }
 body { background: #999; font: 10pt/1 Arial, Helvetica, sans-serif; }
 label input { vertical-align: middle; }
+label.normal { font-weight: normal !important; }
+
+/* Compulsory Field Indications */
+label em { color: red; font-size: 14px; padding: 0 2px; position: absolute; }
+span em { color: red; font-size: 14px; padding: 0 2px; position: absolute; }
+h2 em { color: white; font-size: 14px; padding: 0 2px; position: absolute; }
 
 .centre { text-align: center !important; }
 .right { text-align: right !important; }
@@ -48,7 +54,7 @@ label input { vertical-align: middle; }
 #middle > header nav ul li.current a { background-position: 0 0; color: #000; } 
 
 #middle > header nav .user { float: right; font-size: 12pt; }
-#middle > header nav .user a.user-logout { font-size: 9pt; margin-right: 5px; }
+#middle > header nav .user a.user-logout { font-size: 9pt; margin-right: 5px; margin-bottom: 7px;}
 
 
 /* Content area ------------------------------------------------------------------------------------------- */
@@ -173,8 +179,65 @@ div.search-box button {
 }
 
 /* Validation errors. */
-span.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; color: red; display: inline-block; margin-left: 10px; padding-left: 24px; }
+span.invalid {
+	/* background: url(../../images/button_exclaim.png) no-repeat 0 .1em; */ 
+	color: red; 
+	display: inline-block; 
+	padding-left: 3px; 
+	margin-left: -2px;
+	/*IE 7*/ zoom: 1; *display: inline;
+}
+
+span.invalid-submit { 
+	color:red; padding-bottom:10px; line-height:46px; padding-left: 48px;
+	background: url("../../images/submit_error.png") no-repeat scroll 0 0.2em transparent;
+	display: inline-block; /*IE 7*/ zoom: 1; *display: inline;
+	width:805px;
+	font-size: 14px;
+	margin-bottom: -15px;
+	margin-top: -15px;
+}
+
+span.invalid-info-text{
+	
+	/* background: url(../../images/button_exclaim.png) no-repeat 0 .1em; */ 
+	color: red; 
+	display: inline-block;
+	padding-left: 10px;
+	margin-left: -2px;
+	/*IE 7*/ zoom: 1; *display: inline;
+	margin-bottom: 5px;
+	
+}
+span.info-text { 
+	 
+	background: url(../../images/temp_blue_i.png) no-repeat 0 .1em;
+	display: inline-block;
+	padding-left: 24px; 
+	margin-left: -2px;
+	/*IE 7*/ zoom: 1; 
+	*display: inline;
+	margin-bottom: 5px;
+}
+
+/* to control the looks of the information bar on top of each section */
+section.folding form > div.section-info-bar {
+	background: #FFF url(../../images/temp_blue_i.png) no-repeat 10px 10px;
+	border: 1px solid #0071B9;
+	padding: 10px;
+}
+section.folding form > div.section-info-bar .row,
+section.folding form > div.section-info-bar .info-text { background: none; margin-bottom: 0; }
+section.folding form > div.section-info-bar .info-text { line-height: 1.3; padding-left: 30px; }
+
+section.folding form > div.section-error-bar{
+	border:  1px solid red;
+	padding-bottom: 0;
+}
+
+
 input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin: -1px; }
+p.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; color: red; clear: left; display: inline-block; padding-bottom: 10px; padding-left: 24px; line-height: 24px;}
 
 div.buttons { text-align: right; }
 
@@ -215,6 +278,7 @@ table.data thead th {
   background: linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7c7c7c', endColorstr='#7c7c7c',GradientType=0 ); /* IE6-8 */
   cursor: pointer; font-weight: bold; text-align: left; padding: 5px 3px;
+	line-height: 1.3;
 }
 table.data th, table.data td { padding: 3px; vertical-align: middle; }
 table.data tr td, table.data tr th { border-bottom: 1px solid #999; }
@@ -262,7 +326,6 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 #pagination ul.pages li { display: inline; }
 #pagination ul.pages li a { padding: 0 5px; }
 #pagination ul.pages li.current { font-weight: bold; }
-
 
 /* JQUERY UI --------------------------------------------------------------------------------------------- */
 /* Layout helpers */

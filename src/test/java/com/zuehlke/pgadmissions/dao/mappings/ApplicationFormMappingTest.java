@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -38,6 +39,7 @@ import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
@@ -118,6 +120,24 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 	}
 
+	
+	@Test
+	public void shouldLoadApplicationFormWithInterview() throws ParseException {
+		
+		ApplicationForm application = new ApplicationFormBuilder().applicant(user).program(program).toApplicationForm();
+		
+		sessionFactory.getCurrentSession().save(application);
+		flushAndClearSession();
+		Interview interview = new InterviewBuilder().application(application).lastNotified(new Date()).furtherDetails("tba").locationURL("pgadmissions").toInterview();
+		
+		sessionFactory.getCurrentSession().save(interview);
+		flushAndClearSession();
+		
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertEquals(interview, reloadedApplication.getInterview());
+		
+	}
+	
 
 
 	@Test

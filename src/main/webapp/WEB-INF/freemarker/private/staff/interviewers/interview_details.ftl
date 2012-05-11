@@ -54,7 +54,7 @@
 
 					<div class="user">
 						${user.firstName?html} ${user.lastName?html} <a
-							class="button user-logout"
+							class="button blue user-logout"
 							href="<@spring.url '/j_spring_security_logout'/>">Logout</a>
 					</div>
 				</nav>

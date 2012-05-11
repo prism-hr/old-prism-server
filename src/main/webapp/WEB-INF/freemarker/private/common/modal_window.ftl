@@ -10,8 +10,8 @@
 					<div id="horizontal-separator"></div>
 					<div id="dialog-row">
 						<div id="dialog-actions">
-							<a href="#" class="button red-button" id="popup-ok-button">OK</a>
-							<a href="#" class="button" id="popup-cancel-button">Cancel</a>
+							<a href="#" class="default-button red-button" id="popup-ok-button">OK</a>
+							<a href="#" class="default-button" id="popup-cancel-button">Cancel</a>
 						</div>
 					</div>
 				</div>

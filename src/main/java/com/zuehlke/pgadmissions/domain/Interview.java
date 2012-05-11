@@ -39,7 +39,7 @@ public class Interview extends DomainObject<Integer> {
 	
 	@Temporal(TemporalType.DATE)
 	@Column(name="due_date")
-	private Date dueDate;
+	private Date interviewDueDate;
 	
 	public Date getLastNotified() {
 		return lastNotified;
@@ -73,12 +73,12 @@ public class Interview extends DomainObject<Integer> {
 		this.locationURL = locationURL;
 	}
 
-	public Date getDueDate() {
-		return dueDate;
+	public Date getInterviewDueDate() {
+		return interviewDueDate;
 	}
 
-	public void setDueDate(Date dueDate) {
-		this.dueDate = dueDate;
+	public void setInterviewDueDate(Date dueDate) {
+		this.interviewDueDate = dueDate;
 	}
 
 	

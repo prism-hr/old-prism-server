@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.InterviewerDAO;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Service
@@ -64,6 +66,21 @@ public class InterviewerService {
 		program.getInterviewers().add(newUser);
 		userService.save(newUser);
 		programService.save(program);
+	}
+
+	@Transactional
+	public void createInterviewerToApplication(RegisteredUser interviewerUser, ApplicationForm application) {
+		Interviewer interviewer = createNewInterviewer();
+		interviewer.setUser(interviewerUser);
+		interviewer.setApplication(application);
+		application.getInterviewers().add(interviewer);
+		interviewerDAO.save(interviewer);
+		
+	}
+
+	public Interviewer createNewInterviewer() {
+		Interviewer interviewer = new Interviewer();
+		return interviewer;
 	}
 
 }

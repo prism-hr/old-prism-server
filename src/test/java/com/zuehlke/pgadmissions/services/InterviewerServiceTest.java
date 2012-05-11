@@ -7,9 +7,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.InterviewerDAO;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -98,6 +102,30 @@ public class InterviewerServiceTest {
 		Assert.assertTrue(program.getInterviewers().contains(interviewer));
 		Assert.assertEquals(1, interviewer.getProgramsOfWhichInterviewer().size());
 		Assert.assertTrue(interviewer.getProgramsOfWhichInterviewer().contains(program));
+	}
+	
+	@Test
+	public void shouldCreateInterviewerObjectFromUserAndAddToApplication() {
+		final Interviewer interviewer = new InterviewerBuilder().id(1).toInterviewer();
+		interviewerService = new InterviewerService(interviewerDAOMock, userServiceMock, programsServiceMock){
+			@Override
+			public Interviewer createNewInterviewer() {
+				return interviewer;
+			}
+		};
+		
+		RegisteredUser interviewerUser =  new RegisteredUserBuilder().id(1).toUser();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).toApplicationForm();
+		interviewerDAOMock.save(interviewer);
+		EasyMock.replay(interviewerDAOMock);
+		interviewerService.createInterviewerToApplication(interviewerUser, application);
+		EasyMock.verify(interviewerDAOMock);
+		Assert.assertNotNull(interviewer.getUser());
+		Assert.assertNotNull(interviewer.getApplication());
+		Assert.assertEquals(application, interviewer.getApplication());
+		Assert.assertEquals(interviewerUser, interviewer.getUser());
+		
+		
 	}
 	
 	@Before

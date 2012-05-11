@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -50,12 +51,11 @@ public class RejectApplicationControllerTest {
 	public void setUp() {
 		admin = new RegisteredUserBuilder().id(1).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		setupSecurityContext(admin);
+		reason1 = new RejectReasonBuilder().id(10).text("idk").toRejectReason();
+		reason2 = new RejectReasonBuilder().id(20).text("idc").toRejectReason();
 		approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		reason1 = new RejectReasonBuilder().id(1).text("idk").toRejectReason();
-		reason2 = new RejectReasonBuilder().id(2).text("idc").toRejectReason();
-		program = new ProgramBuilder().id(100).administrators(admin).toProgram();
+		program = new ProgramBuilder().id(100).administrators(admin).approver(approver).toProgram();
 		application = new ApplicationFormBuilder().id(10).status(ApplicationFormStatus.VALIDATION)//
-				.approver(approver)//
 				.program(program)//
 				.toApplicationForm();
 
@@ -156,7 +156,7 @@ public class RejectApplicationControllerTest {
 	public void throwRNFEIfUserIsNotApproverOfApplication() {
 		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
-		RegisteredUser wrongApprover= new RegisteredUserBuilder().id(656).username("wrongApprover").role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
+		RegisteredUser wrongApprover = new RegisteredUserBuilder().id(656).username("wrongApprover").role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 		authenticationToken.setDetails(wrongApprover);
 
 		controllerUT.getApplicationForm(10);
@@ -196,13 +196,19 @@ public class RejectApplicationControllerTest {
 
 	@Test
 	public void moveToRejectWithOneReason() {
-		RejectReason[] reasons = new RejectReason[] { reason1, reason2 };
-		rejectServiceMock.moveApplicationToReject(application, reasons);
+		authenticationToken.setDetails(approver);
+
+		List<RejectReason> reasons = Arrays.asList(new RejectReason[] { reason1, reason2 });
+		rejectServiceMock.moveApplicationToReject(application, approver, reasons);
 		EasyMock.expectLastCall();
+
+		RejectReason reason3 = new RejectReasonBuilder().id(30).text("bla").toRejectReason();
+		List<RejectReason> allReasons = Arrays.asList(new RejectReason[] { reason1, reason2, reason3 });
+		EasyMock.expect(rejectServiceMock.getAllRejectionReasons()).andReturn(allReasons);
 		EasyMock.replay(rejectServiceMock);
 
-		String nextView = controllerUT.moveApplicationToReject(application, reasons);
-		
+		String nextView = controllerUT.moveApplicationToReject(application, new Integer[] { reason1.getId(), reason2.getId() });
+
 		EasyMock.verify(rejectServiceMock);
 		Assert.assertEquals(AFTER_REJECT_VIEW, nextView);
 	}
@@ -213,7 +219,16 @@ public class RejectApplicationControllerTest {
 				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole())//
 				.toUser();
 		authenticationToken.setDetails(applicant);
-		
-		controllerUT.moveApplicationToReject(application, new RejectReason[] { reason1 });
+		controllerUT.moveApplicationToReject(application, new Integer[] { reason1.getId() });
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void moveToReviewThrowIAEwhenNullReasonIds() {
+		controllerUT.moveApplicationToReject(application, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void moveToReviewThrowIAEwhenEmptyReasonIds() {
+		controllerUT.moveApplicationToReject(application, new Integer[] {});
 	}
 }

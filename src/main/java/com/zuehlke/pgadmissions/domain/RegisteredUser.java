@@ -303,7 +303,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public List<Authority> getAuthoritiesForProgram(Program program) {
 		List<Authority> authorities = new ArrayList<Authority>();
-		if (programsOfWhichAdministrator.contains(program)) {
+		if (getProgramsOfWhichAdministrator().contains(program)) {
 			authorities.add(Authority.ADMINISTRATOR);
 		}
 		if (getProgramsOfWhichReviewer().contains(program)) {
@@ -429,15 +429,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		return false;
 	}
-
-	public boolean isApproverOfApplicationForm(ApplicationForm form) {
-		RegisteredUser approver = form.getApprover();
-		if (approver != null && this.equals(approver)) {
-			return true;
-		}
-		return false;
-	}
-
 	
 	public boolean hasRefereesInApplicationForm(ApplicationForm form) {
 		return getRefereeForApplicationForm(form) != null;
@@ -550,4 +541,8 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.pendingRoleNotifications.addAll(pendingRoleNotifications);
 	}
 
+	@Override
+	public String toString() {
+		return "RegisteredUser [id=" + id + ", username=" + username + "]";
+	}
 }

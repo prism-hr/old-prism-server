@@ -183,4 +183,8 @@ public class ApplicationFormDAO {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
 				.createAlias("interviewers", "interviewer").add(Restrictions.eq("interviewer.user", user)).list();
 	}
+
+	public SessionFactory getSF() {
+		return sessionFactory;
+	}
 }

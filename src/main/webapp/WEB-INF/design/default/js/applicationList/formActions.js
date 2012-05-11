@@ -10,7 +10,7 @@ $(document).ready(function() {
 		}else if($(this).val() == 'approve') {
 			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
 		}else if($(this).val() == 'reject') {
-			window.location.href = "/pgadmissions/reviewer/assign?id=" + id;
+			window.location.href = "/pgadmissions/rejectApplication?applicationId=" + id;
 		}else if($(this).val() == 'comment') {
 			window.location.href = "/pgadmissions/comment?applicationId=" + id;
 		}else if($(this).val() == 'print') {

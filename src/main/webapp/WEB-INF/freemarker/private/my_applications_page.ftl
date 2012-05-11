@@ -59,17 +59,23 @@
 							<table class="data" border="0" >
 					          	<colgroup>
 					            	<col style="width: 30px" />
+					            	<col/>
+					            	<col/>
+					            	<col/>
+					            	<col/>
+					            	<col/>
+					            	<col style="width: 90px" />
+					            	<col/>
 					            </colgroup>
 					          	<thead>
 					              <tr>
 					                <th scope="col">&nbsp;</th>
-					                <th scope="col">App. No.</th>
-					                <th scope="col">First Name</th>
-					                <th scope="col">Surname</th>
+					                <th scope="col"></th>
+					                <th scope="col">Name</th>
 					                <th scope="col">Programme</th>					
 					            	<th scope="col">Status</th>
 					                <th scope="col">Actions</th>
-					                <th scope="col">Date Submitted</th>					                
+					                <th scope="col">Date</th>					                
 					                <th class="centre" scope="col">Select</th>
 					              </tr>
 					            </thead>
@@ -78,8 +84,7 @@
 							        	<tr id="row_${application.id?string("######")}" name="applicationRow">
 							                <td><a class="row-arrow" href="#">&gt;</a></td>
 							                <td name="idColumn">${application.id?string("######")}</td>
-							                <td>${application.applicant.firstName}</td>
-							                <td>${application.applicant.lastName}</td>
+							                <td>${application.applicant.firstName} &nbsp ${application.applicant.lastName}</td>
 							                <td>${application.program.code} - ${application.program.title}</td>								                
 							               	<td id="statusColumn" name="statusColumn">${application.status.displayValue()}</td>
 							                <td>

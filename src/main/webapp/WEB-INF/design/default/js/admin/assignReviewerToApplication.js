@@ -45,7 +45,7 @@ $(document).ready(function() {
 			
 		$.post( "/pgadmissions/assignReviewers/moveApplicationToReview" , $.param(postData),
 			function(data) {
-				$('#assignReviewersToAppSection').html(data);
+			   window.location.href = "/pgadmissions/applications";
 			}
 		);
 	});

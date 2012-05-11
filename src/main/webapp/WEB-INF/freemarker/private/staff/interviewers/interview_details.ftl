@@ -85,6 +85,7 @@
 							
 						</select>
 						<div class="buttons">
+							<button class="blue" type="button" id="removeInterviewerBtn">Remove</button>
 							<button type="button" id="addInterviewerBtn">Add interviewer</button>
 						</div>
 						<br></br> 
@@ -135,7 +136,7 @@
 						  <div class="row">
                                <label class="label">Interview Date<em>*</em></label>
                                    <div class="field">
-                                   <input class="full date hasDatepicker" type="text" name="interviewDate" id="interviewDate"/>
+                                   <input class="full date hasDatepicker" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd-MMM-yyyy'))!}" />
                                    <@spring.bind "interview.interviewDueDate" /> 
 	                			   <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                </div>
@@ -143,7 +144,7 @@
                                 <div class="row">
                                     <label class="label">Further Details<em>*</em></label>
                                     <div class="field">
-                                    <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+                                    <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
                                     <@spring.bind "interview.furtherDetails" /> 
 	                			    <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                     </div>
@@ -152,7 +153,7 @@
                              <div class="row">
                                 <label class="label">Location (Link)<em>*</em></label>
                                         <div class="field">
-                                         <input class="full" type="text"  name="interviewLocation" id="interviewLocation"/>
+                                         <textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${interview.locationURL!}</textarea>
                                              <@spring.bind "interview.locationURL" /> 
 	                			  			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                         </div>

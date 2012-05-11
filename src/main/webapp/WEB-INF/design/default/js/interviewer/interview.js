@@ -11,11 +11,13 @@ $(document).ready(function(){
 	});
 	
 	$('#createInterviewer').click(function() {
+		var idString = getAssignedInterviewerIdString();
 		var postData ={ 
 			applicationId : $('#applicationId').val(),
 			firstName : $('#newInterviewerFirstName').val(),
 			lastName : $('#newInterviewerLastName').val(),
-			email : $('#newInterviewerEmail').val()
+			email : $('#newInterviewerEmail').val(),
+			unsavedInterviewersRaw : idString
 		};
 		
 		$.post("/pgadmissions/moveToInterview/createInterviewer", 
@@ -25,6 +27,17 @@ $(document).ready(function(){
 			}
 		);
 	});
+	
+	$('#removeInterviewerBtn').click(function() {
+		var selectedReviewers = $('#applicationInterviewers').val();
+		selectedReviewers.forEach(function(id) {
+			var selText = $("#applicationInterviewers option[value='" + id + "']").text();
+			$("#applicationInterviewers option[value='" + id + "']").remove();
+			$("#interviewers").append('<option value="'+ id +'">'+ selText +'</option>');
+		});
+	});
+
+	
 	
 	$('#moveToInterviewBtn').click(function() {
 		var idString = getAssignedInterviewerIdString();

@@ -48,7 +48,6 @@
 						<li><a href="#">My account</a></li>
 						<li class="current"><a href="<@spring.url '/applications'/>">My
 								applications</a></li>
-						<li><a href="#">Messages</a></li>
 						<li><a href="#">Help</a></li>
 					</ul>
 

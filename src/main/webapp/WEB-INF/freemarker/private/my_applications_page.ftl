@@ -21,7 +21,7 @@
 	
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>	    
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
-	    
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 	</head>
 	
 	<!--[if IE 9]>
@@ -65,7 +65,7 @@
 					            	<col/>
 					            	<col/>
 					            	<col style="width: 90px" />
-					            	<col/>
+					            	<col style="width: 40px" />
 					            </colgroup>
 					          	<thead>
 					              <tr>
@@ -76,7 +76,9 @@
 					            	<th scope="col">Status</th>
 					                <th scope="col">Actions</th>
 					                <th scope="col">Date</th>					                
-					                <th class="centre" scope="col">Select</th>
+					                <th class="centre" scope="col">
+					                	<input type="checkbox" name="select-all" id="select-all" />
+					                </th>
 					              </tr>
 					            </thead>
 					            <tbody>

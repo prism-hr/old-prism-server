@@ -112,7 +112,7 @@ public class CreateNewUserControllerTest {
 		newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
 		
 	//	EasyMock.expect(userServiceMock.createNewUser(firstname, lastname, email))
-		controller.handleNewUserToProgramSubmission(newUserDTO);
+		//controller.handleNewUserToProgramSubmission(newUserDTO);
 	}
 
 	

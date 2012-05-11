@@ -39,7 +39,7 @@ public class NewUserDTO {
 	public Authority[] getSelectedAuthorities() {
 		return selectedAuthorities;
 	}
-	public void setSelectedAuthorities(Authority[] authorities) {
+	public void setSelectedAuthorities(Authority... authorities) {
 		this.selectedAuthorities = authorities;
 	}
 

@@ -7,13 +7,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.easymock.EasyMock;
+import org.hibernate.type.PrimitiveByteArrayBlobType;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.NewUserDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -97,6 +100,20 @@ public class CreateNewUserControllerTest {
 		assertEquals("private/staff/superAdmin/create_new_user_in_role_page", controller.getAddUsersView());
 	}
 	
+	@Test
+	@Ignore
+	public void shouldCreateNewUserInRoles(){
+		NewUserDTO newUserDTO = new NewUserDTO();
+		newUserDTO.setFirstName("Jane");
+		newUserDTO.setLastName("Doe");
+		newUserDTO.setEmail("jane.doe@test.com");
+		Program program = new ProgramBuilder().id(5).toProgram();
+		newUserDTO.setSelectedprogram(program);
+		newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
+		
+	//	EasyMock.expect(userServiceMock.createNewUser(firstname, lastname, email))
+		controller.handleNewUserToProgramSubmission(newUserDTO);
+	}
 
 	
 	@Before

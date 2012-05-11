@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.NewUserDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -64,5 +65,10 @@ public class CreateNewUserController {
 		}
 		throw new ResourceNotFoundException();
 	}
+	/*@RequestMapping(method = RequestMethod.POST, value = "/createNewUser")
+	public void handleNewUserToProgramSubmission(NewUserDTO newUserDTO) {
+		// TODO Auto-generated method stub
+		
+	}*/
 
 }

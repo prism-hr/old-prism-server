@@ -46,10 +46,7 @@ public class InterviewerService {
 
 	@Transactional
 	public RegisteredUser createNewUserWithInterviewerRoleInProgram(RegisteredUser interviewer, Program program) {
-		RegisteredUser newUser = userService.createNewUser(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail());
-		userService.addRoleToUser(newUser, Authority.INTERVIEWER);
-		addAndSaveInterviewerToProgram(program, newUser);
-		return newUser;
+		return userService.createNewUserForProgramme(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail(), program, Authority.INTERVIEWER);
 	}
 
 

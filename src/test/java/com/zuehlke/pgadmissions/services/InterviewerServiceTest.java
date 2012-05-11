@@ -54,19 +54,14 @@ public class InterviewerServiceTest {
 	public void shouldCreateNewUserWithInterviewerRoleInProgram() {
 		RegisteredUser interviewer = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
-		EasyMock.expect(userServiceMock.createNewUser(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail())).andReturn(interviewer);
-		userServiceMock.addRoleToUser(interviewer, Authority.INTERVIEWER);
-		userServiceMock.save(interviewer);
-		programsServiceMock.save(program);
-		EasyMock.replay(userServiceMock, programsServiceMock);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail(), program, Authority.INTERVIEWER)).andReturn(interviewer);
+		EasyMock.replay(userServiceMock);
 		
-		interviewerService.createNewUserWithInterviewerRoleInProgram(interviewer, program);
+		RegisteredUser newInterviewer = interviewerService.createNewUserWithInterviewerRoleInProgram(interviewer, program);
 		
-		EasyMock.verify(userServiceMock, programsServiceMock);
-		Assert.assertEquals(1, program.getInterviewers().size());
-		Assert.assertTrue(program.getInterviewers().contains(interviewer));
-		Assert.assertEquals(1, interviewer.getProgramsOfWhichInterviewer().size());
-		Assert.assertTrue(interviewer.getProgramsOfWhichInterviewer().contains(program));
+		EasyMock.verify(userServiceMock);	
+		Assert.assertEquals(interviewer, newInterviewer);
+		
 	}
 	
 	

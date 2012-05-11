@@ -99,7 +99,7 @@
 									    			<#if !user.isInRole('APPLICANT') && !user.isRefereeOfApplicationForm(application)>
 								    					<option value="comment">Comment</option>								    				
 								      				</#if>      												
-							                	    <#if user.isReviewerOfApplicationForm(application) >
+							                	    <#if user.isReviewerOfApplicationForm(application) && !user.isAdminInProgramme(application.program) && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn() >
       													<option value="assignReviewer">Assign Reviewer</option>
         		  									</#if>
 									    			<#if user.isInRoleInProgram('REVIEWER', application.program) && application.isInState('REVIEW') && !user.hasRespondedToProvideReviewForApplication(application)> 

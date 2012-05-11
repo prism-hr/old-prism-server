@@ -4,7 +4,15 @@ $(document).ready(function(){
 	
 	$('#programId').change(function(){
 		 var program = $(this).val();
-		 window.location.href="/pgadmissions/manageUsers/showPage?programId=" + program;
+		 if(program== "-1"){	
+			 $('#roles option').each(function(){				
+				if(	$(this).val() != 'SUPERADMINISTRATOR'){
+					$(this).attr("disabled", "disabled");
+				}
+			 });
+		 }else{
+			 window.location.href="/pgadmissions/manageUsers/showPage?programId=" + program;
+		}
 	});
 	
 	$('#selectedProgramForNewUser').change(function(){
@@ -22,7 +30,7 @@ $(document).ready(function(){
 		 event.preventDefault(); 
 		 if(confirm("Are you sure you want to remove this user from ALL roles in this programme?")){
 		 	var user = $(this).attr("id").replace("remove_", "");
-		 	$('#userId').val(user);		 
+		 	$('#selectedUser').val(user);		 
 		 	$('#roles').val("");
 		 	$('#programmeForm').submit();
 		}

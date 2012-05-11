@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.dao;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
@@ -195,7 +196,108 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 				approverOne, approverThree, administratorOne, administratorThree)));
 
 	}
+	
+	@Test
+	public void shouldReturnSuperAdmininistrator(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		Role superAdminRole = roleDAO.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
 
+		RegisteredUser superAdmin = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).toUser();
+		save(superAdmin);
+		flushAndClearSession();
+		List<RegisteredUser> users = userDAO.getInternalUsers();
+		assertTrue(users.contains(superAdmin));
+	}
+
+	@Test
+	public void shouldReturnAdmininistrator(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		Role superAdminRole = roleDAO.getRoleByAuthority(Authority.ADMINISTRATOR);
+
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).toUser();
+		save(user);
+		flushAndClearSession();
+		List<RegisteredUser> users = userDAO.getInternalUsers();
+		assertTrue(users.contains(user));
+	}
+	
+	@Test
+	public void shouldReturnReviewer(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		Role superAdminRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
+
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).toUser();
+		save(user);
+		flushAndClearSession();
+		List<RegisteredUser> users = userDAO.getInternalUsers();
+		assertTrue(users.contains(user));
+	}
+	
+	@Test
+	public void shouldReturnInteverviweer(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		Role superAdminRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).toUser();
+		save(user);
+		flushAndClearSession();
+		List<RegisteredUser> users = userDAO.getInternalUsers();
+		assertTrue(users.contains(user));
+	}
+	
+	@Test
+	public void shouldReturnApprover(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		Role superAdminRole = roleDAO.getRoleByAuthority(Authority.APPROVER);
+
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).toUser();
+		save(user);
+		flushAndClearSession();
+		List<RegisteredUser> users = userDAO.getInternalUsers();
+		assertTrue(users.contains(user));
+	}
+	
+	@Test
+	public void shouldNotReturnApplicant(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		Role superAdminRole = roleDAO.getRoleByAuthority(Authority.APPLICANT);
+
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(superAdminRole).toUser();
+		save(user);
+		flushAndClearSession();
+		List<RegisteredUser> users = userDAO.getInternalUsers();
+		assertFalse(users.contains(user));
+	}
+	
+	@Test
+	public void shouldNotReturnReferee(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
+		save(user);
+		flushAndClearSession();
+		List<RegisteredUser> users = userDAO.getInternalUsers();
+		assertFalse(users.contains(user));
+	}
+	@Test
+	public void shouldReturnEachUserOnlyOnce(){
+		List<RegisteredUser> usersBefore = userDAO.getInternalUsers();
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username1")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true)
+				.roles(roleDAO.getRoleByAuthority(Authority.APPROVER),roleDAO.getRoleByAuthority(Authority.REVIEWER)).toUser();
+		save(user);
+		flushAndClearSession();
+		List<RegisteredUser> users = userDAO.getInternalUsers();
+		assertEquals(usersBefore.size() + 1, users.size());
+	}
+	
 	@Before
 	public void setup() {
 		userDAO = new UserDAO(sessionFactory);

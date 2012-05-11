@@ -16,3 +16,5 @@ table.data tbody td { background: #EEE; padding: 4px; }
 
 div.left-column { float: left; margin-right: 20px; width: 400px; }
 div.right-column { float: left; text-align: left; width: 400px; }
+
+.pending{ color: #999999;}

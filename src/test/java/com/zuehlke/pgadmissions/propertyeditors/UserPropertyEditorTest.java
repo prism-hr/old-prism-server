@@ -38,7 +38,11 @@ public class UserPropertyEditorTest {
 		editor.setAsText(null);
 		assertNull(editor.getValue());		
 	}
-	
+	@Test	
+	public void shouldReturNullIfIdIsBlanl(){			
+		editor.setAsText("");
+		assertNull(editor.getValue());		
+	}
 	@Test	
 	public void shouldReturnNullIfValueIsNull(){			
 		editor.setValue(null);

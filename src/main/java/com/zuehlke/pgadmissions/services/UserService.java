@@ -21,7 +21,6 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.dto.NewRolesDTO;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.UserFactory;
@@ -76,36 +75,12 @@ public class UserService {
 	}
 
 
-	public List<RegisteredUser> getSuperAdmins() {
-		return getUsersInRole(Authority.SUPERADMINISTRATOR);
-	}
-
 	public List<RegisteredUser> getAllUsersForProgram(Program program) {
 		return userDAO.getUsersForProgram(program);
 	}
 	
 	public List<RegisteredUser> getAllInternalUsers() {
-		List<RegisteredUser> availableUsers = new ArrayList<RegisteredUser>();
-		availableUsers.addAll(getUsersInRole(Authority.ADMINISTRATOR));
-		List<RegisteredUser> approvers = getUsersInRole(Authority.APPROVER);
-		for (RegisteredUser approver : approvers) {
-			if(!availableUsers.contains(approver)){
-				availableUsers.add(approver);
-			}
-		}
-		List<RegisteredUser> reviewers = getUsersInRole(Authority.REVIEWER);
-		for (RegisteredUser reviewer : reviewers) {
-			if(!availableUsers.contains(reviewer)){
-				availableUsers.add(reviewer);
-			}
-		}
-		List<RegisteredUser> superadmins = getUsersInRole(Authority.SUPERADMINISTRATOR);
-		for (RegisteredUser superadmin : superadmins) {
-			if(!availableUsers.contains(superadmin)){
-				availableUsers.add(superadmin);
-			}
-		}
-		return availableUsers;
+		return userDAO.getInternalUsers();
 	}
 
 	
@@ -169,77 +144,72 @@ public class UserService {
 	}
 
 	@Transactional
-	public void updateUserWithNewRoles(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
+	public void updateUserWithNewRoles(RegisteredUser selectedUser, Program selectedProgram, Authority... newAuthorities) {
 		if (getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-			removeFromSuperadminRoleIfRequired(selectedUser, newRolesDTO);
+			removeFromSuperadminRoleIfRequired(selectedUser, newAuthorities);
 		}
 		for (Authority authority : Authority.values()) {
-			addToRoleIfRequired(selectedUser, newRolesDTO, authority);
+			addToRoleIfRequired(selectedUser, newAuthorities, authority);
 		}
 
-		addOrRemoveFromProgramsOfWhichAdministratorIfRequired(selectedUser, selectedProgram, newRolesDTO);
-		addOrRemoveFromProgramsOfWhichApproverIfRequired(selectedUser, selectedProgram, newRolesDTO);
-		addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newRolesDTO);
-		addOrRemoveFromProgramsOfWhichInterviewerIfRequired(selectedUser, selectedProgram, newRolesDTO);
+		addOrRemoveFromProgramsOfWhichAdministratorIfRequired(selectedUser, selectedProgram, newAuthorities);
+		addOrRemoveFromProgramsOfWhichApproverIfRequired(selectedUser, selectedProgram, newAuthorities);
+		addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
+		addOrRemoveFromProgramsOfWhichInterviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 		userDAO.save(selectedUser);
 		
 	}
-	private void removeFromSuperadminRoleIfRequired(RegisteredUser selectedUser, NewRolesDTO newRolesDTO) {
-		if (getRole(newRolesDTO, Authority.SUPERADMINISTRATOR) == null) {
+	private void removeFromSuperadminRoleIfRequired(RegisteredUser selectedUser,  Authority[] newAuthorities) {
+		if (!newAuthoritiesContains(newAuthorities, Authority.SUPERADMINISTRATOR) ) {
 			Role superAdminRole = selectedUser.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
 			selectedUser.getRoles().remove(superAdminRole);
 		}
 	}
 
-	private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
-		if (getRole(newRolesDTO, Authority.ADMINISTRATOR) != null && !selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
+	private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+		if (newAuthoritiesContains(  newAuthorities, Authority.ADMINISTRATOR)  && !selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichAdministrator().add(selectedProgram);
-		} else if (getRole(newRolesDTO, Authority.ADMINISTRATOR) == null && selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
+		} else if (!newAuthoritiesContains(  newAuthorities, Authority.ADMINISTRATOR) && selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
 		}
 
 	}
 
-	private void addOrRemoveFromProgramsOfWhichApproverIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
-		if (getRole(newRolesDTO, Authority.APPROVER) != null && !selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
+	private void addOrRemoveFromProgramsOfWhichApproverIfRequired(RegisteredUser selectedUser, Program selectedProgram,  Authority[]  newAuthorities) {
+		if (newAuthoritiesContains(newAuthorities, Authority.APPROVER) && !selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichApprover().add(selectedProgram);
-		} else if (getRole(newRolesDTO, Authority.APPROVER) == null && selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
+		} else if (!newAuthoritiesContains(newAuthorities, Authority.APPROVER) && selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
 		}
 	}
 
-	private void addOrRemoveFromProgramsOfWhichReviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
-		if (getRole(newRolesDTO, Authority.REVIEWER) != null && !selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
+	private void addOrRemoveFromProgramsOfWhichReviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[]  newAuthorities) {
+		if (newAuthoritiesContains(newAuthorities, Authority.REVIEWER)&& !selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichReviewer().add(selectedProgram);
-		} else if (getRole(newRolesDTO, Authority.REVIEWER) == null && selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
+		} else if (!newAuthoritiesContains(newAuthorities, Authority.REVIEWER) && selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichReviewer().remove(selectedProgram);
 		}
 	}
 
-	private void addOrRemoveFromProgramsOfWhichInterviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, NewRolesDTO newRolesDTO) {
+	private void addOrRemoveFromProgramsOfWhichInterviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[]  newAuthorities) {
 		
-		if (getRole(newRolesDTO, Authority.INTERVIEWER) != null && !selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
+		if (newAuthoritiesContains(newAuthorities, Authority.INTERVIEWER) && !selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichInterviewer().add(selectedProgram);
-		} else if (getRole(newRolesDTO, Authority.INTERVIEWER) == null && selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
+		} else if (!newAuthoritiesContains(newAuthorities,Authority.INTERVIEWER) && selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichInterviewer().remove(selectedProgram);
 		}
 	}
 
-	private void addToRoleIfRequired(RegisteredUser selectedUser, NewRolesDTO newRolesDTO, Authority authority) {
-		if (!selectedUser.isInRole(authority) && getRole(newRolesDTO, authority) != null) {
-			selectedUser.getRoles().add(getRole(newRolesDTO, authority));
+	private void addToRoleIfRequired(RegisteredUser selectedUser,Authority[]  newAuthorities, Authority authority) {
+		if (!selectedUser.isInRole(authority) && newAuthoritiesContains(newAuthorities, authority)) {
+			selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
 		}
 	}
 
-	private Role getRole(NewRolesDTO newRolesDTO, Authority authority) {
-		
-		for (Role role : newRolesDTO.getNewRoles()) {
-			if (role.getAuthorityEnum() == authority) {
-				return role;
-			}
-		}
-		return null;
+	private boolean newAuthoritiesContains( Authority[]  newAuthorities, Authority authority ){
+		return Arrays.asList(newAuthorities).contains(authority);
 	}
+	
 
 	@Transactional
 	public RegisteredUser createNewUserForProgramme(String firstName, String lastName, String email, Program program,  Authority...authorities) {

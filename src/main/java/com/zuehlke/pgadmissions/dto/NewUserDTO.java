@@ -9,7 +9,7 @@ public class NewUserDTO {
 	private String lastName;
 	private String email;
 	
-	private Program selectedprogram;
+	private Program selectedProgram;
 	private Authority[] selectedAuthorities;
 	
 	public String getFirstName() {
@@ -30,13 +30,16 @@ public class NewUserDTO {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public Program getSelectedprogram() {
-		return selectedprogram;
+	public Program getSelectedProgram() {
+		return selectedProgram;
 	}
-	public void setSelectedprogram(Program selectedprogram) {
-		this.selectedprogram = selectedprogram;
+	public void setSelectedProgram(Program selectedprogram) {
+		this.selectedProgram = selectedprogram;
 	}
 	public Authority[] getSelectedAuthorities() {
+		if(selectedAuthorities == null){
+			return new Authority[]{};
+		}
 		return selectedAuthorities;
 	}
 	public void setSelectedAuthorities(Authority... authorities) {

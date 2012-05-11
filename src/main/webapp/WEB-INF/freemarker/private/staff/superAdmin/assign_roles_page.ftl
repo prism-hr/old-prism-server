@@ -40,7 +40,7 @@
 		      		<div class="content-box">
 		      			<div class="content-box-inner">
 		        
-			          		<form id ="programmeForm" name="programmeForm" action="/pgadmissions/manageUsers/updateRoles" method="POST">
+			          		<form id ="programmeForm" name="programmeForm" action="/pgadmissions/manageUsers/updateUserRoles" method="POST">
 			          
 			          			<h1>Add Existing programme users and assign roles</h1>
 			            		<p>Please add users to the programme.<br>You can select one or more roles for the user.</p>
@@ -49,8 +49,9 @@
 			            
 			            		<div class="row programme">
 				              		<label>Select programme</label>
-				              		<select name="programId" id="programId">
+				              		<select name="selectedProgram" id="programId">
 											<option value="">Please select a program</option>
+											<option value="-1">All programs</option>
 	                                		<#list programs as program>"
 	                                    		<option value='${program.id?string("######")}' 
 	                                    			<#if selectedProgram?? && selectedProgram.id == program.id >
@@ -58,11 +59,16 @@
 													</#if>
 												>${program.title}</option>               
 	                                		</#list>
-				              		</select>
-				              		<#if result?? && result.getFieldError('selectedProgram')??>
-                                            <p class="invalid"><@spring.message  result.getFieldError('selectedProgram').code /></p>
-                                    </#if>
+				              		</select>				              		
 			            		</div>
+			            		<@spring.bind "updateUserRolesDTO.selectedProgram" /> 
+								<#list spring.status.errorMessages as error>
+									<div class="row">
+										<div class="field">
+											<span class="invalid">${error}</span>
+										</div>
+									</div>
+								</#list>
 								<!-- // EXISTING USERS -->
 											
 				            	<hr>
@@ -71,37 +77,52 @@
 					            
 					              	<div class="row">
 					                	<label>Please choose a user</label>
-					                	<select id="userId" name="userId">
+					                	<select id="selectedUser" name="selectedUser">
 					                			<option value="">Please choose a user</option>
 					                			<#list availableUsers as user>						                			
 						                			<option value="${user.id?string("######")}"
 						                			<#if selectedUser?? && selectedUser.id == user.id >
 													 selected = "selected"
 													</#if>
-						                			>${user.firstName?html} ${user.lastName?html}</option>      
+						                			<#if !user.enabled>class="pending"</#if>>${user.firstName?html} ${user.lastName?html} (${user.email?html})</option>      
 												</#list>
 					                		</select>
-					                	<#if result?? && result.getFieldError('selectedUser')??>
-                                            <p class="invalid"><@spring.message  result.getFieldError('selectedUser').code /></p>
-                                        </#if>
+				
 					              	</div>
 					              	<div class="row">
 					                	or <a href="/pgadmissions/manageUsers/createNewUser">add a new user</a>
 					              	</div>
+					              	<@spring.bind "updateUserRolesDTO.selectedUser" /> 
+									<#list spring.status.errorMessages as error>
+										<div class="row">
+											<div class="field">
+												<span class="invalid">${error}</span>
+											</div>
+										</div>
+									</#list>
 					            </div>
-					
+								
 								<!-- Right side -->
 								<div class="right-column">
 					            
 					            	<div class="row">
 					                	<label>Role(s) in application process</label>
-					                	<select multiple size="5" id="roles" name="newRoles" >
+					                	<select multiple size="5" id="roles" name="selectedAuthorities" >
                         				<#list authorities as authority>
                       						<option value="${authority}" <#if selectedUser?? && selectedUser.isInRoleInProgram(authority, selectedProgram)>selected="selected" </#if>>${authority}</option>
                       					</#list>
                       					</select>
-					              	</div>
+                      					 <@spring.bind "updateUserRolesDTO.selectedAuthorities" /> 
+										<#list spring.status.errorMessages as error>
+											<div class="row">
+												<div class="field">
+													<span class="invalid">${error}</span>
+												</div>
+											</div>
+										</#list>
 					            
+					              	</div>
+						           
 					              	<div class="buttons">
 					              		<button type="submit" value="adduser" >Add / update user</button>
 					            	</div>
@@ -129,7 +150,7 @@
 		            			</thead>
 		            			<tbody>
 		            				<#list usersInRoles as userInRole>
-			              				<tr>
+			              				<tr <#if !userInRole.enabled>class="pending"</#if>>
 			                				<td scope="col">${userInRole.email?html}</td>
 						                	<td scope="col">${userInRole.firstName?html} ${userInRole.lastName?html}</td>
 						                	<td scope="col">${userInRole.getAuthoritiesForProgramAsString(selectedProgram)}</td>

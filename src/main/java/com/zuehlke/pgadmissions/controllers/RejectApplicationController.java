@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,18 +47,9 @@ public class RejectApplicationController {
 			@ModelAttribute("applicationForm") ApplicationForm application,// 
 			RejectReason[] rejectReasons) {
 
-		System.out.println("RejectApplicationController.moveApplicationToReject()");
-		System.out.println("application: " + application);
-		if (rejectReasons == null) {
-			System.out.println("NO REASONS!!");
-		} else {
-			System.out.println(Arrays.toString(rejectReasons));
-		}
-
 		checkPermissionForApplication(application);
 		checkApplicationStatus(application);
-		System.out.println("MOVE TO REJECTION!!");
-		//		rejectService.moveApplicationToReject(application, reasons);
+		rejectService.moveApplicationToReject(application, rejectReasons);
 		return NEXT_VIEW_NAME;
 	}
 

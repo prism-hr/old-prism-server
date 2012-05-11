@@ -127,13 +127,22 @@ public class MoveToInterviewControllerTest {
 
 	@Test
 	public void shouldChangeStateToInterviewAndSave(){
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().toProgram()).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(new ProgramBuilder().toProgram()).toApplicationForm();
+		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock, interviewServiceMock){
+			@Override
+			public
+			ApplicationForm getApplicationForm(Integer applicationId) {
+				return applicationForm;
+			}
+		};
+		
 		List<Interviewer> interviewers = Arrays.asList(new InterviewerBuilder().id(1).toInterviewer(), new InterviewerBuilder().id(2).toInterviewer());
 		applicationForm.setInterviewers(interviewers);
+		RegisteredUser currentUserMock = expectCurrentUser(applicationForm);
 		applicationServiceMock.save(applicationForm);
-		EasyMock.replay(applicationServiceMock,stageDurationDAOMock);
+		EasyMock.replay(applicationServiceMock,stageDurationDAOMock, currentUserMock);
 		
-		String view = controller.moveToInterview(applicationForm, new Interview());
+		String view = controller.moveToInterview(applicationForm.getId(), new Interview());
 		
 		EasyMock.verify(applicationServiceMock);
 		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getStatus());
@@ -144,7 +153,14 @@ public class MoveToInterviewControllerTest {
 	@Test
 	public void shouldReturnExistingInterviewersBelongingToApplication(){
 		Program program = new ProgramBuilder().id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock, interviewServiceMock){
+			@Override
+			public
+			ApplicationForm getApplicationForm(Integer applicationId) {
+				return applicationForm;
+			}
+		};
 		RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).toUser();
 		RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).toUser();
 		
@@ -157,7 +173,7 @@ public class MoveToInterviewControllerTest {
 		applicationServiceMock.save(applicationForm);
 		EasyMock.replay(applicationServiceMock,userServiceMock, currentUserMock);
 		
-		List<RegisteredUser> interviewersUsers = controller.getApplicationInterviewersAsUsers(applicationForm);
+		List<RegisteredUser> interviewersUsers = controller.getApplicationInterviewersAsUsers(applicationForm.getId());
 		assertEquals(2, interviewersUsers.size());
 	}
 
@@ -180,12 +196,19 @@ public class MoveToInterviewControllerTest {
 	
 	@Test
 	public void shouldSaveInterview(){
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		final ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock, interviewServiceMock){
+			@Override
+			public
+			ApplicationForm getApplicationForm(Integer applicationId) {
+				return application;
+			}
+		};
 		Interview interview = new InterviewBuilder().furtherDetails("9 pm").locationURL("pgadmissions.com").dueDate(new Date()).toInterview();
 		interviewServiceMock.save(interview);
 		applicationServiceMock.save(application);
 		EasyMock.replay(interviewerServiceMock, applicationServiceMock);
-		controller.moveToInterview(application, interview);
+		controller.moveToInterview(application.getId(), interview);
 		EasyMock.verify(interviewerServiceMock, applicationServiceMock);
 //		Assert.assertNotNull(application.getInterview());
 //		Assert.assertEquals("9 pm", application.getInterview().getFurtherDetails());
@@ -216,8 +239,16 @@ public class MoveToInterviewControllerTest {
 	
 	@Test
 	public void shouldNotAddOrCreateExistingInterviewerInProgramme() {
+		final ApplicationForm applicationForm = new ApplicationForm();
+		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock, interviewServiceMock){
+			@Override
+			public
+			ApplicationForm getApplicationForm(Integer applicationId) {
+				return applicationForm;
+			}
+		};
+		
 		interviewerUser1.setEmail("rev1@bla.com");
-		ApplicationForm applicationForm = new ApplicationForm();
 		RegisteredUser currentUserMock = expectCurrentUser(applicationForm);
 		Program program = new ProgramBuilder().administrators(currentUserMock).toProgram();
 		applicationForm.setProgram(program);
@@ -227,7 +258,7 @@ public class MoveToInterviewControllerTest {
 
 		RegisteredUser inputUser = new RegisteredUserBuilder().email("hui@blu.com").toUser();
 		ModelMap mmap = new ModelMap();
-		String view = controller.createInterviewer(applicationForm, inputUser, bindingResultMock, mmap);
+		String view = controller.createInterviewer(applicationForm.getId(), inputUser, bindingResultMock, mmap);
 		Assert.assertEquals(INTERVIEW_DETAILS_VIEW_NAME, view);
 		EasyMock.verify(interviewerServiceMock, userServiceMock, messageSourceMock);
 		Assert.assertEquals("SDFSDFSDFSDF", mmap.get("message"));

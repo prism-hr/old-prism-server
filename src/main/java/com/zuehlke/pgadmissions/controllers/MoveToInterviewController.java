@@ -76,9 +76,9 @@ public class MoveToInterviewController {
 	
 	
 	@RequestMapping(value="/createInterviewer",method = RequestMethod.POST)
-	public String createInterviewer(@ModelAttribute ApplicationForm applicationForm, @Valid @ModelAttribute("interviewer") RegisteredUser interviewer,
+	public String createInterviewer(@RequestParam Integer applicationId, @Valid @ModelAttribute("interviewer") RegisteredUser interviewer,
 			BindingResult bindingResult, ModelMap modelMap) {
-		
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Program program = applicationForm.getProgram();
 		checkAdminPermission(program);
 		
@@ -108,7 +108,8 @@ public class MoveToInterviewController {
 	}
 	
 	@RequestMapping(value="/move",method = RequestMethod.POST)
-	public String moveToInterview(@ModelAttribute ApplicationForm applicationForm, @ModelAttribute("interview") Interview interview) {
+	public String moveToInterview(@RequestParam Integer applicationId, @ModelAttribute("interview") Interview interview) {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		interview.setApplication(applicationForm);
 //		interview.setDueDate(interview.getDueDate());   // add one day more
 		interviewService.save(interview);
@@ -131,7 +132,6 @@ public class MoveToInterviewController {
 	
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
-		System.out.println("HEREEE ");
 		ApplicationForm application = applicationsService.getApplicationById(applicationId);
 		if (application == null || !getCurrentUser().isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram())) {
 			throw new ResourceNotFoundException();
@@ -141,8 +141,9 @@ public class MoveToInterviewController {
 
 	
 	@ModelAttribute("programme")
-	public Program getProgrammeForApplication(@ModelAttribute("applicationForm") ApplicationForm application) {
-		return application.getProgram();
+	public Program getProgrammeForApplication(@RequestParam Integer applicationId) {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		return applicationForm.getProgram();
 	}
 	
 	@ModelAttribute("interviewer")
@@ -162,8 +163,6 @@ public class MoveToInterviewController {
 	public List<RegisteredUser> getProgrammeInterviewers(@ModelAttribute("programme") Program program,
 			@ModelAttribute("applicationForm") ApplicationForm application) {
 		
-		System.out.println("App " + application);
-		System.out.println("App program " + application.getProgram());
 		List<RegisteredUser> availableInterviewers = new ArrayList<RegisteredUser>();
 		List<RegisteredUser> programmeInterviewers = program.getInterviewers();
 		for (RegisteredUser registeredUser : programmeInterviewers) {
@@ -181,9 +180,10 @@ public class MoveToInterviewController {
 	}
 
 	@ModelAttribute("applicationInterviewers")
-	public List<RegisteredUser> getApplicationInterviewersAsUsers(@ModelAttribute("applicationForm") ApplicationForm application) {
+	public List<RegisteredUser> getApplicationInterviewersAsUsers(@RequestParam Integer applicationId) {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> existingInterviewers = new ArrayList<RegisteredUser>();
-		List<Interviewer> appInterviewers = application.getInterviewers();
+		List<Interviewer> appInterviewers = applicationForm.getInterviewers();
 		for (Interviewer interviewer : appInterviewers) {
 			if(!existingInterviewers.contains(interviewer.getUser())){
 				existingInterviewers.add(interviewer.getUser());

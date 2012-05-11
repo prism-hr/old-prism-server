@@ -119,6 +119,82 @@ $(document).ready(function()
   
   $('.button-delete').parent().css(styleMap);
   
+  
+  // Toolbar button action when jumping on a specific part of the application
+  $('.tool-button a').click(function(){
+	  
+	  var buttonId = $(this).parent().attr("id");
+	  var sectionId = "";
+//	  alert("inside");
+	  
+	  switch(buttonId){
+	  
+	  	case "tool-programme":
+	  		
+	  		sectionId = "programme-H2";
+	  		break;
+	  		
+	  	case "tool-personal":
+	  		
+	  		sectionId = "personalDetails-H2";
+	  		break;
+	  		
+	  	case "tool-funding":
+	  		
+	  		sectionId = "funding-H2";
+	  		break;
+
+	  	case "tool-employment":
+	  		
+	  		sectionId = "position-H2";
+	  		break;
+	  		
+	  	case "tool-address":
+	  		
+	  		sectionId = "address-H2";
+	  		break;
+
+	  	case "tool-information":
+	  		
+	  		sectionId = "additional-H2";
+	  		break;
+
+	  	case "tool-qualification":
+	  		
+	  		sectionId = "qualifications-H2";
+	  		break;
+	  		
+	  	case "tool-documents":
+	  		
+	  		sectionId = "documents-H2";
+	  		break;
+	  		
+	  	default:
+	  		return false;
+	  	
+	  }
+	  
+	  
+	  $('section.folding h2').each(function(){
+		  
+		  if(sectionId != $(this).attr('id')){
+			  
+			  $(this).removeClass('open');
+			  $(this).next('div').hide();
+			  
+		  }else{
+			  
+			  $(this).addClass('open');
+			  $(this).next('div').show();
+			  
+		  }
+		  
+	  });
+	  
+	  
+  });
+  
+  
 });
 
 

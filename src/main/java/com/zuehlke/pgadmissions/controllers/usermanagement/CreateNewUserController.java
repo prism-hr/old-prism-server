@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -87,7 +88,7 @@ public class CreateNewUserController {
 			return NEW_USER_VIEW_NAME;
 			
 		}
-		RegisteredUser existingUser = userService.getUserByEmail(newUserDTO.getEmail());
+		RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(newUserDTO.getEmail());
 		if (existingUser != null) {
 			userService.updateUserWithNewRoles(existingUser, newUserDTO.getSelectedProgram(), newUserDTO.getSelectedAuthorities());
 		} else {
@@ -111,6 +112,18 @@ public class CreateNewUserController {
 		binder.setValidator(newUserDTOValidator);
 		binder.registerCustomEditor(Program.class, programPropertyEditor);
 
+	}
+	
+	@ModelAttribute("selectedProgram")
+	public Program getSelectedProgram(@RequestParam(required = false) Integer programId) {
+		if (programId == null) {
+			return null;
+		}
+		Program program = programsService.getProgramById(programId);
+		if (program == null) {
+			throw new ResourceNotFoundException();
+		}
+		return program;
 	}
 
 

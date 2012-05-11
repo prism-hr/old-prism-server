@@ -37,7 +37,12 @@ $(document).ready(function() {
 	});
 	
 	$('#moveToReviewBtn').click(function() {
-		var idString = getAssignedReviewerIdString(); 
+		var idString = getAssignedReviewerIdString();
+		
+		if(!idString) {
+			alert("Please select a reviewer to assign.");
+			return false;
+		}
 		var postData = {
 				applicationId : $('#applicationId').val(),
 				unsavedReviewersRaw : idString

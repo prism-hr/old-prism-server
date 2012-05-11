@@ -1,173 +1,241 @@
-<section id="assignReviewersToAppSection" >	
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>UCL Postgraduate Admissions</title>
-
-<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-
-<link rel="stylesheet" type="text/css"
-	href="<@spring.url '/design/default/css/private/global_private.css' />" />
-<link type="text/css" rel="stylesheet"
-	href="<@spring.url '/design/default/css/actions.css' />" />
-
-<!--[if lt IE 9]>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>UCL Postgraduate Admissions</title>
+		
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		
+		<link type="text/css" rel="stylesheet" 
+			href="<@spring.url '/design/default/css/private/global_private.css'/>" />
+		<link type="text/css" rel="stylesheet" 
+			href="<@spring.url '/design/default/css/private/application.css'/>" />
+		
+		<link type="text/css" rel="stylesheet" 
+			href="<@spring.url '/design/default/css/private/staff/add_reviewer.css'/>" />
+		
+		<link type="text/css" rel="stylesheet"
+				href="<@spring.url '/design/default/css/actions.css' />" />
+		
+		
+		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-</head>
+	</head>
 
-<body>
+	<!--[if IE 9]>
+	<body class="ie9">
+	<![endif]-->
+	<!--[if lt IE 9]>
+	<body class="old-ie">
+	<![endif]-->
+	<!--[if (gte IE 9)|!(IE)]><!-->
+	<body>
+	<!--<![endif]-->
 
-	<div id="wrapper">
+		<div id="wrapper">
 
-		<!-- Header. -->
-		<div id="header">
-			<p>Postgraduate Research Admissions Tool</p>
-		</div>
+			<#include "/private/common/global_header.ftl"/>
 
-		<!-- Middle. -->
-		<div id="middle">
+			<!-- Middle. -->
+			<div id="middle">
 
-			<header>
+				<#include "/private/common/parts/nav_with_user_info.ftl"/>
 
-				<!-- App logo and tagline -->
-				<div class="logo">
-					<img src="<@spring.url '/design/default/images/ph_logo_app.png'/>"
-						alt="" />
-				</div>
+				<!-- Main content area. -->
+				<article id="content" role="main">
 
-				<div class="tagline">Your Gateway to Research Opportunities</div>
+				    <#if !user.isInRole('APPLICANT')>
+				    	<#include "/private/common/parts/tools.ftl"/>
+				    </#if>
 
-				<!-- Main tabbed menu -->
-				<nav>
-					<ul>
-						<li><a href="#">My account</a></li>
-						<li class="current"><a href="<@spring.url '/applications'/>">My
-								applications</a></li>
-						<li><a href="#">Messages</a></li>
-						<li><a href="#">Help</a></li>
+					<!-- FLOATING TOOLBAR -->
+		            <ul id="view-toolbar">
+		            	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
+		                <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
 					</ul>
 
-					<div class="user">
-						${user.firstName?html} ${user.lastName?html} <a
-							class="button user-logout"
-							href="<@spring.url '/j_spring_security_logout'/>">Logout</a>
-					</div>
-				</nav>
 
-			</header>
-
-
-			<!-- Main content area. -->
-			<article id="content" role="main">
-
-				<!-- content box -->
-				<div class="content-box">
-					<div class="content-box-inner">
-						<@spring.bind "applicationForm.*" />
-						<@spring.bind "availableReviewers.*" />
-						<@spring.bind "applicationReviewers.*" />
-						<@spring.bind "programme.*" />
-						<@spring.bind "unsavedReviewers.*" />
-						<div id="messageSection"></div>
-						Application ID: ${(applicationForm.id?string('#####'))!} 
-						<br></br>
-						Program name: ${(programme.title?string)!} 
-						<br></br> 
-						Available reviewers in programme: 
-						<select id="reviewers" multiple="multiple">
-							<#list availableReviewers as reviewer>
-							  <option value="${reviewer.id?string('#####')}">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
-							</#list>
-						</select>
-						<div class="buttons">
-							<button type="submit" id="addReviewerBtn">Add reviewer</button>
-						</div>
-						<div class="buttons">
-							<button type="submit" id="removeReviewerBtn">Remove reviewer</button>
-						</div>
-						<br></br> 
-						Already reviewers of this application: 
-						<select id="assignedReviewers" multiple="multiple">
-							<#list applicationReviewers as reviewer>
-								<option disabled="disabled" value="${reviewer.id?string('#####')}">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
-							</#list>
-							<#list unsavedReviewers as unsaved>
-							   <#if applicationReviewers?seq_index_of(unsaved) < 0>
-								<option value="${unsaved.id?string('#####')}">${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if></option>
-							   </#if>
-							</#list>
-						</select>
-						<p>${message!}</p>
-						  <div class="row">
-                               <label class="label">First Name<em>*</em></label>
-                                   <div class="field">
-                                   <input class="full" type="text" name="newReviewerFirstName" id="newReviewerFirstName"/>
-                                   <@spring.bind "uiReviewer.firstName" /> 
-	                			   <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-                               </div>
-                               </div>
-                                <div class="row">
-                                    <label class="label">Last Name<em>*</em></label>
-                                    <div class="field">
-                                        <input class="full" type="text" name="newReviewerLastName" id="newReviewerLastName"/>
-                                        <@spring.bind "uiReviewer.lastName" /> 
-	                				    <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-                                    </div>
-                                </div>
-                                
-                             <div class="row">
-                                <label class="label">Email<em>*</em></label>
-                                        <div class="field">
-                                         <input class="full" type="text"  name="newReviewerEmail" id="newReviewerEmail"/>
-                                         <@spring.bind "uiReviewer.email" /> 
-             					      	 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-                                        </div>
-                             </div>
+					<!-- content box -->
+					<div class="content-box">
+						<div class="content-box-inner">
+						
+							<@spring.bind "applicationForm.*" />
+							<@spring.bind "availableReviewers.*" />
+							<@spring.bind "applicationReviewers.*" />
+							<@spring.bind "programme.*" />
+							<@spring.bind "unsavedReviewers.*" />
+						
+							<div id="programme-details">			          
+						    	
+						    	<div class="row">
+						        	<label class="label">Programme</label>
+						           	${applicationForm.program.code} - ${applicationForm.program.title}
+						        </div>
+						            
+						        <div class="row">
+						        	<label class="label">Application Number</label>
+						            ${applicationForm.id?string("######")} 
+						        </div>
+						        
+						        <#if applicationForm.isSubmitted()>
+						        	<div class="row">
+						            	<label>Date Submitted</label>
+						              	${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}
+						            </div>
+						        </#if>
+							</div>
 							
-						<div class="buttons">
-							<button type="submit" id="createReviewer">Create reviewer</button>
+							<hr />
+							
+				          	<section id="assignReviewersToAppSection" class="folding violet">
+            					<div>
+              						<form>
+						            	<div>
+						               
+                  							<!-- Available reviewers in programme -->
+                  							<div class="row">
+                    							<label class="label">Reviewers</label>
+                    							<div class="field">
+                    								<p><strong>Available Reviewers</strong></p>
+													<select id="reviewers" multiple="multiple">
+														<#list availableReviewers as reviewer>
+								  							<option value="${reviewer.id?string('#####')}">
+								  								${reviewer.firstName?html} ${reviewer.lastName?html} 
+								  								<#if !reviewer.enabled> - Pending</#if>
+								  							</option>
+														</#list>
+													</select>
+						                		</div>
+						                	</div>
+						                	
+						                	<!-- Available Reviewer Buttons -->
+						                  	<div class="row reviewer-buttons">
+						                    	<div class="field">
+						                    		<span>
+						                    			<button class="blue" type="submit" id="addReviewerBtn">Add</button>
+						                    			<button class="blue" type="submit" id="removeReviewerBtn">Remove</button>
+						                      		</span>
+						                    	</div>
+						                  	</div>						                	
+						                	
+						                	<!-- Already reviewers of this application -->
+                  							<div class="row">
+                    							<div class="field">
+                    								<p><strong>Selected Reviewers</strong></p>
+                      								<select id="assignedReviewers" multiple="multiple">
+                      									<#list applicationReviewers as reviewer>
+                      										<option disabled="disabled" value="${reviewer.id?string('#####')}">
+                      											${reviewer.firstName?html} ${reviewer.lastName?html} 
+                      											<#if !reviewer.enabled> - Pending</#if>
+                      										</option>	
+                      									</#list>	
+														<#list unsavedReviewers as unsaved>
+							   								<#if applicationReviewers?seq_index_of(unsaved) < 0>
+																<option value="${unsaved.id?string('#####')}">
+																	${unsaved.firstName?html} ${unsaved.lastName?html} 
+																	<#if !unsaved.enabled> - Pending</#if>
+																</option>
+							   								</#if>
+														</#list>
+                      									
+						                			</select>
+						                		</div>
+						                	</div>
+						                	
+						               	</div>
+						               	
+                						<div>
+                
+                							<p>${message!}</p>
+                							<p><strong>Create New Reviewer</strong></p>
+                							
+                							<!-- Supervisor First Name -->
+						                  	<div class="row">
+						                    	<label class="label normal">Reviewer First Name<em>*</em></label>
+						                    	<span class="hint" data-desc="Tooltip demonstration."></span>
+						                    	<div class="field">
+						                    		<input class="full" type="text" name="newReviewerFirstName" id="newReviewerFirstName"/>
+						                    	</div>
+						                    	<@spring.bind "uiReviewer.firstName" />
+						                    	<#list spring.status.errorMessages as error> 
+						                    		<span class="invalid">${error}</span>
+						                    	</#list>
+						                  	</div>
+
+											<!-- Supervisor Last Name -->
+						                  	<div class="row">
+						                    	<label class="label normal">Reviewer Last Name<em>*</em></label>
+						                    	<span class="hint" data-desc="Tooltip demonstration."></span>
+						                    	<div class="field">
+						                    		<input class="full" type="text" name="newReviewerLastName" id="newReviewerLastName"/>
+						                    	</div>
+						                    	<@spring.bind "uiReviewer.lastName" />
+						                    	<#list spring.status.errorMessages as error> 
+						                    		<span class="invalid">${error}</span>
+						                    	</#list>
+						                  	</div>  
+						                  	
+						                  	<!-- Supervisor Email -->
+						                  	<div class="row">
+						                    	<label class="label normal">Reviewer Email<em>*</em></label>
+						                    	<span class="hint" data-desc="Tooltip demonstration."></span>
+						                    	<div class="field">
+						                    		<input class="full" type="text" name="newReviewerEmail" id="newReviewerEmail"/>
+						                    	</div>
+						                    	<@spring.bind "uiReviewer.email" />
+						                    	<#list spring.status.errorMessages as error> 
+						                    		<span class="invalid">${error}</span>
+						                    	</#list>
+						                  	</div>  
+						                  	
+											<div class="row">
+                    							<div class="field">
+		                  							<button class="blue" type="submit" id="createReviewer">Create reviewer</button>
+		                  							<button class="blue" type="submit" id="moveToReviewBtn">Create reviewer</button>
+                    							</div>
+                  							</div>
+                							
+						               	</div>
+						               	
+						               	<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/>
+						            
+						            </form>
+						        </div>
+							</section>
+							
+							<!-- #actions -->
+							<#include "/private/common/feedback.ftl"/>
+														
 						</div>
-						<div class="buttons">
-							<button type="button" id="moveToReviewBtn">Continue</button>
-						</div>
-						<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/> 
+						<!-- .content-box-inner -->
 					</div>
-					<!-- #actions -->
+					<!-- .content-box -->
+				</article>
 
-					<#include "/private/common/feedback.ftl"/>
-				</div>
-				<!-- .content-box-inner -->
+			</div>
+
+			<!-- Footer. -->
+			<div id="footer">
+				<ul>
+					<li><a href="#">Privacy</a></li>
+					<li><a href="#">Terms &amp; conditions</a></li>
+					<li><a href="#">Contact us</a></li>
+					<li><a href="#">Glossary</a></li>
+				</ul>
+			</div>
+
 		</div>
-		<!-- .content-box -->
 
-		</article>
-
-	</div>
-
-	<!-- Footer. -->
-	<div id="footer">
-		<ul>
-			<li><a href="#">Privacy</a></li>
-			<li><a href="#">Terms &amp; conditions</a></li>
-			<li><a href="#">Contact us</a></li>
-			<li><a href="#">Glossary</a></li>
-		</ul>
-	</div>
-
-	</div>
-
-	<script type="text/javascript"
-		src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	<script type="text/javascript"
-		src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-	<script type="text/javascript"
-		src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	<script type="text/javascript"
-		src="<@spring.url '/design/default/js/admin/assignReviewerToApplication.js'/>"></script>
-</body>
+		<script type="text/javascript"
+			src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+		<script type="text/javascript"
+			src="<@spring.url '/design/default/js/libraries.js'/>"></script>
+		<script type="text/javascript"
+			src="<@spring.url '/design/default/js/script.js' />"></script>
+		<script type="text/javascript"
+			src="<@spring.url '/design/default/js/admin/assignReviewerToApplication.js'/>"></script>
+	</body>
 </html>
-</section>

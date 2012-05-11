@@ -99,11 +99,19 @@ public class Program extends DomainObject<Integer> {
 	}
 
 	public boolean isApprover(RegisteredUser user) {
-		if (!user.isInRole(Authority.APPROVER)) {
+		return checkUserRole(user, Authority.APPROVER, approvers);
+	}
+
+	public boolean isAdministrator(RegisteredUser user) {
+		return checkUserRole(user, Authority.ADMINISTRATOR, administrators);
+	}
+
+	private boolean checkUserRole(RegisteredUser user, Authority authority, Iterable<RegisteredUser> lookup) {
+		if (!user.isInRole(authority)) {
 			return false;
 		}
-		for (RegisteredUser approver : approvers) {
-			if (approver.equals(user)) {
+		for (RegisteredUser lookupUser : lookup) {
+			if (lookupUser.equals(user)) {
 				return true;
 			}
 		}

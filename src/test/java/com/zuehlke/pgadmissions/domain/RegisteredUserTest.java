@@ -229,32 +229,6 @@ public class RegisteredUserTest {
 	}
 
 	@Test
-	public void shouldReturnTrueIfUserIsApproverOfApplication() {
-		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder().approver(approver).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		assertTrue(approver.isApproverOfApplicationForm(applicationForm));
-	}
-
-	@Test
-	public void shouldReturnFalseIfUserIsNotApproverOfApplication() {
-		RegisteredUser realApprover = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		RegisteredUser wrongApprover = new RegisteredUserBuilder().id(2).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder().approver(realApprover).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		assertFalse(wrongApprover.isApproverOfApplicationForm(applicationForm));
-	}
-
-	@Test
-	public void shouldReturnFalseNoApproverInApplication() {
-		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		Program program = new ProgramBuilder().id(1).toProgram();
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		assertFalse(approver.isApproverOfApplicationForm(applicationForm));
-	}
-
-	@Test
 	public void shouldReturnFalseForInterviewersIfUserIsApproverInApplication() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();

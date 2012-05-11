@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.RejectReason;
@@ -17,6 +18,7 @@ public class RejectReasonDAO {
 		this(null);
 	}
 
+	@Autowired
 	public RejectReasonDAO(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}

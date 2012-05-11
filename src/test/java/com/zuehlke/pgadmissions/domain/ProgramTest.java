@@ -45,6 +45,27 @@ public class ProgramTest {
 		Program program = new ProgramBuilder().id(1).approver(approver).toProgram();
 		assertFalse(program.isApprover(approver));
 	}
+
+	@Test
+	public void shouldReturnTrueIfUserIsAdminOfProgram() {
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).administrators(admin).toProgram();
+		assertTrue(program.isAdministrator(admin));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfUserIsNotAdminOfProgram() {
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		assertFalse(program.isAdministrator(admin));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfUserIsNotAdmin() {
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).administrators(admin).toProgram();
+		assertFalse(program.isAdministrator(admin));
+	}
 	
 	@Test
 	public void shouldReturnTrueIfUserInterviewerOfProgram(){

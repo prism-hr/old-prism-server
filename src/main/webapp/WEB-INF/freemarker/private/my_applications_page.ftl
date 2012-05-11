@@ -89,6 +89,7 @@
 							                		<option value="print">Print</option>
 							                	    <#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
 							                	    	<option value="approve">Approve</option>
+							                	    	<option value="reject">Reject</option>
       												</#if>
       												<#if user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('VALIDATION')> 
 									    				<option value="validate">Validate</option>

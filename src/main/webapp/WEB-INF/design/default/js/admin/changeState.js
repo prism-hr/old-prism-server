@@ -63,15 +63,5 @@ function moveToReview(data){
 
 function moveToRejected(data){
 	var application = $('#applicationId').val();
-
-	$.post(
-		"/pgadmissions/approveOrReject",
-		{
-			id: application,
-			decision: 'REJECTED'
-		}, 
-		function(data) {
-			window.location.href = "/pgadmissions/applications";
-		}
-	);
+	window.location.href = "/pgadmissions/rejectApplication?applicationId=" + application;
 }

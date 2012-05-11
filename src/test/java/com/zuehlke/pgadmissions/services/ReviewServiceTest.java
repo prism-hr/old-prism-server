@@ -41,6 +41,8 @@ public class ReviewServiceTest {
 	private Role reviewerRole;
 	private ApplicationForm application;
 
+
+
 	@Before
 	public void setUp() {
 		userDaoMock = EasyMock.createMock(UserDAO.class);
@@ -60,31 +62,7 @@ public class ReviewServiceTest {
 		reviewService = new ReviewService(userDaoMock, roleDaoMock, programmeDaoMock, applicationDaoMock, reviewerDaoMock);
 	}
 
-	@Test(expected = IllegalStateException.class)
-	public void throwISEwhenUserAlreadyExists() {
-		EasyMock.expect(userDaoMock.getUserByEmail("some@email.com")).andReturn(reviewer1);
-		EasyMock.replay(userDaoMock, roleDaoMock, applicationDaoMock);
-		reviewService.createNewReviewerForProgramme(programme, "la", "le", "some@email.com");
-	}
-
-	@Test
-	public void createUserAndAddToProgramme() {
-		EasyMock.expect(userDaoMock.getUserByEmail("some@email.com")).andReturn(null);
-		EasyMock.expect(roleDaoMock.getRoleByAuthority(Authority.REVIEWER)).andReturn(reviewerRole);
-		userDaoMock.save(EasyMock.anyObject(RegisteredUser.class));
-		EasyMock.expectLastCall().andDelegateTo(new CheckProgrammeAndSimulateSaveDAO(340, programme));
-
-		EasyMock.replay(userDaoMock, roleDaoMock, applicationDaoMock);
-		RegisteredUser newReviewer = reviewService.createNewReviewerForProgramme(programme, "la", "le", "some@email.com");
-
-		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock);
-		Assert.assertEquals(2, programme.getProgramReviewers().size());
-		Assert.assertTrue(programme.getProgramReviewers().contains(reviewer1));
-		Assert.assertTrue(programme.getProgramReviewers().contains(newReviewer));
-		Assert.assertTrue(newReviewer.getProgramsOfWhichReviewer().contains(programme));
-		Assert.assertTrue(newReviewer.isInRole(Authority.REVIEWER));
-	}
-
+	
 	@Test
 	public void addReviewerToProgramme() {
 		RegisteredUser reviewer2 = new RegisteredUserBuilder().id(101).role(reviewerRole).toUser();
@@ -245,22 +223,7 @@ public class ReviewServiceTest {
 		Assert.assertNotSame(ApplicationFormStatus.REVIEW, application.getStatus());
 	}
 
-	class CheckProgrammeAndSimulateSaveDAO extends UserDAO {
-		private final Integer id;
-		private final Program expectedProgramme;
-
-		public CheckProgrammeAndSimulateSaveDAO(Integer id, Program programme) {
-			super(null);
-			this.id = id;
-			this.expectedProgramme = programme;
-		}
-
-		@Override
-		public void save(RegisteredUser user) {
-			user.setId(id);
-			Assert.assertTrue(user.getProgramsOfWhichReviewer().contains(expectedProgramme));
-		}
-	}
+	
 
 	class CheckReviewersAndSimulateSaveDAO extends ApplicationFormDAO {
 

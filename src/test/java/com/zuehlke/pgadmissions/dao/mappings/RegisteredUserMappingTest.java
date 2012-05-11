@@ -275,7 +275,9 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		RegisteredUser reloadedUser = (RegisteredUser) sessionFactory.getCurrentSession().get(RegisteredUser.class, reviewer.getId());
 		assertEquals(1, reloadedUser.getProgramsOfWhichReviewer().size());
 		assertTrue(reloadedUser.getProgramsOfWhichReviewer().containsAll(Arrays.asList(program)));
-
+		
+		Program reloadedProgram = (Program) sessionFactory.getCurrentSession().get(Program.class, program.getId());
+		assertTrue(reloadedProgram.getProgramReviewers().contains(reloadedUser));
 	}
 	
 	

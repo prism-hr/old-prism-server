@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.NewRolesDTO;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.Environment;
+import com.zuehlke.pgadmissions.utils.UserFactory;
 
 @Service("userService")
 public class UserService {
@@ -33,15 +34,17 @@ public class UserService {
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final JavaMailSender mailsender;
 	private final Logger log = Logger.getLogger(UserService.class);
+	private final UserFactory userFactory;
 	
 	UserService() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public UserService(UserDAO userDAO, RoleDAO roleDAO, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
+	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
+		this.userFactory = userFactory;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
 	}
@@ -249,6 +252,30 @@ public class UserService {
 			}
 		}
 		return null;
+	}
+
+	@Transactional
+	public RegisteredUser createNewUserForProgramme(String firstName, String lastName, String email, Program program,  Authority...authorities) {
+	RegisteredUser newUser = userDAO.getUserByEmail(email);
+		if (newUser != null) {
+			throw new IllegalStateException(String.format("user with email: %s already exists!", email));
+		}
+		newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authorities);
+		if(Arrays.asList(authorities).contains(Authority.REVIEWER)){
+			newUser.getProgramsOfWhichReviewer().add(program);
+		}
+		if(Arrays.asList(authorities).contains(Authority.ADMINISTRATOR)){
+			newUser.getProgramsOfWhichAdministrator().add(program);
+		}
+		if(Arrays.asList(authorities).contains(Authority.APPROVER)){
+			newUser.getProgramsOfWhichApprover().add(program);
+		}
+		if(Arrays.asList(authorities).contains(Authority.INTERVIEWER)){
+			newUser.getProgramsOfWhichInterviewer().add(program);
+		}
+		userDAO.save(newUser);
+		return newUser;
+	
 	}
 
 }

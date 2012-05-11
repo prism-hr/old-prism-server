@@ -50,7 +50,7 @@ public class AssignReviewerController {
 	}
 
 	@Autowired
-	public AssignReviewerController(ApplicationsService applicationServiceMock, ReviewService reviewService,// 
+	public AssignReviewerController(ApplicationsService applicationServiceMock, ReviewService reviewService,//
 			UserService userService, NewUserByAdminValidator validator, MessageSource msgSource) {
 		this.applicationService = applicationServiceMock;
 		this.reviewService = reviewService;
@@ -85,7 +85,7 @@ public class AssignReviewerController {
 
 	@RequestMapping(value = "/createReviewer", method = RequestMethod.POST)
 	public String createReviewer(@ModelAttribute("programme") Program programme, //
-			@ModelAttribute("applicationForm") ApplicationForm form,// 
+			@ModelAttribute("applicationForm") ApplicationForm form,//
 			@Valid @ModelAttribute("uiReviewer") RegisteredUser uiReviewer,//
 			BindingResult bindingResult, //
 			@ModelAttribute("unsavedReviewers") ArrayList<RegisteredUser> unsavedReviewers,//
@@ -104,8 +104,8 @@ public class AssignReviewerController {
 			availableRevs = new ArrayList<RegisteredUser>();
 		}
 		if (reviewer == null) {
-			reviewer = reviewService.createNewReviewerForProgramme(programme,// 
-					uiReviewer.getFirstName(), uiReviewer.getLastName(), uiReviewer.getEmail());
+			reviewer = userService.createNewUserForProgramme(uiReviewer.getFirstName(), uiReviewer.getLastName(), uiReviewer.getEmail(), programme,
+					Authority.REVIEWER);
 			modelMap.put("message", getMessage("assignReviewer.newReviewer.created", reviewer.getUsername(), reviewer.getEmail()));
 			availableRevs.add(reviewer);
 		} else {

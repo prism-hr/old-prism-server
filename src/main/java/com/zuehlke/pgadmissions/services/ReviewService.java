@@ -25,6 +25,7 @@ public class ReviewService {
 	private final ProgramDAO programmeDAO;
 	private final ApplicationFormDAO applicationDAO;
 	private final ReviewerDAO reviewerDAO;
+	
 
 	ReviewService() {
 		this(null, null, null, null, null);
@@ -37,13 +38,14 @@ public class ReviewService {
 		this.programmeDAO = programmeDAO;
 		this.applicationDAO = applicationDAO;
 		this.reviewerDAO = reviewerDAO;
+	
 	}
 
 	/**
 	 * Associates the given reviewers to the application and updates the
 	 * application record(s) if necessary. Silently handles reviewers already
-	 * associated with the application, but throws {@link IllegalStateException}s 
-	 * when the users don't have the role reviewer or are not reviewer of the
+	 * associated with the application, but throws {@link IllegalStateException}
+	 * s when the users don't have the role reviewer or are not reviewer of the
 	 * programme of the application.
 	 * 
 	 * @param application
@@ -75,26 +77,7 @@ public class ReviewService {
 		applicationDAO.save(application);
 	}
 
-	/**
-	 * Creates a new user with role {@link Authority#REVIEWER} and associates it
-	 * with the given programme.
-	 * 
-	 * @throws IllegalStateException
-	 *             if user already exists.
-	 */
-	@Transactional
-	public RegisteredUser createNewReviewerForProgramme(Program programme, String firstName, String lastName, String email) {
-		RegisteredUser newUser = userDAO.getUserByEmail(email);
-		if (newUser != null) {
-			throw new IllegalStateException(String.format("user with email: %s already exists!", email));
-		}
-		newUser = createNewReviewer(firstName, lastName, email);
-		newUser.getProgramsOfWhichReviewer().add(programme);
-		programme.getProgramReviewers().add(newUser);
-		userDAO.save(newUser);
-		programmeDAO.save(programme);
-		return newUser;
-	}
+	
 
 	/**
 	 * Associates given user to the given programme.
@@ -111,21 +94,6 @@ public class ReviewService {
 		programmeDAO.save(programme);
 	}
 
-	private RegisteredUser createNewReviewer(String firstName, String lastName, String email) {
-		RegisteredUser user = new RegisteredUser();
-
-		user.setFirstName(firstName);
-		user.setLastName(lastName);
-		user.setUsername(email);
-		user.setEmail(email);
-		user.setAccountNonExpired(true);
-		user.setAccountNonLocked(true);
-		user.setEnabled(false);
-		user.setCredentialsNonExpired(true);
-
-		user.getRoles().add(roleDAO.getRoleByAuthority(Authority.REVIEWER));
-		return user;
-	}
 
 	private void checkApplicationStatus(ApplicationForm application) {
 		ApplicationFormStatus status = application.getStatus();
@@ -137,6 +105,5 @@ public class ReviewService {
 			throw new IllegalStateException(String.format("Application in invalid status: '%s'!", status));
 		}
 	}
-	
-	
+
 }

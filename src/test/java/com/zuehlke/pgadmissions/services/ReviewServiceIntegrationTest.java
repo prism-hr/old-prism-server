@@ -90,24 +90,6 @@ public class ReviewServiceIntegrationTest {
 		Assert.assertTrue(storedUser.getProgramsOfWhichReviewer().contains(programme));
 	}
 
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testAddNewReviewerToProject() {
-		Program programme = new Program();
-		programme.setCode("blablabal");
-		programDAO.save(programme);
-		Assert.assertNotNull(programme.getId());
-		flushNClear();
-		
-		RegisteredUser newReviewer = reviewService.createNewReviewerForProgramme(programme, "first", "last", "first@last.com");
-		flushNClear();
-		
-		Program storedProgramme = programDAO.getProgramById(programme.getId());
-		Assert.assertTrue(storedProgramme.getProgramReviewers().contains(newReviewer));
-		RegisteredUser storedUser = userDAO.get(newReviewer.getId());
-		Assert.assertTrue(storedUser.getProgramsOfWhichReviewer().contains(programme));
-	}
 
 	private void flushNClear() {
 		sessionFactory.getCurrentSession().flush();

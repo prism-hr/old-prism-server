@@ -269,7 +269,7 @@ public class AssignReviewerControllerTest {
 				.toUser();
 
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bla@blu.com")).andReturn(null);
-		EasyMock.expect(reviewServiceMock.createNewReviewerForProgramme(program, "fresh", "reviewer", "bla@blu.com")).andReturn(storedUser);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme( "fresh", "reviewer", "bla@blu.com", program, Authority.REVIEWER)).andReturn(storedUser);
 
 		prepareMessageSourceMock("assignReviewer.newReviewer.created", new Object[] { "uname", "uname@name.com" }, "blabla");
 		EasyMock.replay(reviewServiceMock, userServiceMock, messageSourceMock);
@@ -291,7 +291,7 @@ public class AssignReviewerControllerTest {
 				.toUser();
 
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bla@blu.com")).andReturn(null);
-		EasyMock.expect(reviewServiceMock.createNewReviewerForProgramme(program, "fresh", "reviewer", "bla@blu.com")).andReturn(storedUser);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme( "fresh", "reviewer", "bla@blu.com", program, Authority.REVIEWER)).andReturn(storedUser);
 
 		prepareMessageSourceMock("assignReviewer.newReviewer.created", new Object[] { "uname", "uname@name.com" }, "blabla");
 		EasyMock.replay(reviewServiceMock, userServiceMock, messageSourceMock);
@@ -316,7 +316,7 @@ public class AssignReviewerControllerTest {
 				.toUser();
 
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bla@blu.com")).andReturn(null);
-		EasyMock.expect(reviewServiceMock.createNewReviewerForProgramme(program, "fresh", "reviewer", "bla@blu.com")).andReturn(storedUser);
+		EasyMock.expect(userServiceMock.createNewUserForProgramme ("fresh", "reviewer", "bla@blu.com", program,Authority.REVIEWER)).andReturn(storedUser);
 		prepareMessageSourceMock("assignReviewer.newReviewer.created", new Object[] { "uname", "uname@HAHA.com" }, "BLUBLU");
 		EasyMock.replay(reviewServiceMock, userServiceMock, messageSourceMock);
 

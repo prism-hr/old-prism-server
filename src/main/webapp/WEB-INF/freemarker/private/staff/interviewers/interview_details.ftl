@@ -11,6 +11,7 @@
 
 <link rel="stylesheet" type="text/css"
 	href="<@spring.url '/design/default/css/private/global_private.css' />" />
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link type="text/css" rel="stylesheet"
 	href="<@spring.url '/design/default/css/actions.css' />" />
 
@@ -71,26 +72,32 @@
 						<@spring.bind "programmeInterviewers.*" />
 						<@spring.bind "applicationInterviewers.*" />
 						<@spring.bind "programme.*" />
+						<@spring.bind "unsavedInterviewers.*" />
 						<div id="messageSection"></div>
 						Application ID: ${(applicationForm.id?string('#####'))!} 
 						<br></br>
 						Program name: ${(programme.title?string)!} 
 						<br></br> 
 						Available interviewers in programme: 
-						<select id="interviewers" multiple="multiple">
+						<select id="programInterviewers" multiple="multiple">
 							<#list programmeInterviewers as interviewer>
 							  <option value="${interviewer.id?string('#####')}">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
 							</#list>
 							
 						</select>
 						<div class="buttons">
-							<button type="submit" id="addInterviewerBtn">Add interviewer</button>
+							<button type="button" id="addInterviewerBtn">Add interviewer</button>
 						</div>
 						<br></br> 
 						Already interviewers of this application: 
-						<select id="assignedInterviewers" multiple="multiple">
+						<select id="applicationInterviewers" multiple="multiple">
 							<#list applicationInterviewers as interviewer>
 								<option value="${interviewer.id?string('#####')}">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
+							</#list>
+							<#list unsavedInterviewers as unsaved>
+							   <#if applicationInterviewers?seq_index_of(unsaved) < 0>
+								<option value="${unsaved.id?string('#####')}">${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if></option>
+							   </#if>
 							</#list>
 						</select>
 						<p>${message!}</p>
@@ -117,7 +124,7 @@
                                         <div class="field">
                                          <input class="full" type="text"  name="newInterviewerEmail" id="newInterviewerEmail"/>
                                           <@spring.bind "interviewer.email" /> 
-	                			   		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+	                			   		  <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                         </div>
                              </div>
 						
@@ -129,13 +136,17 @@
 						  <div class="row">
                                <label class="label">Interview Date<em>*</em></label>
                                    <div class="field">
-                                   <input class="full date" type="text" name="interviewDate" id="interviewDate"/>
+                                   <input class="full date hasDatepicker" type="text" name="interviewDate" id="interviewDate"/>
+                                   <@spring.bind "interview.interviewDueDate" /> 
+	                			   <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                </div>
                                </div>
                                 <div class="row">
                                     <label class="label">Further Details<em>*</em></label>
                                     <div class="field">
                                     <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+                                    <@spring.bind "interview.furtherDetails" /> 
+	                			    <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                     </div>
                                 </div>
                                 
@@ -143,6 +154,8 @@
                                 <label class="label">Location (Link)<em>*</em></label>
                                         <div class="field">
                                          <input class="full" type="text"  name="interviewLocation" id="interviewLocation"/>
+                                             <@spring.bind "interview.locationURL" /> 
+	                			  			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                         </div>
                              </div>
 							

@@ -53,7 +53,7 @@ public class InterviewBuilder {
 		interview.setFurtherDetails(furtherDetails);
 		interview.setLastNotified(lastNotified);
 		interview.setLocationURL(locationURL);
-		interview.setDueDate(dueDate);
+		interview.setInterviewDueDate(dueDate);
 		return interview;
 	}
 	

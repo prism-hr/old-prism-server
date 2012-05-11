@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import junit.framework.Assert;
@@ -37,11 +38,11 @@ public class InterviewValidatorTest {
 	
 	@Test
 	public void shouldRejectIfDueDateIsEmpty() {
-		interview.setDueDate(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "dueDate");
+		interview.setInterviewDueDate(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewDueDate");
 		interviewValidator.validate(interview, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("interview.dueDate.notempty", mappingResult.getFieldError("dueDate").getCode());
+		Assert.assertEquals("interview.interviewDueDate.notempty", mappingResult.getFieldError("interviewDueDate").getCode());
 	}
 
 	@Test
@@ -53,10 +54,23 @@ public class InterviewValidatorTest {
 		Assert.assertEquals("interview.locationURL.invalid", mappingResult.getFieldError("locationURL").getCode());
 	}
 	
+	@Test
+	public void shouldRejectIfDueDateInPast() {
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_YEAR, -1);
+		interview.setInterviewDueDate(calendar.getTime());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewDueDate");
+		interviewValidator.validate(interview, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("interview.interviewDueDate.past", mappingResult.getFieldError("interviewDueDate").getCode());
+	}
+	
 	@Before
 	public void setup(){
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_YEAR, 1);
 		
-		interview = new InterviewBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).dueDate(new Date())
+		interview = new InterviewBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).dueDate(calendar.getTime())
 				.furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").toInterview();
 		interviewValidator = new InterviewValidator();
 	}

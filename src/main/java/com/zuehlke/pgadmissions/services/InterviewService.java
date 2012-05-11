@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.InterviewDAO;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 
 @Service
 public class InterviewService {
@@ -30,4 +32,5 @@ public class InterviewService {
 	public void save(Interview interview) {
 		interviewDAO.save(interview);
 	}
+
 }

@@ -17,7 +17,15 @@ $(document).ready(function(){
 	
 	$('#selectedProgramForNewUser').change(function(){
 		 var program = $(this).val();
-		 window.location.href="/pgadmissions/manageUsers/createNewUser?selectedProgramForNewUser=" + program;
+		 if(program== "-1"){	
+			 $('#roles option').each(function(){				
+				if(	$(this).val() != 'SUPERADMINISTRATOR'){
+					$(this).attr("disabled", "disabled");
+				}
+			 });
+		 }else{
+			 window.location.href="/pgadmissions/manageUsers/createNewUser?programId=" + program;
+		 }
 	});
 	
 	$('#userId').change(function(){

@@ -49,7 +49,7 @@
 			            
 			            		<div class="row programme">
 				              		<label>Select programme</label>
-				              		<select name="selectedProgram" id="programId">
+				              		<select name="selectedProgram" id="selectedProgramForNewUser">
 											<option value="">Please select a program</option>
 											<option value="-1">All programs</option>
 	                                		<#list programs as program>"

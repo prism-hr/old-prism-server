@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers.usermanagement;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -35,6 +36,28 @@ public class CreateNewUserControllerTest {
 	private ProgramPropertyEditor programPropertyEditorMock;
 	private NewUserDTOValidator newUserDTOValidatorMock;
 
+	
+	@Test
+	public void shouldGetSelectedProgramfIdProvided() {
+		Program program = new ProgramBuilder().id(5).toProgram();
+		EasyMock.expect(programServiceMock.getProgramById(5)).andReturn(program);
+		EasyMock.replay(programServiceMock);
+
+		assertEquals(program, controller.getSelectedProgram(5));
+	}
+
+	@Test
+	public void shoudlReturnNullIfProgramIdNotProvided() {
+		assertNull(controller.getSelectedProgram(null));
+	}
+	
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoucnExceptionIfNoSuchProgram() {
+
+		EasyMock.expect(programServiceMock.getProgramById(5)).andReturn(null);
+		EasyMock.replay(programServiceMock);
+		controller.getSelectedProgram(5);
+	}
 	@Test
 	public void shouldReturnCurrentUser() {
 		assertEquals(currentUserMock, controller.getUser());
@@ -131,7 +154,7 @@ public class CreateNewUserControllerTest {
 		Program program = new ProgramBuilder().id(5).toProgram();
 		newUserDTO.setSelectedProgram(program);
 		newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
-		EasyMock.expect(userServiceMock.getUserByEmail("jane.doe@test.com")).andReturn(null);
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserForProgramme("Jane", "Doe", "jane.doe@test.com", program, Authority.REVIEWER, Authority.ADMINISTRATOR))
 				.andReturn(new RegisteredUserBuilder().id(4).toUser());
 		EasyMock.replay(currentUserMock, userServiceMock);
@@ -161,7 +184,7 @@ public class CreateNewUserControllerTest {
 		newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
 
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).toUser();
-		EasyMock.expect(userServiceMock.getUserByEmail("jane.doe@test.com")).andReturn(existingUser);
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
 		userServiceMock.updateUserWithNewRoles(existingUser, program, Authority.REVIEWER, Authority.ADMINISTRATOR);
 		EasyMock.replay(currentUserMock, userServiceMock);
 
@@ -188,7 +211,7 @@ public class CreateNewUserControllerTest {
 		newUserDTO.setSelectedAuthorities(Authority.REVIEWER, Authority.ADMINISTRATOR);
 
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(7).toUser();
-		EasyMock.expect(userServiceMock.getUserByEmail("jane.doe@test.com")).andReturn(existingUser);
+		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("jane.doe@test.com")).andReturn(existingUser);
 		userServiceMock.updateUserWithNewRoles(existingUser, null, Authority.REVIEWER, Authority.ADMINISTRATOR);
 		EasyMock.replay(currentUserMock, userServiceMock);
 

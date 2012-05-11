@@ -62,6 +62,10 @@
 		<constructor-arg ref="sessionFactoryMail" />
 	</bean>
 
+	<bean id="mailUserFactory" class="com.zuehlke.pgadmissions.utils.UserFactory"
+		autowire-candidate="false">
+		<constructor-arg ref="mailRoleDAO" />
+	</bean>
 	<bean id="mailUserDAO" class="com.zuehlke.pgadmissions.dao.UserDAO"
 		autowire-candidate="false">
 		<constructor-arg ref="sessionFactoryMail" />
@@ -70,8 +74,9 @@
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mailUserDAO" />
 		<constructor-arg index="1" ref="mailRoleDAO" />
-		<constructor-arg index="2" ref="mimeMessagePreparatorFactory" />
-		<constructor-arg index="3" ref="mailSender" />
+		<constructor-arg index="2" ref="mailUserFactory"/>
+		<constructor-arg index="3" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="4" ref="mailSender" />
 	</bean>
 	<bean id="mailCommentService" class="com.zuehlke.pgadmissions.services.CommentService"
 		autowire-candidate="false">

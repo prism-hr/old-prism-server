@@ -56,6 +56,7 @@ public class CreateNewUserController {
 		}
 		return Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER);
 	}
+	
 	@RequestMapping(method = RequestMethod.GET, value = "/createNewUser")
 	public String getAddUsersView() {
 		if(userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)  || userService.getCurrentUser().isInRole(Authority.ADMINISTRATOR)){

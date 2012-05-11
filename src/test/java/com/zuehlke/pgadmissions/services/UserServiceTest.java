@@ -1,16 +1,15 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
@@ -25,7 +24,6 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
-import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
@@ -43,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.NewRolesDTO;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.utils.UserFactory;
 
 public class UserServiceTest {
 
@@ -54,6 +53,7 @@ public class UserServiceTest {
 	private JavaMailSender mailsenderMock;
 	private UserService userServiceWithCurrentUserOverride;
 	private RegisteredUser currentUserMock;
+	private UserFactory userFactoryMock;
 
 	@Test
 	public void shouldGetUserFromDAO() {
@@ -113,7 +113,7 @@ public class UserServiceTest {
 		final RegisteredUser userThree = new RegisteredUserBuilder().id(3).toUser();
 		final RegisteredUser userFour = new RegisteredUserBuilder().id(4).toUser();
 		final RegisteredUser userFive = new RegisteredUserBuilder().id(5).toUser();
-		userService = new UserService(userDAOMock, roleDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock) {
+		userService = new UserService(userDAOMock, roleDAOMock, userFactoryMock, mimeMessagePreparatorFactoryMock, mailsenderMock) {
 
 			@SuppressWarnings("unchecked")
 			@Override
@@ -452,7 +452,35 @@ public class UserServiceTest {
 		assertFalse(selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram));
 	}
 
+	@Test(expected = IllegalStateException.class)
+	public void shouldThrowISEwhenUserAlreadyExists() {
+		RegisteredUser existingUser = new RegisteredUserBuilder().id(1).toUser();
+		
+		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(existingUser);
+		EasyMock.replay(userDAOMock);
+		userService.createNewUserForProgramme( "la", "le", "some@email.com", new ProgramBuilder().id(4).toProgram());
+	}
 
+	@Test
+	public void shouldCreateUserAndWithRolesInProgramme() {
+		Program program = new ProgramBuilder().id(4).toProgram();
+		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(null);
+		RegisteredUser newUser = new RegisteredUserBuilder().id(5).toUser();
+		EasyMock.expect(userFactoryMock.createNewUserInRoles("la", "le", "some@email.com",Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER)).andReturn(newUser);
+		userDAOMock.save(newUser);
+		EasyMock.expectLastCall().andDelegateTo(new CheckProgrammeAndSimulateSaveDAO(program));
+
+		EasyMock.replay(userDAOMock, roleDAOMock, userFactoryMock);
+		RegisteredUser newReviewer = userService.createNewUserForProgramme( "la", "le", "some@email.com", program, Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER);
+
+		EasyMock.verify(userDAOMock, roleDAOMock, userFactoryMock);
+		assertEquals(newUser, newReviewer);				
+		assertTrue(newReviewer.getProgramsOfWhichAdministrator().contains(program));
+		assertTrue(newReviewer.getProgramsOfWhichApprover().contains(program));
+		assertTrue(newReviewer.getProgramsOfWhichInterviewer().contains(program));
+		assertTrue(newReviewer.getProgramsOfWhichReviewer().contains(program));
+		
+	}
 	@Before
 	public void setUp() {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
@@ -465,10 +493,11 @@ public class UserServiceTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 
-		userDAOMock = EasyMock.createMock(UserDAO.class);
+		userDAOMock = EasyMock.createMock(UserDAO.class);		
 		roleDAOMock = EasyMock.createMock(RoleDAO.class);
-		userService = new UserService(userDAOMock, roleDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock);
-		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock, mimeMessagePreparatorFactoryMock, mailsenderMock){
+		userFactoryMock = EasyMock.createMock(UserFactory.class);
+		userService = new UserService(userDAOMock, roleDAOMock,userFactoryMock,  mimeMessagePreparatorFactoryMock, mailsenderMock);
+		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,  mimeMessagePreparatorFactoryMock, mailsenderMock){
 
 			@Override
 			public RegisteredUser getCurrentUser() {
@@ -483,5 +512,18 @@ public class UserServiceTest {
 	public void tearDown() {
 		SecurityContextHolder.clearContext();
 	}
+	
+	class CheckProgrammeAndSimulateSaveDAO extends UserDAO {
+		private final Program expectedProgramme;
 
+		public CheckProgrammeAndSimulateSaveDAO(Program programme) {
+			super(null);
+			this.expectedProgramme = programme;
+		}
+
+		@Override
+		public void save(RegisteredUser user) {
+			Assert.assertTrue(user.getProgramsOfWhichReviewer().contains(expectedProgramme));
+		}
+	}
 }

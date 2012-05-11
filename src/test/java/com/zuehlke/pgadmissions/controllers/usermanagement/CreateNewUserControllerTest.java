@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.usermanagement;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,7 +24,6 @@ public class CreateNewUserControllerTest {
 	private CreateNewUserController controller;
 	private UserService userServiceMock;
 	private RegisteredUser currentUserMock;
-
 
 	@Test
 	public void shouldReturnCurrentUser(){
@@ -90,14 +90,18 @@ public class CreateNewUserControllerTest {
 		assertEquals("private/staff/superAdmin/create_new_user_in_role_page", controller.getAddUsersView());
 	}
 	@Test
-	public void shoulReturnNewUsersViewForDdmin(){
+	public void shoulReturnNewUsersViewForAdmin(){
 		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(false).anyTimes();
 		EasyMock.expect(currentUserMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true).anyTimes();
 		EasyMock.replay(currentUserMock);
 		assertEquals("private/staff/superAdmin/create_new_user_in_role_page", controller.getAddUsersView());
 	}
+	
+
+	
 	@Before
-	public void setUp(){
+	public void setUp(){		
+
 		userServiceMock = EasyMock.createMock(UserService.class);
 		programServiceMock = EasyMock.createMock(ProgramsService.class);
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);

@@ -12,11 +12,11 @@ $(document).ready(function(){
 			}
 	);
 	
-	$('#cancelReviewBtn').click(function() {
-		window.location.href = "/pgadmissions/reviewFeedback?applicationId=" +  $('#applicationId').val();
+	$('#cancelInterviewFeedbackBtn').click(function() {
+		window.location.href = "/pgadmissions/interviewFeedback?applicationId=" +  $('#applicationId').val();
 	});	
 	
-	$('#submitReviewFeedback').click(function() {
+	$('#submitInterviewFeedback').click(function() {
 			var application = $('#applicationId').val();
 			var willingSupervise = null;
 			if ($('#willingRB_true:checked').val() !== undefined) {
@@ -34,8 +34,8 @@ $(document).ready(function(){
 			}
 			var postParams = {
 				applicationId: application,
-				type: 'REVIEW',
-				comment: $('#review-comment').val(),
+				type: 'INTERVIEW',
+				comment: $('#interview-comment').val(),
 				decline: $("#declineValue").val()				
 			};
 			if(isSuitable){
@@ -45,7 +45,7 @@ $(document).ready(function(){
 				postParams.willingToSupervice= willingSupervise;
 			}
 			$.post(
-					"/pgadmissions/reviewFeedback",
+					"/pgadmissions/interviewFeedback",
 					postParams,
 					function(data) {
 						window.location.href = "/pgadmissions/applications";
@@ -71,9 +71,9 @@ $(document).ready(function(){
 			  newLblText = newLblText.substring(0, starIndex);
 			}
 			$("#comment-lbl").text(newLblText).addClass("grey-label");
-			$("#review-comment").val("");
-			$("#review-comment").addClass("grey-label");
-			$("#review-comment").attr("disabled", "disabled");
+			$("#interview-comment").val("");
+			$("#interview-comment").addClass("grey-label");
+			$("#interview-comment").attr("disabled", "disabled");
 			
 			//supervise radio
 			
@@ -112,8 +112,8 @@ $(document).ready(function(){
 		} else {
 			//comment field
 			$("#comment-lbl").append('<em>*</em>').removeClass("grey-label");
-			$("#review-comment").removeClass("grey-label");
-			$("#review-comment").removeAttr("disabled", "disabled");
+			$("#interview-comment").removeClass("grey-label");
+			$("#interview-comment").removeAttr("disabled", "disabled");
 			
 			//supervise radio
 			

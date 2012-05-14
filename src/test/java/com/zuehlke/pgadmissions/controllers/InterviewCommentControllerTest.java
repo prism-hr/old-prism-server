@@ -12,11 +12,16 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
@@ -30,10 +35,10 @@ import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FeedbackCommentValidator;
 
-public class ReviewCommentControllerTest {
+public class InterviewCommentControllerTest {
 	private ApplicationsService applicationsServiceMock;
 	private UserService userServiceMock;
-	private ReviewCommentController controller;
+	private InterviewCommentController controller;
 	private FeedbackCommentValidator reviewFeedbackValidatorMock;
 	private CommentService commentServiceMock;
 
@@ -45,7 +50,7 @@ public class ReviewCommentControllerTest {
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isReviewerOfApplicationForm(applicationForm)).andReturn(true);;
+		EasyMock.expect(currentUser.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);;
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser, userServiceMock);
 		
@@ -63,13 +68,13 @@ public class ReviewCommentControllerTest {
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfCurrentUserNotReviewerOfForm() {
+	public void shouldThrowResourceNotFoundExceptionIfCurrentUserNotInterviewerOfForm() {
 		Program program = new ProgramBuilder().id(7).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isReviewerOfApplicationForm(applicationForm)).andReturn(false);
+		EasyMock.expect(currentUser.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
 		EasyMock.replay(currentUser, userServiceMock);
 		
 		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
@@ -88,7 +93,7 @@ public class ReviewCommentControllerTest {
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isReviewerOfApplicationForm(applicationForm)).andReturn(true);
+		EasyMock.expect(currentUser.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(currentUser, userServiceMock);
 		
@@ -100,7 +105,7 @@ public class ReviewCommentControllerTest {
 
 	@Test
 	public void shouldReturnGenericCommentPage(){
-		assertEquals("private/staff/reviewer/feedback/reviewcomment", controller.getReviewFeedbackPage());
+		assertEquals("private/staff/interviewers/feedback/interview_feedback", controller.getInterviewFeedbackPage());
 	}
 	
 	@Test
@@ -112,14 +117,14 @@ public class ReviewCommentControllerTest {
 	}
 	
 	@Test
-	public void shouldCreateNewReviewCommentForApplicationForm(){
+	public void shouldCreateNewInterviewCommentForApplicationForm(){
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
 		final RegisteredUser currentUser =EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		Reviewer reviewer = new ReviewerBuilder().id(5).toReviewer();
-		EasyMock.expect(currentUser.getReviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(reviewer));
+		Interviewer interviewer = new InterviewerBuilder().id(5).toInterviewer();
+		EasyMock.expect(currentUser.getInterviewersForApplicationForm(applicationForm)).andReturn(Arrays.asList(interviewer));
 		EasyMock.replay(userServiceMock, currentUser);
-		controller = new  ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock){
+		controller = new  InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock){
 
 			@Override
 			public ApplicationForm getApplicationForm(Integer id) {
@@ -132,13 +137,13 @@ public class ReviewCommentControllerTest {
 			}
 			
 		};
-		ReviewComment comment = controller.getComment(5);
+		InterviewComment comment = controller.getComment(5);
 		
 		assertNull(comment.getId());
 		assertEquals(applicationForm, comment.getApplication());
 		assertEquals(currentUser, comment.getUser());
-		assertEquals(CommentType.REVIEW, comment.getType());
-		assertEquals(reviewer, comment.getReviewer());
+		assertEquals(CommentType.INTERVIEW, comment.getType());
+		assertEquals(interviewer, comment.getInterviewer());
 		
 		
 	}
@@ -156,16 +161,16 @@ public class ReviewCommentControllerTest {
 	@Test
 	public void shouldReturnToCommentsPageIfErrors(){
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ReviewComment comment = new ReviewCommentBuilder().application(new ApplicationForm()).toReviewComment();
+		InterviewComment comment = new InterviewCommentBuilder().application(new ApplicationForm()).toInterviewComment();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock);
-		assertEquals("private/staff/reviewer/feedback/reviewcomment", controller.addComment(comment,errorsMock));
+		assertEquals("private/staff/interviewers/feedback/interview_feedback", controller.addComment(comment,errorsMock));
 	}
 	
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowResourceNotFoundIfApplicationAlreadyDecided(){
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
-		ReviewComment comment = new ReviewCommentBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm()).toReviewComment();
+		InterviewComment comment = new InterviewCommentBuilder().application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm()).toInterviewComment();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock);
 		controller.addComment(comment,errorsMock);
@@ -173,7 +178,7 @@ public class ReviewCommentControllerTest {
 	
 	@Test
 	public void shouldSaveCommentAndToApplicationListIfNoErrors(){
-		ReviewComment comment = new ReviewCommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).toApplicationForm()).toReviewComment();		
+		InterviewComment comment = new InterviewCommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).toApplicationForm()).toInterviewComment();		
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		commentServiceMock.save(comment);
@@ -191,7 +196,7 @@ public class ReviewCommentControllerTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		reviewFeedbackValidatorMock = EasyMock.createMock(FeedbackCommentValidator.class);
 		commentServiceMock = EasyMock.createMock(CommentService.class);
-		controller = new ReviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock);
+		controller = new InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock);
 
 	}
 }

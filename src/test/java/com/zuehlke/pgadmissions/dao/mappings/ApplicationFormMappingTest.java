@@ -323,6 +323,35 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertNull(sessionFactory.getCurrentSession().get(Event.class, eventOneId));
 
 	}
+	
+	
+	@Test
+	public void shouldLoadInterviewsForApplicationFormOrderedByCreatedDate() throws ParseException, InterruptedException {
+		
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).toApplicationForm();		
+		save(application);
+		
+		Interview interviewOne = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).application(application).toInterview();
+		save(interviewOne);
+		Thread.sleep(1000);
+		
+		Interview interviewTwo = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).application(application).toInterview();
+		save(interviewTwo);
+		Thread.sleep(1000);
+		
+		Interview interviewTrhee = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).application(application).toInterview();
+		save(interviewTrhee);
+		Thread.sleep(1000);
+		
+		flushAndClearSession();
+		
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertEquals(3, reloadedApplication.getInterviews().size());
+		assertEquals(interviewOne, reloadedApplication.getInterviews().get(2));
+		assertEquals(interviewTwo, reloadedApplication.getInterviews().get(1));
+		assertEquals(interviewTrhee, reloadedApplication.getInterviews().get(0));
+		
+	}
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

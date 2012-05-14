@@ -18,11 +18,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -115,7 +117,8 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "application_form_id")
+	@OrderBy("createdDate desc")
+	@JoinColumn(name = "application_form_id")	
 	private List<Interview> interviews = new ArrayList<Interview>();
 	
 	@OneToMany(mappedBy = "application")
@@ -185,11 +188,15 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return approver;
 	}
 	
-	//change with correct functionality
+	
 	public Interview getCurrentInterview(){
-		if(!interviews.isEmpty())
-			return interviews.get(0);
-		return new Interview();
+		//this is always valid as the hibernate mapping orders by
+		//reverse creation date
+		if(interviews.isEmpty()){
+			return null;
+		}
+		return interviews.get(0);
+		
 	}
 	public void setApprover(RegisteredUser approver) {
 		this.approver = approver;

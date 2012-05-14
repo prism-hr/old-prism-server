@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -123,8 +124,8 @@ public class RegisteredUserTest {
 	public void shouldReturnTrueIfUserInterviewerAndApplicationInInterviewStage() {
 		
 		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
-		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).
+		Interview interview = new InterviewBuilder().id(1).interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).toInterview();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(interview).
 				status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
 		assertTrue(interviewerUser.canSee(applicationForm));
 		
@@ -253,7 +254,7 @@ public class RegisteredUserTest {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().approver(approver).program(program).status(ApplicationFormStatus.VALIDATION)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(new Interview()).approver(approver).program(program).status(ApplicationFormStatus.VALIDATION)
 				.toApplicationForm();
 		assertFalse(approver.isInterviewerOfApplicationForm(applicationForm));
 	}
@@ -263,15 +264,16 @@ public class RegisteredUserTest {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(new Interview()).program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertFalse(reviewer.isInterviewerOfApplicationForm(applicationForm));
 	}
 	
 	@Test
 	public void shouldReturnTrueForInterviewersIfUserIsInterviewerTApplication() {
 		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer())
+		Interview interview = new InterviewBuilder().id(1).interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).toInterview();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(interview)
 				.status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertTrue(interviewerUser.isInterviewerOfApplicationForm(applicationForm));
 	}
@@ -660,13 +662,13 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnInterviewersForApplicationForm() {
 		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(new Interview()).id(7).toApplicationForm();
 		Interviewer interviewerOne = new InterviewerBuilder().id(7).user(user).toInterviewer();
 		Interviewer interviewerTwo = new InterviewerBuilder().id(8).user(new RegisteredUserBuilder().id(9).toUser()).toInterviewer();
 		Interviewer interviewerThree = new InterviewerBuilder().id(9).user(user).toInterviewer();
 		
 		
-		applicationForm.getInterviewers().addAll(Arrays.asList(interviewerOne, interviewerTwo,interviewerThree));
+		applicationForm.getCurrentInterview().getInterviewers().addAll(Arrays.asList(interviewerOne, interviewerTwo,interviewerThree));
 		List<Interviewer> interviewers = user.getInterviewersForApplicationForm(applicationForm);
 		assertEquals(2, interviewers.size());
 		assertTrue(interviewers.containsAll(Arrays.asList(interviewerOne, interviewerThree)));
@@ -675,7 +677,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnEmptyListfNotInterviewerForApplicationForm() {
 		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(new Interview()).id(7).toApplicationForm();
 		assertTrue(user.getInterviewersForApplicationForm(applicationForm).isEmpty());
 	}
 

@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
 @SuppressWarnings("serial")
 public abstract class DomainObject<T> implements Serializable {
 	
@@ -38,4 +40,11 @@ public abstract class DomainObject<T> implements Serializable {
 		}
 		return LARGE_PRIME * id.hashCode();
 	}
+
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this);
+	}
+	
+	
 }

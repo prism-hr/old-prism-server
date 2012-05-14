@@ -128,8 +128,7 @@ public class AssignReviewerController {
 
 	@ModelAttribute("uiReviewer")
 	public RegisteredUser getUiReviewer() {
-		RegisteredUser uiReviewer = new RegisteredUser();
-		return uiReviewer;
+		return new RegisteredUser();
 	}
 
 	@ModelAttribute("applicationForm")
@@ -141,18 +140,15 @@ public class AssignReviewerController {
 	}
 
 	@ModelAttribute("programme")
-	public Program getProgrammeForApplication(@ModelAttribute("applicationForm") ApplicationForm application) {
-		checkPermissionForApplication(application);
-		return application.getProgram();
+	public Program getProgrammeForApplication(@RequestParam Integer applicationId) {
+		return getApplicationForm(applicationId).getProgram();
 	}
 
 	@ModelAttribute("availableReviewers")
-	public List<RegisteredUser> getAvailableReviewers(//
-			@ModelAttribute("programme") Program program,//
-			@ModelAttribute("applicationForm") ApplicationForm application,//
-			@ModelAttribute("unsavedReviewers") ArrayList<RegisteredUser> unsavedReviewers) {
+	public List<RegisteredUser> getAvailableReviewers(@RequestParam Integer applicationId, String unsavedReviewersRaw) {
 
-		checkPermissionForApplication(application);
+		ApplicationForm application = getApplicationForm(applicationId);
+		Program program = application.getProgram();
 		List<RegisteredUser> availableReviewers = new ArrayList<RegisteredUser>();
 		List<RegisteredUser> programmeReviewers = program.getProgramReviewers();
 		for (RegisteredUser registeredUser : programmeReviewers) {
@@ -160,6 +156,7 @@ public class AssignReviewerController {
 				availableReviewers.add(registeredUser);
 			}
 		}
+		List<RegisteredUser> unsavedReviewers = unsavedReviewers(unsavedReviewersRaw);
 		if (unsavedReviewers != null) {
 			availableReviewers.removeAll(unsavedReviewers);
 		}
@@ -167,10 +164,9 @@ public class AssignReviewerController {
 	}
 
 	@ModelAttribute("applicationReviewers")
-	public Set<RegisteredUser> getApplicationReviewers(//
-			@ModelAttribute("applicationForm") ApplicationForm application) {
+	public Set<RegisteredUser> getApplicationReviewers(@RequestParam Integer applicationId) {
 
-		checkPermissionForApplication(application);
+		ApplicationForm application = getApplicationForm(applicationId);
 
 		Set<RegisteredUser> existingReviewers = new HashSet<RegisteredUser>();
 		for (Reviewer reviewer : application.getReviewers()) {
@@ -203,6 +199,7 @@ public class AssignReviewerController {
 
 	private void checkPermissionForApplication(ApplicationForm application) {
 		if (application == null || !getCurrentUser().canSee(application)) {
+
 			throw new ResourceNotFoundException();
 		}
 	}
@@ -212,6 +209,7 @@ public class AssignReviewerController {
 		if (!(programme.getAdministrators().contains(currentUser) || //
 				currentUser.isInRole(Authority.SUPERADMINISTRATOR) || //
 		programme.getProgramReviewers().contains(currentUser))) {
+
 			throw new ResourceNotFoundException();
 		}
 	}

@@ -75,8 +75,9 @@ public class AssignReviewerControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 		messageSourceMock = EasyMock.createMock(MessageSource.class);
-		controllerUT = new AssignReviewerController(applicationServiceMock, reviewServiceMock, userServiceMock,//
-				userValidatorMock, messageSourceMock);
+		controllerUT = new AssignReviewerController(applicationServiceMock, reviewServiceMock, userServiceMock,	userValidatorMock, messageSourceMock);
+		
+		
 
 		reviewerUser1 = new RegisteredUserBuilder().id(2).username("rev 1").role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		reviewerUser2 = new RegisteredUserBuilder().id(3).username("rev 2").role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
@@ -177,23 +178,27 @@ public class AssignReviewerControllerTest {
 	public void throwRNFEIfApplicantUser() {
 		admin.getRoles().clear();
 		admin.getRoles().add(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole());
-
-		controllerUT.getProgrammeForApplication(application);
+		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+		controllerUT.getProgrammeForApplication(5);
 	}
 
 	@Test
 	public void getProgrammeFromApplicationAsSuperUser() {
 		admin.getRoles().clear();
 		admin.getRoles().add(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole());
-
-		Program returnedProgram = controllerUT.getProgrammeForApplication(application);
+		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+		Program returnedProgram = controllerUT.getProgrammeForApplication(5);
 		Assert.assertNotNull(returnedProgram);
 		Assert.assertEquals(program, returnedProgram);
 	}
 
 	@Test
 	public void getProgrammeFromApplication() {
-		Program returnedProgram = controllerUT.getProgrammeForApplication(application);
+		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+		Program returnedProgram = controllerUT.getProgrammeForApplication(5);
 		Assert.assertNotNull(returnedProgram);
 		Assert.assertEquals(program, returnedProgram);
 	}
@@ -202,7 +207,9 @@ public class AssignReviewerControllerTest {
 	// ------- available reviewers of a program:
 	@Test
 	public void getAvailableReviewers() {
-		List<RegisteredUser> availableReviewers = controllerUT.getAvailableReviewers(program, application, null);
+		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+		List<RegisteredUser> availableReviewers = controllerUT.getAvailableReviewers(5, null);
 		Assert.assertNotNull(availableReviewers);
 		Assert.assertEquals(2, availableReviewers.size());
 		Assert.assertTrue(availableReviewers.contains(reviewerUser1));
@@ -211,9 +218,11 @@ public class AssignReviewerControllerTest {
 
 	@Test
 	public void getAvailableReviewersMinusUnsavedReviewers() {
-		ArrayList<RegisteredUser> unsavedReviewers = new ArrayList<RegisteredUser>();
-		unsavedReviewers.add(reviewerUser1);
-		List<RegisteredUser> availableReviewers = controllerUT.getAvailableReviewers(program, application, unsavedReviewers);
+		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);		
+		EasyMock.expect(userServiceMock.getUser(6)).andReturn(reviewerUser1);
+		EasyMock.replay(userServiceMock);
+		List<RegisteredUser> availableReviewers = controllerUT.getAvailableReviewers(5, "6");
 		Assert.assertNotNull(availableReviewers);
 		Assert.assertEquals(1, availableReviewers.size());
 		Assert.assertTrue(availableReviewers.contains(reviewerUser2));
@@ -223,7 +232,9 @@ public class AssignReviewerControllerTest {
 	// ------- existing reviewers of an application:
 	@Test
 	public void getEmptyApplicationReviewerList() {
-		Set<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(application);
+		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+		Set<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(5);
 		Assert.assertNotNull(applReviewers);
 		Assert.assertTrue(applReviewers.isEmpty());
 	}
@@ -231,8 +242,9 @@ public class AssignReviewerControllerTest {
 	@Test
 	public void getAvailableReviewersMinusAlreadyReviewerOfApplication() {
 		application.getReviewers().add(new ReviewerBuilder().user(reviewerUser1).toReviewer());
-
-		List<RegisteredUser> availableReviewers = controllerUT.getAvailableReviewers(program, application, null);
+		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+		List<RegisteredUser> availableReviewers = controllerUT.getAvailableReviewers(5, null);
 		Assert.assertNotNull(availableReviewers);
 		Assert.assertEquals(1, availableReviewers.size());
 		Assert.assertTrue(availableReviewers.contains(reviewerUser2));
@@ -242,8 +254,9 @@ public class AssignReviewerControllerTest {
 	public void getExistingApplicationReviewerList() {
 		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser2).toReviewer();
 		application.setReviewers(Arrays.asList(reviewer));
-
-		Set<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(application);
+		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+		Set<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(5);
 		Assert.assertNotNull(applReviewers);
 		Assert.assertTrue(applReviewers.contains(reviewerUser2));
 	}

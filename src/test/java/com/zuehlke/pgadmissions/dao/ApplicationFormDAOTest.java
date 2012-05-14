@@ -17,12 +17,12 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -604,7 +604,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				
 	}
 	
-	@Ignore
 	@Test
 	public void shouldReturnAppsOfWhichInterviewerEvenIfNotCurrentlyInRole(){
 		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
@@ -613,7 +612,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();			
+		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(new Interview()).program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();			
 		save(applicationForm, interviewerUser);
 		Interviewer interviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).toInterviewer();
 		applicationForm.getCurrentInterview().getInterviewers().add(interviewer);
@@ -625,7 +624,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				
 	}
 	
-	@Ignore
 	@Test
 	public void shouldNotReturnAppsOfWhichInterviewerNotInInterviewState(){
 		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
@@ -634,7 +632,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();			
+		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(new Interview()).program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();			
 		save(applicationForm, interviewerUser);
 		Interviewer interviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).toInterviewer();
 		applicationForm.getCurrentInterview().getInterviewers().add(interviewer);
@@ -646,7 +644,6 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				
 	}	
 	
-	@Ignore
 	@Test
 	public void shouldReturnAppsSubmittedToUsersProgramsAndAppsOfWhichInterviewerIfAdminAndInterviewer(){
 		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
@@ -655,7 +652,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		RegisteredUser interviewerAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
 		
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();			
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().interviews(new Interview()).program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();			
 		save(applicationFormOne, interviewerAndAdminUser);
 		Interviewer interviewer = new InterviewerBuilder().application(applicationFormOne).user(interviewerAndAdminUser).toInterviewer();
 		applicationFormOne.getCurrentInterview().getInterviewers().add(interviewer);

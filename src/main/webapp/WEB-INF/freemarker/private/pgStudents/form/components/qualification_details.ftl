@@ -73,7 +73,7 @@
   	<form>
 		<div class="section-info-bar">
 			<div class="row">
-				<span class="info-text"> &nbsp
+				<span class="info-text">
 					<@spring.message 'education.qualifications.sectionInfo'/>
 					<b><@spring.message 'education.qualifications.sectionInfoBold'/></b> 
 				</span>

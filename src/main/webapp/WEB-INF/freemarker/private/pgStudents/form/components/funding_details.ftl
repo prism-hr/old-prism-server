@@ -73,7 +73,7 @@
 
 		<div class="section-info-bar">
 			<div class="row">
-				<span class="info-text"> &nbsp
+				<span class="info-text">
 					<@spring.message 'fundingDetails.sectionInfo'/> 
 				</span>
 			</div>

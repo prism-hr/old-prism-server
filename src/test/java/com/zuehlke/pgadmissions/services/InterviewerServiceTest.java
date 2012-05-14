@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -115,7 +116,7 @@ public class InterviewerServiceTest {
 		};
 		
 		RegisteredUser interviewerUser =  new RegisteredUserBuilder().id(1).toUser();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().interviews(new Interview()).id(1).toApplicationForm();
 		interviewerDAOMock.save(interviewer);
 		EasyMock.replay(interviewerDAOMock);
 		interviewerService.createInterviewerToApplication(interviewerUser, application);

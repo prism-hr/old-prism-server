@@ -150,12 +150,13 @@ public class ApplicationFormDAO {
 			}
 		}
 		
-		List<ApplicationForm> interviewerApps = getApplicationsOfWhichInterviewerCurrentlyInInterview(user);
-		for (ApplicationForm applicationForm : interviewerApps) {
-			if (!apps.contains(applicationForm)) {
-				apps.add(applicationForm);
-			}
-		}
+		//reftactor after introducing current interview
+//		List<ApplicationForm> interviewerApps = getApplicationsOfWhichInterviewerCurrentlyInInterview(user);
+//		for (ApplicationForm applicationForm : interviewerApps) {
+//			if (!apps.contains(applicationForm)) {
+//				apps.add(applicationForm);
+//			}
+//		}
 		return apps;
 	}
 
@@ -178,10 +179,12 @@ public class ApplicationFormDAO {
 				.createAlias("reviewers", "reviewer").add(Restrictions.eq("reviewer.user", user)).list();
 	}
 	
+	//subquery current interview's interviewers after introducing current interview
 	@SuppressWarnings("unchecked")
 	private List<ApplicationForm> getApplicationsOfWhichInterviewerCurrentlyInInterview(RegisteredUser user) {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
-				.createAlias("interviewers", "interviewer").add(Restrictions.eq("interviewer.user", user)).list();
+				.list();
+//				.createAlias("interviewers", "interviewer").add(Restrictions.eq("interviewer.user", user)).list();
 	}
 
 	public SessionFactory getSF() {

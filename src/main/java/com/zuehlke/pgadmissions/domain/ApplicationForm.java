@@ -116,10 +116,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
-	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
-	
-	@OneToOne(mappedBy = "application")
-	private Interview interview;
+	private List<Interview> interviews = new ArrayList<Interview>();
 	
 	@OneToMany(mappedBy = "application")
 	private List<Comment> applicationComments = new ArrayList<Comment>();
@@ -187,7 +184,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public RegisteredUser getApprover() {
 		return approver;
 	}
-
+	
+	//change with correct functionality
+	public Interview getCurrentInterview(){
+		if(!interviews.isEmpty())
+			return interviews.get(0);
+		return new Interview();
+	}
 	public void setApprover(RegisteredUser approver) {
 		this.approver = approver;
 	}
@@ -473,14 +476,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return reviewers;
 	}
 
-	public List<Interviewer> getInterviewers() {
-		return interviewers;
-	}
-
-	public void setInterviewers(List<Interviewer> interviewers) {
-		this.interviewers = interviewers;
-	}
-	
 	@Override
 	public int compareTo(ApplicationForm appForm) {
 	
@@ -496,12 +491,12 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return appForm.getSubmittedDate().compareTo(this.submittedDate);
 	}
 
-	public Interview getInterview() {
-		return interview;
+	public List<Interview> getInterviews() {
+		return interviews;
 	}
 
-	public void setInterview(Interview interview) {
-		this.interview = interview;
+	public void setInterviews(List<Interview> interviews) {
+		this.interviews = interviews;
 	}
 
 }

@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -56,7 +57,8 @@ public class ApplicationFormBuilder {
 	private AdditionalInformation info;	
 	private Date lastUpdated;
 	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
-	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
+	private List<Interview> interviews = new ArrayList<Interview>();
+	
 	
 	public ApplicationFormBuilder reviewers(Reviewer...reviewers) {
 		for (Reviewer reviewer : reviewers) {
@@ -65,19 +67,18 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
-	public ApplicationFormBuilder interviewers(Interviewer...interviewers) {
-		for (Interviewer interviewer : interviewers) {
-			this.interviewers.add(interviewer);
-		}
-		return this;
-	}
-
-	
 	public ApplicationFormBuilder lastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
 		return this;
 	}
 
+	public ApplicationFormBuilder interviews(Interview...interviews) {
+		for (Interview interview : interviews) {
+			this.interviews.add(interview);
+		}
+		return this;
+	}
+	
 	
 	public ApplicationFormBuilder status(ApplicationFormStatus status) {
 		this.status = status;
@@ -229,7 +230,6 @@ public class ApplicationFormBuilder {
 		application.setApplicant(applicant);
 		
 		application.getReviewers().addAll(reviewers);
-		application.getInterviewers().addAll(interviewers);
 		application.setSubmittedDate(submittedDate);
 
 		application.setApprover(approver);
@@ -255,6 +255,7 @@ public class ApplicationFormBuilder {
 		application.setLastUpdated(lastUpdated);
 		application.setAcceptedTerms(acceptedTerms);
 		application.getApplicationComments().addAll(comments);
+		application.getInterviews().addAll(interviews);
 		return application;
 	}
 }

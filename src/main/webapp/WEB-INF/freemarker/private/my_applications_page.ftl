@@ -113,8 +113,11 @@
 							                	   <#if user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('INTERVIEW')> 
       													<option value="assignInterviewer">Assign Interviewer</option>
         		  									</#if>
-									    			<#if user.isInRoleInProgram('REVIEWER', application.program) && application.isInState('REVIEW') && !user.hasRespondedToProvideReviewForApplication(application)> 
+									    			<#if user.isReviewerOfApplicationForm(application) && application.isInState('REVIEW') && !user.hasRespondedToProvideReviewForApplication(application)> 
 								    					<option value="review">Add Review</option>								    				
+								      				</#if>      												
+									    			<#if user.isInterviewerOfApplicationForm(application) && application.isInState('INTERVIEW') && !user.hasRespondedToProvideInterviewFeedbackForApplication(application)> 
+								    					<option value="interviewFeedback">Add Interview Feedback</option>								    				
 								      				</#if>      												
 								      				<#if (user.isRefereeOfApplicationForm(application) && application.isSubmitted() && !application.isDecided() )>
 								    					<option value="reference">Add Reference</option>

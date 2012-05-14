@@ -15,6 +15,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.Comment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.StateChangeComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ReviewComment</value>
+	     		<value>com.zuehlke.pgadmissions.domain.InterviewComment</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Program</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ProgramInstance</value>		     		
 	     		<value>com.zuehlke.pgadmissions.domain.Qualification</value>

@@ -244,6 +244,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 				}
 			}
 		}
+		
+		if (isInRole(Authority.INTERVIEWER) && applicationForm.getStatus() == ApplicationFormStatus.INTERVIEW) {
+			for (Interviewer interviewer : applicationForm.getInterviewers()) {
+				if (this.equals(interviewer.getUser())) {
+					return true;
+				}
+			}
+		}
 
 		if (isInRole(Authority.APPROVER) && applicationForm.getStatus() == ApplicationFormStatus.APPROVAL) {
 			if (applicationForm.getProgram().isApprover(this)) {
@@ -498,6 +506,16 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return false;
 	}
 
+	
+	public boolean hasRespondedToProvideInterviewFeedbackForApplication(ApplicationForm application) {
+		for (Comment comment : comments) {
+			if (comment.getApplication().equals(application) && comment.getType().equals(CommentType.INTERVIEW)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean hasDeclinedToProvideReviewForApplication(ApplicationForm application) {
 
 		for (Comment comment : comments) {
@@ -532,6 +550,17 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return reviewers;
 	}
 
+	public List<Interviewer> getInterviewersForApplicationForm(ApplicationForm applicationForm) {
+		List<Interviewer> interviewers = new ArrayList<Interviewer>();
+		List<Interviewer> formInterviewers = applicationForm.getInterviewers();
+		for (Interviewer interviewer : formInterviewers) {
+			if (this.equals(interviewer.getUser())) {
+				interviewers.add(interviewer);
+			}
+		}
+		return interviewers;
+	}
+	
 	public List<PendingRoleNotification> getPendingRoleNotifications() {
 		return pendingRoleNotifications;
 	}

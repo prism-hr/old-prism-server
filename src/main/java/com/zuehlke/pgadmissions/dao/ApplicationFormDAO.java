@@ -18,6 +18,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -150,13 +151,12 @@ public class ApplicationFormDAO {
 			}
 		}
 		
-		//reftactor after introducing current interview
-//		List<ApplicationForm> interviewerApps = getApplicationsOfWhichInterviewerCurrentlyInInterview(user);
-//		for (ApplicationForm applicationForm : interviewerApps) {
-//			if (!apps.contains(applicationForm)) {
-//				apps.add(applicationForm);
-//			}
-//		}
+		List<ApplicationForm> interviewerApps = getApplicationsOfWhichInterviewerCurrentlyInInterview(user);
+		for (ApplicationForm applicationForm : interviewerApps) {
+			if (!apps.contains(applicationForm)) {
+				apps.add(applicationForm);
+			}
+		}
 		return apps;
 	}
 
@@ -179,12 +179,14 @@ public class ApplicationFormDAO {
 				.createAlias("reviewers", "reviewer").add(Restrictions.eq("reviewer.user", user)).list();
 	}
 	
-	//subquery current interview's interviewers after introducing current interview
 	@SuppressWarnings("unchecked")
 	private List<ApplicationForm> getApplicationsOfWhichInterviewerCurrentlyInInterview(RegisteredUser user) {
+		DetachedCriteria interviewersWithUser = DetachedCriteria.forClass(Interview.class, "interview")
+				.createAlias("interviewers", "interviewer").add(Restrictions.eq("interviewer.user", user));
+
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
-				.list();
-//				.createAlias("interviewers", "interviewer").add(Restrictions.eq("interviewer.user", user)).list();
+				.createAlias("interviews", "interview")
+				.add(Subqueries.exists(interviewersWithUser.setProjection(Projections.property("interview.id")))).list();
 	}
 
 	public SessionFactory getSF() {

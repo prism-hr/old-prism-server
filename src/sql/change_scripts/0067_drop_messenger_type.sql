@@ -1,0 +1,1 @@
+ALTER TABLE MESSENGER DROP COLUMN messenger_type;

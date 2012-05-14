@@ -24,11 +24,12 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 
 	private Program program;
 	private Role reviewerRole;
+	private RegisteredUser creatingUser;
 
 	@Test
 	public void shouldSaveAndLoadPendingRoleNotification() throws ParseException {
 
-		PendingRoleNotification notificationRecord = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).toPendingRoleNotification();
+		PendingRoleNotification notificationRecord = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).addedByUser(creatingUser).toPendingRoleNotification();
 		sessionFactory.getCurrentSession().saveOrUpdate(notificationRecord);
 		assertNotNull(notificationRecord.getId());
 		PendingRoleNotification reloadedPendingRoleNotification = (PendingRoleNotification) sessionFactory.getCurrentSession().get(
@@ -43,6 +44,7 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 
 		assertEquals(reviewerRole, reloadedPendingRoleNotification.getRole());
 		assertEquals(program, reloadedPendingRoleNotification.getProgram());
+		assertEquals(creatingUser, reloadedPendingRoleNotification.getAddedByUser());
 
 	}
 
@@ -71,6 +73,10 @@ public class PendingRoleNotificationMappingTest extends AutomaticRollbackTestCas
 
 		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
 		save(program);
+		
+		creatingUser = new RegisteredUserBuilder().firstName("Hanna").lastName("Doe").email("email@test.com").username("username2").password("password2")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		save(creatingUser);
 		flushAndClearSession();
 	}
 }

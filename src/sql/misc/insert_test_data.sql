@@ -1,5 +1,5 @@
-Insert into PROGRAM(code, description, title) values ('TEST-PROG-ABC', "Test Program One Description", "Test Program One" );
-Insert into PROGRAM(code, description, title) values ('TEST-PROG-DEF', "Test Program Two Description", "Test Program Two" );
+﻿Insert into PROGRAM(code,  title) values ('TEST-PROG-ABC',  "Test Program One" );
+Insert into PROGRAM(code,  title) values ('TEST-PROG-DEF', "Test Program Two" );
 
 Insert into REGISTERED_USER(username, password,firstName, lastName,email, accountNonExpired,  accountNonLocked,  credentialsNonExpired,  enabled) values ('alice@test.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'Alice', 'Aaronson', 'alice@test.com', 1, 1, 1, 1);
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((select id from REGISTERED_USER where username='alice@test.com'), (select id from APPLICATION_ROLE where authority='APPROVER'));

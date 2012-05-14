@@ -1,6 +1,12 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +58,53 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 		assertEquals(returnedInterviewer, interviewer);
 		
 	}
+	
+	@Test
+	public void shouldReturnInterviewerIfLastModifiedIsNull() {
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW)
+				.toApplicationForm();
+		save(application);
+		flushAndClearSession();
+		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).toInterviewer();
+		save(interviewer);
+		flushAndClearSession();
+
+		List<Interviewer> interviewers = dao.getInterviewersDueNotification();
+		assertTrue(interviewers.contains(interviewer));
+
+	}
+
+	@Test
+	public void shouldNotReturInterviewerInLastNotifiedIsNotNull() {
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW)
+				.toApplicationForm();
+		save(application);
+		flushAndClearSession();
+		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(new Date()).application(application).toInterviewer();
+		save(interviewer);
+		flushAndClearSession();
+
+		List<Interviewer> interviewers = dao.getInterviewersDueNotification();
+		assertFalse(interviewers.contains(interviewer));
+
+	}
+
+	@Test
+	public void shouldNotReturnInterviewerIfApplicationNotInInterview() {
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
+				.toApplicationForm();
+		save(application);
+		flushAndClearSession();
+
+		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).toInterviewer();
+		save(interviewer);
+		flushAndClearSession();
+
+		List<Interviewer> interviewers = dao.getInterviewersDueNotification();
+		assertFalse(interviewers.contains(interviewer));
+
+	}
+
 	
 	@Before
 	public void setUp() {

@@ -51,13 +51,13 @@ public class MoveToInterviewController {
 	private final InterviewService interviewService;
 	private final InterviewValidator interviewValidator;
 	private final DatePropertyEditor datePropertyEditor;
-	
+
 	MoveToInterviewController() {
 		this(null, null, null, null, null, null, null, null);
 	}
-	
+
 	@Autowired
-	public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator, 
+	public MoveToInterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
 			InterviewerService interviewerService, MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
 			DatePropertyEditor datePropertyEditor) {
 		this.applicationsService = applicationsService;
@@ -69,89 +69,86 @@ public class MoveToInterviewController {
 		this.interviewValidator = interviewValidator;
 		this.datePropertyEditor = datePropertyEditor;
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET)
-	public String getInterviewDetailsPage(@RequestParam(required=false) Boolean assignOnly, ModelMap modelMap) {
+	public String getInterviewDetailsPage(@RequestParam(required = false) Boolean assignOnly, ModelMap modelMap) {
 		modelMap.put("assignOnly", assignOnly);
 		return INTERVIEW_DETAILS_VIEW_NAME;
 	}
-	
+
 	@InitBinder(value = "interviewer")
 	public void registerInterviewerValidators(WebDataBinder binder) {
 		binder.setValidator(interviewerValidator);
 	}
-	
+
 	@InitBinder(value = "interview")
 	public void registerInterviewValidatorsAndPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.setValidator(interviewValidator);
 	}
 
-	@RequestMapping(value="/createInterviewer",method = RequestMethod.POST)
+	@RequestMapping(value = "/createInterviewer", method = RequestMethod.POST)
 	public String createInterviewer(@RequestParam Integer applicationId, @Valid @ModelAttribute("interviewer") RegisteredUser interviewer,
-			BindingResult bindingResult, 
-			@ModelAttribute("unsavedInterviewers") ArrayList<RegisteredUser> unsavedInterviewers, 
-			ModelMap modelMap) {
+			BindingResult bindingResult, @RequestParam String unsavedInterviewersRaw, ModelMap modelMap) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Program program = applicationForm.getProgram();
 		if (bindingResult.hasErrors()) {
 			return INTERVIEW_DETAILS_VIEW_NAME;
 		}
-		
+
 		RegisteredUser interviewerUser = userService.getUserByEmailIncludingDisabledAccounts(interviewer.getEmail());
-		if(interviewerUser == null){
+		if (interviewerUser == null) {
 			RegisteredUser newUser = interviewerService.createNewUserWithInterviewerRoleInProgram(interviewer, program);
 			modelMap.put("message", getMessage("assignInterviewer.user.created", newUser.getUsername(), newUser.getEmail()));
-		}
-		else {
+		} else {
 			if (interviewerUser.isInterviewerOfApplicationForm(applicationForm)) {
-				modelMap.put("message", getMessage("assignInterviewer.user.alreadyExistsInTheApplication", interviewerUser.getUsername(), interviewerUser.getEmail()));
-			}
-			else if (!interviewerUser.isInterviewerOfProgram(program)) {
+				modelMap.put("message",
+						getMessage("assignInterviewer.user.alreadyExistsInTheApplication", interviewerUser.getUsername(), interviewerUser.getEmail()));
+			} else if (!interviewerUser.isInterviewerOfProgram(program)) {
 				interviewerService.addInterviewerToProgram(interviewerUser, program);
 				modelMap.put("message", getMessage("assignInterviewer.user.addedToProgramme", interviewerUser.getUsername(), interviewerUser.getEmail()));
-			}
-			else {
+			} else {
 				modelMap.put("message", getMessage("assignInterviewer.user.alreadyInProgramme", interviewerUser.getUsername(), interviewerUser.getEmail()));
 			}
 		}
+		List<RegisteredUser> unsavedInterviewers = unsavedInterviewers(unsavedInterviewersRaw);
 		if (unsavedInterviewers != null) {
 			modelMap.put("unsavedInterviewers", unsavedInterviewers);
 		}
-		modelMap.put("programmeInterviewers", getProgrammeInterviewers(applicationId, unsavedInterviewers));
+		modelMap.put("programmeInterviewers", getProgrammeInterviewers(applicationId, unsavedInterviewersRaw));
 		return INTERVIEW_DETAILS_VIEW_NAME;
-		
+
 	}
-	
-	@RequestMapping(value="/move",method = RequestMethod.POST)
-	public String moveToInterview(@RequestParam Integer applicationId, @Valid @ModelAttribute("interview") Interview interview,
-			BindingResult bindingResult, ModelMap modelMap, @ModelAttribute("unsavedInterviewers") ArrayList<RegisteredUser> unsavedInterviewers) {
-		
+
+	@RequestMapping(value = "/move", method = RequestMethod.POST)
+	public String moveToInterview(@RequestParam Integer applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult,
+			ModelMap modelMap, @ModelAttribute("unsavedInterviewers") ArrayList<RegisteredUser> unsavedInterviewers) {
+
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
-		
+
 		if (bindingResult.hasErrors()) {
 			return INTERVIEW_DETAILS_VIEW_NAME;
 		}
-		
+
 		for (RegisteredUser interviewerUser : unsavedInterviewers) {
 			if (!interviewerUser.isInterviewerOfApplicationForm(applicationForm)) {
 				interviewerService.createInterviewerToApplication(interviewerUser, applicationForm);
 			}
 		}
-		
+
 		interview.setApplication(applicationForm);
 		Calendar calendar = Calendar.getInstance();
 		calendar.setTime(interview.getInterviewDueDate());
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
-		interview.setInterviewDueDate(calendar.getTime());   
+		interview.setInterviewDueDate(calendar.getTime());
 		interviewService.save(interview);
-		
+
 		applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
 		applicationsService.save(applicationForm);
-		
+
 		return "redirect:/applications";
 	}
-	
+
 	@ModelAttribute("unsavedInterviewers")
 	public List<RegisteredUser> unsavedInterviewers(String unsavedInterviewersRaw) {
 		List<RegisteredUser> retval = new ArrayList<RegisteredUser>();
@@ -165,72 +162,72 @@ public class MoveToInterviewController {
 		return retval;
 	}
 
-	
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
-		RegisteredUser user = getUser();
+
 		ApplicationForm application = applicationsService.getApplicationById(applicationId);
-		if (application == null || !user.isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram())|| !user.canSee(application) ) {
+		if (application == null || !userService.getCurrentUser().isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram())
+				|| !userService.getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();
 		}
 		return application;
 	}
 
-	
 	@ModelAttribute("programme")
 	public Program getProgrammeForApplication(@RequestParam Integer applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		return applicationForm.getProgram();
 	}
-	
+
 	@ModelAttribute("interviewer")
 	public RegisteredUser getInterviewer() {
-		RegisteredUser interviewer = new RegisteredUser();
-		return interviewer;
+		return new RegisteredUser();
 	}
-	
-	
+
 	@ModelAttribute("interview")
-	public Interview getInterview(@RequestParam(required=false) Integer interviewId, @RequestParam(required=false) Integer applicationId) {
-		if(applicationId != null){
-			ApplicationForm application = getApplicationForm(applicationId);
-			if(application.getInterview()!=null){
-				return application.getInterview();
+	public Interview getInterview(@RequestParam(required = false) Integer interviewId, @RequestParam(required = false) Integer applicationId) {
+
+		if (applicationId != null) {
+			Interview interview = getApplicationForm(applicationId).getInterview();
+			if (interview != null) {
+				return interview;
 			}
 		}
-		if(interviewId == null){
-			return new Interview();
+		if(interviewId != null){
+			Interview interview = interviewService.getInterviewById(interviewId);
+			if(interview == null){
+				 throw new ResourceNotFoundException();
+			}
+			return interview;
 		}
-		Interview interview = interviewService.getInterviewById(interviewId);
-		if (interview == null){
-			throw new ResourceNotFoundException();
-		}
-		return interview;
+		return new Interview();
 	}
-	
+
 	@ModelAttribute("programmeInterviewers")
-	public List<RegisteredUser> getProgrammeInterviewers(@RequestParam Integer applicationId,
-			@ModelAttribute("unsavedInterviewers") ArrayList<RegisteredUser> unsavedInterviewers) {
+	public List<RegisteredUser> getProgrammeInterviewers(@RequestParam Integer applicationId, String unsavedInterviewersRaw) {
 		ApplicationForm application = getApplicationForm(applicationId);
 		Program program = application.getProgram();
 		List<RegisteredUser> availableInterviewers = new ArrayList<RegisteredUser>();
 		List<RegisteredUser> programmeInterviewers = program.getInterviewers();
 		for (RegisteredUser registeredUser : programmeInterviewers) {
-			if(!registeredUser.isInterviewerOfApplicationForm(application)){
+			if (!registeredUser.isInterviewerOfApplicationForm(application)) {
 				availableInterviewers.add(registeredUser);
 			}
 		}
+		List<RegisteredUser> unsavedInterviewers = unsavedInterviewers(unsavedInterviewersRaw);
 		if (unsavedInterviewers != null) {
 			availableInterviewers.removeAll(unsavedInterviewers);
 		}
-				
+
 		return availableInterviewers;
 	}
-	
+
 	@ModelAttribute("user")
 	public RegisteredUser getUser() {
 		return userService.getCurrentUser();
 	}
+	
+	
 
 	@ModelAttribute("applicationInterviewers")
 	public Set<RegisteredUser> getApplicationInterviewersAsUsers(@RequestParam Integer applicationId) {
@@ -241,10 +238,9 @@ public class MoveToInterviewController {
 		}
 		return existingInterviewers;
 	}
-	
+
 	private String getMessage(String code, Object... args) {
 		return messageSource.getMessage(code, args, null);
 	}
 
-	
 }

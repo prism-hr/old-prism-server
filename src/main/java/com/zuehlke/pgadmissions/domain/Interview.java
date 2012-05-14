@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -9,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -30,7 +34,7 @@ public class Interview extends DomainObject<Integer> {
 	@Column(name = "further_details")
 	private String furtherDetails;
 	
-	@OneToOne
+	@ManyToOne
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application;
 	
@@ -40,6 +44,13 @@ public class Interview extends DomainObject<Integer> {
 	@Temporal(TemporalType.DATE)
 	@Column(name="due_date")
 	private Date interviewDueDate;
+	
+
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "interview_id")
+	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
+	
 	
 	public Date getLastNotified() {
 		return lastNotified;
@@ -93,6 +104,14 @@ public class Interview extends DomainObject<Integer> {
 	@Access(AccessType.PROPERTY)
 	public Integer getId() {
 		return id;
+	}
+
+	public List<Interviewer> getInterviewers() {
+		return interviewers;
+	}
+
+	public void setInterviewers(List<Interviewer> interviewers) {
+		this.interviewers = interviewers;
 	}
 	
 }

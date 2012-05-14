@@ -134,7 +134,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		assertEquals(interview, reloadedApplication.getInterview());
+		assertEquals(interview, reloadedApplication.getInterviews().get(0));
 		
 	}
 	
@@ -164,29 +164,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 	}
 	
-	@Test
-	public void shouldSaveLoadApplicationFormWithInterviewer() {
-		
-		ApplicationForm application = new ApplicationForm();
-		application.setProgram(program);
-		application.setApplicant(user);
-		
-		application.getInterviewers().add(new InterviewerBuilder().user(interviewerUser).toInterviewer());
-		
-		sessionFactory.getCurrentSession().save(application);
-		
-		flushAndClearSession();
-		
-		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		assertNotSame(application, reloadedApplication);
-		assertEquals(application, reloadedApplication);
-		
-		Assert.assertEquals(1, reloadedApplication.getInterviewers().size());
-		Interviewer interviewer = reloadedApplication.getInterviewers().get(0);
-		assertEquals(interviewerUser, interviewer.getUser());
-		assertEquals(reloadedApplication, interviewer.getApplication());
-		
-	}
 	@Test
 	public void shouldSaveAndLoadApplicationFormWithAddress() {
 		ApplicationForm application = new ApplicationForm();

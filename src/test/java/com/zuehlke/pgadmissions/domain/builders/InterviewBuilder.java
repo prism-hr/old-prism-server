@@ -1,9 +1,12 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 
 public class InterviewBuilder {
 
@@ -13,10 +16,17 @@ public class InterviewBuilder {
 	private Date dueDate;	
 	private String furtherDetails;
 	private String locationURL;
-	
+	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
 
 	public InterviewBuilder lastNotified(Date lastNotified){
 		this.lastNotified = lastNotified;
+		return this;
+	}
+	
+	public InterviewBuilder interviewers(Interviewer...interviewers) {
+		for (Interviewer interviewer : interviewers) {
+			this.interviewers.add(interviewer);
+		}
 		return this;
 	}
 	
@@ -54,6 +64,7 @@ public class InterviewBuilder {
 		interview.setLastNotified(lastNotified);
 		interview.setLocationURL(locationURL);
 		interview.setInterviewDueDate(dueDate);
+		interview.getInterviewers().addAll(interviewers);
 		return interview;
 	}
 	

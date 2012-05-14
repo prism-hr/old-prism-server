@@ -32,7 +32,7 @@
 		    	</td>
 		    	<td width="500">
 		      		<h1 style="font-size: 12pt;">
-		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${reviewer.user.firstName?html},</font>
+		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${interviewer.user.firstName?html},</font>
 		      		</h1>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated to interview ${applicant.firstName?html} ${applicant.lastName?html} in connection with their application ${application.id?string('#####')} to join the Postgraduate research Programme in ${application.program.title} at UCL.</font>

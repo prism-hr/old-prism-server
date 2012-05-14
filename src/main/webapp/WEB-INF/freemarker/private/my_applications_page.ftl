@@ -104,6 +104,9 @@
 									      			<#if user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('REVIEW')> 
 									    				<option value="validate">Evaluate reviews</option>
 									      			</#if>
+									      			<#if user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('INTERVIEW')> 
+									    				<option value="validate">Evaluate interview feedback</option>
+									      			</#if>
 									    			<#if !user.isInRole('APPLICANT') && !user.isRefereeOfApplicationForm(application)>
 								    					<option value="comment">Comment</option>								    				
 								      				</#if>      												

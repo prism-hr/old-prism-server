@@ -23,8 +23,11 @@ public enum ApplicationFormStatus {
 	}
 
 	public static ApplicationFormStatus[] getAvailableNextStati(ApplicationFormStatus status) {
-		if (status == VALIDATION || status == REVIEW || status == INTERVIEW) {
+		if (status == VALIDATION || status == REVIEW ) {
 			return new ApplicationFormStatus[] { REJECTED, REVIEW, APPROVAL, INTERVIEW };
+		}
+		if( status == INTERVIEW){
+			return new ApplicationFormStatus[] { REJECTED, APPROVAL, INTERVIEW };
 		}
 		return new ApplicationFormStatus[] {};
 	}

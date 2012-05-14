@@ -1,8 +1,8 @@
 $(document).ready(function(){
 
 	$('#changeStateButton').click(
+		
 		function(){
-			
 			if($('#status').val() == 'APPROVAL'){						
 				saveComment(moveToApproval);					
 			}

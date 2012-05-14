@@ -59,6 +59,8 @@
 							    	<h1>Validate application</h1>
 							    <#elseif applicationForm.isInState('REVIEW')>
 							    	<h1>Evaluate reviews</h1>
+							    <#elseif applicationForm.isInState('INTERVIEW')>
+							    	<h1>Evaluate interview feedback</h1>
 							    </#if>
 							    <br/><br/>
 		            			<div class="row">
@@ -70,6 +72,8 @@
 								    	<input type="hidden" id="commentType" value="VALIDATION"/>
 								    <#elseif applicationForm.isInState('REVIEW')>
 								    	<input type="hidden" id="commentType" value="REVIEW_EVALUATION"/>
+								    <#elseif applicationForm.isInState('INTERVIEW')>
+								    	<input type="hidden" id="commentType" value="INTERVIEW_EVALUATION"/>
 								    </#if>
 		            			</div>
 		        

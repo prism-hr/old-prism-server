@@ -13,28 +13,40 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 public class CommentFactory {
 
 	public Comment createComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType) {		
-		if(commentType == CommentType.VALIDATION || commentType == CommentType.REVIEW_EVALUATION){
-			StateChangeComment stateChangeComment = new StateChangeComment();
-			stateChangeComment.setApplication(applicationForm);
-			stateChangeComment.setUser(user);
-			stateChangeComment.setComment(strComment);
-			stateChangeComment.setType(commentType);
-			return stateChangeComment;
+		if(commentType == CommentType.VALIDATION || commentType == CommentType.REVIEW_EVALUATION || commentType == CommentType.INTERVIEW_EVALUATION){
+			return creatStateChangeComment(applicationForm, user, strComment, commentType);
 		}
 		
 		if(commentType == CommentType.REVIEW){
-			ReviewComment reviewComment = new ReviewComment();
-			reviewComment.setApplication(applicationForm);
-			reviewComment.setUser(user);
-			reviewComment.setComment(strComment);
-			reviewComment.setType(commentType);
-			return reviewComment;
+			return createReviewComment(applicationForm, user, strComment, commentType);
 		}
+		return createGenericComment(applicationForm, user, strComment);		
+	}
+
+	private Comment createGenericComment(ApplicationForm applicationForm, RegisteredUser user, String strComment) {
 		Comment comment = new Comment();
 		comment.setApplication(applicationForm);
 		comment.setComment(strComment);
 		comment.setUser(user);
-		return comment;		
+		return comment;
+	}
+
+	private Comment createReviewComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType) {
+		ReviewComment reviewComment = new ReviewComment();
+		reviewComment.setApplication(applicationForm);
+		reviewComment.setUser(user);
+		reviewComment.setComment(strComment);
+		reviewComment.setType(commentType);
+		return reviewComment;
+	}
+
+	private Comment creatStateChangeComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType) {
+		StateChangeComment stateChangeComment = new StateChangeComment();
+		stateChangeComment.setApplication(applicationForm);
+		stateChangeComment.setUser(user);
+		stateChangeComment.setComment(strComment);
+		stateChangeComment.setType(commentType);
+		return stateChangeComment;
 	}
 
 }

@@ -79,8 +79,7 @@ public class InterviewerService {
 	}
 
 	public Interviewer createNewInterviewer() {
-		Interviewer interviewer = new Interviewer();
-		return interviewer;
+		return new Interviewer();
 	}
 
 }

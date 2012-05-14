@@ -162,6 +162,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 
 		// clear out whatever test data is in there -remember, it will all be
 		// rolled back!
+		sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
 		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
 		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 
@@ -189,6 +190,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 	public void shouldDeleteRoleMappingWhenDeletingUser() throws Exception {
 		// clear out whatever test data is in there -remember, it will all be
 		// rolled back!
+		sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
 		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
 		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 		Role role = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();

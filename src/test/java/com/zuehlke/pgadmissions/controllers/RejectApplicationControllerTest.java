@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -13,6 +14,7 @@ import org.junit.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
+import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -32,6 +34,7 @@ import com.zuehlke.pgadmissions.services.RejectService;
 
 public class RejectApplicationControllerTest {
 	private static final String VIEW_RESULT = "private/staff/approver/reject_page";
+	private static final String REJECT_EMAIL = "private/pgStudents/mail/rejected_notification";
 	private static final String AFTER_REJECT_VIEW = "redirect:/applications";
 
 	private RejectApplicationController controllerUT;
@@ -192,7 +195,7 @@ public class RejectApplicationControllerTest {
 	}
 
 	// -------------------------------------------
-	// ------- move application to review:
+	// ------- move application to reject:
 
 	@Test
 	public void moveToRejectWithOneReason() {
@@ -230,5 +233,40 @@ public class RejectApplicationControllerTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void moveToReviewThrowIAEwhenEmptyReasonIds() {
 		controllerUT.moveApplicationToReject(application, new Integer[] {});
+	}
+
+	// -------------------------------------------
+	// ------- retrieving email text:
+	@Test(expected = IllegalArgumentException.class)
+	public void getEmailTextThrowIAEwhenNullReasonIds() {
+		controllerUT.getRejectionText(application, null, null);
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getEmailTextThrowIAEwhenEmptyReasonIds() {
+		controllerUT.getRejectionText(application, new Integer[] {}, null);
+	}
+
+	@Test
+	public void getRejectionText() {
+		RejectReason reason3 = new RejectReasonBuilder().id(30).text("bla").toRejectReason();
+		List<RejectReason> allReasons = Arrays.asList(new RejectReason[] { reason1, reason2, reason3 });
+		EasyMock.expect(rejectServiceMock.getAllRejectionReasons()).andReturn(allReasons);
+		EasyMock.replay(rejectServiceMock);
+
+		ModelMap modelMap = new ModelMap();
+		String nextView = controllerUT.getRejectionText(application, new Integer[] { reason1.getId(), reason2.getId() }, modelMap);
+
+		EasyMock.verify(rejectServiceMock);
+		Assert.assertEquals(REJECT_EMAIL, nextView);
+		Assert.assertEquals(application, modelMap.get("application"));
+		@SuppressWarnings("unchecked")
+		Collection<RejectReason> providedReasons = (Collection<RejectReason>) modelMap.get("reasons");
+		Assert.assertEquals(2, providedReasons.size());
+		Assert.assertTrue(providedReasons.contains(reason1));
+		Assert.assertTrue(providedReasons.contains(reason2));
+
+		Assert.assertNotNull(modelMap.get("host"));
+		Assert.assertNotNull(modelMap.get("adminsEmails"));
 	}
 }

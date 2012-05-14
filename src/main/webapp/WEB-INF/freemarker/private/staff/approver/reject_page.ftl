@@ -1,4 +1,3 @@
-<section id="rejectAppSection" >	
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
 <html>
@@ -70,19 +69,24 @@
 						<@spring.bind "availableReasons.*" />
 						<div id="messageSection"></div>
 						Application ID: ${(applicationForm.id?string('#####'))!} 
-						<br></br>
+						<br />
 						Program name: ${(applicationForm.program.title?string)!} 
-						<br></br> 
+						<br /> 
 						<div class="row">
                     	<label class="plain-label">Reasons for rejections<em>*</em></label>
-                   		<div class="field">
+                   		<div id="reasonList" class="field">
                    			<#list availableReasons as reason>
-							  <input type="checkbox" name="rejectReasons" value="${reason.id}" >${reason.text}</input>
+							  <input type="checkbox" name="rejectReasons" value="${reason.id}">${reason.text}</input>
+							  <br/>
 							</#list>
 						</div> 
 						<div class="buttons">
 							<button type="submit" id="rejectButton">Reject application</button>
 						</div>
+						<div class="field">
+						 Content of the e-mail for the applicant:
+						</div>
+						<div id="emailText"></div>
 						<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/> 
 					</div>
 					<!-- #actions -->
@@ -119,4 +123,3 @@
 		src="<@spring.url '/design/default/js/approver/reject_page.js'/>"></script>
 </body>
 </html>
-</section>

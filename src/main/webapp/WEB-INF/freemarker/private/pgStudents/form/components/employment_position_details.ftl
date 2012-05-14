@@ -18,11 +18,11 @@
 	<#if hasEmploymentPositions>
     	<table class="existing">
         	<colgroup>
-            	<col style="width: 30px" />
-                <col />
-                <col style="width: 140px" />
-                <col style="width: 140px" />
-                <col style="width: 30px" />
+				<col style="width: 30px">
+				<col>
+				<col style="width: 220px">
+				<col style="width: 30px">
+				<col style="width: 30px">
 			</colgroup>
             
             <thead>
@@ -40,9 +40,9 @@
             	<#list applicationForm.employmentPositions as position>
 	            	<tr>
 	                    <td><a class="row-arrow">-</a></td>
-	                    <td>${(position.position?html)!}</td>
-	                    <td>${(position.startDate?string('dd-MMM-yyyy'))!}</td>
-	                    <td>${(position.endDate?string('dd-MMM-yyyy'))!}</td>
+	                    <td>${(position.position?html)!} &nbsp ${(employmentPosition.employerName?html)!}</td>
+	                    <td>${(position.startDate?string('dd MMM yyyy'))!}&nbsp-&nbsp 
+	                    ${(position.endDate?string('dd MMM yyyy'))!}</td>
 	                     
 	                    	<td>		                		
 		                		<a name="positionEditButton" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if>

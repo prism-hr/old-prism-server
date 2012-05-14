@@ -57,7 +57,8 @@
 				       	 	<#if !user.hasRespondedToProvideInterviewFeedbackForApplication(applicationForm)  >			        		
 							
 							    <h1>Interview feedback</h1>
-							    <br/><br/>
+							    <br/>
+							   <p style="color:red;">Please note that once you submit your feedback you cannot re-submit or edit it.</p> 
 							     <form>
 							   
 							    	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>

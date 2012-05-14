@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,8 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -159,6 +162,24 @@ public class ApplicationFormTest {
 		
 	}
 	
+	@Test
+	public void shouldGetFirstItemInListAsCurrentInterview(){
+		//this is because the hibernate mappign orders them by reverse creation date!
+		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
+		Interview interviewOne = new InterviewBuilder().id(1).toInterview();
+		Interview interviewTwo = new InterviewBuilder().id(2).toInterview();
+		Interview interviewThree = new InterviewBuilder().id(3).toInterview();
+		applicationForm.getInterviews().addAll(Arrays.asList(interviewOne, interviewTwo, interviewThree));
+		assertEquals(interviewOne, applicationForm.getCurrentInterview());
+		
+	}
 
+	@Test
+	public void shouldReturnNullINoInterviews(){
+	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
+		assertNull(applicationForm.getCurrentInterview());
+		
+	}
 
 }

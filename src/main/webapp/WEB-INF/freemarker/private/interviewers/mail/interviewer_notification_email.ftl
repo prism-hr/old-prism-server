@@ -46,20 +46,20 @@
 			      		</font>
 			      	</p>
 			      	  <p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place on ${application.interview.interviewDueDate?string("dd MMM yyyy")}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place on ${interviewer.interview.interviewDueDate?string("dd MMM yyyy")}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">The details of the interview are as follows:</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">${application.interview.furtherDetails?html}</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${interviewer.interview.furtherDetails?html}</font>
 			      	</p>
-			      	<#if application.interview.locationURL??>
+			      	<#if interviewer.interview.locationURL??>
 				      	<p>
 				      		<font face="Arial, Helvetica, sans-serif" size="2">Please click the following link for more details about the location at which the interview will take place:</font>
 				      	</p>
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${application.interview.locationURL}">Location details</a></font>
+				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${interviewer.interview.locationURL}">Location details</a></font>
 				      	</p>
 				      </#if>
 			      	<p>

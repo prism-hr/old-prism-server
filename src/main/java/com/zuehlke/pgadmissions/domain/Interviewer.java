@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -23,6 +24,10 @@ public class Interviewer extends DomainObject<Integer> {
 	 */
 	private static final long serialVersionUID = 1676615842814210633L;
 
+	@OneToOne(mappedBy = "interviewer")
+	private InterviewComment interviewComment;
+
+	
 	@Column(name = "last_notified")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastNotified;
@@ -70,6 +75,14 @@ public class Interviewer extends DomainObject<Integer> {
 
 	public void setLastNotified(Date lastNotified) {
 		this.lastNotified = lastNotified;
+	}
+
+	public InterviewComment getInterviewComment() {
+		return interviewComment;
+	}
+
+	public void setInterviewComment(InterviewComment interviewComment) {
+		this.interviewComment = interviewComment;
 	}
 
 }

@@ -41,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -73,7 +74,16 @@ public class MoveToInterviewControllerTest {
 	
 	@Test
 	public void shouldGetInterviewPage() {
-		Assert.assertEquals(INTERVIEW_DETAILS_VIEW_NAME, controller.getInterviewDetailsPage());
+		Assert.assertEquals(INTERVIEW_DETAILS_VIEW_NAME, controller.getInterviewDetailsPage(false, new ModelMap()));
+	}
+	
+	@Test
+	public void shouldGetInterviewPageWithOnlyAssignNewInterviewersFunctionality() {
+		ModelMap modelMap = new ModelMap();
+		String interviewDetailsPage = controller.getInterviewDetailsPage(true, modelMap);
+		Assert.assertEquals(INTERVIEW_DETAILS_VIEW_NAME, interviewDetailsPage);
+		Assert.assertTrue((Boolean) modelMap.get("assignOnly"));
+		
 	}
 	
 	@Test
@@ -177,17 +187,25 @@ public class MoveToInterviewControllerTest {
 	
 	@Test
 	public void shouldGetProgrammeInterviewers(){
-		RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).toUser();
-		RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).toUser();
-		Program program = new ProgramBuilder().interviewers(interUser1, interUser2).id(6).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
+		final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).toUser();
+		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).toUser();
+		final Program program = new ProgramBuilder().interviewers(interUser1, interUser2).id(6).toProgram();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().acceptedTerms(CheckedStatus.NO).id(5).program(program).toApplicationForm();
+		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock, interviewServiceMock, interviewValidator, datePropertyEditorMock){
+			@Override
+			public
+			ApplicationForm getApplicationForm(Integer applicationId) {
+					applicationForm.setProgram(program);
+				return applicationForm;
+			}
+		};
 		
 		RegisteredUser currentUserMock = expectCurrentUser(applicationForm);
 		
 		applicationServiceMock.save(applicationForm);
 		EasyMock.replay(applicationServiceMock,userServiceMock, currentUserMock);
 		
-		List<RegisteredUser> interviewersUsers = controller.getProgrammeInterviewers(program, applicationForm);
+		List<RegisteredUser> interviewersUsers = controller.getProgrammeInterviewers(5, null);
 		assertEquals(2, interviewersUsers.size());
 	}
 	

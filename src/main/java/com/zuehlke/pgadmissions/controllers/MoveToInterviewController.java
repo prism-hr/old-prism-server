@@ -71,7 +71,8 @@ public class MoveToInterviewController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String getInterviewDetailsPage() {
+	public String getInterviewDetailsPage(@RequestParam(required=false) Boolean assignOnly, ModelMap modelMap) {
+		modelMap.put("assignOnly", assignOnly);
 		return INTERVIEW_DETAILS_VIEW_NAME;
 	}
 	
@@ -117,7 +118,7 @@ public class MoveToInterviewController {
 		if (unsavedInterviewers != null) {
 			modelMap.put("unsavedInterviewers", unsavedInterviewers);
 		}
-		modelMap.put("programmeInterviewers", getProgrammeInterviewers(program, applicationForm));
+		modelMap.put("programmeInterviewers", getProgrammeInterviewers(applicationId, unsavedInterviewers));
 		return INTERVIEW_DETAILS_VIEW_NAME;
 		
 	}
@@ -208,15 +209,19 @@ public class MoveToInterviewController {
 	}
 	
 	@ModelAttribute("programmeInterviewers")
-	public List<RegisteredUser> getProgrammeInterviewers(@ModelAttribute("programme") Program program,
-			@ModelAttribute("applicationForm") ApplicationForm application) {
-		
+	public List<RegisteredUser> getProgrammeInterviewers(@RequestParam Integer applicationId,
+			@ModelAttribute("unsavedInterviewers") ArrayList<RegisteredUser> unsavedInterviewers) {
+		ApplicationForm application = getApplicationForm(applicationId);
+		Program program = application.getProgram();
 		List<RegisteredUser> availableInterviewers = new ArrayList<RegisteredUser>();
 		List<RegisteredUser> programmeInterviewers = program.getInterviewers();
 		for (RegisteredUser registeredUser : programmeInterviewers) {
 			if(!registeredUser.isInterviewerOfApplicationForm(application)){
 				availableInterviewers.add(registeredUser);
 			}
+		}
+		if (unsavedInterviewers != null) {
+			availableInterviewers.removeAll(unsavedInterviewers);
 		}
 				
 		return availableInterviewers;

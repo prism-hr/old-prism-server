@@ -85,7 +85,7 @@
 							
 						</select>
 						<div class="buttons">
-							<button class="blue" type="button" id="removeInterviewerBtn">Remove</button>
+							 <#if assignOnly?? && assignOnly == false><button class="blue" type="button" id="removeInterviewerBtn">Remove</button></#if>
 							<button type="button" id="addInterviewerBtn">Add interviewer</button>
 						</div>
 						<br></br> 
@@ -134,9 +134,13 @@
 						
 						
 						  <div class="row">
-                               <label class="label">Interview Date<em>*</em></label>
+                               <label  class="label">Interview Date<em>*</em></label>
                                    <div class="field">
-                                   <input class="full date hasDatepicker" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd-MMM-yyyy'))!}" />
+                                     <#if assignOnly?? && assignOnly>
+                                      <input class="full date hasDatepicker" readonly="readonly" disabled="disabled" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd-MMM-yyyy'))!}" />
+        							<#else>
+        			     		   		<input class="full date hasDatepicker" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd-MMM-yyyy'))!}" />
+        							</#if>
                                    <@spring.bind "interview.interviewDueDate" /> 
 	                			   <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                </div>
@@ -144,7 +148,11 @@
                                 <div class="row">
                                     <label class="label">Further Details<em>*</em></label>
                                     <div class="field">
-                                    <textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
+                                     <#if assignOnly?? && assignOnly>
+                                     <textarea id="furtherDetails" readonly="readonly" disabled="disabled" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
+        							<#else>
+        			     		   	<textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
+                                  </#if>
                                     <@spring.bind "interview.furtherDetails" /> 
 	                			    <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                     </div>
@@ -153,7 +161,11 @@
                              <div class="row">
                                 <label class="label">Location (Link)<em>*</em></label>
                                         <div class="field">
-                                         <textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${interview.locationURL!}</textarea>
+                                        <#if assignOnly?? && assignOnly>
+                                         <textarea id="interviewLocation" readonly="readonly" disabled="disabled" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${interview.locationURL!}</textarea>
+        							<#else>
+        			     		  		 <textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${interview.locationURL!}</textarea>
+                                       </#if>
                                              <@spring.bind "interview.locationURL" /> 
 	                			  			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                                         </div>

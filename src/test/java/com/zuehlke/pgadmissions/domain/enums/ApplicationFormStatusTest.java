@@ -31,9 +31,9 @@ public class ApplicationFormStatusTest {
 	}
 	
 	@Test
-	public void shouldReturnRejectedReviewApprovedAndInterviewForInterviewState(){
+	public void shouldReturnRejectedApprovedAndInterviewForInterviewState(){
 		ApplicationFormStatus[] avaialbleStati = ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.INTERVIEW);
-		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.INTERVIEW},avaialbleStati);
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.REJECTED, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.INTERVIEW},avaialbleStati);
 	}
 	
 	@Test

@@ -42,6 +42,14 @@ public class CommentFactoryTest {
 		assertEquals(CommentType.REVIEW_EVALUATION, comment.getType());
 		assertEquals(user,comment.getUser());
 		
+		
+		comment = commentFactory.createComment(applicationForm, user, strComment, CommentType.INTERVIEW_EVALUATION);
+		assertEquals(StateChangeComment.class, comment.getClass());
+		assertEquals(applicationForm, comment.getApplication());
+		assertEquals("bob", comment.getComment());
+		assertEquals(CommentType.INTERVIEW_EVALUATION, comment.getType());
+		assertEquals(user,comment.getUser());
+		
 		comment = commentFactory.createComment(applicationForm, user, strComment, CommentType.REVIEW);
 		assertEquals(ReviewComment.class, comment.getClass());
 		assertEquals(applicationForm, comment.getApplication());

@@ -19,20 +19,17 @@
     	<table class="existing">
           	
           	<colgroup>
-            	<col style="width: 30px" />
-            	<col />
-            	<col style="width: 80px" />
-            	<col />
-            	<col />
-            	<col style="width: 30px" />
+            	<col style="width: 30px">
+            	<col>
+            	<col style="width: 90px">
+            	<col style="width: 30px">
+            	<col style="width: 30px">
             </colgroup>
           	
           	<thead>
             	<tr>
               	<th colspan="2">Qualification</th>
-                <th>Grade</th>
-                <th>Awarding Body</th>
-                <th>Date Completed</th>
+                <th>Date</th>
                 <th>&nbsp;</th>
                 <th id="last-col">&nbsp;</th>
               </tr>
@@ -44,10 +41,16 @@
                 	<tr>
 	                  	<td><a class="row-arrow">-</a>
 	                  	</td>
-	                  	<td>${(existingQualification.qualificationType?html)!}</td>
-	                  	<td>${(existingQualification.qualificationGrade?html)!}</td>
-	                  	<td>${(existingQualification.qualificationInstitution?html)!}</td>
-	                  	<td>${(existingQualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</td>
+	                  	<td>${(existingQualification.qualificationType?html)!} &nbsp
+	                  		${(qualification.qualificationSubject?html)!} &nbsp
+	                  	 	(<#if qualification.isQualificationCompleted()>
+									Achieved:
+							 <#else> 
+							 		Expected: 
+	                    	 </#if>
+	                    	 &nbsp ${(existingQualification.qualificationGrade?html)!}) &nbsp
+	                  		${(existingQualification.qualificationInstitution?html)!}</td>
+	                  	<td>${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}</td>
 	                  	  
 	                  	  	   <td>
 	                  	  	   		<a name="editQualificationLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="qualification_${existingQualification.id?string('#######')}" class="button-edit button-hint">edit</a>

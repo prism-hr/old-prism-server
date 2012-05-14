@@ -15,9 +15,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -89,7 +91,8 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 	public void shouldGetUsersByRole() {
 		// clear out whatever test data is in there -remember, it will all be
 		// rolled back!
-		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();
+		sessionFactory.getCurrentSession().createSQLQuery("delete from PENDING_ROLE_NOTIFICATION").executeUpdate();
+		sessionFactory.getCurrentSession().createSQLQuery("delete from USER_ROLE_LINK").executeUpdate();		
 		sessionFactory.getCurrentSession().createSQLQuery("delete from APPLICATION_ROLE").executeUpdate();
 
 		Role roleOne = new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole();
@@ -296,6 +299,88 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		List<RegisteredUser> users = userDAO.getInternalUsers();
 		assertEquals(usersBefore.size() + 1, users.size());
+	}
+	
+	
+	@Test
+	public void shouldReturnUserWithPendingNotifications(){		
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
+		Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		save(program);
+		
+		PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).toPendingRoleNotification();
+		PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).toPendingRoleNotification();
+		
+		
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).toUser();
+		save(user);
+		flushAndClearSession();
+		
+		List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
+		assertTrue(users.contains(user));
+		
+	}
+	@Test
+	public void shouldReturnUserWithPendingNotificationsOnlyOnce(){		
+		List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
+		int previousNumberOfUsers = users.size();
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
+		Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		save(program);
+		
+		PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).toPendingRoleNotification();
+		PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).toPendingRoleNotification();
+		
+		
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).pendingRoleNotifications(pendingOne, pendingTwo).toUser();
+		save(user);
+		flushAndClearSession();
+		
+		users = userDAO.getUsersWithPendingRoleNotifications();
+		assertEquals(previousNumberOfUsers + 1, users.size());
+		
+	}
+	
+	@Test
+	public void shouldNotReturnEnalbedUserWithPendingNotifications(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		Role reviewerRole = roleDAO.getRoleByAuthority(Authority.REVIEWER);
+		Role interviewerRole = roleDAO.getRoleByAuthority(Authority.INTERVIEWER);
+
+		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
+		save(program);
+		
+		PendingRoleNotification pendingOne = new PendingRoleNotificationBuilder().role(reviewerRole).program(program).toPendingRoleNotification();
+		PendingRoleNotification pendingTwo = new PendingRoleNotificationBuilder().role(interviewerRole).program(program).toPendingRoleNotification();
+		
+		
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(true).pendingRoleNotifications(pendingOne, pendingTwo).toUser();
+		save(user);
+		flushAndClearSession();
+		
+		List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
+		assertFalse(users.contains(user));
+	}
+	
+	@Test
+	public void shouldNotReturnUserWithNoPendingNotifications(){
+	
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		save(user);
+		flushAndClearSession();
+		
+		List<RegisteredUser> users = userDAO.getUsersWithPendingRoleNotifications();
+		assertFalse(users.contains(user));
 	}
 	
 	@Before

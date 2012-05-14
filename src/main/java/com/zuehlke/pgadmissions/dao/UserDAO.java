@@ -5,11 +5,17 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -49,8 +55,7 @@ public class UserDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getUsersInRole(Role role) {
-		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles")
-				.add(Restrictions.eq("id", role.getId())).list();
+		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("roles").add(Restrictions.eq("id", role.getId())).list();
 
 	}
 
@@ -64,7 +69,7 @@ public class UserDAO {
 		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
 		users.addAll(getUsersInRole((Role) sessionFactory.getCurrentSession().createCriteria(Role.class)
 				.add(Restrictions.eq("authorityEnum", Authority.SUPERADMINISTRATOR)).uniqueResult()));
-		
+
 		List<RegisteredUser> administrators = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
 				.createCriteria("programsOfWhichAdministrator").add(Restrictions.eq("id", program.getId())).list();
 		for (RegisteredUser admin : administrators) {
@@ -72,15 +77,15 @@ public class UserDAO {
 				users.add(admin);
 			}
 		}
-		List<RegisteredUser> approvers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-				.createCriteria("programsOfWhichApprover").add(Restrictions.eq("id", program.getId())).list();
+		List<RegisteredUser> approvers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichApprover")
+				.add(Restrictions.eq("id", program.getId())).list();
 		for (RegisteredUser approver : approvers) {
 			if (!users.contains(approver)) {
 				users.add(approver);
 			}
 		}
-		List<RegisteredUser> reviewers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
-				.createCriteria("programsOfWhichReviewer").add(Restrictions.eq("id", program.getId())).list();
+		List<RegisteredUser> reviewers = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).createCriteria("programsOfWhichReviewer")
+				.add(Restrictions.eq("id", program.getId())).list();
 		for (RegisteredUser reviewer : reviewers) {
 			if (!users.contains(reviewer)) {
 				users.add(reviewer);
@@ -107,9 +112,21 @@ public class UserDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getInternalUsers() {
-		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).createAlias("roles", "role")
-				.add(Restrictions.and(Restrictions.not(Restrictions.eq("role.authorityEnum", Authority.APPLICANT)), Restrictions.not(Restrictions.eq("role.authorityEnum", Authority.REFEREE)))).addOrder(Order.asc("firstName")).addOrder(Order.asc("lastName"))
-				.list();
+		return sessionFactory
+				.getCurrentSession()
+				.createCriteria(RegisteredUser.class)
+				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.createAlias("roles", "role")
+				.add(Restrictions.and(Restrictions.not(Restrictions.eq("role.authorityEnum", Authority.APPLICANT)),
+						Restrictions.not(Restrictions.eq("role.authorityEnum", Authority.REFEREE)))).addOrder(Order.asc("firstName"))
+				.addOrder(Order.asc("lastName")).list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<RegisteredUser> getUsersWithPendingRoleNotifications() {	
+		
+		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class, "user").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).add(Restrictions.eq("enabled", false))
+				.createAlias("pendingRoleNotifications", "pendingRoleNotification").list();
 	}
 
 }

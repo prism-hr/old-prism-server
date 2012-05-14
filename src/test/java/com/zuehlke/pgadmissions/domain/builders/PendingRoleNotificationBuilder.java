@@ -11,6 +11,12 @@ public class PendingRoleNotificationBuilder {
 	private Program program;
 	private RegisteredUser user;	
 	private Integer id;
+	private RegisteredUser addedByUser;
+	
+	public PendingRoleNotificationBuilder addedByUser(RegisteredUser addedByUser) {
+		this.addedByUser = addedByUser;
+		return this;
+	}
 	
 	public PendingRoleNotificationBuilder role(Role role) {
 		this.role = role;
@@ -39,6 +45,7 @@ public class PendingRoleNotificationBuilder {
 		pendingRoleNotification.setProgram(program);
 		pendingRoleNotification.setRole(role);
 		pendingRoleNotification.setUser(user);
+		pendingRoleNotification.setAddedByUser(addedByUser);
 		return pendingRoleNotification;
 	}
 }

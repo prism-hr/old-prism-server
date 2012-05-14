@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
@@ -34,67 +34,61 @@ public class UserService {
 	private final JavaMailSender mailsender;
 	private final Logger log = Logger.getLogger(UserService.class);
 	private final UserFactory userFactory;
-	
+
 	UserService() {
 		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
+	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
+			JavaMailSender mailsender) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
 		this.userFactory = userFactory;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
 	}
-	
-
-
 
 	public RegisteredUser getUser(Integer id) {
-		return userDAO.get(id);	
+		return userDAO.get(id);
 	}
-	
+
 	public List<RegisteredUser> getUsersInRole(Authority auth) {
 		return userDAO.getUsersInRole(roleDAO.getRoleByAuthority(auth));
 	}
-	
-	@Transactional 
+
+	@Transactional
 	public void save(RegisteredUser user) {
 		userDAO.save(user);
 	}
 
-	
-	public List<RegisteredUser> getAllUsers(){
+	public List<RegisteredUser> getAllUsers() {
 		return userDAO.getAllUsers();
 	}
-	
-	
+
 	public RegisteredUser getUserByUsername(String username) {
 		return userDAO.getUserByUsername(username);
 	}
 
-
 	public List<RegisteredUser> getAllUsersForProgram(Program program) {
 		return userDAO.getUsersForProgram(program);
 	}
-	
+
 	public List<RegisteredUser> getAllInternalUsers() {
 		return userDAO.getInternalUsers();
 	}
 
-	
 	public RegisteredUser getUserByEmail(String email) {
 		return userDAO.getUserByEmail(email);
-		
-	}
-	
-	public RegisteredUser getUserByEmailIncludingDisabledAccounts(String email) {
-		return userDAO.getUserByEmailIncludingDisabledAccounts(email);
-		
+
 	}
 
-	@Transactional 
+	public RegisteredUser getUserByEmailIncludingDisabledAccounts(String email) {
+		return userDAO.getUserByEmailIncludingDisabledAccounts(email);
+
+	}
+
+	@Transactional
 	public void saveAndEmailRegisterConfirmationToReferee(RegisteredUser referee) {
 		save(referee);
 		sendMailToReferee(referee);
@@ -107,7 +101,7 @@ public class UserService {
 			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 			Map<String, Object> model = new HashMap<String, Object>();
 			model.put("referee", referee);
-			model.put("applicant", applicant);			
+			model.put("applicant", applicant);
 			model.put("adminsEmails", adminsEmails);
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstName() + " " + referee.getLastName());
@@ -117,9 +111,8 @@ public class UserService {
 			log.warn("error while sending email", e);
 		}
 
-		
 	}
-	
+
 	private String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
 		StringBuilder adminsMails = new StringBuilder();
 		for (RegisteredUser admin : administrators) {
@@ -132,14 +125,14 @@ public class UserService {
 		}
 		return result;
 	}
-	
+
 	@Transactional
 	public RegisteredUser getCurrentUser() {
 		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		return userDAO.get(currentUser.getId());
 	}
 
-	public void addRoleToUser (RegisteredUser user, Authority authority){
+	public void addRoleToUser(RegisteredUser user, Authority authority) {
 		user.getRoles().add(roleDAO.getRoleByAuthority(authority));
 	}
 
@@ -157,82 +150,97 @@ public class UserService {
 		addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 		addOrRemoveFromProgramsOfWhichInterviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 		userDAO.save(selectedUser);
-		
+
 	}
-	private void removeFromSuperadminRoleIfRequired(RegisteredUser selectedUser,  Authority[] newAuthorities) {
-		if (!newAuthoritiesContains(newAuthorities, Authority.SUPERADMINISTRATOR) ) {
+
+	private void removeFromSuperadminRoleIfRequired(RegisteredUser selectedUser, Authority[] newAuthorities) {
+		if (!newAuthoritiesContains(newAuthorities, Authority.SUPERADMINISTRATOR)) {
 			Role superAdminRole = selectedUser.getRoleByAuthority(Authority.SUPERADMINISTRATOR);
 			selectedUser.getRoles().remove(superAdminRole);
 		}
 	}
 
 	private void addOrRemoveFromProgramsOfWhichAdministratorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
-		if (newAuthoritiesContains(  newAuthorities, Authority.ADMINISTRATOR)  && !selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichAdministrator().add(selectedProgram);
-		} else if (!newAuthoritiesContains(  newAuthorities, Authority.ADMINISTRATOR) && selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
+		if (newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && !selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichAdministrator().add(selectedProgram);			
+		} else if (!newAuthoritiesContains(newAuthorities, Authority.ADMINISTRATOR) && selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichAdministrator().remove(selectedProgram);
 		}
 
 	}
 
-	private void addOrRemoveFromProgramsOfWhichApproverIfRequired(RegisteredUser selectedUser, Program selectedProgram,  Authority[]  newAuthorities) {
+	private void addOrRemoveFromProgramsOfWhichApproverIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
 		if (newAuthoritiesContains(newAuthorities, Authority.APPROVER) && !selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichApprover().add(selectedProgram);
+			selectedUser.getProgramsOfWhichApprover().add(selectedProgram);			
 		} else if (!newAuthoritiesContains(newAuthorities, Authority.APPROVER) && selectedUser.getProgramsOfWhichApprover().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichApprover().remove(selectedProgram);
 		}
 	}
 
-	private void addOrRemoveFromProgramsOfWhichReviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[]  newAuthorities) {
-		if (newAuthoritiesContains(newAuthorities, Authority.REVIEWER)&& !selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichReviewer().add(selectedProgram);
+	private void addOrRemoveFromProgramsOfWhichReviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+		if (newAuthoritiesContains(newAuthorities, Authority.REVIEWER) && !selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichReviewer().add(selectedProgram);			
 		} else if (!newAuthoritiesContains(newAuthorities, Authority.REVIEWER) && selectedUser.getProgramsOfWhichReviewer().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichReviewer().remove(selectedProgram);
 		}
 	}
 
-	private void addOrRemoveFromProgramsOfWhichInterviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[]  newAuthorities) {
-		
+	private void addOrRemoveFromProgramsOfWhichInterviewerIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+
 		if (newAuthoritiesContains(newAuthorities, Authority.INTERVIEWER) && !selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
-			selectedUser.getProgramsOfWhichInterviewer().add(selectedProgram);
-		} else if (!newAuthoritiesContains(newAuthorities,Authority.INTERVIEWER) && selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichInterviewer().add(selectedProgram);			
+		} else if (!newAuthoritiesContains(newAuthorities, Authority.INTERVIEWER) && selectedUser.getProgramsOfWhichInterviewer().contains(selectedProgram)) {
 			selectedUser.getProgramsOfWhichInterviewer().remove(selectedProgram);
 		}
 	}
 
-	private void addToRoleIfRequired(RegisteredUser selectedUser,Authority[]  newAuthorities, Authority authority) {
+	private void addToRoleIfRequired(RegisteredUser selectedUser, Authority[] newAuthorities, Authority authority) {
 		if (!selectedUser.isInRole(authority) && newAuthoritiesContains(newAuthorities, authority)) {
-			selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));
+			selectedUser.getRoles().add(roleDAO.getRoleByAuthority(authority));			
 		}
 	}
 
-	private boolean newAuthoritiesContains( Authority[]  newAuthorities, Authority authority ){
+	private void addPendingRoleNotificationToUser(RegisteredUser selectedUser, Authority authority, Program program) {
+		PendingRoleNotification pendingRoleNotification = new PendingRoleNotification();
+		pendingRoleNotification.setRole(roleDAO.getRoleByAuthority(authority));
+		pendingRoleNotification.setProgram(program);
+		pendingRoleNotification.setAddedByUser(getCurrentUser());
+		selectedUser.getPendingRoleNotifications().add(pendingRoleNotification);
+	}
+
+	private boolean newAuthoritiesContains(Authority[] newAuthorities, Authority authority) {
 		return Arrays.asList(newAuthorities).contains(authority);
 	}
-	
 
 	@Transactional
-	public RegisteredUser createNewUserForProgramme(String firstName, String lastName, String email, Program program,  Authority...authorities) {
-	RegisteredUser newUser = userDAO.getUserByEmail(email);
+	public RegisteredUser createNewUserForProgramme(String firstName, String lastName, String email, Program program, Authority... authorities) {
+		RegisteredUser newUser = userDAO.getUserByEmail(email);
 		if (newUser != null) {
 			throw new IllegalStateException(String.format("user with email: %s already exists!", email));
 		}
 		newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authorities);
-		if(Arrays.asList(authorities).contains(Authority.REVIEWER)){
+		if (Arrays.asList(authorities).contains(Authority.SUPERADMINISTRATOR)) {
+			addPendingRoleNotificationToUser(newUser, Authority.SUPERADMINISTRATOR, null);
+		}
+		if (Arrays.asList(authorities).contains(Authority.REVIEWER)) {
 			newUser.getProgramsOfWhichReviewer().add(program);
+			addPendingRoleNotificationToUser(newUser, Authority.REVIEWER, program);
 		}
-		if(Arrays.asList(authorities).contains(Authority.ADMINISTRATOR)){
+		if (Arrays.asList(authorities).contains(Authority.ADMINISTRATOR)) {
 			newUser.getProgramsOfWhichAdministrator().add(program);
+			addPendingRoleNotificationToUser(newUser, Authority.ADMINISTRATOR, program);
 		}
-		if(Arrays.asList(authorities).contains(Authority.APPROVER)){
+		if (Arrays.asList(authorities).contains(Authority.APPROVER)) {
 			newUser.getProgramsOfWhichApprover().add(program);
+			addPendingRoleNotificationToUser(newUser, Authority.APPROVER, program);
 		}
-		if(Arrays.asList(authorities).contains(Authority.INTERVIEWER)){
+		if (Arrays.asList(authorities).contains(Authority.INTERVIEWER)) {
 			newUser.getProgramsOfWhichInterviewer().add(program);
+			addPendingRoleNotificationToUser(newUser, Authority.INTERVIEWER, program);
 		}
 		userDAO.save(newUser);
 		return newUser;
-	
+
 	}
 
 }

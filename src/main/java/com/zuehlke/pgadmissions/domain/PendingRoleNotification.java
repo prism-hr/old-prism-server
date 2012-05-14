@@ -15,7 +15,11 @@ public class PendingRoleNotification extends DomainObject<Integer> {
 
 
 	private static final long serialVersionUID = -2489009906410335249L;
-
+	
+	@ManyToOne
+	@JoinColumn(name = "added_by_user_id")
+	private RegisteredUser addedByUser;
+	
 	@ManyToOne
 	@JoinColumn(name = "role_id")
 	private Role role;
@@ -64,6 +68,14 @@ public class PendingRoleNotification extends DomainObject<Integer> {
 
 	public void setUser(RegisteredUser user) {
 		this.user = user;
+	}
+
+	public RegisteredUser getAddedByUser() {
+		return addedByUser;
+	}
+
+	public void setAddedByUser(RegisteredUser addedByUser) {
+		this.addedByUser = addedByUser;
 	}
 
 

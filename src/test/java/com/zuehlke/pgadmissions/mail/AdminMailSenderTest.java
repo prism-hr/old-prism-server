@@ -25,25 +25,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.utils.Environment;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.mail.internet.InternetAddress;
-
-import org.easymock.EasyMock;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessagePreparator;
-
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Program;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.utils.Environment;
 
 
 public class AdminMailSenderTest {
@@ -56,9 +37,8 @@ public class AdminMailSenderTest {
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
 		
-		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).toUser();
-		RegisteredUser applicant = new RegisteredUserBuilder().id(10).toUser();
-		RegisteredUser reviewer = new RegisteredUserBuilder().id(11).toUser();
+
+
 		RegisteredUser adminOne = new RegisteredUserBuilder().id(1).email("bob@test.com").toUser();
 		RegisteredUser adminTwo = new RegisteredUserBuilder().id(8).email("alice@test.com").toUser();
 

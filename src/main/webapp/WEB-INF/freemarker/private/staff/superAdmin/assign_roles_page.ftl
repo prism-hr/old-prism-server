@@ -90,7 +90,7 @@
 				
 					              	</div>
 					              	<div class="row">
-					                	or <a href="/pgadmissions/manageUsers/createNewUser">add a new user</a>
+					                	or <a href="/pgadmissions/manageUsers/createNewUser<#if selectedProgram??>?programId=${selectedProgram.id?string('#####')}</#if>" >add a new user</a>
 					              	</div>
 					              	<@spring.bind "updateUserRolesDTO.selectedUser" /> 
 									<#list spring.status.errorMessages as error>

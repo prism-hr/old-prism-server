@@ -89,7 +89,7 @@ public class MoveToInterviewController {
 
 	@RequestMapping(value = "/createInterviewer", method = RequestMethod.POST)
 	public String createInterviewer(@RequestParam Integer applicationId, @Valid @ModelAttribute("interviewer") RegisteredUser interviewer,
-			BindingResult bindingResult, @RequestParam String unsavedInterviewersRaw, ModelMap modelMap) {
+			BindingResult bindingResult,@RequestParam String unsavedInterviewersRaw, ModelMap modelMap) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Program program = applicationForm.getProgram();
 		if (bindingResult.hasErrors()) {
@@ -100,7 +100,8 @@ public class MoveToInterviewController {
 		if (interviewerUser == null) {
 			RegisteredUser newUser = interviewerService.createNewUserWithInterviewerRoleInProgram(interviewer, program);
 			modelMap.put("message", getMessage("assignInterviewer.user.created", newUser.getUsername(), newUser.getEmail()));
-		} else {
+		}
+		else {
 			if (interviewerUser.isInterviewerOfApplicationForm(applicationForm)) {
 				modelMap.put("message",
 						getMessage("assignInterviewer.user.alreadyExistsInTheApplication", interviewerUser.getUsername(), interviewerUser.getEmail()));
@@ -162,6 +163,7 @@ public class MoveToInterviewController {
 		return retval;
 	}
 
+	
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
 
@@ -173,6 +175,7 @@ public class MoveToInterviewController {
 		return application;
 	}
 
+	
 	@ModelAttribute("programme")
 	public Program getProgrammeForApplication(@RequestParam Integer applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
@@ -181,14 +184,17 @@ public class MoveToInterviewController {
 
 	@ModelAttribute("interviewer")
 	public RegisteredUser getInterviewer() {
+	
 		return new RegisteredUser();
 	}
 
+	
+	
 	@ModelAttribute("interview")
 	public Interview getInterview(@RequestParam(required = false) Integer interviewId, @RequestParam(required = false) Integer applicationId) {
 
 		if (applicationId != null) {
-			Interview interview = getApplicationForm(applicationId).getInterview();
+			Interview interview = getApplicationForm(applicationId).getCurrentInterview();
 			if (interview != null) {
 				return interview;
 			}
@@ -233,7 +239,8 @@ public class MoveToInterviewController {
 	public Set<RegisteredUser> getApplicationInterviewersAsUsers(@RequestParam Integer applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Set<RegisteredUser> existingInterviewers = new HashSet<RegisteredUser>();
-		for (Interviewer interviewer : applicationForm.getInterviewers()) {
+		Interview currentInterview = applicationForm.getCurrentInterview();
+		for (Interviewer interviewer : currentInterview.getInterviewers()) {
 			existingInterviewers.add(interviewer.getUser());
 		}
 		return existingInterviewers;
@@ -243,4 +250,5 @@ public class MoveToInterviewController {
 		return messageSource.getMessage(code, args, null);
 	}
 
+	
 }

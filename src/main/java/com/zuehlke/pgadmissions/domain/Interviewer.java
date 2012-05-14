@@ -40,6 +40,10 @@ public class Interviewer extends DomainObject<Integer> {
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application;
 
+	@ManyToOne
+	@JoinColumn(name = "interview_id")
+	private Interview interview;
+	
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
@@ -83,6 +87,14 @@ public class Interviewer extends DomainObject<Integer> {
 
 	public void setInterviewComment(InterviewComment interviewComment) {
 		this.interviewComment = interviewComment;
+	}
+
+	public Interview getInterview() {
+		return interview;
+	}
+
+	public void setInterview(Interview interview) {
+		this.interview = interview;
 	}
 
 }

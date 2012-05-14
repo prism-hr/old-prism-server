@@ -73,7 +73,7 @@ public class InterviewerService {
 		Interviewer interviewer = createNewInterviewer();
 		interviewer.setUser(interviewerUser);
 		interviewer.setApplication(application);
-		application.getInterviewers().add(interviewer);
+		application.getCurrentInterview().getInterviewers().add(interviewer);
 		System.err.println("saving: " +  interviewer);
 		interviewerDAO.save(interviewer);
 		

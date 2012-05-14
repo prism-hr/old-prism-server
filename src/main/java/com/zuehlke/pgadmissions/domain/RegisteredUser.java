@@ -245,8 +245,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 		
+		Interview currentInterview = applicationForm.getCurrentInterview(); 
 		if (isInRole(Authority.INTERVIEWER) && applicationForm.getStatus() == ApplicationFormStatus.INTERVIEW) {
-			for (Interviewer interviewer : applicationForm.getInterviewers()) {
+			for (Interviewer interviewer : currentInterview.getInterviewers()) {
 				if (this.equals(interviewer.getUser())) {
 					return true;
 				}
@@ -420,7 +421,8 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	}
 
 	public boolean isInterviewerOfApplicationForm(ApplicationForm form) {
-		for (Interviewer interviewer : form.getInterviewers()) {
+		Interview currentInterview = form.getCurrentInterview();
+		for (Interviewer interviewer : currentInterview.getInterviewers()) {
 			if (interviewer != null && this.equals(interviewer.getUser())) {
 				return true;
 			}
@@ -552,7 +554,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public List<Interviewer> getInterviewersForApplicationForm(ApplicationForm applicationForm) {
 		List<Interviewer> interviewers = new ArrayList<Interviewer>();
-		List<Interviewer> formInterviewers = applicationForm.getInterviewers();
+		List<Interviewer> formInterviewers = applicationForm.getCurrentInterview().getInterviewers();
 		for (Interviewer interviewer : formInterviewers) {
 			if (this.equals(interviewer.getUser())) {
 				interviewers.add(interviewer);

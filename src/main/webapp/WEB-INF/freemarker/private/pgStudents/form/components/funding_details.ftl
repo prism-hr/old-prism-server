@@ -210,7 +210,7 @@
 	      		<!-- Add another button -->
 	            <div class="row">
 	            	<div class="field">
-	                	<a id="addFundingButton" class="button blue">Add Funding</a>
+	                	<a id="addFundingButton" class="button blue">Submit</a>
 	                </div>
 	            </div>
 			</#if>

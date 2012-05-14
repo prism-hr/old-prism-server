@@ -344,7 +344,7 @@
       		<div class="row">
       			<div class="field">
       				<#if !referee.id??>
-      					<a id="addReferenceButton" class="button blue">Add Reference</a>
+      					<a id="addReferenceButton" class="button blue">Submit</a>
       				<#else>
       					<a id="addReferenceButton" class="button blue">Update Reference</a>
       				</#if>

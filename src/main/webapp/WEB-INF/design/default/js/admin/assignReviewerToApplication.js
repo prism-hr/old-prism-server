@@ -1,5 +1,4 @@
 $(document).ready(function() {
-
 	$('#addReviewerBtn').click(function() {
 		var selectedReviewers = $('#reviewers').val();
 		selectedReviewers.forEach(function(id) {

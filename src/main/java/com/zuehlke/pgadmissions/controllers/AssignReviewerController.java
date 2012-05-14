@@ -36,6 +36,7 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 @RequestMapping("/assignReviewers")
 public class AssignReviewerController {
 	private static final String ASSIGN_REVIEWERS_TO_APPLICATION_VIEW = "private/staff/admin/assign_reviewers_to_appl_page";
+	private static final String ASSIGN_REVIEWERS_TO_APPLICATION_SECTION = "private/staff/admin/assign_reviewers_to_appl_section";
 	private static final String NEXT_VIEW = "redirect:/applications";
 
 	private final ApplicationsService applicationService;
@@ -50,7 +51,7 @@ public class AssignReviewerController {
 	}
 
 	@Autowired
-	public AssignReviewerController(ApplicationsService applicationServiceMock, ReviewService reviewService,//
+	public AssignReviewerController(ApplicationsService applicationServiceMock, ReviewService reviewService,// 
 			UserService userService, NewUserByAdminValidator validator, MessageSource msgSource) {
 		this.applicationService = applicationServiceMock;
 		this.reviewService = reviewService;
@@ -85,7 +86,7 @@ public class AssignReviewerController {
 
 	@RequestMapping(value = "/createReviewer", method = RequestMethod.POST)
 	public String createReviewer(@ModelAttribute("programme") Program programme, //
-			@ModelAttribute("applicationForm") ApplicationForm form,//
+			@ModelAttribute("applicationForm") ApplicationForm form,// 
 			@Valid @ModelAttribute("uiReviewer") RegisteredUser uiReviewer,//
 			BindingResult bindingResult, //
 			@ModelAttribute("unsavedReviewers") ArrayList<RegisteredUser> unsavedReviewers,//
@@ -94,7 +95,7 @@ public class AssignReviewerController {
 		checkAdminPermission(programme);
 
 		if (bindingResult.hasErrors()) {
-			return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;
+			return ASSIGN_REVIEWERS_TO_APPLICATION_SECTION;
 		}
 
 		RegisteredUser reviewer = userService.getUserByEmailIncludingDisabledAccounts(uiReviewer.getEmail());
@@ -104,8 +105,7 @@ public class AssignReviewerController {
 			availableRevs = new ArrayList<RegisteredUser>();
 		}
 		if (reviewer == null) {
-			reviewer = userService.createNewUserForProgramme(uiReviewer.getFirstName(), uiReviewer.getLastName(), uiReviewer.getEmail(), programme,
-					Authority.REVIEWER);
+			reviewer = userService.createNewUserForProgramme(uiReviewer.getFirstName(), uiReviewer.getLastName(), uiReviewer.getEmail(), programme, Authority.REVIEWER);
 			modelMap.put("message", getMessage("assignReviewer.newReviewer.created", reviewer.getUsername(), reviewer.getEmail()));
 			availableRevs.add(reviewer);
 		} else {
@@ -123,7 +123,7 @@ public class AssignReviewerController {
 		if (unsavedReviewers != null) {
 			modelMap.put("unsavedReviewers", unsavedReviewers);
 		}
-		return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;
+		return ASSIGN_REVIEWERS_TO_APPLICATION_SECTION;
 	}
 
 	@ModelAttribute("uiReviewer")

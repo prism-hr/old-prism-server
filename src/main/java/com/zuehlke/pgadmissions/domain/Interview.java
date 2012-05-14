@@ -17,6 +17,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
+
 
 @Entity(name = "INTERVIEW")
 @Access(AccessType.FIELD)
@@ -31,6 +34,11 @@ public class Interview extends DomainObject<Integer> {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastNotified;
 
+	@Column(name = "created_date", insertable = false)
+	@Generated(GenerationTime.INSERT)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date createdDate;
+	
 	@Column(name = "further_details")
 	private String furtherDetails;
 	
@@ -112,6 +120,14 @@ public class Interview extends DomainObject<Integer> {
 
 	public void setInterviewers(List<Interviewer> interviewers) {
 		this.interviewers = interviewers;
+	}
+
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(Date created) {
+		this.createdDate = created;
 	}
 	
 }

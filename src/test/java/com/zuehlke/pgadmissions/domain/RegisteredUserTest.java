@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -119,6 +120,16 @@ public class RegisteredUserTest {
 	}
 
 	@Test
+	public void shouldReturnTrueIfUserInterviewerAndApplicationInInterviewStage() {
+		
+		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).
+				status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		assertTrue(interviewerUser.canSee(applicationForm));
+		
+	}
+	@Test
 	public void shouldReturnTrueIfUserReviewerAndApplicationInReviewStage() {
 
 		RegisteredUser revieweruser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
@@ -174,6 +185,15 @@ public class RegisteredUserTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(new ReviewerBuilder().user(revieweruser).toReviewer()).toApplicationForm();
 		assertFalse(revieweruser.canSee(applicationForm));
 	}
+
+	@Test
+	public void shouldReturnFalseIfUserIsNotItsInterviewer() {
+		RegisteredUser interviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
+		assertFalse(interviewer.canSee(applicationForm));
+		
+	}
+	
 
 	@Test
 	public void shouldReturnTrueForAnApplicantIfUnsubmittedApplication() {
@@ -566,6 +586,56 @@ public class RegisteredUserTest {
 	}
 	
 	@Test
+	public void shouldReturnTrueIfUserIsInterviewerOfApplicationAndHasProvidedInterview() {
+		
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		
+		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
+		InterviewComment interviewComment = new InterviewCommentBuilder().application(application).id(2).decline(CheckedStatus.NO).comment("This is an interview comment")
+				.commentType(CommentType.INTERVIEW).toInterviewComment();
+		Comment comment1 = new CommentBuilder().id(3).application(application).comment("This is another generic Comment").toComment();
+		
+		RegisteredUser interviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, interviewComment)
+				.roles(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
+		assertTrue(interviewer.hasRespondedToProvideInterviewFeedbackForApplication(application));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfUserIsInterviewerOfApplicationButHasNotProvidedInterviewFeedback() {
+		
+		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com")
+				.toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).id(1).toApplicationForm();
+		
+		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
+		Comment comment1 = new CommentBuilder().id(3).application(application).comment("This is another generic Comment").toComment();
+		
+		RegisteredUser interviewer = new RegisteredUserBuilder().programsOfWhichInterviewer(program).comments(comment1, comment)
+				.roles(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).username("email").firstName("bob").lastName("bobson")
+				.email("email@test.com").toUser();
+		assertFalse(interviewer.hasRespondedToProvideInterviewFeedbackForApplication(application));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfUserIsInterviewerButNotForThisInApplication() {
+		
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application1 = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		ApplicationForm application2 = new ApplicationFormBuilder().program(program).id(2).toApplicationForm();
+		
+		Comment comment = new CommentBuilder().id(1).application(application1).comment("This is a generic Comment").toComment();
+		InterviewComment interviewComment = new InterviewCommentBuilder().application(application2).id(2).decline(CheckedStatus.NO).comment("This is an interview comment")
+				.commentType(CommentType.INTERVIEW).toInterviewComment();
+		Comment comment1 = new CommentBuilder().id(3).application(application1).comment("This is another generic Comment").toComment();
+		
+		RegisteredUser interviewer = new RegisteredUserBuilder().programsOfWhichReviewer(program).comments(comment1, comment, interviewComment)
+				.roles(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
+		assertFalse(interviewer.hasRespondedToProvideInterviewFeedbackForApplication(application1));
+	}
+	
+	@Test
 	public void shouldReturnReviewersForApplicationForm() {
 		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
@@ -585,6 +655,28 @@ public class RegisteredUserTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
 		assertTrue(user.getReviewersForApplicationForm(applicationForm).isEmpty());
+	}
+	
+	@Test
+	public void shouldReturnInterviewersForApplicationForm() {
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
+		Interviewer interviewerOne = new InterviewerBuilder().id(7).user(user).toInterviewer();
+		Interviewer interviewerTwo = new InterviewerBuilder().id(8).user(new RegisteredUserBuilder().id(9).toUser()).toInterviewer();
+		Interviewer interviewerThree = new InterviewerBuilder().id(9).user(user).toInterviewer();
+		
+		
+		applicationForm.getInterviewers().addAll(Arrays.asList(interviewerOne, interviewerTwo,interviewerThree));
+		List<Interviewer> interviewers = user.getInterviewersForApplicationForm(applicationForm);
+		assertEquals(2, interviewers.size());
+		assertTrue(interviewers.containsAll(Arrays.asList(interviewerOne, interviewerThree)));
+	}
+	
+	@Test
+	public void shouldReturnEmptyListfNotInterviewerForApplicationForm() {
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(7).toApplicationForm();
+		assertTrue(user.getInterviewersForApplicationForm(applicationForm).isEmpty());
 	}
 
 }

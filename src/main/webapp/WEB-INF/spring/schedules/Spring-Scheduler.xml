@@ -2,6 +2,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 
 <beans>
+	<import resource="Applicant-Emails.xml" />
 
 	<bean id="mailServiceForTimers" class="com.zuehlke.pgadmissions.services.MailService"
 		autowire-candidate="false">
@@ -194,25 +195,6 @@
 		<property name="timerTask" ref="updateNotificationTimerTask" />
 	</bean>
 
-	<!-- applicant submitted notifications -->
-	<bean id="applicantSubmissionNotificationTimerTask"
-		class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask">
-		<constructor-arg index="0" ref="sessionFactoryMail" />
-		<constructor-arg index="1" ref="mailApplicationDAO" />
-		<constructor-arg index="2" ref="applicantMailSender" />
-		<constructor-arg index="3"
-			value="APPLICANT_SUBMISSION_NOTIFICATION" />
-		<constructor-arg index="4" value="VALIDATION" />
-		<constructor-arg index="5" value="has been recieved" />
-		<constructor-arg index="6"
-			value="private/pgStudents/mail/application_submit_confirmation.ftl" />
-	</bean>
-
-	<bean id="applicantSubmissionNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="10500" />
-		<property name="period" value="60000" />
-		<property name="timerTask" ref="applicantSubmissionNotificationTimerTask" />
-	</bean>
 	<!-- admin submitted notifications -->
 	<bean id="adminSubmissionNotificationTimerTask"
 		class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask">
@@ -233,25 +215,7 @@
 		<property name="timerTask" ref="adminSubmissionNotificationTimerTask" />
 	</bean>
 
-	<!-- move to review notifications -->
-	<bean id="moveToReviewNotificationTimerTask"
-		class="com.zuehlke.pgadmissions.timers.StateChangeNotificationTask">
-		<constructor-arg index="0" ref="sessionFactoryMail" />
-		<constructor-arg index="1" ref="mailApplicationDAO" />
-		<constructor-arg index="2" ref="applicantMailSender" />
-		<constructor-arg index="3"
-			value="APPLICANT_MOVED_TO_REVIEW_NOTIFICATION" />
-		<constructor-arg index="4" value="REVIEW" />
-		<constructor-arg index="5" value="now being reviewed" />
-		<constructor-arg index="6"
-			value="private/pgStudents/mail/moved_to_review_notification.ftl" />
-	</bean>
-
-	<bean id="moveToReviewNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="10000" />
-		<property name="period" value="60000" />
-		<property name="timerTask" ref="moveToReviewNotificationTimerTask" />
-	</bean>
+	
 
 	<!-- reviewer notification -->
 	<bean id="reviewerNotificationTimerTask" class="com.zuehlke.pgadmissions.timers.ReviewerNotificationTask">
@@ -306,6 +270,7 @@
 				<ref bean="reviewerNotificationSchedule"/>
 				<ref bean="reviewerReminderSchedule"/>
 				<ref bean="newUserNotificationSchedule"/>
+				<ref bean="moveToInterviewNotificationSchedule"/>
 			</list>
 		</property>
 	</bean>

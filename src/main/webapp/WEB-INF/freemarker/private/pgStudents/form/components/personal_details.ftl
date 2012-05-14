@@ -67,7 +67,7 @@
 			 	<#else>
 				 	<div class="section-info-bar">
 						<div class="row">
-							<span class="info-text">&nbsp
+							<span class="info-text">
 								<@spring.message 'personalDetails.sectionInfo'/> 
 							</span>
 						</div>
@@ -417,10 +417,10 @@
             
             <div>
           		<div class="row">
-          			<label class="group-heading-label">Equal Opportunities Details</label>
+          			<label class="group-heading-label">Equal Opportunities</label>
           		</div>
             	<div class="row">
-              		<label class="plain-label">Ethnicity</label>
+              		<label class="plain-label">Ethnicity<em>*</em></label>
                 	<span class="hint" data-desc="<@spring.message 'personalDetails.ethnicity'/>"></span>
                 	<div class="field">
                   		<select class="full" name="ethnicity" id="ethnicity" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
@@ -446,7 +446,7 @@
 				</#list>
               	
             	<div class="row">
-              		<label class="plain-label">Disability</label>
+              		<label class="plain-label">Disability<em>*</em></label>
                 	<span class="hint" data-desc="<@spring.message 'personalDetails.disability'/>"></span>
                 	<div class="field">
                   		<select class="full" name="disability" id="disability" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >

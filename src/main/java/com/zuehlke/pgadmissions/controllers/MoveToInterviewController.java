@@ -95,7 +95,7 @@ public class MoveToInterviewController {
 
 	@RequestMapping(value = "/createInterviewer", method = RequestMethod.POST)
 	public String createInterviewer(@RequestParam Integer applicationId, @Valid @ModelAttribute("interviewer") RegisteredUser interviewer,
-			BindingResult bindingResult,@RequestParam String unsavedInterviewersRaw, ModelMap modelMap) {
+			BindingResult bindingResult,@RequestParam String unsavedInterviewersRaw, @RequestParam(required = false) Boolean assignOnly, ModelMap modelMap) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Program program = applicationForm.getProgram();
 		if (bindingResult.hasErrors()) {
@@ -122,26 +122,23 @@ public class MoveToInterviewController {
 		if (unsavedInterviewers != null) {
 			modelMap.put("unsavedInterviewers", unsavedInterviewers);
 		}
+		modelMap.put("assignOnly", assignOnly);
 		modelMap.put("programmeInterviewers", getProgrammeInterviewers(applicationId, unsavedInterviewersRaw));
 		return INTERVIEW_DETAILS_VIEW_NAME;
 
 	}
 
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
-	public String moveToInterview(@RequestParam Integer applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult,
+	public String moveToInterview(@RequestParam Integer applicationId, @RequestParam(required = false) Boolean assignOnly, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult,
 			ModelMap modelMap, @ModelAttribute("unsavedInterviewers") ArrayList<RegisteredUser> unsavedInterviewers) {
 
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 
 		if (bindingResult.hasErrors()) {
+			modelMap.put("assignOnly", assignOnly);
 			return INTERVIEW_DETAILS_VIEW_NAME;
 		}
 
-		for (RegisteredUser interviewerUser : unsavedInterviewers) {
-			if (!interviewerUser.isInterviewerOfApplicationForm(applicationForm)) {
-				interviewerService.createInterviewerToApplication(interviewerUser, applicationForm);
-			}
-		}
 
 		interview.setApplication(applicationForm);
 		Calendar calendar = Calendar.getInstance();
@@ -152,7 +149,12 @@ public class MoveToInterviewController {
 		applicationForm.setLatestInterview(interview);
 		applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
 		applicationsService.save(applicationForm);
-
+		
+		for (RegisteredUser interviewerUser : unsavedInterviewers) {
+			if (!interviewerUser.isInterviewerOfApplicationForm(applicationForm)) {
+				interviewerService.createInterviewerToApplication(interviewerUser, applicationForm);
+			}
+		}
 		return "redirect:/applications";
 	}
 
@@ -172,7 +174,6 @@ public class MoveToInterviewController {
 	
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
-
 		ApplicationForm application = applicationsService.getApplicationById(applicationId);
 		if (application == null || !userService.getCurrentUser().isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram())
 				|| !userService.getCurrentUser().canSee(application)) {
@@ -198,7 +199,6 @@ public class MoveToInterviewController {
 	
 	@ModelAttribute("interview")
 	public Interview getInterview(@RequestParam(required = false) Integer interviewId, @RequestParam(required = false) Integer applicationId) {
-
 		if (applicationId != null) {
 			Interview interview = getApplicationForm(applicationId).getLatestInterview();
 			if (interview != null) {

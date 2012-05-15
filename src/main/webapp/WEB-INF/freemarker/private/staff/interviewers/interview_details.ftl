@@ -85,6 +85,7 @@
 							
 						</select>
 						<div class="buttons">
+							<input type="hidden" id="assignOnly" name="assignOnly" value="${assignOnly?string!}" />
 							 <#if assignOnly?? && assignOnly == false><button class="blue" type="button" id="removeInterviewerBtn">Remove</button></#if>
 							<button type="button" id="addInterviewerBtn">Add interviewer</button>
 						</div>

@@ -17,6 +17,7 @@ $(document).ready(function(){
 			firstName : $('#newInterviewerFirstName').val(),
 			lastName : $('#newInterviewerLastName').val(),
 			email : $('#newInterviewerEmail').val(),
+			assignOnly: $('#assignOnly').val(),
 			unsavedInterviewersRaw : idString
 		};
 		
@@ -46,6 +47,7 @@ $(document).ready(function(){
 			furtherDetails : $('#furtherDetails').val(),
 			interviewDueDate : $('#interviewDate').val(),
 			locationURL : $('#interviewLocation').val(),
+			assignOnly: $('#assignOnly').val(),
 			unsavedInterviewersRaw : idString
 		};
 		

@@ -218,10 +218,9 @@ public class MoveToInterviewControllerTest {
 		ModelMap mmap = new ModelMap();
 		Interview interview = new InterviewBuilder().id(4).furtherDetails("9 pm").locationURL("pgadmissions.com").dueDate(new Date()).toInterview();
 		interviewServiceMock.save(interview);
-		applicationServiceMock.save(application);
-		EasyMock.replay(interviewerServiceMock, applicationServiceMock);
-		controller.moveToInterview(application.getId(), interview, bindingResultMock, mmap, new ArrayList<RegisteredUser>());
-		EasyMock.verify(interviewerServiceMock, applicationServiceMock);
+		EasyMock.replay(interviewerServiceMock);
+		controller.moveToInterview(application.getId(), false, interview, bindingResultMock, mmap, new ArrayList<RegisteredUser>());
+		EasyMock.verify(interviewerServiceMock);
 		assertEquals(interview, application.getLatestInterview());
 	}
 
@@ -254,7 +253,7 @@ public class MoveToInterviewControllerTest {
 		EasyMock.expect(userMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
 		EasyMock.expect(userMock.isInterviewerOfProgram(program)).andReturn(true);
 		EasyMock.replay(userServiceMock, interviewerServiceMock, userMock);
-		String view = controller.createInterviewer(1, userMock, bindingResultMock,null, mmap);
+		String view = controller.createInterviewer(1, userMock, bindingResultMock,null, false, mmap);
 		Assert.assertEquals(INTERVIEW_DETAILS_VIEW_NAME, view);
 		EasyMock.verify(interviewerServiceMock, userServiceMock, userMock);
 		Assert.assertNull(mmap.get("interviewer"));
@@ -278,7 +277,7 @@ public class MoveToInterviewControllerTest {
 		EasyMock.expect(interviewerServiceMock.createNewUserWithInterviewerRoleInProgram(user, program)).andReturn(user);
 		
 		EasyMock.replay(userServiceMock, interviewerServiceMock);
-		controller.createInterviewer(1, user, bindingResultMock, null, mmap);
+		controller.createInterviewer(1, user, bindingResultMock, null,false, mmap);
 		EasyMock.verify(userServiceMock, interviewerServiceMock);
 	}
 	
@@ -305,7 +304,7 @@ public class MoveToInterviewControllerTest {
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts(null)).andReturn(userMock);
 		EasyMock.expect(userMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
 		EasyMock.replay(userServiceMock, interviewerServiceMock, userMock);
-		String view = controller.createInterviewer(1, userMock, bindingResultMock, null, mmap);
+		String view = controller.createInterviewer(1, userMock, bindingResultMock, null,false, mmap);
 		Assert.assertEquals(INTERVIEW_DETAILS_VIEW_NAME, view);
 		EasyMock.verify(interviewerServiceMock, userServiceMock, userMock);
 		Assert.assertNull(mmap.get("interviewer"));
@@ -341,7 +340,7 @@ public class MoveToInterviewControllerTest {
 		interviewerServiceMock.addInterviewerToProgram(userMock, program);
 		EasyMock.replay(userServiceMock, interviewerServiceMock, userMock);
 		
-		String view = controller.createInterviewer(1, userMock, bindingResultMock, null, mmap);
+		String view = controller.createInterviewer(1, userMock, bindingResultMock, null, false, mmap);
 		
 		Assert.assertEquals(INTERVIEW_DETAILS_VIEW_NAME, view);
 		EasyMock.verify(interviewerServiceMock, userServiceMock, userMock);
@@ -375,7 +374,7 @@ public class MoveToInterviewControllerTest {
 		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, applicationServiceMock);
-		assertEquals(INTERVIEW_DETAILS_VIEW_NAME, controller.moveToInterview(1, interview, errorsMock, new ModelMap(), new ArrayList<RegisteredUser>()));
+		assertEquals(INTERVIEW_DETAILS_VIEW_NAME, controller.moveToInterview(1, false, interview, errorsMock, new ModelMap(), new ArrayList<RegisteredUser>()));
 
 	}
 	
@@ -397,10 +396,9 @@ public class MoveToInterviewControllerTest {
 		Interview interview = new InterviewBuilder().furtherDetails("further").dueDate(new Date()).id(1).application(applicationForm).toInterview();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		interviewServiceMock.save(interview);
-		applicationServiceMock.save(applicationForm);
-		EasyMock.replay(errorsMock, interviewServiceMock, applicationServiceMock);
-		assertEquals("redirect:/applications", controller.moveToInterview(1, interview, errorsMock, new ModelMap(), new ArrayList<RegisteredUser>()));
-		EasyMock.verify(errorsMock, interviewServiceMock, applicationServiceMock);
+		EasyMock.replay(errorsMock, interviewServiceMock);
+		assertEquals("redirect:/applications", controller.moveToInterview(1, false, interview, errorsMock, new ModelMap(), new ArrayList<RegisteredUser>()));
+		EasyMock.verify(errorsMock, interviewServiceMock);
 		Assert.assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getStatus());
 		assertEquals(DateUtils.truncate(tomorrow, Calendar.DATE), DateUtils.truncate(interview.getInterviewDueDate(), Calendar.DATE));
 		

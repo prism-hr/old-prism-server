@@ -11,16 +11,19 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.util.WeakReferenceMonitor.ReleaseListener;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
@@ -48,6 +51,20 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 		assertEquals(lastNotified, reloadedReviewer.getLastNotified());
 	}
 	
+	@Test	
+	public void shouldLoadReviewerWithReviewRound() throws ParseException{
+		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");		
+		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(rewiewerUser).lastNotified(lastNotified).toReviewer();
+		save(reviewer);
+		
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).application(applicationForm).toReviewRound();
+		
+		sessionFactory.getCurrentSession().save(reviewRound);
+		flushAndClearSession();
+		
+		Reviewer reloadedReviewer = (Reviewer) sessionFactory.getCurrentSession().get(Reviewer.class,reviewer.getId());
+		assertEquals(reviewRound, reloadedReviewer.getReviewRound());
+	}
 	@Test
 	public void shoulLoadReviewWithReviewer() throws ParseException{
 		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(rewiewerUser).toReviewer();

@@ -16,6 +16,8 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.domain.builders.DisabilityBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EthnicityBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 
@@ -65,6 +67,7 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("personalDetails.email.invalid", mappingResult.getFieldError("email").getCode());
 	}
+
 	@Test
 	public void shouldRejectIfGenderisNull() {
 		personalDetails.setGender(null);
@@ -73,6 +76,7 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("personalDetails.gender.notempty", mappingResult.getFieldError("gender").getCode());
 	}
+
 	@Test
 	public void shouldRejectIfDateOfBirthisNull() {
 		personalDetails.setDateOfBirth(null);
@@ -81,7 +85,7 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("personalDetails.dateOfBirth.notempty", mappingResult.getFieldError("dateOfBirth").getCode());
 	}
-	
+
 	@Test
 	public void shouldRejectIfCountryIsNull() {
 		personalDetails.setCountry(null);
@@ -90,7 +94,7 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("personalDetails.country.notempty", mappingResult.getFieldError("country").getCode());
 	}
-	
+
 	@Test
 	public void shouldRejectIfResidenceCountryIsNull() {
 		personalDetails.setResidenceCountry(null);
@@ -99,7 +103,7 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("personalDetails.residenceCountry.notempty", mappingResult.getFieldError("residenceCountry").getCode());
 	}
-	
+
 	@Test
 	public void shouldRejectIfApplicationFormIsNull() {
 		personalDetails.setApplication(null);
@@ -108,7 +112,7 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("personalDetails.application.notempty", mappingResult.getFieldError("application").getCode());
 	}
-	
+
 	@Test
 	public void shouldRejectIfNoCandidateNationality() {
 		personalDetails.getCandidateNationalities().clear();
@@ -117,10 +121,9 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("personalDetails.candidateNationalities.notempty", mappingResult.getFieldError("candidateNationalities").getCode());
 	}
-	
-	
+
 	@Test
-	public void shouldRejectIfDOBISFutureDate(){
+	public void shouldRejectIfDOBISFutureDate() {
 		Date tomorrow;
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DATE, 1);
@@ -131,7 +134,7 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("personalDetails.dateOfBirth.future", mappingResult.getFieldError("dateOfBirth").getCode());
 	}
-	
+
 	@Test
 	public void shouldRejectIfPhoneNumberIsEmpty() {
 		personalDetails.setPhoneNumber(null);
@@ -140,13 +143,42 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("personalDetails.phoneNumber.notempty", mappingResult.getFieldError("phoneNumber").getCode());
 	}
-	
+
+	@Test
+	public void shouldRejectIfDisabilityIsNull() {
+		personalDetails.setDisability(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "disability");
+		personalDetailValidator.validate(personalDetails, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("personalDetails.disability.notempty", mappingResult.getFieldError("disability").getCode());
+	}
+
+	@Test
+	public void shouldRejectIfEthnicityIsNull() {
+		personalDetails.setEthnicity(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "ethnicity");
+		personalDetailValidator.validate(personalDetails, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("personalDetails.ethnicity.notempty", mappingResult.getFieldError("ethnicity").getCode());
+	}
+
 	@Before
-	public void setup(){
+	public void setup() {
 		Country nationality = new Country();
-		personalDetails = new PersonalDetailsBuilder().candiateNationalities(nationality).maternalGuardianNationalities(nationality).paternalGuardianNationalities(nationality).applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm()).country(new CountryBuilder().toCountry()).dateOfBirth(new Date()).email("email@test.com").firstName("bob")
-		.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith").residenceCountry(new CountryBuilder().toCountry()).phoneNumber("abc").toPersonalDetails();
-		
+		personalDetails = new PersonalDetailsBuilder()//
+				.candiateNationalities(nationality)//
+				.maternalGuardianNationalities(nationality)//
+				.paternalGuardianNationalities(nationality)//
+				.applicationForm(new ApplicationFormBuilder().id(2).toApplicationForm())//
+				.country(new CountryBuilder().toCountry())//
+				.dateOfBirth(new Date()).email("email@test.com").firstName("bob")//
+				.gender(Gender.PREFER_NOT_TO_SAY).lastName("smith")//
+				.residenceCountry(new CountryBuilder().toCountry())//
+				.phoneNumber("abc")//
+				.ethnicity(new EthnicityBuilder().id(23).toEthnicity())//
+				.disability(new DisabilityBuilder().id(23213).toDisability())//
+				.toPersonalDetails();
+
 		personalDetailValidator = new PersonalDetailsValidator();
 	}
 }

@@ -143,7 +143,9 @@ $(document).ready(function(){
 	 */ 
 	$('#submitAppButton').click(function(){
 		if( $("#acceptTermsValue").val() =='NO'){ 
-			$("span[name='nonAccepted']").html('You must agree to the terms and conditions');
+			//$("span[name='nonAccepted']").html('You must agree to the terms and conditions');
+			$("#acceptTermsSection form").css({background: 'red'});
+			$('.terms-label').css({color: 'red'});
 		}
 		else{
 			$("span[name='nonAccepted']").html('');

@@ -6,6 +6,7 @@ $(document).ready(function() {
 			$("#reviewers option[value='" + id + "']").remove();
 			$("#assignedReviewers").append('<option value="'+ id +'">'+ selText +'</option>');
 		});
+		return false;
 	});
 	
 	$('#removeReviewerBtn').click(function() {
@@ -15,6 +16,7 @@ $(document).ready(function() {
 			$("#assignedReviewers option[value='" + id + "']").remove();
 			$("#reviewers").append('<option value="'+ id +'">'+ selText +'</option>');
 		});
+		return false;
 	});
 
 	$('#createReviewer').click(function() {
@@ -33,6 +35,7 @@ $(document).ready(function() {
 				$('#assignReviewersToAppSection').html(data);
 			}
 		);
+		return false;
 	});
 	
 	$('#moveToReviewBtn').click(function() {

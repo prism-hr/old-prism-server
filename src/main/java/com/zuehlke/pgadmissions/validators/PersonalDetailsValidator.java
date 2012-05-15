@@ -41,6 +41,8 @@ public class PersonalDetailsValidator implements Validator {
 		if (StringUtils.isNotBlank(dob) && personalDetail.getDateOfBirth().after(today)) {
 			errors.rejectValue("dateOfBirth", "personalDetails.dateOfBirth.future");
 		}
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "disability", "personalDetails.disability.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ethnicity", "personalDetails.ethnicity.notempty");
 		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", "personalDetails.application.notempty");
 	}

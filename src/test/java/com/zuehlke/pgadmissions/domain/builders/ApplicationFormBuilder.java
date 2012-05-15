@@ -2,11 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
-import org.bouncycastle.ocsp.RevokedStatus;
 
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
@@ -17,7 +13,6 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -25,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
@@ -58,6 +54,7 @@ public class ApplicationFormBuilder {
 	private Date lastUpdated;
 	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
 	private List<Interview> interviews = new ArrayList<Interview>();
+	private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
 	private Interview latestInterview;
 	
 	public ApplicationFormBuilder latestInterview(Interview latestInterview) {
@@ -65,7 +62,15 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
-	public ApplicationFormBuilder reviewers(Reviewer...reviewers) {
+	
+	public ApplicationFormBuilder reviewRounds(ReviewRound... reviewRounds) {
+		for (ReviewRound reviewRound : reviewRounds) {
+			this.reviewRounds.add(reviewRound);
+		}
+		return this;
+	}
+	
+	public ApplicationFormBuilder reviewers(Reviewer... reviewers) {
 		for (Reviewer reviewer : reviewers) {
 			this.reviewers.add(reviewer);
 		}
@@ -262,6 +267,7 @@ public class ApplicationFormBuilder {
 		application.getApplicationComments().addAll(comments);
 		application.getInterviews().addAll(interviews);
 		application.setLatestInterview(latestInterview);
+		application.setReviewRounds(reviewRounds);
 		return application;
 	}
 }

@@ -26,12 +26,12 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -46,6 +46,7 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
@@ -326,30 +327,27 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	
 	
 	@Test
-	public void shouldLoadInterviewsForApplicationFormOrderedByCreatedDate() throws ParseException, InterruptedException {
+	public void shouldLoadInterviewsForApplicationForm() throws ParseException, InterruptedException {
 		
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).toApplicationForm();		
 		save(application);
 		
 		Interview interviewOne = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).application(application).toInterview();
 		save(interviewOne);
-		Thread.sleep(1000);
-		
+
 		Interview interviewTwo = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).application(application).toInterview();
 		save(interviewTwo);
-		Thread.sleep(1000);
+
 		
 		Interview interviewTrhee = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).application(application).toInterview();
 		save(interviewTrhee);
-		Thread.sleep(1000);
+
 		
 		flushAndClearSession();
 		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
 		assertEquals(3, reloadedApplication.getInterviews().size());
-		assertEquals(interviewOne, reloadedApplication.getInterviews().get(2));
-		assertEquals(interviewTwo, reloadedApplication.getInterviews().get(1));
-		assertEquals(interviewTrhee, reloadedApplication.getInterviews().get(0));
+		assertTrue(reloadedApplication.getInterviews().containsAll(Arrays.asList(interviewOne, interviewTwo, interviewTrhee)));
 		
 	}
 	
@@ -373,6 +371,34 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(interview, reloadedApplication.getLatestInterview());
 		
 	}
+	
+	
+
+	@Test
+	public void shouldLoadReveiwRoundForApplicationForm() throws ParseException, InterruptedException {
+		
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).toApplicationForm();		
+		save(application);
+		
+		ReviewRound reviewRoundOne = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).toReviewer()).application(application).toReviewRound();
+		save(reviewRoundOne);
+
+		ReviewRound reviewRoundTwo = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).toReviewer()).application(application).toReviewRound();
+		save(reviewRoundTwo);
+
+		
+		ReviewRound reviewRoundTrhee = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).toReviewer()).application(application).toReviewRound();
+		save(reviewRoundTrhee);
+
+		
+		flushAndClearSession();
+		
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		assertEquals(3, reloadedApplication.getReviewRounds().size());
+		assertTrue(reloadedApplication.getReviewRounds().containsAll(Arrays.asList(reviewRoundOne, reviewRoundTwo, reviewRoundTrhee)));
+		
+	}
+	
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

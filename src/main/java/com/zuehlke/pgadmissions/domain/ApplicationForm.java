@@ -110,6 +110,12 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne(mappedBy = "application")
 	private ProgrammeDetails programmeDetails;
 
+	
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "application_form_id")
+	private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
+	
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
@@ -508,6 +514,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setLatestInterview(Interview latestInterview) {
 		this.latestInterview = latestInterview;
+	}
+
+	public List<ReviewRound> getReviewRounds() {
+		return reviewRounds;
+	}
+
+	public void setReviewRounds(List<ReviewRound> reviewRound) {
+		this.reviewRounds = reviewRound;
 	}
 
 }

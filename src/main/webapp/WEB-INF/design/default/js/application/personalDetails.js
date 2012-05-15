@@ -115,7 +115,8 @@ $(document).ready(function(){
 	
 	$('#personalDetailsSaveButton').on("click", function(){	
 		if( $("#acceptTermsPEDValue").val() =='NO'){ 
-			$("span[name='nonAcceptedPED']").html('You must agree to the terms and conditions');
+			//$("span[name='nonAcceptedPED']").html('You must agree to the terms and conditions');
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}
 		else{
 			$("span[name='nonAcceptedPED']").html('');

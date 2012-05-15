@@ -29,7 +29,6 @@
             	<tr>
                 	<th colspan="2">Position</th>
                     <th>From</th>
-                    <th>To</th>
                     <th>&nbsp;</th>
                     <th id="last-col">&nbsp;</th>
                 </tr>
@@ -41,8 +40,7 @@
 	            	<tr>
 	                    <td><a class="row-arrow">-</a></td>
 	                    <td>${(position.position?html)!} &nbsp ${(employmentPosition.employerName?html)!}</td>
-	                    <td>${(position.startDate?string('dd MMM yyyy'))!}&nbsp-&nbsp 
-	                    ${(position.endDate?string('dd MMM yyyy'))!}</td>
+	                    <td>${(position.startDate?string('dd MMM yyyy'))!} - ${(position.endDate?string('dd MMM yyyy'))!"Ongoing"}</td>
 	                     
 	                    	<td>		                		
 		                		<a name="positionEditButton" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if>

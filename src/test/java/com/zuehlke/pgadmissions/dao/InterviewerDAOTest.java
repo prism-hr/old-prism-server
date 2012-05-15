@@ -16,12 +16,14 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -70,12 +72,12 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldReturnInterviewerIfLastModifiedIsNull() {
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW)
-				.toApplicationForm();
-		save(application);
-		flushAndClearSession();
+		
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
 		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).toInterviewer();
-		save(interviewer);
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.setLatestInterview(interview);
+		save(application, interviewer, interview);
 		flushAndClearSession();
 
 		List<Interviewer> interviewers = dao.getInterviewersDueNotification();
@@ -85,12 +87,12 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldNotReturnInterviewerInLastNotifiedIsNotNull() {
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW)
-				.toApplicationForm();
-		save(application);
-		flushAndClearSession();
-		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(new Date()).application(application).toInterviewer();
-		save(interviewer);
+		
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(new Date()).toInterviewer();
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.setLatestInterview(interview);
+		save(application, interviewer, interview);
 		flushAndClearSession();
 
 		List<Interviewer> interviewers = dao.getInterviewersDueNotification();
@@ -100,13 +102,26 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldNotReturnInterviewerIfApplicationNotInInterview() {
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();
-		save(application);
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).toInterviewer();
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.setLatestInterview(interview);
+		save(application, interviewer, interview);
 		flushAndClearSession();
 
+		List<Interviewer> interviewers = dao.getInterviewersDueNotification();
+		assertFalse(interviewers.contains(interviewer));
+
+		
+	}
+	@Test
+	public void shouldNotReturnInterviewerifNotInterviewerOfLatestInterview() {
+		
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
 		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).toInterviewer();
-		save(interviewer);
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.getInterviews().add(interview);
+		save(application, interviewer, interview);
 		flushAndClearSession();
 
 		List<Interviewer> interviewers = dao.getInterviewersDueNotification();
@@ -119,36 +134,54 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 		Date now = new Date();
 		Date sevenDaysAgo = DateUtils.addDays(now, -7);
 		Date twoWeeksAgo = DateUtils.addDays(now, -14);
-		Date sevenDaysMinus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, 5);
-		
+		Date sevenDaysMinus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, 5);			
+			
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(twoWeeksAgo)
 				.toApplicationForm();
-		save(application);
-		flushAndClearSession();
-		
 		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
-		save(interviewer);
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.setLatestInterview(interview);
+		save(application, interviewer, interview);
 		flushAndClearSession();
 
 		List<Interviewer> interviewers = dao.getInterviewersDueReminder();
 		assertTrue(interviewers.contains(interviewer));
 	}
 	
+	
+	@Test
+	public void shouldNotReturnInterviewerIfNotInterviewerOfLatestInterview() {
+		Date now = new Date();
+		Date sevenDaysAgo = DateUtils.addDays(now, -7);
+		Date twoWeeksAgo = DateUtils.addDays(now, -14);
+		Date sevenDaysMinus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, 5);			
+			
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(twoWeeksAgo)
+				.toApplicationForm();
+		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.getInterviews().add(interview);
+		save(application, interviewer, interview);
+		flushAndClearSession();
+
+		List<Interviewer> interviewers = dao.getInterviewersDueReminder();
+		assertFalse(interviewers.contains(interviewer));
+	}
+	
 	@Test
 	public void shouldNotReturnInterviewerForAppNotInInterview() {
 		Date now = new Date();
-		Date sevenDaysAgo = DateUtils.addDays(now, -7);		
-		Date sevenDaysMinus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, 5);
-		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW).dueDate(sevenDaysAgo)
+		Date sevenDaysAgo = DateUtils.addDays(now, -7);
+		Date twoWeeksAgo = DateUtils.addDays(now, -14);
+		Date sevenDaysMinus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, 5);			
+			
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW).dueDate(twoWeeksAgo)
 				.toApplicationForm();
-		save(application);
-		flushAndClearSession();
-		
 		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
-		save(interviewer);
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.setLatestInterview(interview);
+		save(application, interviewer, interview);
 		flushAndClearSession();
-
 		List<Interviewer> interviewers = dao.getInterviewersDueReminder();
 		assertFalse(interviewers.contains(interviewer));
 	}
@@ -162,12 +195,12 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(inTwoWeeks)
 				.toApplicationForm();
-		save(application);
-		flushAndClearSession();
-		
 		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
-		save(interviewer);
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.setLatestInterview(interview);
+		save(application, interviewer, interview);
 		flushAndClearSession();
+	
 
 		List<Interviewer> interviewers = dao.getInterviewersDueReminder();
 		assertFalse(interviewers.contains(interviewer));
@@ -182,68 +215,49 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(sixDaysAgo)
 				.toApplicationForm();
-		save(application);
-		flushAndClearSession();
-		
 		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
-		save(interviewer);
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.setLatestInterview(interview);
+		save(application, interviewer, interview);
 		flushAndClearSession();
 
 		List<Interviewer> interviewers = dao.getInterviewersDueReminder();
 		assertFalse(interviewers.contains(interviewer));
 	}
 	
-	@Test
-	public void shouldNotReturnInterviewerIfNotInterviewerOfCurrentInterview() {
-		Date now = new Date();
-		Date sevenDaysAgo = DateUtils.addDays(now, -7);
-		Date sixDaysAgo = DateUtils.addDays(now, -6);
-		Date sevenDaysMinus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, 5);
-		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(sixDaysAgo)
-				.toApplicationForm();
-		save(application);
-		flushAndClearSession();
-		
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
-		save(interviewer);
-		flushAndClearSession();
-
-		List<Interviewer> interviewers = dao.getInterviewersDueReminder();
-		assertFalse(interviewers.contains(interviewer));
-	}
-	@Test
-	@Ignore
+	@Test	
 	public void shouldReturnInterviewerReminded7Plus5minDaysAgo() {
-		fail("");
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();
-		save(application);
-		flushAndClearSession();
+
 		Date now = new Date();
 		Date sevenDaysAgo = DateUtils.addDays(now, -7);
-		Date sevenDaysPlus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, -5);
+		Date twoWeeksAgo = DateUtils.addDays(now, -14);
+		Date sevenDaysPlus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, -5);			
+			
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(twoWeeksAgo)
+				.toApplicationForm();
 		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysPlus5MinutesAgo).toInterviewer();
-		save(interviewer);
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.setLatestInterview(interview);
+		save(application, interviewer, interview);
 		flushAndClearSession();
-
+		
 		List<Interviewer> interviewers = dao.getInterviewersDueReminder();
 		assertTrue(interviewers.contains(interviewer));
 	}
 
 	@Test
-	@Ignore
-	public void shouldNotReturnInterviewerLastNotified6DaysAgo() {
-		fail("");
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();
-		save(application);
-		flushAndClearSession();
+	public void shouldNotReturnInterviewerLastReminded6DaysAgo() {
 		Date now = new Date();
 		Date sixDaysAgo = DateUtils.addDays(now, -6);
-
+		Date twoWeeksAgo = DateUtils.addDays(now, -14);
+			
+			
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(twoWeeksAgo)
+				.toApplicationForm();
 		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sixDaysAgo).toInterviewer();
-		save(interviewer);
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.setLatestInterview(interview);
+		save(application, interviewer, interview);
 		flushAndClearSession();
 
 		List<Interviewer> interviewers = dao.getInterviewersDueReminder();
@@ -251,43 +265,26 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	@Ignore
-	public void shouldReturnNotInterviewerWithInterview() {
-		fail("");
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.toApplicationForm();
-		save(application);
-		flushAndClearSession();
+		public void shouldReturnNotInterviewerWhoHaveProvidedFeedback() {
 		Date now = new Date();
 		Date sevenDaysAgo = DateUtils.addDays(now, -7);
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysAgo).toInterviewer();
-		InterviewComment reviewComment = new InterviewCommentBuilder().interviewer(interviewer).adminsNotified(CheckedStatus.NO).commentType(CommentType.REVIEW)
-				.comment("This is a review comment").suitableCandidate(CheckedStatus.NO).user(user).application(application).decline(CheckedStatus.YES)
-				.willingToSupervice(CheckedStatus.NO).toInterviewComment();
-		save(interviewer, reviewComment);
-
-		flushAndClearSession();
-
-		List<Interviewer> interviewers = dao.getInterviewersDueReminder();
-		assertFalse(interviewers.contains(interviewer));
-	}
-	@Test
-	@Ignore
-	public void shouldNotReturnInterviewerIfApplicationFormNotInInterview() {
-		fail("");
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL)
+		Date twoWeeksAgo = DateUtils.addDays(now, -14);
+		Date sevenDaysMinus5MinutesAgo = DateUtils.addMinutes(sevenDaysAgo, 5);			
+			
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(twoWeeksAgo)
 				.toApplicationForm();
-		save(application);
-		flushAndClearSession();
-		Date now = new Date();
-		Date sevenDaysAgo = DateUtils.addDays(now, -7);		
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysAgo).toInterviewer();
-		save(interviewer);
+		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		application.setLatestInterview(interview);
+		InterviewComment interviewComment = new InterviewCommentBuilder().interviewer(interviewer).adminsNotified(CheckedStatus.NO).commentType(CommentType.INTERVIEW).comment("This is an interview comment").suitableCandidate(CheckedStatus.NO).user(user).application(application).toInterviewComment();
+		save(application, interviewer, interview, interviewComment);
 		flushAndClearSession();
 
 		List<Interviewer> interviewers = dao.getInterviewersDueReminder();
 		assertFalse(interviewers.contains(interviewer));
+	
 	}
+	
 	
 	@Before
 	public void setUp() {

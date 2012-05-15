@@ -23,7 +23,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 public class InterviewCommentMappingTest extends AutomaticRollbackTestCase{
 
 	@Test
-	public void shouldSaveAndLoadReviewComment(){
+	public void shouldSaveAndLoadInterviewComment(){
 		Program program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
 		save( program);
 		

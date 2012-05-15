@@ -244,8 +244,8 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 				}
 			}
 		}
-		
-		Interview latestInterview = applicationForm.getLatestInterview(); 
+
+		Interview latestInterview = applicationForm.getLatestInterview();
 		if (isInRole(Authority.INTERVIEWER) && latestInterview != null && applicationForm.getStatus() == ApplicationFormStatus.INTERVIEW) {
 			for (Interviewer interviewer : latestInterview.getInterviewers()) {
 				if (this.equals(interviewer.getUser())) {
@@ -421,9 +421,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	}
 
 	public boolean isInterviewerOfApplicationForm(ApplicationForm form) {
-		Interview currentInterview = form.getLatestInterview();
-		if(currentInterview!=null){
-			for (Interviewer interviewer : currentInterview.getInterviewers()) {
+		Interview latestInterview = form.getLatestInterview();
+		if (latestInterview != null) {
+			for (Interviewer interviewer : latestInterview.getInterviewers()) {
 				if (interviewer != null && this.equals(interviewer.getUser())) {
 					return true;
 				}
@@ -441,7 +441,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		return false;
 	}
-	
+
 	public boolean hasRefereesInApplicationForm(ApplicationForm form) {
 		return getRefereeForApplicationForm(form) != null;
 	}
@@ -510,7 +510,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return false;
 	}
 
-	
 	public boolean hasRespondedToProvideInterviewFeedbackForApplication(ApplicationForm application) {
 		for (Comment comment : comments) {
 			if (comment.getApplication().equals(application) && comment.getType().equals(CommentType.INTERVIEW)) {
@@ -519,7 +518,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		return false;
 	}
-	
+
 	public boolean hasDeclinedToProvideReviewForApplication(ApplicationForm application) {
 
 		for (Comment comment : comments) {
@@ -564,7 +563,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		return interviewers;
 	}
-	
+
 	public List<PendingRoleNotification> getPendingRoleNotifications() {
 		return pendingRoleNotifications;
 	}

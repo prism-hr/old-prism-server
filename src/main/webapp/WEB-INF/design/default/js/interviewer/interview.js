@@ -43,8 +43,7 @@ $(document).ready(function(){
 	$('#moveToInterviewBtn').click(function() {
 		var idString = getAssignedInterviewerIdString();
 		var postData ={ 
-			applicationId : $('#applicationId').val(),
-			furtherDetails : $('#furtherDetails').val(),
+			applicationId : $('#applicationId').val(),			furtherDetails : $('#furtherDetails').val(),
 			interviewDueDate : $('#interviewDate').val(),
 			locationURL : $('#interviewLocation').val(),
 			assignOnly: $('#assignOnly').val(),

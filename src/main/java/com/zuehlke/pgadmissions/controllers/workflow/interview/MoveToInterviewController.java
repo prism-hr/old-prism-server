@@ -94,8 +94,7 @@ public class MoveToInterviewController extends InterviewController{
 		if (bindingResult.hasErrors()) {
 			return INTERVIEW_DETAILS_VIEW_NAME;
 		}
-	
-		
+			
 	
 		interview.setApplication(applicationForm);
 		Calendar calendar = Calendar.getInstance();

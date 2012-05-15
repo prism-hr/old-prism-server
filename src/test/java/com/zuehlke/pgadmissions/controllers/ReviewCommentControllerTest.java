@@ -45,7 +45,7 @@ public class ReviewCommentControllerTest {
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isReviewerOfApplicationForm(applicationForm)).andReturn(true);;
+		EasyMock.expect(currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);;
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser, userServiceMock);
 		
@@ -69,7 +69,7 @@ public class ReviewCommentControllerTest {
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isReviewerOfApplicationForm(applicationForm)).andReturn(false);
+		EasyMock.expect(currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(false);
 		EasyMock.replay(currentUser, userServiceMock);
 		
 		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
@@ -88,7 +88,7 @@ public class ReviewCommentControllerTest {
 		
 		RegisteredUser currentUser = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-		EasyMock.expect(currentUser.isReviewerOfApplicationForm(applicationForm)).andReturn(true);
+		EasyMock.expect(currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(currentUser, userServiceMock);
 		

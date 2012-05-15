@@ -117,9 +117,9 @@ public abstract class InterviewController {
 	public Set<RegisteredUser> getApplicationInterviewersAsUsers(@RequestParam Integer applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Set<RegisteredUser> existingInterviewers = new HashSet<RegisteredUser>();
-		Interview currentInterview = applicationForm.getLatestInterview();
-		if(currentInterview != null){
-			for (Interviewer interviewer : currentInterview.getInterviewers()) {
+		Interview latestInterview = applicationForm.getLatestInterview();
+		if(latestInterview != null){
+			for (Interviewer interviewer : latestInterview.getInterviewers()) {
 				existingInterviewers.add(interviewer.getUser());
 			}
 		}

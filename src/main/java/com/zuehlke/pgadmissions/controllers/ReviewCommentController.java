@@ -50,7 +50,7 @@ public class ReviewCommentController {
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
 		RegisteredUser currentUser = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
-		if (applicationForm == null  || !currentUser.isReviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm) ){
+		if (applicationForm == null  || !currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm) ){
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;

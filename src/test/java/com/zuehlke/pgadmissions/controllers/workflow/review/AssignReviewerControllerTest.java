@@ -24,10 +24,12 @@ import com.zuehlke.pgadmissions.controllers.workflow.review.AssignReviewerContro
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -233,7 +235,7 @@ public class AssignReviewerControllerTest {
 	// -------------------------------------------
 	// ------- existing reviewers of an application:
 	@Test
-	public void getEmptyApplicationReviewerList() {
+	public void getEmptyApplicationReviewerIfNoLatestsReviewRoundList() {
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
 		Set<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(5);
@@ -243,7 +245,8 @@ public class AssignReviewerControllerTest {
 
 	@Test
 	public void getAvailableReviewersMinusAlreadyReviewerOfApplication() {
-		application.getReviewers().add(new ReviewerBuilder().user(reviewerUser1).toReviewer());
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser1).toReviewer()).toReviewRound();
+		application.setLatestReviewRound(reviewRound);
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
 		List<RegisteredUser> availableReviewers = controllerUT.getAvailableReviewers(5, null);
@@ -254,8 +257,9 @@ public class AssignReviewerControllerTest {
 
 	@Test
 	public void getExistingApplicationReviewerList() {
-		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser2).toReviewer();
-		application.setReviewers(Arrays.asList(reviewer));
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser2).toReviewer()).toReviewRound();
+		application.setLatestReviewRound(reviewRound);
+		
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
 		Set<RegisteredUser> applReviewers = controllerUT.getApplicationReviewers(5);
@@ -388,7 +392,8 @@ public class AssignReviewerControllerTest {
 		prepareMessageSourceMock("assignReviewer.reviewer.alreadyExistsInTheApplication", new Object[] { "rev 1", "rev1@bla.com" }, "SDFSDFSDFSDF");
 		EasyMock.replay(reviewServiceMock, userServiceMock, messageSourceMock);
 		RegisteredUser inputUser = new RegisteredUserBuilder().id(3).email("hui@blu.com").toUser();
-		ApplicationForm newApplication = new ApplicationFormBuilder().id(1).reviewers(new ReviewerBuilder().user(reviewerUser1).toReviewer()).toApplicationForm();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser1).toReviewer()).toReviewRound();
+		ApplicationForm newApplication = new ApplicationFormBuilder().id(1).latestReviewRound(reviewRound).toApplicationForm();
 		ModelMap mmap = new ModelMap();
 		String view = controllerUT.createReviewer(program, newApplication, inputUser, bindingResultMock, null, mmap);
 

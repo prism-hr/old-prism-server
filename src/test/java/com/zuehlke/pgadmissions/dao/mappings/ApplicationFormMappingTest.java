@@ -139,32 +139,6 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 	}
 	
-
-
-	@Test
-	public void shouldSaveLoadApplicationFormWithReviewer() {
-		
-		ApplicationForm application = new ApplicationForm();
-		application.setProgram(program);
-		application.setApplicant(user);
-		
-		application.getReviewers().add(new ReviewerBuilder().user(reviewerUser).toReviewer());
-
-		sessionFactory.getCurrentSession().save(application);
-
-		flushAndClearSession();
-
-		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		assertNotSame(application, reloadedApplication);
-		assertEquals(application, reloadedApplication);
-		
-		Assert.assertEquals(1, reloadedApplication.getReviewers().size());
-		Reviewer reviewer = reloadedApplication.getReviewers().get(0);
-		assertEquals(reviewerUser,reviewer.getUser());
-		assertEquals(reloadedApplication, reviewer.getApplication());
-		
-	}
-	
 	@Test
 	public void shouldSaveAndLoadApplicationFormWithAddress() {
 		ApplicationForm application = new ApplicationForm();
@@ -399,6 +373,28 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 	}
 	
+	@Test
+	public void shouldSaveAndLoadLatestReviewRound() throws ParseException, InterruptedException {
+		
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).toApplicationForm();		
+		save(application);
+		
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).toReviewer()).application(application).toReviewRound();
+		save(reviewRound);
+		
+		application.setLatestReviewRound(reviewRound);
+		save(application);
+		
+		flushAndClearSession();
+		
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		
+		assertEquals(reviewRound, reloadedApplication.getLatestReviewRound());
+		
+	}
+	
+	
+
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

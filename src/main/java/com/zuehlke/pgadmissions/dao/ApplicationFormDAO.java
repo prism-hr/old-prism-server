@@ -148,7 +148,7 @@ public class ApplicationFormDAO {
 			}
 		}
 		
-		List<ApplicationForm> reviewerApps = getApplicationsOfWhichReviewerCurrentlyInReview(user);
+		List<ApplicationForm> reviewerApps = getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(user);
 		for (ApplicationForm applicationForm : reviewerApps) {
 			if (!apps.contains(applicationForm)) {
 				apps.add(applicationForm);
@@ -177,10 +177,12 @@ public class ApplicationFormDAO {
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
 				.add(Restrictions.in("program", user.getProgramsOfWhichApprover())).list();
 	}
+	
 	@SuppressWarnings("unchecked")
-	private List<ApplicationForm> getApplicationsOfWhichReviewerCurrentlyInReview(RegisteredUser user) {
+	private List<ApplicationForm> getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(RegisteredUser user) {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("status", ApplicationFormStatus.REVIEW))
-				.createAlias("reviewers", "reviewer").add(Restrictions.eq("reviewer.user", user)).list();
+				.createAlias("latestReviewRound", "latestReviewRound")
+				.createAlias("latestReviewRound.reviewers", "reviewer").add(Restrictions.eq("reviewer.user", user)).list();
 	}
 	
 	@SuppressWarnings("unchecked")

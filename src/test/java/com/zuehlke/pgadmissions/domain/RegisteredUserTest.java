@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -143,9 +144,8 @@ public class RegisteredUserTest {
 	public void shouldReturnTrueIfUserReviewerAndApplicationInReviewStage() {
 
 		RegisteredUser revieweruser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(new ReviewerBuilder().user(revieweruser).toReviewer())
-				.status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(revieweruser).toReviewer()).toReviewRound();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().latestReviewRound(reviewRound).status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		assertTrue(revieweruser.canSee(applicationForm));
 
 	}
@@ -173,9 +173,8 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserIsReviewerOfForm() {
 		RegisteredUser revieweruser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(new ReviewerBuilder().user(revieweruser).toReviewer())
-				.status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(revieweruser).toReviewer()).toReviewRound();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().latestReviewRound(reviewRound).status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		assertTrue(revieweruser.canSee(applicationForm));
 
 	}
@@ -191,8 +190,8 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnFalseForAnyoneNotAnApplicantIfUnsubmittedApplication() {
 		RegisteredUser revieweruser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(new ReviewerBuilder().user(revieweruser).toReviewer()).toApplicationForm();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(revieweruser).toReviewer()).toReviewRound();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().latestReviewRound(reviewRound).toApplicationForm();
 		assertFalse(revieweruser.canSee(applicationForm));
 	}
 
@@ -235,29 +234,52 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserIsReviewerTApplication() {
 		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).toReviewer())
-				.status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		assertTrue(reviewerUser.isReviewerOfApplicationForm(applicationForm));
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).toReviewer()).toReviewRound();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().latestReviewRound(reviewRound).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertTrue(reviewerUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm));
 	}
+	@Test
+	public void shouldReturnFalseIfLatestReviewRoundIsNull() {
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
 
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertFalse(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm));
+	}
 	@Test
 	public void shouldReturnFalseIfUserIsReviewerButNotInApplication() {
 		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
 		Program program = new ProgramBuilder().id(1).toProgram();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		assertFalse(reviewer.isReviewerOfApplicationForm(applicationForm));
+		ApplicationForm applicationForm = new ApplicationFormBuilder().latestReviewRound(new ReviewRoundBuilder().toReviewRound()).program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertFalse(reviewer.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm));
 	}
 
 	@Test
 	public void shouldReturnFalseIfUserIsApproverInApplication() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().approver(approver).status(ApplicationFormStatus.VALIDATION)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().latestReviewRound(new ReviewRoundBuilder().toReviewRound()).approver(approver).status(ApplicationFormStatus.VALIDATION)
 				.toApplicationForm();
-		assertFalse(approver.isReviewerOfApplicationForm(applicationForm));
+		assertFalse(approver.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm));
 	}
 
+	@Test
+	public void shouldReturnTrueIfUserIsPastOrPresentReviewerOfApplication() {
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewerUser).toReviewer()).toReviewRound();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertTrue(reviewerUser.isPastOrPresentReviewerOfApplicationForm(applicationForm));
+	}
+
+
+	@Test
+	public void shouldReturnFalseIfUserIsNeitherPastOrPresentReviewerOfApplication() {
+		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION)
+				.toApplicationForm();
+		assertFalse(approver.isPastOrPresentReviewerOfApplicationForm(applicationForm));
+	}
+	
 	@Test
 	public void shouldReturnFalseForInterviewersIfUserIsApproverInApplication() {
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
@@ -653,9 +675,9 @@ public class RegisteredUserTest {
 		Reviewer reviewerOne = new ReviewerBuilder().id(7).user(user).toReviewer();
 		Reviewer reviewerTwo = new ReviewerBuilder().id(8).user(new RegisteredUserBuilder().id(9).toUser()).toReviewer();
 		Reviewer reviewerThree = new ReviewerBuilder().id(9).user(user).toReviewer();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewerOne, reviewerTwo, reviewerThree).toReviewRound();
 		
-		
-		applicationForm.getReviewers().addAll(Arrays.asList(reviewerOne, reviewerTwo,reviewerThree));
+		applicationForm.setLatestReviewRound(reviewRound);
 		List<Reviewer> reviewers = user.getReviewersForApplicationForm(applicationForm);
 		assertEquals(2, reviewers.size());
 		assertTrue(reviewers.containsAll(Arrays.asList(reviewerOne, reviewerThree)));

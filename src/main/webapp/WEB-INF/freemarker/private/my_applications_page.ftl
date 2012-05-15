@@ -113,7 +113,7 @@
 							                	    <#if user.isReviewerOfApplicationForm(application) && !user.isAdminInProgramme(application.program) && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn() >
       													<option value="assignReviewer">Assign Reviewer</option>
         		  									</#if>
-							                	   <#if user.isInRoleInProgram('ADMINISTRATOR', application.program) && application.isInState('INTERVIEW')> 
+							                	   <#if (user.isInRoleInProgram('ADMINISTRATOR', application.program) || user.isInterviewerOfApplicationForm(application)) && application.isInState('INTERVIEW')> 
       													<option value="assignInterviewer">Assign Interviewer</option>
         		  									</#if>
 									    			<#if user.isReviewerOfApplicationForm(application) && application.isInState('REVIEW') && !user.hasRespondedToProvideReviewForApplication(application)> 

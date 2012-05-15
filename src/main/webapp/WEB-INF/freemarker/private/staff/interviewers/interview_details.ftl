@@ -69,13 +69,12 @@
 					<div class="content-box-inner">
 						<@spring.bind "applicationForm.*" />
 						<@spring.bind "programmeInterviewers.*" />
-						<@spring.bind "applicationInterviewers.*" />
-						<@spring.bind "programme.*" />
+						<@spring.bind "applicationInterviewers.*" />						
 						<@spring.bind "unsavedInterviewers.*" />
 						<div id="messageSection"></div>
 						Application ID: ${(applicationForm.id?string('#####'))!} 
 						<br></br>
-						Program name: ${(programme.title?string)!} 
+						Program name: ${(applicationForm.program.title?string)!} 
 						<br></br> 
 						Available interviewers in programme: 
 						<select id="programInterviewers" multiple="multiple">

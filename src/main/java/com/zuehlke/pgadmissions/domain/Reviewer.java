@@ -28,6 +28,11 @@ public class Reviewer extends DomainObject<Integer> {
 	private Date lastNotified;
 
 	@ManyToOne
+	@JoinColumn(name = "review_round_id")
+	private ReviewRound reviewRound;
+
+	
+	@ManyToOne
 	@JoinColumn(name = "registered_user_id")
 	private RegisteredUser user;
 
@@ -78,6 +83,14 @@ public class Reviewer extends DomainObject<Integer> {
 
 	public void setReview(ReviewComment review) {
 		this.review = review;
+	}
+
+	public ReviewRound getReviewRound() {
+		return reviewRound;
+	}
+
+	public void setReviewRound(ReviewRound reviewRound) {
+		this.reviewRound = reviewRound;
 	}
 
 }

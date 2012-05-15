@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -25,9 +24,6 @@ import org.hibernate.annotations.GenerationTime;
 @Access(AccessType.FIELD)
 public class Interview extends DomainObject<Integer> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -730673777949846236L;
 
 	@Column(name = "last_notified")

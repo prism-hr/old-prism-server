@@ -240,8 +240,10 @@ public class MoveToInterviewController {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Set<RegisteredUser> existingInterviewers = new HashSet<RegisteredUser>();
 		Interview currentInterview = applicationForm.getLatestInterview();
-		for (Interviewer interviewer : currentInterview.getInterviewers()) {
-			existingInterviewers.add(interviewer.getUser());
+		if(currentInterview != null){
+			for (Interviewer interviewer : currentInterview.getInterviewers()) {
+				existingInterviewers.add(interviewer.getUser());
+			}
 		}
 		return existingInterviewers;
 	}

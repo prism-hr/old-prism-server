@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.controllers.referees;
 
 import static org.junit.Assert.assertEquals;
 

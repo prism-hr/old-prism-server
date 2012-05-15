@@ -73,26 +73,26 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadApplication() throws Exception {
 
-		ApplicationForm application = new ApplicationForm();
-		application.setProgram(program);
+		ApplicationForm inApplication = new ApplicationForm();
+		inApplication.setProgram(program);
 
-		application.setApplicant(user);
+		inApplication.setApplicant(user);
 
-		assertNull(application.getId());
+		assertNull(inApplication.getId());
 
-		applicationDAO.save(application);
+		applicationDAO.save(inApplication);
 
-		assertNotNull(application.getId());
-		Integer id = application.getId();
+		assertNotNull(inApplication.getId());
+		Integer id = inApplication.getId();
 		ApplicationForm reloadedApplication = applicationDAO.get(id);
-		assertSame(application, reloadedApplication);
+		assertSame(inApplication, reloadedApplication);
 
 		flushAndClearSession();
 
 		reloadedApplication = applicationDAO.get(id);
-		assertNotSame(application, reloadedApplication);
-		assertEquals(application, reloadedApplication);
-		assertEquals(application.getApplicant(), user);
+		assertNotSame(inApplication, reloadedApplication);
+		assertEquals(inApplication, reloadedApplication);
+		assertEquals(inApplication.getApplicant(), user);
 	}
 
 	
@@ -109,13 +109,13 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldAssignDateToApplicationForm() {
-		ApplicationForm application = new ApplicationForm();
-		application.setProgram(program);
-		application.setApplicant(user);
+		ApplicationForm inApplication = new ApplicationForm();
+		inApplication.setProgram(program);
+		inApplication.setApplicant(user);
 
-		applicationDAO.save(application);
+		applicationDAO.save(inApplication);
 
-		Integer id = application.getId();
+		Integer id = inApplication.getId();
 		ApplicationForm reloadedApplication = applicationDAO.get(id);
 		assertNotNull(reloadedApplication.getApplicationTimestamp());
 
@@ -375,6 +375,21 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		List<ApplicationForm> applicationsDueApplicantReviewNotification = applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION, ApplicationFormStatus.REVIEW);
 		assertFalse(applicationsDueApplicantReviewNotification.contains(applicationForm));
 
+	}
+
+	@Test
+	public void shouldReturnApplicationFormDueReviewNotificationIfRejectedAndNewStatusIsRejected() {
+		Date now = Calendar.getInstance().getTime();
+		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REJECTED)
+				.events(new EventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REJECTED).toEvent()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueApplicantReviewNotification = applicationDAO.getApplicationsDueNotificationForStateChangeEvent(NotificationType.APPLICATION_MOVED_TO_REJECT_NOTIFICATION, ApplicationFormStatus.REJECTED);
+		assertTrue(applicationsDueApplicantReviewNotification.contains(applicationForm));
+		
 	}
 	
 	@Test

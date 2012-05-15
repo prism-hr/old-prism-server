@@ -7,11 +7,11 @@ import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
-
 import org.springframework.mail.javamail.JavaMailSender;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApplicantMailSender extends StateChangeMailSender {
@@ -33,6 +33,10 @@ public class ApplicantMailSender extends StateChangeMailSender {
 
 		model.put("applicant", form.getApplicant());
 		model.put("host", Environment.getInstance().getApplicationHostName());
+
+		if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
+			model.put("reasons", form.getRejectReasons());
+		}
 		return model;
 	}
 	

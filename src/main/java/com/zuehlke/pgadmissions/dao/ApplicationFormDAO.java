@@ -110,11 +110,16 @@ public class ApplicationFormDAO {
 						Subqueries.propertyGt("date", notificationCriteriaTwo.setProjection(Projections.max("notificationRecord.date")))))
 				.add(Property.forName("event.application").eqProperty("applicationForm.id"));
 
+		List<ApplicationFormStatus> invalidStateList = new ArrayList<ApplicationFormStatus>();
+		invalidStateList.add(ApplicationFormStatus.APPROVED);
+		invalidStateList.add(ApplicationFormStatus.WITHDRAWN);
+		if (!ApplicationFormStatus.REJECTED.equals(newStatus)) {
+			invalidStateList.add(ApplicationFormStatus.REJECTED);
+		}
 		return sessionFactory
 				.getCurrentSession()
 				.createCriteria(ApplicationForm.class, "applicationForm")
-				.add(Restrictions.not(Restrictions.in("status",
-						Arrays.asList(ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED))))
+				.add(Restrictions.not(Restrictions.in("status", invalidStateList)))
 				.add(Subqueries.exists(reviewEventsCriteria.setProjection(Projections.property("event.id")))).list();
 	}
 

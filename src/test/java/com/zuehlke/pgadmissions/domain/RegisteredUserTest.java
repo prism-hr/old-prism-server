@@ -130,6 +130,15 @@ public class RegisteredUserTest {
 		assertTrue(interviewerUser.canSee(applicationForm));
 		
 	}
+	
+	@Test
+	public void shouldNotFailIfLatestInterviewIsNull() {
+		
+		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().	status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		assertFalse(interviewerUser.canSee(applicationForm));
+		
+	}
 	@Test
 	public void shouldReturnTrueIfUserReviewerAndApplicationInReviewStage() {
 

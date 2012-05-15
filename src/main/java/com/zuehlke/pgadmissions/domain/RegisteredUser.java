@@ -245,9 +245,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 		
-		Interview currentInterview = applicationForm.getLatestInterview(); 
-		if (isInRole(Authority.INTERVIEWER) && applicationForm.getStatus() == ApplicationFormStatus.INTERVIEW) {
-			for (Interviewer interviewer : currentInterview.getInterviewers()) {
+		Interview latestInterview = applicationForm.getLatestInterview(); 
+		if (isInRole(Authority.INTERVIEWER) && latestInterview != null && applicationForm.getStatus() == ApplicationFormStatus.INTERVIEW) {
+			for (Interviewer interviewer : latestInterview.getInterviewers()) {
 				if (this.equals(interviewer.getUser())) {
 					return true;
 				}

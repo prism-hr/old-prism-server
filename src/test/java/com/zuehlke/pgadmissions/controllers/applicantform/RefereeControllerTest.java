@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.controllers.applicantform;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

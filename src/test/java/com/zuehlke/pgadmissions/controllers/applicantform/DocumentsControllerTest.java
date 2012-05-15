@@ -1,11 +1,8 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.controllers.applicantform;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
@@ -20,71 +17,53 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
-import com.zuehlke.pgadmissions.services.FundingService;
-import com.zuehlke.pgadmissions.validators.FundingValidator;
+import com.zuehlke.pgadmissions.validators.DocumentSectionValidator;
 
-public class FundingControllerTest {
+public class DocumentsControllerTest {
 
 	private RegisteredUser currentUser;
 
-	private DatePropertyEditor datePropertyEditorMock;
 	private ApplicationsService applicationsServiceMock;
-	private FundingValidator fundingValidatorMock;
-
-	private FundingService fundingServiceMock;
-	private FundingController controller;
-	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
+	private DocumentSectionValidator documentSectionValidatorMock;
+	private DocumentsController controller;
 	private UsernamePasswordAuthenticationToken authenticationToken;
 	private DocumentPropertyEditor documentPropertyEditorMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-		Funding funding = new FundingBuilder().id(1)
-				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm()).toFunding();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.APPROVED).toApplicationForm();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
-		EasyMock.replay(fundingServiceMock, errors);
-		controller.editFunding(funding, errors);
-		EasyMock.verify(fundingServiceMock);
+		EasyMock.replay(applicationsServiceMock, errors);
+		controller.editDocuments(applicationForm, errors);
+		EasyMock.verify(applicationsServiceMock);
 
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
 		currentUser.getRoles().clear();
-		controller.editFunding(null, null);
+		controller.editDocuments(null, null);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
 		currentUser.getRoles().clear();
-		controller.getFundingView();
+		controller.getDocumentsView();
 	}
 
 	@Test
-	public void shouldReturnFundingView() {
-		assertEquals("/private/pgStudents/form/components/funding_details", controller.getFundingView());
-	}
-
-	@Test
-	public void shouldReturnAllFundingTypes() {
-
-		FundingType[] fundingTypes = controller.getFundingTypes();
-		assertArrayEquals(fundingTypes, FundingType.values());
+	public void shouldReturnApplicationFormView() {
+		assertEquals("/private/pgStudents/form/components/documents", controller.getDocumentsView());
 	}
 
 	@Test
@@ -121,36 +100,11 @@ public class FundingControllerTest {
 	@Test
 	public void shouldBindPropertyEditors() {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-		binderMock.setValidator(fundingValidatorMock);
-		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
-		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
+		binderMock.setValidator(documentSectionValidatorMock);
 		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
-	}
-
-	@Test
-	public void shouldGetFundingFromServiceIfIdProvided() {
-		Funding funding = new FundingBuilder().id(1).toFunding();
-		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(funding);
-		EasyMock.replay(fundingServiceMock);
-		Funding returnedFunding = controller.getFunding(1);
-		assertEquals(funding, returnedFunding);
-	}
-
-	@Test
-	public void shouldReturnNewFundingIfIdIsNull() {
-		Funding returnedFunding = controller.getFunding(null);
-		assertNull(returnedFunding.getId());
-	}
-
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfFundingDoesNotExist() {
-		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(null);
-		EasyMock.replay(fundingServiceMock);
-		controller.getFunding(1);
-
 	}
 
 	@Test
@@ -160,46 +114,38 @@ public class FundingControllerTest {
 	}
 
 	@Test
-	public void shouldSaveQulificationAndRedirectIfNoErrors() {
+	public void shouldSaveAppplicationFormAndRedirectIfNoErrors() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		Funding funding = new FundingBuilder().id(1).application(applicationForm).toFunding();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
-		fundingServiceMock.save(funding);
 		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(fundingServiceMock,applicationsServiceMock, errors);
-		String view = controller.editFunding(funding, errors);
-		EasyMock.verify(fundingServiceMock, applicationsServiceMock);
-		assertEquals("redirect:/update/getFunding?applicationId=5", view);
+		EasyMock.replay(applicationsServiceMock, errors);
+		String view = controller.editDocuments(applicationForm, errors);
+		EasyMock.verify(applicationsServiceMock);
+		assertEquals("redirect:/update/getDocuments?applicationId=5", view);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test
 	public void shouldNotSaveAndReturnToViewIfErrors() {
-		Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toFunding();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 
-		EasyMock.replay(fundingServiceMock, errors);
-		String view = controller.editFunding(funding, errors);
-		EasyMock.verify(fundingServiceMock);
-		assertEquals("/private/pgStudents/form/components/funding_details", view);
+		EasyMock.replay(applicationsServiceMock, errors);
+		String view = controller.editDocuments(applicationForm, errors);
+		EasyMock.verify(applicationsServiceMock);
+		assertEquals("/private/pgStudents/form/components/documents", view);
 	}
 
 	@Before
-	public void setUp(){
-		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-
+	public void setUp() {
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
-
-		fundingValidatorMock = EasyMock.createMock(FundingValidator.class);
-		fundingServiceMock = EasyMock.createMock(FundingService.class);
+		documentSectionValidatorMock = EasyMock.createMock(DocumentSectionValidator.class);
 
 		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
 
-		controller = new FundingController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, fundingValidatorMock,
-				fundingServiceMock, documentPropertyEditorMock);
+		controller = new DocumentsController(applicationsServiceMock, documentSectionValidatorMock, documentPropertyEditorMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 

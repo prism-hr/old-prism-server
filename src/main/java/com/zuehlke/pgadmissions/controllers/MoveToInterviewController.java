@@ -39,7 +39,7 @@ import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 @Controller
-@RequestMapping("/moveToInterview")
+@RequestMapping("/interview")
 public class MoveToInterviewController {
 
 	private final ApplicationsService applicationsService;
@@ -70,12 +70,18 @@ public class MoveToInterviewController {
 		this.datePropertyEditor = datePropertyEditor;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getInterviewDetailsPage(@RequestParam(required = false) Boolean assignOnly, ModelMap modelMap) {
-		modelMap.put("assignOnly", assignOnly);
+	@RequestMapping(method = RequestMethod.GET, value="moveToInterview")
+	public String getInterviewDetailsPage(ModelMap modelMap) {
+		modelMap.put("assignOnly", false);
 		return INTERVIEW_DETAILS_VIEW_NAME;
 	}
-
+	
+	@RequestMapping(method = RequestMethod.GET, value="assignInterviewers")
+	public String getAssignInterviewersPage(ModelMap modelMap) {
+		modelMap.put("assignOnly", true);
+		return INTERVIEW_DETAILS_VIEW_NAME;
+	}
+	
 	@InitBinder(value = "interviewer")
 	public void registerInterviewerValidators(WebDataBinder binder) {
 		binder.setValidator(interviewerValidator);
@@ -251,6 +257,8 @@ public class MoveToInterviewController {
 	private String getMessage(String code, Object... args) {
 		return messageSource.getMessage(code, args, null);
 	}
+
+	
 
 	
 }

@@ -64,21 +64,25 @@ public class MoveToInterviewControllerTest {
 	private static final String INTERVIEW_DETAILS_VIEW_NAME = "/private/staff/interviewers/interview_details";
 	private RegisteredUser currentUserMock;
 	
+
 	
 	@Test
-	public void shouldGetInterviewPage() {
-		Assert.assertEquals(INTERVIEW_DETAILS_VIEW_NAME, controller.getInterviewDetailsPage(false, new ModelMap()));
+	public void shouldGetInterviewPageWithOnlyAssignFalseNewInterviewersFunctionality() {
+		ModelMap modelMap = new ModelMap();
+		String interviewDetailsPage = controller.getInterviewDetailsPage(modelMap);
+		Assert.assertEquals(INTERVIEW_DETAILS_VIEW_NAME, interviewDetailsPage);
+		Assert.assertFalse((Boolean) modelMap.get("assignOnly"));
+		
 	}
 	
 	@Test
-	public void shouldGetInterviewPageWithOnlyAssignNewInterviewersFunctionality() {
+	public void shouldGetInterviewPageWithOnlyAssignTrueAssignInterviewersFunctionality() {
 		ModelMap modelMap = new ModelMap();
-		String interviewDetailsPage = controller.getInterviewDetailsPage(true, modelMap);
+		String interviewDetailsPage = controller.getAssignInterviewersPage(modelMap);
 		Assert.assertEquals(INTERVIEW_DETAILS_VIEW_NAME, interviewDetailsPage);
 		Assert.assertTrue((Boolean) modelMap.get("assignOnly"));
 		
 	}
-	
 	@Test
 	public void shouldAddRegisteredUserValidator() {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);

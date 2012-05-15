@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.timers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -19,7 +20,6 @@ import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.mail.RefereeMailSender;
-import com.zuehlke.pgadmissions.services.MailService;
 
 public class RefereeReminderTaskTest {
 

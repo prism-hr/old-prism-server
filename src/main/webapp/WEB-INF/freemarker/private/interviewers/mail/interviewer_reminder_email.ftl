@@ -32,10 +32,10 @@
 		    	</td>
 		    	<td width="500">
 		      		<h1 style="font-size: 12pt;">
-		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${reviewer.user.firstName?html},</font>
+		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${interviewer.user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is a reminder that you have been nominated to review ${applicant.firstName?html} ${applicant.lastName?html}'s application ${application.id?string('#####')} to join the Postgraduate research Programme in ${application.program.title} at UCL.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">This is a reminder to provide your feedback on the recent interview with ${applicant.firstName?html} ${applicant.lastName?html} in connection with their application ${application.id?string('#####')} to join the Postgraduate research Programme in ${application.program.title} at UCL.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You can view the application and provide your feedback by clicking the links below.</font>
@@ -47,7 +47,7 @@
 			      	</p>
 			      	     <p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/reviewFeedback?applicationId=${application.id?string("######")}">Provide feedback</a>
+			      			<a href="${host}/pgadmissions/interviewFeedback?applicationId=${application.id?string("######")}">Provide feedback</a>
 			      		</font>
 			      	</p>
 			      	<p>

@@ -60,6 +60,7 @@ public class ReviewerDAO {
 				.add(Restrictions.le("lastNotified", oneWeekAgo))
 				.createAlias("application", "application").add(Restrictions.eq("application.status", ApplicationFormStatus.REVIEW))
 				.list();
+		
 		for (Reviewer reviewer : reviewers) {
 			if(reviewer.getReview() == null){
 				reviewersDueReminder.add(reviewer);

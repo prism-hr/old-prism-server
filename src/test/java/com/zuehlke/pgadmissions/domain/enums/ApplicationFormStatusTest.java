@@ -43,4 +43,11 @@ public class ApplicationFormStatusTest {
 		assertArrayEquals(new ApplicationFormStatus[]{},ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.APPROVED));
 		assertArrayEquals(new ApplicationFormStatus[]{},ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.WITHDRAWN));
 	}
+	
+	@Test
+	public void shouldGetConfigurableStages() {
+		ApplicationFormStatus[] configurableStages = ApplicationFormStatus.getConfigurableStages();
+		assertArrayEquals(new ApplicationFormStatus[]{ApplicationFormStatus.VALIDATION, ApplicationFormStatus.REVIEW, ApplicationFormStatus.APPROVAL, ApplicationFormStatus.INTERVIEW},configurableStages);
+	
+	}
 }

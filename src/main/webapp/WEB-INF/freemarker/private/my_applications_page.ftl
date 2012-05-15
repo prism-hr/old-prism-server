@@ -128,6 +128,9 @@
 								      				<#if (user.isInRole('APPLICANT') && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn())>
 								    					<option value="withdraw">Withdraw</option>
 								      				</#if>      												
+								      				<#if (user.isInRole('SUPERADMINISTRATOR'))>
+								    					<option value="assignStagesDuration">Assign Stages Duration</option>
+								      				</#if>      												
 							                  	</select>
 							                </td>
 							                <td>

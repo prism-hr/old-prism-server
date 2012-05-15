@@ -25,6 +25,8 @@ $(document).ready(function() {
 			window.location.href = "/pgadmissions/reviewFeedback?applicationId=" + id;
 		}else if($(this).val() == 'interviewFeedback') {
 			window.location.href = "/pgadmissions/interviewFeedback?applicationId=" + id;
+		}else if($(this).val() == 'assignStagesDuration') {
+			window.location.href = "/pgadmissions/assignStagesDuration";
 		}
 		else if($(this).val() == 'withdraw') {
 				if(confirm("Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application."))

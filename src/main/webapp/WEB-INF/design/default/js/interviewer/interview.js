@@ -21,7 +21,7 @@ $(document).ready(function(){
 			unsavedInterviewersRaw : idString
 		};
 		
-		$.post("/pgadmissions/interview/moveToInterview/createInterviewer", 
+		$.post("/pgadmissions/interview/createInterviewer", 
 			$.param(postData),
 			function(data) {
 				$('#interviewSection').html(data);
@@ -51,7 +51,7 @@ $(document).ready(function(){
 			unsavedInterviewersRaw : idString
 		};
 		
-		$.post("/pgadmissions/interview/moveToInterview/move", 
+		$.post("/pgadmissions/interview/move", 
 			$.param(postData),
 			function(data) {
 				$('#interviewSection').html(data);

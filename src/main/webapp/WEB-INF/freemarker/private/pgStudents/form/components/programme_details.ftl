@@ -290,11 +290,15 @@
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>
 <@spring.bind "programmeDetails.*" />
+<#--
+
+Commenting out the following block to keep the programme section open in all scenario!
 
 <#if ((errorCode?? && errorCode=='false' && studyOptionError?? && studyOptionError =='false' && programError?? && programError =='false' && !applicationForm.shouldOpenFirstSection()) || applicationForm.isSubmitted() || (message?? && message='close' && !spring.status.errorMessages?has_content))>
+
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#programme-H2').trigger('click');
 	});
-</script>
-</#if>
+</script> 
+</#if> -->

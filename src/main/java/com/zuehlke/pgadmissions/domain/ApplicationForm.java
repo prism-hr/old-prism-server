@@ -115,11 +115,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
 	private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
-	
-	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	@JoinColumn(name = "application_form_id")
-	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -163,6 +158,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne
 	@JoinColumn(name = "latest_interview_id")
 	private Interview latestInterview;
+
+
+	@OneToOne
+	@JoinColumn(name = "latest_review_round_id")
+	private ReviewRound latestReviewRound;
 	
 	public List<Qualification> getQualifications() {
 		return qualifications;
@@ -356,7 +356,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		}
 
 		for (Comment comment : applicationComments) {
-			if (!user.isInRole(Authority.REVIEWER) || !comment.getUser().isReviewerOfApplicationForm(this) || comment.getUser().equals(user)) {
+			if (!user.isInRole(Authority.REVIEWER) || !comment.getUser().isPastOrPresentReviewerOfApplicationForm(this) || comment.getUser().equals(user)) {
 				visibleComments.add(comment);
 			}
 		}
@@ -477,13 +477,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.events.addAll(events);
 	}
 
-	public void setReviewers(List<Reviewer> reviewers) {
-		this.reviewers = reviewers;
-	}
-
-	public List<Reviewer> getReviewers() {
-		return reviewers;
-	}
 
 	@Override
 	public int compareTo(ApplicationForm appForm) {
@@ -522,6 +515,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setReviewRounds(List<ReviewRound> reviewRound) {
 		this.reviewRounds = reviewRound;
+	}
+
+	public ReviewRound getLatestReviewRound() {
+		return latestReviewRound;
+	}
+
+	public void setLatestReviewRound(ReviewRound latestReviewRound) {
+		this.latestReviewRound = latestReviewRound;
 	}
 
 }

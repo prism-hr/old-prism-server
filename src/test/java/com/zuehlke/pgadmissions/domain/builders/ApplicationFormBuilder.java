@@ -52,11 +52,17 @@ public class ApplicationFormBuilder {
 	private Document personalStatement = null;
 	private AdditionalInformation info;	
 	private Date lastUpdated;
-	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
+	
 	private List<Interview> interviews = new ArrayList<Interview>();
 	private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
 	private Interview latestInterview;
+	private ReviewRound latestReviewRound;
 	
+	
+	public ApplicationFormBuilder latestReviewRound(ReviewRound latestReviewRound) {
+		this.latestReviewRound = latestReviewRound;
+		return this;
+	}
 	public ApplicationFormBuilder latestInterview(Interview latestInterview) {
 		this.latestInterview = latestInterview;
 		return this;
@@ -70,12 +76,6 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 	
-	public ApplicationFormBuilder reviewers(Reviewer... reviewers) {
-		for (Reviewer reviewer : reviewers) {
-			this.reviewers.add(reviewer);
-		}
-		return this;
-	}
 	
 	public ApplicationFormBuilder lastUpdated(Date lastUpdated) {
 		this.lastUpdated = lastUpdated;
@@ -238,8 +238,7 @@ public class ApplicationFormBuilder {
 		ApplicationForm application = new ApplicationForm();
 		application.setId(id);
 		application.setApplicant(applicant);
-		
-		application.getReviewers().addAll(reviewers);
+
 		application.setSubmittedDate(submittedDate);
 
 		application.setApprover(approver);
@@ -268,6 +267,7 @@ public class ApplicationFormBuilder {
 		application.getInterviews().addAll(interviews);
 		application.setLatestInterview(latestInterview);
 		application.setReviewRounds(reviewRounds);
+		application.setLatestReviewRound(latestReviewRound);
 		return application;
 	}
 }

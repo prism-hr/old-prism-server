@@ -16,11 +16,13 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -115,14 +117,14 @@ public class ReviewServiceTest {
 		reviewService.moveApplicationToReview(application, reviewer1, reviewer2);
 		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock, reviewerDaoMock);
 
-		List<Reviewer> reviewers = application.getReviewers();
+		List<Reviewer> reviewers = application.getLatestReviewRound().getReviewers();
 		Assert.assertNotNull(reviewers);
 		Assert.assertEquals(2, reviewers.size());
 		for (Reviewer reviewer : reviewers) {
 			Assert.assertEquals(application, reviewer.getApplication());
 		}
-		Assert.assertTrue(reviewer1.isReviewerOfApplicationForm(application));
-		Assert.assertTrue(reviewer2.isReviewerOfApplicationForm(application));
+		Assert.assertTrue(reviewer1.isReviewerInLatestReviewRoundOfApplicationForm(application));
+		Assert.assertTrue(reviewer2.isReviewerInLatestReviewRoundOfApplicationForm(application));
 		Assert.assertEquals(ApplicationFormStatus.REVIEW, application.getStatus());
 	}
 
@@ -147,23 +149,25 @@ public class ReviewServiceTest {
 
 	@Test
 	public void shouldNotAddReviewerIfAlreadyInApplication() {
-		Reviewer reviewer = new ReviewerBuilder().user(reviewer1).id(1).toReviewer();
-		application.getReviewers().add(reviewer);
-
+		Reviewer reviewer = new ReviewerBuilder().user(reviewer1).id(1).toReviewer();		
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).toReviewRound();
+		application.setLatestReviewRound(reviewRound);
+		
 		applicationDaoMock.save(application);
 		EasyMock.expectLastCall().andDelegateTo(new CheckReviewersAndSimulateSaveDAO(reviewer1));
 		EasyMock.replay(userDaoMock, roleDaoMock, applicationDaoMock);
 		reviewService.moveApplicationToReview(application, reviewer1);
 
 		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock);
-		Assert.assertEquals(1, application.getReviewers().size());
-		Assert.assertEquals(reviewer, application.getReviewers().get(0));
+		Assert.assertEquals(1, application.getLatestReviewRound().getReviewers().size());
+		Assert.assertEquals(reviewer, application.getLatestReviewRound().getReviewers().get(0));
 		Assert.assertEquals(ApplicationFormStatus.REVIEW, application.getStatus());
 	}
 
 	@Test
 	public void shouldAddOnlyReviewersNotAlreadyInApplication() {
-		application.getReviewers().add(new ReviewerBuilder().user(reviewer1).toReviewer());
+		 ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(reviewer1).toReviewer()).toReviewRound();
+		application.setLatestReviewRound(reviewRound);
 
 		RegisteredUser reviewer2 = new RegisteredUserBuilder().id(101).email("rev2@bla.com")//
 				.role(reviewerRole)//
@@ -177,9 +181,9 @@ public class ReviewServiceTest {
 		reviewService.moveApplicationToReview(application, reviewer1, reviewer2);
 
 		EasyMock.verify(userDaoMock, roleDaoMock, applicationDaoMock);
-		Assert.assertTrue(reviewer1.isReviewerOfApplicationForm(application));
-		Assert.assertTrue(reviewer2.isReviewerOfApplicationForm(application));
-		List<Reviewer> reviewers = application.getReviewers();
+		Assert.assertTrue(reviewer1.isReviewerInLatestReviewRoundOfApplicationForm(application));
+		Assert.assertTrue(reviewer2.isReviewerInLatestReviewRoundOfApplicationForm(application));
+		List<Reviewer> reviewers = application.getLatestReviewRound().getReviewers();
 		Assert.assertNotNull(reviewers);
 		Assert.assertEquals(2, reviewers.size());
 		Assert.assertEquals(ApplicationFormStatus.REVIEW, application.getStatus());
@@ -237,7 +241,7 @@ public class ReviewServiceTest {
 		@Override
 		public void save(ApplicationForm applToSave) {
 			for (RegisteredUser expectedReviewer : expectedReviewers) {
-				Assert.assertTrue(expectedReviewer.isReviewerOfApplicationForm(applToSave));
+				Assert.assertTrue(expectedReviewer.isReviewerInLatestReviewRoundOfApplicationForm(applToSave));
 			}
 		}
 	}

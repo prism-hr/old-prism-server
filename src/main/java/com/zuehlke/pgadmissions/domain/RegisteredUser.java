@@ -238,7 +238,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 
 		if (isInRole(Authority.REVIEWER) && applicationForm.getStatus() == ApplicationFormStatus.REVIEW) {
-			for (Reviewer reviewer : applicationForm.getReviewers()) {
+			for (Reviewer reviewer : applicationForm.getLatestReviewRound().getReviewers()) {
 				if (this.equals(reviewer.getUser())) {
 					return true;
 				}
@@ -410,8 +410,12 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return this.isInRole(Authority.REFEREE) && hasRefereesInApplicationForm(form);
 	}
 
-	public boolean isReviewerOfApplicationForm(ApplicationForm form) {
-		for (Reviewer reviewer : form.getReviewers()) {
+	public boolean isReviewerInLatestReviewRoundOfApplicationForm(ApplicationForm form) {
+		ReviewRound latestReviewRound = form.getLatestReviewRound();
+		if (latestReviewRound == null) {
+			return false;
+		}
+		for (Reviewer reviewer : latestReviewRound.getReviewers()) {
 			if (reviewer != null && this.equals(reviewer.getUser())) {
 				return true;
 			}
@@ -419,7 +423,18 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return false;
 
 	}
+	
+	public boolean isPastOrPresentReviewerOfApplicationForm(ApplicationForm applicationForm) {
+		for (ReviewRound reviewRound : applicationForm.getReviewRounds()) {
+			for (Reviewer reviewer : reviewRound.getReviewers()) {
+				if (reviewer != null && this.equals(reviewer.getUser())) {
+					return true;
+				}
+			}
+		}
+		return false;
 
+	}
 	public boolean isInterviewerOfApplicationForm(ApplicationForm form) {
 		Interview latestInterview = form.getLatestInterview();
 		if (latestInterview != null) {
@@ -544,7 +559,11 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public List<Reviewer> getReviewersForApplicationForm(ApplicationForm applicationForm) {
 		List<Reviewer> reviewers = new ArrayList<Reviewer>();
-		List<Reviewer> formReviewers = applicationForm.getReviewers();
+		ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
+		if(latestReviewRound == null){
+			return reviewers;
+		}
+		List<Reviewer> formReviewers = latestReviewRound.getReviewers();
 		for (Reviewer reviewer : formReviewers) {
 			if (this.equals(reviewer.getUser())) {
 				reviewers.add(reviewer);
@@ -577,4 +596,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public String toString() {
 		return "RegisteredUser [id=" + id + ", username=" + username + "]";
 	}
+
+
 }

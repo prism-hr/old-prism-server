@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -65,11 +66,17 @@ public class ReviewService {
 						String.format("User '%s' is not a reviewer in programme '%s'!", reviewerUser.getUsername(), programme.getTitle()));
 			}
 
-			if (!reviewerUser.isReviewerOfApplicationForm(application)) {
+			if (!reviewerUser.isReviewerInLatestReviewRoundOfApplicationForm(application)) {
 				Reviewer reviewer = new Reviewer();
 				reviewer.setUser(reviewerUser);
 				reviewer.setApplication(application);
-				application.getReviewers().add(reviewer);
+				if(application.getLatestReviewRound() == null){
+					ReviewRound reviewRound = new ReviewRound();
+					reviewRound.setApplication(application);
+					application.setLatestReviewRound(reviewRound);
+				
+				}
+				application.getLatestReviewRound().getReviewers().add(reviewer);
 				reviewerDAO.save(reviewer);
 			}
 		}

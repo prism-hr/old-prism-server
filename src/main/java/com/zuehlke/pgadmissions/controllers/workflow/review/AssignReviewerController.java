@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
@@ -109,7 +110,7 @@ public class AssignReviewerController {
 			modelMap.put("message", getMessage("assignReviewer.newReviewer.created", reviewer.getUsername(), reviewer.getEmail()));
 			availableRevs.add(reviewer);
 		} else {
-			if (reviewer.isReviewerOfApplicationForm(form)) {
+			if (reviewer.isReviewerInLatestReviewRoundOfApplicationForm(form)) {
 				modelMap.put("message", getMessage("assignReviewer.reviewer.alreadyExistsInTheApplication", reviewer.getUsername(), reviewer.getEmail()));
 			} else if (!programme.getProgramReviewers().contains(reviewer)) {
 				reviewService.addUserToProgramme(programme, reviewer);
@@ -152,7 +153,7 @@ public class AssignReviewerController {
 		List<RegisteredUser> availableReviewers = new ArrayList<RegisteredUser>();
 		List<RegisteredUser> programmeReviewers = program.getProgramReviewers();
 		for (RegisteredUser registeredUser : programmeReviewers) {
-			if (!registeredUser.isReviewerOfApplicationForm(application)) {
+			if (!registeredUser.isReviewerInLatestReviewRoundOfApplicationForm(application)) {
 				availableReviewers.add(registeredUser);
 			}
 		}
@@ -169,7 +170,11 @@ public class AssignReviewerController {
 		ApplicationForm application = getApplicationForm(applicationId);
 
 		Set<RegisteredUser> existingReviewers = new HashSet<RegisteredUser>();
-		for (Reviewer reviewer : application.getReviewers()) {
+		ReviewRound latestReviewRound = application.getLatestReviewRound();
+		if(latestReviewRound == null){
+			return existingReviewers;
+		}
+		for (Reviewer reviewer : latestReviewRound.getReviewers()) {
 			existingReviewers.add(reviewer.getUser());
 		}
 		return existingReviewers;

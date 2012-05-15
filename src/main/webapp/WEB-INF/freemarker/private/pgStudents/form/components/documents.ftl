@@ -55,7 +55,7 @@
 				</#list>
       		
       		 <div class="row">
-        		<span class="plain-label">CV / resume (PDF)</span>
+        		<span class="plain-label">CV / Resume (PDF)</span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.cv'/>"></span>
         		<div class="field" id="cvUploadFields">        	
           			<input id="cvDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					

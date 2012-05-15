@@ -185,7 +185,7 @@
            
      <!-- Attachment / supporting document -->
       		<div class="row">
-        		<span class="plain-label">Proof of award (PDF)<em>*</em></span>
+        		<span class="plain-label">Proof of Award (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
         		<div class="field" id="fundingUploadFields">        	
           			<input id="fundingDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					

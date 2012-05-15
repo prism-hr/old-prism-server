@@ -3,18 +3,14 @@ $(document).ready(function()
 
   // Select all checkbox implementation
 	// Listen for click on toggle checkbox
-	$('#select-all').click(function(event) {   
-	    if(this.checked) {
-	        // Iterate each checkbox
-	        $(':checkbox').each(function() {
-	            this.checked = true;                        
-	        });
-	    }else if(this.unchecked){
-	        // Iterate each checkbox
-	        $(':checkbox').each(function() {
-	            this.checked = true;                        
-	        });
-	    }
+	$('#select-all').click(function(event) {
+		
+		var selectAllValue = this.checked;
+		
+		//Iterate each checkbox
+	    $(':checkbox').each(function() {
+	    	this.checked = selectAllValue;                        
+	    });
 	});
 	
 	
@@ -62,7 +58,7 @@ $(document).ready(function()
 	           method: 'flip shift'
 	        }
 	     },
-	     style: 'tooltip-pgr ui-tooltip-shadow';
+	     style: 'tooltip-pgr ui-tooltip-shadow'
 	   });
   
 

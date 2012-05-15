@@ -42,8 +42,8 @@
 	                  	<td><a class="row-arrow">-</a>
 	                  	</td>
 	                  	<td>${(existingQualification.qualificationType?html)!} &nbsp
-	                  		${(qualification.qualificationSubject?html)!} &nbsp
-	                  	 	(<#if qualification.isQualificationCompleted()>
+	                  		${(existingQualification.qualificationSubject?html)!} &nbsp
+	                  	 	(<#if existingQualification.isQualificationCompleted()>
 									Achieved:
 							 <#else> 
 							 		Expected: 

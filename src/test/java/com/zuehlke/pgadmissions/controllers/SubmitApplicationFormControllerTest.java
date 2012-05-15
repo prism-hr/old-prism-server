@@ -78,7 +78,7 @@ public class SubmitApplicationFormControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(student).id(2).toApplicationForm();		
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);		
 		StageDuration stageDuration = new StageDuration();
-		stageDuration.setDurationInDays(8);
+		stageDuration.setDuration(8);
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		applicationsServiceMock.save(applicationForm);
 		
@@ -105,7 +105,9 @@ public class SubmitApplicationFormControllerTest {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicant(student).toApplicationForm();
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
-		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(new StageDuration());
+		StageDuration stageDuration = new StageDuration();
+		stageDuration.setDuration(1);
+		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock, errorsMock,stageDurationDAOMock);
 		String view = applicationController.submitApplication(applicationForm, errorsMock);

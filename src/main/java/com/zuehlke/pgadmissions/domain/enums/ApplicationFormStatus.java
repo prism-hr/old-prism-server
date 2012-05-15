@@ -31,5 +31,9 @@ public enum ApplicationFormStatus {
 		}
 		return new ApplicationFormStatus[] {};
 	}
+	
+	public static ApplicationFormStatus[] getConfigurableStages() {
+			return new ApplicationFormStatus[] { VALIDATION, REVIEW, APPROVAL, INTERVIEW };
+	}
 
 }

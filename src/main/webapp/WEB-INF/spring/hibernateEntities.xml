@@ -41,6 +41,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.ReviewRound</value>
 	     		<value>com.zuehlke.pgadmissions.domain.RejectReason</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Interview</value>
+	     		<value>com.zuehlke.pgadmissions.domain.StageDuration</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

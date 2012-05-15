@@ -30,7 +30,7 @@ public class ReviewerReminderTask extends TimerTask {
 		log.info("Reviewer reminder Task Running");
 		Transaction transaction = sessionFactory.getCurrentSession().beginTransaction();
 		List<Reviewer> reviewersDuereminder = reviewerDAO.getReviewersDueReminder();
-System.err.println("Revs:" + reviewersDuereminder.size());
+
 		transaction.commit();
 		
 		for (Reviewer reviewer : reviewersDuereminder) {

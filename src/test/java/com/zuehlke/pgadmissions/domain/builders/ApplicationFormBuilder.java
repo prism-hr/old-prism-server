@@ -43,7 +43,7 @@ public class ApplicationFormBuilder {
 	private Program program;
 	private Date appDate;
 	private Date submittedDate;
-	private Date validationDueDate;
+	private Date dueDate;
 	private CheckedStatus acceptedTerms;
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 	private List<Event> events = new ArrayList<Event>();
@@ -58,7 +58,12 @@ public class ApplicationFormBuilder {
 	private Date lastUpdated;
 	private List<Reviewer> reviewers = new ArrayList<Reviewer>();
 	private List<Interview> interviews = new ArrayList<Interview>();
+	private Interview latestInterview;
 	
+	public ApplicationFormBuilder latestInterview(Interview latestInterview) {
+		this.latestInterview = latestInterview;
+		return this;
+	}
 	
 	public ApplicationFormBuilder reviewers(Reviewer...reviewers) {
 		for (Reviewer reviewer : reviewers) {
@@ -214,8 +219,8 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
-	public ApplicationFormBuilder validationDueDate(Date validationDueDate) {
-		this.validationDueDate = validationDueDate;
+	public ApplicationFormBuilder dueDate(Date dueDate) {
+		this.dueDate = dueDate;
 		return this;
 	}
 
@@ -244,7 +249,7 @@ public class ApplicationFormBuilder {
 		application.setContactAddress(contactAddress);
 		application.setCurrentAddress(currentAddress);
 		application.setPersonalDetails(personalDetails);
-		application.setDueDate(validationDueDate);
+		application.setDueDate(dueDate);
 
 		application.setProgram(program);
 		application.setEvents(events);
@@ -256,6 +261,7 @@ public class ApplicationFormBuilder {
 		application.setAcceptedTerms(acceptedTerms);
 		application.getApplicationComments().addAll(comments);
 		application.getInterviews().addAll(interviews);
+		application.setLatestInterview(latestInterview);
 		return application;
 	}
 }

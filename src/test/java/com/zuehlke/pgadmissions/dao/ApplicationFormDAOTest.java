@@ -31,6 +31,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -130,7 +131,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.program(program)
 				.applicant(user)
 				.status(ApplicationFormStatus.VALIDATION)
-				.validationDueDate(oneMonthAgo)
+				.dueDate(oneMonthAgo)
 				.notificationRecords(
 						new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER).notificationDate(eightDaysAgo)
 								.toNotificationRecord()).toApplicationForm();
@@ -148,7 +149,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date today = DateUtils.truncate(now, Calendar.DATE);
 		Date oneMonthAgo = DateUtils.addMonths(today, -1);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
-				.validationDueDate(oneMonthAgo).toApplicationForm();
+				.dueDate(oneMonthAgo).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();
@@ -167,7 +168,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.program(program)
 				.applicant(user)
 				.status(ApplicationFormStatus.APPROVED)
-				.validationDueDate(oneMonthAgo)
+				.dueDate(oneMonthAgo)
 				.notificationRecords(
 						new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER).notificationDate(eightDaysAgo)
 								.toNotificationRecord()).toApplicationForm();
@@ -185,7 +186,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date today = DateUtils.truncate(now, Calendar.DATE);
 		Date oneWeekInFuture = DateUtils.addWeeks(today, 1);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
-				.validationDueDate(oneWeekInFuture).toApplicationForm();
+				.dueDate(oneWeekInFuture).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();
@@ -200,7 +201,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date today = DateUtils.truncate(now, Calendar.DATE);
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
-				.validationDueDate(today).toApplicationForm();
+				.dueDate(today).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();
@@ -219,7 +220,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.program(program)
 				.applicant(user)
 				.status(ApplicationFormStatus.VALIDATION)
-				.validationDueDate(oneMonthAgo)
+				.dueDate(oneMonthAgo)
 				.notificationRecords(
 						new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER).notificationDate(sixDaysAgo)
 								.toNotificationRecord()).toApplicationForm();
@@ -242,7 +243,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.program(program)
 				.applicant(user)
 				.status(ApplicationFormStatus.VALIDATION)
-				.validationDueDate(oneMonthAgo)
+				.dueDate(oneMonthAgo)
 				.notificationRecords(
 						new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER).notificationDate(oneWeekAgoAndFiveMinAgo)
 								.toNotificationRecord()).toApplicationForm();
@@ -265,7 +266,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 				.program(program)
 				.applicant(user)
 				.status(ApplicationFormStatus.VALIDATION)
-				.validationDueDate(oneMonthAgo)
+				.dueDate(oneMonthAgo)
 				.notificationRecords(
 						new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER).notificationDate(oneWeekAgoAndFiveMinAgo)
 								.toNotificationRecord()).toApplicationForm();
@@ -605,18 +606,24 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
-	public void shouldReturnAppsOfWhichInterviewerEvenIfNotCurrentlyInRole(){
+	public void shouldReturnAppsOfWhichInterviewerOfLatestInterview(){
 		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
 		save(otherProgram);
 		
-		RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(new Interview()).program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();			
-		save(applicationForm, interviewerUser);
+		RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();		
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		
 		Interviewer interviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).toInterviewer();
-		applicationForm.getCurrentInterview().getInterviewers().add(interviewer);
-		save(applicationForm);
+		
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		
+		applicationForm.setLatestInterview(interview);
+		
+		save(applicationForm, interviewerUser, interviewer, interview);
+		
 		flushAndClearSession();
 		
 		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(interviewerUser);
@@ -625,18 +632,50 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
+	public void shouldNotReturnAppsOfWhichInterviewerOfPreviousInterview(){
+		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(otherProgram);
+		
+		
+		RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();		
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		
+		Interviewer interviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).toInterviewer();
+		
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		
+				
+		save(applicationForm, interviewerUser, interviewer, interview);
+	
+
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(interviewerUser);
+		assertFalse(applications.contains(applicationForm));		
+				
+	}
+	@Test
 	public void shouldNotReturnAppsOfWhichInterviewerNotInInterviewState(){
 		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
 		save(otherProgram);
 		
-		RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(new Interview()).program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();			
-		save(applicationForm, interviewerUser);
+		RegisteredUser interviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();		
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		
 		Interviewer interviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).toInterviewer();
-		applicationForm.getCurrentInterview().getInterviewers().add(interviewer);
-		save(applicationForm);
+		
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		
+		applicationForm.setLatestInterview(interview);
+		
+		save(applicationForm, interviewerUser, interviewer, interview);
+	
+		
 		flushAndClearSession();
 		
 		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(interviewerUser);
@@ -645,18 +684,19 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}	
 	
 	@Test
-	public void shouldReturnAppsSubmittedToUsersProgramsAndAppsOfWhichInterviewerIfAdminAndInterviewer(){
+	public void shouldReturnAppsSubmittedToUsersProgramsAndAppsOfWhichInterviewerIsAdminAndInterviewer(){
 		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
 		save(otherProgram);
 
 		RegisteredUser interviewerAndAdminUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
+
 		
-		ApplicationForm applicationFormOne = new ApplicationFormBuilder().interviews(new Interview()).program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();			
-		save(applicationFormOne, interviewerAndAdminUser);
-		Interviewer interviewer = new InterviewerBuilder().application(applicationFormOne).user(interviewerAndAdminUser).toInterviewer();
-		applicationFormOne.getCurrentInterview().getInterviewers().add(interviewer);
-		save(applicationFormOne);
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();		
+		Interviewer interviewer = new InterviewerBuilder().application(applicationFormOne).user(interviewerAndAdminUser).toInterviewer();		
+		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
+		applicationFormOne.setLatestInterview(interview);		
+		save(applicationFormOne, interviewerAndAdminUser, interviewer, interview);
 		
 		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		save(applicationFormTwo);

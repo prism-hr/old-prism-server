@@ -1,7 +1,10 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +48,16 @@ public class InterviewerDAO {
 		return sessionFactory.getCurrentSession().createCriteria(Interviewer.class).add(Restrictions.isNull("lastNotified"))
 				.createAlias("application", "application").add(Restrictions.eq("application.status", ApplicationFormStatus.INTERVIEW)).list();
 		
+	}
+	@SuppressWarnings("unchecked")
+	public List<Interviewer> getInterviewersDueReminder() {
+		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
+		Date sixDaysAgo = DateUtils.addDays(today,-6);
+		return sessionFactory.getCurrentSession().createCriteria(Interviewer.class)
+				.createAlias("application", "application")
+				.add(Restrictions.eq("application.status", ApplicationFormStatus.INTERVIEW))
+				.add(Restrictions.lt("application.dueDate", sixDaysAgo))
+				.list();
 	}
 	
 }

@@ -352,6 +352,27 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(interviewTrhee, reloadedApplication.getInterviews().get(0));
 		
 	}
+	
+	
+	@Test
+	public void shouldSaveAndLoadLatestInterview() throws ParseException, InterruptedException {
+		
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).toApplicationForm();		
+		save(application);
+		
+		Interview interview = new InterviewBuilder().interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).application(application).toInterview();
+		save(interview);
+		
+		application.setLatestInterview(interview);
+		save(application);
+		
+		flushAndClearSession();
+		
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		
+		assertEquals(interview, reloadedApplication.getLatestInterview());
+		
+	}
 	@Before
 	public void setup() {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")

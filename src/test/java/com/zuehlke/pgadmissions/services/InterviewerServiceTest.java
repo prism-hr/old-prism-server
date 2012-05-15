@@ -116,7 +116,7 @@ public class InterviewerServiceTest {
 		};
 		
 		RegisteredUser interviewerUser =  new RegisteredUserBuilder().id(1).toUser();
-		ApplicationForm application = new ApplicationFormBuilder().interviews(new Interview()).id(1).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().latestInterview(new Interview()).id(1).toApplicationForm();
 		interviewerDAOMock.save(interviewer);
 		EasyMock.replay(interviewerDAOMock);
 		interviewerService.createInterviewerToApplication(interviewerUser, application);

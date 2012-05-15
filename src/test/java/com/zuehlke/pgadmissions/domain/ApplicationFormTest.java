@@ -162,24 +162,6 @@ public class ApplicationFormTest {
 		
 	}
 	
-	@Test
-	public void shouldGetFirstItemInListAsCurrentInterview(){
-		//this is because the hibernate mappign orders them by reverse creation date!
-		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
-		Interview interviewOne = new InterviewBuilder().id(1).toInterview();
-		Interview interviewTwo = new InterviewBuilder().id(2).toInterview();
-		Interview interviewThree = new InterviewBuilder().id(3).toInterview();
-		applicationForm.getInterviews().addAll(Arrays.asList(interviewOne, interviewTwo, interviewThree));
-		assertEquals(interviewOne, applicationForm.getCurrentInterview());
-		
-	}
-
-	@Test
-	public void shouldReturnNullINoInterviews(){
 	
-		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
-		assertNull(applicationForm.getCurrentInterview());
-		
-	}
 
 }

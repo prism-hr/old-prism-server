@@ -143,7 +143,7 @@ public class MoveToInterviewController {
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
 		interview.setInterviewDueDate(calendar.getTime());
 		interviewService.save(interview);
-
+		applicationForm.setLatestInterview(interview);
 		applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
 		applicationsService.save(applicationForm);
 
@@ -194,7 +194,7 @@ public class MoveToInterviewController {
 	public Interview getInterview(@RequestParam(required = false) Integer interviewId, @RequestParam(required = false) Integer applicationId) {
 
 		if (applicationId != null) {
-			Interview interview = getApplicationForm(applicationId).getCurrentInterview();
+			Interview interview = getApplicationForm(applicationId).getLatestInterview();
 			if (interview != null) {
 				return interview;
 			}
@@ -239,7 +239,7 @@ public class MoveToInterviewController {
 	public Set<RegisteredUser> getApplicationInterviewersAsUsers(@RequestParam Integer applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Set<RegisteredUser> existingInterviewers = new HashSet<RegisteredUser>();
-		Interview currentInterview = applicationForm.getCurrentInterview();
+		Interview currentInterview = applicationForm.getLatestInterview();
 		for (Interviewer interviewer : currentInterview.getInterviewers()) {
 			existingInterviewers.add(interviewer.getUser());
 		}

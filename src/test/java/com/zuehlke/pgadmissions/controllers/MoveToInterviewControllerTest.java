@@ -158,7 +158,7 @@ public class MoveToInterviewControllerTest {
 		Interviewer inter2 = new InterviewerBuilder().user(interUser2).id(5).toInterviewer();
 		Interview interview = new InterviewBuilder().id(1).toInterview();
 		interview.setInterviewers(Arrays.asList(inter1, inter2));
-		applicationForm.setInterviews(Arrays.asList(interview));
+		applicationForm.setLatestInterview(interview);
 		
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);		
@@ -176,7 +176,7 @@ public class MoveToInterviewControllerTest {
 		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).toUser();
 		final Program program = new ProgramBuilder().interviewers(interUser1, interUser2).id(6).toProgram();
 		Interview interview = new InterviewBuilder().id(1).toInterview();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(interview).acceptedTerms(CheckedStatus.NO).id(5).program(program).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(interview).latestInterview(interview).acceptedTerms(CheckedStatus.NO).id(5).program(program).toApplicationForm();
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock, interviewServiceMock, interviewValidator, datePropertyEditorMock){
 			@Override
 			public
@@ -212,12 +212,13 @@ public class MoveToInterviewControllerTest {
 			}
 		};
 		ModelMap mmap = new ModelMap();
-		Interview interview = new InterviewBuilder().furtherDetails("9 pm").locationURL("pgadmissions.com").dueDate(new Date()).toInterview();
+		Interview interview = new InterviewBuilder().id(4).furtherDetails("9 pm").locationURL("pgadmissions.com").dueDate(new Date()).toInterview();
 		interviewServiceMock.save(interview);
 		applicationServiceMock.save(application);
 		EasyMock.replay(interviewerServiceMock, applicationServiceMock);
 		controller.moveToInterview(application.getId(), interview, bindingResultMock, mmap, new ArrayList<RegisteredUser>());
 		EasyMock.verify(interviewerServiceMock, applicationServiceMock);
+		assertEquals(interview, application.getLatestInterview());
 	}
 
 	
@@ -412,7 +413,7 @@ public class MoveToInterviewControllerTest {
 	public void shouldReturnExistingInterviewOfApplication(){
 		Interview interview = new InterviewBuilder().id(3).toInterview();
 		Program program = new ProgramBuilder().id(5).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(interview).id(5).program(program).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(interview).latestInterview(interview).id(5).program(program).toApplicationForm();
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock);
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);

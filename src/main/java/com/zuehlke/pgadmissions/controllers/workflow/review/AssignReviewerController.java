@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.controllers.workflow.review;
 
 import java.util.ArrayList;
 import java.util.HashSet;

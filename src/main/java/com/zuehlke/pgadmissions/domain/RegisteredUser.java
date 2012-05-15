@@ -422,9 +422,11 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	public boolean isInterviewerOfApplicationForm(ApplicationForm form) {
 		Interview currentInterview = form.getLatestInterview();
-		for (Interviewer interviewer : currentInterview.getInterviewers()) {
-			if (interviewer != null && this.equals(interviewer.getUser())) {
-				return true;
+		if(currentInterview!=null){
+			for (Interviewer interviewer : currentInterview.getInterviewers()) {
+				if (interviewer != null && this.equals(interviewer.getUser())) {
+					return true;
+				}
 			}
 		}
 		return false;

@@ -53,7 +53,7 @@ function moveToApproval(data){
 function moveToInterview(data){
 	
 	var application = $('#applicationId').val();
-	window.location.href = "/pgadmissions/moveToInterview?assignOnly=false&applicationId=" + application;
+	window.location.href = "/pgadmissions/interview/moveToInterview?assignOnly=false&applicationId=" + application;
 }
 
 function moveToReview(data){

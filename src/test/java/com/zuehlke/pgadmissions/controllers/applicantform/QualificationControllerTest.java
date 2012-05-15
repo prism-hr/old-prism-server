@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.controllers.applicantform;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -22,13 +22,14 @@ import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
-import com.zuehlke.pgadmissions.domain.EmploymentPosition;
+import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EmploymentPositionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -38,54 +39,56 @@ import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.LanguagePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
-import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.LanguageService;
-import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
+import com.zuehlke.pgadmissions.services.QualificationService;
+import com.zuehlke.pgadmissions.validators.QualificationValidator;
 
-public class EmploymentControllerTest {
-
-	private UsernamePasswordAuthenticationToken authenticationToken;
+public class QualificationControllerTest {
 	private RegisteredUser currentUser;
-	private EmploymentPositionService employmentServiceMock;
-	private EmploymentController controller;
 	private LanguageService languageServiceMock;
-	private CountryService countriesServiceMock;
-	private ApplicationsService applicationsServiceMock;
 	private LanguagePropertyEditor languagePropertyEditorMock;
 	private DatePropertyEditor datePropertyEditorMock;
 	private CountryPropertyEditor countryPropertyEditor;
+	private ApplicationsService applicationsServiceMock;
+	private QualificationValidator qualificationValidatorMock;
+	private CountryService countriesServiceMock;
+	private QualificationService qualificationServiceMock;
+	private QualificationController controller;
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
-	private EmploymentPositionValidator employmentValidatorMock;
+	private UsernamePasswordAuthenticationToken authenticationToken;
+	private DocumentPropertyEditor documentPropertyEditorMock;
 
-	@Test(expected = CannotUpdateApplicationException.class)
+
+
+	@Test(expected=CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-		EmploymentPosition employment = new EmploymentPositionBuilder().id(1)
-				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).toApplicationForm()).toEmploymentPosition();
+		Qualification qualification = new QualificationBuilder().id(1).application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm()).toQualification();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
-		EasyMock.replay(employmentServiceMock, errors);
-		controller.editEmployment(employment, errors);
-		EasyMock.verify(employmentServiceMock);
-
+		EasyMock.replay(qualificationServiceMock, errors);
+		controller.editQualification(qualification, errors);
+		EasyMock.verify(qualificationServiceMock);
+		
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionOnSubmitIfCurrentUserNotApplicant() {
 		currentUser.getRoles().clear();
-		controller.editEmployment(null, null);
+		controller.editQualification(null, null);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourenotFoundExceptionOnGetIfCurrentUserNotApplicant() {
 		currentUser.getRoles().clear();
-		controller.getEmploymentView();
+		controller.getQualificationView();
 	}
 
 	@Test
-	public void shouldReturnEmploymentView() {
-		assertEquals("/private/pgStudents/form/components/employment_position_details", controller.getEmploymentView());
+	public void shouldReturnQualificationView() {
+		assertEquals(QualificationController.APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, controller.getQualificationView());
 	}
 
 	@Test
@@ -108,7 +111,7 @@ public class EmploymentControllerTest {
 
 	@Test
 	public void shouldReturnApplicationForm() {
-		currentUser = EasyMock.createMock(RegisteredUser.class);
+		currentUser =EasyMock.createMock(RegisteredUser.class);
 		authenticationToken.setDetails(currentUser);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
@@ -127,53 +130,51 @@ public class EmploymentControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
-		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		currentUser =EasyMock.createMock(RegisteredUser.class);
+		authenticationToken.setDetails(currentUser);		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();		
 		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, currentUser);
 		controller.getApplicationForm(1);
-
+	
 	}
-
 	@Test
 	public void shouldBindPropertyEditors() {
 		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
-		binderMock.setValidator(employmentValidatorMock);
+		binderMock.setValidator(qualificationValidatorMock);
 		binderMock.registerCustomEditor(Date.class, datePropertyEditorMock);
 		binderMock.registerCustomEditor(Language.class, languagePropertyEditorMock);
 		binderMock.registerCustomEditor(Country.class, countryPropertyEditor);
 		binderMock.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditorMock);
+		binderMock.registerCustomEditor(Document.class, documentPropertyEditorMock);
 		EasyMock.replay(binderMock);
 		controller.registerPropertyEditors(binderMock);
 		EasyMock.verify(binderMock);
 	}
 
 	@Test
-	public void shouldGetEmploymentFromServiceIfIdProvided() {
-		EmploymentPosition employment = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
-		EasyMock.expect(employmentServiceMock.getEmploymentPositionById(1)).andReturn(employment);
-		EasyMock.replay(employmentServiceMock);
-		EmploymentPosition returnedEmploymentPosition = controller.getEmploymentPosition(1);
-		assertEquals(employment, returnedEmploymentPosition);
+	public void shouldGetQualificationFromServiceIfIdProvided() {
+		Qualification qualification = new QualificationBuilder().id(1).toQualification();
+		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(qualification);
+		EasyMock.replay(qualificationServiceMock);
+		Qualification returnedQualification = controller.getQualification(1);
+		assertEquals(qualification, returnedQualification);
 	}
 
 	@Test
-	public void shouldReturnNewEmploymentIfIdIsNull() {
-		EmploymentPosition returnedEmploymentPosition = controller.getEmploymentPosition(null);
-		assertNull(returnedEmploymentPosition.getId());
+	public void shouldReturnNewQualificationIfIdIsNull() {
+		Qualification returnedQualification = controller.getQualification(null);
+		assertNull(returnedQualification.getId());
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfEmploymentDoesNotExist() {
-		EasyMock.expect(employmentServiceMock.getEmploymentPositionById(1)).andReturn(null);
-		EasyMock.replay(employmentServiceMock);
-		controller.getEmploymentPosition(1);
+	public void shouldThrowResourceNotFoundExceptionIfQualificationDoesNotExist() {
+		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(null);
+		EasyMock.replay(qualificationServiceMock);
+		controller.getQualification(1);
 
 	}
-	
-	
 
 	@Test
 	public void shouldReturnMessage() {
@@ -182,52 +183,57 @@ public class EmploymentControllerTest {
 	}
 
 	@Test
-	public void shouldSaveEmploymentAndRedirectIfNoErrors() {
+	public void shouldSaveQulificationAndRedirectIfNoErrors() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		EmploymentPosition employment = new EmploymentPositionBuilder().id(1).application(applicationForm).toEmploymentPosition();
+		Qualification qualification = new QualificationBuilder().id(1).application(applicationForm).toQualification();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
-		employmentServiceMock.save(employment);
+		qualificationServiceMock.save(qualification);
 		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(employmentServiceMock, applicationsServiceMock, errors);
-		String view = controller.editEmployment(employment, errors);
-		EasyMock.verify(employmentServiceMock, applicationsServiceMock);
-		assertEquals( "redirect:/update/getEmploymentPosition?applicationId=5", view);
+		EasyMock.replay(qualificationServiceMock, applicationsServiceMock, errors);
+		String view = controller.editQualification(qualification, errors);
+		EasyMock.verify(qualificationServiceMock,applicationsServiceMock);
+		assertEquals( "redirect:/update/getQualification?applicationId=5", view);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test
 	public void shouldNotSaveAndReturnToViewIfErrors() {
-		EmploymentPosition employment = new EmploymentPositionBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toEmploymentPosition();
+		Qualification qualification = new QualificationBuilder().id(1).application(new ApplicationFormBuilder().id(5).toApplicationForm()).toQualification();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(true);
 	
-		EasyMock.replay(employmentServiceMock, errors);
-		String view = controller.editEmployment(employment, errors);
-		EasyMock.verify(employmentServiceMock);
-		assertEquals(EmploymentController.STUDENTS_EMPLOYMENT_DETAILS_VIEW, view);
+		EasyMock.replay(qualificationServiceMock, errors);
+		String view = controller.editQualification(qualification, errors);
+		EasyMock.verify(qualificationServiceMock);
+		assertEquals(QualificationController.APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME, view);
 	}
-	
-	
+
 	@Before
 	public void setUp() {
-
-		employmentServiceMock = EasyMock.createMock(EmploymentPositionService.class);
 		languageServiceMock = EasyMock.createMock(LanguageService.class);
-		countriesServiceMock = EasyMock.createMock(CountryService.class);
-		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-
 		languagePropertyEditorMock = EasyMock.createMock(LanguagePropertyEditor.class);
+
+		
+
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
+
 		countryPropertyEditor = EasyMock.createMock(CountryPropertyEditor.class);
+		countriesServiceMock = EasyMock.createMock(CountryService.class);
+
+		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
 
-		employmentValidatorMock = EasyMock.createMock(EmploymentPositionValidator.class);
+		qualificationValidatorMock = EasyMock.createMock(QualificationValidator.class);
+		qualificationServiceMock = EasyMock.createMock(QualificationService.class);
 
-		controller = new EmploymentController(employmentServiceMock, languageServiceMock, countriesServiceMock, applicationsServiceMock,
-				languagePropertyEditorMock, datePropertyEditorMock, countryPropertyEditor, applicationFormPropertyEditorMock, employmentValidatorMock);
+		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+		
+		controller = new QualificationController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, countriesServiceMock,
+				languageServiceMock, languagePropertyEditorMock, countryPropertyEditor, qualificationValidatorMock, qualificationServiceMock, documentPropertyEditorMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		authenticationToken.setDetails(currentUser);
 		SecurityContextImpl secContext = new SecurityContextImpl();

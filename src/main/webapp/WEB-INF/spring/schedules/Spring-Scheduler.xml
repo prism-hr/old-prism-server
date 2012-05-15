@@ -40,6 +40,7 @@
 				<ref bean="reviewerReminderSchedule"/>
 				<ref bean="newUserNotificationSchedule"/>
 				<ref bean="moveToInterviewNotificationSchedule"/>
+				<ref bean="moveToRejectNotificationSchedule"/>
 				<ref bean="interviewerNotificationSchedule"/>
 				<ref bean="interviewerReminderSchedule"/>
 			</list>

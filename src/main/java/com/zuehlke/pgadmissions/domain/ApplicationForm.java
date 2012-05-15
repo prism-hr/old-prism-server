@@ -154,6 +154,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	private List<RejectReason> rejectReasons = new ArrayList<RejectReason>();
 
+	@OneToOne
+	@JoinColumn(name = "latest_interview_id")
+	private Interview latestInterview;
+	
 	public List<Qualification> getQualifications() {
 		return qualifications;
 	}
@@ -189,15 +193,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 	
 	
-	public Interview getCurrentInterview(){
-		//this is always valid as the hibernate mapping orders by
-		//reverse creation date
-		if(interviews.isEmpty()){
-			return null;
-		}
-		return interviews.get(0);
-		
-	}
+
 	public void setApprover(RegisteredUser approver) {
 		this.approver = approver;
 	}
@@ -504,6 +500,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setInterviews(List<Interview> interviews) {
 		this.interviews = interviews;
+	}
+
+	public Interview getLatestInterview() {
+		return latestInterview;
+	}
+
+	public void setLatestInterview(Interview latestInterview) {
+		this.latestInterview = latestInterview;
 	}
 
 }

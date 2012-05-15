@@ -151,7 +151,7 @@ public class ApplicationFormDAO {
 			}
 		}
 		
-		List<ApplicationForm> interviewerApps = getApplicationsOfWhichInterviewerCurrentlyInInterview(user);
+		List<ApplicationForm> interviewerApps = getApplicationsCurrentlyInInterviewOfWhichInterviewerOfLatestInterview(user);
 		for (ApplicationForm applicationForm : interviewerApps) {
 			if (!apps.contains(applicationForm)) {
 				apps.add(applicationForm);
@@ -180,16 +180,12 @@ public class ApplicationFormDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<ApplicationForm> getApplicationsOfWhichInterviewerCurrentlyInInterview(RegisteredUser user) {
-		DetachedCriteria interviewersWithUser = DetachedCriteria.forClass(Interview.class, "interview")
-				.createAlias("interviewers", "interviewer").add(Restrictions.eq("interviewer.user", user));
-
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
-				.createAlias("interviews", "interview")
-				.add(Subqueries.exists(interviewersWithUser.setProjection(Projections.property("interview.id")))).list();
+	private List<ApplicationForm> getApplicationsCurrentlyInInterviewOfWhichInterviewerOfLatestInterview(RegisteredUser user) {
+				return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
+				.createAlias("latestInterview", "latestInterview")
+				.createAlias("latestInterview.interviewers", "interviewer").add(Restrictions.eq("interviewer.user", user))
+				.list();
 	}
 
-	public SessionFactory getSF() {
-		return sessionFactory;
-	}
+
 }

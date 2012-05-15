@@ -35,20 +35,20 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to inform you that an interview has been arranged for you on ${application.currentInterview.interviewDueDate?string("dd MMM yyyy")} in connection with your application ${application.id?string("######")} to join ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to inform you that an interview has been arranged for you on ${application.latestInterview.interviewDueDate?string("dd MMM yyyy")} in connection with your application ${application.id?string("######")} to join ${application.program.title}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">The details of the interview are as follows:</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">${application.currentInterview.furtherDetails?html}</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${application.latestInterview.furtherDetails?html}</font>
 			      	</p>
-			      	<#if application.currentInterview.locationURL??>
+			      	<#if application.latestInterview.locationURL??>
 				      	<p>
 				      		<font face="Arial, Helvetica, sans-serif" size="2">Please click the following link for more details about the location at which the interview will take place:</font>
 				      	</p>
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${application.currentInterview.locationURL}">Location details</a></font>
+				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${application.latestInterview.locationURL}">Location details</a></font>
 				      	</p>
 				      </#if>
 			      	<p>

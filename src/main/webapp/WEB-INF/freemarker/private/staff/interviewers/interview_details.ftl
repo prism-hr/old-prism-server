@@ -172,7 +172,7 @@
 										
 											<div class="row">
 												<div class="field">
-													<button class="blue" type="button" id="createInterviewer">Create reviewer</button>
+													<button class="blue" type="button" id="createInterviewer">Create interviewer</button>
 										
 												</div>
 											</div>

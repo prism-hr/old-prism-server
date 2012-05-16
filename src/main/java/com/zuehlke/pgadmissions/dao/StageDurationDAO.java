@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -23,22 +24,12 @@ public class StageDurationDAO {
 		this.sessionFactory = sessionFactory;
 	}
 	
+	@Transactional
 	public void save(StageDuration stageDuration) {
 		sessionFactory.getCurrentSession().saveOrUpdate(stageDuration);
 	}
 	
-//	public StageDuration getByStatus(ApplicationFormStatus status) {
-//		StageDuration stageDuration = new StageDuration();
-//		stageDuration.setStage(status);
-//		if( status == ApplicationFormStatus.VALIDATION){
-//			stageDuration.setDuration(7);
-//		}
-//		if( status == ApplicationFormStatus.REVIEW){
-//			stageDuration.setDuration(14);
-//		}
-//		return stageDuration;
-//	}
-	
+	@Transactional
 	public StageDuration getByStatus(ApplicationFormStatus stage) {
 		return (StageDuration)sessionFactory.getCurrentSession().createCriteria(StageDuration.class)
 				.add(Restrictions.eq("stage", stage))

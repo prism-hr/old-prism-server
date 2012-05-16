@@ -2,6 +2,8 @@ package com.zuehlke.pgadmissions.controllers;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Arrays;
+
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -13,16 +15,23 @@ import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.dto.StageDurationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 
 public class AssignStagesDurationControllerTest {
 
 	private AssignStagesDurationController controller;
 	private StageDurationDAO stateDurationDAOMock;
 	private RegisteredUser superAdmin;
+	private StageDurationPropertyEditor stageDurationPropertyEditorMock;
 	private UsernamePasswordAuthenticationToken authenticationToken;
 	private static final String CHANGE_STATES_DURATION_VIEW_NAME = "/private/staff/superAdmin/assign_stages_duration";
 	
@@ -48,11 +57,31 @@ public class AssignStagesDurationControllerTest {
 		assertEquals(CHANGE_STATES_DURATION_VIEW_NAME, view);
 	}
 	
+	@Test
+	public void shouldSaveStageDurations() {
+		StageDuration validationDuration = new StageDurationBuilder().stage(ApplicationFormStatus.VALIDATION).duration(1).unit(DurationUnitEnum.HOURS).toStageDuration();
+		StageDuration interviewDuration = new StageDurationBuilder().stage(ApplicationFormStatus.INTERVIEW).duration(3).unit(DurationUnitEnum.WEEKS).toStageDuration();
+		StageDuration approvalDuration = new StageDurationBuilder().stage(ApplicationFormStatus.APPROVAL).duration(2).unit(DurationUnitEnum.DAYS).toStageDuration();
+		StageDuration reviewDuration = new StageDurationBuilder().stage(ApplicationFormStatus.REVIEW).duration(1).unit(DurationUnitEnum.HOURS).toStageDuration();
+		StageDurationDTO stageDurationDto = new StageDurationDTO();
+		stageDurationDto.setStagesDuration(Arrays.asList(validationDuration, interviewDuration, approvalDuration, reviewDuration));
+		stateDurationDAOMock.save(validationDuration);
+		stateDurationDAOMock.save(interviewDuration);
+		stateDurationDAOMock.save(approvalDuration);
+		stateDurationDAOMock.save(reviewDuration);
+		EasyMock.replay(stateDurationDAOMock);
+		controller.submitStagesDurations(stageDurationDto, new ModelMap());
+		EasyMock.verify(stateDurationDAOMock);
+		
+	}
+	
+	
 	@Before
 	public void setUp(){
 		
 		stateDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
-		controller = new AssignStagesDurationController(stateDurationDAOMock);
+		stageDurationPropertyEditorMock = EasyMock.createMock(StageDurationPropertyEditor.class);
+		controller = new AssignStagesDurationController(stateDurationDAOMock, stageDurationPropertyEditorMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

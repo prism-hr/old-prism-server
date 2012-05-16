@@ -9,6 +9,7 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.MessageSource;
+import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -54,7 +55,10 @@ public class AddReviewersControllerTest {
 	
 	@Test
 	public void shouldReturnShowPageTemplate() {
-		Assert.assertEquals(VIEW_RESULT, controller.getAddReviewsPage());
+		ModelMap modelMap = new ModelMap();
+		Assert.assertEquals(VIEW_RESULT, controller.getAddReviewsPage(modelMap));
+		Assert.assertTrue((Boolean) modelMap.get("assignOnly"));
+		
 	}
 
 }

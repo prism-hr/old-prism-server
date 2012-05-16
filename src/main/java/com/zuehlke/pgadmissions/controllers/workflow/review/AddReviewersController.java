@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.workflow.review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -37,7 +38,8 @@ public class AddReviewersController extends AssignReviewerController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "assignReviewers")
-	public String getAddReviewsPage() {
+	public String getAddReviewsPage(ModelMap modelMap) {
+		modelMap.put("assignOnly", true);
 		return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;
 	}
 

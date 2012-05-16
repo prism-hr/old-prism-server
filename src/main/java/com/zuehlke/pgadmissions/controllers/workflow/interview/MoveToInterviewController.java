@@ -21,8 +21,6 @@ import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
@@ -89,8 +87,7 @@ public class MoveToInterviewController extends InterviewController{
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
 	public String moveToInterview(@RequestParam Integer applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult, ModelMap modelMap, @ModelAttribute("unsavedInterviewers") ArrayList<RegisteredUser> unsavedInterviewers) {
 	
-		ApplicationForm applicationForm = getApplicationForm(applicationId);
-	
+		ApplicationForm applicationForm = getApplicationForm(applicationId);	
 		if (bindingResult.hasErrors()) {
 			return INTERVIEW_DETAILS_VIEW_NAME;
 		}

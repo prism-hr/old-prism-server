@@ -21,7 +21,7 @@ public class InterviewerMailSender extends MailSender {
 	}
 
 	Map<String, Object> createModel(Interviewer interviewer) {
-		ApplicationForm form = interviewer.getApplication();
+		ApplicationForm form = interviewer.getInterview().getApplication();
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -37,8 +37,8 @@ public class InterviewerMailSender extends MailSender {
 	public void sendInterviewerNotification(Interviewer interviewer) throws UnsupportedEncodingException {
 		InternetAddress toAddress = new InternetAddress(interviewer.getUser().getEmail(), interviewer.getUser().getFirstName() + " "
 				+ interviewer.getUser().getLastName());
-		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + interviewer.getApplication().getId() + " for "
-				+ interviewer.getApplication().getProgram().getTitle() + " - Interviewer Notification",
+		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + interviewer.getInterview().getApplication().getId() + " for "
+				+ interviewer.getInterview().getApplication().getProgram().getTitle() + " - Interviewer Notification",
 				"private/interviewers/mail/interviewer_notification_email.ftl", createModel(interviewer)));
 
 	}
@@ -46,8 +46,8 @@ public class InterviewerMailSender extends MailSender {
 	public void sendInterviewerReminder(Interviewer interviewer) throws UnsupportedEncodingException {
 		InternetAddress toAddress = new InternetAddress(interviewer.getUser().getEmail(), interviewer.getUser().getFirstName() + " "
 				+ interviewer.getUser().getLastName());
-		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + interviewer.getApplication().getId() + " for "
-				+ interviewer.getApplication().getProgram().getTitle() + " - Interview Feedback Reminder",
+		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + interviewer.getInterview().getApplication().getId() + " for "
+				+ interviewer.getInterview().getApplication().getProgram().getTitle() + " - Interview Feedback Reminder",
 				"private/interviewers/mail/interviewer_reminder_email.ftl", createModel(interviewer)));
 
 		

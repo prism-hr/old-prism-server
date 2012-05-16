@@ -7,10 +7,7 @@ import java.util.Set;
 
 import javax.validation.Valid;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -33,26 +30,24 @@ import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
-@Controller
-@RequestMapping("/assignReviewers")
-public class AssignReviewerController {
-	private static final String ASSIGN_REVIEWERS_TO_APPLICATION_VIEW = "private/staff/admin/assign_reviewers_to_appl_page";
-	private static final String ASSIGN_REVIEWERS_TO_APPLICATION_SECTION = "private/staff/admin/assign_reviewers_to_appl_section";
-	private static final String NEXT_VIEW = "redirect:/applications";
+public abstract class AssignReviewerController {
+	protected static final String ASSIGN_REVIEWERS_TO_APPLICATION_VIEW = "private/staff/admin/assign_reviewers_to_appl_page";
+	protected static final String ASSIGN_REVIEWERS_TO_APPLICATION_SECTION = "private/staff/admin/assign_reviewers_to_appl_section";
+	protected static final String NEXT_VIEW = "redirect:/applications";
 
-	private final ApplicationsService applicationService;
-	private final ReviewService reviewService;
-	private final UserService userService;
-	private final MessageSource messageSource;
+	protected final ApplicationsService applicationService;
+	protected final ReviewService reviewService;
+	protected final UserService userService;
+	protected final MessageSource messageSource;
 
-	private final NewUserByAdminValidator userValidator;
+	protected final NewUserByAdminValidator userValidator;
 
 	AssignReviewerController() {
 		this(null, null, null, null, null);
 	}
 
-	@Autowired
-	public AssignReviewerController(ApplicationsService applicationServiceMock, ReviewService reviewService,// 
+
+	public AssignReviewerController(ApplicationsService applicationServiceMock, ReviewService reviewService,//
 			UserService userService, NewUserByAdminValidator validator, MessageSource msgSource) {
 		this.applicationService = applicationServiceMock;
 		this.reviewService = reviewService;
@@ -61,71 +56,14 @@ public class AssignReviewerController {
 		messageSource = msgSource;
 	}
 
-	@RequestMapping(method = RequestMethod.GET)
-	public String getAssignReviewerPage() {
-		return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;
-	}
+
 
 	@InitBinder(value = "uiReviewer")
 	public void registerValidators(WebDataBinder binder) {
 		binder.setValidator(userValidator);
 	}
 
-	@RequestMapping(value = "/moveApplicationToReview", method = RequestMethod.POST)
-	public String moveApplicationToReviewState(//
-			@ModelAttribute("applicationForm") ApplicationForm application,//
-			@ModelAttribute("unsavedReviewers") ArrayList<RegisteredUser> unsavedReviewers) {
-
-		checkApplicationStatus(application);
-		checkAdminPermission(application.getProgram());
-
-		if (unsavedReviewers != null && !unsavedReviewers.isEmpty()) {
-			reviewService.moveApplicationToReview(application, unsavedReviewers.toArray(new RegisteredUser[unsavedReviewers.size()]));
-		}
-		return NEXT_VIEW;
-	}
-
-	@RequestMapping(value = "/createReviewer", method = RequestMethod.POST)
-	public String createReviewer(@ModelAttribute("programme") Program programme, //
-			@ModelAttribute("applicationForm") ApplicationForm form,// 
-			@Valid @ModelAttribute("uiReviewer") RegisteredUser uiReviewer,//
-			BindingResult bindingResult, //
-			@ModelAttribute("unsavedReviewers") ArrayList<RegisteredUser> unsavedReviewers,//
-			ModelMap modelMap) {
-
-		checkAdminPermission(programme);
-
-		if (bindingResult.hasErrors()) {
-			return ASSIGN_REVIEWERS_TO_APPLICATION_SECTION;
-		}
-
-		RegisteredUser reviewer = userService.getUserByEmailIncludingDisabledAccounts(uiReviewer.getEmail());
-		@SuppressWarnings("unchecked")
-		List<RegisteredUser> availableRevs = (List<RegisteredUser>) modelMap.get("availableReviewers");
-		if (availableRevs == null) {
-			availableRevs = new ArrayList<RegisteredUser>();
-		}
-		if (reviewer == null) {
-			reviewer = userService.createNewUserForProgramme(uiReviewer.getFirstName(), uiReviewer.getLastName(), uiReviewer.getEmail(), programme, Authority.REVIEWER);
-			modelMap.put("message", getMessage("assignReviewer.newReviewer.created", reviewer.getUsername(), reviewer.getEmail()));
-			availableRevs.add(reviewer);
-		} else {
-			if (reviewer.isReviewerInLatestReviewRoundOfApplicationForm(form)) {
-				modelMap.put("message", getMessage("assignReviewer.reviewer.alreadyExistsInTheApplication", reviewer.getUsername(), reviewer.getEmail()));
-			} else if (!programme.getProgramReviewers().contains(reviewer)) {
-				reviewService.addUserToProgramme(programme, reviewer);
-				modelMap.put("message", getMessage("assignReviewer.newReviewer.addedToProgramme", reviewer.getUsername(), reviewer.getEmail()));
-				availableRevs.add(reviewer);
-			} else {
-				modelMap.put("message", getMessage("assignReviewer.newReviewer.alreadyInProgramme", reviewer.getUsername(), reviewer.getEmail()));
-			}
-		}
-
-		if (unsavedReviewers != null) {
-			modelMap.put("unsavedReviewers", unsavedReviewers);
-		}
-		return ASSIGN_REVIEWERS_TO_APPLICATION_SECTION;
-	}
+	
 
 	@ModelAttribute("uiReviewer")
 	public RegisteredUser getUiReviewer() {
@@ -171,7 +109,7 @@ public class AssignReviewerController {
 
 		Set<RegisteredUser> existingReviewers = new HashSet<RegisteredUser>();
 		ReviewRound latestReviewRound = application.getLatestReviewRound();
-		if(latestReviewRound == null){
+		if (latestReviewRound == null) {
 			return existingReviewers;
 		}
 		for (Reviewer reviewer : latestReviewRound.getReviewers()) {
@@ -198,28 +136,30 @@ public class AssignReviewerController {
 		return getCurrentUser();
 	}
 
-	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+	public abstract ReviewRound getReviewRound(Integer applicationId);
+
+	protected RegisteredUser getCurrentUser() {
+		return userService.getCurrentUser(); 
 	}
 
-	private void checkPermissionForApplication(ApplicationForm application) {
+	protected void checkPermissionForApplication(ApplicationForm application) {
 		if (application == null || !getCurrentUser().canSee(application)) {
 
 			throw new ResourceNotFoundException();
 		}
 	}
 
-	private void checkAdminPermission(Program programme) {
+	protected void checkAdminPermission(Program programme) {
 		RegisteredUser currentUser = getCurrentUser();
-		if (!(programme.getAdministrators().contains(currentUser) || //
-				currentUser.isInRole(Authority.SUPERADMINISTRATOR) || //
+		if (!(programme.getAdministrators().contains(currentUser) || 
+				currentUser.isInRole(Authority.SUPERADMINISTRATOR) || 
 		programme.getProgramReviewers().contains(currentUser))) {
 
 			throw new ResourceNotFoundException();
 		}
 	}
 
-	private void checkApplicationStatus(ApplicationForm application) {
+	protected void checkApplicationStatus(ApplicationForm application) {
 		switch (application.getStatus()) {
 		case REVIEW:
 		case VALIDATION:
@@ -229,7 +169,7 @@ public class AssignReviewerController {
 		}
 	}
 
-	private String getMessage(String code, Object... args) {
+	protected String getMessage(String code, Object... args) {
 		return messageSource.getMessage(code, args, null);
 	}
 }

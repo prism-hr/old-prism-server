@@ -15,10 +15,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
@@ -39,8 +41,7 @@ public class InterviewerMailSenderTest {
 		RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();
 		
 		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram()).applicant(applicant).toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().id(4).user(defaultInterviewer).application(form).toInterviewer();
-		
+		Interviewer interviewer = new InterviewerBuilder().id(4).user(defaultInterviewer).interview(new InterviewBuilder().id(5).application(form).toInterview()).toInterviewer();
 
 		Map<String, Object> model = interviewerMailSender.createModel(interviewer);
 		assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
@@ -65,7 +66,7 @@ public class InterviewerMailSenderTest {
 		
 		RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();		
 		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().id(4).user(defaultInterviewer).application(form).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().id(4).user(defaultInterviewer).interview(new InterviewBuilder().id(5).application(form).toInterview()).toInterviewer();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
@@ -98,7 +99,7 @@ public class InterviewerMailSenderTest {
 		
 		RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();		
 		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().id(4).user(defaultInterviewer).application(form).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().id(4).user(defaultInterviewer).interview(new InterviewBuilder().id(5).application(form).toInterview()).toInterviewer();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");

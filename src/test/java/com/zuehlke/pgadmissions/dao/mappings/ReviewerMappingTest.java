@@ -11,7 +11,6 @@ import java.util.Date;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.WeakReferenceMonitor.ReleaseListener;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -35,7 +34,7 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldSaveAndLoadReviewer() throws ParseException{
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");		
-		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(rewiewerUser).lastNotified(lastNotified).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).lastNotified(lastNotified).toReviewer();
 		save(reviewer);
 		assertNotNull(reviewer.getId());
 		Reviewer reloadedReviewer = (Reviewer) sessionFactory.getCurrentSession().get(Reviewer.class,reviewer.getId());
@@ -46,7 +45,6 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 		
 		assertNotSame(reviewer, reloadedReviewer);
 		assertEquals(reviewer, reloadedReviewer);
-		assertEquals(applicationForm, reloadedReviewer.getApplication());
 		assertEquals(rewiewerUser, reloadedReviewer.getUser());
 		assertEquals(lastNotified, reloadedReviewer.getLastNotified());
 	}
@@ -54,7 +52,7 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 	@Test	
 	public void shouldLoadReviewerWithReviewRound() throws ParseException{
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");		
-		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(rewiewerUser).lastNotified(lastNotified).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).lastNotified(lastNotified).toReviewer();
 		save(reviewer);
 		
 		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).application(applicationForm).toReviewRound();
@@ -67,7 +65,7 @@ public class ReviewerMappingTest extends AutomaticRollbackTestCase{
 	}
 	@Test
 	public void shoulLoadReviewWithReviewer() throws ParseException{
-		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(rewiewerUser).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().user(rewiewerUser).toReviewer();
 		ReviewComment review = new ReviewCommentBuilder().application(applicationForm).user(rewiewerUser).comment("hi").reviewer(reviewer).commentType(CommentType.REVIEW).toReviewComment();
 		
 		

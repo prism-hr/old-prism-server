@@ -36,10 +36,6 @@ public class Reviewer extends DomainObject<Integer> {
 	@JoinColumn(name = "registered_user_id")
 	private RegisteredUser user;
 
-	@ManyToOne
-	@JoinColumn(name = "application_form_id")
-	private ApplicationForm application;
-
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
@@ -61,13 +57,6 @@ public class Reviewer extends DomainObject<Integer> {
 		this.user = user;
 	}
 
-	public ApplicationForm getApplication() {
-		return application;
-	}
-
-	public void setApplication(ApplicationForm application) {
-		this.application = application;
-	}
 
 	public Date getLastNotified() {
 		return lastNotified;

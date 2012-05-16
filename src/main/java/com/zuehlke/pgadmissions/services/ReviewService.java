@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.ProgramDAO;
+import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
@@ -26,63 +27,53 @@ public class ReviewService {
 	private final ProgramDAO programmeDAO;
 	private final ApplicationFormDAO applicationDAO;
 	private final ReviewerDAO reviewerDAO;
+	private final ReviewRoundDAO reviewRoundDAO;
 	
 
 	ReviewService() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public ReviewService(UserDAO userDAO, RoleDAO roleDAO, ProgramDAO programmeDAO, ApplicationFormDAO applicationDAO, ReviewerDAO reviewerDAO) {
+	public ReviewService(UserDAO userDAO, RoleDAO roleDAO, ProgramDAO programmeDAO, ApplicationFormDAO applicationDAO, ReviewerDAO reviewerDAO, ReviewRoundDAO reviewRoundDAO) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
 		this.programmeDAO = programmeDAO;
 		this.applicationDAO = applicationDAO;
 		this.reviewerDAO = reviewerDAO;
+		this.reviewRoundDAO = reviewRoundDAO;
 	
 	}
-
-	/**
-	 * Associates the given reviewers to the application and updates the
-	 * application record(s) if necessary. Silently handles reviewers already
-	 * associated with the application, but throws {@link IllegalStateException}
-	 * s when the users don't have the role reviewer or are not reviewer of the
-	 * programme of the application.
-	 * 
-	 * @param application
-	 * @param reviewerUsers
-	 */
+	
 	@Transactional
-	public void moveApplicationToReview(ApplicationForm application, RegisteredUser... reviewerUsers) {
+	public void moveApplicationToReview(ApplicationForm application, ReviewRound reviewRound, RegisteredUser... reviewerUsers) {
 		checkApplicationStatus(application);
-		Program programme = application.getProgram();
+		application.setLatestReviewRound(reviewRound);		
 		for (RegisteredUser reviewerUser : reviewerUsers) {
 			if (!reviewerUser.isInRole(Authority.REVIEWER)) {
 				throw new IllegalStateException(//
 						String.format("User '%s' is not a reviewer!", reviewerUser.getUsername()));
 			}
-			if (!reviewerUser.isReviewerInProgramme(programme)) {
+			if (!reviewerUser.isReviewerInProgramme(application.getProgram())) {
 				throw new IllegalStateException(//
-						String.format("User '%s' is not a reviewer in programme '%s'!", reviewerUser.getUsername(), programme.getTitle()));
+						String.format("User '%s' is not a reviewer in programme '%s'!", reviewerUser.getUsername(), application.getProgram().getTitle()));
 			}
 
 			if (!reviewerUser.isReviewerInLatestReviewRoundOfApplicationForm(application)) {
 				Reviewer reviewer = new Reviewer();
-				reviewer.setUser(reviewerUser);
-				reviewer.setApplication(application);
-				if(application.getLatestReviewRound() == null){
-					ReviewRound reviewRound = new ReviewRound();
-					reviewRound.setApplication(application);
-					application.setLatestReviewRound(reviewRound);
-				
-				}
-				application.getLatestReviewRound().getReviewers().add(reviewer);
-				reviewerDAO.save(reviewer);
+				reviewer.setUser(reviewerUser);				
+				reviewRound.getReviewers().add(reviewer);				
 			}
 		}
+		reviewRound.setApplication(application);
+		reviewRoundDAO.save(reviewRound);
+		
 		application.setStatus(ApplicationFormStatus.REVIEW);
 		applicationDAO.save(application);
 	}
+
+
+	
 
 	
 

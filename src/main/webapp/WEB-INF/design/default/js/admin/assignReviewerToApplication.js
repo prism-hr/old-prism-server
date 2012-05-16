@@ -29,7 +29,7 @@ $(document).ready(function() {
 			unsavedReviewersRaw : idString
 		};
 		
-		$.post("/pgadmissions/assignReviewers/createReviewer", 
+		$.post("/pgadmissions/review/createReviewer", 
 			$.param(postData),
 			function(data) {
 				$('#assignReviewersToAppSection').html(data);
@@ -50,7 +50,7 @@ $(document).ready(function() {
 				unsavedReviewersRaw : idString
 			};
 			
-		$.post( "/pgadmissions/assignReviewers/moveApplicationToReview" , $.param(postData),
+		$.post( "/pgadmissions/review/moveApplicationToReview" , $.param(postData),
 			function(data) {
 			   window.location.href = "/pgadmissions/applications";
 			}

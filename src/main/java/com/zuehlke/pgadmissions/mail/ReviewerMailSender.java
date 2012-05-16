@@ -21,7 +21,7 @@ public class ReviewerMailSender extends MailSender {
 	}
 
 	Map<String, Object> createModel(Reviewer reviewer) {
-		ApplicationForm form = reviewer.getApplication();
+		ApplicationForm form = reviewer.getReviewRound().getApplication();
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -37,8 +37,8 @@ public class ReviewerMailSender extends MailSender {
 	public void sendReviewerNotification(Reviewer reviewer) throws UnsupportedEncodingException {
 		InternetAddress toAddress = new InternetAddress(reviewer.getUser().getEmail(), reviewer.getUser().getFirstName() + " "
 				+ reviewer.getUser().getLastName());
-		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + reviewer.getApplication().getId() + " for "
-				+ reviewer.getApplication().getProgram().getTitle() + " - Reviewer Notification",
+		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + reviewer.getReviewRound().getApplication().getId() + " for "
+				+ reviewer.getReviewRound().getApplication().getProgram().getTitle() + " - Reviewer Notification",
 				"private/reviewers/mail/reviewer_notification_email.ftl", createModel(reviewer)));
 
 	}
@@ -46,8 +46,8 @@ public class ReviewerMailSender extends MailSender {
 	public void sendReviewerReminder(Reviewer reviewer) throws UnsupportedEncodingException {
 		InternetAddress toAddress = new InternetAddress(reviewer.getUser().getEmail(), reviewer.getUser().getFirstName() + " "
 				+ reviewer.getUser().getLastName());
-		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + reviewer.getApplication().getId() + " for "
-				+ reviewer.getApplication().getProgram().getTitle() + " - Review Reminder",
+		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + reviewer.getReviewRound().getApplication().getId() + " for "
+				+ reviewer.getReviewRound().getApplication().getProgram().getTitle() + " - Review Reminder",
 				"private/reviewers/mail/reviewer_reminder_email.ftl", createModel(reviewer)));
 
 		

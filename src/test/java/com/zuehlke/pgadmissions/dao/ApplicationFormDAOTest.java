@@ -568,7 +568,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
 		
-		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(reviewerUser).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).toReviewer();
 		
 		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer).toReviewRound();
 		applicationForm.setLatestReviewRound(reviewRound);
@@ -592,7 +592,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
 		
-		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(reviewerUser).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).toReviewer();
 		
 		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer).toReviewRound();
 		applicationForm.getReviewRounds().add(reviewRound);
@@ -615,7 +615,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		RegisteredUser reviewerUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
 		
-		Reviewer reviewer = new ReviewerBuilder().application(applicationForm).user(reviewerUser).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().user(reviewerUser).toReviewer();
 		
 		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer).toReviewRound();
 		applicationForm.setLatestReviewRound(reviewRound);
@@ -639,7 +639,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		
-		Reviewer reviewer = new ReviewerBuilder().application(applicationFormOne).user(reviewerAndAdminUser).toReviewer();
+		Reviewer reviewer = new ReviewerBuilder().user(reviewerAndAdminUser).toReviewer();
 		
 		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationFormOne).reviewers(reviewer).toReviewRound();
 		applicationFormOne.setLatestReviewRound(reviewRound);

@@ -32,8 +32,12 @@ public class ReviewerDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Reviewer> getReviewersDueNotification() {
-		return sessionFactory.getCurrentSession().createCriteria(Reviewer.class).add(Restrictions.isNull("lastNotified"))
-				.createAlias("application", "application").add(Restrictions.eq("application.status", ApplicationFormStatus.REVIEW)).list();
+		return sessionFactory.getCurrentSession()
+				.createCriteria(Reviewer.class)
+				.createAlias("reviewRound.application", "application")
+				.add(Restrictions.eqProperty("application.latestReviewRound", "reviewRound"))
+				.add(Restrictions.eq("application.status", ApplicationFormStatus.REVIEW))
+				.add(Restrictions.isNull("lastNotified")).list();
 	}
 
 	public void save(Reviewer reviewer) {
@@ -58,7 +62,9 @@ public class ReviewerDAO {
 		List<Reviewer> reviewers = sessionFactory.getCurrentSession()
 				.createCriteria(Reviewer.class, "reviewer")
 				.add(Restrictions.le("lastNotified", oneWeekAgo))
-				.createAlias("application", "application").add(Restrictions.eq("application.status", ApplicationFormStatus.REVIEW))
+				.createAlias("reviewRound.application", "application")
+				.add(Restrictions.eqProperty("application.latestReviewRound", "reviewRound"))
+				.add(Restrictions.eq("application.status", ApplicationFormStatus.REVIEW))
 				.list();
 		
 		for (Reviewer reviewer : reviewers) {

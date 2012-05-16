@@ -110,13 +110,13 @@
 									    			<#if !user.isInRole('APPLICANT') && !user.isRefereeOfApplicationForm(application)>
 								    					<option value="comment">Comment</option>								    				
 								      				</#if>      												
-							                	    <#if user.isReviewerOfApplicationForm(application) && !user.isAdminInProgramme(application.program) && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn() >
+							                	    <#if user.isReviewerInLatestReviewRoundOfApplicationForm(application) && !user.isAdminInProgramme(application.program) && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn() >
       													<option value="assignReviewer">Assign Reviewer</option>
         		  									</#if>
 							                	   <#if (user.isInRoleInProgram('ADMINISTRATOR', application.program) || user.isInterviewerOfApplicationForm(application)) && application.isInState('INTERVIEW')> 
       													<option value="assignInterviewer">Assign Interviewer</option>
         		  									</#if>
-									    			<#if user.isReviewerOfApplicationForm(application) && application.isInState('REVIEW') && !user.hasRespondedToProvideReviewForApplication(application)> 
+									    			<#if user.isReviewerInLatestReviewRoundOfApplicationForm(application) && application.isInState('REVIEW') && !user.hasRespondedToProvideReviewForApplication(application)> 
 								    					<option value="review">Add Review</option>								    				
 								      				</#if>      												
 									    			<#if user.isInterviewerOfApplicationForm(application) && application.isInState('INTERVIEW') && !user.hasRespondedToProvideInterviewFeedbackForApplication(application)> 

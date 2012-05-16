@@ -55,21 +55,30 @@
 							    <h1>Application form Stages duration</h1>
 							    <br/>
 							     <form>
+							     
+							     <select id="stages" style="visibility:hidden;">
+									<#list stages as stage>
+							  			<option value="${stage}"></option>
+									</#list>
+								</select>
+								
 							     <#list stages as stage>
 	   								<div class="row"> 
 			           					<span id="${stage.displayValue()}-lbl" class="plain-label">${stage.displayValue()} Duration</span>
 			            				<div class="field">	
-			            					<input type="hidden" id="${stage.displayValue()}_Stage" value="${stage}" />	            				
-			            					<input type = "text" name="${stage.displayValue()}_Duration" id="validationDuration" />
-		            							<select name="units" id="units">
+			            					<input type="hidden" id="stage" name="stage" value="${stage}" />	            				
+			            					<input type = "text" id="${stage}_duration" name="${stage}_duration" />
+		            							<select name="${stage}_unit" id="${stage}_unit">
 													<option value="">Select...</option>
 														<#list units as unit>
 												 		 	<option value="${unit}" >${unit.displayValue()}</option>               
 														</#list>
 												 </select>	
 		            						</div>
+		            						 <!-- for editing stages -->
 									</div>
 									</#list>
+									<input type="hidden" name="stagesDuration" id= "stagesDuration" />
 									
 			            			<div class="buttons">						        		
 			            				<button type="button" id="cancelDurationBtn" value="cancel">Cancel</button>

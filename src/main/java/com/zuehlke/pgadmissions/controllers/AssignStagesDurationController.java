@@ -52,6 +52,7 @@ public class AssignStagesDurationController {
 		}
 		modelMap.put("stages", getConfigurableStages());
 		modelMap.put("units", DurationUnitEnum.values());
+		modelMap.put("durationDAO", stateDurationDao);
 		return CHANGE_STATES_DURATION_VIEW_NAME;
 	}
 	
@@ -66,6 +67,7 @@ public class AssignStagesDurationController {
 		}
 		modelMap.put("stages", getConfigurableStages());
 		modelMap.put("units", DurationUnitEnum.values());
+		modelMap.put("durationDAO", stateDurationDao);
 		return CHANGE_STATES_DURATION_VIEW_NAME;
 	}
 	
@@ -77,5 +79,5 @@ public class AssignStagesDurationController {
 	public ApplicationFormStatus[] getConfigurableStages() {
 		return ApplicationFormStatus.getConfigurableStages();
 	}
-
+	
 }

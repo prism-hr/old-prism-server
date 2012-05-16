@@ -104,6 +104,7 @@ $(document).ready(function(){
 			$("#acceptTermsPEDValue").val("NO");
 		} else {	
 			$("#acceptTermsPEDValue").val("YES");
+			$(".terms-box").attr('style','');
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
 				acceptedTerms: $("#acceptTermsPEDValue").val()

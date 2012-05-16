@@ -36,6 +36,7 @@ $(document).ready(function(){
 			$("#acceptTermsEPValue").val("NO");
 		} else {	
 			$("#acceptTermsEPValue").val("YES");
+			$(".terms-box").attr('style','');
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
 				acceptedTerms: $("#acceptTermsEPValue").val()

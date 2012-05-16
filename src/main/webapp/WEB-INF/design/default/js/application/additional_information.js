@@ -42,8 +42,9 @@ $(document).ready(function(){
 	$("input[name*='acceptTermsAIDCB']").click(function() {
 		if ($("#acceptTermsAIDValue").val() =='YES'){
 			$("#acceptTermsAIDValue").val("NO");
-		} else {	
+		} else {
 			$("#acceptTermsAIDValue").val("YES");
+			$(".terms-box").attr('style','');
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
 				acceptedTerms: $("#acceptTermsAIDValue").val()
@@ -67,6 +68,7 @@ $(document).ready(function(){
 			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}
 		else{
+
 			$("span[name='nonAcceptedAID']").html('');
 			$.post("/pgadmissions/update/editAdditionalInformation", { 
 				informationText: $("#informationText").val(),

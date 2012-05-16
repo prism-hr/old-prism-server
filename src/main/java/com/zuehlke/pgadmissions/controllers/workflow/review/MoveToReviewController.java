@@ -45,7 +45,8 @@ public class MoveToReviewController extends AssignReviewerController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value="moveToReview")
-	public String getMoveToReviewPage() {
+	public String getMoveToReviewPage(ModelMap modelMap) {
+		modelMap.put("assignOnly", false);
 		return ASSIGN_REVIEWERS_TO_APPLICATION_VIEW;
 	}
 	

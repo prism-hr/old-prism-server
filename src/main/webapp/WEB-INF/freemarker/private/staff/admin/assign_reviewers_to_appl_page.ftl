@@ -116,9 +116,9 @@
 													<p>
 														<strong>Selected Reviewers</strong>
 													</p>
-													<select id="assignedReviewers" multiple="multiple">
+													<select id="assignedReviewers" multiple="multiple" <#if assignOnly>disabled="disabled"</#if>>
 													<#list applicationReviewers as reviewer>
-														<option disabled="disabled" value="${reviewer.id?string('#####')}">
+														<option value="${reviewer.id?string('#####')}">
 															${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if>
 														</option> 
 													</#list> 

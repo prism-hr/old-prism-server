@@ -84,7 +84,9 @@ public class MoveToReviewControllerTest {
 
 	@Test
 	public void shouldReturnShowPageTemplate() {
-		Assert.assertEquals(VIEW_RESULT, controller.getMoveToReviewPage());
+		ModelMap modelMap = new ModelMap();
+		Assert.assertEquals(VIEW_RESULT, controller.getMoveToReviewPage(modelMap));
+		Assert.assertFalse((Boolean) modelMap.get("assignOnly"));
 	}
 
 	// -------------------------------------------

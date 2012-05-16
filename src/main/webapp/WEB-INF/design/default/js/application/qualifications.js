@@ -68,6 +68,7 @@ $(document).ready(function(){
 			$("#acceptTermsQDValue").val("NO");
 		} else {	
 			$("#acceptTermsQDValue").val("YES");
+			$(".terms-box").attr('style','');
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
 				acceptedTerms: $("#acceptTermsQDValue").val()

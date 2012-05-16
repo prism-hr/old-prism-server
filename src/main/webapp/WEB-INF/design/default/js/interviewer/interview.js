@@ -1,6 +1,13 @@
 $(document).ready(function(){
 	
-	
+
+		$('#interviewDate').attr("readonly", "readonly");	
+		$('#interviewDate').datepicker({
+			dateFormat: 'dd-M-yy',
+			changeMonth: true,
+			changeYear: true,
+			yearRange: '1900:c+20' });
+
 	$('#addInterviewerBtn').click(function() {
 		var selectedReviewers = $('#programInterviewers').val();
 		selectedReviewers.forEach(function(id) {
@@ -43,19 +50,30 @@ $(document).ready(function(){
 	$('#moveToInterviewBtn').click(function() {
 		var idString = getAssignedInterviewerIdString();
 		var postData ={ 
-			applicationId : $('#applicationId').val(),			furtherDetails : $('#furtherDetails').val(),
+			applicationId : $('#applicationId').val(),			
+			furtherDetails : $('#furtherDetails').val(),
 			interviewDueDate : $('#interviewDate').val(),
 			locationURL : $('#interviewLocation').val(),
 			assignOnly: $('#assignOnly').val(),
 			unsavedInterviewersRaw : idString
 		};
+		$('#postInterviewForm').html('');
+		$('#postInterviewForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");
+		$('#postInterviewForm').append("<input name='furtherDetails' type='hidden' value='" +  $('#furtherDetails').val() + "'/>");
+		$('#postInterviewForm').append("<input name='interviewDueDate' type='hidden' value='" +  $('#interviewDate').val() + "'/>");
+		$('#postInterviewForm').append("<input name='locationURL' type='hidden' value='" +  $('#interviewLocation').val() + "'/>");
+		$('#postInterviewForm').append("<input name='unsavedInterviewersRaw' type='hidden' value='" + idString + "'/>");
 		
-		$.post("/pgadmissions/interview/move", 
+		$('#postInterviewForm').submit();
+		
+		
+		/**$.post("/pgadmissions/interview/move", 
 			$.param(postData),
 			function(data) {
-				$('#interviewSection').html(data);
+				alert(data);
+				$(this).html(data);
 			}
-		);
+		);*/
 	});
 });
 
@@ -70,4 +88,3 @@ function getAssignedInterviewerIdString() {
 	}
 	return revIds;
 }
-//	bindDatePicker('#interviewDate');

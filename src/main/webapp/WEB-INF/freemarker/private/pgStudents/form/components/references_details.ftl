@@ -354,7 +354,7 @@
     	</div>
 	
        <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
-       <div>
+       <div class="terms-box">
 			<div class="row">
 				<span class="terms-label">
 					I understand that in accepting this declaration I am confirming
@@ -366,7 +366,6 @@
 		        	<input type="checkbox" name="acceptTermsRDCB" id="acceptTermsRDCB"/>
 		        </div>
 	            <input type="hidden" name="acceptTermsRDValue" id="acceptTermsRDValue"/>
-	           	<span class="invalid" name="nonAcceptedRD"></span>
 			</div>	        
 	    </div>
 	    </#if>  

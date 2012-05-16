@@ -34,7 +34,8 @@ $(document).ready(function(){
 	
 	$('#documentsSaveButton').click(function(){
 		if( $("#acceptTermsDDValue").val() =='NO'){ 
-			$("span[name='nonAcceptedDD']").html('You must agree to the terms and conditions');
+			//$("span[name='nonAcceptedDD']").html('You must agree to the terms and conditions');
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}
 		else{
 			$("span[name='nonAcceptedDD']").html('');

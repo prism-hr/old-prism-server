@@ -38,7 +38,8 @@ $(document).ready(function(){
 	
 	$('#refereeSaveAndCloseButton').click(function(){
 		if( $("#acceptTermsRDValue").val() =='NO'){ 
-			$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');
+			//$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}
 		else{
 			$("span[name='nonAcceptedRD']").html('');
@@ -47,7 +48,8 @@ $(document).ready(function(){
 	});
 	$('#addReferenceButton').click(function(){
 		if( $("#acceptTermsRDValue").val() =='NO'){ 
-			$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');
+			//$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}
 		else{
 			$("span[name='nonAcceptedRD']").html('');

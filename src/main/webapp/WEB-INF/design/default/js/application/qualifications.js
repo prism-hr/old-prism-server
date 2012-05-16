@@ -79,7 +79,8 @@ $(document).ready(function(){
 	
 	$('#addQualificationButton').click(function(){
 		if( $("#acceptTermsQDValue").val() =='NO'){ 
-			$("span[name='nonAcceptedQD']").html('You must agree to the terms and conditions');
+			//$("span[name='nonAcceptedQD']").html('You must agree to the terms and conditions');
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}
 		else{
 			$("span[name='nonAcceptedQD']").html('');
@@ -89,7 +90,8 @@ $(document).ready(function(){
 	
 	$('#qualificationsSaveButton').click(function(){
 		if( $("#acceptTermsQDValue").val() =='NO'){ 
-			$("span[name='nonAcceptedQD']").html('You must agree to the terms and conditions');
+			//$("span[name='nonAcceptedQD']").html('You must agree to the terms and conditions');
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}
 		else{
 			$("span[name='nonAcceptedQD']").html('');

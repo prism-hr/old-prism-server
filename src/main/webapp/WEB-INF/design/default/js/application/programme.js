@@ -122,7 +122,8 @@ $(document).ready(function(){
 	
 	$('#programmeSaveButton').on("click",function(){
 			if( $("#acceptTermsPDValue").val() =='NO'){ 
-				$("span[name='nonAcceptedPD']").html('You must agree to the terms and conditions');
+				//$("span[name='nonAcceptedPD']").html('You must agree to the terms and conditions');
+				$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			}
 			else{
 				$("span[name='nonAcceptedPD']").html('');

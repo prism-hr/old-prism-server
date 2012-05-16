@@ -66,16 +66,25 @@
 	   								<div class="row"> 
 			           					<span id="${stage.displayValue()}-lbl" class="plain-label">${stage.displayValue()} Duration</span>
 			            				<div class="field">	
-			            					<input type="hidden" id="stage" name="stage" value="${stage}" />	            				
-			            					<input type = "text" id="${stage}_duration" name="${stage}_duration" />
+			            					<input type="hidden" id="stage" name="stage" value="${stage}" />
+			            					 <#if durationDAO.getByStatus(stage)?? && durationDAO.getByStatus(stage).duration??>  				
+			            						<input type = "text" id="${stage}_duration" name="${stage}_duration" value="${durationDAO.getByStatus(stage).duration}" />
+			            					<#else>
+			            						<input type = "text" id="${stage}_duration" name="${stage}_duration"  />
+			            					</#if>
 		            							<select name="${stage}_unit" id="${stage}_unit">
 													<option value="">Select...</option>
 														<#list units as unit>
-												 		 	<option value="${unit}" >${unit.displayValue()}</option>               
+												 		 	<option value="${unit}"
+												 		 	<#if  durationDAO.getByStatus(stage)?? && durationDAO.getByStatus(stage).unit?? && durationDAO.getByStatus(stage).unit == unit>
+																selected="selected"
+															</#if>>
+															${unit.displayValue()}</option>               
 														</#list>
 												 </select>	
 		            						</div>
-		            						 <!-- for editing stages -->
+		            					<span class="invalid" name="${stage}_invalidDuration" style="display:none;"></span>
+		            					<span class="invalid" name="${stage}_invalidUnit" style="display:none;"></span>
 									</div>
 									</#list>
 									<input type="hidden" name="stagesDuration" id= "stagesDuration" />

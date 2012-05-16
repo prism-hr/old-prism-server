@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.dao;
 
 
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,14 @@ public class StageDurationDAO {
 				.uniqueResult();
 
 	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<StageDuration> getAllStagesDurations() {
+		return (List<StageDuration>) sessionFactory.getCurrentSession().createCriteria(StageDuration.class)
+				.list();
+	}
+	
 
 
 }

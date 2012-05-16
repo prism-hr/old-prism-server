@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -29,9 +31,10 @@ public class AssignStagesDurationController {
 	private final StageDurationDAO stateDurationDao;
 	private static final String CHANGE_STATES_DURATION_VIEW_NAME = "/private/staff/superAdmin/assign_stages_duration";
 	private final StageDurationPropertyEditor stageDurationPropertyEditor;
+	private final ReminderIntervalDAO reminderIntervalDAO;
 	
 	AssignStagesDurationController(){
-		this(null, null);
+		this(null, null, null);
 	}
 	
 	@InitBinder
@@ -40,9 +43,10 @@ public class AssignStagesDurationController {
 	}
 	
 	@Autowired
-	public AssignStagesDurationController(StageDurationDAO stateDurationDao, StageDurationPropertyEditor stageDurationPropertyEditor) {
+	public AssignStagesDurationController(StageDurationDAO stateDurationDao, StageDurationPropertyEditor stageDurationPropertyEditor, ReminderIntervalDAO reminderIntervalDAO) {
 		this.stateDurationDao = stateDurationDao;
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
+		this.reminderIntervalDAO = reminderIntervalDAO;
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -53,6 +57,7 @@ public class AssignStagesDurationController {
 		modelMap.put("stages", getConfigurableStages());
 		modelMap.put("units", DurationUnitEnum.values());
 		modelMap.put("durationDAO", stateDurationDao);
+		modelMap.put("intervalDAO", reminderIntervalDAO);
 		return CHANGE_STATES_DURATION_VIEW_NAME;
 	}
 	
@@ -68,6 +73,22 @@ public class AssignStagesDurationController {
 		modelMap.put("stages", getConfigurableStages());
 		modelMap.put("units", DurationUnitEnum.values());
 		modelMap.put("durationDAO", stateDurationDao);
+		modelMap.put("intervalDAO", reminderIntervalDAO);
+		return CHANGE_STATES_DURATION_VIEW_NAME;
+	}
+	
+	@RequestMapping(value="/submitReminderInterval", method = RequestMethod.POST)
+	public String submitReminderInterval(ReminderInterval reminderInterval, ModelMap modelMap) {
+		if (!getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
+			throw new ResourceNotFoundException();
+		}
+		
+		reminderIntervalDAO.save(reminderInterval);
+		
+		modelMap.put("stages", getConfigurableStages());
+		modelMap.put("units", DurationUnitEnum.values());
+		modelMap.put("durationDAO", stateDurationDao);
+		modelMap.put("intervalDAO", reminderIntervalDAO);
 		return CHANGE_STATES_DURATION_VIEW_NAME;
 	}
 	

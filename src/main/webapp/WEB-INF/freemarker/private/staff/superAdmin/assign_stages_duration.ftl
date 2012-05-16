@@ -52,7 +52,7 @@
 				      <!-- content box -->				      
 				      <div class="content-box">
 				        <div class="content-box-inner">
-							    <h1>Application form Stages duration</h1>
+							    <h1> Configure Application form Stages duration</h1>
 							    <br/>
 							     <form>
 							     
@@ -95,6 +95,40 @@
 									</div>
 									</form>
 			  					<hr/>
+			  					
+			  					<!-- Configure Reminder Interval -->
+			  					
+			  					 <h1> Configure Email Reminders Interval</h1>
+							    <br/>
+							     <form>
+							     
+	   								<div class="row"> 
+			           					<span id="reminder-lbl" class="plain-label">Reminder Interval Duration</span>
+			            				<div class="field">	
+			            						<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
+			            						<input type = "text" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(intervalDAO.getReminderInterval().duration)!}" />
+		            							<select name="reminderUnit" id="reminderUnit">
+													<option value="">Select...</option>
+														<#list units as unit>
+												 		 	<option value="${unit}"
+												 		 	<#if  intervalDAO.getReminderInterval()?? && intervalDAO.getReminderInterval().unit?? && intervalDAO.getReminderInterval().unit == unit>
+																selected="selected"
+															</#if>>
+															${unit.displayValue()}</option>               
+														</#list>
+												 </select>	
+		            						</div>
+		            					<span class="invalid" name="invalidDurationInterval" style="display:none;"></span>
+		            					<span class="invalid" name="invalidUnitInterval" style="display:none;"></span>
+									</div>
+									
+			            			<div class="buttons">						        		
+			            				<button type="button" id="cancelReminderBtn" value="cancel">Cancel</button>
+							       		<button class="blue" id="submitRIBtn" type="button" value="Submit">Submit</button>						        
+									</div>
+									</form>
+			  					<hr/>
+			  					
 		  					
 				        </div><!-- .content-box-inner -->
 				      </div><!-- .content-box -->

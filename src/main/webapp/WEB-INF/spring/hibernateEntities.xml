@@ -42,6 +42,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.RejectReason</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Interview</value>
 	     		<value>com.zuehlke.pgadmissions.domain.StageDuration</value>
+	     		<value>com.zuehlke.pgadmissions.domain.ReminderInterval</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

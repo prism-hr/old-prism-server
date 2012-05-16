@@ -13,8 +13,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
 
+import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -34,6 +36,7 @@ public class AssignStagesDurationControllerTest {
 	private StageDurationPropertyEditor stageDurationPropertyEditorMock;
 	private UsernamePasswordAuthenticationToken authenticationToken;
 	private static final String CHANGE_STATES_DURATION_VIEW_NAME = "/private/staff/superAdmin/assign_stages_duration";
+	private ReminderIntervalDAO reminderIntervalDAOMock;
 	
 
 	
@@ -75,13 +78,27 @@ public class AssignStagesDurationControllerTest {
 		
 	}
 	
+	@Test
+	public void shouldSaveReminderInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		reminderIntervalDAOMock.save(reminderInterval);
+		EasyMock.replay(reminderIntervalDAOMock);
+		controller.submitReminderInterval(reminderInterval, new ModelMap());
+		EasyMock.verify(reminderIntervalDAOMock);
+		
+	}
+	
 	
 	@Before
 	public void setUp(){
 		
 		stateDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
 		stageDurationPropertyEditorMock = EasyMock.createMock(StageDurationPropertyEditor.class);
-		controller = new AssignStagesDurationController(stateDurationDAOMock, stageDurationPropertyEditorMock);
+		reminderIntervalDAOMock = EasyMock.createMock(ReminderIntervalDAO.class);
+		controller = new AssignStagesDurationController(stateDurationDAOMock, stageDurationPropertyEditorMock, reminderIntervalDAOMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

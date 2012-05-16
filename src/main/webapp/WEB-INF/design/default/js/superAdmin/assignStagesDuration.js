@@ -13,8 +13,51 @@ $(document).ready(function() {
 			);
 		}
 	});
+	
+	$('#submitRIBtn').click(function() {
+		var validationErrors = validateReminderInterval();
+		var postData ={ 
+				id : $('#reminderIntervalId').val(),
+				duration : $('#reminderIntervalDuration').val(),
+				unit : $('#reminderUnit').val()
+			};
+		if(!validationErrors){
+			$.post("/pgadmissions/assignStagesDuration/submitReminderInterval", 
+					$.param(postData),
+					function(data) {
+				window.location.href = "/pgadmissions/applications";
+			}
+			);
+		}
+	});
 });
 
+
+function validateReminderInterval() {
+	var validationErrors = false;
+		var reminderIntervalDuration = $('#reminderIntervalDuration').val();
+		var reminderIntervalUnit = $('#reminderUnit').val();
+		if(isNaN(reminderIntervalDuration) || reminderIntervalDuration == ""){
+			$("span[name='invalidDurationInterval']").html('Please specify the duration amount as a number.');
+			$("span[name='invalidDurationInterval']").show();
+			validationErrors = true;
+		}
+		else{
+			$("span[name='invalidDurationInterval']").html('');
+			$("span[name='invalidDurationInterval']").hide();
+		}
+		if(reminderIntervalUnit == ""){
+			$("span[name='invalidUnitInterval']").html('Please select a duration unit from the dropdown.');
+			$("span[name='invalidUnitInterval']").show();
+			
+			validationErrors = true;
+		}
+		else{
+			$("span[name='invalidUnitInterval']").html('');
+			$("span[name='invalidUnitInterval']").hide();
+		}
+	return validationErrors;
+}
 function appendStagesJSON() {
 	var validationErrors = false;
 	var stages = document.getElementById("stages");

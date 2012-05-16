@@ -9,8 +9,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -34,7 +32,7 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldSaveAndLoadInterviewer() throws ParseException{
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");		
-		Interviewer interviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).lastNotified(lastNotified).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).lastNotified(lastNotified).toInterviewer();
 		save(interviewer);
 		assertNotNull(interviewer.getId());
 		Interviewer reloadedInterviewer = (Interviewer) sessionFactory.getCurrentSession().get(Interviewer.class,interviewer.getId());
@@ -45,14 +43,14 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase{
 		
 		assertNotSame(interviewer, reloadedInterviewer);
 		assertEquals(interviewer, reloadedInterviewer);
-		assertEquals(applicationForm, reloadedInterviewer.getApplication());
+
 		assertEquals(interviewerUser, reloadedInterviewer.getUser());
 		assertEquals(lastNotified, reloadedInterviewer.getLastNotified());
 	}
 	
 	@Test
 	public void shoulLoadInterviewCommentWithInterviewer() throws ParseException{
-		Interviewer interviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).toInterviewer();
 		InterviewComment interviewComment = new InterviewCommentBuilder().application(applicationForm).user(interviewerUser).comment("comment").interviewer(interviewer).commentType(CommentType.INTERVIEW).toInterviewComment();
 		
 		save(interviewer, interviewComment);		

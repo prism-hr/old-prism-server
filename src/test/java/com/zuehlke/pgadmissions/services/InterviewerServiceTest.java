@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -134,14 +135,18 @@ public class InterviewerServiceTest {
 		};
 		
 		RegisteredUser interviewerUser =  new RegisteredUserBuilder().id(1).toUser();
-		ApplicationForm application = new ApplicationFormBuilder().latestInterview(new Interview()).id(1).toApplicationForm();
+		
+		Interview latestInterview = new InterviewBuilder().id(1).toInterview();
+		ApplicationForm application = new ApplicationFormBuilder().latestInterview(latestInterview).id(1).toApplicationForm();
+		
 		interviewerDAOMock.save(interviewer);
 		EasyMock.replay(interviewerDAOMock);
+		
 		interviewerService.createInterviewerToApplication(interviewerUser, application);
+		
 		EasyMock.verify(interviewerDAOMock);
+		Assert.assertEquals(interviewer, latestInterview.getInterviewers().get(0));
 		Assert.assertNotNull(interviewer.getUser());
-		Assert.assertNotNull(interviewer.getApplication());
-		Assert.assertEquals(application, interviewer.getApplication());
 		Assert.assertEquals(interviewerUser, interviewer.getUser());
 		
 		

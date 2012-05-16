@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.dao;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -11,24 +10,21 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.InterviewComment;
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -74,7 +70,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 	public void shouldReturnInterviewerIfLastModifiedIsNull() {
 		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.setLatestInterview(interview);
 		save(application, interviewer, interview);
@@ -89,7 +85,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 	public void shouldNotReturnInterviewerInLastNotifiedIsNotNull() {
 		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(new Date()).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(new Date()).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.setLatestInterview(interview);
 		save(application, interviewer, interview);
@@ -103,7 +99,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnInterviewerIfApplicationNotInInterview() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.setLatestInterview(interview);
 		save(application, interviewer, interview);
@@ -118,7 +114,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 	public void shouldNotReturnInterviewerifNotInterviewerOfLatestInterview() {
 		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.getInterviews().add(interview);
 		save(application, interviewer, interview);
@@ -138,7 +134,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 			
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(twoWeeksAgo)
 				.toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.setLatestInterview(interview);
 		save(application, interviewer, interview);
@@ -158,7 +154,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 			
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(twoWeeksAgo)
 				.toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.getInterviews().add(interview);
 		save(application, interviewer, interview);
@@ -177,7 +173,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 			
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW).dueDate(twoWeeksAgo)
 				.toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.setLatestInterview(interview);
 		save(application, interviewer, interview);
@@ -195,7 +191,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(inTwoWeeks)
 				.toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.setLatestInterview(interview);
 		save(application, interviewer, interview);
@@ -215,7 +211,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(sixDaysAgo)
 				.toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.setLatestInterview(interview);
 		save(application, interviewer, interview);
@@ -235,7 +231,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 			
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(twoWeeksAgo)
 				.toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysPlus5MinutesAgo).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(sevenDaysPlus5MinutesAgo).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.setLatestInterview(interview);
 		save(application, interviewer, interview);
@@ -254,7 +250,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 			
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(twoWeeksAgo)
 				.toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sixDaysAgo).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(sixDaysAgo).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.setLatestInterview(interview);
 		save(application, interviewer, interview);
@@ -273,7 +269,7 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 			
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).dueDate(twoWeeksAgo)
 				.toApplicationForm();
-		Interviewer interviewer = new InterviewerBuilder().user(user).application(application).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(user).lastNotified(sevenDaysMinus5MinutesAgo).toInterviewer();
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		application.setLatestInterview(interview);
 		InterviewComment interviewComment = new InterviewCommentBuilder().interviewer(interviewer).adminsNotified(CheckedStatus.NO).commentType(CommentType.INTERVIEW).comment("This is an interview comment").suitableCandidate(CheckedStatus.NO).user(user).application(application).toInterviewComment();

@@ -74,8 +74,7 @@ public class InterviewerService {
 	@Transactional
 	public void createInterviewerToApplication(RegisteredUser interviewerUser, ApplicationForm application) {
 		Interviewer interviewer = createNewInterviewer();
-		interviewer.setUser(interviewerUser);
-		interviewer.setApplication(application);
+		interviewer.setUser(interviewerUser);		
 		application.getLatestInterview().getInterviewers().add(interviewer);
 
 		interviewerDAO.save(interviewer);

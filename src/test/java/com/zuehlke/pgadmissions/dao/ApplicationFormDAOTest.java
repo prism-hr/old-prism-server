@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
@@ -669,7 +668,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
 		
-		Interviewer interviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).toInterviewer();
 		
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		
@@ -695,7 +694,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
 		
-		Interviewer interviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).toInterviewer();
 		
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		
@@ -720,7 +719,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		
-		Interviewer interviewer = new InterviewerBuilder().application(applicationForm).user(interviewerUser).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).toInterviewer();
 		
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		
@@ -746,7 +745,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 		
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();		
-		Interviewer interviewer = new InterviewerBuilder().application(applicationFormOne).user(interviewerAndAdminUser).toInterviewer();		
+		Interviewer interviewer = new InterviewerBuilder().user(interviewerAndAdminUser).toInterviewer();		
 		Interview interview = new InterviewBuilder().interviewers(interviewer).application(application).toInterview();
 		applicationFormOne.setLatestInterview(interview);		
 		save(applicationFormOne, interviewerAndAdminUser, interviewer, interview);

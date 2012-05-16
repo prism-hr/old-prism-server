@@ -47,7 +47,8 @@ $(document).ready(function(){
 	
 	$('#positionSaveAndCloseButton').click(function(){
 		if( $("#acceptTermsEPValue").val() =='NO'){ 
-			$("span[name='nonAcceptedEP']").html('You must agree to the terms and conditions');
+			//$("span[name='nonAcceptedEP']").html('You must agree to the terms and conditions');
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}
 		else{
 			$("span[name='nonAcceptedEP']").html('');
@@ -57,7 +58,8 @@ $(document).ready(function(){
 
 	$('#addPosisionButton').click(function(){
 		if( $("#acceptTermsEPValue").val() =='NO'){ 
-			$("span[name='nonAcceptedEP']").html('You must agree to the terms and conditions');
+			//$("span[name='nonAcceptedEP']").html('You must agree to the terms and conditions');
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}
 		else{
 			$("span[name='nonAcceptedEP']").html('');

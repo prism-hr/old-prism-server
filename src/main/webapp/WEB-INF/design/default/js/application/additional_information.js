@@ -63,7 +63,8 @@ $(document).ready(function(){
 			hasConvictions = false;
 		}
 		if( $("#acceptTermsAIDValue").val() =='NO'){ 
-			$("span[name='nonAcceptedAID']").html('You must agree to the terms and conditions');
+			//$("span[name='nonAcceptedAID']").html('You must agree to the terms and conditions');
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}
 		else{
 			$("span[name='nonAcceptedAID']").html('');

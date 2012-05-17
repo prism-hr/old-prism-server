@@ -154,7 +154,14 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldReturnOverDueApplicationInValidationStageWithNoReminder() {
+	public void shouldReturnOverDueApplicationInValidationStageWithNoReminderForOneWeekReminder() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		Date now = Calendar.getInstance().getTime();
 		Date today = DateUtils.truncate(now, Calendar.DATE);
 		Date oneMonthAgo = DateUtils.addMonths(today, -1);
@@ -169,7 +176,15 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldNotReturnApplicationsNotInValidationStage() {
+	public void shouldNotReturnApplicationsNotInValidationStageForOneWeekReminder() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		
 		Date now = Calendar.getInstance().getTime();
 		Date today = DateUtils.truncate(now, Calendar.DATE);
 		Date eightDaysAgo = DateUtils.addDays(today, -8);
@@ -191,7 +206,14 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldNotReturnApplicationaInValidationStageButNotOverDue() {
+	public void shouldNotReturnApplicationaInValidationStageButNotOverDueForOneWeekReminder() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		Date now = Calendar.getInstance().getTime();
 		Date today = DateUtils.truncate(now, Calendar.DATE);
 		Date oneWeekInFuture = DateUtils.addWeeks(today, 1);

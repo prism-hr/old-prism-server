@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Repository
@@ -48,9 +49,12 @@ public class RefereeDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Referee> getRefereesDueAReminder() {
-		Date now = Calendar.getInstance().getTime();
-		Date today = DateUtils.truncate(now, Calendar.DATE);
-		Date oneWeekAgo = DateUtils.addDays(today, -6);	
+
+		Date today = Calendar.getInstance().getTime();
+		ReminderInterval reminderInterval = (ReminderInterval)sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
+		Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
+
+	
 		return (List<Referee>) sessionFactory.getCurrentSession()
 					.createCriteria(Referee.class)
 					.createAlias("application", "application")
@@ -58,7 +62,7 @@ public class RefereeDAO {
 					.add(Restrictions.isNull("reference"))
 					.add(Restrictions.isNotNull("user"))
 					.add(Restrictions.not(Restrictions.in("application.status", new ApplicationFormStatus[]{ApplicationFormStatus.WITHDRAWN, ApplicationFormStatus.APPROVED, ApplicationFormStatus.REJECTED, ApplicationFormStatus.UNSUBMITTED})))
-					.add(Restrictions.le("lastNotified", oneWeekAgo))
+					.add(Restrictions.le("lastNotified", dateWithSubtractedInterval))
 				.list();
 	}
 	

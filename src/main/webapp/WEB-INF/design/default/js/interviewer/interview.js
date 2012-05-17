@@ -27,13 +27,17 @@ $(document).ready(function(){
 			assignOnly: $('#assignOnly').val(),
 			unsavedInterviewersRaw : idString
 		};
+		var idString = getAssignedInterviewerIdString();
+
+		$('#postInterviewerForm').html('');
+		$('#postInterviewerForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");
+		$('#postInterviewerForm').append("<input name='firstName' type='hidden' value='" +  $('#newInterviewerFirstName').val() + "'/>");
+		$('#postInterviewerForm').append("<input name='lastName' type='hidden' value='" +  $('#newInterviewerLastName').val() + "'/>");
+		$('#postInterviewerForm').append("<input name='email' type='hidden' value='" +  $('#newInterviewerEmail').val() + "'/>");
+		$('#postInterviewerForm').append("<input name='unsavedInterviewersRaw' type='hidden' value='" + idString + "'/>");
 		
-		$.post("/pgadmissions/interview/createInterviewer", 
-			$.param(postData),
-			function(data) {
-				$('#interviewSection').html(data);
-			}
-		);
+		$('#postInterviewerForm').submit();
+		
 	});
 	
 	$('#removeInterviewerBtn').click(function() {
@@ -49,14 +53,7 @@ $(document).ready(function(){
 	
 	$('#moveToInterviewBtn').click(function() {
 		var idString = getAssignedInterviewerIdString();
-		var postData ={ 
-			applicationId : $('#applicationId').val(),			
-			furtherDetails : $('#furtherDetails').val(),
-			interviewDueDate : $('#interviewDate').val(),
-			locationURL : $('#interviewLocation').val(),
-			assignOnly: $('#assignOnly').val(),
-			unsavedInterviewersRaw : idString
-		};
+
 		$('#postInterviewForm').html('');
 		$('#postInterviewForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");
 		$('#postInterviewForm').append("<input name='furtherDetails' type='hidden' value='" +  $('#furtherDetails').val() + "'/>");
@@ -67,13 +64,7 @@ $(document).ready(function(){
 		$('#postInterviewForm').submit();
 		
 		
-		/**$.post("/pgadmissions/interview/move", 
-			$.param(postData),
-			function(data) {
-				alert(data);
-				$(this).html(data);
-			}
-		);*/
+		
 	});
 });
 

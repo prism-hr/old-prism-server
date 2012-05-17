@@ -211,7 +211,7 @@
             <input type="hidden" id="supervisorId" name="supervisorId"/>
             
             <div class="row">
-            <label class="plain-label">Supervisor First Name<em>*</em></label>
+            <label class="plain-label">Supervisor First Name</label>
              <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.firstname'/>"></span>
                 <div class="field">
                     <input class="full" type="text" placeholder="First Name" id="supervisorFirstname" name="supervisorFirstname"/>
@@ -220,7 +220,7 @@
             </div>
             
             <div class="row">
-                <label class="plain-label">Supervisor Last Name<em>*</em></label>
+                <label class="plain-label">Supervisor Last Name</label>
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.lastname'/>"></span>
                 <div class="field"> 
                     <input class="full" type="text" placeholder="Last Name" id="supervisorLastname" name="supervisorLastname"/>
@@ -229,7 +229,7 @@
             </div>
             
             <div class="row">
-                <label class="plain-label">Supervisor Email<em>*</em></label>
+                <label class="plain-label">Supervisor Email</label>
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.email'/>"></span>
                 <div class="field">
                     <input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>

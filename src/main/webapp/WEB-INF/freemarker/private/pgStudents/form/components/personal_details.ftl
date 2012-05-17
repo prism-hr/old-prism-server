@@ -474,7 +474,7 @@
   
           	<div class="buttons">
               <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-              		<button type="reset" name="personalDetailsCancelButton" id="personalDetailsCancelButton" value="cancel">Cancel</button>
+              		<button type="reset" name="personalDetailsCancelButton" id="personalDetailsCancelButton" value="cancel">Clear</button>
                     <a id="personalDetailsCloseButton" class="button blue">Close</a>
 					<button class="blue" type="button" id="personalDetailsSaveButton" value="close">Save</button>
               <#else>

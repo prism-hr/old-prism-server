@@ -41,16 +41,13 @@
                 	<tr>
 	                  	<td><a class="row-arrow">-</a>
 	                  	</td>
-	                  	<td>${(existingQualification.qualificationType?html)!} &nbsp
-	                  		${(existingQualification.qualificationSubject?html)!} &nbsp
-	                  	 	(<#if existingQualification.isQualificationCompleted()>
-									Achieved:
-							 <#else> 
-							 		Expected: 
-	                    	 </#if>
-	                    	 &nbsp ${(existingQualification.qualificationGrade?html)!}) &nbsp
-	                  		${(existingQualification.qualificationInstitution?html)!}</td>
-	                  	<td>${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}</td>
+	                  	<td>${(existingQualification.qualificationInstitution?html)!}&nbsp
+	                  		${(existingQualification.qualificationType?html)!}&nbsp
+	                  		${(existingQualification.qualificationSubject?html)!}&nbsp
+	                  		(${(existingQualification.qualificationGrade?html)!})
+	                  	 	</td>
+	                  	<td><#if existingQualification.isQualificationCompleted()>${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}
+	                  	<#else>Expected</#if></td>
 	                  	  
 	                  	  	   <td>
 	                  	  	   		<a name="editQualificationLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="qualification_${existingQualification.id?string('#######')}" class="button-edit button-hint">edit</a>
@@ -347,7 +344,7 @@
 		
     	<div class="buttons">
 	    	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-	        	<a class="button" id="qualificationCancelButton" name="qualificationCancelButton">Cancel</a>
+	        	<a class="button" id="qualificationCancelButton" name="qualificationCancelButton">Clear</a>
 	        	<button class="blue" type="button" id="qualificationsCloseButton" name="qualificationsCloseButton">Close</button>
 	            <button id="qualificationsSaveButton" class="blue" type="button" value="add">Save</button>
 	         <#else>

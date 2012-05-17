@@ -232,6 +232,9 @@
 						<form id="postInterviewForm" method="post" action ="<@spring.url '/interview/move'/>">
 							
 						</form>
+						<form id="postInterviewerForm" method="post" action ="<@spring.url '/interview/createInterviewer'/>">
+							
+						</form>
 					<#include "/private/common/feedback.ftl"/>
 				</div>
 				<!-- .content-box-inner -->

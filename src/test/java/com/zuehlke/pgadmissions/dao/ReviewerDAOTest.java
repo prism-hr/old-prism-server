@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
@@ -28,12 +29,14 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
 public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 
 	private RegisteredUser user;
 	private ReviewerDAO dao;
 	private Program program;
+	private ReminderInterval reminderInterval;
 /*
 	@Test
 	public void shouldReturnReviewerOfLatestReviewRoundIfLastModifiedIsNull() {
@@ -116,7 +119,13 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 
 */
 	@Test
-	public void shouldReturnReviewerOfLatestRoundReminded7Minus5minDaysAgo() {
+	public void shouldReturnReviewerOfLatestRoundReminded7Minus5minDaysAgoForASixDaysReminderInterval() {
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(6);
+		reminderInterval.setUnit(DurationUnitEnum.DAYS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
 				.toApplicationForm();
 
@@ -172,7 +181,7 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldNotReturnReviewerLastNotified6DaysAgo() {
+	public void shouldReturnReviewerLastNotified6DaysAgo() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
 				.toApplicationForm();
 		
@@ -233,6 +242,13 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
 
+		reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		save(user, program);
 
 		dao = new ReviewerDAO(sessionFactory);

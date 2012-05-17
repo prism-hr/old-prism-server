@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
@@ -42,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
@@ -124,11 +126,17 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldReturnOverDueApplicationInValidationStageWithReminderMoreThanAWeekAgo() {
+	public void shouldReturnOverDueApplicationInValidationStageWithReminderMoreThanAWeekAgoReminderInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		Date now = Calendar.getInstance().getTime();
-		Date today = DateUtils.truncate(now, Calendar.DATE);
-		Date eightDaysAgo = DateUtils.addDays(today, -8);
-		Date oneMonthAgo = DateUtils.addMonths(today, -1);
+		Date eightDaysAgo = DateUtils.addDays(now, -8);
+		Date oneMonthAgo = DateUtils.addMonths(now, -1);
 		ApplicationForm applicationForm = new ApplicationFormBuilder()
 				.program(program)
 				.applicant(user)
@@ -198,12 +206,18 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldNotReturnApplicationaInValidationStageWitDueDateToday() {
+	public void shouldNotReturnApplicationaInValidationStageWitDueDateTodayForAReminderOfOneWeek() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		Date now = Calendar.getInstance().getTime();
-		Date today = DateUtils.truncate(now, Calendar.DATE);
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
-				.dueDate(today).toApplicationForm();
+				.dueDate(now).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();
@@ -214,6 +228,13 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 	@Test
 	public void shouldNotReturnOverDueApplicationInValidationStageWithReminderSixDaysWeekAgo() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		Date now = Calendar.getInstance().getTime();
 		Date today = DateUtils.truncate(now, Calendar.DATE);
 		Date sixDaysAgo = DateUtils.addDays(today, -6);
@@ -235,12 +256,18 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldReturnOverDueApplicationInValidationStageWithReminderOneWeekAndFiveMinAgo() {
+	public void shouldReturnOverDueApplicationInValidationStageWithReminderOneWeekAndFiveMinAgoForAReminderOfOneWeek() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		Date now = Calendar.getInstance().getTime();
-		Date today = DateUtils.truncate(now, Calendar.DATE);
 		Date oneWeekAgo = DateUtils.addWeeks(now, -1);
 		Date oneWeekAgoAndFiveMinAgo = DateUtils.addMinutes(oneWeekAgo, -5);
-		Date oneMonthAgo = DateUtils.addMonths(today, -1);
+		Date oneMonthAgo = DateUtils.addMonths(now, -1);
 		ApplicationForm applicationForm = new ApplicationFormBuilder()
 				.program(program)
 				.applicant(user)
@@ -258,12 +285,190 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldReturnOverDueApplicationInValidationStageWithReminderOneWeekMinusFiveMinAgo() {
+	public void shouldReturnOverDueApplicationInValidationStageWithReminder1HourAgoForAReminderWith30MinutesInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(30);
+		reminderInterval.setUnit(DurationUnitEnum.MINUTES);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		Date now = Calendar.getInstance().getTime();
 		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date oneDayAgo = DateUtils.addDays(now, -1);
+		Date oneMonthAgo = DateUtils.addMonths(today, -1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		.program(program)
+		.applicant(user)
+		.status(ApplicationFormStatus.VALIDATION)
+		.dueDate(oneMonthAgo)
+		.notificationRecords(
+				new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER).notificationDate(oneDayAgo)
+				.toNotificationRecord()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		assertTrue(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldNotReturnOverDueApplicationInValidationStageWithReminder1HourAgoForAReminderWith2HoursInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(2);
+		reminderInterval.setUnit(DurationUnitEnum.HOURS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date onehourAgo = DateUtils.addHours(now, -1);
+		Date oneMonthAgo = DateUtils.addMonths(today, -1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		.program(program)
+		.applicant(user)
+		.status(ApplicationFormStatus.VALIDATION)
+		.dueDate(oneMonthAgo)
+		.notificationRecords(
+				new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER).notificationDate(onehourAgo)
+				.toNotificationRecord()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		assertFalse(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldNotReturnOverDueApplicationInValidationStageWithReminder1DayAgoForAReminderWith2DaysInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(2);
+		reminderInterval.setUnit(DurationUnitEnum.DAYS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date oneDayAgo = DateUtils.addDays(now, -1);
+		Date oneMonthAgo = DateUtils.addMonths(today, -1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		.program(program)
+		.applicant(user)
+		.status(ApplicationFormStatus.VALIDATION)
+		.dueDate(oneMonthAgo)
+		.notificationRecords(
+				new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER).notificationDate(oneDayAgo)
+				.toNotificationRecord()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		assertFalse(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldNotReturnOverDueApplicationInValidationStageWithReminder5MinutesAgoForAReminderWith10MinutesInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(10);
+		reminderInterval.setUnit(DurationUnitEnum.MINUTES);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
+		Date today = DateUtils.truncate(now, Calendar.DATE);
+		Date fiveMinutesAgo = DateUtils.addMinutes(now, -5);
+		Date oneMonthAgo = DateUtils.addMonths(today, -1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		.program(program)
+		.applicant(user)
+		.status(ApplicationFormStatus.VALIDATION)
+		.dueDate(oneMonthAgo)
+		.notificationRecords(
+				new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER).notificationDate(fiveMinutesAgo)
+				.toNotificationRecord()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		assertFalse(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldReturnOverDueApplicationInValidationStageWithReminder10MinutesAgoForAReminderWith5MinutesInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(5);
+		reminderInterval.setUnit(DurationUnitEnum.MINUTES);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
+		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
+		Date oneMonthAgo = DateUtils.addMonths(now, -1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		.program(program)
+		.applicant(user)
+		.status(ApplicationFormStatus.VALIDATION)
+		.dueDate(oneMonthAgo)
+		.notificationRecords(
+				new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER).notificationDate(tenMinutesAgo)
+				.toNotificationRecord()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		assertTrue(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldReturnOverDueApplicationInValidationStageWithReminder1DayAgoForAReminderWith23HoursInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(23);
+		reminderInterval.setUnit(DurationUnitEnum.HOURS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
+		Date oneDayAgo = DateUtils.addDays(now, -1);
+		Date oneMonthAgo = DateUtils.addMonths(now, -1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		.program(program)
+		.applicant(user)
+		.status(ApplicationFormStatus.VALIDATION)
+		.dueDate(oneMonthAgo)
+		.notificationRecords(
+				new NotificationRecordBuilder().notificationType(NotificationType.VALIDATION_REMINDER).notificationDate(oneDayAgo)
+				.toNotificationRecord()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applicationsDueReminder = applicationDAO.getApplicationsDueAdminReminder(NotificationType.VALIDATION_REMINDER, ApplicationFormStatus.VALIDATION);
+		assertTrue(applicationsDueReminder.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldReturnOverDueApplicationInValidationStageWithReminderOneWeekMinusFiveMinAgoForOneWeekReminderInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
 		Date oneWeekAgo = DateUtils.addWeeks(now, -1);
 		Date oneWeekAgoAndFiveMinAgo = DateUtils.addMinutes(oneWeekAgo, -5);
-		Date oneMonthAgo = DateUtils.addMonths(today, -1);
+		Date oneMonthAgo = DateUtils.addMonths(now, -1);
 		ApplicationForm applicationForm = new ApplicationFormBuilder()
 				.program(program)
 				.applicant(user)
@@ -281,7 +486,14 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldReturnApplicationUpdatedSinceLastAlertAndLastAlertMoreThan24HoursAgo() {
+	public void shouldReturnApplicationUpdatedSinceLastAlertAndLastAlertMoreThan24HoursAgoForOneWeekReminderInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		Date now = Calendar.getInstance().getTime();
 		Date twentyFiveHoursAgo = DateUtils.addHours(now, -25);
 		Date twelveHoursAgo = DateUtils.addHours(now, -12);
@@ -299,7 +511,14 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldNotReturnApplicationUpdatedSinceLastAlertAndLastAlertLessThan24HoursAgo() {
+	public void shouldNotReturnApplicationUpdatedSinceLastAlertAndLastAlertLessThan24HoursAgoFor1WeekReminderInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		Date now = Calendar.getInstance().getTime();
 		Date twentyThreeHoursAgo = DateUtils.addHours(now, -23);
 		Date twelveHoursAgo = DateUtils.addHours(now, -12);

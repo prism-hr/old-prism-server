@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.concurrent.TimeUnit;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -71,4 +73,20 @@ public class StageDuration{
 		}
 		return LARGE_PRIME * stage.hashCode();
 	}
+	
+	public int getDurationInMinutes(){
+		if (this.unit == DurationUnitEnum.DAYS){
+			return (int)TimeUnit.MINUTES.convert(this.duration, TimeUnit.DAYS);
+		}
+		if (this.unit == DurationUnitEnum.HOURS){
+			return  (int)TimeUnit.MINUTES.convert(this.duration, TimeUnit.HOURS);
+		}
+		if (this.unit == DurationUnitEnum.WEEKS){
+			int weekInDays = this.duration * 7;
+			return (int)TimeUnit.MINUTES.convert(weekInDays, TimeUnit.DAYS);
+		}
+		return this.duration;
+	}
+	
+	
 }

@@ -14,7 +14,6 @@
 <div>
 	
 	<form>
-	
 				<#if errorCode?? && errorCode=="true">
 					<div class="section-error-bar">
 						<div class="row">

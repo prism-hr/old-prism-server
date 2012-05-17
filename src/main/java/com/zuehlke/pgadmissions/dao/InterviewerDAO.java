@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Repository
@@ -57,12 +58,15 @@ public class InterviewerDAO {
 	@SuppressWarnings("unchecked")
 	public List<Interviewer> getInterviewersDueReminder() {
 		List<Interviewer> interviewersDueReminder = new ArrayList<Interviewer>();
-		Date today = DateUtils.truncate(new Date(), Calendar.DATE);
-		Date sixDaysAgo = DateUtils.addDays(today, -6);
+		
+		Date today = Calendar.getInstance().getTime();
+		ReminderInterval reminderInterval = (ReminderInterval)sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
+		Date dateWithSubtractedInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
+
 		List<Interviewer> interviewers = sessionFactory.getCurrentSession().createCriteria(Interviewer.class).createAlias("interview.application", "application")
 				.add(Restrictions.eqProperty("interview", "application.latestInterview"))
-				.add(Restrictions.eq("application.status", ApplicationFormStatus.INTERVIEW)).add(Restrictions.lt("application.dueDate", sixDaysAgo))
-				.add(Restrictions.lt("lastNotified", sixDaysAgo)).list();
+				.add(Restrictions.eq("application.status", ApplicationFormStatus.INTERVIEW)).add(Restrictions.lt("application.dueDate", dateWithSubtractedInterval))
+				.add(Restrictions.lt("lastNotified", dateWithSubtractedInterval)).list();
 
 		for (Interviewer interviewer : interviewers) {
 			if (interviewer.getInterviewComment() == null) {

@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -24,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.Reference;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
@@ -31,12 +31,14 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 
 public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
 	private RegisteredUser user;
 	private Program program;	
 	private RefereeDAO refereeDAO;
+	private ReminderInterval reminderInterval;
 
 	@Test(expected = NullPointerException.class)
 	public void shouldThrowNullPointerException() {
@@ -227,7 +229,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 
 	}
 	@Test
-	public void shouldReturnRefereeForWhichReminderWasSendOneWeekMinus5minAgo() {
+	public void shouldReturnRefereeForWhichReminderWasSendOneWeekMinus5minAgoForSixDaysInternal() {
+		reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(6);
+		reminderInterval.setUnit(DurationUnitEnum.DAYS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		save(application);
 		Date now = Calendar.getInstance().getTime();		
@@ -245,6 +255,64 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		assertNotNull(referees);
 		assertTrue(referees.contains(referee));			
 	}
+	
+	
+	@Test
+	public void shouldNotReturnRefereeReminded6MinutesAgoForOneMinuteReminderInterval() {
+		reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(6);
+		reminderInterval.setUnit(DurationUnitEnum.MINUTES);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		save(application);
+		Date now = Calendar.getInstance().getTime();		
+		Date oneMinuteAgo = DateUtils.addMinutes(now,-1);
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
+		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf").lastNotified(oneMinuteAgo)
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+		
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		assertNotNull(referees);
+		assertFalse(referees.contains(referee));			
+	}
+	
+	@Test
+	public void shouldReturnRefereeReminded2MinutesAgoForOneMinuteReminderInterval() {
+		reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.MINUTES);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		save(application);
+		Date now = Calendar.getInstance().getTime();		
+		Date twoMinutesAgo = DateUtils.addMinutes(now,-2);
+		CountriesDAO countriesDAO = new CountriesDAO(sessionFactory);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(1).toUser();
+		Referee referee = new RefereeBuilder().user(refereeUser).application(application).addressCountry(countriesDAO.getCountryById(1)).addressLocation("sdfsdf").lastNotified(twoMinutesAgo)
+				.email("errwe.fsd").firstname("sdsdf").jobEmployer("sdfsdf").jobTitle("fsdsd").lastname("fsdsdf").phoneNumber("hallihallo").toReferee();			
+		
+		save(referee);
+		
+		flushAndClearSession();
+		List<Referee> referees = refereeDAO.getRefereesDueAReminder();
+		assertNotNull(referees);
+		assertTrue(referees.contains(referee));			
+	}
+	
+	
+	
 	
 	@Test
 	public void shouldReturnRefereeForWhichReminderWasSendOne6DaysAnd5minAgo() {
@@ -517,7 +585,15 @@ public class RefereeDAOTest extends AutomaticRollbackTestCase {
 		user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
-		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();		
+		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();	
+		
+		reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
 		save(user, program);
 
 		flushAndClearSession();

@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
@@ -62,15 +63,16 @@ public class ApplicationFormDAO {
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueAdminReminder(NotificationType notificationType, ApplicationFormStatus status) {
 
-		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
-		Date oneWeekAgo = DateUtils.addDays(today, -6);
+		Date today = Calendar.getInstance().getTime();
+		ReminderInterval reminderInterval = (ReminderInterval)sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
+		Date subtractInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
 
 		DetachedCriteria anyRemindersCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", notificationType))
 				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 
 		DetachedCriteria overDueRemindersCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", notificationType)).add(Restrictions.lt("notificationRecord.date", oneWeekAgo))
+				.add(Restrictions.eq("notificationType", notificationType)).add(Restrictions.lt("notificationRecord.date", subtractInterval))
 				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
 
 		return (List<ApplicationForm>) sessionFactory

@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.validators;
 
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Time;
 import java.util.Calendar;
 
 import junit.framework.Assert;
@@ -64,12 +65,22 @@ public class InterviewValidatorTest {
 		Assert.assertEquals("interview.interviewDueDate.past", mappingResult.getFieldError("interviewDueDate").getCode());
 	}
 	
+	
+	@Test
+	public void shouldRejectIfTimeIsEmpty() {
+		interview.setInterviewTime(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewTime");
+		interviewValidator.validate(interview, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("interview.interviewTime.notempty", mappingResult.getFieldError("interviewTime").getCode());
+	}
+	
 	@Before
 	public void setup(){
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
 		
-		interview = new InterviewBuilder().application(new ApplicationFormBuilder().id(2).toApplicationForm()).dueDate(calendar.getTime())
+		interview = new InterviewBuilder().interviewTime("09:00 AM").application(new ApplicationFormBuilder().id(2).toApplicationForm()).dueDate(calendar.getTime())
 				.furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").toInterview();
 		interviewValidator = new InterviewValidator();
 	}

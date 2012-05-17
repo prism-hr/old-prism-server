@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ public class InterviewBuilder {
 	private ApplicationForm application;
 	private Date lastNotified;	
 	private Date dueDate;	
+	private String interviewTime;
 	private String furtherDetails;
 	private String locationURL;
 	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
@@ -51,6 +53,11 @@ public class InterviewBuilder {
 		return this;
 	}
 	
+	public InterviewBuilder interviewTime(String interviewTime){
+		this.interviewTime = interviewTime;
+		return this;
+	}
+	
 	public InterviewBuilder id(Integer id){
 		this.id = id;
 		return this;
@@ -65,6 +72,7 @@ public class InterviewBuilder {
 		interview.setLocationURL(locationURL);
 		interview.setInterviewDueDate(dueDate);
 		interview.getInterviewers().addAll(interviewers);
+		interview.setInterviewTime(interviewTime);
 		return interview;
 	}
 	

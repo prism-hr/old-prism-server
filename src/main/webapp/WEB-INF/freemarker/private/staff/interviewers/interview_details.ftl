@@ -216,9 +216,9 @@
 				        			     		   	<textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
 				                                 	 </#if>
 			                                  
-			                                    </div>
 			                                     <@spring.bind "interview.furtherDetails" /> 
 				                			    <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+			                                    </div>
 				                            </div>
 				                                
 				                             <div class="row">

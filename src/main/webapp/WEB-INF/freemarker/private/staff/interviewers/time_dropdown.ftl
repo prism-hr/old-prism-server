@@ -1,5 +1,5 @@
  <select name="hours" id="hours">
-		<option value="">Select...</option>
+		<option value="">Hour..</option>
 		<option value="01">01</option>               
 		<option value="02">02</option>               
 		<option value="03">03</option>               
@@ -15,7 +15,7 @@
 </select>	
 
  <select name="minutes" id="minutes">
-		<option value="">Select...</option>
+		<option value="">Minutes..</option>
 		<option value="00">00</option>               
 		<option value="01">01</option>               
 		<option value="02">02</option>               
@@ -79,7 +79,7 @@
 </select>	
 
  <select name="format" id="format">
-		<option value="">Select...</option>
+		<option value="">Format..</option>
 		<option value="AM">AM</option>               
 		<option value="PM">PM</option>               
 </select>

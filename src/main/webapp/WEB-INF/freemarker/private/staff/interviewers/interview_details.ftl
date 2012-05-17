@@ -193,6 +193,20 @@
 			                               	 	<@spring.bind "interview.interviewDueDate" /> 
 				                			   <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 				                           	</div>
+											<div class="row">
+				                               <label  class="label normal">Interview Time<em>*</em></label>
+			                                   <div class="field">
+			                                    <#if assignOnly?? && assignOnly>
+				                                      <input disabled="disabled" type="text" value="${(interview.interviewTime)!}" />
+				        							<#else>
+			                                     	<#include "/private/staff/interviewers/time_dropdown.ftl"/>
+			                                      
+			                               			<span class="invalid" name="timeInvalid" style="display:none;"></span>
+			                               	 		<@spring.bind "interview.interviewTime" /> 
+				                			   		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+				                			   		</#if>
+			                               		</div>
+				                           	</div>
 				                            <div class="row">
 			                                    <label class="label normal">Further Details<em>*</em></label>
 			                                    <div class="field">

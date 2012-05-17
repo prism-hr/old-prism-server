@@ -53,15 +53,28 @@ $(document).ready(function(){
 	
 	$('#moveToInterviewBtn').click(function() {
 		var idString = getAssignedInterviewerIdString();
-
-		$('#postInterviewForm').html('');
-		$('#postInterviewForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");
-		$('#postInterviewForm').append("<input name='furtherDetails' type='hidden' value='" +  $('#furtherDetails').val() + "'/>");
-		$('#postInterviewForm').append("<input name='interviewDueDate' type='hidden' value='" +  $('#interviewDate').val() + "'/>");
-		$('#postInterviewForm').append("<input name='locationURL' type='hidden' value='" +  $('#interviewLocation').val() + "'/>");
-		$('#postInterviewForm').append("<input name='unsavedInterviewersRaw' type='hidden' value='" + idString + "'/>");
+		var timeErrors = false;
+		if($('#hours').val() == "" || $('#minutes').val() == "" || $('#format').val() == ""){
+			timeErrors = true;
+			$("span[name='timeInvalid']").html('You must specify hour, minutes and format. ');
+			$("span[name='timeInvalid']").show();
+		}
 		
-		$('#postInterviewForm').submit();
+		if(!timeErrors){
+			$("span[name='timeInvalid']").html('');
+			$("span[name='timeInvalid']").hide();
+			var timeString = $('#hours').val() + ":" + $('#minutes').val() + " " + $('#format').val();
+
+			$('#postInterviewForm').html('');
+			$('#postInterviewForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");
+			$('#postInterviewForm').append("<input name='furtherDetails' type='hidden' value='" +  $('#furtherDetails').val() + "'/>");
+			$('#postInterviewForm').append("<input name='interviewDueDate' type='hidden' value='" +  $('#interviewDate').val() + "'/>");
+			$('#postInterviewForm').append("<input name='interviewTime' type='hidden' value='" +  timeString + "'/>");
+			$('#postInterviewForm').append("<input name='locationURL' type='hidden' value='" +  $('#interviewLocation').val() + "'/>");
+			$('#postInterviewForm').append("<input name='unsavedInterviewersRaw' type='hidden' value='" + idString + "'/>");
+		
+			$('#postInterviewForm').submit();
+		}
 		
 		
 		

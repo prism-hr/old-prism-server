@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,9 @@ public class Interview extends DomainObject<Integer> {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastNotified;
 
+	@Column(name = "interview_time")
+	private String interviewTime;
+	
 	@Column(name = "created_date", insertable = false)
 	@Generated(GenerationTime.INSERT)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -124,6 +128,14 @@ public class Interview extends DomainObject<Integer> {
 
 	public void setCreatedDate(Date created) {
 		this.createdDate = created;
+	}
+
+	public String getInterviewTime() {
+		return interviewTime;
+	}
+
+	public void setInterviewTime(String interviewTime) {
+		this.interviewTime = interviewTime;
 	}
 	
 }

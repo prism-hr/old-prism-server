@@ -29,6 +29,7 @@ public class InterviewValidator implements Validator {
 		}
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "furtherDetails", "interview.furtherDetails.notempty");
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewDueDate", "interview.interviewDueDate.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "interviewTime", "interview.interviewTime.notempty");
 		String dueDate = interview.getInterviewDueDate() == null ? "": interview.getInterviewDueDate().toString();
 		if (StringUtils.isNotBlank(dueDate) && interview.getInterviewDueDate().before(today)) {
 			errors.rejectValue("interviewDueDate", "interview.interviewDueDate.past");

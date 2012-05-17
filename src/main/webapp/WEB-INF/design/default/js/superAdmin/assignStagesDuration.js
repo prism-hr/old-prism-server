@@ -1,5 +1,13 @@
 $(document).ready(function() {
 	
+	$('#cancelDurationBtn').click(function() {
+		  window.location.href = "/pgadmissions/applications";
+	});
+	
+	$('#cancelReminderBtn').click(function() {
+		window.location.href = "/pgadmissions/applications";
+	});
+	
 	$('#submitDurationStages').click(function() {
 		$("#stagesDuration").html('');
 		var validationErrors = appendStagesJSON();

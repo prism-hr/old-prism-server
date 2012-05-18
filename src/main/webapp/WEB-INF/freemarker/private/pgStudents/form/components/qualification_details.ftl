@@ -41,11 +41,22 @@
                 	<tr>
 	                  	<td><a class="row-arrow">-</a>
 	                  	</td>
-	                  	<td>${(existingQualification.qualificationInstitution?html)!}&nbsp
-	                  		${(existingQualification.qualificationType?html)!}&nbsp
-	                  		${(existingQualification.qualificationSubject?html)!}&nbsp
-	                  		(${(existingQualification.qualificationGrade?html)!})
-	                  	 	</td>
+	                  	<td>
+		                  	<#if existingQualification.proofOfAward??>
+			                  	<a href="<@spring.url '/download?documentId=${(existingQualification.proofOfAward.id?string("#######"))!}'/>" 
+			                  			data-desc="Proof Of Award" class="button-hint">
+			                  		${(existingQualification.qualificationInstitution?html)!}&nbsp
+			                  		${(existingQualification.qualificationType?html)!}&nbsp
+			                  		${(existingQualification.qualificationSubject?html)!}&nbsp
+			                  		(${(existingQualification.qualificationGrade?html)!})
+			                  	</a>
+			                <#else>
+		                  		${(existingQualification.qualificationInstitution?html)!}&nbsp
+		                  		${(existingQualification.qualificationType?html)!}&nbsp
+		                  		${(existingQualification.qualificationSubject?html)!}&nbsp
+		                  		(${(existingQualification.qualificationGrade?html)!})
+		                  	</#if>
+	                  	</td>
 	                  	<td><#if existingQualification.isQualificationCompleted()>${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}
 	                  	<#else>Expected</#if></td>
 	                  	  
@@ -300,7 +311,7 @@
 
       		<!-- Attachment / supporting document -->
       		<div class="row">
-        		<span id="quali-proof-of-award-lb" class="plain-label grey-label">Proof of award (PDF)</span>
+        		<span id="quali-proof-of-award-lb" class="plain-label grey-label">Proof of Award (PDF)</span>
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
         		<div class="field" id="uploadFields">         		       	
           			<input id="proofOfAward" class="full" type="file" name="file" value=""  <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					

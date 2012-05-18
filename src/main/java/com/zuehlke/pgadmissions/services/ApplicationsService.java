@@ -67,16 +67,29 @@ public class ApplicationsService {
 	public ApplicationFormStatus getStageComingFrom(ApplicationForm application) {
 		List<Event> events = application.getEventsSortedByDate();
 		Event previousEvent;
-		for(int i=0; i<events.size(); i++){
-			if(events.get(i).getNewStatus() == ApplicationFormStatus.REJECTED){
-				previousEvent = events.get(i - 1);
-				if(previousEvent.getNewStatus() ==  ApplicationFormStatus.REVIEW || previousEvent.getNewStatus() ==  ApplicationFormStatus.INTERVIEW){
-					return previousEvent.getNewStatus();
-				}
-				if(previousEvent.getNewStatus() ==  ApplicationFormStatus.APPROVAL){
-					Event previousOfApproval = events.get(i - 2);
-					if(previousOfApproval.getNewStatus() ==  ApplicationFormStatus.REVIEW || previousOfApproval.getNewStatus() ==  ApplicationFormStatus.INTERVIEW || previousOfApproval.getNewStatus() ==  ApplicationFormStatus.VALIDATION){
-						return previousOfApproval.getNewStatus();
+		if(events.size() == 1 ){
+			return application.getStatus();
+		}
+		if(events.size() == 2){
+			if(events.get(1).getNewStatus() == ApplicationFormStatus.REJECTED){
+				return events.get(0).getNewStatus();
+			}
+			else{
+				return application.getStatus();
+			}
+		}
+		if(events.size()>2){
+			for(int i=0; i<events.size(); i++){
+				if(events.get(i).getNewStatus() == ApplicationFormStatus.REJECTED ){
+					previousEvent = events.get(i - 1);
+					if(previousEvent.getNewStatus() ==  ApplicationFormStatus.REVIEW || previousEvent.getNewStatus() ==  ApplicationFormStatus.INTERVIEW){
+						return previousEvent.getNewStatus();
+					}
+					if(previousEvent.getNewStatus() ==  ApplicationFormStatus.APPROVAL){
+						Event previousOfApproval = events.get(i - 2);
+						if(previousOfApproval.getNewStatus() ==  ApplicationFormStatus.REVIEW || previousOfApproval.getNewStatus() ==  ApplicationFormStatus.INTERVIEW || previousOfApproval.getNewStatus() ==  ApplicationFormStatus.VALIDATION){
+							return previousOfApproval.getNewStatus();
+						}
 					}
 				}
 			}

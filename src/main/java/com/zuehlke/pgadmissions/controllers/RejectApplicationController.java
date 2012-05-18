@@ -73,6 +73,7 @@ public class RejectApplicationController {
 			ModelMap model) {
 
 		Collection<RejectReason> rejectReasons = getRejectReason(rejectReasonIds);
+		application.setStatus(ApplicationFormStatus.REJECTED); //simulate rejection to get right stage back
 		ApplicationFormStatus stage = applicationService.getStageComingFrom(application);
 		model.put("stage", stage);
 		model.put("application", application);

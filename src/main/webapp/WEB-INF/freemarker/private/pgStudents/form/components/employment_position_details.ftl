@@ -28,7 +28,7 @@
             <thead>
             	<tr>
                 	<th id="primary-header" colspan="2">Position</th>
-                    <th>From</th>
+                    <th>Dates</th>
                     <th>&nbsp;</th>
                     <th id="last-col">&nbsp;</th>
                 </tr>

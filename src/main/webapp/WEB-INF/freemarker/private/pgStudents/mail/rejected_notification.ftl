@@ -35,6 +35,9 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Outcome of the application during phase  ${stage.displayValue()}</font>
+			      	</p>
+			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to inform you that your application ${application.id?string("######")} to join ${application.program.title} was rejected by admissions staff. To view your application, click the link below: </font>
 			      	</p>
 			      	<p>

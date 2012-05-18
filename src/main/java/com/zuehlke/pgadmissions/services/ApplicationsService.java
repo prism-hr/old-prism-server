@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 @Service("applicationsService")
 public class ApplicationsService {
@@ -60,6 +62,26 @@ public class ApplicationsService {
 	@Transactional
 	public List<ApplicationForm> getApplicationsDueUpdateNotification() {
 		return applicationFormDAO.getApplicationsDueUpdateNotification();
+	}
+
+	public ApplicationFormStatus getStageComingFrom(ApplicationForm application) {
+		List<Event> events = application.getEventsSortedByDate();
+		Event previousEvent;
+		for(int i=0; i<events.size(); i++){
+			if(events.get(i).getNewStatus() == ApplicationFormStatus.REJECTED){
+				previousEvent = events.get(i - 1);
+				if(previousEvent.getNewStatus() ==  ApplicationFormStatus.REVIEW || previousEvent.getNewStatus() ==  ApplicationFormStatus.INTERVIEW){
+					return previousEvent.getNewStatus();
+				}
+				if(previousEvent.getNewStatus() ==  ApplicationFormStatus.APPROVAL){
+					Event previousOfApproval = events.get(i - 2);
+					if(previousOfApproval.getNewStatus() ==  ApplicationFormStatus.REVIEW || previousOfApproval.getNewStatus() ==  ApplicationFormStatus.INTERVIEW || previousOfApproval.getNewStatus() ==  ApplicationFormStatus.VALIDATION){
+						return previousOfApproval.getNewStatus();
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 

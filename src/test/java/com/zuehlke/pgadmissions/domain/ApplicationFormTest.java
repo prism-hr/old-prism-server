@@ -12,11 +12,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -151,6 +154,20 @@ public class ApplicationFormTest {
 		
 		List<Comment> visibleComments = applicationForm.getVisibleComments(reviewerUserTwo);
 		assertEquals(3, visibleComments.size());		
+	}
+	
+	@Test
+	public void shouldReturnEventsSortedByDate() throws ParseException{
+		Event validationEvent = new EventBuilder().id(1).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/01/01")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
+		Event reviewEvent = new EventBuilder().id(2).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/02/02")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
+		Event approvalEvent = new EventBuilder().id(3).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
+		Event rejectedEvent = new EventBuilder().id(40).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).events(approvalEvent, rejectedEvent, reviewEvent, validationEvent).toApplicationForm();
+		List<Event> eventsSortedByDate = application.getEventsSortedByDate();
+		Assert.assertEquals(validationEvent, eventsSortedByDate.get(0));
+		Assert.assertEquals(reviewEvent, eventsSortedByDate.get(1));
+		Assert.assertEquals(approvalEvent, eventsSortedByDate.get(2));
+		Assert.assertEquals(rejectedEvent, eventsSortedByDate.get(3));
 	}
 	
 	

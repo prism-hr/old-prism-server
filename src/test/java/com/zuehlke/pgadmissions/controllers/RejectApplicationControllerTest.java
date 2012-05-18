@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,10 +19,12 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
@@ -269,4 +273,6 @@ public class RejectApplicationControllerTest {
 		Assert.assertNotNull(modelMap.get("host"));
 		Assert.assertNotNull(modelMap.get("adminsEmails"));
 	}
+	
+	
 }

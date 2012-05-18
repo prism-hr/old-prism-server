@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +23,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
@@ -523,6 +525,17 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setLatestReviewRound(ReviewRound latestReviewRound) {
 		this.latestReviewRound = latestReviewRound;
+	}
+
+	public List<Event> getEventsSortedByDate() {
+		Comparator<Event> dateComparator = new Comparator<Event>() {
+			@Override
+			public int compare(Event event1, Event event2) {
+				return event1.getDate().compareTo(event2.getDate());
+			}
+		};
+		Collections.sort(events, dateComparator);
+		return events;
 	}
 
 }

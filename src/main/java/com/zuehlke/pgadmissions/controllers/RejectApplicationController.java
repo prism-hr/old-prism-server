@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -72,6 +73,8 @@ public class RejectApplicationController {
 			ModelMap model) {
 
 		Collection<RejectReason> rejectReasons = getRejectReason(rejectReasonIds);
+		ApplicationFormStatus stage = applicationService.getStageComingFrom(application);
+		model.put("stage", stage);
 		model.put("application", application);
 		model.put("reasons", rejectReasons);
 		model.put("host", Environment.getInstance().getApplicationHostName());

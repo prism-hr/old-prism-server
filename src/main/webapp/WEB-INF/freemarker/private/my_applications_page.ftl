@@ -46,9 +46,6 @@
 				
 				    <!-- Main content area. -->
 				    <article id="content" role="main">
-				      <#if !user.isInRole('APPLICANT')>
-				      	<#include "/private/common/parts/tools.ftl"/>
-				      </#if>
 				      
 				      <!-- content box -->
 				      <input type="hidden" id="appList" name="appList" />

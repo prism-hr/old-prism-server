@@ -192,7 +192,7 @@ public class ApplicationsServiceTest {
 		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
 		ApplicationForm application = new ApplicationFormBuilder().id(1).events(validationEvent).toApplicationForm();
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
-		Assert.assertEquals(application.getStatus(), stage);
+		Assert.assertEquals(validationEvent.getNewStatus(), stage);
 	}
 	
 	@Test

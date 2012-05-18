@@ -139,7 +139,7 @@
               
             <!-- Value of award -->
             <div class="row">
-              	<span class="plain-label">Value of Award<em>*</em></span>
+              	<span class="plain-label">Value of Award (GBP)<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'fundingDetails.award.value'/>"></span>
                 <div class="field">
                 <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>

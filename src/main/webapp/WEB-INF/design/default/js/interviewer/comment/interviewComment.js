@@ -2,16 +2,6 @@ $(document).ready(function(){
 
 	$("#declineValue").val("NO");
 	
-	$.get("/pgadmissions/comments/view",
-			{
-				id:  $('#applicationId').val(),				
-				cacheBreaker: new Date().getTime() 
-			},
-			function(data) {
-				$('#timeline').html(data);
-			}
-	);
-	
 	$('#cancelInterviewFeedbackBtn').click(function() {
 		window.location.href = "/pgadmissions/interviewFeedback?applicationId=" +  $('#applicationId').val();
 	});	

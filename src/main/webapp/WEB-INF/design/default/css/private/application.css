@@ -45,6 +45,11 @@ section.folding table.existing td, section.folding table.existing th {
 	width: 30px;
 }
 
+/* Contrlloing the appearince of the text of the first column header */
+section.folding table.existing th#primary-header{
+	padding-left: 33px;
+}
+
 
 section.folding form { background: #BBB; padding: 10px; }
 .old-ie section.folding form { *display: inline-block; } /* fixes unsightly space at the bottom of a folding section. */

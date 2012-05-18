@@ -29,7 +29,7 @@
             
             <thead>
 				<tr>
-                	<th colspan="2">Funding Type</th>
+                	<th id="primary-header" colspan="2">Funding Type</th>
                     <th>Description</th>
                     <th>Supporting Documentation</th>
                     <th>Award Date</th>

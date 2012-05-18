@@ -6,6 +6,7 @@ import static org.junit.Assert.assertSame;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -184,6 +185,36 @@ public class ApplicationsServiceTest {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).events(validationEvent, reviewEvent, approvalEvent).toApplicationForm();
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		Assert.assertNull(stage);
+	}
+	
+	@Test
+	public void shouldReturnCurrentEventIfOnlyOneEvent() throws ParseException{
+		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).events(validationEvent).toApplicationForm();
+		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
+		Assert.assertEquals(application.getStatus(), stage);
+	}
+	
+	@Test
+	public void shouldReturnFirstEventIfOnlyTwoEventsAndLastOneIsRejected() throws ParseException{
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_YEAR, 1);
+		Date tomorrow = cal.getTime();
+		Event rejectedEvent = new EventBuilder().date(tomorrow).newStatus(ApplicationFormStatus.REJECTED).toEvent();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).events(rejectedEvent).toApplicationForm();
+		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
+		Assert.assertEquals(ApplicationFormStatus.UNSUBMITTED, stage);
+	}
+	
+	@Test
+	public void shouldReturnCurrentEventIfOnlyTwoEventsAndLastOneIsNotRejected() throws ParseException{
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DAY_OF_YEAR, 1);
+		Date tomorrow = cal.getTime();
+		Event validationEvent = new EventBuilder().date(tomorrow).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).events(validationEvent).toApplicationForm();
+		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
+		Assert.assertEquals(application.getStatus(), stage);
 	}
 	
 

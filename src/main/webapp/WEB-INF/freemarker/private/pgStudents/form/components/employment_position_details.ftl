@@ -39,7 +39,7 @@
             	<#list applicationForm.employmentPositions as position>
 	            	<tr>
 	                    <td><a class="row-arrow">-</a></td>
-	                    <td>${(position.position?html)!} &nbsp ${(employmentPosition.employerName?html)!}</td>
+	                    <td>${(position.position?html)!} ${(position.employerName?html)!} ${(position.employerCountry.name)!}</td>
 	                    <td>${(position.startDate?string('dd MMM yyyy'))!} - ${(position.endDate?string('dd MMM yyyy'))!"Ongoing"}</td>
 	                     
 	                    	<td>		                		

@@ -167,6 +167,10 @@ section.folding div.comment .previous ul li span { display: block; }
 #view-toolbar li.top a { background-image: url(../../images/float_up.png) }
 #view-toolbar li.pdf a { background-image: url(../../images/float_download.png) }
 #view-toolbar li.print a { background-image: url(../../images/float_print.png) }
+#view-toolbar li.tool-separator a {
+    background-image: url("../../images/dots.png");
+	margin-bottom: -11px;
+}
 
 /* Rest of the button to jump to each section*/
 li.tool-button{

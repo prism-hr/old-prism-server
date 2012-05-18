@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -35,6 +37,7 @@ public class SubmitApplicationFormController {
 	private static final String VIEW_APPLICATION_STAFF_VIEW_NAME = "/private/staff/application/main_application_page";
 	private final ApplicationFormValidator applicationFormValidator;
 	private final StageDurationDAO stageDurationDAO;
+	private static final String VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME = "/private/staff/application/main_application_page_without_headers";
 
 	SubmitApplicationFormController() {
 		this(null, null,  null);
@@ -92,11 +95,13 @@ public class SubmitApplicationFormController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public String getApplicationView() {
+	public String getApplicationView(HttpServletRequest request) {
 		if(getCurrentUser().isInRole(Authority.APPLICANT)){
 			return VIEW_APPLICATION_APPLICANT_VIEW_NAME;
 		}
-		
+		if (request != null && request.getParameter("embeddedApplication") != null && request.getParameter("embeddedApplication").equals("true")) {
+			return VIEW_APPLICATION_INTERNAL_PLAIN_VIEW_NAME;
+		}
 		return VIEW_APPLICATION_STAFF_VIEW_NAME;
 	}
 

@@ -28,7 +28,7 @@
           	
           	<thead>
             	<tr>
-              	<th colspan="2">Qualification</th>
+              	<th id="primary-header" colspan="2">Qualification</th>
                 <th>Date</th>
                 <th>&nbsp;</th>
                 <th id="last-col">&nbsp;</th>

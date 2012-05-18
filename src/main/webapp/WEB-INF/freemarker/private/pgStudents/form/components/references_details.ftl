@@ -30,7 +30,7 @@
         
         	<thead>
           		<tr>
-                    <th colspan="2">First name</th>
+                    <th id="primary-header" colspan="2">First name</th>
                     <th>Surname</th>
                     <th>Job Title</th>
                     <th>Email</th>              

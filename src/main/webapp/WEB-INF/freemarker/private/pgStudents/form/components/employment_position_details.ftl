@@ -27,7 +27,7 @@
             
             <thead>
             	<tr>
-                	<th colspan="2">Position</th>
+                	<th id="primary-header" colspan="2">Position</th>
                     <th>From</th>
                     <th>&nbsp;</th>
                     <th id="last-col">&nbsp;</th>

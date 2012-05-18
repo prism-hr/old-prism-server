@@ -31,7 +31,7 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 public abstract class InterviewController {
 	protected final String INTERVIEW_DETAILS_VIEW_NAME = "/private/staff/interviewers/interview_details";
 	protected final ApplicationsService applicationsService;
-	protected final UserService userService;	
+	protected final UserService userService;
 	protected final NewUserByAdminValidator interviewerValidator;
 	protected final InterviewerService interviewerService;
 	protected final MessageSource messageSource;
@@ -68,29 +68,13 @@ public abstract class InterviewController {
 		binder.setValidator(interviewValidator);
 	}
 
-
-	@ModelAttribute("unsavedInterviewers")
-	public List<RegisteredUser> unsavedInterviewers(String unsavedInterviewersRaw) {
-		List<RegisteredUser> retval = new ArrayList<RegisteredUser>();
-		if (unsavedInterviewersRaw == null || unsavedInterviewersRaw.isEmpty()) {
-			return retval;
-		}
-		String[] tokens = unsavedInterviewersRaw.split("\\|");
-		for (String idStr : tokens) {
-			retval.add(userService.getUser(Integer.parseInt(idStr)));
-		}
-		return retval;
-	}
-
-
 	@ModelAttribute("interviewer")
 	public RegisteredUser getInterviewer() {
-	
 		return new RegisteredUser();
 	}
 
 	@ModelAttribute("programmeInterviewers")
-	public List<RegisteredUser> getProgrammeInterviewers(@RequestParam Integer applicationId, String unsavedInterviewersRaw) {
+	public List<RegisteredUser> getProgrammeInterviewers(@RequestParam Integer applicationId, @RequestParam(required = false) List<Integer> pendingInterviewer) {
 		ApplicationForm application = getApplicationForm(applicationId);
 		Program program = application.getProgram();
 		List<RegisteredUser> availableInterviewers = new ArrayList<RegisteredUser>();
@@ -100,11 +84,12 @@ public abstract class InterviewController {
 				availableInterviewers.add(registeredUser);
 			}
 		}
-		List<RegisteredUser> unsavedInterviewers = unsavedInterviewers(unsavedInterviewersRaw);
-		if (unsavedInterviewers != null) {
-			availableInterviewers.removeAll(unsavedInterviewers);
+		for (RegisteredUser registeredUser : getPendingInterviewers(pendingInterviewer, applicationId)) {
+			if (availableInterviewers.contains(registeredUser)) {
+				availableInterviewers.remove(registeredUser);
+			}
 		}
-	
+
 		return availableInterviewers;
 	}
 
@@ -118,7 +103,7 @@ public abstract class InterviewController {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Set<RegisteredUser> existingInterviewers = new HashSet<RegisteredUser>();
 		Interview latestInterview = applicationForm.getLatestInterview();
-		if(latestInterview != null){
+		if (latestInterview != null) {
 			for (Interviewer interviewer : latestInterview.getInterviewers()) {
 				existingInterviewers.add(interviewer.getUser());
 			}
@@ -126,10 +111,14 @@ public abstract class InterviewController {
 		return existingInterviewers;
 	}
 
+	protected String getCreateInterviewerMessage(String code, RegisteredUser user) {
+		return getMessage(code, new Object[] { user.getFirstName() + " " + user.getLastName(), user.getEmail() });
+	}
+	
+
 	protected String getMessage(String code, Object... args) {
 		return messageSource.getMessage(code, args, null);
 	}
-
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
@@ -137,16 +126,46 @@ public abstract class InterviewController {
 		ApplicationForm application = applicationsService.getApplicationById(applicationId);
 		if (application == null
 				|| (!userService.getCurrentUser().isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram()) && !userService.getCurrentUser()
-						.isInterviewerOfApplicationForm(application))) {			
+						.isInterviewerOfApplicationForm(application))) {
 			throw new ResourceNotFoundException();
 		}
 		return application;
 	}
 
-	
 	public abstract Interview getInterview(@RequestParam Integer applicationId);
 
+	@ModelAttribute("pendingInterviewers")
+	public List<RegisteredUser> getPendingInterviewers(@RequestParam(required = false) List<Integer> pendingInterviewer, @RequestParam Integer applicationId) {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		List<RegisteredUser> newUsers = new ArrayList<RegisteredUser>();
+		if (pendingInterviewer != null) {
+			for (Integer id : pendingInterviewer) {
+				RegisteredUser user = userService.getUser(id);
+				if (!user.isInterviewerOfApplicationForm(applicationForm)) {
+					newUsers.add(user);
+				}
+			}
+		}
+
+		return newUsers;
+	}
+
+	@ModelAttribute("previousInterviewers")
+	public List<RegisteredUser> getPreviousInterviewers(@RequestParam Integer applicationId, @RequestParam(required = false) List<Integer> pendingInterviewer) {
+		List<RegisteredUser> availablePreviousInterviewers = new ArrayList<RegisteredUser>();
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		List<RegisteredUser> previousInterviewersOfProgram = userService.getAllPreviousInterviewersOfProgram(applicationForm.getProgram());
+
+		List<RegisteredUser> pendingInterviewers = getPendingInterviewers(pendingInterviewer, applicationId);
+
+		for (RegisteredUser registeredUser : previousInterviewersOfProgram) {
+			if (!registeredUser.isInterviewerOfApplicationForm(applicationForm) && !pendingInterviewers.contains(registeredUser)
+					&& !applicationForm.getProgram().getInterviewers().contains(registeredUser)) {
+				availablePreviousInterviewers.add(registeredUser);
+			}
+		}
+
+		return availablePreviousInterviewers;
+	}
 
 }
-
-	

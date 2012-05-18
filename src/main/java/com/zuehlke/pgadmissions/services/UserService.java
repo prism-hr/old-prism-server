@@ -211,6 +211,17 @@ public class UserService {
 	private boolean newAuthoritiesContains(Authority[] newAuthorities, Authority authority) {
 		return Arrays.asList(newAuthorities).contains(authority);
 	}
+	
+	@Transactional
+	public RegisteredUser createNewUserInRole(String firstName, String lastName, String email, Authority authority)  {
+		RegisteredUser newUser = userDAO.getUserByEmail(email);
+		if (newUser != null) {
+			throw new IllegalStateException(String.format("user with email: %s already exists!", email));
+		}
+		newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authority);
+		userDAO.save(newUser);
+		return newUser;
+	}
 
 	@Transactional
 	public RegisteredUser createNewUserForProgramme(String firstName, String lastName, String email, Program program, Authority... authorities) {
@@ -241,6 +252,11 @@ public class UserService {
 		userDAO.save(newUser);
 		return newUser;
 
+	}
+
+	@Transactional
+	public List<RegisteredUser> getAllPreviousInterviewersOfProgram(Program program) {
+		return userDAO.getAllPreviousInterviewersOfProgram(program);
 	}
 
 }

@@ -9,7 +9,6 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Service
@@ -46,14 +45,14 @@ public class InterviewerService {
 		return interviewerDAO.getInterviewerByUser(user);
 	}
 
-	@Transactional
-	public RegisteredUser createNewUserWithInterviewerRoleInProgram(RegisteredUser interviewer, Program program) {
-		RegisteredUser newUser =  userService.createNewUserForProgramme(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail(), program, Authority.INTERVIEWER);
-		program.getInterviewers().add(newUser);
-		programService.save(program);
-		return newUser;
-	}
-
+//	@Transactional
+//	public RegisteredUser createNewUserWithInterviewerRoleInProgram(RegisteredUser interviewer, Program program) {
+//		RegisteredUser newUser =  userService.createNewUserForProgramme(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail(), program, Authority.INTERVIEWER);
+//		program.getInterviewers().add(newUser);
+//		programService.save(program);
+//		return newUser;
+//	}
+//
 
 	@Transactional
 	public void addInterviewerToProgram(RegisteredUser interviewerUser, Program program) {

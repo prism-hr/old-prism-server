@@ -14,6 +14,8 @@ import org.hibernate.criterion.Subqueries;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
@@ -127,6 +129,19 @@ public class UserDAO {
 		
 		return sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class, "user").setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).add(Restrictions.eq("enabled", false))
 				.createAlias("pendingRoleNotifications", "pendingRoleNotification").list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<RegisteredUser> getAllPreviousInterviewersOfProgram(Program program) {
+		List<Interviewer> interviewers = sessionFactory.getCurrentSession().createCriteria(Interviewer.class).createAlias("interview", "interview").createAlias("interview.application", "application")
+				.add(Restrictions.eq("application.program", program)).list();
+		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
+		for (Interviewer interviewer : interviewers) {
+			if(!users.contains(interviewer.getUser())){
+				users.add(interviewer.getUser());
+			}
+		}
+		return users;
 	}
 
 }

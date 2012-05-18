@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.PriorityBlockingQueue;
 
 import javax.mail.internet.InternetAddress;
 
@@ -19,12 +20,14 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
+import com.sun.jna.platform.win32.Netapi32Util.UserInfo;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -413,7 +416,7 @@ public class UserServiceTest {
 	}
 
 	@Test(expected = IllegalStateException.class)
-	public void shouldThrowISEwhenUserAlreadyExists() {
+	public void shouldThrowISEwhenUserAlreadyExistsForNewUserInProgramme() {
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(1).toUser();
 		
 		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(existingUser);
@@ -479,6 +482,55 @@ public class UserServiceTest {
 		assertEquals(role_5, pendingRoleNotification.getRole());
 		assertEquals(program, pendingRoleNotification.getProgram());
 		assertEquals(currentUserMock, pendingRoleNotification.getAddedByUser());
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void shouldThrowISEwhenUserAlreadyExistsForNewUserNotInProgramme() {
+		RegisteredUser existingUser = new RegisteredUserBuilder().id(1).toUser();
+		
+		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(existingUser);
+		EasyMock.replay(userDAOMock);
+		userService.createNewUserInRole( "la", "le", "some@email.com", Authority.APPROVER);
+	}
+	
+	
+	@Test
+	public void shouldCreateUserAndWithRolesNotInAnyProgramme() {
+
+		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(null);
+		RegisteredUser newUser = new RegisteredUserBuilder().id(5).toUser();
+		EasyMock.expect(userFactoryMock.createNewUserInRoles("la", "le", "some@email.com", Authority.REVIEWER)).andReturn(newUser);
+		userDAOMock.save(newUser);		
+
+		EasyMock.replay(userDAOMock, userFactoryMock);
+		
+		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.REVIEWER);
+
+		EasyMock.verify(userDAOMock, userFactoryMock);
+		assertEquals(newUser, createdUser);				
+
+		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichInterviewer().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichReviewer().isEmpty());
+		
+		assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
+		
+	}
+	
+	@Test
+	public void shouldGetAllPreviousInterviewersOfProgam(){
+		RegisteredUser userOne = new RegisteredUserBuilder().id(5).toUser();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(6).toUser();
+		Program program = new ProgramBuilder().id(5).toProgram();
+		EasyMock.expect(userDAOMock.getAllPreviousInterviewersOfProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
+		EasyMock.replay(userDAOMock);
+		
+		List<RegisteredUser> users = userService.getAllPreviousInterviewersOfProgram(program);
+		assertEquals(2, users.size());
+		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
+			
+		
 	}
 	@Before
 	public void setUp() {

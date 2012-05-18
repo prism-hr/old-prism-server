@@ -1,5 +1,13 @@
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
+<#assign avaliableOptionsSize = (programmeInterviewers?size + previousInterviewers?size + 4)/>
+<#if (avaliableOptionsSize > 25)>
+	<#assign avaliableOptionsSize = 25 />
+</#if> 
+<#assign selectedOptionsSize = (applicationInterviewers?size + pendingInterviewers?size) + 1/>
+<#if (selectedOptionsSize > 25)>
+	<#assign selectedOptionsSize = 25 />
+</#if> 
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -95,10 +103,18 @@
 														<p>
 															<strong>Available Interviewers</strong>
 														</p>
-														<select id="programInterviewers" multiple="multiple">
+														<select id="programInterviewers" multiple="multiple" size="${avaliableOptionsSize}">
+															<option value="" disabled="disabled" id="default">Default interviewers</option>
 															<#list programmeInterviewers as interviewer>
-															  <option value="${interviewer.id?string('#####')}">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
-															</#list>																
+															  <option value="${interviewer.id?string('#####')}" category="default">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
+															</#list>
+															<option value="" disabled="disabled"></option>
+															<option value="" disabled="disabled" id="previous">Previous interviewers in this programme</option>
+															
+															<#list previousInterviewers as interviewer>
+															  <option value="${interviewer.id?string('#####')}" category="previous">${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if></option>
+															</#list>							
+															<option value="" disabled="disabled"></option>								
 														</select>
 													</div>
 												</div>
@@ -121,25 +137,28 @@
 													<p>
 														<strong>Selected Interviewers</strong>
 													</p>
-													<select id="applicationInterviewers" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if>>>
+													<select id="applicationInterviewers" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 														<#list applicationInterviewers as interviewer>
 															<option value="${interviewer.id?string('#####')}">
 																${interviewer.firstName?html} ${interviewer.lastName?html} <#if !interviewer.enabled> - Pending</#if>
 															</option>
 														</#list>
-														<#list unsavedInterviewers as unsaved>
-														   <#if applicationInterviewers?seq_index_of(unsaved) < 0>
-																<option value="${unsaved.id?string('#####')}">
-																	${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if>
-																</option>
-														   </#if>
+														<#list pendingInterviewers as unsaved>									
+															<option value="${unsaved.id?string('#####')}">
+																${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if> (*)
+															</option>
 														</#list>
 													</select>
 												</div>
 											</div>
 										</div>
-										<div>							
-											<p>${message!}</p>
+										<div>				
+											<#if mesage??>			
+												<p>${message?html}</p>
+											</#if>
+											<#if RequestParameters.message??>			
+												<p>${RequestParameters.message?html}</p>
+											</#if>
 											<p>
 												<strong>Create New Interviewer</strong>
 											</p>									
@@ -196,14 +215,14 @@
 											<div class="row">
 				                               <label  class="label normal">Interview Time<em>*</em></label>
 			                                   <div class="field">
-			                                    <#if assignOnly?? && assignOnly>
+			                                   	 <#if assignOnly?? && assignOnly>
 				                                      <input disabled="disabled" type="text" value="${(interview.interviewTime)!}" />
 				        							<#else>
-			                                     	<#include "/private/staff/interviewers/time_dropdown.ftl"/>
-			                                      
-			                               			<span class="invalid" name="timeInvalid" style="display:none;"></span>
-			                               	 		<@spring.bind "interview.interviewTime" /> 
-				                			   		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+				                                     	<#include "/private/staff/interviewers/time_dropdown.ftl"/>
+				                                      
+				                               			<span class="invalid" name="timeInvalid" style="display:none;"></span>
+				                               	 		<@spring.bind "interview.interviewTime" /> 
+					                			   		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 				                			   		</#if>
 			                               		</div>
 				                           	</div>
@@ -243,10 +262,11 @@
 								</form>
 							</div>
 						</section>
-						<form id="postInterviewForm" method="post" action ="<@spring.url '/interview/move'/>">
+						<form id="postInterviewForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/interview/assign'/>"<#else> action ="<@spring.url '/interview/move'/>" </#if>>
 							
 						</form>
-						<form id="postInterviewerForm" method="post" action ="<@spring.url '/interview/createInterviewer'/>">
+						<form id="postInterviewerForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/interview/assignNewInterviewer'/>" <#else> action ="<@spring.url '/interview/createInterviewer'/>" </#if>>				
+					
 							
 						</form>
 					<#include "/private/common/feedback.ftl"/>

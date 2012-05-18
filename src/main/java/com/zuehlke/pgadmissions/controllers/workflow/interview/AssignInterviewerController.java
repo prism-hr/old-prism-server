@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -11,8 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
@@ -20,6 +21,7 @@ import com.zuehlke.pgadmissions.services.InterviewerService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
+
 @Controller
 @RequestMapping("/interview")
 public class AssignInterviewerController extends InterviewController {
@@ -41,12 +43,24 @@ public class AssignInterviewerController extends InterviewController {
 		return INTERVIEW_DETAILS_VIEW_NAME;
 	}
 
-
 	@Override
 	@ModelAttribute("interview")
 	public Interview getInterview(@RequestParam Integer applicationId) {
 		return getApplicationForm(applicationId).getLatestInterview();
-		
+
+	}
+
+	@RequestMapping(value = "/assign", method = RequestMethod.POST)
+	public String assignInterviewers(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
+			@ModelAttribute("pendingInterviewers") List<RegisteredUser> unsavedInterviewers) {
+
+		for (RegisteredUser interviewerUser : unsavedInterviewers) {
+			if (!interviewerUser.isInterviewerOfApplicationForm(applicationForm)) {
+				interviewerService.createInterviewerToApplication(interviewerUser, applicationForm);
+			}
+		}
+
+		return "redirect:/applications";
 	}
 
 }

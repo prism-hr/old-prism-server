@@ -9,20 +9,27 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 public class UserDAOTest extends AutomaticRollbackTestCase {
@@ -383,6 +390,28 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		assertFalse(users.contains(user));
 	}
 	
+	
+	@Test
+	public void shouldReturnUserIfReviewerOfApplication(){
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("somethingelse@test.com").username("somethingelse").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		Program program = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();		
+		save(applicant, program);
+		
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		Interview interview = new InterviewBuilder().application(applicationForm).interviewers(new InterviewerBuilder().user(user).toInterviewer()).dueDate(new Date()).furtherDetails("rr").locationURL("").toInterview();
+		save(user, applicationForm, interview);
+		flushAndClearSession();
+		
+		List<RegisteredUser> users = userDAO.getAllPreviousInterviewersOfProgram(program);
+		assertEquals(1, users.size());
+		assertTrue(users.contains(user));
+		
+		
+	}
 	@Before
 	public void setup() {
 		userDAO = new UserDAO(sessionFactory);

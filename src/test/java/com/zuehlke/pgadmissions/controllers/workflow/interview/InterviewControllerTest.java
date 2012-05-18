@@ -1,10 +1,12 @@
 package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -51,9 +53,8 @@ public class InterviewControllerTest {
 
 	private InterviewValidator interviewValidator;
 	private DatePropertyEditor datePropertyEditorMock;
-	private static final String INTERVIEW_DETAILS_VIEW_NAME = "/private/staff/interviewers/interview_details";
+
 	private RegisteredUser currentUserMock;
-	private ApplicationForm applicationForm;
 
 	@Test
 	public void shouldAddRegisteredUserValidator() {
@@ -100,22 +101,23 @@ public class InterviewControllerTest {
 	}
 
 	@Test
-	public void shouldGetProgrammeInterviewers() {
-		final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).toUser();
+	public void shouldGetProgrammeInterviewersAndRemovePendingAndAssignedInterviewersUsers() {
 		final RegisteredUser interUser1 = new RegisteredUserBuilder().id(7).toUser();
-		final Program program = new ProgramBuilder().interviewers(interUser1, interUser2).id(6).toProgram();
-		Interview interview = new InterviewBuilder().id(1).toInterview();
+		final RegisteredUser interUser2 = new RegisteredUserBuilder().id(6).toUser();
+		final RegisteredUser interUser3 = new RegisteredUserBuilder().id(8).toUser();
+		final RegisteredUser interUser4 = new RegisteredUserBuilder().id(9).toUser();
+
+		final Program program = new ProgramBuilder().interviewers(interUser1, interUser2, interUser3, interUser4).id(6).toProgram();
+		Interview interview = new InterviewBuilder().id(1).interviewers(new InterviewerBuilder().user(interUser4).toInterviewer()).toInterview();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(interview).latestInterview(interview).acceptedTerms(CheckedStatus.NO)
 				.id(5).program(program).toApplicationForm();
 		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock,
 				interviewServiceMock, interviewValidator, datePropertyEditorMock) {
 			@Override
 			public ApplicationForm getApplicationForm(Integer applicationId) {
-				applicationForm.setProgram(program);
-				return applicationForm;
-			}
-
-			public List<RegisteredUser> unsavedInterviewers(String unsavedInterviewersRaw) {
+				if(applicationId == 5){
+					return applicationForm;
+				}
 				return null;
 			}
 
@@ -125,17 +127,21 @@ public class InterviewControllerTest {
 				return null;
 			}
 
+			@SuppressWarnings("unchecked")
+			@Override
+			public List<RegisteredUser> getPendingInterviewers(List<Integer> pendingInterviewer, Integer applicationId) {
+				if (pendingInterviewer.size() == 1 && pendingInterviewer.get(0) == 3) {
+					return Arrays.asList(interUser3);
+				}
+				return Collections.EMPTY_LIST;
+			}
+
 		};
-		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
-		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
 
-		applicationServiceMock.save(applicationForm);
-		EasyMock.replay(applicationServiceMock, currentUserMock);
 
-		List<RegisteredUser> interviewersUsers = controller.getProgrammeInterviewers(5, null);
+		List<RegisteredUser> interviewersUsers = controller.getProgrammeInterviewers(5, Arrays.asList(3));
 		assertEquals(2, interviewersUsers.size());
 	}
-
 
 	@Test
 	public void shouldRegisterInterviewValidatorAndPropertyEditor() {
@@ -147,8 +153,6 @@ public class InterviewControllerTest {
 		EasyMock.verify(binderMock);
 	}
 
-	
-
 	@Test
 	public void shouldReturnNewUser() {
 		assertNotNull(controller.getInterviewer());
@@ -156,39 +160,10 @@ public class InterviewControllerTest {
 	}
 
 	@Test
-	public void shouldTransformStringIdsToUserObjects() {
-		EasyMock.reset(userServiceMock);
-		RegisteredUser user_1 = new RegisteredUserBuilder().id(5).toUser();
-		RegisteredUser user_2 = new RegisteredUserBuilder().id(6).toUser();
-		EasyMock.expect(userServiceMock.getUser(5)).andReturn(user_1);
-		EasyMock.expect(userServiceMock.getUser(6)).andReturn(user_2);
-
-		EasyMock.replay(userServiceMock);
-		List<RegisteredUser> unsavedInterviewers = controller.unsavedInterviewers("5|6");
-
-		EasyMock.verify(userServiceMock);
-		Assert.assertNotNull(unsavedInterviewers);
-		Assert.assertEquals(2, unsavedInterviewers.size());
-		Assert.assertTrue(unsavedInterviewers.contains(user_1));
-		Assert.assertTrue(unsavedInterviewers.contains(user_2));
-
-	}
-
-	@Test
-	public void shouldNotFailIntUnsavedReviewersIsNull() {
-		EasyMock.reset(userServiceMock);
-		EasyMock.replay(userServiceMock);
-		List<RegisteredUser> unsavedInterviewers = controller.unsavedInterviewers(null);
-
-		EasyMock.verify(userServiceMock);
-		Assert.assertNotNull(unsavedInterviewers);
-		Assert.assertTrue(unsavedInterviewers.isEmpty());
-	}
-	@Test
 	public void shouldGetApplicationFromIdForAdmin() {
 		Program program = new ProgramBuilder().id(6).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
-		
+
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
@@ -196,16 +171,14 @@ public class InterviewControllerTest {
 
 		ApplicationForm returnedForm = controller.getApplicationForm(5);
 		assertEquals(applicationForm, returnedForm);
-		
 
 	}
 
-	
 	@Test
 	public void shouldGetApplicationFromIdForInterviewer() {
 		Program program = new ProgramBuilder().id(6).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
-		
+
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
@@ -213,7 +186,6 @@ public class InterviewControllerTest {
 
 		ApplicationForm returnedForm = controller.getApplicationForm(5);
 		assertEquals(applicationForm, returnedForm);
-		
 
 	}
 
@@ -230,16 +202,97 @@ public class InterviewControllerTest {
 
 		Program program = new ProgramBuilder().id(6).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
-		
+
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
 		EasyMock.expect(currentUserMock.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
-		
+
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 
 		controller.getApplicationForm(5);
 	}
+
+	@Test
+	public void shouldReturnPendingInterviewersAndRemoveExistingInterviewersFromList() {
+		List<Integer> ids = Arrays.asList(1, 8);
+		EasyMock.reset(userServiceMock);
+		RegisteredUser newUser1 = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser newUser2 = new RegisteredUserBuilder().id(8).toUser();
+
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(newUser1);
+		EasyMock.expect(userServiceMock.getUser(8)).andReturn(newUser2);
+		EasyMock.replay(userServiceMock);
+
+		Integer applicationId = 5;
+		final ApplicationForm applicationForm = new ApplicationFormBuilder()
+				.latestInterview(new InterviewBuilder().interviewers(new InterviewerBuilder().user(newUser2).toInterviewer()).toInterview()).id(applicationId)
+				.toApplicationForm();
+		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock,
+				interviewServiceMock, interviewValidator, datePropertyEditorMock) {
+			@Override
+			public ApplicationForm getApplicationForm(Integer applicationId) {
+				if (5 == applicationId) {
+					return applicationForm;
+				}
+				return null;
+			}
+
+			@Override
+			public Interview getInterview(Integer applicationId) {
+				return null;
+			}
+		};
+		List<RegisteredUser> newUsers = controller.getPendingInterviewers(ids, applicationId);
+		assertEquals(1, newUsers.size());
+		assertEquals(newUser1, newUsers.get(0));
+
+	}
 	
+	@Test
+	public void shouldGetListOfPreviousInterviewersAndRemovePendingAssignedOrDefaultInterviewers(){
+		EasyMock.reset(userServiceMock);
+		final RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(7).toUser();
+		final RegisteredUser interviewer = new RegisteredUserBuilder().id(6).toUser();
+		final RegisteredUser pendingInterviewerUser = new RegisteredUserBuilder().id(8).toUser();
+		final RegisteredUser assignedInterviewer = new RegisteredUserBuilder().id(9).toUser();
+
+		final Program program = new ProgramBuilder().interviewers(defaultInterviewer).id(6).toProgram();
+		Interview interview = new InterviewBuilder().id(1).interviewers(new InterviewerBuilder().user(assignedInterviewer).toInterviewer()).toInterview();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().latestInterview(interview).id(5).program(program).toApplicationForm();
+		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock,
+				interviewServiceMock, interviewValidator, datePropertyEditorMock) {
+			@Override
+			public ApplicationForm getApplicationForm(Integer applicationId) {
+				if(applicationId == 5){
+					return applicationForm;
+				}
+				return null;
+			}
+
+			@Override
+			public Interview getInterview(Integer applicationId) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public List<RegisteredUser> getPendingInterviewers(List<Integer> pendingInterviewer, Integer applicationId) {
+				if (pendingInterviewer.size() == 1 && pendingInterviewer.get(0) == 3) {
+					return Arrays.asList(pendingInterviewerUser);
+				}
+				return Collections.EMPTY_LIST;
+			}
+
+		};
+		
+		EasyMock.expect(userServiceMock.getAllPreviousInterviewersOfProgram(program)).andReturn(Arrays.asList(defaultInterviewer, interviewer, pendingInterviewerUser, assignedInterviewer));
+		EasyMock.replay(userServiceMock);
+		List<RegisteredUser> interviewersUsers = controller.getPreviousInterviewers(5, Arrays.asList(3));
+		assertEquals(1, interviewersUsers.size());
+		assertTrue(interviewersUsers.contains(interviewer));
+	}
+
 	@Before
 	public void setUp() {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
@@ -257,10 +310,9 @@ public class InterviewControllerTest {
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
-		
+
 		controller = new InterviewController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock,
 				interviewServiceMock, interviewValidator, datePropertyEditorMock) {
-			
 
 			@Override
 			public Interview getInterview(Integer applicationId) {

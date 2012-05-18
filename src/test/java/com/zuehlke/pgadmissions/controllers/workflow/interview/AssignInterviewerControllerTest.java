@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+
+import java.util.Arrays;
 
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -17,9 +18,10 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
@@ -47,6 +49,7 @@ public class AssignInterviewerControllerTest {
 	private static final String INTERVIEW_DETAILS_VIEW_NAME = "/private/staff/interviewers/interview_details";
 	private RegisteredUser currentUserMock;
 	
+	
 
 	@Test
 	public void shouldGetInterviewPageWithOnlyAssignTrueAssignInterviewersFunctionality() {
@@ -72,6 +75,22 @@ public class AssignInterviewerControllerTest {
 		assertEquals(interview, controller.getInterview(5));
 	}
 
+
+
+	@Test
+	public void shouldShouldAddNewInterviewers() {
+		RegisteredUser user1 = new RegisteredUserBuilder().id(1).toUser();
+		RegisteredUser user2 = new RegisteredUserBuilder().id(2).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).latestInterview(new InterviewBuilder().interviewers(new InterviewerBuilder().user(user1).toInterviewer()).toInterview()).toApplicationForm();
+		interviewerServiceMock.createInterviewerToApplication(user2, applicationForm);
+		EasyMock.replay(interviewerServiceMock);
+		assertEquals("redirect:/applications", controller.assignInterviewers(applicationForm, Arrays.asList(user1, user2)));
+		EasyMock.verify(interviewerServiceMock);
+		
+	
+	
+	}
+	
 	@Before
 	public void setUp() {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
@@ -86,7 +105,7 @@ public class AssignInterviewerControllerTest {
 		interviewValidator = EasyMock.createMock(InterviewValidator.class);
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 	
-		
+
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);

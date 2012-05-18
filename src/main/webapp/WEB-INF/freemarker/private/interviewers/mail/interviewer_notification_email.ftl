@@ -37,8 +37,18 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated to interview ${applicant.firstName?html} ${applicant.lastName?html} in connection with their application ${application.id?string('#####')} to join the Postgraduate research Programme in ${application.program.title} at UCL.</font>
 			      	</p>
+			      	<#if !interviewer.user.enabled>
+			      		<p>
+			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with the UCL Portal, please do so by clicking the link below:</font>
+			      		</p>
+				      	<p>
+				      		<font face="Arial, Helvetica, sans-serif" size="2">
+				      			<a href="${host}/pgadmissions/register?userId=${interviewer.user.id?string('#######')}">Register</a>
+				      		</font>
+				      	</p>
+			      	</#if>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You can view the application by clicking the following link:</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">After logging in, you can view the application by clicking the following link:</font>
 			      	</p>
 			         <p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">

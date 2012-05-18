@@ -3,7 +3,6 @@
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/timeline.css' />"/>
 
-
  <table>
          	<colgroup>
               	<col style="width: 100px" />

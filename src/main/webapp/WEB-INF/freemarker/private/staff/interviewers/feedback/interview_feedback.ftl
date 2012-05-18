@@ -106,9 +106,8 @@
 			  				<#else>
 			  					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 		  					</#if>
-		  					<div id= "timeline">
-		  						
-		  					</div>
+		  					<#include "/private/staff/admin/comment/timeline_application.ftl"/>
+		  					
 		  					
 				        </div><!-- .content-box-inner -->
 				      </div><!-- .content-box -->

@@ -68,14 +68,14 @@ public class ApplicationsService {
 		List<Event> events = application.getEventsSortedByDate();
 		Event previousEvent;
 		if(events.size() == 1 ){
-			return application.getStatus();
+			return events.get(0).getNewStatus();
 		}
 		if(events.size() == 2){
 			if(events.get(1).getNewStatus() == ApplicationFormStatus.REJECTED){
 				return events.get(0).getNewStatus();
 			}
 			else{
-				return application.getStatus();
+				return events.get(0).getNewStatus();
 			}
 		}
 		if(events.size()>2){

@@ -1,0 +1,6 @@
+/* CSS Document */
+
+#programReviewers, #applicationReviewers { width: 400px; }
+#programReviewers option, #applicationReviewers option { border-bottom: 1px solid #999; padding: 5px; }
+#programReviewers option:last-child, #applicationReviewers option:last-child { border-bottom: none; }
+

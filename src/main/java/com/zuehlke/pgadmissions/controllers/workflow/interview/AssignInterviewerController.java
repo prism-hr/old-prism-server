@@ -1,23 +1,21 @@
 package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
-import java.util.List;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
-import com.zuehlke.pgadmissions.services.InterviewerService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
@@ -27,14 +25,14 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 public class AssignInterviewerController extends InterviewController {
 
 	AssignInterviewerController() {
-		this(null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public AssignInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
-			InterviewerService interviewerService, MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
+			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
 			DatePropertyEditor datePropertyEditor) {
-		super(applicationsService, userService, validator, interviewerService, messageSource, interviewService, interviewValidator, datePropertyEditor);
+		super(applicationsService, userService, validator,  messageSource, interviewService, interviewValidator, datePropertyEditor, null);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "assignInterviewers")
@@ -49,17 +47,13 @@ public class AssignInterviewerController extends InterviewController {
 		return getApplicationForm(applicationId).getLatestInterview();
 
 	}
-
+	
 	@RequestMapping(value = "/assign", method = RequestMethod.POST)
-	public String assignInterviewers(@ModelAttribute("applicationForm") ApplicationForm applicationForm,
-			@ModelAttribute("pendingInterviewers") List<RegisteredUser> unsavedInterviewers) {
-
-		for (RegisteredUser interviewerUser : unsavedInterviewers) {
-			if (!interviewerUser.isInterviewerOfApplicationForm(applicationForm)) {
-				interviewerService.createInterviewerToApplication(interviewerUser, applicationForm);
-			}
+	public String assignInterviewers(@Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult) {
+		if(bindingResult.hasErrors()){
+			return INTERVIEW_DETAILS_VIEW_NAME;
 		}
-
+		interviewService.save(interview);
 		return "redirect:/applications";
 	}
 

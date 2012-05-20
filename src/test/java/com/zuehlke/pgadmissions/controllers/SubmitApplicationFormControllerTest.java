@@ -25,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
@@ -79,6 +80,7 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);		
 		StageDuration stageDuration = new StageDuration();
 		stageDuration.setDuration(8);
+		stageDuration.setUnit(DurationUnitEnum.HOURS);
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		applicationsServiceMock.save(applicationForm);
 		
@@ -89,7 +91,7 @@ public class SubmitApplicationFormControllerTest {
 
 		EasyMock.verify(applicationsServiceMock);
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());	
-		assertEquals(DateUtils.truncate(DateUtils.addDays(new Date(), 8), Calendar.DATE), applicationForm.getDueDate());
+		assertEquals(DateUtils.truncate(DateUtils.addHours(new Date(), 8), Calendar.HOUR), DateUtils.truncate(applicationForm.getDueDate(), Calendar.HOUR));
 		assertEquals(2, applicationForm.getEvents().size());
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getEvents().get(1).getNewStatus());
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(1).getDate(), Calendar.DATE));

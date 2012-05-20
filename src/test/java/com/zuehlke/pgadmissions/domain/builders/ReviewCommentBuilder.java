@@ -82,7 +82,7 @@ public class ReviewCommentBuilder {
 		reviewComment.setId(id);
 		reviewComment.setSuitableCandidate(suitableCandidate);
 		reviewComment.setUser(user);
-		reviewComment.setWillingToSupervice(willingToSupervice);
+		reviewComment.setWillingToInterview(willingToSupervice);
 		reviewComment.setAdminsNotified(adminsNotified);
 		reviewComment.setReviewer(reviewer);
 		return reviewComment;

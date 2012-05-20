@@ -41,55 +41,8 @@ public class ReviewServiceIntegrationTest {
 	@Autowired
 	private SessionFactory sessionFactory;
 
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testAddExistingUserToProgramme() {
-		RegisteredUser reviewer = createNewReviewerUser("firs", "last", "email", Authority.ADMINISTRATOR);
-		userDAO.save(reviewer);
-		flushNClear();
-		Assert.assertNotNull(reviewer.getId());
 
-		Program programme = new Program();
-		programme.setCode("blablabal");
-		programDAO.save(programme);
-		Assert.assertNotNull(programme.getId());
-		flushNClear();
-
-		reviewService.addUserToProgramme(programme, reviewer);
-		flushNClear();
-
-		Program storedProgramme = programDAO.getProgramById(programme.getId());
-		Assert.assertTrue(storedProgramme.getProgramReviewers().contains(reviewer));
-		RegisteredUser storedUser = userDAO.get(reviewer.getId());
-		Assert.assertTrue(storedUser.getProgramsOfWhichReviewer().contains(programme));
-		Assert.assertTrue(reviewer.isInRole(Authority.REVIEWER));
-	}
-
-	@Test
-	@Transactional
-	@Rollback(true)
-	public void testAddExistingReviewerToProgramme() {
-		RegisteredUser reviewer = createNewReviewerUser("firs", "last", "email", Authority.REVIEWER);
-		userDAO.save(reviewer);
-		flushNClear();
-		Assert.assertNotNull(reviewer.getId());
-
-		Program programme = new Program();
-		programme.setCode("blablabal");
-		programDAO.save(programme);
-		Assert.assertNotNull(programme.getId());
-		flushNClear();
-
-		reviewService.addUserToProgramme(programme, reviewer);
-		flushNClear();
-
-		Program storedProgramme = programDAO.getProgramById(programme.getId());
-		Assert.assertTrue(storedProgramme.getProgramReviewers().contains(reviewer));
-		RegisteredUser storedUser = userDAO.get(reviewer.getId());
-		Assert.assertTrue(storedUser.getProgramsOfWhichReviewer().contains(programme));
-	}
-
+	
 
 	private void flushNClear() {
 		sessionFactory.getCurrentSession().flush();

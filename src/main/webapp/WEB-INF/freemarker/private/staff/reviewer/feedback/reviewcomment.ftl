@@ -78,11 +78,11 @@
 			            				</div>
 									</div>
 	   								<div class="row">
-			            				<span id="supervise-lbl" class="plain-label">Willing to supervise?<em>*</em></span>
+			            				<span id="supervise-lbl" class="plain-label">Willing to interview?<em>*</em></span>
 										<div class="field">
 											<label><input type="radio"   name="willingRB" value="TRUE" id="willingRB_true"/> Yes</label> 
 											<label><input type="radio"  name="willingRB" value="FALSE" id="willingRB_false"/> No</label> 
-											<@spring.bind "comment.willingToSupervice" /> 
+											<@spring.bind "comment.willingToInterview" /> 
 	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
 			    					</div>

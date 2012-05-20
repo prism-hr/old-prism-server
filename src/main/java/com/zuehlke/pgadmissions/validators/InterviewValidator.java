@@ -34,6 +34,9 @@ public class InterviewValidator implements Validator {
 		if (StringUtils.isNotBlank(dueDate) && interview.getInterviewDueDate().before(today)) {
 			errors.rejectValue("interviewDueDate", "interview.interviewDueDate.past");
 		}
+		if(interview.getInterviewers().isEmpty()){
+			errors.rejectValue("interviewers", "interview.interviewers.notempty");
+		}
 	}
 	
 }

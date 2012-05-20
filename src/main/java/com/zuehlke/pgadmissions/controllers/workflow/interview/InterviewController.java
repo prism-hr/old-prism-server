@@ -21,9 +21,9 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
-import com.zuehlke.pgadmissions.services.InterviewerService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
@@ -33,11 +33,11 @@ public abstract class InterviewController {
 	protected final ApplicationsService applicationsService;
 	protected final UserService userService;
 	protected final NewUserByAdminValidator interviewerValidator;
-	protected final InterviewerService interviewerService;
 	protected final MessageSource messageSource;
 	protected final InterviewService interviewService;
 	protected final InterviewValidator interviewValidator;
 	protected final DatePropertyEditor datePropertyEditor;
+	protected final InterviewerPropertyEditor interviewerPropertyEditor;
 
 	InterviewController() {
 		this(null, null, null, null, null, null, null, null);
@@ -45,16 +45,17 @@ public abstract class InterviewController {
 
 	@Autowired
 	public InterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
-			InterviewerService interviewerService, MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
-			DatePropertyEditor datePropertyEditor) {
+			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
+			DatePropertyEditor datePropertyEditor, InterviewerPropertyEditor interviewerPropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.interviewerValidator = validator;
-		this.interviewerService = interviewerService;
+
 		this.messageSource = messageSource;
 		this.interviewService = interviewService;
 		this.interviewValidator = interviewValidator;
 		this.datePropertyEditor = datePropertyEditor;
+		this.interviewerPropertyEditor = interviewerPropertyEditor;
 	}
 
 	@InitBinder(value = "interviewer")
@@ -65,6 +66,7 @@ public abstract class InterviewController {
 	@InitBinder(value = "interview")
 	public void registerInterviewValidatorsAndPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
+		binder.registerCustomEditor(Interviewer.class,interviewerPropertyEditor);
 		binder.setValidator(interviewValidator);
 	}
 

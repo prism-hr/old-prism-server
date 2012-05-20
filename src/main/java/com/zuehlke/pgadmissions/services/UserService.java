@@ -259,4 +259,8 @@ public class UserService {
 		return userDAO.getAllPreviousInterviewersOfProgram(program);
 	}
 
+	public List<RegisteredUser> getAllPreviousReviewersOfProgram(Program program) {
+		return userDAO.getAllPreviousReviewersOfProgram(program);
+	}
+
 }

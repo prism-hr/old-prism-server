@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -139,6 +140,19 @@ public class UserDAO {
 		for (Interviewer interviewer : interviewers) {
 			if(!users.contains(interviewer.getUser())){
 				users.add(interviewer.getUser());
+			}
+		}
+		return users;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<RegisteredUser> getAllPreviousReviewersOfProgram(Program program) {
+		List<Reviewer> reviewers = sessionFactory.getCurrentSession().createCriteria(Reviewer.class).createAlias("reviewRound", "reviewRound").createAlias("reviewRound.application", "application")
+				.add(Restrictions.eq("application.program", program)).list();
+		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
+		for (Reviewer reviewer : reviewers) {
+			if(!users.contains(reviewer.getUser())){
+				users.add(reviewer.getUser());
 			}
 		}
 		return users;

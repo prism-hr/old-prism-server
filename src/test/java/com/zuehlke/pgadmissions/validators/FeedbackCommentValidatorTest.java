@@ -35,20 +35,20 @@ public class FeedbackCommentValidatorTest {
 	
 	@Test
 	public void shouldRejectIfNotDeclinedAndWillingToSuperviseIsEmpty() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "willingToSupervice");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "willingToInterview");
 		reviewComment.setWillingToInterview(null);
 		validator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("feedbackComment.willingToSupervice.notempty", mappingResult.getFieldError("willingToSupervice").getCode());
+		Assert.assertEquals("feedbackComment.willingToInterview.notempty", mappingResult.getFieldError("willingToInterview").getCode());
 	}
 	
 	@Test
 	public void shouldRejectIfNotDeclinedAndSuitableCandidateIsEmpty() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "willingToSupervice");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "willingToInterview");
 		reviewComment.setWillingToInterview(null);
 		validator.validate(reviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("feedbackComment.willingToSupervice.notempty", mappingResult.getFieldError("willingToSupervice").getCode());
+		Assert.assertEquals("feedbackComment.willingToInterview.notempty", mappingResult.getFieldError("willingToInterview").getCode());
 	}
 
 	

@@ -1,12 +1,14 @@
-$(document).ready(function(){
+$(document).ready(function()
+{
+	
 	$("#acceptTermsPDValue").val("NO");
 	$("#addSupervisorButton").show();
 	$("#awareSupervisorCB").attr('checked', false);
 	$("#awareSupervisor").val("NO");
 	var unsavedSupervisors = 0;
 	
-	var superviworRowCount = $("#supervisors tbody").children().length;
-	if(superviworRowCount > 0){
+	var supervisorRowCount = $("#supervisors tbody").children().length;
+	if(supervisorRowCount > 0){
 		$("#supervisors").show();
 	}else{
 		$("#supervisors").hide();
@@ -98,80 +100,86 @@ $(document).ready(function(){
 			$(this).parent().parent().remove();
 	});
 	
-	$('#programmeCancelButton').click(function(){
-		$("#addSupervisorButton").show();
-		$("#updateSupervisorButton").hide();
-		$.get("/pgadmissions/update/getProgrammeDetails",
-				{
-					applicationId:  $('#applicationId').val(),					
-					cacheBreaker: new Date().getTime()					
-				},
-				function(data) {
-					$('#programmeDetailsSection').html(data);
-				}
-		);
-	});
-	
-	$("input[name*='awareSupervisorCB']").click(function() {
-		if ($("#awareSupervisor").val() =='YES'){
+
+	// ---------------------------------------------------------------------------------
+	// Checkbox for whether a supervisor is aware of the applicant's application.
+	// ---------------------------------------------------------------------------------	
+	$("input[name*='awareSupervisorCB']").click(function()
+	{
+		$("#awareSupervisor").val( $(this).is(':checked') ? 'YES' : 'NO' );
+		/*
+		if ($("#awareSupervisor").val() == 'YES')
+		{
 			$("#awareSupervisor").val("NO");
-		} else {		
+		}
+		else {
 			$("#awareSupervisor").val("YES");
 		}
+		*/
 	});
 	
 	
-	$('#programmeSaveButton').on("click",function(){
-			if( $("#acceptTermsPDValue").val() =='NO'){ 
-				//$("span[name='nonAcceptedPD']").html('You must agree to the terms and conditions');
-				$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			}
-			else{
-				$("span[name='nonAcceptedPD']").html('');
-				postProgrammeData('close');
-			}
-	});	
-	function validateEmail(email) { 
+	// ---------------------------------------------------------------------------------
+	// Validation of email addresses.
+	// ---------------------------------------------------------------------------------	
+	function validateEmail(email)
+	{ 
 		var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
-	    var result = pattern.test(email);
+	  var result	= pattern.test(email);
 		return result;
-	} 
+	}
 	
-	$('#addSupervisorButton').on('click', function(){
-		$("#supervisors").show();
-		if( $('#supervisorFirstname').val() ==""  || $('#supervisorFirstname').val() =="First Name" ){
-			$("span[name='superFirstname']").html('First name cannot be empty');
-			$("span[name='superFirstname']").show();
-
-		}
-		if( $('#supervisorLastname').val() ==""  || $('#supervisorLastname').val() =="Last Name" ){
-			$("span[name='superLastname']").html('Last name cannot be empty');
-			$("span[name='superLastname']").show();
-
-		}
-		if( !validateEmail($('#supervisorEmail').val())){
-			$("span[name='superEmail']").html('Email is not valid');
-			$("span[name='superEmail']").show();
-
-		}
-		if( validateEmail($('#supervisorEmail').val()) && $('#supervisorEmail').val() && $('#supervisorEmail').val() !="Email address" &&
-				$('#supervisorFirstname').val() && $('#supervisorFirstname').val() !="First Name"&&
-				$('#supervisorLastname').val() && $('#supervisorLastname').val() !="Last Name"){
-			
+	
+	// ---------------------------------------------------------------------------------
+	// Validation of the supervisor form.
+	// ---------------------------------------------------------------------------------	
+	function validateSupervisor()
+	{
+		var errors = 0;
 		
-			$("span[name='superFirstname']").html('');
-			$("span[name='superFirstname']").hide();
-			$("span[name='superLastname']").html('');
-			$("span[name='superLastname']").hide();
-			$("span[name='superEmail']").html('');
-			$("span[name='superEmail']").hide();
-			var aware = "";
-			if($('#awareSupervisor').val() =="YES"){
-				aware = "Yes";
-			}
-			else{
-				aware = "No";
-			}
+		if ($('#supervisorFirstname').val() == "" || $('#supervisorFirstname').val() == "First Name")
+		{
+			$("span[name='superFirstname']").html('First name cannot be empty').show();
+			errors++;
+		}
+		else
+		{
+			$("span[name='superFirstname']").html('').hide();
+		}
+		
+		if ($('#supervisorLastname').val() == "" || $('#supervisorLastname').val() == "Last Name")
+		{
+			$("span[name='superLastname']").html('Last name cannot be empty').show();
+			errors++;
+		}
+		else
+		{
+			$("span[name='superLastname']").html('').hide();
+		}
+		
+		if ($('#supervisorEmail').val() == ""  || $('#supervisorEmail').val() == "Email address" || !validateEmail($('#supervisorEmail').val()))
+		{
+			$("span[name='superEmail']").html('Email is not valid').show();
+			errors++;
+		}
+		else
+		{
+			$("span[name='superEmail']").html('').hide();
+		}
+		
+		return (errors == 0); // should return true if no errors occurred.
+	}
+	
+
+	// ---------------------------------------------------------------------------------
+	// Add supervisor button (adding a new supervisor).
+	// ---------------------------------------------------------------------------------	
+	$('#addSupervisorButton').click(function()
+	{
+		$("#supervisors").show();
+		if (validateSupervisor())
+		{
+			var aware = $('#awareSupervisor').val() == 'YES' ? 'Yes' : 'No';
 			unsavedSupervisors++;
 			$('table.data-table tbody').append(
 					'<tr>' +
@@ -184,9 +192,7 @@ $(document).ready(function(){
 					'<input type="hidden" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
 					'<input type="hidden" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
 					'<input type="hidden" id="us_'+unsavedSupervisors+'aware" value="' + $('#awareSupervisor').val()+'"/>'	+								
-					
 					'<input type="hidden" name="supervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $('#awareSupervisor').val() + '"} ' + "'" + "/>");
-		
 		
 		 $("input[name='sFN']").val($('#supervisorFirstname').val());
 		 $("input[name='sLN']").val($('#supervisorLastname').val());
@@ -201,40 +207,15 @@ $(document).ready(function(){
 		}
 	});
 	
-	$('#updateSupervisorButton').on('click', function(){
-		if( $('#supervisorFirstname').val() ==""  || $('#supervisorFirstname').val() =="First Name" ){
-			$("span[name='superFirstname']").html('First name cannot be empty');
-			$("span[name='superFirstname']").show();
-			
-		}
-		if( $('#supervisorLastname').val() ==""  || $('#supervisorLastname').val() =="Last Name" ){
-			$("span[name='superLastname']").html('Last name cannot be empty');
-			$("span[name='superLastname']").show();
-			
-		}
-		if( $('#supervisorEmail').val() ==""  || $('#supervisorEmail').val() =="Email address" || !validateEmail($('#supervisorEmail').val())){
-			$("span[name='superEmail']").html('Email is not valid');
-			$("span[name='superEmail']").show();
-			
-		}
-		if( $('#supervisorEmail').val() && $('#supervisorEmail').val() !="Email address" &&
-				$('#supervisorFirstname').val() && $('#supervisorFirstname').val() !="First Name"&&
-				$('#supervisorLastname').val() && $('#supervisorLastname').val() !="Last Name"){
-			
-			
-			$("span[name='superFirstname']").html('');
-			$("span[name='superFirstname']").hide();
-			$("span[name='superLastname']").html('');
-			$("span[name='superLastname']").hide();
-			$("span[name='superEmail']").html('');
-			$("span[name='superEmail']").hide();
-			var aware = "";
-			if($('#awareSupervisor').val() =="YES"){
-				aware = "Yes";
-			}
-			else{
-				aware = "No";
-			}
+	// ---------------------------------------------------------------------------------
+	// Update supervisor button (editing an existing supervisor's details).
+	// (validation is effectively the same as with adding a supervisor.)
+	// ---------------------------------------------------------------------------------	
+	$('#updateSupervisorButton').click(function()
+	{
+		if (validateSupervisor())
+		{
+			var aware = $('#awareSupervisor').val() == 'YES' ? 'Yes' : 'No';
 			
 			$('table.data-table tbody').append(
 					'<tr>' +
@@ -280,15 +261,58 @@ $(document).ready(function(){
 //					$('#programmeDetailsSection').html(data);
 //				});
 //	});
+
+	// ---------------------------------------------------------------------------------	
+	// Cancel button.
+	// ---------------------------------------------------------------------------------	
+	$('#programmeCancelButton').click(function()
+	{
+		$("#addSupervisorButton").show();
+		$("#updateSupervisorButton").hide();
+		$.get(
+			"/pgadmissions/update/getProgrammeDetails",
+			{
+				applicationId:  $('#applicationId').val(),					
+				cacheBreaker: new Date().getTime()					
+			},
+			function(data)
+			{
+				$('#programmeDetailsSection').html(data);
+			}
+		);
+	});
 	
-	$('#programmeCloseButton').click(function(){
+	// ---------------------------------------------------------------------------------
+	// Close button.
+	// ---------------------------------------------------------------------------------	
+	$('#programmeCloseButton').click(function()
+	{
 		$('#programme-H2').trigger('click');
 		return false;
 	});
 	
-	
+	// ---------------------------------------------------------------------------------
+	// Save button.
+	// ---------------------------------------------------------------------------------	
+	$('#programmeSaveButton').click(function()
+	{
+		if ($("#acceptTermsPDValue").val() =='NO')
+		{ 
+			//$("span[name='nonAcceptedPD']").html('You must agree to the terms and conditions');
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+		}
+		else
+		{
+			$("span[name='nonAcceptedPD']").html('');
+			postProgrammeData('close');
+		}
+	});	
+
+
 	  bindDatePicker('#startDate');
 	  addToolTips();
+
+/*
 		//open/close
 		var $header  =$('#programme-H2');
 		var $content = $header.next('div');
@@ -298,28 +322,35 @@ $(document).ready(function(){
 		  $(this).toggleClass('open', $content.is(':visible'));
 		  return false;
 		});
-		
+*/	
 
 });
 
-function postProgrammeData(message){
+// ---------------------------------------------------------------------------------	
+// Submit programme details data.
+// ---------------------------------------------------------------------------------	
+function postProgrammeData(message)
+{
 	var postData = {
-			programmeName: $("#programmeName").val(),
-			projectName: $("#projectName").val(), 
-			studyOption: $("#studyOption").val(), 
-			startDate: $("#startDate").val(),
-			referrer: $("#referrer").val(),
-			application: $("#appId1").val(),
-			programmeDetailsId: $("#programmeDetailsId").val(),
-			application: $('#applicationId').val(),
-			applicationId: $('#applicationId').val(),
-			supervisors: "",
-			message: message
-				
-		};
+		programmeName: 			$("#programmeName").val(),
+		projectName:				$("#projectName").val(), 
+		studyOption:				$("#studyOption").val(), 
+		startDate:					$("#startDate").val(),
+		referrer:						$("#referrer").val(),
+		application:				$("#appId1").val(),
+		programmeDetailsId: $("#programmeDetailsId").val(),
+		application:				$('#applicationId').val(),
+		applicationId:			$('#applicationId').val(),
+		supervisors:				"",
+		message:						message
+	};
 		
-		$.post( "/pgadmissions/update/editProgrammeDetails" ,$.param(postData) +"&" + $('[input[name="supervisors"]').serialize(),
-		function(data) {
+	$.post(
+		"/pgadmissions/update/editProgrammeDetails",
+		$.param(postData) + "&" + $('[input[name="supervisors"]').serialize(),
+		function(data)
+		{
 			$('#programmeDetailsSection').html(data);
-		});
+		}
+	);
 }

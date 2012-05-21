@@ -45,7 +45,7 @@ public class AdminMailSenderTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram())
 				.toApplicationForm();
 
-		Map<String, Object> model = adminMailSender.createModel(form, adminOne, null);
+		Map<String, Object> model = adminMailSender.createModel(form, adminOne, null, null);
 		assertEquals(form, model.get("application"));
 		assertEquals(adminOne, model.get("admin"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
@@ -58,7 +58,7 @@ public class AdminMailSenderTest {
 
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 			@Override
-			Map<String, Object> createModel(ApplicationForm application, RegisteredUser administrator, RegisteredUser reviewer) {
+			Map<String, Object> createModel(ApplicationForm application, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer) {
 				return model;
 			}
 		};
@@ -89,7 +89,7 @@ public class AdminMailSenderTest {
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
 			@Override
-			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer) {
+			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer) {
 				return model;
 			}
 
@@ -111,6 +111,36 @@ public class AdminMailSenderTest {
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 
+	}
+	
+	@Test
+	public void shouldSendAdminNotificationForNewInterviewComment() throws UnsupportedEncodingException {
+		final HashMap<String, Object> model = new HashMap<String, Object>();
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
+			
+			@Override
+			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer) {
+				return model;
+			}
+			
+		};
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).toUser();
+		ApplicationForm form = new ApplicationFormBuilder().program(new Program()).toApplicationForm();
+		RegisteredUser interviewer = new RegisteredUserBuilder().id(11).toUser();
+		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
+		InternetAddress toAddress = new InternetAddress("bob@bobson.com", "Bob Bobson");
+		
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Notification - Interview added",
+						"private/staff/admin/mail/interview_submission_notification.ftl", model)).andReturn(preparatorMock);
+		javaMailSenderMock.send(preparatorMock);
+		
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		
+		adminMailSender.sendAdminInterviewNotification(admin, form , interviewer);
+		
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
+		
 	}
 
 	

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -44,6 +45,14 @@ public class CommentDAO {
 	public List<ReviewComment> getReviewCommentsDueNotification() {
 		return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class)
 				.add(Restrictions.eq("type", CommentType.REVIEW))
+				.add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified", CheckedStatus.NO)))
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<InterviewComment> getInterviewCommentsDueNotification() {
+		return (List<InterviewComment>) sessionFactory.getCurrentSession().createCriteria(InterviewComment.class)
+				.add(Restrictions.eq("type", CommentType.INTERVIEW))
 				.add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified", CheckedStatus.NO)))
 				.list();
 	}

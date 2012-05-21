@@ -330,20 +330,21 @@ public class RegisteredUserTest {
 	public void shouldReturnListOfAuthoritiesForProgram() {
 		Program program = new ProgramBuilder().id(1).toProgram();
 		RegisteredUser user = new RegisteredUserBuilder().programsOfWhichAdministrator(program).programsOfWhichApprover(program)
-				.programsOfWhichReviewer(program).toUser();
+				.programsOfWhichReviewer(program).programsOfWhichSupervisor(program).toUser();
 		List<Authority> authorities = user.getAuthoritiesForProgram(program);
-		assertEquals(3, authorities.size());
+		assertEquals(4, authorities.size());
 		assertEquals(Authority.ADMINISTRATOR, authorities.get(0));
 		assertEquals(Authority.REVIEWER, authorities.get(1));
 		assertEquals(Authority.APPROVER, authorities.get(2));
+		assertEquals(Authority.SUPERVISOR, authorities.get(3));
 	}
 
 	@Test
 	public void shouldReturnCommaSeparatedListOfAuthoritiesForProgram() {
 		Program program = new ProgramBuilder().id(1).toProgram();
 		RegisteredUser user = new RegisteredUserBuilder().programsOfWhichAdministrator(program).programsOfWhichApprover(program)
-				.programsOfWhichReviewer(program).programsOfWhichInterviewer(program).toUser();
-		assertEquals("Administrator, Reviewer, Interviewer, Approver", user.getAuthoritiesForProgramAsString(program));
+				.programsOfWhichReviewer(program).programsOfWhichInterviewer(program).programsOfWhichSupervisor(program).toUser();
+		assertEquals("Administrator, Reviewer, Interviewer, Approver, Supervisor", user.getAuthoritiesForProgramAsString(program));
 
 	}
 
@@ -351,8 +352,8 @@ public class RegisteredUserTest {
 	public void shouldAddSuperAdminToReturnCommaSeparatedListIfSuperadmin() {
 		Program program = new ProgramBuilder().id(1).toProgram();
 		RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole())
-				.programsOfWhichAdministrator(program).programsOfWhichApprover(program).programsOfWhichReviewer(program).programsOfWhichInterviewer(program).toUser();
-		assertEquals("Superadministrator, Administrator, Reviewer, Interviewer, Approver", user.getAuthoritiesForProgramAsString(program));
+				.programsOfWhichAdministrator(program).programsOfWhichApprover(program).programsOfWhichSupervisor(program).programsOfWhichReviewer(program).programsOfWhichInterviewer(program).toUser();
+		assertEquals("Superadministrator, Administrator, Reviewer, Interviewer, Approver, Supervisor", user.getAuthoritiesForProgramAsString(program));
 
 	}
 

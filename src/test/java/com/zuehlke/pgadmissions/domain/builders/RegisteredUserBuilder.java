@@ -35,6 +35,7 @@ public class RegisteredUserBuilder {
 	private List<Program> programsOfWhichApprover = new ArrayList<Program>();		
 	private List<Program> programsOfWhichReviewer = new ArrayList<Program>();
 	private List<Program> programsOfWhichInterviewer = new ArrayList<Program>();
+	private List<Program> programsOfWhichSupervisor = new ArrayList<Program>();
 	
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
 	private List<PendingRoleNotification> pendingRoleNotifications = new ArrayList<PendingRoleNotification>();
@@ -51,6 +52,11 @@ public class RegisteredUserBuilder {
 	
 	public RegisteredUserBuilder programsOfWhichAdministrator(Program...programs) {
 		this.programsOfWhichAdministrator.addAll(Arrays.asList(programs));
+		return this;
+	} 
+	
+	public RegisteredUserBuilder programsOfWhichSupervisor(Program...programs) {
+		this.programsOfWhichSupervisor.addAll(Arrays.asList(programs));
 		return this;
 	} 
 	
@@ -178,6 +184,7 @@ public class RegisteredUserBuilder {
 		user.setProgramsOfWhichApprover(programsOfWhichApprover);
 		user.setProgramsOfWhichReviewer(programsOfWhichReviewer);
 		user.setProgramsOfWhichInterviewer(programsOfWhichInterviewer);
+		user.setProgramsOfWhichSupervisor(programsOfWhichSupervisor);
 		user.setConfirmPassword(confirmPassword);
 		user.setReferees(referees);
 		user.setComments(comments);

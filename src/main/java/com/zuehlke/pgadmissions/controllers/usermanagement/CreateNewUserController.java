@@ -63,10 +63,10 @@ public class CreateNewUserController {
 	@ModelAttribute("authorities")
 	public List<Authority> getAuthorities() {
 		if (userService.getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
-			return Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER);
+			return Arrays.asList(Authority.SUPERADMINISTRATOR, Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER, Authority.SUPERVISOR);
 
 		}
-		return Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER);
+		return Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER, Authority.SUPERVISOR);
 	}
 
 	@ModelAttribute("newUserDTO")

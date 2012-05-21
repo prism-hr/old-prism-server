@@ -258,6 +258,10 @@ public class UserService {
 			newUser.getProgramsOfWhichInterviewer().add(program);
 			addPendingRoleNotificationToUser(newUser, Authority.INTERVIEWER, program);
 		}
+		if (Arrays.asList(authorities).contains(Authority.SUPERVISOR)) {
+			newUser.getProgramsOfWhichSupervisor().add(program);
+			addPendingRoleNotificationToUser(newUser, Authority.SUPERVISOR, program);
+		}
 		userDAO.save(newUser);
 		return newUser;
 

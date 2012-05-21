@@ -203,11 +203,35 @@ $(document).ready(function()
 		  }
 		  
 	  });
-	  
-	  
+		
   });
-  
-  
+
+
+	// ------------------------------------------------------------------------------
+	// Opening and closing each section with a "sliding" animation.
+	// ------------------------------------------------------------------------------
+	$(document).on('click', 'section.folding h2', function()
+	{
+		var $header = $(this);
+		var $content = $header.next('div');
+		
+		if ($content.not(':animated'))
+		{
+			var state = $content.is(':visible');
+			if (state)
+			{
+				$header.removeClass('open');
+				$content.slideUp(800);
+			}
+			else
+			{
+				$header.addClass('open');
+				$content.slideDown(800);
+			}
+		}
+	});
+	
+	
 });
 
 

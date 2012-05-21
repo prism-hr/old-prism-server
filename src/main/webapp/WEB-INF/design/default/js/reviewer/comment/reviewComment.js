@@ -42,7 +42,7 @@ $(document).ready(function(){
 				postParams.suitableCandidate= isSuitable;
 			}
 			if(willingSupervise){
-				postParams.willingToSupervice= willingSupervise;
+				postParams.willingToInterview= willingSupervise;
 			}
 			$.post(
 					"/pgadmissions/reviewFeedback",

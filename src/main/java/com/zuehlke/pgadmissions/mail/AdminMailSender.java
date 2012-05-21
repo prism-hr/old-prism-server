@@ -70,10 +70,9 @@ public class AdminMailSender extends StateChangeMailSender {
 
 	}
 
-	
 	public void sendAdminRejectNotification(RegisteredUser admin, ApplicationForm form, RegisteredUser approver) throws UnsupportedEncodingException {
 		InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
-		Map<String, Object> model = createModel(form, admin, null);
+		Map<String, Object> model = createModel(form, admin, null, null);
 		model.put("approver", approver);
 		model.put("reasons", form.getRejectReasons());
 		String templateName = "private/staff/admin/mail/rejected_notification.ftl";

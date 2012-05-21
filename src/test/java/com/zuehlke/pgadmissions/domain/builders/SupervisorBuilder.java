@@ -1,5 +1,8 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
+import java.util.Date;
+
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
 
@@ -10,6 +13,8 @@ public class SupervisorBuilder {
 	private String email;
 	private String firstname;
 	private String lastname;
+	private RegisteredUser user;
+	private Date lastModified;
 
 	public SupervisorBuilder id(Integer id) {
 		this.id = id;
@@ -31,6 +36,17 @@ public class SupervisorBuilder {
 		return this;
 	}
 	
+	public SupervisorBuilder user(RegisteredUser user) {
+		this.user = user;
+		return this;
+	}
+	
+	
+	public SupervisorBuilder lastModified(Date lastModified) {
+		this.lastModified = lastModified;
+		return this;
+	}
+	
 	public SupervisorBuilder lastname(String lastname) {
 		this.lastname = lastname;
 		return this;
@@ -43,6 +59,8 @@ public class SupervisorBuilder {
 		supervisor.setFirstname(firstname);
 		supervisor.setLastname(lastname);
 		supervisor.setAwareSupervisor(awareSupervisor);
+		supervisor.setUser(user);
+		supervisor.setLastNotified(lastModified);
 		return supervisor;
 	}
 }

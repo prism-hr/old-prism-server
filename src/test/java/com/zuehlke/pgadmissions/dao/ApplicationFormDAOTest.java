@@ -8,12 +8,15 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
@@ -1054,31 +1057,50 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertTrue(applications.contains(applicationFormTwo));
 				
 	}
-	public List<ApplicationForm> getApplicationFormsBelongingToSameUser() {
-		List<ApplicationForm> applications = new ArrayList<ApplicationForm>();
 
-		ApplicationForm application1 = new ApplicationForm();
-		application1.setApplicant(user);
-		application1.setProgram(program);
+	@Test
+	public void shouldReturnApplicationsWithNoRejectNotificationDate() {
+		BigInteger rejectedBigInt = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from APPLICATION_FORM where reject_notification_date IS NULL AND status = 'REJECTED'").uniqueResult();
+		int numOfRejecteAppl = rejectedBigInt.intValue();
 
-		applicationDAO.save(application1);
+		RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichApprover(program).toUser();
 
-		applications.add(application1);
+		ApplicationForm applicationForm = new ApplicationFormBuilder()//
+				.program(program).applicant(user).status(ApplicationFormStatus.REVIEW)//
+				.approver(approver).status(ApplicationFormStatus.REJECTED)//
+				.toApplicationForm();
 
-		ApplicationForm application2 = new ApplicationForm();
-		application2.setApplicant(user);
-		application2.setProgram(program);
-
-		applicationDAO.save(application2);
-
-		applications.add(application2);
-
+		save(approver, applicationForm);
 		flushAndClearSession();
 
-		return applications;
+		List<ApplicationForm> applications = applicationDAO.getApplicationsDueRejectNotifications();
+		Assert.assertNotNull(applications);
+		Assert.assertEquals(numOfRejecteAppl + 1, applications.size());
+		assertTrue(applications.contains(applicationForm));
 	}
 
-	public List<Qualification> getQualificationsBelongingToSameApplication() throws ParseException {
+	@Test
+	public void shouldNotReturnApplicationsWithRejectNotificationDate() {
+		BigInteger rejectedBigInt = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery("select count(*) from APPLICATION_FORM where reject_notification_date IS NULL AND status = 'REJECTED'").uniqueResult();
+		int numOfRejecteAppl = rejectedBigInt.intValue();
+
+		RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichApprover(program).toUser();
+
+		ApplicationForm applicationForm = new ApplicationFormBuilder()//
+				.program(program).applicant(user).status(ApplicationFormStatus.REVIEW)//
+				.approver(approver).status(ApplicationFormStatus.REJECTED)//
+				.toApplicationForm();
+
+		applicationForm.setRejectNotificationDate(new Date());
+		save(approver, applicationForm);
+		flushAndClearSession();
+
+		List<ApplicationForm> applications = applicationDAO.getApplicationsDueRejectNotifications();
+		Assert.assertNotNull(applications);
+		Assert.assertEquals(numOfRejecteAppl, applications.size());
+	}
+
+	private List<Qualification> getQualificationsBelongingToSameApplication() throws ParseException {
 
 		application = new ApplicationForm();
 		application.setApplicant(user);
@@ -1111,5 +1133,4 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		qualifications.add(qualification1);
 		return qualifications;
 	}
-
 }

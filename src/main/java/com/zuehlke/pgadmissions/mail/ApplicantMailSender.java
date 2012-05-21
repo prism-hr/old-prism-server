@@ -12,14 +12,18 @@ import org.springframework.mail.javamail.JavaMailSender;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApplicantMailSender extends StateChangeMailSender {
 
 
 	
-	public ApplicantMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender) {
+	private final ApplicationsService applicationsService;
+
+	public ApplicantMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, ApplicationsService applicationsService) {
 		super(mimeMessagePreparatorFactory, mailSender);
+		this.applicationsService = applicationsService;
 	}
 
 	Map<String, Object> createModel(ApplicationForm form) {
@@ -36,6 +40,7 @@ public class ApplicantMailSender extends StateChangeMailSender {
 
 		if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
 			model.put("reasons", form.getRejectReasons());
+			model.put("stage", applicationsService.getStageComingFrom(form));
 		}
 		return model;
 	}

@@ -21,13 +21,14 @@ public class AdminMailSender extends StateChangeMailSender {
 
 	}
 
-	Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser administrator, RegisteredUser reviewer) {
+	Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("admin", administrator);
 		model.put("application", applicationForm);
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		model.put("applicant", applicationForm.getApplicant());
 		model.put("reviewer", reviewer);
+		model.put("interviewer", interviewer);
 		return model;
 	}
 	
@@ -46,10 +47,17 @@ public class AdminMailSender extends StateChangeMailSender {
 	public void sendAdminReviewNotification(RegisteredUser admin, ApplicationForm form, RegisteredUser reviewer) throws UnsupportedEncodingException {
 			InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Notification - review added",
-					"private/staff/admin/mail/review_submission_notification.ftl", createModel(form, admin, reviewer)));
+					"private/staff/admin/mail/review_submission_notification.ftl", createModel(form, admin, reviewer, null)));
 		
 	}
 
+	public void sendAdminInterviewNotification(RegisteredUser admin, ApplicationForm form, RegisteredUser interviewer) throws UnsupportedEncodingException {
+		InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
+		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Notification - Interview added",
+				"private/staff/admin/mail/interview_submission_notification.ftl", createModel(form, admin, null, interviewer)));
+		
+	}
+	
 
 	void sendMailToAdmin(ApplicationForm applicationForm, RegisteredUser administrator, String subjectMessage, String templatename)
 			throws UnsupportedEncodingException {
@@ -57,7 +65,7 @@ public class AdminMailSender extends StateChangeMailSender {
 
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + applicationForm.getId() + " by "
 				+ applicationForm.getApplicant().getFirstName() + " " + applicationForm.getApplicant().getLastName() + " " + subjectMessage, templatename,
-				createModel(applicationForm, administrator, null)));
+				createModel(applicationForm, administrator, null, null)));
 
 	}
 

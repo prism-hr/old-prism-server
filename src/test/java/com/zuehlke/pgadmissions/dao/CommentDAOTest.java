@@ -16,12 +16,14 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
@@ -153,7 +155,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
-	public void shouldGetAllCommentsDueAdminEmailNotification() {
+	public void shouldGetAllReviewCommentsDueAdminEmailNotification() {
 		
 		
 		
@@ -180,5 +182,33 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		assertTrue(reloadedComments.contains(reviewComment3));
 	}
 
+	@Test
+	public void shouldGetAllInterviewCommentsDueAdminEmailNotification() {
+		
+		
+		
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).toApplicationForm();
+		save(application);
+		flushAndClearSession();
+		
+		Comment comment = new CommentBuilder().user(user).comment("comment").application(application).toComment();
+		InterviewComment interviewComment1 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(CheckedStatus.NO).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
+		InterviewComment interviewComment2 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(CheckedStatus.NO).comment("comment").commentType(CommentType.REVIEW).toInterviewComment();
+		InterviewComment interviewComment3 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(null).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
+		InterviewComment interviewComment4 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(CheckedStatus.YES).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
+		
+		save(comment, interviewComment1, interviewComment2, interviewComment3, interviewComment4);
+		
+		flushAndClearSession();
+		
+		List<InterviewComment> reloadedComments = commentDAO.getInterviewCommentsDueNotification();
+		
+		assertFalse(reloadedComments.contains(comment));
+		assertTrue(reloadedComments.contains(interviewComment1));
+		assertFalse(reloadedComments.contains(interviewComment2));
+		assertTrue(reloadedComments.contains(interviewComment3));
+		assertFalse(reloadedComments.contains(interviewComment4));
+	}
+	
 
 }

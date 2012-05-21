@@ -14,7 +14,9 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -43,7 +45,7 @@ public class CommentServiceTest {
 	}
 
 	@Test
-	public void shouldGetAllCommentsDueNotificationToAdmin() {
+	public void shouldGetAllReviewCommentsDueNotificationToAdmin() {
 		ReviewComment reviewComment = new ReviewCommentBuilder().id(1).toReviewComment();
 		ReviewComment reviewComment2 = new ReviewCommentBuilder().id(2)
 				.commentType(CommentType.REVIEW).adminsNotified(CheckedStatus.YES).toReviewComment();
@@ -52,6 +54,18 @@ public class CommentServiceTest {
 		List<ReviewComment> commentsDueNotification = service.getReviewCommentsDueNotification();
 		assertEquals(1, commentsDueNotification.size());
 		assertFalse(commentsDueNotification.contains(reviewComment));
+	}
+	
+	@Test
+	public void shouldGetAllInterviewCommentsDueNotificationToAdmin() {
+		InterviewComment interviewComment = new InterviewCommentBuilder().id(1).toInterviewComment();
+		InterviewComment interviewComment2 = new InterviewCommentBuilder().id(2)
+				.commentType(CommentType.INTERVIEW).adminsNotified(CheckedStatus.YES).toInterviewComment();
+		EasyMock.expect(commentDAOMock.getInterviewCommentsDueNotification()).andReturn(Arrays.asList(interviewComment2));
+		EasyMock.replay(commentDAOMock);
+		List<InterviewComment> commentsDueNotification = service.getInterviewCommentsDueNotification();
+		assertEquals(1, commentsDueNotification.size());
+		assertFalse(commentsDueNotification.contains(interviewComment));
 	}
 	
 	@Before

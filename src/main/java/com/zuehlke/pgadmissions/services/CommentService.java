@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
 import com.zuehlke.pgadmissions.domain.Comment;
+import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 
 @Service
@@ -36,6 +37,11 @@ public class CommentService {
 	@Transactional
 	public List<ReviewComment> getReviewCommentsDueNotification() {
 		return commentDAO.getReviewCommentsDueNotification();
+	}
+	
+	@Transactional
+	public List<InterviewComment> getInterviewCommentsDueNotification() {
+		return commentDAO.getInterviewCommentsDueNotification();
 	}
 	
 	@Transactional

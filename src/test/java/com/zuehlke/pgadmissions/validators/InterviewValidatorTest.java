@@ -15,6 +15,7 @@ import org.springframework.validation.DirectFieldBindingResult;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 
 public class InterviewValidatorTest {
 
@@ -75,13 +76,22 @@ public class InterviewValidatorTest {
 		Assert.assertEquals("interview.interviewTime.notempty", mappingResult.getFieldError("interviewTime").getCode());
 	}
 	
+	@Test
+	public void shouldRejectIfInterviewersListIsEmpty() {
+		interview.getInterviewers().clear();
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interview, "interviewers");
+		interviewValidator.validate(interview, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("interview.interviewers.notempty", mappingResult.getFieldError("interviewers").getCode());
+	}
+	
 	@Before
 	public void setup(){
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.DAY_OF_YEAR, 1);
 		
 		interview = new InterviewBuilder().interviewTime("09:00 AM").application(new ApplicationFormBuilder().id(2).toApplicationForm()).dueDate(calendar.getTime())
-				.furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").toInterview();
+				.furtherDetails("at 9 pm").locationURL("http://www.ucl.ac.uk").interviewers(new InterviewerBuilder().id(4).toInterviewer()).toInterview();
 		interviewValidator = new InterviewValidator();
 	}
 	

@@ -37,6 +37,16 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated to review ${applicant.firstName?html} ${applicant.lastName?html}'s application ${application.id?string('#####')} to join the Postgraduate research Programme in ${application.program.title} at UCL.</font>
 			      	</p>
+			      	<#if !reviewer.user.enabled>
+			      		<p>
+			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with the UCL Portal, please do so by clicking the link below:</font>
+			      		</p>
+				      	<p>
+				      		<font face="Arial, Helvetica, sans-serif" size="2">
+				      			<a href="${host}/pgadmissions/register?userId=${reviewer.user.id?string('#######')}">Register</a>
+				      		</font>
+				      	</p>
+			      	</#if>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You can view the application and provide your feedback by clicking the links below.</font>
 			      	</p>

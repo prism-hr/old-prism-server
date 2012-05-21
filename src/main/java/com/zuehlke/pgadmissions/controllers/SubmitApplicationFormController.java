@@ -70,8 +70,8 @@ public class SubmitApplicationFormController {
 
 	public Date calculateAndGetValidationDueDate() {
 		 Calendar dueDate = Calendar.getInstance();
-		 dueDate.add(Calendar.DATE, stageDurationDAO.getByStatus(ApplicationFormStatus.VALIDATION).getDuration());
-		 return DateUtils.truncate(dueDate.getTime(), Calendar.DATE);
+		 dueDate.add(Calendar.MINUTE, stageDurationDAO.getByStatus(ApplicationFormStatus.VALIDATION).getDurationInMinutes());
+		 return dueDate.getTime();
 	}
 
 	@ModelAttribute

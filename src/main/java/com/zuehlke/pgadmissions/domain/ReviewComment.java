@@ -32,7 +32,7 @@ public class ReviewComment extends Comment{
 	
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
 	@Column(name = "willing_to_supervise")
-	private CheckedStatus willingToSupervice;
+	private CheckedStatus willingToInterview;
 	
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
 	@Column(name="suitable_candidate")
@@ -66,12 +66,12 @@ public class ReviewComment extends Comment{
 		this.type = type;
 	}
 	
-	public CheckedStatus getWillingToSupervice() {
-		return willingToSupervice;
+	public CheckedStatus getWillingToInterview() {
+		return willingToInterview;
 	}
 
-	public void setWillingToSupervice(CheckedStatus willingToSupervice) {
-		this.willingToSupervice = willingToSupervice;
+	public void setWillingToInterview(CheckedStatus willingToSupervice) {
+		this.willingToInterview = willingToSupervice;
 	}
 
 	public CheckedStatus getSuitableCandidate() {

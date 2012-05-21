@@ -147,6 +147,8 @@
 													</select>
 												</div>
 											</div>
+											<@spring.bind "interview.interviewers" /> 
+				                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
 										<div>				
 											<#if mesage??>			
@@ -162,7 +164,7 @@
 											<div class="row">
 				                               	<label class="label normal">Interviewer First Name<em>*</em></label> 
 			                                   	<div class="field">
-				                                   <input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"/>
+				                                   <input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName" />
 				                               	</div>
 				                               	<@spring.bind "interviewer.firstName" /> 
 					                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
@@ -253,7 +255,8 @@
 													<button class="blue" type="button" id="moveToInterviewBtn">Continue</button>
 												</div>
 											</div>								
-										<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/> 
+										<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/>
+										<input type="hidden" id="interviewId" name="interviewId" value="${(interview.id?string("######"))!}"/> 
 									</div>
 								</form>
 							</div>

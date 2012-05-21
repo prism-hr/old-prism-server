@@ -1,92 +1,128 @@
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
+
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>UCL Postgraduate Admissions</title>
-
-<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
-<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-
-<link rel="stylesheet" type="text/css"
-	href="<@spring.url '/design/default/css/private/global_private.css' />" />
-<link type="text/css" rel="stylesheet"
-	href="<@spring.url '/design/default/css/actions.css' />" />
-
-<!--[if lt IE 9]>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>UCL Postgraduate Admissions</title>
+		
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		
+		<link type="text/css" rel="stylesheet" 
+			href="<@spring.url '/design/default/css/private/global_private.css'/>" />
+		<link type="text/css" rel="stylesheet" 
+			href="<@spring.url '/design/default/css/private/application.css'/>" />
+		
+		<link type="text/css" rel="stylesheet" 
+			href="<@spring.url '/design/default/css/private/staff/reject.css'/>" />
+		
+		<link type="text/css" rel="stylesheet"
+				href="<@spring.url '/design/default/css/actions.css' />" />
+		
+		
+		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->
-</head>
+	</head>
 
-<body>
+	<!--[if IE 9]>
+	<body class="ie9">
+	<![endif]-->
+	<!--[if lt IE 9]>
+	<body class="old-ie">
+	<![endif]-->
+	<!--[if (gte IE 9)|!(IE)]><!-->
+	<body>
+	<!--<![endif]-->
 
-	<div id="wrapper">
+		<div id="wrapper">
 
-		<!-- Header. -->
-		<div id="header">
-			<p>Postgraduate Research Admissions Tool</p>
-		</div>
+			<#include "/private/common/global_header.ftl"/>
 
-		<!-- Middle. -->
-		<div id="middle">
+			<!-- Middle. -->
+			<div id="middle">
 
-			<header>
+				<#include "/private/common/parts/nav_with_user_info.ftl"/>
 
-				<!-- App logo and tagline -->
-				<div class="logo">
-					<img src="<@spring.url '/design/default/images/ph_logo_app.png'/>"
-						alt="" />
-				</div>
+				<!-- Main content area. -->
+				<article id="content" role="main">
 
-				<div class="tagline">Your Gateway to Research Opportunities</div>
+				    <#if !user.isInRole('APPLICANT')>
+				    	<#include "/private/common/parts/tools.ftl"/>
+				    </#if>
 
-				<!-- Main tabbed menu -->
-				<nav>
-					<ul>
-						<li><a href="#">My account</a></li>
-						<li class="current"><a href="<@spring.url '/applications'/>">My
-								applications</a></li>
-						<li><a href="#">Help</a></li>
+					<!-- FLOATING TOOLBAR -->
+		            <ul id="view-toolbar">
+		            	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
+		                <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
 					</ul>
-
-					<div class="user">
-						${user.firstName?html} ${user.lastName?html} <a
-							class="button user-logout"
-							href="<@spring.url '/j_spring_security_logout'/>">Logout</a>
-					</div>
-				</nav>
-
-			</header>
-
-
-			<!-- Main content area. -->
-			<article id="content" role="main">
 
 				<!-- content box -->
 				<div class="content-box">
 					<div class="content-box-inner">
+				
+						<div id="programme-details">			          
+						    	
+					    	<div class="row">
+					        	<label class="label">Programme</label>
+					           	${applicationForm.program.code} - ${applicationForm.program.title}
+					        </div>
+					            
+					        <div class="row">
+					        	<label class="label">Application Number</label>
+					            ${applicationForm.id?string("######")} 
+					        </div>
+					        
+					        <#if applicationForm.isSubmitted()>
+					        	<div class="row">
+					            	<label>Date Submitted</label>
+					              	${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}
+					            </div>
+					        </#if>
+						</div>
+						<hr />
 						<@spring.bind "applicationForm.*" />
 						<@spring.bind "availableReasons.*" />
-						<div id="messageSection"></div>
-						Application ID: ${(applicationForm.id?string('#####'))!} 
-						<br />
-						Program name: ${(applicationForm.program.title?string)!} 
-						<br /> 
-						<div class="row">
-                    	<label class="plain-label">Reasons for rejections<em>*</em></label>
-                   		<div id="reasonList" class="field">
-                   			<#list availableReasons as reason>
-							  <input type="checkbox" name="rejectReasons" value="${reason.id}">${reason.text}</input>
-							  <br/>
-							</#list>
-						</div> 
-						<div class="buttons">
-							<button type="submit" id="rejectButton">Reject application</button>
-						</div>
-						<div class="field">
-						 Content of the e-mail for the applicant:
-						</div>
-						<div id="emailText"></div>
+						<section class="folding violet">
+							<div>
+								<form>
+									<div>			
+										
+										<div class="row">
+				                    		<label class="label">Reasons for rejections<em>*</em></label>
+					                   		<div id="reasonList" class="field">
+					                   			<ul>
+					                   			<#list availableReasons as reason>
+					                   				<li>
+												  		<input type="checkbox" name="rejectReasons" value="${reason.id}" class="reason"/><label>${reason.text}</label>
+													 </li> 
+												</#list>
+												</ul>
+											</div> 
+										</div>
+										<div class="row">
+											<div class="field">
+												<span>
+													<button type="button" id="rejectButton" class="blue">Reject application</button>
+													
+												</span>
+											</div>
+										</div>
+									</div>
+									<div>
+										<div class="row">
+				                    		<label class="label"> Content of the e-mail for the applicant</label>
+					                   		<div  id="emailText">
+					                   
+											
+											</div> 
+										</div>
+									</div>
+								</form>
+							</div>
+						</section>
+					
 						<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/> 
 					</div>
 					<!-- #actions -->

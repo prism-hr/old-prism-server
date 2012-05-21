@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -21,7 +22,6 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
-import com.zuehlke.pgadmissions.services.InterviewerService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
@@ -31,16 +31,20 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 public class CreateNewInterviewerController extends InterviewController {
 	
 	
-	 CreateNewInterviewerController() {
-		 this(null, null, null, null,null,null,null, null);
+	 private static final String REDIRECT_INTERVIEW_ASSIGN_INTERVIEWERS = "redirect:/interview/assignInterviewers";
+	private static final String REDIRECT_INTERVIEW_MOVE_TO_INTERVIEW = "redirect:/interview/moveToInterview";
+
+
+	CreateNewInterviewerController() {
+		 this(null, null, null, null,null,null, null);
 	
 	}
 
 	 @Autowired
 	public CreateNewInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
-			InterviewerService interviewerService, MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
+		 MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
 			DatePropertyEditor datePropertyEditor) {
-		super(applicationsService, userService, validator, interviewerService, messageSource, interviewService, interviewValidator, datePropertyEditor);
+		super(applicationsService, userService, validator,  messageSource, interviewService, interviewValidator, datePropertyEditor, null);
 	}
 
 
@@ -49,7 +53,7 @@ public class CreateNewInterviewerController extends InterviewController {
 			@ModelAttribute("applicationForm") ApplicationForm applicationForm,
 			@ModelAttribute("pendingInterviewers") List<RegisteredUser> pendingInterviewers,
 			@ModelAttribute("previousInterviewers") List<RegisteredUser> previousInterviewers) {
-		return createNewInterviewer(interviewer, bindingResult, applicationForm, pendingInterviewers, previousInterviewers, "redirect:/interview/moveToInterview");
+		return createNewInterviewer(interviewer, bindingResult, applicationForm, pendingInterviewers, previousInterviewers, REDIRECT_INTERVIEW_MOVE_TO_INTERVIEW);
 	}
 	
 	@RequestMapping(value = "/assignNewInterviewer", method = RequestMethod.POST)
@@ -58,13 +62,20 @@ public class CreateNewInterviewerController extends InterviewController {
 			@ModelAttribute("pendingInterviewers") List<RegisteredUser> pendingInterviewers,
 			@ModelAttribute("previousInterviewers") List<RegisteredUser> previousInterviewers) {
 		
-		return createNewInterviewer(interviewer, bindingResult, applicationForm, pendingInterviewers, previousInterviewers, "redirect:/interview/assignInterviewers");
+		return createNewInterviewer(interviewer, bindingResult, applicationForm, pendingInterviewers, previousInterviewers, REDIRECT_INTERVIEW_ASSIGN_INTERVIEWERS);
 	}
 	
 	private ModelAndView createNewInterviewer(RegisteredUser interviewer, BindingResult bindingResult, ApplicationForm applicationForm,
 			List<RegisteredUser> pendingInterviewers, List<RegisteredUser> previousInterviewers, String viewName) {
 		if(bindingResult.hasErrors()){
-			return new ModelAndView(INTERVIEW_DETAILS_VIEW_NAME);
+			ModelAndView modelAndView = new ModelAndView(INTERVIEW_DETAILS_VIEW_NAME);
+			if(REDIRECT_INTERVIEW_MOVE_TO_INTERVIEW.equals(viewName) ){
+				modelAndView.getModel().put("assignOnly", false);
+			}else{
+				modelAndView.getModel().put("assignOnly", true);
+			}
+			
+			return modelAndView;
 		}
 		List<Integer> newUserIds = new ArrayList<Integer>();
 		for (RegisteredUser registeredUser : pendingInterviewers) {
@@ -119,9 +130,12 @@ public class CreateNewInterviewerController extends InterviewController {
 
 
 	@Override
-	public Interview getInterview(Integer applicationId) {
-	
-		return null;
+	@ModelAttribute("interview")
+	public Interview getInterview(@RequestParam Integer interviewId) {	
+		if(interviewId == null){
+			return new Interview();
+		}
+		return interviewService.getInterviewById(interviewId);
 	}
 	
 

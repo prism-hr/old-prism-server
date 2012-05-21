@@ -2,8 +2,6 @@ package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Arrays;
-
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,14 +16,11 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
-import com.zuehlke.pgadmissions.services.InterviewerService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.InterviewValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
@@ -38,7 +33,7 @@ public class AssignInterviewerControllerTest {
 	private UserService userServiceMock;
 	
 	private NewUserByAdminValidator userValidatorMock;
-	private InterviewerService interviewerServiceMock;
+	
 	private InterviewService interviewServiceMock;
 	private MessageSource messageSourceMock;
 	private BindingResult bindingResultMock;
@@ -75,20 +70,28 @@ public class AssignInterviewerControllerTest {
 		assertEquals(interview, controller.getInterview(5));
 	}
 
-
-
 	@Test
-	public void shouldShouldAddNewInterviewers() {
-		RegisteredUser user1 = new RegisteredUserBuilder().id(1).toUser();
-		RegisteredUser user2 = new RegisteredUserBuilder().id(2).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(8).latestInterview(new InterviewBuilder().interviewers(new InterviewerBuilder().user(user1).toInterviewer()).toInterview()).toApplicationForm();
-		interviewerServiceMock.createInterviewerToApplication(user2, applicationForm);
-		EasyMock.replay(interviewerServiceMock);
-		assertEquals("redirect:/applications", controller.assignInterviewers(applicationForm, Arrays.asList(user1, user2)));
-		EasyMock.verify(interviewerServiceMock);
+	public void shouldSaveInterviewIfNoErrors() {		
+		Interview interview = new InterviewBuilder().id(4).toInterview();
+		interviewServiceMock.save(interview);
+		EasyMock.replay(interviewServiceMock);
+		String view = controller.assignInterviewers(interview, bindingResultMock);
+		assertEquals("redirect:/applications", view);
+		EasyMock.verify(interviewServiceMock);
 		
+	}
 	
-	
+	@Test
+	public void shouldReturnToViewAndNotSaveIfErros() {
+		EasyMock.reset(bindingResultMock);
+		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(true);
+		EasyMock.replay(bindingResultMock);
+		Interview interview = new InterviewBuilder().id(4).toInterview();	
+		EasyMock.replay(interviewServiceMock);
+		String view = controller.assignInterviewers(interview, bindingResultMock);
+		assertEquals(INTERVIEW_DETAILS_VIEW_NAME, view);
+		EasyMock.verify(interviewServiceMock);
+		
 	}
 	
 	@Before
@@ -99,7 +102,7 @@ public class AssignInterviewerControllerTest {
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock).anyTimes();
 		EasyMock.replay(userServiceMock);
 		userValidatorMock = EasyMock.createMock(NewUserByAdminValidator.class);
-		interviewerServiceMock = EasyMock.createMock(InterviewerService.class);
+	
 		interviewServiceMock = EasyMock.createMock(InterviewService.class);
 		messageSourceMock = EasyMock.createMock(MessageSource.class);
 		interviewValidator = EasyMock.createMock(InterviewValidator.class);
@@ -110,7 +113,7 @@ public class AssignInterviewerControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 		
-		controller = new AssignInterviewerController(applicationServiceMock, userServiceMock, userValidatorMock, interviewerServiceMock, messageSourceMock, interviewServiceMock, interviewValidator, datePropertyEditorMock);
+		controller = new AssignInterviewerController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock, interviewServiceMock, interviewValidator, datePropertyEditorMock);
 		
 		
 	}

@@ -10,7 +10,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.PriorityBlockingQueue;
 
 import javax.mail.internet.InternetAddress;
 
@@ -20,14 +19,12 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.beans.factory.parsing.Problem;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 
-import com.sun.jna.platform.win32.Netapi32Util.UserInfo;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -528,10 +525,22 @@ public class UserServiceTest {
 		
 		List<RegisteredUser> users = userService.getAllPreviousInterviewersOfProgram(program);
 		assertEquals(2, users.size());
-		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));
-			
-		
+		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));		
 	}
+	
+	@Test
+	public void shouldGetAllPreviousReviewersOfProgam(){
+		RegisteredUser userOne = new RegisteredUserBuilder().id(5).toUser();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(6).toUser();
+		Program program = new ProgramBuilder().id(5).toProgram();
+		EasyMock.expect(userDAOMock.getAllPreviousReviewersOfProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
+		EasyMock.replay(userDAOMock);
+		
+		List<RegisteredUser> users = userService.getAllPreviousReviewersOfProgram(program);
+		assertEquals(2, users.size());
+		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));		
+	}
+	
 	@Before
 	public void setUp() {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);

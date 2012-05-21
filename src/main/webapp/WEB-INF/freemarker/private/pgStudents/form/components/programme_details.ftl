@@ -238,7 +238,7 @@
             </div>
             
             <div class="row">
-                <label class="plain-label">Is this supervisor aware of your application?</label> n
+                <label class="plain-label">Is this supervisor aware of your application?</label>
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.awareOfApplication'/>"></span>
                 <div class="field">
                 	<input type="checkbox" name="awareSupervisorCB" id="awareSupervisorCB"/>

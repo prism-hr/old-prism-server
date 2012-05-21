@@ -164,7 +164,7 @@
 											<div class="row">
 				                               	<label class="label normal">Interviewer First Name<em>*</em></label> 
 			                                   	<div class="field">
-				                                   <input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName" />
+				                                   <input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"  value="${(interviewer.firstName?html)!}"/>
 				                               	</div>
 				                               	<@spring.bind "interviewer.firstName" /> 
 					                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
@@ -172,7 +172,7 @@
 			                                <div class="row">
 			                                    <label class="label normal">Interviewer Last Name<em>*</em></label>
 			                                    <div class="field">
-			                                        <input class="full" type="text" name="newInterviewerLastName" id="newInterviewerLastName"/>			                                      
+			                                        <input class="full" type="text" name="newInterviewerLastName" id="newInterviewerLastName" value="${(interviewer.lastName?html)!}"/>			                                      
 			                                    </div>
 			                                      <@spring.bind "interviewer.lastName" /> 
 				                			   		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
@@ -181,7 +181,7 @@
 				                             <div class="row">
 			                                	<label class="label normal">Email<em>*</em></label>
 		                                        <div class="field">
-		                                         	<input class="full" type="text"  name="newInterviewerEmail" id="newInterviewerEmail"/>			                                         
+		                                         	<input class="full" type="text"  name="newInterviewerEmail" id="newInterviewerEmail" value="${(interviewer.email?html)!}"/>			                                         
 		                                        </div>
 		                                         <@spring.bind "interviewer.email" /> 
 			                			   		 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>

@@ -1,4 +1,4 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.controllers.workflow.rejection;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

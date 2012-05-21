@@ -12,26 +12,31 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotApproveApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class ApproveRejectControllerTest {
 
 	private ApplicationsService applicationsServiceMock;
 	private ApproveRejectController controller;
 	private RegisteredUser approverMock;
+	private UserService userServiceMock;
 
 	@Test
 	public void shouldGetApplicationFromFromService() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		Program program = new ProgramBuilder().id(4).toProgram();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
-		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock, applicationsServiceMock);
 		assertEquals(applicationForm, controller.getApplicationForm(5));
@@ -58,35 +63,37 @@ public class ApproveRejectControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfCurrentUserNotApprover() {
-		ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
-		EasyMock.expect(applicationFormMock.isModifiable()).andReturn(true);
-		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(false);
-		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
-		EasyMock.expect(approverMock.canSee(applicationFormMock)).andReturn(true);
-		EasyMock.replay(approverMock, applicationFormMock);
-		controller.applyDecision(applicationFormMock, ApplicationFormStatus.APPROVED);
+		Program program = new ProgramBuilder().id(4).toProgram();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).toApplicationForm();
+		
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
+		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.replay(approverMock);
+		controller.applyDecision(applicationForm, ApplicationFormStatus.APPROVED);
 	}
 
 	@Test(expected = CannotApproveApplicationException.class)
 	public void shouldThrowCannotReviewApprovedApplicationExceptionIfSubmittedApplicationnNotReviewable() {
+		Program program = new ProgramBuilder().id(4).toProgram();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REJECTED).program(program).toApplicationForm();
+		
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
 
-		ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
-		EasyMock.expect(applicationFormMock.isModifiable()).andReturn(false);
-		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
-		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
-
-		EasyMock.expect(approverMock.canSee(applicationFormMock)).andReturn(true);
-		EasyMock.replay(approverMock, applicationFormMock);
-		controller.applyDecision(applicationFormMock, ApplicationFormStatus.APPROVED);
+		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.replay(approverMock);
+		controller.applyDecision(applicationForm, ApplicationFormStatus.APPROVED);
 	}
 
 	@Test
 	public void shouldSetStatusAndApproverAndSaveApplication() {
+		Program program = new ProgramBuilder().id(4).toProgram();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).toApplicationForm();
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
-		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
-		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock, applicationsServiceMock);
 
@@ -99,24 +106,24 @@ public class ApproveRejectControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowExceptionIfAdminTriesToApproveApplication() {
-		ApplicationForm applicationFormMock = EasyMock.createMock(ApplicationForm.class);
-		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(false);
-		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
-		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(true);
-		EasyMock.expect(approverMock.canSee(applicationFormMock)).andReturn(true);
-		EasyMock.replay(approverMock, applicationFormMock);
+		Program program = new ProgramBuilder().id(4).toProgram();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).toApplicationForm();
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true).anyTimes();
+		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
+		EasyMock.replay(approverMock);
 
-		controller.applyDecision(applicationFormMock, ApplicationFormStatus.APPROVED);
+		controller.applyDecision(applicationForm, ApplicationFormStatus.APPROVED);
 
 	}
 
 	@Test
 	public void shouldRedirectToApplicationListOnApproval() {
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		Program program = new ProgramBuilder().id(4).toProgram();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
-		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
-		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock, applicationsServiceMock);
 
@@ -128,11 +135,11 @@ public class ApproveRejectControllerTest {
 
 	@Test
 	public void shouldRedirectToApplicationListOnRejection() {
-
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		Program program = new ProgramBuilder().id(4).toProgram();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
-		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
-		EasyMock.expect(approverMock.isInRole(Authority.ADMINISTRATOR)).andReturn(false);
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
+		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock, applicationsServiceMock);
 
@@ -157,15 +164,13 @@ public class ApproveRejectControllerTest {
 
 	@Before
 	public void setUp() {
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		
 		approverMock = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(approverMock);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-
+		userServiceMock = EasyMock.createMock(UserService.class);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(approverMock).anyTimes();
+		EasyMock.replay(userServiceMock);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		controller = new ApproveRejectController(applicationsServiceMock);
+		controller = new ApproveRejectController(applicationsServiceMock, userServiceMock);
 
 	}
 

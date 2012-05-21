@@ -132,15 +132,6 @@ $(document).ready(function(){
 	bindDatePicker('#qualificationStartDate');
 	bindDatePicker('#qualificationAwardDate');
 	addToolTips();
-	// open/close
-	var $header  =$('#qualifications-H2');
-	var $content = $header.next('div');
-	$header.bind('click', function()
-	{
-	  $content.toggle();
-	  $(this).toggleClass('open', $content.is(':visible'));
-	  return false;
-	});
 		
 	$('#uploadFields').on('change','#proofOfAward', function(event){	
 		ajaxProofOfAwardDelete();

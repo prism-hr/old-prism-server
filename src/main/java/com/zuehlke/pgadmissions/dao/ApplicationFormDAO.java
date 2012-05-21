@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.dao;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
@@ -195,5 +195,12 @@ public class ApplicationFormDAO {
 				.list();
 	}
 
-
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getApplicationsDueRejectNotifications() {
+		Session session = sessionFactory.getCurrentSession();
+		List<?> result = session.createCriteria(ApplicationForm.class).add(Restrictions.eq("status", ApplicationFormStatus.REJECTED))
+				.add(Restrictions.isNull("rejectNotificationDate"))
+				.list();
+		return (List<ApplicationForm>) result;
+	}
 }

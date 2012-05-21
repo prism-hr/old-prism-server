@@ -52,10 +52,6 @@
 		<property name="period" value="60000" />
 		<property name="timerTask" ref="adminReviewReminderTimerTask" />
 	</bean>
-	
-	
-
-	
 
 	<!-- Submission and update notifications -->
 	<bean id="adminSubmissionNotificationTimerTask"
@@ -90,5 +86,17 @@
 		<property name="period" value="60000" />
 		<property name="timerTask" ref="updateNotificationTimerTask" />
 	</bean>
+	
+		<!-- reject notification -->
+	<bean id="adminRejectNotificationTask" class="com.zuehlke.pgadmissions.timers.AdminRejectNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="adminMailSender" />
+		<constructor-arg index="2" ref="mailApplicationDAO" />		
+	</bean>
 
+	<bean id="adminRejectNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="3000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="adminRejectNotificationTask" />
+	</bean>
 </beans>

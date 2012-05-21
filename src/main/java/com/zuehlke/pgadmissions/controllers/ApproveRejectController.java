@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotApproveApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.PageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping(value = { "/approveOrReject" })
@@ -24,24 +25,26 @@ public class ApproveRejectController {
 
 	
 	private final ApplicationsService applicationsService;
+	private final UserService userService;
 
 	ApproveRejectController() {
-		this(null);
+		this(null, null);
 	}
 
 	@Autowired
-	public ApproveRejectController(ApplicationsService applicationsService) {
+	public ApproveRejectController(ApplicationsService applicationsService, UserService userService) {
 		this.applicationsService = applicationsService;
+		this.userService = userService;
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView applyDecision(@ModelAttribute ApplicationForm applicationForm, @RequestParam ApplicationFormStatus decision) {
-		RegisteredUser approver = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		if(!(approver.isInRole(Authority.APPROVER) || approver.isInRole(Authority.ADMINISTRATOR))){
+		RegisteredUser approver = userService.getCurrentUser();
+		if(!(approver.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram()) || approver.isInRoleInProgram(Authority.ADMINISTRATOR, applicationForm.getProgram()))){
 			throw new ResourceNotFoundException();
 		}
 		
-		if (approver.isInRole(Authority.ADMINISTRATOR) && decision == ApplicationFormStatus.APPROVED){
+		if ( approver.isInRoleInProgram(Authority.ADMINISTRATOR, applicationForm.getProgram()) && decision == ApplicationFormStatus.APPROVED){
 			throw new ResourceNotFoundException();
 		}
 		if(!applicationForm.isModifiable()){
@@ -57,7 +60,7 @@ public class ApproveRejectController {
 	
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(Integer id) {
-		RegisteredUser approver = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		RegisteredUser approver = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationsService.getApplicationById(id);
 		if(applicationForm == null || !approver.canSee(applicationForm)){
 			throw new ResourceNotFoundException();
@@ -69,7 +72,7 @@ public class ApproveRejectController {
 	public ModelAndView getApprovedOrRejectedPage(ApplicationForm applicationForm) {
 		PageModel pageModel = new PageModel();
 		pageModel.setApplicationForm(applicationForm);
-		pageModel.setUser((RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails());
+		pageModel.setUser(userService.getCurrentUser());
 		return new ModelAndView("/reviewer/approvedOrRejected", "model", pageModel);
 	}
 

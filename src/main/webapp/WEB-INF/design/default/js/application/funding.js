@@ -91,15 +91,6 @@ $(document).ready(function(){
 	
 	bindDatePicker('#fundingAwardDate');
 	addToolTips();
-	// open/close
-	var $header  =$('#funding-H2');
-	var $content = $header.next('div');
-	$header.bind('click', function()
-	{
-	  $content.toggle();
-	  $(this).toggleClass('open', $content.is(':visible'));
-	  return false;
-	});
 		
 	$('#fundingUploadFields').on('change','#fundingDocument', function(event){	
 		fundingDocumentDelete();

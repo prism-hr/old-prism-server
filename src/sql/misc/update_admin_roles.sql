@@ -1,0 +1,2 @@
+insert into PROGRAM_ADMINISTRATOR_LINK (administrator_id, program_id ) values ((select id from REGISTERED_USER where username='george@test.com'), (select id from PROGRAM where code ='TEST-PROG-ABC'));
+insert into PROGRAM_ADMINISTRATOR_LINK (administrator_id, program_id ) values ((select id from REGISTERED_USER where username='hetta@test.com'), (select id from PROGRAM where code ='TEST-PROG-DEF'));

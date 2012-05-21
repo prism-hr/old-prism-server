@@ -294,14 +294,7 @@
 <script type="text/javascript">
 	$(document).ready(function()
 	{
-		if (pageLoad)
-		{
-			pageLoad = false;
-		}
-		else
-		{
 			$('#programme-H2').trigger('click');
-		}
 	});
 </script> 
 </#if>

@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApplicantMailSenderTest {
@@ -33,13 +34,14 @@ public class ApplicantMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private ApplicantMailSender applicantMailSender;
+	private ApplicationsService applicationServiceMock;
 
 	@Before
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-
-		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
+		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,applicationServiceMock);
 	}
 
 	@Test
@@ -60,6 +62,7 @@ public class ApplicantMailSenderTest {
 	}
 
 	@Test
+	@SuppressWarnings("unchecked")
 	public void shouldReturnCorrectlyPopulatedModelForRejectedApplications() {
 
 		RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).toUser();
@@ -70,13 +73,14 @@ public class ApplicantMailSenderTest {
 
 		RejectReason reason1 = new RejectReasonBuilder().id(30).text("lalalala").toRejectReason();
 		form.getRejectReasons().add(reason1);
-
+		EasyMock.expect(applicationServiceMock.getStageComingFrom(form)).andReturn(ApplicationFormStatus.INTERVIEW);
+		EasyMock.replay(applicationServiceMock);
 		Map<String, Object> model = applicantMailSender.createModel(form);
 		assertEquals("bob@test.com, alice@test.com", model.get("adminsEmails"));
 		assertEquals(form, model.get("application"));
 		assertEquals(applicant, model.get("applicant"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
-		@SuppressWarnings("unchecked")
+		assertEquals(ApplicationFormStatus.INTERVIEW, model.get("stage"));
 		Collection<RejectReason> reasons = (Collection<RejectReason>) model.get("reasons");
 		Assert.assertTrue(reasons.contains(reason1));
 	}
@@ -84,7 +88,7 @@ public class ApplicantMailSenderTest {
 	@Test
 	public void shouldSendMovedToReviewNotificationToApplicant() throws UnsupportedEncodingException {
 		final Map<String, Object> model = new HashMap<String, Object>();
-		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
+		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock) {
 
 			@Override
 			Map<String, Object> createModel(ApplicationForm application) {

@@ -15,6 +15,11 @@ public class EnvironmentTest {
 	public void shouldGetEmailFromAddressFromPropertiesFile() {
 		assertNotNull(Environment.getInstance().getEmailFromAddress());
 	}
+	
+	@Test
+	public void shouldGetUclProspectusLinkFromPropertiesFile() {
+		assertNotNull(Environment.getInstance().getUCLProspectusLink());
+	}
 
 
 }

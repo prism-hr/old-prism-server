@@ -9,7 +9,7 @@ public class AuthorityTest {
 	@Test
 	public void shouldHaveCorrectValues(){
 		Authority[] authorities = Authority.values();
-		assertEquals(7, authorities.length);
+		assertEquals(8, authorities.length);
 		assertEquals(Authority.APPLICANT, authorities[0]);
 		assertEquals(Authority.REVIEWER, authorities[1]);
 		assertEquals(Authority.ADMINISTRATOR, authorities[2]);
@@ -17,5 +17,6 @@ public class AuthorityTest {
 		assertEquals(Authority.SUPERADMINISTRATOR, authorities[4]);
 		assertEquals(Authority.REFEREE, authorities[5]);
 		assertEquals(Authority.INTERVIEWER, authorities[6]);
+		assertEquals(Authority.SUPERVISOR, authorities[7]);
 	}
 }

@@ -101,6 +101,13 @@ public class UserDAO {
 				users.add(interviewer);
 			}
 		}
+		List<RegisteredUser> supervisors = sessionFactory.getCurrentSession().createCriteria(RegisteredUser.class)
+				.createCriteria("programsOfWhichSupervisor").add(Restrictions.eq("id", program.getId())).list();
+		for (RegisteredUser supervisor : supervisors) {
+			if (!users.contains(supervisor)) {
+				users.add(supervisor);
+			}
+		}
 		return users;
 	}
 

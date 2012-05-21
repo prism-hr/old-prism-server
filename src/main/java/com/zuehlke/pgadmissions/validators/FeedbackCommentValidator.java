@@ -27,7 +27,7 @@ public class FeedbackCommentValidator implements Validator{
 					errors.rejectValue("suitableCandidate", "feedbackComment.suitableCandidate.notempty");
 				}
 				if(comment.getWillingToInterview() == null || (comment.getWillingToInterview() != CheckedStatus.YES && comment.getWillingToInterview() != CheckedStatus.NO)){
-					errors.rejectValue("willingToSupervice", "feedbackComment.willingToSupervice.notempty");
+					errors.rejectValue("willingToInterview", "feedbackComment.willingToInterview.notempty");
 				}
 				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "feedbackComment.comment.notempty");
 			}

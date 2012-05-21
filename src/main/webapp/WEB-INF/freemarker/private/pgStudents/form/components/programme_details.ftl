@@ -294,7 +294,14 @@
 <script type="text/javascript">
 	$(document).ready(function()
 	{
+		if (!$('#programmeDetailsSection').hasClass('loaded'))
+		{
+			$('#programmeDetailsSection').addClass('loaded');
+		}
+		else
+		{
 			$('#programme-H2').trigger('click');
+		}
 	});
 </script> 
 </#if>

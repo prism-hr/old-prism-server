@@ -37,7 +37,12 @@ import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm> {
 
 	private static final long serialVersionUID = -7671357234815343496L;
-
+	
+	@OneToOne( cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "rejection_id")
+	private Rejection rejection;
+	
 	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
@@ -539,6 +544,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		};
 		Collections.sort(events, dateComparator);
 		return events;
+	}
+
+	public Rejection getRejection() {
+		return rejection;
+	}
+
+	public void setRejection(Rejection rejection) {
+		this.rejection = rejection;
 	}
 
 }

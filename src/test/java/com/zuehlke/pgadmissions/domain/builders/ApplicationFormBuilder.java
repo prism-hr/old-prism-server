@@ -20,8 +20,8 @@ import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
@@ -57,7 +57,13 @@ public class ApplicationFormBuilder {
 	private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
 	private Interview latestInterview;
 	private ReviewRound latestReviewRound;
+	private Rejection rejection;
 	
+	
+	public ApplicationFormBuilder rejection(Rejection rejection) {
+		this.rejection = rejection;
+		return this;
+	}
 	
 	public ApplicationFormBuilder latestReviewRound(ReviewRound latestReviewRound) {
 		this.latestReviewRound = latestReviewRound;
@@ -268,6 +274,7 @@ public class ApplicationFormBuilder {
 		application.setLatestInterview(latestInterview);
 		application.setReviewRounds(reviewRounds);
 		application.setLatestReviewRound(latestReviewRound);
+		application.setRejection(rejection);
 		return application;
 	}
 }

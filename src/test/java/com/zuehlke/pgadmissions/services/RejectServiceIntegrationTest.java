@@ -75,7 +75,6 @@ public class RejectServiceIntegrationTest {
 		userDAO.save(user);
 		application.setApplicant(user);
 
-		
 		application.setProgram(program);
 		applicationDAO.save(application);
 

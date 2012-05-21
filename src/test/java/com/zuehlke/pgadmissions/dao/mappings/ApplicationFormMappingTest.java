@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.CountriesDAO;
 import com.zuehlke.pgadmissions.dao.LanguageDAO;
+import com.zuehlke.pgadmissions.dao.RejectReasonDAO;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
@@ -31,6 +32,8 @@ import com.zuehlke.pgadmissions.domain.PersonalDetails;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.RejectReason;
+import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.AddressBuilder;
@@ -46,6 +49,7 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -393,7 +397,27 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		
 	}
 	
-	
+	@Test
+	public void shouldSaveAndLoadRejection() throws ParseException, InterruptedException {
+		
+		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).toApplicationForm();		
+		save(application);
+		
+		RejectReasonDAO rejectReasonDAO = new RejectReasonDAO(sessionFactory);
+		RejectReason rejectReason = rejectReasonDAO.getAllReasons().get(0);
+		Rejection rejection = new RejectionBuilder().includeProspectusLink(true).rejectionReason(rejectReason).toRejection();
+		
+		application.setRejection(rejection);
+		save(application);
+		
+		flushAndClearSession();
+		
+		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
+		
+		assertEquals(rejection, reloadedApplication.getRejection());
+		
+		
+	}
 
 	@Before
 	public void setup() {

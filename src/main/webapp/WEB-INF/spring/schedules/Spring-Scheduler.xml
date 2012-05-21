@@ -28,6 +28,7 @@
 		<property name="scheduledTimerTasks">
 			<list>
 				<ref bean="adminValidationReminderSchedule" />
+				<ref bean="adminRejectNotificationSchedule" />
 				<ref bean="adminReviewReminderSchedule" />
 				<ref bean="refereeReminderSchedule" />
 				<ref bean="refereeNotificationSchedule" />

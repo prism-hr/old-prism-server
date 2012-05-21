@@ -8,6 +8,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -70,6 +71,15 @@ public class AdminMailSender extends StateChangeMailSender {
 	}
 
 	
-	
+	public void sendAdminRejectNotification(RegisteredUser admin, ApplicationForm form, RegisteredUser approver) throws UnsupportedEncodingException {
+		InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
+		Map<String, Object> model = createModel(form, admin, null);
+		model.put("approver", approver);
+		model.put("reasons", form.getRejectReasons());
+		String templateName = "private/staff/admin/mail/rejected_notification.ftl";
 
+		MimeMessagePreparator mimePrep = mimeMessagePreparatorFactory.getMimeMessagePreparator(//
+				toAddress, "Notification - rejected application", templateName, model);
+		javaMailSender.send(mimePrep);
+	}
 }

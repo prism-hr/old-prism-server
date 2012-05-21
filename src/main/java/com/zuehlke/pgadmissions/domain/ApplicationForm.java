@@ -23,10 +23,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
-
 import org.hibernate.annotations.Type;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -112,7 +110,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne(mappedBy = "application")
 	private ProgrammeDetails programmeDetails;
 
-	
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
@@ -121,9 +118,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@OrderBy("createdDate desc")
-	@JoinColumn(name = "application_form_id")	
+	@JoinColumn(name = "application_form_id")
 	private List<Interview> interviews = new ArrayList<Interview>();
-	
+
 	@OneToMany(mappedBy = "application")
 	private List<Comment> applicationComments = new ArrayList<Comment>();
 
@@ -157,15 +154,18 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	private List<RejectReason> rejectReasons = new ArrayList<RejectReason>();
 
+	@Column(name = "reject_notification_date")
+	@Temporal(value = TemporalType.TIMESTAMP)
+	private Date rejectNotificationDate;
+
 	@OneToOne
 	@JoinColumn(name = "latest_interview_id")
 	private Interview latestInterview;
 
-
 	@OneToOne
 	@JoinColumn(name = "latest_review_round_id")
 	private ReviewRound latestReviewRound;
-	
+
 	public List<Qualification> getQualifications() {
 		return qualifications;
 	}
@@ -199,8 +199,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public RegisteredUser getApprover() {
 		return approver;
 	}
-	
-	
 
 	public void setApprover(RegisteredUser approver) {
 		this.approver = approver;
@@ -224,8 +222,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public boolean isSubmitted() {
 		return status != ApplicationFormStatus.UNSUBMITTED;
 	}
-
-
 
 	public boolean isDecided() {
 		if (status == ApplicationFormStatus.REJECTED || status == ApplicationFormStatus.APPROVED) {
@@ -409,6 +405,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.rejectReasons = rejectReasons;
 	}
 
+	public Date getRejectNotificationDate() {
+		return rejectNotificationDate;
+	}
+
+	public void setRejectNotificationDate(Date rejectNotificationDate) {
+		this.rejectNotificationDate = rejectNotificationDate;
+	}
+
 	public void setStatus(ApplicationFormStatus status) {
 
 		Event event = new Event();
@@ -479,17 +483,16 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.events.addAll(events);
 	}
 
-
 	@Override
 	public int compareTo(ApplicationForm appForm) {
-	
-		if(appForm.getSubmittedDate() != null && this.getSubmittedDate() == null){
+
+		if (appForm.getSubmittedDate() != null && this.getSubmittedDate() == null) {
 			return 1;
 		}
-		if(appForm.getSubmittedDate() == null && this.getSubmittedDate() != null){
+		if (appForm.getSubmittedDate() == null && this.getSubmittedDate() != null) {
 			return -1;
 		}
-		if(appForm.getSubmittedDate() == null && this.getSubmittedDate() == null){
+		if (appForm.getSubmittedDate() == null && this.getSubmittedDate() == null) {
 			return appForm.getApplicationTimestamp().compareTo(this.applicationTimestamp);
 		}
 		return appForm.getSubmittedDate().compareTo(this.submittedDate);

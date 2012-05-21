@@ -183,6 +183,16 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		RegisteredUser interviewerThree = new RegisteredUserBuilder().programsOfWhichInterviewer(programOne).firstName("Jane").lastName("Doe")
 				.email("email@test.com").username("username16").password("password").accountNonExpired(false).accountNonLocked(false)
 				.credentialsNonExpired(false).enabled(true).toUser();
+		
+		RegisteredUser supervisorOne = new RegisteredUserBuilder().programsOfWhichSupervisor(programOne).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username17").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(true).toUser();
+		RegisteredUser supervisorTwo = new RegisteredUserBuilder().programsOfWhichSupervisor(programTwo).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username18").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(true).toUser();
+		RegisteredUser supervisorThree = new RegisteredUserBuilder().programsOfWhichSupervisor(programOne).firstName("Jane").lastName("Doe")
+				.email("email@test.com").username("username19").password("password").accountNonExpired(false).accountNonLocked(false)
+				.credentialsNonExpired(false).enabled(true).toUser();
 
 		RegisteredUser administratorOne = new RegisteredUserBuilder().programsOfWhichAdministrator(programOne).firstName("Jane").lastName("Doe")
 				.email("email@test.com").username("username10").password("password").accountNonExpired(false).accountNonLocked(false)
@@ -199,14 +209,14 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 				.accountNonLocked(false).credentialsNonExpired(false).enabled(true).toUser();
 
 		save(superAdminOne, superAdminTwo, superAdminThree, administratorOne, administratorThree, administratorTwo, approverOne, approverThree, approverTwo,
-				reviewerOne, reviewerThree, reviewerTwo,interviewerOne, interviewerTwo, interviewerThree, reviewerAndApprover);
+				reviewerOne, reviewerThree, reviewerTwo,interviewerOne, interviewerTwo, interviewerThree, reviewerAndApprover, supervisorOne, supervisorTwo, supervisorThree);
 
 		flushAndClearSession();
 
 		List<RegisteredUser> usersInProgram = userDAO.getUsersForProgram(programOne);
-		assertEquals(numberOfExistingSuperAdminUsers + 12, usersInProgram.size());
+		assertEquals(numberOfExistingSuperAdminUsers + 14, usersInProgram.size());
 		assertTrue(usersInProgram.containsAll(Arrays.asList(reviewerAndApprover, superAdminOne, superAdminThree, superAdminTwo, reviewerOne, reviewerThree,interviewerOne, interviewerThree,
-				approverOne, approverThree, administratorOne, administratorThree)));
+				approverOne, approverThree, administratorOne, administratorThree, supervisorOne, supervisorThree)));
 
 	}
 	

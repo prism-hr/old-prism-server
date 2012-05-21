@@ -94,7 +94,11 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@ManyToMany
 	@JoinTable(name = "PROGRAM_INTERVIEWER_LINK", joinColumns = { @JoinColumn(name = "interviewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	private List<Program> programsOfWhichInterviewer = new ArrayList<Program>();
-
+	
+	@ManyToMany
+	@JoinTable(name = "PROGRAM_SUPERVISOR_LINK", joinColumns = { @JoinColumn(name = "supervisor_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
+	private List<Program> programsOfWhichSupervisor = new ArrayList<Program>();
+	
 	public List<Role> getRoles() {
 		return roles;
 	}
@@ -323,6 +327,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		if (getProgramsOfWhichApprover().contains(program)) {
 			authorities.add(Authority.APPROVER);
+		}
+		if (getProgramsOfWhichSupervisor().contains(program)) {
+			authorities.add(Authority.SUPERVISOR);
 		}
 		return authorities;
 
@@ -595,6 +602,15 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@Override
 	public String toString() {
 		return "RegisteredUser [id=" + id + ", username=" + username + "]";
+	}
+
+	public List<Program> getProgramsOfWhichSupervisor() {
+		return programsOfWhichSupervisor;
+	}
+
+	public void setProgramsOfWhichSupervisor(
+			List<Program> programsOfWhichSupervisor) {
+		this.programsOfWhichSupervisor = programsOfWhichSupervisor;
 	}
 
 

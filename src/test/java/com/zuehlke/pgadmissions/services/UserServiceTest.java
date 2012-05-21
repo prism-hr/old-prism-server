@@ -283,6 +283,16 @@ public class UserServiceTest {
 		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.INTERVIEWER);
 		assertTrue(selectedUser.isInRole(Authority.INTERVIEWER));
 	}
+	
+	@Test
+	public void shouldAddUserRoleSupervisorIfNotAlreadySupervisorAndRevieweInNewRoles() {
+		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();
+		Program selectedProgram = new ProgramBuilder().id(4).toProgram();
+		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.SUPERVISOR)).andReturn(new RoleBuilder().authorityEnum(Authority.SUPERVISOR).toRole()).anyTimes();
+		EasyMock.replay(roleDAOMock);
+		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.SUPERVISOR);
+		assertTrue(selectedUser.isInRole(Authority.SUPERVISOR));
+	}
 	@Test
 	public void shouldAddUserRoleSuperAdmimnIfNotAlreadySuperadminAndSuperadminInNewRoles() {
 		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();
@@ -379,12 +389,36 @@ public class UserServiceTest {
 		
 	}
 	
+	
+	@Test
+	public void shouldAddProgramToSupervisorListIfNew(){
+		Program selectedProgram = new ProgramBuilder().id(1).toProgram();
+		RegisteredUser selectedUser = new RegisteredUserBuilder().id(1).toUser();	
+		Role role = new RoleBuilder().id(1).authorityEnum(Authority.SUPERVISOR).toRole();
+		EasyMock.expect(roleDAOMock.getRoleByAuthority(Authority.SUPERVISOR)).andReturn(role).anyTimes();
+		EasyMock.replay(roleDAOMock);
+		
+		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram, Authority.SUPERVISOR);
+		
+		assertTrue(selectedUser.getProgramsOfWhichSupervisor().contains(selectedProgram));		
+		EasyMock.verify(roleDAOMock);
+		
+	}
+	
 	@Test
 	public void shouldRemoveFromProgramsOfWhichAdministratorIfNoLongerInList(){
 		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
 		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichAdministrator(selectedProgram).id(1).toUser();
 		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram);
 		assertFalse(selectedUser.getProgramsOfWhichAdministrator().contains(selectedProgram));
+	}
+	
+	@Test
+	public void shouldRemoveFromProgramsOfWhichSupervisorIfNoLongerInList(){
+		Program selectedProgram = new ProgramBuilder().id(1).toProgram();		
+		RegisteredUser selectedUser = new RegisteredUserBuilder().programsOfWhichSupervisor(selectedProgram).id(1).toUser();
+		userServiceWithCurrentUserOverride.updateUserWithNewRoles(selectedUser, selectedProgram);
+		assertFalse(selectedUser.getProgramsOfWhichSupervisor().contains(selectedProgram));
 	}
 	
 	@Test

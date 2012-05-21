@@ -1,9 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.usermanagement;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -74,9 +71,9 @@ public class ManageUserRolesControllerTest {
 		EasyMock.expect(currentUserMock.isInRole(Authority.SUPERADMINISTRATOR)).andReturn(true).anyTimes();
 		EasyMock.replay(currentUserMock);
 		List<Authority> authorities = controller.getAuthorities();
-		assertEquals(5, authorities.size());
+		assertEquals(6, authorities.size());
 		assertTrue(authorities.containsAll(Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.SUPERADMINISTRATOR,
-				Authority.INTERVIEWER)));
+				Authority.INTERVIEWER, Authority.SUPERVISOR)));
 	}
 
 	@Test
@@ -85,8 +82,8 @@ public class ManageUserRolesControllerTest {
 		EasyMock.replay(currentUserMock);
 
 		List<Authority> authorities = controller.getAuthorities();
-		assertEquals(4, authorities.size());
-		assertTrue(authorities.containsAll(Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER)));
+		assertEquals(5, authorities.size());
+		assertTrue(authorities.containsAll(Arrays.asList(Authority.ADMINISTRATOR, Authority.APPROVER, Authority.REVIEWER, Authority.INTERVIEWER, Authority.SUPERVISOR)));
 	}
 	
 	@Test

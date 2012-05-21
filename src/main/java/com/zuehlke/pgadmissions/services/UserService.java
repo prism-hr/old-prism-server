@@ -149,8 +149,17 @@ public class UserService {
 		addOrRemoveFromProgramsOfWhichApproverIfRequired(selectedUser, selectedProgram, newAuthorities);
 		addOrRemoveFromProgramsOfWhichReviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
 		addOrRemoveFromProgramsOfWhichInterviewerIfRequired(selectedUser, selectedProgram, newAuthorities);
+		addOrRemoveFromProgramsOfWhichSupervisorIfRequired(selectedUser, selectedProgram, newAuthorities);
 		userDAO.save(selectedUser);
 
+	}
+
+	private void addOrRemoveFromProgramsOfWhichSupervisorIfRequired(RegisteredUser selectedUser, Program selectedProgram, Authority[] newAuthorities) {
+		if (newAuthoritiesContains(newAuthorities, Authority.SUPERVISOR) && !selectedUser.getProgramsOfWhichSupervisor().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichSupervisor().add(selectedProgram);			
+		} else if (!newAuthoritiesContains(newAuthorities, Authority.SUPERVISOR) && selectedUser.getProgramsOfWhichSupervisor().contains(selectedProgram)) {
+			selectedUser.getProgramsOfWhichSupervisor().remove(selectedProgram);
+		}
 	}
 
 	private void removeFromSuperadminRoleIfRequired(RegisteredUser selectedUser, Authority[] newAuthorities) {

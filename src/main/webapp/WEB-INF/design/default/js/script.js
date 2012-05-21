@@ -204,11 +204,11 @@ $(document).ready(function()
 		  
 	  });
 
-
+	
 		// ---------------------------------------------------------------------------------
 		// General opening/closing function for all folding sections as they are loaded.
 		// ---------------------------------------------------------------------------------
-		$('section.folding h2').live('click', function()
+		$(document).on('click', 'section.folding h2', function()
 		{
 			var $header  = $(this);
 			var $content = $header.next('div');

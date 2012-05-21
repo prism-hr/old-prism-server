@@ -146,6 +146,8 @@
                     	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
                    		 <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
                    		 
+                   		 <li class="tool-separator"><a href="#"></a></li>
+                   		 
 						<li id="tool-programme" class="tool-button"><a href="#programme-details" title="Back to Programme">Back to Programme</a></li>
                    		<li id="tool-personal" class="tool-button"><a href="#Personal-Details" title="Back to Personal Details">Back to Personal Details</a></li> 
                    		<li id="tool-address" class="tool-button"><a href="#address-details" title="Back to Address">Back to Address</a></li>

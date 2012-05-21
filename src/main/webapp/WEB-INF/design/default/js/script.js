@@ -203,7 +203,34 @@ $(document).ready(function()
 		  }
 		  
 	  });
-	  
+
+
+		// ---------------------------------------------------------------------------------
+		// General opening/closing function for all folding sections as they are loaded.
+		// ---------------------------------------------------------------------------------
+		$('section.folding h2').live('click', function()
+		{
+			var $header  = $(this);
+			var $content = $header.next('div');
+
+			if ($content.not(':animated')) // only process if we're not in the middle of an animation
+			{
+				if ($content.is(':visible'))
+				{
+					// content is visible, hide by sliding up.
+					$header.removeClass('open');
+					$content.slideUp(800);
+				}
+				else
+				{
+					// content is not visible, hide by sliding down.
+					$header.addClass('open');
+					$content.slideDown(800);
+				}
+			}
+			return false;
+		});
+
 	  
   });
   

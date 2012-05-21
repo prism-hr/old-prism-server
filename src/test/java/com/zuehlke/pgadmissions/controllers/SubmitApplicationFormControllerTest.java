@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -52,15 +54,26 @@ public class SubmitApplicationFormControllerTest {
 
 	@Test
 	public void shouldReturnStudenApplicationViewOnGetForApplicant() {
-		String view = applicationController.getApplicationView();
+		String view = applicationController.getApplicationView(null);
 		assertEquals("/private/pgStudents/form/main_application_page", view);
 	}
 	@Test
 	public void shouldReturnStudenApplicationViewOnGetForNonApplicant() {
 		RegisteredUser otherUser = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
 		authenticationToken.setDetails(otherUser);
-		String view = applicationController.getApplicationView();
+		String view = applicationController.getApplicationView(null);
 		assertEquals("/private/staff/application/main_application_page", view);
+	}
+	@Test
+	public void shouldReturnStudenApplicationViewWithoutHeaders() {
+		RegisteredUser otherUser = new RegisteredUserBuilder().id(6).role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		authenticationToken.setDetails(otherUser);
+		HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);  
+		EasyMock.expect(request.getParameter("embeddedApplication")).andReturn("true");
+		EasyMock.expect(request.getParameter("embeddedApplication")).andReturn("true");
+		EasyMock.replay(request);
+		String view = applicationController.getApplicationView(request);
+		assertEquals("/private/staff/application/main_application_page_without_headers", view);
 	}
 	@Test
 	public void shouldReturnToApplicationViewIfErrors() {

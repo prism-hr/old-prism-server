@@ -2,15 +2,6 @@ $(document).ready(function(){
 
 	$("#declineValue").val("NO");
 	
-	$.get("/pgadmissions/comments/view",
-			{
-				id:  $('#applicationId').val(),				
-				cacheBreaker: new Date().getTime() 
-			},
-			function(data) {
-				$('#timeline').html(data);
-			}
-	);
 	
 	$('#cancelReviewBtn').click(function() {
 		window.location.href = "/pgadmissions/reviewFeedback?applicationId=" +  $('#applicationId').val();

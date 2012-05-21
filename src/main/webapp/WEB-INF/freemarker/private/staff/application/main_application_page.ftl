@@ -71,10 +71,6 @@
                         <li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>">Print Page</a></li>
                     </ul>
     
-                <ul class="right">
-                    <li class="icon-progress"><a href="#">Progress</a></li>
-                    <li class="current icon-application"><a href="#">View Application</a></li>
-                </ul>
                 </div>
 			      
 			      

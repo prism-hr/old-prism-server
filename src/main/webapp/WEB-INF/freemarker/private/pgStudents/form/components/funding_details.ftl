@@ -20,8 +20,9 @@
 			
 			<colgroup>
             	<col style="width: 30px" />
-                <col style="width: 120px" />
-                <col style="width: 120px" />
+                <col style="width: 220px" />
+                <!--
+                <col style="width: 120px" /> -->
                 <col />
                 <col style="width: 120px" />
                 <col style="width: 30px" />
@@ -31,7 +32,8 @@
 				<tr>
                 	<th id="primary-header" colspan="2">Funding Type</th>
                     <th>Description</th>
-                    <th>Supporting Documentation</th>
+                    <#--
+                    <th>Supporting Documentation</th> -->
                     <th>Award Date</th>
                     <th colspan="1">&nbsp;</th>
                     <th id="last-col">&nbsp;</th>
@@ -43,10 +45,14 @@
 				<#list applicationForm.fundings as existingFunding>		
 					<tr>
 	                  	<td><a class="row-arrow">-</a></td>
-	                  	<td>${existingFunding.type.displayValue}</td>
+	                  	<td><a href="<@spring.url '/download'/>?documentId=${existingFunding.document.id?string('#######')}"
+	                  		data-desc="Proof of Award" class="button-hint">
+	                  	${existingFunding.type.displayValue} ${(existingFunding.value?html)!}</a>
+	                  	</td>
 	                  	<td>${existingFunding.description}</td>
+	                  	<#--
 	                  	<td ><a href="<@spring.url '/download'/>?documentId=${existingFunding.document.id?string('#######')}">
-                        <#if existingFunding.document.fileName?length <20 >${existingFunding.document.fileName}<#else>${existingFunding.document.fileName?substring(0,17)}...</#if></a></td>
+                        <#if existingFunding.document.fileName?length <20 >${existingFunding.document.fileName}<#else>${existingFunding.document.fileName?substring(0,17)}...</#if></a></td>-->
 	                  	<td>${existingFunding.awardDate?string('dd-MMM-yyyy')}</td>
 								<td>				                  		                		
 		                			<a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_${existingFunding.id?string('#######')}" class="button-edit button-hint">edit</a>
@@ -139,7 +145,7 @@
               
             <!-- Value of award -->
             <div class="row">
-              	<span class="plain-label">Value of Award<em>*</em></span>
+              	<span class="plain-label">Value of Award (GBP)<em>*</em></span>
                 <span class="hint" data-desc="<@spring.message 'fundingDetails.award.value'/>"></span>
                 <div class="field">
                 <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
@@ -189,10 +195,11 @@
         		<span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
         		<div class="field" id="fundingUploadFields">        	
           			<input id="fundingDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
-					<span id="fundingUploadedDocument" ><input type="hidden" id="document_SUPPORTING_FUNDING" value = "${(funding.document.id?string('######'))!}"/>
-					
-                	  
-					<a href="<@spring.url '/download?documentId=${(funding.document.id?string("#######"))!}'/>">${(funding.document.fileName)!}</a></span>
+					<span id="fundingUploadedDocument">
+						<input type="hidden" id="document_SUPPORTING_FUNDING" value = "${(funding.document.id?string('######'))!}"/>
+                		<!--  
+						<a href="<@spring.url '/download?documentId=${(funding.document.id?string("#######"))!}'/>">${(funding.document.fileName)!}</a>-->
+					</span>
 					<span id="fundingDocumentProgress" style="display: none;" ></span>					
         		</div>  
         		

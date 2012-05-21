@@ -55,10 +55,6 @@
 				<!-- Main content area. -->
 				<article id="content" role="main">
 
-				    <#if !user.isInRole('APPLICANT')>
-				    	<#include "/private/common/parts/tools.ftl"/>
-				    </#if>
-
 					<!-- FLOATING TOOLBAR -->
 		            <ul id="view-toolbar">
 		            	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>

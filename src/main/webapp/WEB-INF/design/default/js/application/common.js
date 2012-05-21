@@ -17,16 +17,18 @@
 function bindDatePicker(selector){
 	// Date pickers.
 
-	$(selector).each(function(){
-
-		if(!$(this).hasClass('hasDatepicker')){
-
-			$(this).attr("readonly", "readonly");	
-			$(this).datepicker({
-				dateFormat: 'dd-M-yy',
-				changeMonth: true,
-				changeYear: true,
-				yearRange: '1900:c+20' });
+	$(selector).each(function()
+	{
+		var $this = $(this);
+		if(!$this.hasClass('hasDatepicker'))
+		{
+			$this.attr("readonly", "readonly");	
+			$this.datepicker({
+				dateFormat:   'dd-M-yy',
+				changeMonth:  true,
+				changeYear:   true,
+				yearRange:    '1900:c+20'
+			});
 		}
 	});
 

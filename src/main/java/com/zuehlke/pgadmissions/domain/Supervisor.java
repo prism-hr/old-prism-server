@@ -1,11 +1,17 @@
 package com.zuehlke.pgadmissions.domain;
 
+import java.util.Date;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
@@ -37,6 +43,14 @@ public class Supervisor extends DomainObject<Integer> {
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.AwareStatusEnumUserType")
 	@Column(name = "aware_supervisor")
 	private AwareStatus awareSupervisor;
+	
+	@ManyToOne
+	@JoinColumn(name = "registered_user_id")
+	private RegisteredUser user;
+	
+	@Column(name = "last_notified")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date lastNotified;
 
 	private String email;
 	private String firstname;
@@ -87,6 +101,22 @@ public class Supervisor extends DomainObject<Integer> {
 
 	public void setAwareSupervisor(AwareStatus awareSupervisor) {
 		this.awareSupervisor = awareSupervisor;
+	}
+
+	public RegisteredUser getUser() {
+		return user;
+	}
+
+	public void setUser(RegisteredUser user) {
+		this.user = user;
+	}
+
+	public Date getLastNotified() {
+		return lastNotified;
+	}
+
+	public void setLastNotified(Date lastNotified) {
+		this.lastNotified = lastNotified;
 	}
 
 }

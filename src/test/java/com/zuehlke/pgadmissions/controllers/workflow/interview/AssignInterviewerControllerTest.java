@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -43,6 +44,7 @@ public class AssignInterviewerControllerTest {
 	
 	private static final String INTERVIEW_DETAILS_VIEW_NAME = "/private/staff/interviewers/interview_details";
 	private RegisteredUser currentUserMock;
+	private InterviewerPropertyEditor interviewerPropertyEditorMock;
 	
 	
 
@@ -107,13 +109,14 @@ public class AssignInterviewerControllerTest {
 		messageSourceMock = EasyMock.createMock(MessageSource.class);
 		interviewValidator = EasyMock.createMock(InterviewValidator.class);
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
+		interviewerPropertyEditorMock = EasyMock.createMock(InterviewerPropertyEditor.class); 
 	
 
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 		
-		controller = new AssignInterviewerController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock, interviewServiceMock, interviewValidator, datePropertyEditorMock);
+		controller = new AssignInterviewerController(applicationServiceMock, userServiceMock, userValidatorMock,  messageSourceMock, interviewServiceMock, interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock);
 		
 		
 	}

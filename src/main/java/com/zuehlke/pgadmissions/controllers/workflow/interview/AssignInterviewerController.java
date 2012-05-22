@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.InterviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -25,14 +26,14 @@ import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 public class AssignInterviewerController extends InterviewController {
 
 	AssignInterviewerController() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public AssignInterviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
 			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
-			DatePropertyEditor datePropertyEditor) {
-		super(applicationsService, userService, validator,  messageSource, interviewService, interviewValidator, datePropertyEditor, null);
+			DatePropertyEditor datePropertyEditor, InterviewerPropertyEditor interviewerPropertyEditor) {
+		super(applicationsService, userService, validator,  messageSource, interviewService, interviewValidator, datePropertyEditor, interviewerPropertyEditor);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "assignInterviewers")

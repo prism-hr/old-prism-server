@@ -40,7 +40,7 @@ public class AdminReviewerAssignedNotificationTask extends TimerTask {
 				List<RegisteredUser> admins = application.getProgram().getAdministrators();
 				try {
 					for (RegisteredUser admin : admins) {
-						adminMailSender.sendReviewerAssignedNotification(reviewers, admin, application);
+						adminMailSender.sendReviewerAssignedNotification(reviewer, admin, application);
 					}
 					reviewer.setDateAdminsNotified(new Date());
 					reviewerDAO.save(reviewer);

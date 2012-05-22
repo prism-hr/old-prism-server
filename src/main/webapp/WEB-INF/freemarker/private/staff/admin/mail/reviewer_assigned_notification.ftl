@@ -35,11 +35,11 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">A new reviewer is assigned for application ${application.id?string("######")}. The update list with reviewers is as follows: </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The following new reviewer has been assigned to application ${application.id?string("######")} : </font>
 			      	</p>
-			      	<#list reviewers as rev>
-			      		${rev.user.firstName?html} ${rev.user.lastName?html}
-			      	</#list>
+			  		<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${newReviewer.user.firstName?html} ${newReviewer.user.lastName?html}</font>
+			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
 			      			<a href="${host}/pgadmissions/review/assignReviewers?applicationId=${application.id?string("######")}">View reviewers</a>

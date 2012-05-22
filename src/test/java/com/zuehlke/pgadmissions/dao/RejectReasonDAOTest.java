@@ -31,4 +31,18 @@ public class RejectReasonDAOTest extends AutomaticRollbackTestCase {
 		assertEquals("reason1", allReasons.get(reasonCount).getText());
 		assertEquals("reason2", allReasons.get(reasonCount + 1).getText());
 	}
+	
+	@Test
+	public void shouldGetRejectReasonById(){
+		RejectReason reason = new RejectReasonBuilder().text("reason1").toRejectReason();		
+		save(reason);
+		flushAndClearSession();
+
+		RejectReasonDAO rejectDAO = new RejectReasonDAO(sessionFactory);
+		assertEquals(reason, rejectDAO.getRejectReasonById(reason.getId()));
+	}
 }
+
+
+
+

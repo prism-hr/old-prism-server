@@ -27,4 +27,8 @@ public class RejectReasonDAO {
 	public List<RejectReason> getAllReasons() {
 		return sessionFactory.getCurrentSession().createCriteria(RejectReason.class).addOrder(Order.asc("id")).list();
 	}
+
+	public RejectReason getRejectReasonById(Integer id) {
+		return (RejectReason) sessionFactory.getCurrentSession().get(RejectReason.class, id);
+	}
 }

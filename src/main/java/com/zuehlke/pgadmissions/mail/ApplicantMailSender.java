@@ -39,7 +39,11 @@ public class ApplicantMailSender extends StateChangeMailSender {
 		model.put("host", Environment.getInstance().getApplicationHostName());
 
 		if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
-			model.put("reasons", form.getRejectReasons());
+			model.put("reason", form.getRejection().getRejectionReason());
+			if(form.getRejection().isIncludeProspectusLink()){
+				model.put("prospectusLink", Environment.getInstance().getUCLProspectusLink());
+			}
+			
 			model.put("stage", applicationsService.getStageComingFrom(form));
 		}
 		return model;

@@ -18,7 +18,9 @@ $(document).ready(function(){
 	$('#createReviewer').click(function() {
 
 		$('#applicationReviewers option').each(function(){
-			$('#postReviewerForm').append("<input name='pendingReviewer' type='hidden' value='" +  $(this).val() + "'/>");	
+			var ids = $(this).val();
+		 	var user = ids.substring(ids.indexOf("|") + 1);
+			$('#postReviewerForm').append("<input name='pendingReviewer' type='hidden' value='" + user + "'/>");	
 		});
 		$('#postReviewerForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");
 		$('#postReviewerForm').append("<input name='reviewRoundId' type='hidden' value='" +  $('#reviewRoundId').val() + "'/>");
@@ -46,7 +48,9 @@ $(document).ready(function(){
 	$('#moveToReviewBtn').click(function() {
 		
 		$('#applicationReviewers option').each(function(){
-				$('#postReviewForm').append("<input name='pendingReviewer' type='hidden' value='" +  $(this).val() + "'/>");	
+			 	var ids = $(this).val();
+			 	var user = ids.substring(ids.indexOf("|") + 1);
+				$('#postReviewForm').append("<input name='pendingReviewer' type='hidden' value='" + user + "'/>");	
 				$('#postReviewForm').append("<input name='reviewers' type='hidden' value='" +  $(this).val() + "'/>");
 		});
 		$('#postReviewForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");				

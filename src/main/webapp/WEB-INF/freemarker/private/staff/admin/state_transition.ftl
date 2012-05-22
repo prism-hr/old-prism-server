@@ -20,7 +20,6 @@
 		<![endif]-->
 	
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	        <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/genericComment.js' />"></script> 
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/admin/changeState.js' />"></script> 
 	    
 	    
@@ -94,9 +93,7 @@
 								</div>
 							
 							<hr/>	
-							<div id= "timeline">
-		  						
-		  					</div>
+							<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 		  
 				        </div><!-- .content-box-inner -->
 				      </div><!-- .content-box -->

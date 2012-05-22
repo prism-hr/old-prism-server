@@ -55,7 +55,7 @@ $(document).ready(function(){
 						$('#uploadFields a.docName').attr('data-oldlink'));
 			}
 			
-			bindDatePickers();
+			//bindDatePickers();
 		}
 		
 	

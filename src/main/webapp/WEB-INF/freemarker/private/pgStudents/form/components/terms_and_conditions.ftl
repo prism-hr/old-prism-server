@@ -20,7 +20,7 @@
 	            	/>
 	            </div>
 	            <input type="hidden" name="acceptTermsValue" id="acceptTermsValue"/>
-	            <span class="invalid" name="nonAccepted"></span>
+	            <!-- <span class="invalid" name="nonAccepted"></span> -->
 	   		</div>
 	   	</div>
 	</form>

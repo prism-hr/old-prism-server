@@ -13,9 +13,9 @@ label input { vertical-align: middle; }
 label.normal { font-weight: normal !important; }
 
 /* Compulsory Field Indications */
-label em { color: red; font-size: 14px; padding: 0 2px; position: absolute; }
-span em { color: red; font-size: 14px; padding: 0 2px; position: absolute; }
-h2 em { color: white; font-size: 14px; padding: 0 2px; position: absolute; }
+label em { color: red; font-size: 14px; padding: 0 2px; /*position: absolute;*/ }
+span em { color: red; font-size: 14px; padding: 0 2px; /*position: absolute;*/ }
+h2 em { color: white; font-size: 14px; padding: 0 2px; /*position: absolute;*/ }
 
 .centre { text-align: center !important; }
 .right { text-align: right !important; }

@@ -45,8 +45,8 @@ public abstract class InterviewController {
 
 	@Autowired
 	public InterviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator validator,
-			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator,
-			DatePropertyEditor datePropertyEditor, InterviewerPropertyEditor interviewerPropertyEditor) {
+			MessageSource messageSource, InterviewService interviewService, InterviewValidator interviewValidator, DatePropertyEditor datePropertyEditor,
+			InterviewerPropertyEditor interviewerPropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.interviewerValidator = validator;
@@ -66,7 +66,7 @@ public abstract class InterviewController {
 	@InitBinder(value = "interview")
 	public void registerInterviewValidatorsAndPropertyEditors(WebDataBinder binder) {
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
-		binder.registerCustomEditor(Interviewer.class,interviewerPropertyEditor);
+		binder.registerCustomEditor(Interviewer.class, interviewerPropertyEditor);
 		binder.setValidator(interviewValidator);
 	}
 
@@ -116,7 +116,6 @@ public abstract class InterviewController {
 	protected String getCreateInterviewerMessage(String code, RegisteredUser user) {
 		return getMessage(code, new Object[] { user.getFirstName() + " " + user.getLastName(), user.getEmail() });
 	}
-	
 
 	protected String getMessage(String code, Object... args) {
 		return messageSource.getMessage(code, args, null);

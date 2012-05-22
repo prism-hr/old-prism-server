@@ -33,17 +33,19 @@ $(document).ready(function(){
 		$('#timeline').html("");
 		$('#timeline').hide();
 		$('#application').show();
-		$.get("/pgadmissions/application?view=view",
-				{
-				embeddedApplication: "true",				
-				applicationId:  $('#applicationId').val(),				
-				cacheBreaker: new Date().getTime() 
-				},
-				function(data) {
-					$('#application').html(data);
-				
-				}
-		);
+		if($('#application').html()==""){
+			$.get("/pgadmissions/application?view=view",
+					{
+					embeddedApplication: "true",				
+					applicationId:  $('#applicationId').val(),				
+					cacheBreaker: new Date().getTime() 
+					},
+					function(data) {
+						$('#application').html(data);
+					
+					}
+			);
+		}
 	});
 	
 	

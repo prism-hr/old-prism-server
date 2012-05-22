@@ -24,7 +24,7 @@ public class AdminMailSender extends StateChangeMailSender {
 
 	}
 
-	Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer, List<Reviewer> reviewers) {
+	Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer, Reviewer newReviewer) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("admin", administrator);
 		model.put("application", applicationForm);
@@ -32,7 +32,7 @@ public class AdminMailSender extends StateChangeMailSender {
 		model.put("applicant", applicationForm.getApplicant());
 		model.put("reviewer", reviewer);
 		model.put("interviewer", interviewer);
-		model.put("reviewers", reviewers);
+		model.put("newReviewer", newReviewer);
 		return model;
 	}
 	
@@ -85,11 +85,11 @@ public class AdminMailSender extends StateChangeMailSender {
 		javaMailSender.send(mimePrep);
 	}
 
-	public void sendReviewerAssignedNotification(List<Reviewer> reviewers,
+	public void sendReviewerAssignedNotification(Reviewer newReviewer,
 			RegisteredUser admin, ApplicationForm applicationForm) throws UnsupportedEncodingException {
 		InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Notification - Reviewer assigned",
-				"private/staff/admin/mail/reviewer_assigned_notification.ftl", createModel(applicationForm, admin, null, null, reviewers)));
+				"private/staff/admin/mail/reviewer_assigned_notification.ftl", createModel(applicationForm, admin, null, null, newReviewer)));
 		
 	}
 }

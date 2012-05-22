@@ -63,7 +63,7 @@ public class AdminMailSenderTest {
 
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 			@Override
-			Map<String, Object> createModel(ApplicationForm application, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer, List<Reviewer> reviewers) {
+			Map<String, Object> createModel(ApplicationForm application, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer, Reviewer newReviewer) {
 				return model;
 			}
 		};
@@ -92,7 +92,7 @@ public class AdminMailSenderTest {
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
 			@Override
-			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer, List<Reviewer> reviewers) {
+			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer, Reviewer newReviewer) {
 				return model;
 			}
 
@@ -120,7 +120,7 @@ public class AdminMailSenderTest {
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
 			@Override
-			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer, List<Reviewer> reviewers) {
+			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer, Reviewer newReviewer) {
 				return model;
 			}
 
@@ -225,7 +225,7 @@ public class AdminMailSenderTest {
 		final Map<String, Object> model = new HashMap<String, Object>();
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 			@Override
-			Map<String, Object> createModel(ApplicationForm form, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer, List<Reviewer> reviewers) {
+			Map<String, Object> createModel(ApplicationForm form, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer, Reviewer newReviewer) {
 				Assert.assertNull(reviewer);
 				Assert.assertNull(interviewer);
 				Assert.assertNotNull(administrator);
@@ -255,7 +255,7 @@ public class AdminMailSenderTest {
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
 			@Override
-			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer, List<Reviewer> reviewers) {
+			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer, Reviewer newReviewer) {
 				return model;
 			}
 
@@ -272,7 +272,7 @@ public class AdminMailSenderTest {
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 
-		adminMailSender.sendReviewerAssignedNotification(Arrays.asList(reviewer), admin, form);
+		adminMailSender.sendReviewerAssignedNotification(reviewer, admin, form);
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 

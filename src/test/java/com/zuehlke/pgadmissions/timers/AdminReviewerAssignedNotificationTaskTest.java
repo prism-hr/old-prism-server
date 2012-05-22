@@ -67,11 +67,11 @@ public class AdminReviewerAssignedNotificationTaskTest {
 			EasyMock.expect(reviewerDAOMock.getReviewersRequireAdminNotification()).andReturn(Arrays.asList(reviewer1, reviewer2));
 			transactionOne.commit();
 
-			adminMailSenderMock.sendReviewerAssignedNotification(Arrays.asList(reviewer1, reviewer2), admin1, form);
+			adminMailSenderMock.sendReviewerAssignedNotification(reviewer1, admin1, form);
 			reviewerDAOMock.save(reviewer1);
 			transactionTwo.commit();
 
-			adminMailSenderMock.sendReviewerAssignedNotification(Arrays.asList(reviewer1, reviewer2), admin1, form);
+			adminMailSenderMock.sendReviewerAssignedNotification( reviewer2, admin1, form);
 			reviewerDAOMock.save(reviewer2);
 			transactionThree.commit();
 
@@ -115,11 +115,11 @@ public class AdminReviewerAssignedNotificationTaskTest {
 		
 		transactionOne.commit();
 
-		adminMailSenderMock.sendReviewerAssignedNotification(Arrays.asList(reviewer1, reviewer2), admin1, form);
+		adminMailSenderMock.sendReviewerAssignedNotification(reviewer1, admin1, form);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("aaaah!"));		
 		transactionTwo.rollback();
 
-		adminMailSenderMock.sendReviewerAssignedNotification(Arrays.asList(reviewer1, reviewer2), admin1, form);
+		adminMailSenderMock.sendReviewerAssignedNotification( reviewer2, admin1, form);
 		reviewerDAOMock.save(reviewer2);
 		transactionThree.commit();
 

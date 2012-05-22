@@ -1,15 +1,18 @@
 $(document).ready(function() {
 
-	$('input:checkbox[name=rejectReasons]').click(function() {
-		var reasonIds = getReasonIds();
-		
-		if( reasonIds.length == 0) {
-			return false;
-		}	
+	$('input:radio[name=rejectionReason]').click(function() {
+	
 		var postData ={ 
 				applicationId : $('#applicationId').val(),
-				rejectReasonIds : reasonIds
+				rejectionReason : $(this).val()
 		};
+		
+		if( $('#includeProspectusLink:checked').val() !== undefined ){
+			postData.includeProspectusLink = true;
+		}else{
+			postData.includeProspectusLink = false;
+		}
+		
 		$.post("/pgadmissions/rejectApplication/rejectionText", 
 				$.param(postData),
 				function(data) {
@@ -18,33 +21,31 @@ $(document).ready(function() {
 		);
 	});
 	
-	
-	$('#rejectButton').click(function() {
-		var reasonIds = getReasonIds();
+	$('#includeProspectusLink').click(function() {
 		
-		if( reasonIds.length == 0) {
-			alert("Please select at least one reason.");
-			return false;
-		}		
+	
 		var postData ={ 
-			applicationId : $('#applicationId').val(),
-			rejectReasonIds : reasonIds
+				applicationId : $('#applicationId').val()	
 		};
-			
-		$.post("/pgadmissions/rejectApplication/moveApplicationToReject", 
-			$.param(postData),
-			function(data) {
-				window.location.href = "/pgadmissions/applications";
-			}
+		
+		if( $('input:radio[name=rejectionReason]:checked').val() !== undefined ){
+			postData.rejectionReason = $('input:radio[name=rejectionReason]:checked').val() ;
+		}
+		
+		if( $('#includeProspectusLink:checked').val() !== undefined ){
+			postData.includeProspectusLink = true;
+		}else{
+			postData.includeProspectusLink = false;
+		}
+		
+		$.post("/pgadmissions/rejectApplication/rejectionText", 
+				$.param(postData),
+				function(data) {
+					$('#emailText').html(data);
+				}
 		);
 	});
+	
 
 });
 
-function getReasonIds() {
-	var reasonIds = [];
-	$("input:checkbox[name=rejectReasons]:checked").each(function() {
-	   reasonIds.push($(this).val());
-	});
-	return reasonIds;
-}

@@ -21,10 +21,12 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
+import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
@@ -62,7 +64,6 @@ public class ApplicantMailSenderTest {
 	}
 
 	@Test
-	@SuppressWarnings("unchecked")
 	public void shouldReturnCorrectlyPopulatedModelForRejectedApplications() {
 
 		RegisteredUser adminOne = new RegisteredUserBuilder().email("bob@test.com").id(8).toUser();
@@ -71,8 +72,11 @@ public class ApplicantMailSenderTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram())//
 				.applicant(applicant).status(ApplicationFormStatus.REJECTED).toApplicationForm();
 
-		RejectReason reason1 = new RejectReasonBuilder().id(30).text("lalalala").toRejectReason();
-		form.getRejectReasons().add(reason1);
+		RejectReason reason = new RejectReasonBuilder().id(30).text("lalalala").toRejectReason();
+		Rejection rejection = new RejectionBuilder().id(1).rejectionReason(reason).toRejection();
+		rejection.setIncludeProspectusLink(true);
+		form.setRejection(rejection);
+		
 		EasyMock.expect(applicationServiceMock.getStageComingFrom(form)).andReturn(ApplicationFormStatus.INTERVIEW);
 		EasyMock.replay(applicationServiceMock);
 		Map<String, Object> model = applicantMailSender.createModel(form);
@@ -81,8 +85,8 @@ public class ApplicantMailSenderTest {
 		assertEquals(applicant, model.get("applicant"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 		assertEquals(ApplicationFormStatus.INTERVIEW, model.get("stage"));
-		Collection<RejectReason> reasons = (Collection<RejectReason>) model.get("reasons");
-		Assert.assertTrue(reasons.contains(reason1));
+		assertEquals(reason, (RejectReason) model.get("reason"));
+		assertEquals(Environment.getInstance().getUCLProspectusLink(), model.get("prospectusLink"));
 	}
 
 	@Test

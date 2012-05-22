@@ -1,8 +1,5 @@
 package com.zuehlke.pgadmissions.services;
 
-import java.util.Arrays;
-import java.util.List;
-
 import junit.framework.Assert;
 
 import org.hibernate.SessionFactory;
@@ -22,9 +19,11 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
+import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
@@ -54,9 +53,9 @@ public class RejectServiceIntegrationTest {
 	@Rollback(true)
 	public void testMoveApplicationToReject() {
 		RejectReason reason1 = createReason("r1");
-		RejectReason reason2 = createReason("r2");
+
 		sessionFactory.getCurrentSession().saveOrUpdate(reason1);
-		sessionFactory.getCurrentSession().saveOrUpdate(reason2);
+		
 
 		Role approverRole = roleDAO.getRoleByAuthority(Authority.APPROVER);
 		RegisteredUser approver = new RegisteredUserBuilder().firstName("Some").lastName("Aprove").email("sdfajklsdf@test.com").username("sdfakd")//
@@ -80,22 +79,15 @@ public class RejectServiceIntegrationTest {
 
 		flushNClear();
 
-		List<RejectReason> reasons = Arrays.asList(new RejectReason[] { reason1, reason2 });
-		rejectsService.moveApplicationToReject(application, approver, reasons);
+		Rejection rejection = new RejectionBuilder().rejectionReason(reason1).toRejection();
+		rejectsService.moveApplicationToReject(application, approver, rejection);
 		flushNClear();
 
 		ApplicationForm storedAppl = applicationDAO.get(application.getId());
 
 		Assert.assertEquals(ApplicationFormStatus.REJECTED, storedAppl.getStatus());
-		List<RejectReason> rejectReasons = storedAppl.getRejectReasons();
-		Assert.assertNotNull(rejectReasons);
-		Assert.assertEquals(2, rejectReasons.size());
-		for (RejectReason storedReason : rejectReasons) {
-			String reasonText = storedReason.getText();
-			if (!"r1".equals(reasonText) && !"r2".equals(reasonText)) {
-				Assert.fail("unexpected reason text: " + reasonText);
-			}
-		}
+		Assert.assertEquals(reason1, storedAppl.getRejection().getRejectionReason());
+			
 		Assert.assertEquals(approver, application.getApprover());
 	}
 

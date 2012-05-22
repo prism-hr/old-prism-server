@@ -1,7 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.rejection;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,24 +17,30 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
+import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RejectService;
+import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.Environment;
+import com.zuehlke.pgadmissions.validators.RejectionValidator;
 
 public class RejectApplicationControllerTest {
 	private static final String VIEW_RESULT = "private/staff/approver/reject_page";
@@ -47,17 +53,21 @@ public class RejectApplicationControllerTest {
 	private ApplicationsService applicationServiceMock;
 	private RejectService rejectServiceMock;
 
-	private UsernamePasswordAuthenticationToken authenticationToken;
+	
 	private RegisteredUser admin;
 	private RegisteredUser approver;
 	private RejectReason reason1;
 	private RejectReason reason2;
 	private Program program;
+	private RejectReasonPropertyEditor rejectReasonPropertyEditorMock;
+	private UserService userServiceMock;
+	private RejectionValidator rejectionValidatorMock;
+	private BindingResult errorsMock;
 
 	@Before
 	public void setUp() {
 		admin = new RegisteredUserBuilder().id(1).username("admin").role(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
-		setupSecurityContext(admin);
+		
 		reason1 = new RejectReasonBuilder().id(10).text("idk").toRejectReason();
 		reason2 = new RejectReasonBuilder().id(20).text("idc").toRejectReason();
 		approver = new RegisteredUserBuilder().id(2).username("real approver").role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
@@ -68,17 +78,19 @@ public class RejectApplicationControllerTest {
 
 		rejectServiceMock = EasyMock.createMock(RejectService.class);
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
-
-		controllerUT = new RejectApplicationController(applicationServiceMock, rejectServiceMock);
+		rejectReasonPropertyEditorMock = EasyMock.createMock(RejectReasonPropertyEditor.class);
+		userServiceMock = EasyMock.createMock(UserService.class);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(admin).anyTimes();
+		EasyMock.replay(userServiceMock);
+		rejectionValidatorMock = EasyMock.createMock(RejectionValidator.class);
+		controllerUT = new RejectApplicationController(applicationServiceMock, rejectServiceMock, userServiceMock, rejectReasonPropertyEditorMock,rejectionValidatorMock);
+		
+		errorsMock = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
+		EasyMock.replay(errorsMock);
 	}
 
-	private void setupSecurityContext(RegisteredUser user) {
-		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		authenticationToken.setDetails(user);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
-	}
+	
 
 	@After
 	public void tearDown() {
@@ -90,6 +102,22 @@ public class RejectApplicationControllerTest {
 		Assert.assertEquals(VIEW_RESULT, controllerUT.getRejectPage());
 	}
 
+	@Test
+	public void shouldGetNewRejection(){
+		Rejection rejection = controllerUT.getRejection();
+		Assert.assertNull(rejection.getId());
+	}
+	
+	@Test
+	public void shouldRegisterRejectReasonProperyEditor(){
+		WebDataBinder binderMock = EasyMock.createMock(WebDataBinder.class);
+		binderMock.registerCustomEditor(RejectReason.class, rejectReasonPropertyEditorMock);
+		binderMock.setValidator(rejectionValidatorMock);
+		EasyMock.replay(binderMock);
+		controllerUT.registerBindersAndValidators(binderMock);
+		EasyMock.verify(binderMock);
+	}
+	
 	// -------------------------------------------------------------------
 	// ----------- check for application states:
 	@Test(expected = CannotUpdateApplicationException.class)
@@ -154,24 +182,31 @@ public class RejectApplicationControllerTest {
 		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
 		RegisteredUser applicant = new RegisteredUserBuilder().id(2023).username("applicant").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(applicant);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
+		EasyMock.replay(userServiceMock);
+		
 
 		controllerUT.getApplicationForm(10);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void throwRNFEIfUserIsNotApproverOfApplication() {
-		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
-		EasyMock.replay(applicationServiceMock);
 		RegisteredUser wrongApprover = new RegisteredUserBuilder().id(656).username("wrongApprover").role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
-		authenticationToken.setDetails(wrongApprover);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(wrongApprover).anyTimes();
+		EasyMock.replay(userServiceMock);
+		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);	
 
 		controllerUT.getApplicationForm(10);
 	}
 
 	@Test
 	public void returnApplicationIfUserIsApprover() {
-		authenticationToken.setDetails(approver);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(approver).anyTimes();
+		EasyMock.replay(userServiceMock);
 		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
 
@@ -202,22 +237,32 @@ public class RejectApplicationControllerTest {
 	// ------- move application to reject:
 
 	@Test
-	public void moveToRejectWithOneReason() {
-		authenticationToken.setDetails(approver);
-
-		List<RejectReason> reasons = Arrays.asList(new RejectReason[] { reason1, reason2 });
-		rejectServiceMock.moveApplicationToReject(application, approver, reasons);
+	public void moveToRejectWithValidRejection() {		
+		
+		Rejection rejection = new RejectionBuilder().id(3).toRejection();
+		rejectServiceMock.moveApplicationToReject(application, admin, rejection);
 		EasyMock.expectLastCall();
-
-		RejectReason reason3 = new RejectReasonBuilder().id(30).text("bla").toRejectReason();
-		List<RejectReason> allReasons = Arrays.asList(new RejectReason[] { reason1, reason2, reason3 });
-		EasyMock.expect(rejectServiceMock.getAllRejectionReasons()).andReturn(allReasons);
 		EasyMock.replay(rejectServiceMock);
 
-		String nextView = controllerUT.moveApplicationToReject(application, new Integer[] { reason1.getId(), reason2.getId() });
+		String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, application);
 
 		EasyMock.verify(rejectServiceMock);
 		Assert.assertEquals(AFTER_REJECT_VIEW, nextView);
+	}
+
+	@Test
+	public void returnToRejectViewWithInvalidRejection() {		
+		EasyMock.reset(errorsMock);
+		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
+		EasyMock.replay(errorsMock);
+		Rejection rejection = new RejectionBuilder().id(3).toRejection();
+
+		EasyMock.replay(rejectServiceMock);
+
+		String nextView = controllerUT.moveApplicationToReject(rejection, errorsMock, application);
+
+		EasyMock.verify(rejectServiceMock);
+		Assert.assertEquals(VIEW_RESULT, nextView);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -225,53 +270,38 @@ public class RejectApplicationControllerTest {
 		RegisteredUser applicant = new RegisteredUserBuilder().id(156).username("appl")//
 				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole())//
 				.toUser();
-		authenticationToken.setDetails(applicant);
-		controllerUT.moveApplicationToReject(application, new Integer[] { reason1.getId() });
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(applicant).anyTimes();
+		EasyMock.replay(userServiceMock);
+		Rejection rejection = new RejectionBuilder().id(3).toRejection();
+		controllerUT.moveApplicationToReject(rejection, errorsMock, application);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void moveToReviewThrowIAEwhenNullReasonIds() {
-		controllerUT.moveApplicationToReject(application, null);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void moveToReviewThrowIAEwhenEmptyReasonIds() {
-		controllerUT.moveApplicationToReject(application, new Integer[] {});
-	}
 
 	// -------------------------------------------
 	// ------- retrieving email text:
-	@Test(expected = IllegalArgumentException.class)
-	public void getEmailTextThrowIAEwhenNullReasonIds() {
-		controllerUT.getRejectionText(application, null, null);
-	}
+	
 
-	@Test(expected = IllegalArgumentException.class)
-	public void getEmailTextThrowIAEwhenEmptyReasonIds() {
-		controllerUT.getRejectionText(application, new Integer[] {}, null);
-	}
 
 	@Test
 	public void getRejectionText() {
-		RejectReason reason3 = new RejectReasonBuilder().id(30).text("bla").toRejectReason();
-		List<RejectReason> allReasons = Arrays.asList(new RejectReason[] { reason1, reason2, reason3 });
-		EasyMock.expect(rejectServiceMock.getAllRejectionReasons()).andReturn(allReasons);
-		EasyMock.replay(rejectServiceMock);
-
+		RejectReason rejectReason = new RejectReasonBuilder().id(1).text("hi").toRejectReason();
+		Rejection rejection = new RejectionBuilder().id(4).rejectionReason(rejectReason).includeProspectusLink(true).toRejection();
+		EasyMock.expect(applicationServiceMock.getStageComingFrom(application)).andReturn(ApplicationFormStatus.REVIEW);
+		EasyMock.replay(applicationServiceMock);
 		ModelMap modelMap = new ModelMap();
-		String nextView = controllerUT.getRejectionText(application, new Integer[] { reason1.getId(), reason2.getId() }, modelMap);
+		
+		String nextView = controllerUT.getRejectionText(application,rejection, modelMap);
 
-		EasyMock.verify(rejectServiceMock);
 		Assert.assertEquals(REJECT_EMAIL, nextView);
 		Assert.assertEquals(application, modelMap.get("application"));
-		@SuppressWarnings("unchecked")
-		Collection<RejectReason> providedReasons = (Collection<RejectReason>) modelMap.get("reasons");
-		Assert.assertEquals(2, providedReasons.size());
-		Assert.assertTrue(providedReasons.contains(reason1));
-		Assert.assertTrue(providedReasons.contains(reason2));
-
+		
+		Assert.assertEquals(rejectReason, (RejectReason) modelMap.get("reason"));
+		Assert.assertEquals(ApplicationFormStatus.REVIEW, modelMap.get("stage"));
 		Assert.assertNotNull(modelMap.get("host"));
+		
 		Assert.assertNotNull(modelMap.get("adminsEmails"));
+		assertEquals(Environment.getInstance().getUCLProspectusLink(), modelMap.get("prospectusLink"));
 	}
 	
 	

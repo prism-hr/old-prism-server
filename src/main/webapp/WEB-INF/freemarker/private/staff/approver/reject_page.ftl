@@ -86,7 +86,7 @@
 						<@spring.bind "availableReasons.*" />
 						<section class="folding violet">
 							<div>
-								<form>
+								<form method="POST" action="<@spring.url '/rejectApplication/moveApplicationToReject'/>">
 									<div>			
 										
 										<div class="row">
@@ -95,16 +95,29 @@
 					                   			<ul>
 					                   			<#list availableReasons as reason>
 					                   				<li>
-												  		<input type="checkbox" name="rejectReasons" value="${reason.id}" class="reason"/><label>${reason.text}</label>
+												  		<input type="radio" name="rejectionReason" value="${reason.id}" class="reason"/><label>${reason.text}</label>
 													 </li> 
 												</#list>
 												</ul>
-											</div> 
+												<@spring.bind "rejection.rejectionReason" /> 
+				                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list> 
 										</div>
+											</div>
+											
+									</div>
+									<div>					
+										<div class="row">
+				                    		<label class="label">Include link to UCL prospectus?</label>
+					                   		<div class="field">					      
+												  <input type="checkbox" name="includeProspectusLink" id="includeProspectusLink" class="reason"/>											
+											</div>
+							
+										</div>
+										
 										<div class="row">
 											<div class="field">
 												<span>
-													<button type="button" id="rejectButton" class="blue">Reject application</button>
+													<button type="submit" id="rejectButton" class="blue">Reject application</button>
 													
 												</span>
 											</div>
@@ -119,11 +132,12 @@
 											</div> 
 										</div>
 									</div>
+									<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/> 
 								</form>
 							</div>
 						</section>
 					
-						<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/> 
+					
 					</div>
 					<!-- #actions -->
 

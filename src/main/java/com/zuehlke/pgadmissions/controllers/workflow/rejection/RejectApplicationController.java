@@ -1,16 +1,17 @@
 package com.zuehlke.pgadmissions.controllers.workflow.rejection;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
+import javax.validation.Valid;
+
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,12 +20,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
+import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.RejectReasonPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RejectService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
+import com.zuehlke.pgadmissions.validators.RejectionValidator;
 
 @Controller
 @RequestMapping(value = { "/rejectApplication" })
@@ -36,16 +41,22 @@ public class RejectApplicationController {
 	private final RejectService rejectService;
 	private final ApplicationsService applicationService;
 
-	CollectionContainsPredicate predicate = new CollectionContainsPredicate();
+	private final RejectReasonPropertyEditor rejectReasonPropertyEditor;
+	private final UserService userService;
+	private final RejectionValidator rejectionValidator;
 
 	RejectApplicationController() {
-		this(null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService) {
+	public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
+			RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator) {
 		this.applicationService = applicationsService;
 		this.rejectService = rejectService;
+		this.userService = userService;
+		this.rejectReasonPropertyEditor = rejectReasonPropertyEditor;
+		this.rejectionValidator = rejectionValidator;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -54,30 +65,37 @@ public class RejectApplicationController {
 	}
 
 	@RequestMapping(value = "/moveApplicationToReject", method = RequestMethod.POST)
-	public String moveApplicationToReject(//
-			@ModelAttribute("applicationForm") ApplicationForm application,// 
-			@RequestParam(value = "rejectReasonIds[]") Integer[] rejectReasonIds) {
+	public String moveApplicationToReject(@Valid @ModelAttribute("rejection") Rejection rejection, BindingResult errors,
+			@ModelAttribute("applicationForm") ApplicationForm application) {
 
 		checkPermissionForApplication(application);
 		checkApplicationStatus(application);
-		
-		Collection<RejectReason> rejectReasons = getRejectReason(rejectReasonIds);
-		rejectService.moveApplicationToReject(application, getCurrentUser(), rejectReasons);
+		if(errors.hasErrors()){
+			return REJECT_VIEW_NAME;
+		}
+
+		rejectService.moveApplicationToReject(application, getCurrentUser(), rejection);
 		return NEXT_VIEW_NAME;
 	}
 
 	@RequestMapping(value = "/rejectionText", method = RequestMethod.POST)
 	public String getRejectionText(//
-			@ModelAttribute("applicationForm") ApplicationForm application,//
-			@RequestParam(value = "rejectReasonIds[]") Integer[] rejectReasonIds,// 
+			@ModelAttribute("applicationForm") ApplicationForm application,
+			@ModelAttribute("rejection") Rejection rejection,
 			ModelMap model) {
 
-		Collection<RejectReason> rejectReasons = getRejectReason(rejectReasonIds);
-		application.setStatus(ApplicationFormStatus.REJECTED); //simulate rejection to get right stage back
+	
+		application.setStatus(ApplicationFormStatus.REJECTED); // simulate
+																// rejection to
+																// get right
+																// stage back*/
 		ApplicationFormStatus stage = applicationService.getStageComingFrom(application);
 		model.put("stage", stage);
 		model.put("application", application);
-		model.put("reasons", rejectReasons);
+		model.put("reason", rejection.getRejectionReason());
+		if(rejection.isIncludeProspectusLink()){
+			model.put("prospectusLink",Environment.getInstance().getUCLProspectusLink());
+		}
 		model.put("host", Environment.getInstance().getApplicationHostName());
 		model.put("adminsEmails", "some@email.com");
 
@@ -89,16 +107,6 @@ public class RejectApplicationController {
 		return rejectService.getAllRejectionReasons();
 	}
 
-	private Collection<RejectReason> getRejectReason(final Integer[] rejectReasonIds) {
-		if (rejectReasonIds == null || rejectReasonIds.length == 0) {
-			throw new IllegalArgumentException("no rejected reasons set!");
-		}
-		
-		List<RejectReason> allRejectionReasons = new ArrayList<RejectReason>(rejectService.getAllRejectionReasons());
-		predicate.setReasonIds(rejectReasonIds);
-		CollectionUtils.filter(allRejectionReasons, predicate);
-		return allRejectionReasons;
-	}
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
@@ -127,27 +135,28 @@ public class RejectApplicationController {
 
 	private void checkPermissionForApplication(ApplicationForm application) {
 		RegisteredUser currentUser = getCurrentUser();
-		if (application == null || // 
+		if (application == null || //
 				!(application.getProgram().isApprover(currentUser) || currentUser.isAdminInProgramme(application.getProgram()))) {
 			throw new ResourceNotFoundException();
 		}
 	}
 
 	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		return userService.getCurrentUser();
 	}
 
-	class CollectionContainsPredicate implements Predicate {
-		private Integer[] reasonIds;
 
-		public void setReasonIds(Integer[] reasonIds) {
-			this.reasonIds = reasonIds;
-		}
 
-		@Override
-		public boolean evaluate(Object object) {
-			RejectReason reason = (RejectReason) object;
-			return ArrayUtils.contains(reasonIds, reason.getId());
-		}
+	@ModelAttribute("rejection")
+	public Rejection getRejection() {
+		return new Rejection();
 	}
+
+	@InitBinder("rejection")
+	public void registerBindersAndValidators(WebDataBinder binder) {
+		binder.registerCustomEditor(RejectReason.class, rejectReasonPropertyEditor);
+		binder.setValidator(rejectionValidator);
+
+	}
+
 }

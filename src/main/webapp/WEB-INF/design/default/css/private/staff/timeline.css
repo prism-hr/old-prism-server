@@ -17,3 +17,12 @@ table tr td, table tr th { border-bottom: 1px solid #999; }
 table tbody td { background: url(../../../images/bg_table_row.jpg) repeat-x 0 100%; }
 table select { width: 100%; }
 table thead th.headerSortDown, table thead th.headerSortUp { background-color: #06C; color: #FFF; }
+
+#timelineview{
+	clear:both;
+}
+#application{
+	border: 1px solid #999;
+	height:600px;
+	overflow:scroll;
+}

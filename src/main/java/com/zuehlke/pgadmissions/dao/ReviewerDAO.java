@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Repository
 public class ReviewerDAO {
@@ -76,6 +77,16 @@ public class ReviewerDAO {
 			}
 		}
 		return reviewersDueReminder;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Reviewer> getReviewersRequireAdminNotification() {
+		return sessionFactory.getCurrentSession()
+				.createCriteria(Reviewer.class)
+				.createAlias("reviewRound.application", "application")
+				.add(Restrictions.eqProperty("application.latestReviewRound", "reviewRound"))
+				.add(Restrictions.eq("requiresAdminNotification", CheckedStatus.YES))
+				.add(Restrictions.isNull("dateAdminsNotified")).list();
 	}
 
 }

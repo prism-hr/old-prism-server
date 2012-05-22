@@ -10,20 +10,23 @@ import org.springframework.context.MessageSource;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 
+import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
-import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 
 public class AssignReviewerControllerTest {
 
@@ -37,9 +40,6 @@ public class AssignReviewerControllerTest {
 	
 	private MessageSource messageSourceMock;
 	private BindingResult bindingResultMock;
-	
-	
-	
 	
 	protected static final String REVIEW_DETAILS_VIEW_NAME = "/private/staff/admin/assign_reviewers_to_appl_page";
 	private RegisteredUser currentUserMock;
@@ -80,6 +80,22 @@ public class AssignReviewerControllerTest {
 		assertEquals("redirect:/applications", view);
 		EasyMock.verify(reviewServiceMock);
 		
+	}
+	
+	
+	@Test
+	public void shouldSetToFlagForAdminNotifiesToNoIfNoErrors() {	
+		Reviewer reviewer3 = new ReviewerBuilder().id(1).requiresAdminNotification(CheckedStatus.NO).toReviewer();
+		Reviewer reviewer1 = new ReviewerBuilder().id(null).requiresAdminNotification(CheckedStatus.NO).toReviewer();
+		Reviewer reviewer2 = new ReviewerBuilder().id(2).requiresAdminNotification(CheckedStatus.YES).toReviewer();
+		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer1, reviewer2, reviewer3).id(4).toReviewRound();
+		reviewServiceMock.save(reviewRound);
+		EasyMock.replay(reviewServiceMock);
+		String view = controller.assignReviewers(reviewRound, bindingResultMock);
+		assertEquals("redirect:/applications", view);
+		EasyMock.verify(reviewServiceMock);
+		Assert.assertEquals(CheckedStatus.YES, reviewer1.getRequiresAdminNotification());
+		Assert.assertEquals(CheckedStatus.YES, reviewer2.getRequiresAdminNotification());
 	}
 	
 	@Test

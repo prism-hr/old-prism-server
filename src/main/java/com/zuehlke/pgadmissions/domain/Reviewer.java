@@ -14,6 +14,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+
 @Entity(name = "REVIEWER")
 @Access(AccessType.FIELD)
 public class Reviewer extends DomainObject<Integer> {
@@ -23,6 +27,15 @@ public class Reviewer extends DomainObject<Integer> {
 	@OneToOne(mappedBy = "reviewer")
 	private ReviewComment review;
 
+	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	@Column(name = "requires_admin_notification")
+	private CheckedStatus requiresAdminNotification;
+	
+	
+	@Column(name = "admins_notified_on")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateAdminsNotified;
+	
 	@Column(name = "last_notified")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastNotified;
@@ -80,6 +93,22 @@ public class Reviewer extends DomainObject<Integer> {
 
 	public void setReviewRound(ReviewRound reviewRound) {
 		this.reviewRound = reviewRound;
+	}
+
+	public Date getDateAdminsNotified() {
+		return dateAdminsNotified;
+	}
+
+	public void setDateAdminsNotified(Date dateAdminsNotified) {
+		this.dateAdminsNotified = dateAdminsNotified;
+	}
+
+	public CheckedStatus getRequiresAdminNotification() {
+		return requiresAdminNotification;
+	}
+
+	public void setRequiresAdminNotification(CheckedStatus requiresAdminNotification) {
+		this.requiresAdminNotification = requiresAdminNotification;
 	}
 
 }

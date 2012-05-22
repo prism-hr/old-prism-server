@@ -235,6 +235,30 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 		List<Reviewer> reviewers = dao.getReviewersDueReminder();
 		assertFalse(reviewers.contains(reviewer));
 	}
+	
+	@Test
+	public void shouldReturnReviewersRequireAdminNotification() {
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL)
+				.toApplicationForm();
+		
+		Reviewer reviewer1 = new ReviewerBuilder().user(user).id(1).requiresAdminNotification(CheckedStatus.YES).dateAdminsNotified(null).toReviewer();
+		Reviewer reviewer2 = new ReviewerBuilder().user(user).id(2).requiresAdminNotification(CheckedStatus.NO).dateAdminsNotified(null).toReviewer();
+		Reviewer reviewer3 = new ReviewerBuilder().user(user).id(1).requiresAdminNotification(CheckedStatus.YES).dateAdminsNotified(new Date()).toReviewer();
+		Reviewer reviewer4 = new ReviewerBuilder().user(user).id(2).requiresAdminNotification(CheckedStatus.NO).dateAdminsNotified(new Date()).toReviewer();
+		
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer1, reviewer2, reviewer3, reviewer4).toReviewRound();
+		application.setLatestReviewRound(reviewRound);
+		save(application,reviewer1, reviewer2, reviewer3, reviewer4, reviewRound);
+		flushAndClearSession();
+
+		List<Reviewer> reviewers = dao.getReviewersRequireAdminNotification();
+		assertFalse(reviewers.contains(reviewer3));
+		assertFalse(reviewers.contains(reviewer4));
+		assertFalse(reviewers.contains(reviewer2));
+		assertTrue(reviewers.contains(reviewer1));
+	}
+	
+	
 	@Before
 	public void setUp() {
 		super.setUp();

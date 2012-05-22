@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.review;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
@@ -23,6 +27,7 @@ import com.zuehlke.pgadmissions.validators.ReviewRoundValidator;
 @Controller
 @RequestMapping("/review")
 public class AssignReviewerController extends ReviewController {
+
 
 	AssignReviewerController(){
 		this(null, null, null, null,null, null, null);
@@ -50,6 +55,12 @@ public class AssignReviewerController extends ReviewController {
 	public String assignReviewers(@Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()){
 			return REVIEW_DETAILS_VIEW_NAME;
+		}
+		List<Reviewer> reviewers = reviewRound.getReviewers();
+		for (Reviewer reviewer : reviewers) {
+			if(reviewer.getId() == null){
+				reviewer.setRequiresAdminNotification(CheckedStatus.YES);
+			}
 		}
 		reviewService.save(reviewRound);
 		return "redirect:/applications";

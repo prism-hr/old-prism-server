@@ -38,11 +38,10 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">The application ${application.id?string("######")} was rejected by ${approver.firstName?html} ${approver.lastName?html}.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Reason<#if (reasons?size > 1)>s</#if> for the rejection:
-			      		<ul>
-			      		    <#list reasons as reason>
-				      		 <li>${reason.text}</li>
-							</#list>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Reason for the rejection:
+			      		<ul>			      		  
+				      		 <li>${(reason.text?html)!}</li>
+	
 			      		</ul>
 			      		</font>
 			      	</p>

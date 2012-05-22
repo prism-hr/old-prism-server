@@ -74,7 +74,7 @@ public class AdminMailSender extends StateChangeMailSender {
 		InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 		Map<String, Object> model = createModel(form, admin, null, null);
 		model.put("approver", approver);
-		model.put("reasons", form.getRejectReasons());
+		model.put("reason", form.getRejection().getRejectionReason());
 		String templateName = "private/staff/admin/mail/rejected_notification.ftl";
 
 		MimeMessagePreparator mimePrep = mimeMessagePreparatorFactory.getMimeMessagePreparator(//

@@ -152,12 +152,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne(mappedBy = "application")
 	private AdditionalInformation additionalInformation;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "APPLICATION_FORM_REJECT_REASON",// 
-	joinColumns = { @JoinColumn(name = "application_id") },// 
-	inverseJoinColumns = { @JoinColumn(name = "reason_id") })
-	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
-	private List<RejectReason> rejectReasons = new ArrayList<RejectReason>();
+
 
 	@Column(name = "reject_notification_date")
 	@Temporal(value = TemporalType.TIMESTAMP)
@@ -402,13 +397,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return status;
 	}
 
-	public List<RejectReason> getRejectReasons() {
-		return rejectReasons;
-	}
-
-	public void setRejectReasons(List<RejectReason> rejectReasons) {
-		this.rejectReasons = rejectReasons;
-	}
 
 	public Date getRejectNotificationDate() {
 		return rejectNotificationDate;

@@ -25,10 +25,12 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
+import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class AdminMailSenderTest {
@@ -208,10 +210,10 @@ public class AdminMailSenderTest {
 		RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
 		ApplicationForm application = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(admin).toProgram()).toApplicationForm();
 
-		RejectReason reason1 = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
-		RejectReason reason2 = new RejectReasonBuilder().id(324).text("blas").toRejectReason();
-		application.getRejectReasons().add(reason1);
-		application.getRejectReasons().add(reason2);
+		RejectReason reason = new RejectReasonBuilder().id(2134).text("blas").toRejectReason();
+		Rejection rejection = new RejectionBuilder().id(3).rejectionReason(reason).toRejection();
+		application.setRejection(rejection);
+
 
 		RegisteredUser approver = new RegisteredUserBuilder().id(11).toUser();
 		InternetAddress expAddr = new InternetAddress("bob@test.com", "bob the builder");
@@ -241,11 +243,7 @@ public class AdminMailSenderTest {
 
 		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock);
 		Assert.assertEquals(approver, model.get("approver"));
-		@SuppressWarnings("unchecked")
-		Collection<RejectReason> reasons = (Collection<RejectReason>) model.get("reasons");
-		Assert.assertNotNull(reasons);
-		Assert.assertTrue(reasons.contains(reason1));
-		Assert.assertTrue(reasons.contains(reason2));
+		Assert.assertEquals(reason, model.get("reason"));
 	}
 
 	@Before

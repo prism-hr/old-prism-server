@@ -33,6 +33,19 @@
 		<property name="period" value="60000" />
 		<property name="timerTask" ref="adminReviewFeedbackNotificationTimerTask" />
 	</bean>
+	
+	<bean id="adminAssignedReviewerNotificationTimerTask"
+		class="com.zuehlke.pgadmissions.timers.AdminReviewerAssignedNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="mailAdminMailSender" />
+		<constructor-arg index="2" ref="mailReviewerDAO" />
+	</bean>
+
+	<bean id="adminAssignedReviewerNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="2000" />
+		<property name="period" value="60000" />
+		<property name="timerTask" ref="adminAssignedReviewerNotificationTimerTask" />
+	</bean>
 
 
 	<bean id="adminReviewReminderTimerTask" class="com.zuehlke.pgadmissions.timers.AdminReminderTimerTask">

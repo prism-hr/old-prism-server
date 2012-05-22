@@ -6,6 +6,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class ReviewerBuilder {
 	private Integer id;
@@ -13,6 +14,21 @@ public class ReviewerBuilder {
 	private Date lastNotified;	
 	private ReviewComment review;
 	private ReviewRound reviewRound;
+	private CheckedStatus requiresAdminNotification;
+	private Date dateAdminsNotified;
+	
+	
+	public ReviewerBuilder requiresAdminNotification(CheckedStatus requiresAdminNotification){
+		this.requiresAdminNotification = requiresAdminNotification;
+		return this;
+	}
+	
+	
+	public ReviewerBuilder dateAdminsNotified(Date dateAdminsNotified){
+		this.dateAdminsNotified = dateAdminsNotified;
+		return this;
+	}
+	
 	
 	public ReviewerBuilder reviewRound(ReviewRound reviewRound){
 		this.reviewRound = reviewRound;
@@ -47,6 +63,8 @@ public class ReviewerBuilder {
 		reviewer.setUser(user);
 		reviewer.setLastNotified(lastNotified);
 		reviewer.setReview(review);
+		reviewer.setRequiresAdminNotification(requiresAdminNotification);
+		reviewer.setDateAdminsNotified(dateAdminsNotified);
 		return reviewer;
 	}
 }

@@ -26,11 +26,13 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectReasonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RejectionBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class AdminMailSenderTest {
@@ -48,7 +50,7 @@ public class AdminMailSenderTest {
 
 		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().administrators(adminOne, adminTwo).toProgram()).toApplicationForm();
 
-		Map<String, Object> model = adminMailSender.createModel(form, adminOne, null, null);
+		Map<String, Object> model = adminMailSender.createModel(form, adminOne, null, null, null);
 		assertEquals(form, model.get("application"));
 		assertEquals(adminOne, model.get("admin"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
@@ -61,7 +63,7 @@ public class AdminMailSenderTest {
 
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 			@Override
-			Map<String, Object> createModel(ApplicationForm application, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer) {
+			Map<String, Object> createModel(ApplicationForm application, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer, List<Reviewer> reviewers) {
 				return model;
 			}
 		};
@@ -90,7 +92,7 @@ public class AdminMailSenderTest {
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
 			@Override
-			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer) {
+			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer, List<Reviewer> reviewers) {
 				return model;
 			}
 
@@ -118,7 +120,7 @@ public class AdminMailSenderTest {
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
 			@Override
-			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer) {
+			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer, List<Reviewer> reviewers) {
 				return model;
 			}
 
@@ -223,7 +225,7 @@ public class AdminMailSenderTest {
 		final Map<String, Object> model = new HashMap<String, Object>();
 		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 			@Override
-			Map<String, Object> createModel(ApplicationForm form, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer) {
+			Map<String, Object> createModel(ApplicationForm form, RegisteredUser administrator, RegisteredUser reviewer, RegisteredUser interviewer, List<Reviewer> reviewers) {
 				Assert.assertNull(reviewer);
 				Assert.assertNull(interviewer);
 				Assert.assertNotNull(administrator);
@@ -245,7 +247,37 @@ public class AdminMailSenderTest {
 		Assert.assertEquals(approver, model.get("approver"));
 		Assert.assertEquals(reason, model.get("reason"));
 	}
+	
+	
+	@Test
+	public void shouldSendReviewerAssignedEmailToEachAdmin() throws UnsupportedEncodingException {
+		final HashMap<String, Object> model = new HashMap<String, Object>();
+		adminMailSender = new AdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
 
+			@Override
+			Map<String, Object> createModel(ApplicationForm form, RegisteredUser admin, RegisteredUser reviewer, RegisteredUser interviewer, List<Reviewer> reviewers) {
+				return model;
+			}
+
+		};
+		RegisteredUser admin = new RegisteredUserBuilder().id(1).firstName("Bob").lastName("Bobson").email("bob@bobson.com").id(1).toUser();
+		ApplicationForm form = new ApplicationFormBuilder().program(new Program()).toApplicationForm();
+		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(11).toUser();
+		Reviewer reviewer = new ReviewerBuilder().id(1).user(reviewerUser).toReviewer();
+		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
+		InternetAddress toAddress = new InternetAddress("bob@bobson.com", "Bob Bobson");
+
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Notification - Reviewer assigned", "private/staff/admin/mail/reviewer_assigned_notification.ftl", model)).andReturn(preparatorMock);
+		javaMailSenderMock.send(preparatorMock);
+
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+
+		adminMailSender.sendReviewerAssignedNotification(Arrays.asList(reviewer), admin, form);
+
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
+
+	}
+	
 	@Before
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);

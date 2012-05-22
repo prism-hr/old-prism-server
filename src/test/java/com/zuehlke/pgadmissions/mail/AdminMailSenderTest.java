@@ -278,6 +278,7 @@ public class AdminMailSenderTest {
 
 	}
 	
+	
 	@Before
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);

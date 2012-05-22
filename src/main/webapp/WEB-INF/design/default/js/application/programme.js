@@ -42,6 +42,13 @@ $(document).ready(function(){
 			$(this).parent().parent().remove();
 			$(this).parent().parent().html('');
 			
+			var rowCount = $("#supervisors tbody tr").length;
+			
+			console.log(rowCount);
+			
+			if(rowCount == 0){
+				$("#supervisors").hide();
+			}
 			
 			// TODO:On delete of a last element
 //			var trExists = false;

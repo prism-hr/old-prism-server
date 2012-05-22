@@ -37,7 +37,7 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 	private ReviewerDAO dao;
 	private Program program;
 	private ReminderInterval reminderInterval;
-/*
+
 	@Test
 	public void shouldReturnReviewerOfLatestReviewRoundIfLastModifiedIsNull() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
@@ -117,7 +117,7 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 
 	}
 
-*/
+
 	@Test
 	public void shouldReturnReviewerOfLatestRoundReminded7Minus5minDaysAgoForASixDaysReminderInterval() {
 		reminderInterval.setId(1);

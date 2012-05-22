@@ -14,7 +14,9 @@ import org.springframework.stereotype.Repository;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 @Repository
 public class InterviewerDAO {
@@ -74,6 +76,16 @@ public class InterviewerDAO {
 			}
 		}
 		return interviewersDueReminder;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Interviewer> getInterviewersRequireAdminNotification() {
+		return sessionFactory.getCurrentSession()
+				.createCriteria(Interviewer.class)
+				.createAlias("interview.application", "application")
+				.add(Restrictions.eqProperty("application.latestInterview", "interview"))
+				.add(Restrictions.eq("requiresAdminNotification", true))
+				.add(Restrictions.isNull("dateAdminsNotified")).list();
 	}
 
 }

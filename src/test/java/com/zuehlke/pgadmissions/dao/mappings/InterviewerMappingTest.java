@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class InterviewerMappingTest extends AutomaticRollbackTestCase{
@@ -32,7 +33,7 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase{
 	@Test
 	public void shouldSaveAndLoadInterviewer() throws ParseException{
 		Date lastNotified = new SimpleDateFormat("dd MM yyyy HH:mm:ss").parse("01 05 2012 13:08:45");		
-		Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).lastNotified(lastNotified).toInterviewer();
+		Interviewer interviewer = new InterviewerBuilder().user(interviewerUser).lastNotified(lastNotified).requiresAdminNotification(true).dateAdminsNotified(lastNotified).toInterviewer();
 		save(interviewer);
 		assertNotNull(interviewer.getId());
 		Interviewer reloadedInterviewer = (Interviewer) sessionFactory.getCurrentSession().get(Interviewer.class,interviewer.getId());
@@ -46,6 +47,8 @@ public class InterviewerMappingTest extends AutomaticRollbackTestCase{
 
 		assertEquals(interviewerUser, reloadedInterviewer.getUser());
 		assertEquals(lastNotified, reloadedInterviewer.getLastNotified());
+		assertEquals(lastNotified, reloadedInterviewer.getDateAdminsNotified());
+		assertEquals(true, reloadedInterviewer.isRequiresAdminNotification());
 	}
 	
 	@Test

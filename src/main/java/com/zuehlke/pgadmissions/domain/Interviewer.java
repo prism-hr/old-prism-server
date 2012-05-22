@@ -14,6 +14,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Type;
+
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+
 @Entity(name = "INTERVIEWER")
 @Access(AccessType.FIELD)
 public class Interviewer extends DomainObject<Integer> {
@@ -24,6 +28,14 @@ public class Interviewer extends DomainObject<Integer> {
 	 */
 	private static final long serialVersionUID = 1676615842814210633L;
 
+
+	@Column(name = "requires_admin_notification")
+	private boolean requiresAdminNotification;
+	
+	@Column(name = "admins_notified_on")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateAdminsNotified;
+	
 	@OneToOne(mappedBy = "interviewer")
 	private InterviewComment interviewComment;
 
@@ -84,6 +96,24 @@ public class Interviewer extends DomainObject<Integer> {
 
 	public void setInterview(Interview interview) {
 		this.interview = interview;
+	}
+
+	
+
+	public Date getDateAdminsNotified() {
+		return dateAdminsNotified;
+	}
+
+	public void setDateAdminsNotified(Date dateAdminsNotified) {
+		this.dateAdminsNotified = dateAdminsNotified;
+	}
+
+	public boolean isRequiresAdminNotification() {
+		return requiresAdminNotification;
+	}
+
+	public void setRequiresAdminNotification(boolean requiresAdminNotification) {
+		this.requiresAdminNotification = requiresAdminNotification;
 	}
 
 }

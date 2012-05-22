@@ -20,12 +20,14 @@ import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -338,7 +340,27 @@ public class InterviewerDAOTest extends AutomaticRollbackTestCase {
 	
 	}
 	
-	
+	@Test
+	public void shouldReturnInterviewersRequireAdminNotification() {
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL)
+				.toApplicationForm();
+		
+		Interviewer interviewer1 = new InterviewerBuilder().user(user).id(1).requiresAdminNotification(true).dateAdminsNotified(null).toInterviewer();
+		Interviewer interviewer2 = new InterviewerBuilder().user(user).id(2).requiresAdminNotification(false).dateAdminsNotified(null).toInterviewer();
+		Interviewer interviewer3 = new InterviewerBuilder().user(user).id(1).requiresAdminNotification(true).dateAdminsNotified(new Date()).toInterviewer();
+		Interviewer interviewer4 = new InterviewerBuilder().user(user).id(2).requiresAdminNotification(false).dateAdminsNotified(new Date()).toInterviewer();
+		
+		Interview reviewRound = new InterviewBuilder().application(application).interviewers(interviewer1, interviewer2, interviewer3, interviewer4).toInterview();
+		application.setLatestInterview(reviewRound);
+		save(application,interviewer1, interviewer2, interviewer3, interviewer4, reviewRound);
+		flushAndClearSession();
+
+		List<Interviewer> interviewers = dao.getInterviewersRequireAdminNotification();
+		assertFalse(interviewers.contains(interviewer3));
+		assertFalse(interviewers.contains(interviewer4));
+		assertFalse(interviewers.contains(interviewer2));
+		assertTrue(interviewers.contains(interviewer1));
+	}
 	@Before
 	public void setUp() {
 		super.setUp();

@@ -313,12 +313,15 @@
       		<div class="row">
         		<span id="quali-proof-of-award-lb" class="plain-label grey-label">Proof of Award (PDF)</span>
         		<span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
-        		<div class="field" id="uploadFields">         		       	
+        		<div class="field <#if qualification.proofOfAward??>uploaded</#if>" id="uploadFields">         		       	
           			<input id="proofOfAward" class="full" type="file" name="file" value=""  <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="qualUploadedDocument" >
 						<input type="hidden" id="document_PROOF_OF_AWARD" value = "${(qualification.proofOfAward.id?string('######'))!}"/>
 						<#if qualification.proofOfAward??> 
-							<a href="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>">${(qualification.proofOfAward.fileName?html)!}</a>
+							<a class="docName" href="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>"
+								data-oldlink="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>">
+									${(qualification.proofOfAward.fileName?html)!}</a>
+							<a name="editPOADoc" data-desc="Change Proof Of Award" id="poaDOC" class="button-edit button-hint">edit</a>
 						</#if>
 					</span>
 					<span id="progress" style="display: none;" ></span>					

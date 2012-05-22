@@ -102,7 +102,8 @@ section.folding form .field {
 section.folding form .hint { 
 	background: url(../../images/button_question.png) 
 	no-repeat; width: 25px; height: 20px; 
-	float: left; margin-left: 10px; 
+	float: left; margin-left: 10px;
+	margin-top: 0.1em; 
 }
 
 section.folding form .error-hint { 
@@ -137,6 +138,11 @@ section.folding form label.label { font-weight: bold; }
 }
 
 .grey-label{
+	color: #AAAAAA;
+}
+
+.upload-delete a{
+	text-decoration: line-through;
 	color: #AAAAAA;
 }
 

@@ -32,7 +32,12 @@ $(document).ready(function(){
 			$("#quali-grad-id").text("Expected Grade / Result / GPA").append('<em>*</em>');
 			$("#quali-award-date-lb").text("Award Date").addClass("grey-label");
 			$("#quali-proof-of-award-lb").text("Proof of award (PDF)").addClass("grey-label");
-
+			
+			if($('#uploadFields').hasClass('uploaded')){
+				$('#uploadFields').addClass('upload-delete');
+				$('#uploadFields a.button-edit').hide();
+				$('#uploadFields a.docName').removeAttr('href');
+			}
 			
 		} else {		
 		
@@ -42,9 +47,17 @@ $(document).ready(function(){
 			$("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
 			$("#quali-award-date-lb").append('<em>*</em>').removeClass("grey-label");
 			$("#quali-proof-of-award-lb").append('<em>*</em>').removeClass("grey-label");
+
+			if($('#uploadFields').hasClass('uploaded')){
+				$('#uploadFields').removeClass('upload-delete');
+				$('#uploadFields a.button-edit').show();
+				$('#uploadFields a.docName').attr('href', 
+						$('#uploadFields a.docName').attr('data-oldlink'));
+			}
 			
 			bindDatePickers();
 		}
+		
 	
 	});
 	
@@ -112,6 +125,26 @@ $(document).ready(function(){
 				},
 				function(data) {
 					$('#qualificationsSection').html(data);
+					
+					if($("#currentQualificationCB").is(":checked")){
+						
+						$("#qualificationAwardDate").removeAttr("disabled", "disabled");
+						$("#proofOfAward").removeAttr("disabled", "disabled");
+						$("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
+						$("#quali-award-date-lb").append('<em>*</em>').removeClass("grey-label");
+						$("#quali-proof-of-award-lb").append('<em>*</em>').removeClass("grey-label");
+						
+					}
+					else{	
+						
+						$("#qualificationAwardDate").attr("disabled", "disabled");
+						$("#proofOfAward").attr("disabled", "disabled");
+						$("#quali-grad-id").text("Expected Grade / Result / GPA").append('<em>*</em>');
+						$("#quali-award-date-lb").text("Award Date").addClass("grey-label");
+						$("#quali-proof-of-award-lb").text("Proof of award (PDF)").addClass("grey-label");
+						
+					}
+					
 				}
 		);
 	});
@@ -139,6 +172,15 @@ $(document).ready(function(){
 		$('#proofOfAward').attr("readonly", "readonly");
 		ajaxProofOfAwardUpload();
 		$('#proofOfAward').removeAttr("readonly");
+	});
+	
+	
+	/* Show the upload field if edit button is clicked */
+	$(document).on('click','a.button-edit', function(){
+		
+		$(this).closest('.uploaded').removeClass('uploaded');
+		$(this).hide();
+		
 	});
 	
 	
@@ -200,9 +242,15 @@ function ajaxProofOfAwardUpload()
 			dataType:'text',
 			data:{type:'PROOF_OF_AWARD'},
 			success: function (data)
-			{		
+			{	
+				//console.log(data);
 				$('#qualUploadedDocument').html(data);
 				$('#qualUploadedDocument').show();
+				
+				$('#uploadFields').addClass('uploaded');
+				
+				$('span[name="supportingDocumentSpan"] a.button-edit')
+						.attr({'id':'editQualiPOA','data-desc':'Edit Proof Of Award'});
 				
 			}
 		}

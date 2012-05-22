@@ -746,3 +746,12 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 .ui-slider-vertical .ui-slider-range-max { top: 0; }
 
 #uploadFields a { display: none; } /* hide the displayed name of uploaded files */
+
+#uploadFields.uploaded input{
+	display: none;
+}
+
+#uploadFields.uploaded a{
+	display: inline-block;
+	 vertical-align: top;
+}

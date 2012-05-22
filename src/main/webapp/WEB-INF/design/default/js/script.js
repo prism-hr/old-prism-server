@@ -167,6 +167,9 @@ $(document).ready(function()
 	  	case "tool-documents":
 	  		sectionId = "documents-H2";
 	  		break;
+			case "tool-references":
+	  		sectionId = "referee-H2";
+	  		break;
 	  	default:
 	  		return false;
 	  }
@@ -185,9 +188,8 @@ $(document).ready(function()
 		  }
 	  });
 		
-		$.scrollTo('#'+sectionId, 900);
+		$.scrollTo('#'+sectionId, 1000);
 		return false;
-		
   });
 
 
@@ -234,7 +236,9 @@ function msg(message, type)
   $msg.fadeIn(700).delay(3000).fadeOut(700);
 }
 
+// ------------------------------------------------------------------------------
 // Back to top functionality, project manager style.
+// ------------------------------------------------------------------------------
 function backToTop()
 {
 	$.scrollTo('#wrapper', 900);

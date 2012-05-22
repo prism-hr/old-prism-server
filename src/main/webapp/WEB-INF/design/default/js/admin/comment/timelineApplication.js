@@ -1,5 +1,17 @@
 $(document).ready(function(){
 
+	$('#application').html("");
+	$.get("/pgadmissions/comments/view",
+			{
+				id:  $('#applicationId').val(),				
+				cacheBreaker: new Date().getTime() 
+			},
+			function(data) {
+				$('#timeline').html(data);
+			}
+	);
+	
+	
 	$('#timelineBtn').click(function() {
 		$('#application').html("");
 		$.get("/pgadmissions/comments/view",

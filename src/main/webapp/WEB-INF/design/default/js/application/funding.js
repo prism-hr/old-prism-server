@@ -41,7 +41,7 @@ $(document).ready(function(){
 	$('#addFundingButton').click(function(){
 		if( $("#acceptTermsFDValue").val() =='NO'){ 
 			//$("span[name='nonAcceptedFD']").html('You must agree to the terms and conditions');
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}
 		else{
 			$("span[name='nonAcceptedFD']").html('');

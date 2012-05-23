@@ -217,4 +217,4 @@ table.data-table .editButton{
 
 /* Deleted uploads. */
 #uploadFields.upload-delete a { display: none !important; }
-#uploadFields.upload-delete input { display: inline-block !important; }
+#uploadFields.upload-delete input[type="file"] { display: inline-block !important; }

@@ -242,16 +242,27 @@ public class PersonalDetails extends DomainObject<Integer> {
 	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-
-	public Boolean isEnglishFirstLanguage() {
+	
+	//convenience metod for Freemarker	
+	public boolean isEnglishFirstLanguageSet() {
+		return (englishFirstLanguage != null);
+	}	
+	
+	public Boolean getEnglishFirstLanguage() {
 		return englishFirstLanguage;
 	}
+
 
 	public void setEnglishFirstLanguage(Boolean englishFirstLanguage) {
 		this.englishFirstLanguage = englishFirstLanguage;
 	}
-
-	public Boolean isRequiresVisa() {
+	
+	//convenience metod for Freemarker
+	public boolean isRequiresVisaSet() {
+		return (requiresVisa != null);
+	}
+	
+	public Boolean getRequiresVisa() {
 		return requiresVisa;
 	}
 

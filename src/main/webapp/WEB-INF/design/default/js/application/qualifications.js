@@ -169,11 +169,15 @@ $(document).ready(function(){
 	addToolTips();
 		
 	$('#uploadFields').on('change','#proofOfAward', function(event){	
-		ajaxProofOfAwardDelete();
-		$('#progress').html("uploading file...");
-		$('#proofOfAward').attr("readonly", "readonly");
-		ajaxProofOfAwardUpload();
-		$('#proofOfAward').removeAttr("readonly");
+		if(this.files[0].size < 10485760){
+			ajaxProofOfAwardDelete();
+			$('#progress').html("uploading file...");
+			$('#proofOfAward').attr("readonly", "readonly");
+			ajaxProofOfAwardUpload();
+			$('#proofOfAward').removeAttr("readonly");
+		}else{
+			 alert("Sorry, document must be at most 10MB.");
+		 }
 	});
 	
 	

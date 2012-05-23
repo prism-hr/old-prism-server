@@ -202,9 +202,9 @@ public class PdfDocumentBuilder {
 		addGivenNationality(document, "Paternal Guardian Nationality", application.getPersonalDetails().getPaternalGuardianNationalities());
 
 		document.add(new Paragraph("Language", smallBoldFont));
-		if (application.getPersonalDetails().isEnglishFirstLanguage() != null && application.getPersonalDetails().isEnglishFirstLanguage().booleanValue()) {
+		if (application.getPersonalDetails().getEnglishFirstLanguage() != null && application.getPersonalDetails().getEnglishFirstLanguage().booleanValue()) {
 			document.add(new Paragraph("Is English your first language? yes."));
-		} else if (application.getPersonalDetails().isEnglishFirstLanguage() != null) {
+		} else if (application.getPersonalDetails().getEnglishFirstLanguage() != null) {
 			document.add(new Paragraph("Is English your first language? no."));
 		}
 		document.add(new Paragraph("Residence", smallBoldFont));
@@ -215,9 +215,9 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Country of Residence: " + application.getPersonalDetails().getResidenceCountry().getName()));
 		}
 
-		if (application.getPersonalDetails().isRequiresVisa() != null && application.getPersonalDetails().isRequiresVisa().booleanValue()) {
+		if (application.getPersonalDetails().getRequiresVisa() != null && application.getPersonalDetails().getRequiresVisa().booleanValue()) {
 			document.add(new Paragraph("Do you require a visa to study in the UK? yes."));
-		} else if (application.getPersonalDetails().isRequiresVisa() != null ) {
+		} else if (application.getPersonalDetails().getRequiresVisa() != null ) {
 			document.add(new Paragraph("Do you require a visa to study in the UK? no."));
 		}
 

@@ -161,7 +161,24 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("personalDetails.ethnicity.notempty", mappingResult.getFieldError("ethnicity").getCode());
 	}
-
+	
+	@Test
+	public void shouldRejectIfRequiresVisaIsNull() {
+		personalDetails.setRequiresVisa(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "requiresVisa");
+		personalDetailValidator.validate(personalDetails, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("personalDetails.requiresVisa.notempty", mappingResult.getFieldError("requiresVisa").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfEnglishFirstLanguageIsNull() {
+		personalDetails.setEnglishFirstLanguage(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(personalDetails, "englishFirstLanguage");
+		personalDetailValidator.validate(personalDetails, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("personalDetails.englishFirstLanguage.notempty", mappingResult.getFieldError("englishFirstLanguage").getCode());
+	}
 	@Before
 	public void setup() {
 		Country nationality = new Country();
@@ -177,6 +194,8 @@ public class PersonalDetailsValidatorTest {
 				.phoneNumber("abc")//
 				.ethnicity(new EthnicityBuilder().id(23).toEthnicity())//
 				.disability(new DisabilityBuilder().id(23213).toDisability())//
+				.requiresVisa(true)
+				.englishFirstLanguage(true)
 				.toPersonalDetails();
 
 		personalDetailValidator = new PersonalDetailsValidator();

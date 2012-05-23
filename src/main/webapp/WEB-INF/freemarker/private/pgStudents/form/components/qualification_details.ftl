@@ -79,7 +79,7 @@
   		
   	</#if>
   
-  	<input type="hidden" id="qualificationId" name="qualificationId" value="${(qualification.id?html)!}"/>
+  	<input type="hidden" id="qualificationId" name="qualificationId" value="${(qualification.id?string('#######'))!}"/>
   	
   	<form>
 		<div class="section-info-bar">

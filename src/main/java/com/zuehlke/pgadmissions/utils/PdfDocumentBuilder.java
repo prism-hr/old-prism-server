@@ -202,9 +202,9 @@ public class PdfDocumentBuilder {
 		addGivenNationality(document, "Paternal Guardian Nationality", application.getPersonalDetails().getPaternalGuardianNationalities());
 
 		document.add(new Paragraph("Language", smallBoldFont));
-		if (application.getPersonalDetails().isEnglishFirstLanguage()) {
+		if (application.getPersonalDetails().isEnglishFirstLanguage() != null && application.getPersonalDetails().isEnglishFirstLanguage().booleanValue()) {
 			document.add(new Paragraph("Is English your first language? yes."));
-		} else {
+		} else if (application.getPersonalDetails().isEnglishFirstLanguage() != null) {
 			document.add(new Paragraph("Is English your first language? no."));
 		}
 		document.add(new Paragraph("Residence", smallBoldFont));
@@ -215,9 +215,9 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("Country of Residence: " + application.getPersonalDetails().getResidenceCountry().getName()));
 		}
 
-		if (application.getPersonalDetails().isRequiresVisa()) {
+		if (application.getPersonalDetails().isRequiresVisa() != null && application.getPersonalDetails().isRequiresVisa().booleanValue()) {
 			document.add(new Paragraph("Do you require a visa to study in the UK? yes."));
-		} else {
+		} else if (application.getPersonalDetails().isRequiresVisa() != null ) {
 			document.add(new Paragraph("Do you require a visa to study in the UK? no."));
 		}
 
@@ -429,7 +429,8 @@ public class PdfDocumentBuilder {
 		if (doc != null) {
 			document.newPage();
 			document.add(new Paragraph(doc.getType().getDisplayValue(), smallBoldFont));
-			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg") || doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
+			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg")
+					|| doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
 				Image image = Image.getInstance(doc.getContent());
 				document.add(image);
 			} else if (doc.getFileName().endsWith(".txt")) {
@@ -443,7 +444,8 @@ public class PdfDocumentBuilder {
 		if (doc != null) {
 			document.newPage();
 			document.add(new Paragraph(doc.getType().getDisplayValue(), smallBoldFont));
-			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg") || doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
+			if (doc.getFileName().endsWith(".jpg") || doc.getFileName().endsWith("bmp") || doc.getFileName().endsWith("jpeg")
+					|| doc.getFileName().endsWith("png") || doc.getFileName().endsWith(".tiff") || doc.getFileName().endsWith(".tif")) {
 				Image image = Image.getInstance(doc.getContent());
 				document.add(image);
 			} else if (doc.getFileName().endsWith(".txt")) {

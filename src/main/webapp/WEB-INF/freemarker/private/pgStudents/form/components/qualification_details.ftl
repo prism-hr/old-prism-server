@@ -318,8 +318,7 @@
 					<span id="qualUploadedDocument" >
 						<input type="hidden" id="document_PROOF_OF_AWARD" value = "${(qualification.proofOfAward.id?string('######'))!}"/>
 						<#if qualification.proofOfAward??> 
-							<a class="docName" href="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>"
-								data-oldlink="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>">
+							<a class="docName" href="<@spring.url '/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}'/>">
 									${(qualification.proofOfAward.fileName?html)!}</a>
 							<a name="editPOADoc" data-desc="Change Proof Of Award" id="poaDOC" class="button-edit button-hint">edit</a>
 						</#if>

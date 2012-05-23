@@ -40,9 +40,6 @@ $(document).ready(function(){
 			{
 				$('#uploadFields').addClass('upload-delete');
 				$('#uploadFields a.button-edit').hide();
-				/*
-				$('#uploadFields a.docName').removeAttr('href');
-				*/
 			}
 		}
 		else
@@ -59,10 +56,6 @@ $(document).ready(function(){
 			{
 				$('#uploadFields').removeClass('upload-delete');
 				$('#uploadFields a.button-edit').show();
-				/*
-				$('#uploadFields a.docName').attr('href', 
-				$('#uploadFields a.docName').attr('data-oldlink'));
-				*/
 			}
 		}
 		
@@ -231,46 +224,44 @@ function ajaxProofOfAwardDelete(){
 }
 function ajaxProofOfAwardUpload()
 {	
-	
-	$("#progress").ajaxStart(function(){
-		$(this).show();
-	})
-	.ajaxComplete(function(){
-		$(this).hide();
-		$('#progress').html("");
-		
-	});
-
-	$.ajaxFileUpload
-	(
+	// Showing/hiding progress bar when we're uploading the file via AJAX.	
+	$("#progress").ajaxStart(function()
 		{
-			url:'/pgadmissions/documents/async',
-			secureuri:false,
-			
-			fileElementId:'proofOfAward',	
-			dataType:'text',
-			data:{type:'PROOF_OF_AWARD'},
-			success: function (data)
-			{	
-				//console.log(data);
-				
-				if ($(data).find('span.invalid').length == 0)
-				{
-					$('#qualUploadedDocument').html(data);
-					$('#qualUploadedDocument').show();
-					// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
-					$('#uploadFields').addClass('uploaded');
-					$('span[name="supportingDocumentSpan"] a.button-edit')
-							.attr({'id':'editQualiPOA','data-desc':'Edit Proof Of Award'});
-				}
-				else
-				{
-					$('#qualUploadedDocument').find('span.invalid').remove();
-					$('#qualUploadedDocument').append(data);
-				}
-				
+			$(this).show();
+		})
+		.ajaxComplete(function()
+		{
+			$(this).hide();
+			$('#progress').html("");
+		}
+	);
+
+	// Remove any previous error messages.
+	$('#qualUploadedDocument').find('span.invalid').remove();
+
+	// Functionality for uploading files via AJAX (immediately on selection).
+	$.ajaxFileUpload(
+	{
+		url:            '/pgadmissions/documents/async',
+		secureuri:      false,
+		fileElementId:  'proofOfAward',	
+		dataType:       'text',
+		data:           { type: 'PROOF_OF_AWARD' },
+		success: function(data)
+		{	
+			if ($(data).find('span.invalid').length == 0)
+			{
+				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
+				$('#qualUploadedDocument').html(data);
+				$('#qualUploadedDocument').show();
+				$('#uploadFields').addClass('uploaded');
+				$('span[name="supportingDocumentSpan"] a.button-edit').attr({'id':'editQualiPOA','data-desc':'Edit Proof Of Award'});
+			}
+			else
+			{
+				$('#qualUploadedDocument').append(data);
 			}
 		}
-	)
+	});
 
 }

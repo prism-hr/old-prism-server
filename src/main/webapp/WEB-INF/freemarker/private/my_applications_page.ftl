@@ -61,6 +61,7 @@
 					            	<col/>
 					            	<col/>
 					            	<col style="" />
+					            	<col style="" />
 					            	<col style="width: 40px" />
 					            </colgroup>
 					          	<thead>
@@ -123,9 +124,7 @@
 								      				</#if>      												
 							                  	</select>
 							                </td>
-							                <td class="centre">
-												${(application.submittedDate?string("dd MMM yyyy"))!}
-							               	</td>							  
+							                <td class="centre">${(application.submittedDate?string("dd MMM yyyy"))!}</td>							  
 							                <td class="centre"><input type="checkbox" name="appDownload" id="appDownload_${application.id?string("######")}"/></td>
 						              	</tr>
 					              	</#list>

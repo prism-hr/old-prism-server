@@ -58,8 +58,8 @@ public class PersonalDetailsMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(personalDetails.getGender(), reloadedDetails.getGender());
 		assertEquals(personalDetails.getLastName(), reloadedDetails.getLastName());
 		assertEquals(personalDetails.getResidenceCountry(), reloadedDetails.getResidenceCountry());
-		assertTrue(reloadedDetails.isRequiresVisa());
-		assertTrue(reloadedDetails.isEnglishFirstLanguage());
+		assertTrue(reloadedDetails.getRequiresVisa());
+		assertTrue(reloadedDetails.getEnglishFirstLanguage());
 		assertEquals(personalDetails.getPhoneNumber(), reloadedDetails.getPhoneNumber());
 		
 

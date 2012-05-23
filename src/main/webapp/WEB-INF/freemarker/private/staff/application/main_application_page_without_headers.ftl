@@ -2,7 +2,9 @@
 <#import "/spring.ftl" as spring />
 <!--
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+-->
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
+<!--
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/field_controls.css' />"/>
 -->
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/additional_information.css' />"/>

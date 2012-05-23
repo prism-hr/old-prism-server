@@ -35,6 +35,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	private static final long serialVersionUID = -7671357234815343496L;
 	
+	@ManyToOne
+	@JoinColumn(name = "app_administrator_id")
+	private RegisteredUser applicationAdministrator;
+	
 	@OneToOne( cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "rejection_id")
@@ -575,6 +579,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setLatestApprovalRound(ApprovalRound latestApprovalRound) {
 		this.latestApprovalRound = latestApprovalRound;
+	}
+
+	public RegisteredUser getApplicationAdministrator() {
+		return applicationAdministrator;
+	}
+
+	public void setApplicationAdministrator(RegisteredUser applicationAdministrator) {
+		this.applicationAdministrator = applicationAdministrator;
 	}
 
 }

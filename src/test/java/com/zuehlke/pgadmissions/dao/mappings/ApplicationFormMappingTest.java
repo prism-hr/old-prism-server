@@ -58,12 +58,15 @@ import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.domain.enums.Gender;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
+import cucumber.annotation.lu.a;
+
 public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 
 	private RegisteredUser user;
 	private Program program;
 	private RegisteredUser reviewerUser;
 	private RegisteredUser interviewerUser;
+	private RegisteredUser applicationAdmin;
 
 	@Test
 	public void shouldSaveAndLoadApplicationForm() throws ParseException {
@@ -75,6 +78,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setProgram(program);		
 		application.setStatus(ApplicationFormStatus.APPROVED);
 		application.setProjectTitle("bob");
+		application.setApplicationAdministrator(applicationAdmin);
 
 		assertNotNull(application.getPersonalDetails());
 		assertNull(application.getId());
@@ -101,6 +105,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertNotNull(application.getPersonalDetails());
 		assertEquals(lastUpdatedDate, application.getLastUpdated());
 		assertNull(application.getPersonalDetails().getId());
+		assertEquals(applicationAdmin, application.getApplicationAdministrator());
 	}
 
 	@Test
@@ -430,9 +435,12 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		interviewerUser = new RegisteredUserBuilder().firstName("brad").lastName("brady").email("brady@test.com").username("brady").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 
+		applicationAdmin = new RegisteredUserBuilder().firstName("joan").lastName("arc").email("act@test.com").username("arc").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		
 		program = new ProgramBuilder().code("doesntexist").title("another title").toProgram();
 
-		save(user, reviewerUser, program, interviewerUser);
+		save(user, reviewerUser, program, interviewerUser, applicationAdmin);
 
 		flushAndClearSession();
 	}

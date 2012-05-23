@@ -60,8 +60,13 @@ public class ApplicationFormBuilder {
 	private Interview latestInterview;
 	private ReviewRound latestReviewRound;
 	private ApprovalRound latestApprovalRound;
-	private Rejection rejection;
+	private Rejection rejection;	
+	private RegisteredUser applicationAdministrator;
 	
+	public ApplicationFormBuilder applicationAdministrator(RegisteredUser applicationAdministrator) {
+		this.applicationAdministrator = applicationAdministrator;
+		return this;
+	}
 	
 	public ApplicationFormBuilder rejection(Rejection rejection) {
 		this.rejection = rejection;
@@ -294,6 +299,7 @@ public class ApplicationFormBuilder {
 		application.setLatestApprovalRound(latestApprovalRound);
 		application.setLatestReviewRound(latestReviewRound);
 		application.setRejection(rejection);
+		application.setApplicationAdministrator(applicationAdministrator);
 		return application;
 	}
 }

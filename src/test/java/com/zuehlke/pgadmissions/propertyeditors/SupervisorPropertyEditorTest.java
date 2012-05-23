@@ -7,45 +7,87 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class SupervisorPropertyEditorTest {
 
 	private UserService userServiceMock;
 	private SupervisorPropertyEditor editor;
+	private ApplicationsService applicationsServiceMock;
 
 
 	@Test	
-	public void shouldCreateNewSupervisorWithUserAndSetAsValue(){
+	public void shouldCreateNewSupervisorWithUserAndSetAsValueIfUserNotSupervisorInLatestRoundOfApplication(){
 		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-		EasyMock.replay(userServiceMock);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(applicationForm);
+		EasyMock.replay(userServiceMock, applicationsServiceMock);
 		
-		editor.setAsText("1");
+		editor.setAsText("2|1");
 		Supervisor supervisor = (Supervisor) editor.getValue();
 		assertNull(supervisor.getId());
 		assertEquals(user, supervisor.getUser());
 		
+	}
+	
+	@Test	
+	public void shouldReturnExistingSupervisorIfUserSupervisorInLatestRoundOfApplication(){
+		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		Supervisor supervisor = new SupervisorBuilder().id(3).user(user).toSupervisor();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).toApprovalRound();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).latestApprovalRound(approvalRound).toApplicationForm();
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(applicationForm);
+		EasyMock.replay(userServiceMock, applicationsServiceMock);
 		
+		editor.setAsText("2|1");
+		Supervisor returnedSupervisor = (Supervisor) editor.getValue();
+		assertEquals(supervisor, returnedSupervisor);
+		
+		
+	}
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldThrowIllegalArgumentExceptionIfNotCorrectFormat(){			
+		editor.setAsText("1");			
+	}
+	
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldThrowIllegalArgumentExceptionIfAppFormIdNotCorretFormat(){			
+		editor.setAsText("bob|1");			
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void shouldThrowIllegalArgumentExceptionIfIdNotInteger(){			
-		editor.setAsText("bob");			
+	public void shouldThrowIllegalArgumentExceptionIfUseerIddNotCorretFormat(){			
+		editor.setAsText("2|b");			
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldThrowIllegalArgumentExceptionIfNoSuchUser(){			
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(null);
 		EasyMock.replay(userServiceMock);		
-		editor.setAsText("1");
+		editor.setAsText("2|1");
+	}
+	
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldThrowIllegalArgumentExceptionIfNoApplicationForm(){			
+		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(null);
+		EasyMock.replay(applicationsServiceMock);		
+		editor.setAsText("2|1");
 	}
 	
 	@Test	
-	public void shouldReturNullIfIdIsNull(){			
+	public void shouldReturNullIfStringIsNull(){			
 		editor.setAsText(null);
 		assertNull(editor.getValue());		
 	}
@@ -65,6 +107,7 @@ public class SupervisorPropertyEditorTest {
 	@Before
 	public void setup(){
 		userServiceMock = EasyMock.createMock(UserService.class);
-		editor = new SupervisorPropertyEditor(userServiceMock);
+		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		editor = new SupervisorPropertyEditor(userServiceMock, applicationsServiceMock);
 	}
 }

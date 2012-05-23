@@ -85,7 +85,9 @@ public class ApprovalServiceTest {
 	public void shouldFailIfApplicationInInvalidState() {
 		ApplicationFormStatus[] values = ApplicationFormStatus.values();
 		for (ApplicationFormStatus status : values) {
-			if (status != ApplicationFormStatus.VALIDATION && status != ApplicationFormStatus.APPROVAL) {
+			if (status != ApplicationFormStatus.VALIDATION && status != ApplicationFormStatus.APPROVAL
+					&& status != ApplicationFormStatus.REVIEW
+					&& status != ApplicationFormStatus.INTERVIEW) {
 				ApplicationForm application = new ApplicationFormBuilder().id(3).status(status).toApplicationForm();
 				boolean threwException = false;
 				try {

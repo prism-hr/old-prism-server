@@ -53,6 +53,8 @@ public class ApprovalService {
 		ApplicationFormStatus status = application.getStatus();
 		switch (status) {
 		case VALIDATION:
+		case REVIEW:
+		case INTERVIEW:
 		case APPROVAL:
 			break;
 		default:

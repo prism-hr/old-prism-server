@@ -254,7 +254,7 @@ function ajaxProofOfAwardUpload()
 			{	
 				//console.log(data);
 				
-				if ($(html).find('span.invalid').length == 0)
+				if ($(data).find('span.invalid').length == 0)
 				{
 					$('#qualUploadedDocument').html(data);
 					$('#qualUploadedDocument').show();

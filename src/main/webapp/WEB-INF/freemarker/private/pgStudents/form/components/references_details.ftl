@@ -70,7 +70,7 @@
   	</#if>
   	
   	<input type="hidden" id="refereeId" name="refereeId" value="${(referee.id?string('#######'))!}" />
-  	  <#if  applicationForm.referees?size &lt; 3 || referee.id??>
+
   	<form>
   	
  				<#if errorCode?? && errorCode=="true">
@@ -98,7 +98,7 @@
         		<span class="plain-label">First Name<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'referee.firstname'/>"></span>
         		<div class="field">
-        			<#if referee.editable>
+        			<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
         				<input class="full" id="ref_firstname" name="ref_firstname" value="${(referee.firstname?html)!}"/>  
 
                 		
@@ -122,7 +122,7 @@
         		<span class="plain-label">Last Name<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'referee.lastname'/>"></span>
         		<div class="field">
-	        		<#if referee.editable>
+	        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
 	        			<input class="full" id="ref_lastname" name="ref_lastname" value="${(referee.lastname?html)!}"/>	          
 
 
@@ -150,7 +150,7 @@
         		<span class="plain-label">Employer<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'referee.employer'/>"></span>
         		<div class="field">
-        			<#if referee.editable>
+        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
           				<input class="full" id="ref_employer" name="ref_employer" value="${(referee.jobEmployer?html)!}"/> 
 
                 		             
@@ -173,7 +173,7 @@
         		<span class="plain-label">Position<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'referee.position'/>"></span>
         		<div class="field">
-        		<#if referee.editable>
+        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
           			<input class="full" id="ref_position" name="ref_position" value="${(referee.jobTitle?html)!}"/>
  
   
@@ -204,7 +204,7 @@
         		<span class="plain-label">Address<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'referee.address'/>"></span>
         		<div class="field">
-        		<#if referee.editable>
+        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
           			<textarea class="max" rows="6" cols="70" maxlength='200' id="ref_address_location" 
           				name="ref_address_location">${(referee.addressLocation?html)!}</textarea> 
  
@@ -230,7 +230,7 @@
         		 <span class="hint" data-desc="<@spring.message 'referee.country'/>"></span>
         		<div class="field">
         		<select class="full" name="ref_address_country" id="ref_address_country"
-                <#if !referee.editable>
+                <#if !referee.editable || (!referee.id?? &&  applicationForm.referees?size &gt;= 3)>
                                 disabled="disabled"
                 </#if>>
                 <option value="">Select...</option>
@@ -264,7 +264,7 @@
         		<span class="plain-label">Email<em>*</em></span>
         		 <span class="hint" data-desc="<@spring.message 'referee.email'/>"></span>
         		<div class="field">
-        		<#if referee.editable>
+        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
           			<input class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}"/> 
 
                 	                
@@ -289,7 +289,7 @@
         		<span class="plain-label">Telephone<em>*</em></span>
 				<span class="hint" data-desc="<@spring.message 'referee.telephone'/>"></span>
         		<div class="field">
-        			<#if referee.editable>
+        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
         			<input class="full" id="refPhoneNumber" name="refPhoneNumber" value="${(referee.phoneNumber?html)!}"/> 
  
                 	<#else>
@@ -313,7 +313,7 @@
         		<span class="plain-label">Skype Name</span>
         		<span class="hint" data-desc="<@spring.message 'referee.skype'/>"></span>
         		<div class="field">
-        			<#if referee.editable>
+        			<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
         			<input class="full" id="ref_messenger" name="ref_messenger" value="${(referee.messenger?html)!}"/> 
                      
                 	<#else>
@@ -339,13 +339,13 @@
                 </div>
         	</div>
 		</#if>
-		<#if referee.editable>
+		<#if referee.editable >
       		<!-- Add another button -->
       		<div class="row">
       			<div class="field">
-      				<#if !referee.id??>
+      				<#if !referee.id?? && applicationForm.referees?size &lt; 3>
       					<a id="addReferenceButton" class="button blue">Submit</a>
-      				<#else>
+      				<#elseif referee.id??>
       					<a id="addReferenceButton" class="button blue">Update Reference</a>
       				</#if>
       			</div>
@@ -353,7 +353,7 @@
       	</#if>		
     	</div>
 	
-       <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED')>
+       <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED') && (referee.id?? || applicationForm.referees?size &lt; 3)>
        <div class="terms-box">
 			<div class="row">
 				<span class="terms-label">
@@ -382,14 +382,7 @@
     	</div>
 
 	</form>
-	<#else>
-		<form>
-		<div class="buttons">    	
-            <a id="refereeCloseButton" class="button blue">Close</a>        	
-    	</div>
-    	</form>
-    
-	</#if>
+	
 </div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/referee.js'/>"></script>

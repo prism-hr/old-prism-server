@@ -18,11 +18,13 @@ table tbody td { background: url(../../../images/bg_table_row.jpg) repeat-x 0 10
 table select { width: 100%; }
 table thead th.headerSortDown, table thead th.headerSortUp { background-color: #06C; color: #FFF; }
 
-#timelineview{
-	clear:both;
+#timelineview {
+	clear: both;
+	margin-top: 10px;
 }
-#application{
+#application {
 	border: 1px solid #999;
-	height:600px;
-	overflow:scroll;
+	height: 600px;
+	overflow: auto;
 }
+#application div.buttons { display: none !important; }

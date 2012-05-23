@@ -27,4 +27,9 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 	height: 600px;
 	overflow: auto;
 }
+#application div.row span.admin_row_label,
+#application div.row span.admin_header { line-height: 1.2; }
+#application div.row span.admin_row_label { margin: 4px 0; }
+#application div.row .field { line-height: 1.2; margin: 4px 0 4px 235px; }
+
 #application div.buttons { display: none !important; }

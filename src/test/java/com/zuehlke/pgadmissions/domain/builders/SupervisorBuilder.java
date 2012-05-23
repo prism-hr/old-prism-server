@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
@@ -15,6 +16,7 @@ public class SupervisorBuilder {
 	private String lastname;
 	private RegisteredUser user;
 	private Date lastModified;
+	private ApprovalRound approvalRound;
 
 	public SupervisorBuilder id(Integer id) {
 		this.id = id;
@@ -41,6 +43,11 @@ public class SupervisorBuilder {
 		return this;
 	}
 	
+	public SupervisorBuilder approvalRound(ApprovalRound approvalRound) {
+		this.approvalRound = approvalRound;
+		return this;
+	}
+	
 	
 	public SupervisorBuilder lastModified(Date lastModified) {
 		this.lastModified = lastModified;
@@ -61,6 +68,7 @@ public class SupervisorBuilder {
 		supervisor.setAwareSupervisor(awareSupervisor);
 		supervisor.setUser(user);
 		supervisor.setLastNotified(lastModified);
+		supervisor.setApprovalRound(approvalRound);
 		return supervisor;
 	}
 }

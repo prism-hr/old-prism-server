@@ -48,7 +48,7 @@ $(document).ready(function()
 		}
 	});
 	$('#addReferenceButton').click(function(){
-		if( $("#acceptTermsRDValue").val() =='NO'){ 
+		if( $('#acceptTermsRDValue').length != 0  && $("#acceptTermsRDValue").val() =='NO'){ 
 			//$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');
 			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}

@@ -288,14 +288,25 @@
                     	<label class="plain-label">Is English your first language?<em>*</em></label>
                    		<span class="hint" data-desc="<@spring.message 'personalDetails.language.section'/>"></span>
                    		<div class="field">
-                   			<input type="checkbox" name="englishFirstLanguageCB" id="englishFirstLanguageCB"
-                   			<#if personalDetails.isEnglishFirstLanguage()>
-                                      checked="checked"
-                            </#if>
-                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
-                                      disabled="disabled"
-                            </#if>
-                           />
+                   			<label>
+                   				<input type="radio" name="englishFirstLanguage" id="englishFirstLanguageYes" value="true"
+	                   			<#if personalDetails.isEnglishFirstLanguage()>
+	                                      checked="checked"
+	                            </#if>
+	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+	                                      disabled="disabled"
+	                            </#if>/> Yes
+                            </label>
+                            
+                            <label>
+	                            <input type="radio" name="englishFirstLanguage" id="englishFirstLanguageNo" value="false"
+	                   			<#if  !personalDetails.isEnglishFirstLanguage()>
+	                                      checked="checked"
+	                            </#if>
+	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+	                                      disabled="disabled"
+	                            </#if>/> No
+                            </label>
                         </div>
            		</div>
 				                              
@@ -333,15 +344,27 @@
 					<div class="row">
 						 <label class="plain-label">Do you require a visa to study in the UK?<em>*</em></label>
                    		<span class="hint"></span>
-                   		<div class="field">
-                   			<input type="checkbox" name="requiresVisaCB" id="requiresVisaCB"
-                   			<#if personalDetails.isRequiresVisa()>
-                                      checked="checked"
-                            </#if>
-                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
-                                      disabled="disabled"
-                            </#if>/>
-                   			<input type="hidden" name="requiresVisa" id="requiresVisa"/>
+                   		<div class="field">                   			
+                   			<label>
+                   				<input type="radio" name="requiresVisa" id="requiresVisaYes" value="true"
+	                   			<#if  personalDetails.isRequiresVisa()>
+	                                      checked="checked"
+	                            </#if>
+	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+	                                      disabled="disabled"
+	                            </#if>/> Yes
+                            </label>
+                            
+                            <label>
+	                            <input type="radio" name="requiresVisa" id="requiresVisaYes" value="false"
+	                   			<#if !personalDetails.isRequiresVisa()>
+	                                      checked="checked"
+	                            </#if>
+	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
+	                                      disabled="disabled"
+	                            </#if>/> No
+                            </label>
+                   			
                    		</div>
 					</div>
 				</div>

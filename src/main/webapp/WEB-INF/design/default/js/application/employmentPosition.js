@@ -58,7 +58,7 @@ $(document).ready(function(){
 	});
 
 	$('#addPosisionButton').click(function(){
-		if( $("#acceptTermsEPValue").val() =='NO'){ 
+		if($('#acceptTermsEPValue').length != 0  &&  $("#acceptTermsEPValue").val() =='NO'){ 
 			//$("span[name='nonAcceptedEP']").html('You must agree to the terms and conditions');
 			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}

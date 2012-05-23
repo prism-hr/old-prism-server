@@ -131,10 +131,7 @@ $(document).ready(function(){
 	// To make uncompleted functionalities disabled
 	$(".disabledEle").attr("disabled", "disabled");	
 	
-	
-	/// delete collection items
-
-		
+	/// delete collection items		
 	$("#existingCandidateNationalities").on("click", "a", function(){	
 		$(this).parent("div").remove();
 		
@@ -203,15 +200,7 @@ function postPersonalDetailsData(message){
 		$('#existingPaternalNationalities').append(html);
 	}
 	
-	var englishFirstLanguage = false;
-	if ($('#englishFirstLanguageCB:checked').val() !== undefined) {
-		englishFirstLanguage = true;
-	}
-	
-	var requiresVisa = false;
-	if ($('#requiresVisaCB:checked').val() !== undefined) {
-		requiresVisa = true;
-	}
+
 	//general post data
 	var postData ={ 
 			firstName: $("#firstName").val(), 
@@ -224,9 +213,7 @@ function postPersonalDetailsData(message){
 			phoneNumber: $('#pd_telephone').val(),
 			personalDetailsId: $("#personalDetailsId").val(), 
 			application: $('#applicationId').val(),
-			applicationId: $('#applicationId').val(),		
-			englishFirstLanguage:englishFirstLanguage,		
-			requiresVisa: requiresVisa,		
+			applicationId: $('#applicationId').val(),			
 			candidateNationalities:"",
 			maternalGuardianNationalities:"",
 			paternalGuardianNationalities:"",
@@ -235,6 +222,16 @@ function postPersonalDetailsData(message){
 			message: message
 			
 		};
+	
+
+	if ($('input:radio[name=englishFirstLanguage]:checked').length > 0) {
+		postData.englishFirstLanguage = $('input:radio[name=englishFirstLanguage]:checked').val();
+	}
+	
+
+	if ($('input:radio[name=requiresVisa]:checked').length > 0 ) {
+		postData.requiresVisa = $('input:radio[name=requiresVisa]:checked').val();
+	}
 	
 	var gender =  $("input[name='genderRadio']:checked").val();
 	if(gender){

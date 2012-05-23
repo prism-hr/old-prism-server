@@ -101,7 +101,7 @@ $(document).ready(function(){
 	
 	$('#addQualificationButton').click(function(){
 		
-		if( $("#acceptTermsQDValue").val() =='NO'){
+		if($('#acceptTermsQDValue').length != 0 &&  $("#acceptTermsQDValue").val() =='NO'){
 			
 			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 		}

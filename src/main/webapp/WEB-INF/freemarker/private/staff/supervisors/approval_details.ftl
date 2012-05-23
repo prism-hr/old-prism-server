@@ -144,6 +144,11 @@
 																${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if> (*)
 															</option>
 														</#list>
+														<#list willingToSuperviseUsers as willingUser>									
+															<option value="${applicationForm.id?string("######")}|${willingUser.id?string('#####')}">
+																${willingUser.firstName?html} ${willingUser.lastName?html} <#if !willingUser.enabled> - Pending</#if> (*)
+															</option>
+														</#list>
 													</select>
 												</div>
 											</div>

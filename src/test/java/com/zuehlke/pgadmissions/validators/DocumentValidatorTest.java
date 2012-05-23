@@ -20,7 +20,22 @@ public class DocumentValidatorTest {
 	public void shouldSupportDocument() {
 		assertTrue(documentValidator.supports(Document.class));
 	}
+	
+	@Test
+	public void shouldRejectIfMoreThan10Mb() {
 
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < 11000000; i++ ){
+			sb.append("a");
+		}
+		document.setContent(sb.toString().getBytes());
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(document, "document");
+			
+		documentValidator.validate(document, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("upload.file.toobig",mappingResult.getFieldError("content").getCode());
+	}
+	
 	@Test
 	public void shouldRejectIfFileNameisMissing() {
 		document.setFileName("");
@@ -29,6 +44,20 @@ public class DocumentValidatorTest {
 		documentValidator.validate(document, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("upload.file.missing",mappingResult.getFieldError("fileName").getCode());
+	}
+	
+	@Test
+	public void shouldRejectIfFileNameMoreThan200Chars() {
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < 200; i++ ){
+			sb.append("a");
+		}
+		document.setFileName(sb.toString() + ".pdf");
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(document, "document");
+			
+		documentValidator.validate(document, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("upload.file.toolong",mappingResult.getFieldError("fileName").getCode());
 	}
 	
 	@Test
@@ -59,7 +88,7 @@ public class DocumentValidatorTest {
 
 	@Before
 	public void setup() {
-		document = new DocumentBuilder().fileName("bob.txt").type(DocumentType.CV).toDocument();
+		document = new DocumentBuilder().fileName("bob.pdf").type(DocumentType.CV).toDocument();
 		documentValidator = new DocumentValidator();
 	}
 }

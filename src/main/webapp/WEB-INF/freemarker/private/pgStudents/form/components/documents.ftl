@@ -38,7 +38,7 @@
         		<div class="field" id="psUploadFields">        	
             			<input id="psDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="psUploadedDocument" ><input type="hidden" id="document_PERSONAL_STATEMENT" value = "${(applicationForm.personalStatement.id?string('######'))!}"/>
-			
+				<input type="hidden" name="MAX_FILE_SIZE" value="500" />
                 	  
 					<a href="<@spring.url '/download?documentId=${(applicationForm.personalStatement.id?string("#######"))!}'/>">${(applicationForm.personalStatement.fileName?html)!}</a></span>
 					<span id="psDocumentProgress" style="display: none;" ></span>					

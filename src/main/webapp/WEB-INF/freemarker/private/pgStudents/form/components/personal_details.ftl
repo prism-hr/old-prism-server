@@ -216,7 +216,7 @@
             	 
               
 				<div class="row">
-					<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add Nationality</a></div>
+					<div class="field"><a class="button blue" id="addCandidateNationalityButton">Submit</a></div>
 				</div>
 
     
@@ -245,7 +245,7 @@
             	</div>
               
             	<div class="row">
-              		<div class="field"><a class="button blue" id="addMaternalNationalityButton">Add Nationality</a></div>
+              		<div class="field"><a class="button blue" id="addMaternalNationalityButton">Submit</a></div>
               	</div>
 
               	 
@@ -275,7 +275,7 @@
             	                     
               
             	<div class="row">
-              		<div class="field"><a class="button blue" id="addPaternalNationalityButton">Add Nationality</a></div>
+              		<div class="field"><a class="button blue" id="addPaternalNationalityButton">Submit</a></div>
               	</div>
               	 
             </div>

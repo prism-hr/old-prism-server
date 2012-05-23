@@ -93,11 +93,15 @@ $(document).ready(function(){
 	addToolTips();
 		
 	$('#fundingUploadFields').on('change','#fundingDocument', function(event){	
-		fundingDocumentDelete();
-		$('#fundingDocumentProgress').html("uploading file...");
-		$('#fundingDocument').attr("readonly", "readonly");
-		fundingDocumentUpload();
-		$('#fundingDocument').removeAttr("readonly");
+		if(this.files[0].size < 10485760){
+			fundingDocumentDelete();
+			$('#fundingDocumentProgress').html("uploading file...");
+			$('#fundingDocument').attr("readonly", "readonly");
+			fundingDocumentUpload();
+			$('#fundingDocument').removeAttr("readonly");
+		}else{
+			 alert("Sorry, document must be at most 10MB.");
+		 }
 	});
 	
 		

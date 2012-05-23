@@ -40,16 +40,9 @@ function saveComment(callback){
 function moveToApproval(data){
 
 	var application = $('#applicationId').val();
-	$.post(
-		"/pgadmissions/approval",
-		{
-			application: application
-		}, 
-		function(data) {
-			window.location.href = "/pgadmissions/applications";
-		}
-	);
+	window.location.href = "/pgadmissions/approval/moveToApproval?applicationId=" + application;
 }
+
 function moveToInterview(data){
 	
 	var application = $('#applicationId').val();

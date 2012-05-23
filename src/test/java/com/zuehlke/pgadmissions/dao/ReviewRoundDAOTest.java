@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Date;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,7 +17,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
-public class ReviewBoundDAOTest extends AutomaticRollbackTestCase {
+public class ReviewRoundDAOTest extends AutomaticRollbackTestCase {
 
 
 	private ReviewRoundDAO dao;

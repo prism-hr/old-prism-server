@@ -45,20 +45,28 @@ $(document).ready(function(){
 	});
 	addToolTips();
 
-	$('#cvUploadFields').on('change','#cvDocument', function(event){	
-		cvDelete();
-		$('#cvDocumentProgress').html("uploading file...");
-		$('#cvDocument').attr("readonly", "readonly");
-		cvUpload();
-		$('#cvDocument').removeAttr("readonly");
+	$('#cvUploadFields').on('change','#cvDocument', function(event){
+		if(this.files[0].size < 10485760){
+			cvDelete();
+			$('#cvDocumentProgress').html("uploading file...");
+			$('#cvDocument').attr("readonly", "readonly");
+			cvUpload();
+			$('#cvDocument').removeAttr("readonly");
+		 }else{
+			 alert("Sorry, document must be at most 10MB.");
+		 }
 	});
 	
 	$('#psUploadFields').on('change','#psDocument', function(event){	
-		psDelete();
-		$('#psDocumentProgress').html("uploading file...");
-		$('#psDocument').attr("readonly", "readonly");
-		psUpload();
-		$('#psDocument').removeAttr("readonly");
+		if(this.files[0].size < 10485760){
+			psDelete();
+			$('#psDocumentProgress').html("uploading file...");
+			$('#psDocument').attr("readonly", "readonly");
+			psUpload();
+			$('#psDocument').removeAttr("readonly");
+		}else{
+			 alert("Sorry, document must be at most 10MB.");
+		 }
 	});
 	
 	

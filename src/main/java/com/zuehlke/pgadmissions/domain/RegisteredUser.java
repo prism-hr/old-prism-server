@@ -442,6 +442,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return false;
 
 	}
+	
 	public boolean isInterviewerOfApplicationForm(ApplicationForm form) {
 		Interview latestInterview = form.getLatestInterview();
 		if (latestInterview != null) {
@@ -455,6 +456,20 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	}
 
+	
+	public boolean isSupervisorOfApplicationForm(ApplicationForm form) {
+		ApprovalRound approvalRound = form.getLatestApprovalRound();
+		if (approvalRound != null) {
+			for (Supervisor supervisor : approvalRound.getSupervisors()) {
+				if (supervisor != null && this.equals(supervisor.getUser())) {
+					return true;
+				}
+			}
+		}
+		return false;
+		
+	}
+	
 	public boolean isInterviewerOfProgram(Program program) {
 		for (RegisteredUser interviewer : program.getInterviewers()) {
 			if (this.equals(interviewer)) {

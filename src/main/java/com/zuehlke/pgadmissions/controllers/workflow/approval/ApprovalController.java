@@ -144,6 +144,12 @@ public abstract class ApprovalController {
 
 		return newUsers;
 	}
+	
+	@ModelAttribute("willingToSuperviseUsers")
+	public List<RegisteredUser> getWillingToSuperviseusers(@RequestParam Integer applicationId) {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		return applicationForm.getUsersWillingToSupervise();
+	}
 
 	@ModelAttribute("previousSupervisors")
 	public List<RegisteredUser> getPreviousSupervisors(@RequestParam Integer applicationId, @RequestParam(required = false) List<Integer> pendingSupervisors) {

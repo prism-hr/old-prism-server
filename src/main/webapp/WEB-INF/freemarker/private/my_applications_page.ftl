@@ -60,7 +60,7 @@
 					            	<col/>
 					            	<col/>
 					            	<col/>
-					            	<col style="width: 90px" />
+					            	<col style="" />
 					            	<col style="width: 40px" />
 					            </colgroup>
 					          	<thead>
@@ -84,7 +84,7 @@
 							                <td name="idColumn">${application.id?string("######")}</td>
 							                <td class="applicant-name">${application.applicant.firstName} ${application.applicant.lastName}</td>
 							                <td>${application.program.code} - ${application.program.title}</td>								                
-							               	<td id="statusColumn" class="centre" name="statusColumn">${application.status.displayValue()}</td>
+							               	<td id="statusColumn" name="statusColumn">${application.status.displayValue()}</td>
 							                <td class="centre">
 							                	<select class="actionType" name="app_[${application.id?string("######")}]">
 							                		<option>Select...</option>

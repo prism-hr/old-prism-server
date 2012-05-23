@@ -141,10 +141,6 @@ section.folding form label.label { font-weight: bold; }
 	color: #AAAAAA;
 }
 
-.upload-delete a{
-	text-decoration: line-through;
-	color: #AAAAAA;
-}
 
 section.folding form .field .max { width: 330px; }
 section.folding form .field .full { width: 240px; }
@@ -210,3 +206,15 @@ table.data-table .editButton{
     vertical-align: middle;
     width: 24px;
 }
+
+
+/* Upload fields - #uploadFields id to be changed to something more generic. */
+#uploadFields a { display: none; } /* hide the displayed name of uploaded files */
+
+/* Show only the file link when a file is uploaded.*/
+#uploadFields.uploaded input { display: none; }
+#uploadFields.uploaded a { display: inline-block; vertical-align: top; }
+
+/* Deleted uploads. */
+#uploadFields.upload-delete a { display: none !important; }
+#uploadFields.upload-delete input { display: inline-block !important; }

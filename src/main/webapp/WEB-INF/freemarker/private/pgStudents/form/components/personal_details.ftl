@@ -290,7 +290,7 @@
                    		<div class="field">
                    			<label>
                    				<input type="radio" name="englishFirstLanguage" id="englishFirstLanguageYes" value="true"
-	                   			<#if personalDetails.isEnglishFirstLanguage()>
+	                   			<#if personalDetails.englishFirstLanguage?? && personalDetails.englishFirstLanguage.booleanValue()>
 	                                      checked="checked"
 	                            </#if>
 	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -300,7 +300,7 @@
                             
                             <label>
 	                            <input type="radio" name="englishFirstLanguage" id="englishFirstLanguageNo" value="false"
-	                   			<#if  !personalDetails.isEnglishFirstLanguage()>
+	                   			<#if personalDetails.englishFirstLanguage?? && !personalDetails.englishFirstLanguage.booleanValue()>
 	                                      checked="checked"
 	                            </#if>
 	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -347,7 +347,7 @@
                    		<div class="field">                   			
                    			<label>
                    				<input type="radio" name="requiresVisa" id="requiresVisaYes" value="true"
-	                   			<#if  personalDetails.isRequiresVisa()>
+	                   			<#if  personalDetails.requiresVisa?? &&  personalDetails.requiresVisa.booleanValue() >
 	                                      checked="checked"
 	                            </#if>
 	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -357,7 +357,7 @@
                             
                             <label>
 	                            <input type="radio" name="requiresVisa" id="requiresVisaYes" value="false"
-	                   			<#if !personalDetails.isRequiresVisa()>
+	                   			<#if  personalDetails.requiresVisa?? &&  !personalDetails.requiresVisa.booleanValue() >
 	                                      checked="checked"
 	                            </#if>
 	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>

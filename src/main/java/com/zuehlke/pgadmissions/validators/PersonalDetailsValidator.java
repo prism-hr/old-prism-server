@@ -45,6 +45,8 @@ public class PersonalDetailsValidator implements Validator {
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "ethnicity", "personalDetails.ethnicity.notempty");
 		
 		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "application", "personalDetails.application.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "englishFirstLanguage", "personalDetails.englishFirstLanguage.notempty");
+		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "requiresVisa", "personalDetails.requiresVisa.notempty");
 	}
 
 	private void validateCandidateNationalities(Object target, Errors errors) {

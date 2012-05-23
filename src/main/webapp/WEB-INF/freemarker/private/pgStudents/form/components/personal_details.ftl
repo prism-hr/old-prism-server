@@ -189,7 +189,7 @@
 			              	  
 			              	  	<div class="nationality-item">
 			              					<label class="full">${nationality.name}</label>  
-			              	  				<input type="hidden" name="candidateNationalities" value='${nationality.id?html}'/>
+			              	  				<input type="hidden" name="candidateNationalities" value='${nationality.id?string("#######")}'/>
 											<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
 			              	  	</div>                  		
 			              	  </#list>
@@ -258,7 +258,7 @@
                   	 		<#list personalDetails.paternalGuardianNationalities as nationality >
                   	 			<div class="nationality-item">
 									<label class="full">${nationality.name?html}</label>  
-									<input type="hidden" name="paternalGuardianNationalities" value='${nationality.id?html}'/>
+									<input type="hidden" name="paternalGuardianNationalities" value='${nationality.id?string("#######")}'/>
 									<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
                   	 			</div>
                   	 		</#list>
@@ -290,7 +290,7 @@
                    		<div class="field">
                    			<label>
                    				<input type="radio" name="englishFirstLanguage" id="englishFirstLanguageYes" value="true"
-	                   			<#if personalDetails.englishFirstLanguage?? && personalDetails.englishFirstLanguage.booleanValue()>
+	                   			<#if personalDetails.isEnglishFirstLanguageSet() && personalDetails.getEnglishFirstLanguage()>
 	                                      checked="checked"
 	                            </#if>
 	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -300,7 +300,7 @@
                             
                             <label>
 	                            <input type="radio" name="englishFirstLanguage" id="englishFirstLanguageNo" value="false"
-	                   			<#if personalDetails.englishFirstLanguage?? && !personalDetails.englishFirstLanguage.booleanValue()>
+	                   			<#if personalDetails.isEnglishFirstLanguageSet() && !personalDetails.getEnglishFirstLanguage()>
 	                                      checked="checked"
 	                            </#if>
 	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -308,6 +308,14 @@
 	                            </#if>/> No
                             </label>
                         </div>
+                        <@spring.bind "personalDetails.englishFirstLanguage" />
+            			<#list spring.status.errorMessages as error>
+							<div class="row">
+								<div class="field">
+									<span class="invalid">${error}</span>
+								</div>
+							</div>
+						</#list>
            		</div>
 				                              
             </div>
@@ -347,7 +355,7 @@
                    		<div class="field">                   			
                    			<label>
                    				<input type="radio" name="requiresVisa" id="requiresVisaYes" value="true"
-	                   			<#if  personalDetails.requiresVisa?? &&  personalDetails.requiresVisa.booleanValue() >
+	                   			<#if  personalDetails.isRequiresVisaSet() &&  personalDetails.getRequiresVisa() >
 	                                      checked="checked"
 	                            </#if>
 	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -357,7 +365,7 @@
                             
                             <label>
 	                            <input type="radio" name="requiresVisa" id="requiresVisaYes" value="false"
-	                   			<#if  personalDetails.requiresVisa?? &&  !personalDetails.requiresVisa.booleanValue() >
+	                   			<#if personalDetails.isRequiresVisaSet() &&  !personalDetails.getRequiresVisa()>
 	                                      checked="checked"
 	                            </#if>
 	                   			<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>
@@ -366,6 +374,14 @@
                             </label>
                    			
                    		</div>
+                   		 <@spring.bind "personalDetails.requiresVisa" />
+             			<#list spring.status.errorMessages as error>
+							<div class="row">
+								<div class="field">
+									<span class="invalid">${error}</span>
+								</div>
+							</div>
+						</#list>
 					</div>
 				</div>
             </div>

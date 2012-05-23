@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
@@ -23,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
@@ -309,6 +311,37 @@ public class RegisteredUserTest {
 		assertTrue(interviewerUser.isInterviewerOfApplicationForm(applicationForm));
 	}
 
+	
+	
+	@Test
+	public void shouldReturnFalseForSupervisorsIfUserIsApproverInApplication() {
+		RegisteredUser approver = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().latestApprovalRound(new ApprovalRound()).approver(approver).program(program).status(ApplicationFormStatus.VALIDATION)
+				.toApplicationForm();
+		assertFalse(approver.isSupervisorOfApplicationForm(applicationForm));
+	}
+	
+	@Test
+	public void shouldReturnFalseForSupervisorsIfUserIsReviewerButNotInApplication() {
+		RegisteredUser reviewer = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		Program program = new ProgramBuilder().id(1).toProgram();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().latestApprovalRound(new ApprovalRound()).program(program).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertFalse(reviewer.isSupervisorOfApplicationForm(applicationForm));
+	}
+	
+	@Test
+	public void shouldReturnTrueForSupervisorsIfUserIsSupervisorTApplication() {
+		RegisteredUser supervisorUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.SUPERVISOR).toRole()).toUser();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).supervisors(new SupervisorBuilder().user(supervisorUser).toSupervisor()).toApprovalRound();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().latestApprovalRound(approvalRound)
+				.status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertTrue(supervisorUser.isSupervisorOfApplicationForm(applicationForm));
+	}
+	
 	
 	
 	@Test

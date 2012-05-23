@@ -51,6 +51,11 @@ public class Supervisor extends DomainObject<Integer> {
 	@Column(name = "last_notified")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastNotified;
+	
+	@ManyToOne
+	@JoinColumn(name = "approval_round_id")
+	private ApprovalRound approvalRound;
+
 
 	private String email;
 	private String firstname;
@@ -117,6 +122,14 @@ public class Supervisor extends DomainObject<Integer> {
 
 	public void setLastNotified(Date lastNotified) {
 		this.lastNotified = lastNotified;
+	}
+
+	public ApprovalRound getApprovalRound() {
+		return approvalRound;
+	}
+
+	public void setApprovalRound(ApprovalRound approvalRound) {
+		this.approvalRound = approvalRound;
 	}
 
 }

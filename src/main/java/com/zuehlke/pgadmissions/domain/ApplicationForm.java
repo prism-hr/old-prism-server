@@ -119,6 +119,11 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
+	@JoinColumn(name = "application_form_id")
+	private List<ApprovalRound> approvalRounds = new ArrayList<ApprovalRound>();
+	
+	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@OrderBy("createdDate desc")
 	@JoinColumn(name = "application_form_id")
 	private List<Interview> interviews = new ArrayList<Interview>();
@@ -159,6 +164,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@JoinColumn(name = "latest_interview_id")
 	private Interview latestInterview;
 
+	@OneToOne
+	@JoinColumn(name = "latest_approval_round_id")
+	private ApprovalRound latestApprovalRound;
+	
 	@OneToOne
 	@JoinColumn(name = "latest_review_round_id")
 	private ReviewRound latestReviewRound;
@@ -537,6 +546,22 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setRejection(Rejection rejection) {
 		this.rejection = rejection;
+	}
+
+	public List<ApprovalRound> getApprovalRounds() {
+		return approvalRounds;
+	}
+
+	public void setApprovalRounds(List<ApprovalRound> approvalRounds) {
+		this.approvalRounds = approvalRounds;
+	}
+
+	public ApprovalRound getLatestApprovalRound() {
+		return latestApprovalRound;
+	}
+
+	public void setLatestApprovalRound(ApprovalRound latestApprovalRound) {
+		this.latestApprovalRound = latestApprovalRound;
 	}
 
 }

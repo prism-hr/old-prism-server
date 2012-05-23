@@ -95,7 +95,7 @@
                 <label class="plain-label grey-label">Project</label>
                <span class="hint" data-desc="<@spring.message 'programmeDetails.project'/>"></span>
                 <div class="field">
-            		<input class="full" id="projectName" name="projectName" type="text" value="${(applicationForm.projectTitle?html)!}" disabled="disabled"/>
+            		<input class="full" id="projectName" name="projectName" type="text" value="${(applicationForm.projectTitle?html)!'Not Specified'}" disabled="disabled"/>
                 </div>
 			</div>
 			
@@ -249,7 +249,7 @@
             	<span class="supervisorAction"></span>       
             	<a id="updateSupervisorButton" class="button" style="display:none;">Update Supervisor</a>
             	<div class="field">
-            		<a id="addSupervisorButton" class="button blue" style="display:none;">Add Supervisor</a>
+            		<a id="addSupervisorButton" class="button blue" style="display:none;">Submit</a>
             	</div>
             </div>
                 </#if>

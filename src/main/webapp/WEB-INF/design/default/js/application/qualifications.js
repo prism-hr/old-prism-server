@@ -22,8 +22,11 @@ $(document).ready(function(){
 		return false;
 	});
 	
-	$("input[name*='currentQualificationCB']").click(function() {
-		if ($("#currentQualification").val() =='YES'){
+	$("input[name*='currentQualificationCB']").click(function()
+	{
+		if ($("#currentQualification").val() =='YES')
+		{
+			// Uncheck the box
 			$("#currentQualification").val("NO");
 			$("#qualificationAwardDate").val("");
 			$("#qualificationAwardDate").attr("disabled", "disabled");
@@ -33,29 +36,34 @@ $(document).ready(function(){
 			$("#quali-award-date-lb").text("Award Date").addClass("grey-label");
 			$("#quali-proof-of-award-lb").text("Proof of award (PDF)").addClass("grey-label");
 			
-			if($('#uploadFields').hasClass('uploaded')){
+			if ($('#uploadFields').hasClass('uploaded'))
+			{
 				$('#uploadFields').addClass('upload-delete');
 				$('#uploadFields a.button-edit').hide();
+				/*
 				$('#uploadFields a.docName').removeAttr('href');
+				*/
 			}
-			
-		} else {		
-		
+		}
+		else
+		{		
+			// Check the box
 			$("#currentQualification").val("YES");
 			$("#qualificationAwardDate").removeAttr("disabled", "disabled");	
-			$("#proofOfAward").removeAttr("disabled", "disabled");
+			$("#proofOfAward").removeAttr("disabled");
 			$("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
 			$("#quali-award-date-lb").append('<em>*</em>').removeClass("grey-label");
 			$("#quali-proof-of-award-lb").append('<em>*</em>').removeClass("grey-label");
 
-			if($('#uploadFields').hasClass('uploaded')){
+			if ($('#uploadFields').hasClass('uploaded'))
+			{
 				$('#uploadFields').removeClass('upload-delete');
 				$('#uploadFields a.button-edit').show();
+				/*
 				$('#uploadFields a.docName').attr('href', 
-						$('#uploadFields a.docName').attr('data-oldlink'));
+				$('#uploadFields a.docName').attr('data-oldlink'));
+				*/
 			}
-			
-			//bindDatePickers();
 		}
 		
 	

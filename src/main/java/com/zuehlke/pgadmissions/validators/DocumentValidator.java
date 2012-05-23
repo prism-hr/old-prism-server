@@ -25,7 +25,7 @@ public class DocumentValidator implements Validator {
 		if (StringUtils.isBlank(document.getFileName())) {
 			errors.rejectValue("fileName", "upload.file.missing");
 		} else {
-
+			
 			if (document.getFileName().indexOf(".") < 0) {
 				errors.rejectValue("fileName", "upload.file.invalidtype");
 			} else {
@@ -35,7 +35,13 @@ public class DocumentValidator implements Validator {
 				}
 
 			}
+			if(document.getFileName().length() > 200){
+				errors.rejectValue("fileName", "upload.file.toolong");
+			}
 
+		}
+		if(document.getContent() != null && document.getContent().length > 10000000){
+			errors.rejectValue("content", "upload.file.toobig");
 		}
 
 	}

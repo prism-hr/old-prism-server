@@ -1,9 +1,10 @@
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
+<!--
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/field_controls.css' />"/>
-
+-->
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/additional_information.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/address.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/pgStudents/form/documents.css' />"/>
@@ -59,6 +60,7 @@
   </section>
   
   
+<!--
   <hr />
   
 
@@ -69,4 +71,4 @@
 	<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/application/formActions.js'/>"></script>
-	
+-->

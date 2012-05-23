@@ -481,6 +481,19 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.events.clear();
 		this.events.addAll(events);
 	}
+	
+	public List<RegisteredUser> getUsersWillingToSupervise() {
+		List<RegisteredUser> usersWillingToSupervise = new ArrayList<RegisteredUser>();
+		for (Comment comment : applicationComments) {
+			if (comment instanceof InterviewComment ) {
+				InterviewComment interviewComment = (InterviewComment) comment;
+				if (interviewComment.getWillingToSupervice() == CheckedStatus.YES){
+					usersWillingToSupervise.add(interviewComment.getUser());
+				}
+			}
+		}
+		return usersWillingToSupervise;
+	}
 
 	@Override
 	public int compareTo(ApplicationForm appForm) {

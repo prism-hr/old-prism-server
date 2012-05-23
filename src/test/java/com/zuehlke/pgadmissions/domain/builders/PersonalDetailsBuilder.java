@@ -30,8 +30,8 @@ public class PersonalDetailsBuilder {
 	private List<Country> candiateNationalities = new ArrayList<Country>();
 	private List<Country> maternalGuardianNationalities = new ArrayList<Country>();
 	private List<Country> paternalGuardianNationalities = new ArrayList<Country>();
-	private boolean englishFirstLanguage;
-	private boolean requiresVisa;
+	private Boolean englishFirstLanguage;
+	private Boolean requiresVisa;
 	private String phoneNumber;
 
 	public PersonalDetailsBuilder phoneNumber(String phoneNumber) {
@@ -44,12 +44,12 @@ public class PersonalDetailsBuilder {
 		return this;
 	}
 
-	public PersonalDetailsBuilder englishFirstLanguage(boolean englishFirstLanguage) {
+	public PersonalDetailsBuilder englishFirstLanguage(Boolean englishFirstLanguage) {
 		this.englishFirstLanguage = englishFirstLanguage;
 		return this;
 	}
 
-	public PersonalDetailsBuilder requiresVisa(boolean requiresVisa) {
+	public PersonalDetailsBuilder requiresVisa(Boolean requiresVisa) {
 		this.requiresVisa = requiresVisa;
 		return this;
 	}

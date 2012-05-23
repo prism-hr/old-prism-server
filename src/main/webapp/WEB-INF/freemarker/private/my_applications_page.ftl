@@ -56,7 +56,7 @@
 							<table class="data" border="0" >
 					          	<colgroup>
 					            	<col style="width: 30px" />
-					            	<col style="width: 100px" />
+					            	<col style="" />
 					            	<col/>
 					            	<col/>
 					            	<col/>
@@ -82,7 +82,7 @@
 							        	<tr id="row_${application.id?string("######")}" name="applicationRow">
 							                <td><a class="row-arrow" href="#">&gt;</a></td>
 							                <td name="idColumn">${application.id?string("######")}</td>
-							                <td class="applicant-name">${application.applicant.firstName} &nbsp ${application.applicant.lastName}</td>
+							                <td class="applicant-name">${application.applicant.firstName} ${application.applicant.lastName}</td>
 							                <td>${application.program.code} - ${application.program.title}</td>								                
 							               	<td id="statusColumn" class="centre" name="statusColumn">${application.status.displayValue()}</td>
 							                <td class="centre">

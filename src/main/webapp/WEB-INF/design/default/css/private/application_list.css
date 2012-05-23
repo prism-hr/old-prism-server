@@ -20,3 +20,5 @@ table.data tr td, table.data tr th { border-bottom: 1px solid #999; }
 table.data tbody td { background: url(../../images/bg_table_row.jpg) repeat-x 0 100%; line-height: 1.3; }
 table.data select { width: 100%; }
 table.data thead th.headerSortDown, table.data thead th.headerSortUp { background-color: #06C; color: #FFF; }
+
+td.applicant-name { white-space: nowrap; } /* name on one line. */

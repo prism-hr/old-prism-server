@@ -34,6 +34,9 @@ public class Program extends DomainObject<Integer> {
 	@ManyToMany(mappedBy = "programsOfWhichInterviewer")
 	private List<RegisteredUser> interviewers = new ArrayList<RegisteredUser>();
 
+	@ManyToMany(mappedBy = "programsOfWhichSupervisor")
+	private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
+	
 	@OneToMany(mappedBy = "program")
 	private List<ProgramInstance> instances = new ArrayList<ProgramInstance>();
 	
@@ -136,5 +139,13 @@ public class Program extends DomainObject<Integer> {
 
 	public void setInterviewers(List<RegisteredUser> interviewers) {
 		this.interviewers = interviewers;
+	}
+
+	public List<RegisteredUser> getSupervisors() {
+		return supervisors;
+	}
+
+	public void setSupervisors(List<RegisteredUser> supervisors) {
+		this.supervisors = supervisors;
 	}
 }

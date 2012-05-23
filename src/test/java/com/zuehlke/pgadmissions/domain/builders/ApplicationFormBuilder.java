@@ -7,6 +7,7 @@ import java.util.List;
 import com.zuehlke.pgadmissions.domain.AdditionalInformation;
 import com.zuehlke.pgadmissions.domain.Address;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.EmploymentPosition;
@@ -53,10 +54,12 @@ public class ApplicationFormBuilder {
 	private AdditionalInformation info;	
 	private Date lastUpdated;
 	
+	private List<ApprovalRound> approvalRounds = new ArrayList<ApprovalRound>();
 	private List<Interview> interviews = new ArrayList<Interview>();
 	private List<ReviewRound> reviewRounds = new ArrayList<ReviewRound>();
 	private Interview latestInterview;
 	private ReviewRound latestReviewRound;
+	private ApprovalRound latestApprovalRound;
 	private Rejection rejection;
 	
 	
@@ -75,9 +78,23 @@ public class ApplicationFormBuilder {
 	}
 	
 	
+	public ApplicationFormBuilder latestApprovalRound(ApprovalRound latestApprovalRound) {
+		this.latestApprovalRound = latestApprovalRound;
+		return this;
+	}
+	
+	
 	public ApplicationFormBuilder reviewRounds(ReviewRound... reviewRounds) {
 		for (ReviewRound reviewRound : reviewRounds) {
 			this.reviewRounds.add(reviewRound);
+		}
+		return this;
+	}
+	
+	
+	public ApplicationFormBuilder approvalRounds(ApprovalRound... approvalRounds) {
+		for (ApprovalRound approvalRound : approvalRounds) {
+			this.approvalRounds.add(approvalRound);
 		}
 		return this;
 	}
@@ -271,8 +288,10 @@ public class ApplicationFormBuilder {
 		application.setAcceptedTerms(acceptedTerms);
 		application.getApplicationComments().addAll(comments);
 		application.getInterviews().addAll(interviews);
+		application.getApprovalRounds().addAll(approvalRounds);
 		application.setLatestInterview(latestInterview);
 		application.setReviewRounds(reviewRounds);
+		application.setLatestApprovalRound(latestApprovalRound);
 		application.setLatestReviewRound(latestReviewRound);
 		application.setRejection(rejection);
 		return application;

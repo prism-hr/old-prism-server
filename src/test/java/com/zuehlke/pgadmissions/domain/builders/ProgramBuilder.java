@@ -16,6 +16,7 @@ public class ProgramBuilder {
 	private List<RegisteredUser> approvers = new ArrayList<RegisteredUser>();
 	private List<RegisteredUser> reviewers = new ArrayList<RegisteredUser>();
 	private List<RegisteredUser> interviewers = new ArrayList<RegisteredUser>();
+	private List<RegisteredUser> supervisors = new ArrayList<RegisteredUser>();
 	
 	private List<RegisteredUser> administrators = new ArrayList<RegisteredUser>();
 	
@@ -62,6 +63,14 @@ public class ProgramBuilder {
 		return this;
 	}
 	
+	
+	public ProgramBuilder supervisors(RegisteredUser... supervisors){
+		for (RegisteredUser supervisor : supervisors) {
+			this.supervisors.add(supervisor);
+		}
+		return this;
+	}
+	
 	public ProgramBuilder code(String code){
 		this.code = code;
 		return this;
@@ -83,6 +92,7 @@ public class ProgramBuilder {
 		program.getAdministrators().addAll(administrators);
 		program.getProgramReviewers().addAll(reviewers);
 		program.getInterviewers().addAll(interviewers);
+		program.getSupervisors().addAll(supervisors);
 		program.getInstances().addAll(instances);
 		return program;
 	}

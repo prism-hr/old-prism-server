@@ -253,13 +253,21 @@ function ajaxProofOfAwardUpload()
 			success: function (data)
 			{	
 				//console.log(data);
-				$('#qualUploadedDocument').html(data);
-				$('#qualUploadedDocument').show();
 				
-				$('#uploadFields').addClass('uploaded');
-				
-				$('span[name="supportingDocumentSpan"] a.button-edit')
-						.attr({'id':'editQualiPOA','data-desc':'Edit Proof Of Award'});
+				if ($(html).find('span.invalid').length == 0)
+				{
+					$('#qualUploadedDocument').html(data);
+					$('#qualUploadedDocument').show();
+					// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
+					$('#uploadFields').addClass('uploaded');
+					$('span[name="supportingDocumentSpan"] a.button-edit')
+							.attr({'id':'editQualiPOA','data-desc':'Edit Proof Of Award'});
+				}
+				else
+				{
+					$('#qualUploadedDocument').find('span.invalid').remove();
+					$('#qualUploadedDocument').append(data);
+				}
 				
 			}
 		}

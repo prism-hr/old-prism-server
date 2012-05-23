@@ -39,11 +39,11 @@ public class PersonalDetails extends DomainObject<Integer> {
 	
 	
 	@Column(name = "english_first_language")
-	private boolean englishFirstLanguage;
+	private Boolean englishFirstLanguage;
 	
 
 	@Column(name = "requires_visa")
-	private boolean requiresVisa;
+	private Boolean requiresVisa;
 	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "CANDIDATE_NATIONALITY_LINK", joinColumns = { @JoinColumn(name = "candidate_personal_details_id") }, inverseJoinColumns = { @JoinColumn(name = "candidate_country_id") })
@@ -243,19 +243,19 @@ public class PersonalDetails extends DomainObject<Integer> {
 		this.phoneNumber = phoneNumber;
 	}
 
-	public boolean isEnglishFirstLanguage() {
+	public Boolean isEnglishFirstLanguage() {
 		return englishFirstLanguage;
 	}
 
-	public void setEnglishFirstLanguage(boolean englishFirstLanguage) {
+	public void setEnglishFirstLanguage(Boolean englishFirstLanguage) {
 		this.englishFirstLanguage = englishFirstLanguage;
 	}
 
-	public boolean isRequiresVisa() {
+	public Boolean isRequiresVisa() {
 		return requiresVisa;
 	}
 
-	public void setRequiresVisa(boolean requiresVisa) {
+	public void setRequiresVisa(Boolean requiresVisa) {
 		this.requiresVisa = requiresVisa;
 	}
 }

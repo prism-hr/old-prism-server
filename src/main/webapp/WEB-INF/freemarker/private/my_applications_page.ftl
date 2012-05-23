@@ -56,8 +56,7 @@
 							<table class="data" border="0" >
 					          	<colgroup>
 					            	<col style="width: 30px" />
-					            	<col/>
-					            	<col/>
+					            	<col style="width: 100px" />
 					            	<col/>
 					            	<col/>
 					            	<col/>
@@ -83,10 +82,10 @@
 							        	<tr id="row_${application.id?string("######")}" name="applicationRow">
 							                <td><a class="row-arrow" href="#">&gt;</a></td>
 							                <td name="idColumn">${application.id?string("######")}</td>
-							                <td>${application.applicant.firstName} &nbsp ${application.applicant.lastName}</td>
+							                <td class="applicant-name">${application.applicant.firstName} &nbsp ${application.applicant.lastName}</td>
 							                <td>${application.program.code} - ${application.program.title}</td>								                
-							               	<td id="statusColumn" name="statusColumn">${application.status.displayValue()}</td>
-							                <td>
+							               	<td id="statusColumn" class="centre" name="statusColumn">${application.status.displayValue()}</td>
+							                <td class="centre">
 							                	<select class="actionType" name="app_[${application.id?string("######")}]">
 							                		<option>Select...</option>
 							                		<option value="view">View</option>
@@ -124,7 +123,7 @@
 								      				</#if>      												
 							                  	</select>
 							                </td>
-							                <td>
+							                <td class="centre">
 												${(application.submittedDate?string("dd MMM yyyy"))!}
 							               	</td>							  
 							                <td class="centre"><input type="checkbox" name="appDownload" id="appDownload_${application.id?string("######")}"/></td>

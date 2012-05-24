@@ -574,7 +574,20 @@ public class UserServiceTest {
 		assertEquals(2, users.size());
 		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));		
 	}
+
 	
+	@Test
+	public void shouldGetAllReviewersWillingToItnerview(){
+		RegisteredUser userOne = new RegisteredUserBuilder().id(5).toUser();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(6).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		EasyMock.expect(userDAOMock.getReviewersWillingToInterview(applicationForm)).andReturn(Arrays.asList(userOne, userTwo));
+		EasyMock.replay(userDAOMock);
+		
+		List<RegisteredUser> users = userService.getReviewersWillingToInterview(applicationForm);
+		assertEquals(2, users.size());
+		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));		
+	}
 	
 	@Test
 	public void shouldGetAllPreviousSupervisorsOfProgam(){

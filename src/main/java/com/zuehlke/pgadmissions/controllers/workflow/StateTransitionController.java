@@ -1,4 +1,6 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.controllers.workflow;
+
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +60,8 @@ public class StateTransitionController {
 	}
 
 	RegisteredUser getCurrentUser() {
-		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		return userService.getUser(currentUser.getId());
+		
+		return userService.getCurrentUser();
 	}
 
 	@ModelAttribute("stati")
@@ -86,6 +88,15 @@ public class StateTransitionController {
 			commentService.save(newComment);
 		}
 		return SIMPLE_MESSAGE_VIEW;
+	}
+
+	@ModelAttribute("reviewersWillingToInterview")
+	public List<RegisteredUser> getReviewersWillingToInterview( @RequestParam Integer application) {
+		ApplicationForm applicationForm = getApplicationForm(application);
+		if(applicationForm.getStatus() == ApplicationFormStatus.REVIEW){
+			return userService.getReviewersWillingToInterview(applicationForm);
+		}
+		return null;
 	}
 
 }

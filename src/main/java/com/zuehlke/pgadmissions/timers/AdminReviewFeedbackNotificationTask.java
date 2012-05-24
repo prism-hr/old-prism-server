@@ -8,13 +8,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 import com.zuehlke.pgadmissions.services.CommentService;
 
-public class AdminReviewFeedbackNotificationTask extends TimerTask{
+public class AdminReviewFeedbackNotificationTask extends TimerTask {
 
 	private final Logger log = Logger.getLogger(AdminReviewFeedbackNotificationTask.class);
 	private final CommentService commentService;
@@ -24,12 +22,12 @@ public class AdminReviewFeedbackNotificationTask extends TimerTask{
 	public AdminReviewFeedbackNotificationTask() {
 		this(null, null, null);
 	}
-	
+
 	@Autowired
 	public AdminReviewFeedbackNotificationTask(SessionFactory sessionFactory, AdminMailSender adminMailSender, CommentService commentService) {
-			this.sessionFactory = sessionFactory;
-			this.adminMailSender = adminMailSender;
-			this.commentService = commentService;
+		this.sessionFactory = sessionFactory;
+		this.adminMailSender = adminMailSender;
+		this.commentService = commentService;
 	}
 
 	@Override
@@ -41,15 +39,12 @@ public class AdminReviewFeedbackNotificationTask extends TimerTask{
 		for (ReviewComment comment : comments) {
 			transaction = sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().refresh(comment);
-			List<RegisteredUser> admins = comment.getApplication().getProgram().getAdministrators();
-			try {	
-				for (RegisteredUser admin : admins) {
-					adminMailSender.sendAdminReviewNotification(admin, comment.getApplication(), comment.getUser());
-				}
+			try {
+				adminMailSender.sendAdminReviewNotification(comment.getApplication(), comment.getUser());
 				comment.setAdminsNotified(true);
 				commentService.save(comment);
-				transaction.commit();				
-				log.info("notification sent to admins for review comment " +  comment.getId());
+				transaction.commit();
+				log.info("notification sent to admins for review comment " + comment.getId());
 			} catch (Throwable e) {
 				transaction.rollback();
 				log.warn("error while sending notification to admins for comment " + comment.getId(), e);
@@ -59,7 +54,4 @@ public class AdminReviewFeedbackNotificationTask extends TimerTask{
 		}
 		log.info("Review Comment Task complete");
 	}
-	
-	
-
 }

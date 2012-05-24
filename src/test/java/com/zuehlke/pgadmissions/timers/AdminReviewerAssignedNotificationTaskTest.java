@@ -1,9 +1,7 @@
 package com.zuehlke.pgadmissions.timers;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -17,21 +15,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
-import com.zuehlke.pgadmissions.dao.UserDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 
 
@@ -67,11 +60,11 @@ public class AdminReviewerAssignedNotificationTaskTest {
 			EasyMock.expect(reviewerDAOMock.getReviewersRequireAdminNotification()).andReturn(Arrays.asList(reviewer1, reviewer2));
 			transactionOne.commit();
 
-			adminMailSenderMock.sendReviewerAssignedNotification(reviewer1, admin1, form);
+			adminMailSenderMock.sendReviewerAssignedNotification(form, reviewer1);
 			reviewerDAOMock.save(reviewer1);
 			transactionTwo.commit();
 
-			adminMailSenderMock.sendReviewerAssignedNotification( reviewer2, admin1, form);
+			adminMailSenderMock.sendReviewerAssignedNotification(form, reviewer2);
 			reviewerDAOMock.save(reviewer2);
 			transactionThree.commit();
 
@@ -115,11 +108,11 @@ public class AdminReviewerAssignedNotificationTaskTest {
 		
 		transactionOne.commit();
 
-		adminMailSenderMock.sendReviewerAssignedNotification(reviewer1, admin1, form);
+		adminMailSenderMock.sendReviewerAssignedNotification(form, reviewer1);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("aaaah!"));		
 		transactionTwo.rollback();
 
-		adminMailSenderMock.sendReviewerAssignedNotification( reviewer2, admin1, form);
+		adminMailSenderMock.sendReviewerAssignedNotification(form, reviewer2);
 		reviewerDAOMock.save(reviewer2);
 		transactionThree.commit();
 

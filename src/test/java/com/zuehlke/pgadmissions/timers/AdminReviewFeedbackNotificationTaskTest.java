@@ -20,7 +20,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 import com.zuehlke.pgadmissions.services.CommentService;
 
@@ -54,11 +53,11 @@ public class AdminReviewFeedbackNotificationTaskTest {
 		EasyMock.expect(commentServiceMock.getReviewCommentsDueNotification()).andReturn(Arrays.asList(reviewComment1, reviewComment2));
 		transactionOne.commit();
 
-		adminMailSenderMock.sendAdminReviewNotification(admin1, form, reviewer);
+		adminMailSenderMock.sendAdminReviewNotification(form, reviewer);
 		commentServiceMock.save(reviewComment1);
 		transactionTwo.commit();
 
-		adminMailSenderMock.sendAdminReviewNotification(admin1, form, reviewer);
+		adminMailSenderMock.sendAdminReviewNotification(form, reviewer);
 		commentServiceMock.save(reviewComment2);
 		transactionThree.commit();
 

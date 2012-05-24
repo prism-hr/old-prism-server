@@ -61,7 +61,7 @@ public class AdminRejectNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx2);
 		
 		sessionMock.refresh(application);
-		mailSenderMock.sendAdminRejectNotification(admin, application, approver);
+		mailSenderMock.sendAdminRejectNotification(application, approver);
 		applicationDaoMock.save(application);
 
 		tx2.commit();
@@ -74,7 +74,7 @@ public class AdminRejectNotificationTaskTest {
 	}
 
 	@Test
-	public void shouldNotSendRejectNotificationsIfApproverIsAdmin() throws Exception {
+	public void shouldCallMailSenderEvenIfApproverIsAdmin() throws Exception {
 		EasyMock.expect(sessionFactoryMock.getCurrentSession()).andReturn(sessionMock).anyTimes();
 
 		Transaction tx1 = EasyMock.createMock(Transaction.class);
@@ -94,6 +94,7 @@ public class AdminRejectNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx2);
 		
 		sessionMock.refresh(application);
+		mailSenderMock.sendAdminRejectNotification(application, admin);
 		applicationDaoMock.save(application);
 
 		tx2.commit();
@@ -127,7 +128,7 @@ public class AdminRejectNotificationTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(tx2);
 		
 		sessionMock.refresh(application);
-		mailSenderMock.sendAdminRejectNotification(admin, application, approver);
+		mailSenderMock.sendAdminRejectNotification(application, approver);
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 
 		tx2.rollback();

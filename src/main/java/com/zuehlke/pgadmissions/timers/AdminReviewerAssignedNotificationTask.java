@@ -10,7 +10,6 @@ import org.hibernate.Transaction;
 
 import com.zuehlke.pgadmissions.dao.ReviewerDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 
@@ -37,27 +36,19 @@ public class AdminReviewerAssignedNotificationTask extends TimerTask {
 			transaction = sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().refresh(reviewer);
 			ApplicationForm application = reviewer.getReviewRound().getApplication();
-				List<RegisteredUser> admins = application.getProgram().getAdministrators();
-				try {
-					for (RegisteredUser admin : admins) {
-						adminMailSender.sendReviewerAssignedNotification(reviewer, admin, application);
-					}
-					reviewer.setDateAdminsNotified(new Date());
-					reviewerDAO.save(reviewer);
-					transaction.commit();
-					log.info("reviewer assigned notification to admins for reviewer " + reviewer.getUser().getEmail());
-				} catch (Throwable e) {
-					transaction.rollback();
-					log.warn("error while sending notification to admins for reviewer " + reviewer.getUser().getEmail(), e);
-				}
-			
+			try {
+				adminMailSender.sendReviewerAssignedNotification(application, reviewer);
+				reviewer.setDateAdminsNotified(new Date());
+				reviewerDAO.save(reviewer);
+				transaction.commit();
+				log.info("reviewer assigned notification to admins for reviewer " + reviewer.getUser().getEmail());
+			} catch (Throwable e) {
+				transaction.rollback();
+				log.warn("error while sending notification to admins for reviewer " + reviewer.getUser().getEmail(), e);
+			}
+
 		}
 
 		log.info("Assigned Reviewer Notification Task complete");
 	}
-	
-	
-	
-	
-
 }

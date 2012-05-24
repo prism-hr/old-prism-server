@@ -15,8 +15,13 @@ $(document).ready(function(){
 				saveComment(moveToReview);
 			}
 			
-			if($('#status').val() == 'INTERVIEW'){		
-				saveComment(moveToInterview);
+			if($('#status').val() == 'INTERVIEW'){
+				if( $('#appliationAdmin').val() ==''){
+					saveComment(moveToInterview);
+				}else{
+					$('#delegateForm').submit();
+				}
+				
 			}			
 		});
 	
@@ -55,6 +60,7 @@ function moveToInterview(data){
 	var application = $('#applicationId').val();
 	window.location.href = "/pgadmissions/interview/moveToInterview?assignOnly=false&applicationId=" + application;
 }
+
 
 function moveToReview(data){
 	var application = $('#applicationId').val();

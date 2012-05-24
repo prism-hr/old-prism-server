@@ -82,7 +82,12 @@ $(document).ready(function(){
 			$("#acceptTermsQDValue").val("NO");
 		} else {	
 			$("#acceptTermsQDValue").val("YES");
+			
 			$(".terms-box").attr('style','');
+			$("#qual-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
+			$("#qual-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
+			$("#qual-info-bar-div .row span.error-hint").remove();
+			
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
 				acceptedTerms: $("#acceptTermsQDValue").val()
@@ -97,6 +102,12 @@ $(document).ready(function(){
 		if($('#acceptTermsQDValue').length != 0 &&  $("#acceptTermsQDValue").val() =='NO'){
 			
 			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+			
+			$("#qual-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
+			$("#qual-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
+			$("#qual-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			addToolTips();
+			
 		}
 		else{
 			$("span[name='nonAcceptedQD']").html('');
@@ -109,8 +120,16 @@ $(document).ready(function(){
 		if ($("#acceptTermsQDValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
-			var $form = $('#qualificationsSection form');
-			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
+//			var $form = $('#qualificationsSection form');
+//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
+			
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+			
+			$("#qual-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
+			$("#qual-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
+			$("#qual-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			addToolTips();
+			
 		}
 		else{
 			$("span[name='nonAcceptedQD']").html('');

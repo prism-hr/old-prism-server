@@ -34,11 +34,14 @@ $(document).ready(function(){
 		});
 	
 	$('#documentsSaveButton').click(function(){
-		if( $("#acceptTermsDDValue").val() =='NO'){ 
-			//$("span[name='nonAcceptedDD']").html('You must agree to the terms and conditions');
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+		if( $("#acceptTermsDDValue").val() =='NO')
+		{ 
+			// Highlight the information bar and terms box.
+			var $form = $('#documentSection form');
+			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
 		}
-		else{
+		else
+		{
 			$("span[name='nonAcceptedDD']").html('');
 			postDocumentData('close');
 		}

@@ -63,11 +63,14 @@ $(document).ready(function(){
 		if ($('#convictionRadio_false:checked').val() !== undefined) {
 			hasConvictions = false;
 		}
-		if( $("#acceptTermsAIDValue").val() =='NO'){ 
-			//$("span[name='nonAcceptedAID']").html('You must agree to the terms and conditions');
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+		if ($("#acceptTermsAIDValue").val() =='NO')
+		{ 
+			// Highlight the information bar and terms box.
+			var $form = $('#additionalInformationSection form');
+			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
 		}
-		else{
+		else
+		{
 
 			$("span[name='nonAcceptedAID']").html('');
 			$.post("/pgadmissions/update/editAdditionalInformation", { 

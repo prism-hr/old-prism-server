@@ -114,12 +114,16 @@ $(document).ready(function(){
 		}
 		});
 	
-	$('#personalDetailsSaveButton').on("click", function(){	
-		if( $("#acceptTermsPEDValue").val() =='NO'){ 
-			//$("span[name='nonAcceptedPED']").html('You must agree to the terms and conditions');
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+	$('#personalDetailsSaveButton').on("click", function()
+	{	
+		if ($("#acceptTermsPEDValue").val() =='NO')
+		{ 
+			// Highlight the information bar and terms box.
+			var $form = $('#personalDetailsSection form');
+			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
 		}
-		else{
+		else
+		{
 			$("span[name='nonAcceptedPED']").html('');
 			postPersonalDetailsData('close');
 		}

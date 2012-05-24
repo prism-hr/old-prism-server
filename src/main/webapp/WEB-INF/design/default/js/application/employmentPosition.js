@@ -47,11 +47,14 @@ $(document).ready(function(){
 		});
 	
 	$('#positionSaveAndCloseButton').click(function(){
-		if( $("#acceptTermsEPValue").val() =='NO'){ 
-			//$("span[name='nonAcceptedEP']").html('You must agree to the terms and conditions');
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+		if ($("#acceptTermsEPValue").val() =='NO')
+		{ 
+			// Highlight the information bar and terms box.
+			var $form = $('#positionSection form');
+			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
 		}
-		else{
+		else
+		{
 			$("span[name='nonAcceptedEP']").html('');
 			postEmploymentData('close');
 		}

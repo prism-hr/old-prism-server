@@ -104,10 +104,13 @@ $(document).ready(function(){
 		}
 	});
 	
-	$('#qualificationsSaveButton').click(function(){
-		if( $("#acceptTermsQDValue").val() =='NO'){ 
-			//$("span[name='nonAcceptedQD']").html('You must agree to the terms and conditions');
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+	$('#qualificationsSaveButton').click(function()
+	{
+		if ($("#acceptTermsQDValue").val() =='NO')
+		{ 
+			// Highlight the information bar and terms box.
+			var $form = $('#qualificationsSection form');
+			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
 		}
 		else{
 			$("span[name='nonAcceptedQD']").html('');

@@ -37,16 +37,21 @@ $(document).ready(function()
 		}
 		});
 	
-	$('#refereeSaveAndCloseButton').click(function(){
-		if( $("#acceptTermsRDValue").val() =='NO'){ 
-			//$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+	$('#refereeSaveAndCloseButton').click(function()
+	{
+		if ($("#acceptTermsRDValue").val() =='NO')
+		{ 
+			// Highlight the information bar and terms box.
+			var $form = $('#referencesSection form');
+			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
 		}
-		else{
+		else
+		{
 			$("span[name='nonAcceptedRD']").html('');
 			postRefereeData("close");
 		}
 	});
+	
 	$('#addReferenceButton').click(function(){
 		if( $('#acceptTermsRDValue').length != 0  && $("#acceptTermsRDValue").val() =='NO'){ 
 			//$("span[name='nonAcceptedRD']").html('You must agree to the terms and conditions');

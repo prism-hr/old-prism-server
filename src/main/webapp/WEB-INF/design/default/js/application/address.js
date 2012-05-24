@@ -37,12 +37,16 @@ $(document).ready(function(){
 		}
 		});
 	
-	$('#addressSaveAndAddButton').click(function(){
-		if( $("#acceptTermsADValue").val() =='NO'){ 
-			//$("span[name='nonAcceptedAD']").html('You must agree to the terms and conditions');
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+	$('#addressSaveAndAddButton').click(function()
+	{
+		if( $("#acceptTermsADValue").val() =='NO')
+		{ 
+			// Highlight the information bar and terms box.
+			var $form = $('#addressSection form');
+			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
 		}
-		else{
+		else
+		{
 			$("span[name='nonAcceptedAD']").html('');
 			postAddressData("close");
 		}

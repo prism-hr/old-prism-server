@@ -1,0 +1,1 @@
+ALTER TABLE REVIEWER ADD COLUMN review_round_id INTEGER UNSIGNED,  ADD CONSTRAINT review_round_reviewer_fk FOREIGN KEY (review_round_id) REFERENCES REVIEW_ROUND(id);

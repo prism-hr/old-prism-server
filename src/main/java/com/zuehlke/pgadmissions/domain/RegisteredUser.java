@@ -22,7 +22,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Entity(name = "REGISTERED_USER")
@@ -94,11 +93,11 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@ManyToMany
 	@JoinTable(name = "PROGRAM_INTERVIEWER_LINK", joinColumns = { @JoinColumn(name = "interviewer_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	private List<Program> programsOfWhichInterviewer = new ArrayList<Program>();
-	
+
 	@ManyToMany
 	@JoinTable(name = "PROGRAM_SUPERVISOR_LINK", joinColumns = { @JoinColumn(name = "supervisor_id") }, inverseJoinColumns = { @JoinColumn(name = "program_id") })
 	private List<Program> programsOfWhichSupervisor = new ArrayList<Program>();
-	
+
 	public List<Role> getRoles() {
 		return roles;
 	}
@@ -235,6 +234,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return true;
 		}
 
+		if (this.equals(applicationForm.getApplicationAdministrator())) {
+			return true;
+		}
 		if (isInRole(Authority.ADMINISTRATOR)) {
 			if (applicationForm.getProgram().getAdministrators().contains(this)) {
 				return true;
@@ -430,7 +432,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return false;
 
 	}
-	
+
 	public boolean isPastOrPresentReviewerOfApplicationForm(ApplicationForm applicationForm) {
 		for (ReviewRound reviewRound : applicationForm.getReviewRounds()) {
 			for (Reviewer reviewer : reviewRound.getReviewers()) {
@@ -442,7 +444,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return false;
 
 	}
-	
+
 	public boolean isInterviewerOfApplicationForm(ApplicationForm form) {
 		Interview latestInterview = form.getLatestInterview();
 		if (latestInterview != null) {
@@ -456,7 +458,6 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 
 	}
 
-	
 	public boolean isSupervisorOfApplicationForm(ApplicationForm form) {
 		ApprovalRound approvalRound = form.getLatestApprovalRound();
 		if (approvalRound != null) {
@@ -467,9 +468,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 		return false;
-		
+
 	}
-	
+
 	public boolean isInterviewerOfProgram(Program program) {
 		for (RegisteredUser interviewer : program.getInterviewers()) {
 			if (this.equals(interviewer)) {
@@ -582,7 +583,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public List<Reviewer> getReviewersForApplicationForm(ApplicationForm applicationForm) {
 		List<Reviewer> reviewers = new ArrayList<Reviewer>();
 		ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
-		if(latestReviewRound == null){
+		if (latestReviewRound == null) {
 			return reviewers;
 		}
 		List<Reviewer> formReviewers = latestReviewRound.getReviewers();
@@ -623,10 +624,25 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		return programsOfWhichSupervisor;
 	}
 
-	public void setProgramsOfWhichSupervisor(
-			List<Program> programsOfWhichSupervisor) {
+	public void setProgramsOfWhichSupervisor(List<Program> programsOfWhichSupervisor) {
 		this.programsOfWhichSupervisor = programsOfWhichSupervisor;
 	}
 
+	public boolean hasAdminRightsOnApplication(ApplicationForm applicationForm) {
+		if(ApplicationFormStatus.UNSUBMITTED == applicationForm.getStatus()){
+			return false;
+		}
+		if(this.isInRole(Authority.SUPERADMINISTRATOR)){
+			return true;
+		}
+		if (this.equals(applicationForm.getApplicationAdministrator())) {
+			return true;
+		}
+		if(applicationForm.getProgram().getAdministrators().contains(this)){
+			return true;
+		}
+		return false;
+
+	}
 
 }

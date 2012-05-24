@@ -136,7 +136,7 @@ public class RejectApplicationController {
 	private void checkPermissionForApplication(ApplicationForm application) {
 		RegisteredUser currentUser = getCurrentUser();
 		if (application == null || //
-				!(application.getProgram().isApprover(currentUser) || currentUser.isAdminInProgramme(application.getProgram()))) {
+				!(application.getProgram().isApprover(currentUser) || currentUser.hasAdminRightsOnApplication(application))) {
 			throw new ResourceNotFoundException();
 		}
 	}

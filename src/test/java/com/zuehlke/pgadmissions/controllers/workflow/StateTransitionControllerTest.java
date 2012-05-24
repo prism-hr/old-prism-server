@@ -47,7 +47,7 @@ public class StateTransitionControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
-		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
+		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
@@ -72,7 +72,7 @@ public class StateTransitionControllerTest {
 
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
-		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
+		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 

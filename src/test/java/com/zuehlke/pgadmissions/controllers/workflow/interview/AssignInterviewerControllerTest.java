@@ -64,7 +64,7 @@ public class AssignInterviewerControllerTest {
 		Interview interview = new InterviewBuilder().id(1).toInterview();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).latestInterview(interview).toApplicationForm();
 		
-		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);		
+		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);		
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 

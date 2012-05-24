@@ -120,7 +120,7 @@ public abstract class ApprovalController {
 
 		ApplicationForm application = applicationsService.getApplicationById(applicationId);
 		if (application == null
-				|| (!userService.getCurrentUser().isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram()) && !userService.getCurrentUser()
+				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()
 						.isSupervisorOfApplicationForm(application))) {
 			throw new ResourceNotFoundException();
 		}

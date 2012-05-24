@@ -55,7 +55,7 @@ public class MoveToReviewControllerTest {
 		Program program = new ProgramBuilder().id(6).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 
-		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
+		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);

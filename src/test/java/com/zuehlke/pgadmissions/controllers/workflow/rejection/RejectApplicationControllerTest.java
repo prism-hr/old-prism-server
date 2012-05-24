@@ -120,7 +120,7 @@ public class RejectApplicationControllerTest {
 	
 	// -------------------------------------------------------------------
 	// ----------- check for application states:
-	@Test(expected = CannotUpdateApplicationException.class)
+	@Test(expected =ResourceNotFoundException.class)
 	public void throwCUAEIfApplicationIsUnsubmitted() {
 		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
@@ -206,6 +206,25 @@ public class RejectApplicationControllerTest {
 	public void returnApplicationIfUserIsApprover() {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(approver).anyTimes();
+		EasyMock.replay(userServiceMock);
+		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.replay(applicationServiceMock);
+
+		ApplicationForm applicationForm = controllerUT.getApplicationForm(10);
+		Assert.assertNotNull(applicationForm);
+		Assert.assertEquals(application, applicationForm);
+		EasyMock.verify(applicationServiceMock);
+	}
+
+	@Test
+	public void returnApplicationIfUserIsHasAdminRightsOnForm() {
+		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userMock.isInRole(Authority.APPROVER)).andReturn(false);		
+		EasyMock.expect(userMock.hasAdminRightsOnApplication(application)).andReturn(true);
+		
+		EasyMock.replay(userMock);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
 		EasyMock.replay(userServiceMock);
 		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
 		EasyMock.replay(applicationServiceMock);

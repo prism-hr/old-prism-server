@@ -67,7 +67,7 @@ public class ApproveRejectControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).toApplicationForm();
 		
 		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
-		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
+		EasyMock.expect(approverMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock);
 		controller.applyDecision(applicationForm, ApplicationFormStatus.APPROVED);
@@ -79,7 +79,7 @@ public class ApproveRejectControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.REJECTED).program(program).toApplicationForm();
 		
 		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
-		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
+		EasyMock.expect(approverMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock);
@@ -93,7 +93,7 @@ public class ApproveRejectControllerTest {
 
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
-		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
+		EasyMock.expect(approverMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock, applicationsServiceMock);
 
@@ -109,7 +109,7 @@ public class ApproveRejectControllerTest {
 		Program program = new ProgramBuilder().id(4).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).toApplicationForm();
 		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
-		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true).anyTimes();
+		EasyMock.expect(approverMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true).anyTimes();
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock);
 
@@ -123,7 +123,7 @@ public class ApproveRejectControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
-		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
+		EasyMock.expect(approverMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock, applicationsServiceMock);
 
@@ -139,7 +139,7 @@ public class ApproveRejectControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
-		EasyMock.expect(approverMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
+		EasyMock.expect(approverMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock, applicationsServiceMock);
 

@@ -801,7 +801,48 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertFalse(applications.contains(applicationFormOne));
 				
 	}
-
+	
+	@Test
+	public void shouldReturnAppsOfWhichApplicationAdministrator(){
+		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(otherProgram);
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		
+		RegisteredUser applicationAdministrator = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
+		
+	
+		applicationForm.setApplicationAdministrator(applicationAdministrator);
+		
+		save(applicationForm, applicationAdministrator);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(applicationAdministrator);
+		assertTrue(applications.contains(applicationForm));
+		
+	}	
+	@Test
+	public void shouldNotReturnUbnsubmittedAppsOfWhichApplicationAdministrator(){
+		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(otherProgram);
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(otherProgram).applicant(user).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		
+		RegisteredUser applicationAdministrator = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichAdministrator(program).toUser();
+		
+	
+		applicationForm.setApplicationAdministrator(applicationAdministrator);
+		
+		save(applicationForm, applicationAdministrator);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(applicationAdministrator);
+		assertFalse(applications.contains(applicationForm));
+		
+	}	
+	
 	@Test
 	public void shouldReturnAppsOfWhichReviewerOfLatestReviewRound(){
 		Program otherProgram = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();

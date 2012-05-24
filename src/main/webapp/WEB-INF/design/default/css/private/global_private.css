@@ -191,6 +191,7 @@ span.invalid-info-text{
 	margin-left: -2px;
 	/*IE 7*/ zoom: 1; *display: inline;
 	margin-bottom: 5px;
+	padding-bottom: 3px;
 	
 }
 span.info-text { 

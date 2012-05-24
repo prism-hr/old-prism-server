@@ -113,6 +113,5 @@ function addToolTips(){
 		},
 		style: 'tooltip-pgr ui-tooltip-shadow'
 	});
-
 	
 }

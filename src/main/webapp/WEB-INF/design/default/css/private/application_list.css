@@ -1,7 +1,7 @@
 
 /* Application list ---------------------------------------------------------------------------------- */
 
-table.data { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; width: 100%; }
+table.data { border: 1px solid #999; border-bottom: none; border-spacing: 0; /*border-collapse: collapse;*/ margin-bottom: 20px; width: 100%; }
 table.data thead th {
 	background: rgb(124,124,124); /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */

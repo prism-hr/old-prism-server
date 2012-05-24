@@ -51,7 +51,7 @@ $(document).ready(function(){
 //			var $form = $('#fundingSection form');
 //			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
 			
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 			
 			$("#fund-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
 			$("#fund-info-bar-span").switchClass("info-text", "invalid-info-text", 1);

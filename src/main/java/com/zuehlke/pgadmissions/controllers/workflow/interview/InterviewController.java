@@ -168,5 +168,12 @@ public abstract class InterviewController {
 
 		return availablePreviousInterviewers;
 	}
+	
+	@ModelAttribute("willingToInterviewReviewers")
+	public List<RegisteredUser> getWillingToInterviewReviewers(@RequestParam Integer applicationId) {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		return applicationForm.getReviewersWillingToInterview();
+	}
+
 
 }

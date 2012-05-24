@@ -53,7 +53,7 @@ $(document).ready(function(){
 			$("#proofOfAward").removeAttr("disabled");
 			$("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
 			$("#quali-award-date-lb").append('<em>*</em>').removeClass("grey-label");
-			$("#quali-proof-of-award-lb").append('<em>*</em>').removeClass("grey-label");
+			$("#quali-proof-of-award-lb").removeClass("grey-label");
 
 			if ($('#uploadFields').hasClass('uploaded'))
 			{
@@ -166,7 +166,7 @@ $(document).ready(function(){
 						$("#proofOfAward").removeAttr("disabled", "disabled");
 						$("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
 						$("#quali-award-date-lb").append('<em>*</em>').removeClass("grey-label");
-						$("#quali-proof-of-award-lb").append('<em>*</em>').removeClass("grey-label");
+						$("#quali-proof-of-award-lb").removeClass("grey-label");
 						
 					}
 					else{	

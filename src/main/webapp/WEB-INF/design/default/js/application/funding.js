@@ -38,21 +38,27 @@ $(document).ready(function(){
 		}
 		});
 	
-	$('#addFundingButton').click(function(){
-		if( $('#acceptTermsFDValue').length != 0 && $("#acceptTermsFDValue").val() =='NO'){ 
-			//$("span[name='nonAcceptedFD']").html('You must agree to the terms and conditions');
-			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+	$('#addFundingButton').click(function()
+	{
+		if ($('#acceptTermsFDValue').length != 0 && $("#acceptTermsFDValue").val() =='NO')
+		{ 
+			// Highlight the information bar and terms box.
+			var $form = $('#fundingSection form');
+			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
 		}
-		else{
+		else
+		{
 			$("span[name='nonAcceptedFD']").html('');
 			postFundingData('add');
 		}
 	});
 	
 	$('#fundingSaveCloseButton').click(function(){
-		if( $("#acceptTermsFDValue").val() =='NO'){ 
-			//$("span[name='nonAcceptedFD']").html('You must agree to the terms and conditions');
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+		if ($("#acceptTermsFDValue").val() =='NO')
+		{ 
+			// Highlight the information bar and terms box.
+			var $form = $('#personalDetailsSection form');
+			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
 		}
 		else{
 			$("span[name='nonAcceptedFD']").html('');

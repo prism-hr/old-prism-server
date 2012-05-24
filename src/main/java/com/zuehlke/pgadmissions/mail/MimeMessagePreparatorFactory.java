@@ -73,7 +73,7 @@ public class MimeMessagePreparatorFactory {
 		public final void prepare(MimeMessage mimeMessage) throws Exception {
 			MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
 
-			log.info("Email \"" + subject + "\" will be send to " + toAddress);
+			log.info("Email \"" + getSubject() + "\" will be send to " + toAddress);
 			message.setTo(toAddress);
 			if (!ArrayUtils.isEmpty(getCCAddresses())) {
 				message.setCc(getCCAddresses());

@@ -1,5 +1,4 @@
 <#if model?? && model.user??>
-	<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/feedback.js' />"></script>
 	
 	
@@ -10,7 +9,6 @@
 
 	<a class="blue button" type="button" id="feedbackButton" name="feedbackButton">Send Feedback</a>
 <#elseif user??>
-	<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 	<script type="text/javascript" src="<@spring.url '/design/default/js/feedback.js' />"></script>
 	
 	

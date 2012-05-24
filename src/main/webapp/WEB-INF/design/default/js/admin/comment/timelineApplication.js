@@ -1,7 +1,11 @@
-$(document).ready(function(){
+$(document).ready(function()
+{
 
+	// Tabs.
+	$('#timelineview ul.tabs').tabs();
+	
 	$('#application').html("");
-	$('#application').hide();
+	/*$('#application').hide();*/
 	$.get("/pgadmissions/comments/view",
 			{
 				id:  $('#applicationId').val(),				
@@ -15,8 +19,8 @@ $(document).ready(function(){
 	
 	$('#timelineBtn').click(function() {
 		$('#application').html("");
-		$('#application').hide();
-		$('#timeline').show();
+		/*$('#application').hide();
+		$('#timeline').show();*/
 		$.get("/pgadmissions/comments/view",
 				{
 					id:  $('#applicationId').val(),				
@@ -31,8 +35,8 @@ $(document).ready(function(){
 	
 	$('#applicationBtn').click(function() {
 		$('#timeline').html("");
-		$('#timeline').hide();
-		$('#application').show();
+		/*$('#timeline').hide();
+		$('#application').show();*/
 		if($('#application').html()==""){
 			$.get("/pgadmissions/application?view=view",
 					{

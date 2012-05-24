@@ -1,4 +1,7 @@
 $(document).ready(function(){
+	
+	var qualImgCount = 0;
+	
 	$("#acceptTermsQDValue").val("NO");
 	
 	if($("#qualificationInstitution").val() == ""){
@@ -87,6 +90,7 @@ $(document).ready(function(){
 			$("#qual-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#qual-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#qual-info-bar-div .row span.error-hint").remove();
+			qualImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
@@ -105,7 +109,10 @@ $(document).ready(function(){
 			
 			$("#qual-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
 			$("#qual-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			$("#qual-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			if(qualImgCount == 0){
+				$("#qual-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+				qualImgCount = qualImgCount + 1;
+			}
 			addToolTips();
 			
 		}
@@ -127,7 +134,10 @@ $(document).ready(function(){
 			
 			$("#qual-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
 			$("#qual-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			$("#qual-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			if(qualImgCount == 0){
+				$("#qual-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+				qualImgCount = qualImgCount + 1;
+			}
 			addToolTips();
 			
 		}

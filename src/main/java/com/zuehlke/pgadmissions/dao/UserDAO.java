@@ -20,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.Supervisor;
@@ -167,11 +168,16 @@ public class UserDAO {
 	}
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getReviewersWillingToInterview(ApplicationForm applicationForm) {
-		List<Reviewer> reviewers = sessionFactory.getCurrentSession().createCriteria(Reviewer.class).list();
+		List<ReviewComment> reviews = sessionFactory.getCurrentSession().createCriteria(ReviewComment.class).createAlias("reviewer", "reviewer")
+				.createAlias("reviewer.reviewRound", "reviewRound").createAlias("reviewRound.application", "application")
+				.add(Restrictions.eq("application", applicationForm))
+				.add(Restrictions.eqProperty("application.latestReviewRound","reviewer.reviewRound"))
+				.add(Restrictions.eq("willingToInterview", true))
+				.list();
 		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
-		for (Reviewer reviewer : reviewers) {
-			if(!users.contains(reviewer.getUser())){
-				users.add(reviewer.getUser());
+		for (ReviewComment reviewComment : reviews) {
+			if(!users.contains(reviewComment.getUser())){
+				users.add(reviewComment.getUser());
 			}
 		}
 		return users;

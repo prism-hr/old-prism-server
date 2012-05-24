@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.dao.UserDAO;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -281,6 +282,11 @@ public class UserService {
 	public List<RegisteredUser> getAllPreviousSupervisorsOfProgram(
 			Program program) {
 		return userDAO.getAllPreviousSupervisorsOfProgram(program);
+	}
+
+	@Transactional
+	public List<RegisteredUser> getReviewersWillingToInterview(ApplicationForm applicationForm) {
+		return userDAO.getReviewersWillingToInterview(applicationForm);
 	}
 
 }

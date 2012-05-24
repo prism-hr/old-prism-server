@@ -15,25 +15,32 @@ $(document).ready(function(){
 				saveComment(moveToReview);
 			}
 			
-			if($('#status').val() == 'INTERVIEW'){				
+			if($('#status').val() == 'INTERVIEW'){		
 				saveComment(moveToInterview);
-			}
-			
+			}			
 		});
+	
+	$('#status').change(function(){
+		if($('#status').val() == 'INTERVIEW'){
+			$('#appliationAdmin').removeAttr('disabled');
+		}else{
+			$('#appliationAdmin').attr('disabled', 'disabled');
+		}
+	});
 });
 
 function saveComment(callback){
 	var application = $('#applicationId').val();	
 	var commentType = $('#commentType').val();
 	$.post( 
-			"/pgadmissions/progress",
-			{
-				application: application,
-				type: commentType,
-				comment: $('#comment').val()
-			},
-			callback
-		);
+		"/pgadmissions/progress",
+		{
+			application: application,
+			type: commentType,
+			comment: $('#comment').val()
+		},
+		callback
+	);
 
 }
 

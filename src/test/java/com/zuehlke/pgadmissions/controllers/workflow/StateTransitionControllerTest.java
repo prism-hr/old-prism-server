@@ -1,8 +1,12 @@
-package com.zuehlke.pgadmissions.controllers;
+package com.zuehlke.pgadmissions.controllers.workflow;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+
+import java.util.Arrays;
+import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -33,7 +37,6 @@ public class StateTransitionControllerTest {
 
 	private StateTransitionController controller;
 	private ApplicationsService applicationServiceMock;
-	private UsernamePasswordAuthenticationToken authenticationToken;
 	private UserService userServiceMock;
 	private CommentFactory commentFactoryMock;
 	private CommentService commentServiceMock;
@@ -42,26 +45,17 @@ public class StateTransitionControllerTest {
 	public void shouldGetApplicationFromId() {
 		Program program = new ProgramBuilder().id(6).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
-		final RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUserMock);
-		controller =  new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock){
-
-			@Override
-			RegisteredUser getCurrentUser() {
-				return currentUserMock;
-			}
-			
-		};
+		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(true);
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
-		EasyMock.replay(applicationServiceMock, currentUserMock);
+		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
 		ApplicationForm returnedForm = controller.getApplicationForm(5);
 		assertEquals(applicationForm, returnedForm);
-	
-	
+
 	}
-	
+
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicatioNDoesNotExist() {
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(null);
@@ -76,54 +70,92 @@ public class StateTransitionControllerTest {
 		Program program = new ProgramBuilder().id(6).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 
-		final RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);		
-		authenticationToken.setDetails(currentUserMock);
-		controller =  new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock){
-
-			@Override
-			RegisteredUser getCurrentUser() {
-				return currentUserMock;
-			}
-			
-		};
+		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.isInRoleInProgram(Authority.ADMINISTRATOR, program)).andReturn(false);
 		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
-		EasyMock.replay(applicationServiceMock, currentUserMock);
+		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
 		controller.getApplicationForm(5);
 	}
 
 	@Test
-	public void shouldReturnCurrentUserRefreshed(){
-		RegisteredUser currentUser = new RegisteredUserBuilder().id(4).toUser();		
-		authenticationToken.setDetails(currentUser);
-		RegisteredUser refreshedUser = new RegisteredUserBuilder().toUser();
-		EasyMock.expect(userServiceMock.getUser(4)).andReturn(refreshedUser);
+	public void shouldReturnCurrentd() {
+		RegisteredUser currentUser = new RegisteredUserBuilder().id(4).toUser();
+
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
 		EasyMock.replay(userServiceMock);
-		assertSame(refreshedUser, controller.getUser());
+		assertSame(currentUser, controller.getUser());
+	}
+
+	@Test
+	public void shouldReturnReviewersWillingToInterviewIfAppliationInReview() {
+		final Integer applicationId = 5;
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(applicationId).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock) {
+
+			@Override
+			public ApplicationForm getApplicationForm(Integer application) {
+				
+				if (application == applicationId) {
+					return applicationForm;
+				}
+				return null;
+			}
+
+		};
+		RegisteredUser userOne = new RegisteredUserBuilder().id(5).toUser();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(6).toUser();
+		
+		EasyMock.expect(userServiceMock.getReviewersWillingToInterview(applicationForm)).andReturn(Arrays.asList(userOne, userTwo));
+		EasyMock.replay(userServiceMock);
+		List<RegisteredUser> willingToInterview = controller.getReviewersWillingToInterview(applicationId);
+		assertEquals(2, willingToInterview.size());
+		assertTrue(willingToInterview.containsAll(Arrays.asList(userOne, userTwo)));
 	}
 	
 	@Test
+	public void shouldReturnNullIfppliationNotInReview() {
+		final Integer applicationId = 5;
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(applicationId).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock) {
+
+			@Override
+			public ApplicationForm getApplicationForm(Integer application) {
+				
+				if (application == applicationId) {
+					return applicationForm;
+				}
+				return null;
+			}
+
+		};
+		
+		EasyMock.replay(userServiceMock);
+		assertNull(controller.getReviewersWillingToInterview(applicationId));
+		EasyMock.verify(userServiceMock);
+	}
+	@Test
 	public void shouldReturnAvaialableNextStati() {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		controller = new StateTransitionController(applicationServiceMock,userServiceMock, commentServiceMock, commentFactoryMock){
+		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock) {
 
 			@Override
 			public ApplicationForm getApplicationForm(Integer application) {
 				return applicationForm;
 			}
-			
+
 		};
 		assertArrayEquals(ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.VALIDATION), controller.getAvailableNextStati(5));
 	}
 
 	@Test
-	public void shouldReturnStateTransitionView(){
+	public void shouldReturnStateTransitionView() {
 		assertEquals("private/staff/admin/state_transition", controller.getStateTransitionView());
 	}
-	
+
 	@Test
-	public void shouldCreateCommentAndSave(){
+	public void shouldCreateCommentAndSave() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
 		String strComment = "comment";
@@ -135,18 +167,19 @@ public class StateTransitionControllerTest {
 		assertEquals("private/common/simpleMessage", controller.addComment(applicationForm, user, type, strComment));
 		EasyMock.verify(commentServiceMock);
 	}
-	
+
 	@Test
-	public void shouldNotCreateCommentORSaveIfCommentParameterIsBlank(){
+	public void shouldNotCreateCommentORSaveIfCommentParameterIsBlank() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
-		String strComment = "";		
+		String strComment = "";
 		CommentType type = CommentType.VALIDATION;
-		
+
 		EasyMock.replay(commentFactoryMock, commentServiceMock);
 		controller.addComment(applicationForm, user, type, strComment);
 		EasyMock.verify(commentServiceMock);
 	}
+
 	@Before
 	public void setUp() {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
@@ -154,11 +187,8 @@ public class StateTransitionControllerTest {
 		commentFactoryMock = EasyMock.createMock(CommentFactory.class);
 		commentServiceMock = EasyMock.createMock(CommentService.class);
 		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock);
-
-		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		
+		
 	}
 
 	@After

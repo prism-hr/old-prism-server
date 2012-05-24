@@ -473,7 +473,6 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
-	@Ignore
 	public void shouldNotReturnUserWhoIsReviewerOfPreviousRoundOfReviewsWhoAreWillingToInterview(){
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("somethingelse@test.com").username("somethingelse").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
@@ -490,7 +489,52 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		save(user, applicationForm, reviewRound,reviewComment) ;
 		flushAndClearSession();
 		
+		List<RegisteredUser> users = userDAO.getReviewersWillingToInterview(applicationForm);		
+		assertFalse(users.contains(user));
+	}
+	
+	@Test
+	public void shouldNotReturnUserWhoIsReviewerOfLatestRoundOfReviewsWhoAreNotWillingToInterview(){
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("somethingelse@test.com").username("somethingelse").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		Program program = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();		
+		save(applicant, program);
+		
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		Reviewer reviewer = new ReviewerBuilder().user(user).toReviewer();
+		ReviewComment reviewComment = new ReviewCommentBuilder().user(user).reviewer(reviewer).willingToInterview(false).application(applicationForm).comment("yep").commentType(CommentType.REVIEW).decline(false).toReviewComment();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer).toReviewRound();
+		applicationForm.setLatestReviewRound(reviewRound);
+		save(user, applicationForm, reviewRound,reviewComment) ;
+		flushAndClearSession();
+		
 		List<RegisteredUser> users = userDAO.getReviewersWillingToInterview(applicationForm);
+		
+		assertFalse(users.contains(user));
+	}
+	@Test
+	public void shouldReturnUserWhoIsReviewerOfLatestRoundOfReviewsWhoAreWillingToInterviewForOtherApplication(){
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("somethingelse@test.com").username("somethingelse").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		Program program = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();		
+		save(applicant, program);
+		
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm otherApplicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		Reviewer reviewer = new ReviewerBuilder().user(user).toReviewer();
+		ReviewComment reviewComment = new ReviewCommentBuilder().user(user).reviewer(reviewer).willingToInterview(true).application(applicationForm).comment("yep").commentType(CommentType.REVIEW).decline(false).toReviewComment();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer).toReviewRound();
+		applicationForm.setLatestReviewRound(reviewRound);
+		save(user,applicationForm,  otherApplicationForm, reviewRound,reviewComment) ;
+		flushAndClearSession();
+		
+		List<RegisteredUser> users = userDAO.getReviewersWillingToInterview(otherApplicationForm);
 		
 		assertFalse(users.contains(user));
 	}

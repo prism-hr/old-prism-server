@@ -87,6 +87,19 @@
 										 </select>	
 		            				</div>
 		            			</div>
+		            			<#if reviewersWillingToInterview??>
+		            				<div class="row">
+			            				<label class="plain-label">Delegate interview management to</label>
+			            				<div class="field">		            				
+			            					<select class="max" name="appliationAdmin" id="appliationAdmin" disabled="disabled">
+												<option value="">Select...</option>
+												<#list reviewersWillingToInterview as reviewerWillingToInterview>
+													  <option value="${reviewerWillingToInterview.id?string('#####')}" >${reviewerWillingToInterview.firstName?html} ${reviewerWillingToInterview.lastName?html}</option>               
+												</#list>
+											 </select>	
+			            				</div>
+		            				</div>
+		            			</#if>
 		            			<div class="buttons">						        		
 		            				<button type="reset" value="cancel">Cancel</button>
 						       		<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>						        

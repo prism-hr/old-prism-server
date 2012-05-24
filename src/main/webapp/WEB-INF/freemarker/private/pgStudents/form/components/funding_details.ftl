@@ -77,14 +77,26 @@
 	<form >
     <input type="hidden" id="fundingId" name="fundingId" value="${(funding.id?string('#######'))!}"/>    
 
-		<div class="section-info-bar">
-			<div class="row">
-				<span class="info-text">
-					<@spring.message 'fundingDetails.sectionInfo'/> 
-				</span>
-			</div>
-		</div>
-            
+
+				<#if errorCode?? && errorCode=="true">
+					<div class="section-error-bar">
+						<div class="row">
+							<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
+							<span class="invalid-info-text">
+								<@spring.message 'fundingDetails.sectionInfo'/>
+							</span>
+				 		</div>
+				 	</div>
+			 	<#else>
+				 	<div id="fund-info-bar-div" class="section-info-bar">
+						<div class="row">
+							<span id="fund-info-bar-span" class="info-text">
+								<@spring.message 'fundingDetails.sectionInfo'/> 
+							</span>
+						</div>
+					</div>	
+				</#if>
+
 		<div>
 			<!-- Award type -->
             <div class="row">

@@ -1,11 +1,9 @@
 $(document).ready(function()
 {
 
-	// Tabs.
-	$('#timelineview').tabs();
-	
+	/*
 	$('#application').html("");
-	/*$('#application').hide();*/
+	$('#application').hide();
 	$.get("/pgadmissions/comments/view",
 			{
 				id:  $('#applicationId').val(),				
@@ -15,12 +13,19 @@ $(document).ready(function()
 				$('#timeline').html(data);				
 			}
 	);
+	*/
 	
-	
-	$('#timelineBtn').click(function() {
-		$('#application').html("");
-		/*$('#application').hide();
-		$('#timeline').show();*/
+
+	// Timeline tab.	
+	$('#timelineBtn').click(function(e)
+	{
+		// Set the current tab.
+		$('#timeline ul.tabs li').removeClass('current');
+		$(this).parent('li').addClass('current');
+		
+		$('#application').hide();
+		$('#timeline').show();
+		
 		$.get("/pgadmissions/comments/view",
 				{
 					id:  $('#applicationId').val(),				
@@ -28,29 +33,42 @@ $(document).ready(function()
 				},
 				function(data) {
 					$('#timeline').html(data);				
-						
 				}
 		);
+		
+		e.preventDefault();
 	});
 	
-	$('#applicationBtn').click(function() {
-		$('#timeline').html("");
-		/*$('#timeline').hide();
-		$('#application').show();*/
-		if($('#application').html()==""){
+	// Application tab.
+	$('#applicationBtn').click(function(e)
+	{
+		// Set the current tab.
+		$('#timeline ul.tabs li').removeClass('current');
+		$(this).parent('li').addClass('current');
+
+		$('#timeline').html("").hide();
+		$('#application').show();
+		
+		if ($('#application').html()=="")
+		{
+			// Only fetch the application form if it hasn't been fetched already.
 			$.get("/pgadmissions/application?view=view",
-					{
+				{
 					embeddedApplication: "true",				
 					applicationId:  $('#applicationId').val(),				
 					cacheBreaker: new Date().getTime() 
-					},
-					function(data) {
-						$('#application').html(data);
-					
-					}
+				},
+				function(data)
+				{
+					$('#application').html(data);
+				}
 			);
 		}
+
+		e.preventDefault();
 	});
 	
+	// "Open" the timeline tab by default.
+	$('#timelineBtn').trigger('click');
 	
 });

@@ -7,14 +7,18 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
+import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Component
 public class CommentFactory {
 
 	public Comment createComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType) {		
-		if(commentType == CommentType.VALIDATION || commentType == CommentType.REVIEW_EVALUATION || commentType == CommentType.INTERVIEW_EVALUATION){
+		if(commentType == CommentType.REVIEW_EVALUATION || commentType == CommentType.INTERVIEW_EVALUATION){
 			return creatStateChangeComment(applicationForm, user, strComment, commentType);
+		}
+		if(commentType == CommentType.VALIDATION ){
+			return createValidationComment(applicationForm, user, strComment, commentType);
 		}
 		
 		if(commentType == CommentType.REVIEW){
@@ -48,5 +52,13 @@ public class CommentFactory {
 		stateChangeComment.setType(commentType);
 		return stateChangeComment;
 	}
-
+	
+	private Comment createValidationComment(ApplicationForm applicationForm, RegisteredUser user, String strComment, CommentType commentType) {
+		ValidationComment validationComment = new ValidationComment();
+		validationComment.setApplication(applicationForm);
+		validationComment.setUser(user);
+		validationComment.setComment(strComment);
+		validationComment.setType(commentType);
+		return validationComment;
+	}
 }

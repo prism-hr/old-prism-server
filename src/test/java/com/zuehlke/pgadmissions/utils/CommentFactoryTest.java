@@ -9,6 +9,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.StateChangeComment;
+import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -29,7 +30,7 @@ public class CommentFactoryTest {
 		assertEquals(user,comment.getUser());
 		
 		comment = commentFactory.createComment(applicationForm, user, strComment, CommentType.VALIDATION);
-		assertEquals(StateChangeComment.class, comment.getClass());
+		assertEquals(ValidationComment.class, comment.getClass());
 		assertEquals(applicationForm, comment.getApplication());
 		assertEquals("bob", comment.getComment());
 		assertEquals(CommentType.VALIDATION, comment.getType());

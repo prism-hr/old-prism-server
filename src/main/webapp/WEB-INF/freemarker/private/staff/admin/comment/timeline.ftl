@@ -37,8 +37,11 @@
  		<#else>
  		<td>${(timelineEntity.comment?html)!}</td>
  		</#if>
- 		
- 		<#if timelineEntity.type?? && timelineEntity.type ==  "REVIEW">
+ 		<#if timelineEntity.type?? && timelineEntity.type ==  "VALIDATION">
+ 			<td>Qualified for PhD: ${(timelineEntity.qualifiedForPhd?string)!}</td>
+ 			<td>English Competency OK: ${(timelineEntity.englishCompentencyOk?string)!}</td>
+ 			<td>Fee status: ${(timelineEntity.homeOrOverseas?string)!}</td>
+ 		<#elseif timelineEntity.type?? && timelineEntity.type ==  "REVIEW">
  			<td>Interview: ${(timelineEntity.willingToInterview?string)!}</td>
  			<td>Suitable: ${(timelineEntity.suitableCandidate?string)!}</td>
  			<td>Decline: ${(timelineEntity.decline?string)!}</td>

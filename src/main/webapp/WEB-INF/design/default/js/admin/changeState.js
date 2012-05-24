@@ -37,13 +37,24 @@ $(document).ready(function(){
 function saveComment(callback){
 	var application = $('#applicationId').val();	
 	var commentType = $('#commentType').val();
-	$.post( 
-		"/pgadmissions/progress",
-		{
+	var postData = {
 			application: application,
 			type: commentType,
 			comment: $('#comment').val()
-		},
+		};
+	
+	if( $('input:radio[name=qualifiedForPhd]:checked').length > 0) {
+		postData.qualifiedForPhd = $('input:radio[name=qualifiedForPhd]:checked').val();
+	}
+	if ($('input:radio[name=englishCompentencyOk]:checked').length > 0) {
+		postData.qualifiedForPhd = $('input:radio[name=englishCompentencyOk]:checked').val();
+	}
+	if ($('input:radio[name=homeOrOverseas]:checked').length > 0) {
+		postData.homeOrOverseas = $('input:radio[name=homeOrOverseas]:checked').val();
+	}
+	$.post( 
+		"/pgadmissions/progress",
+		postData,
 		callback
 	);
 

@@ -1,5 +1,8 @@
 $(document).ready(function() {
 	
+	$("span[id='secondRegistryUser']").hide();
+	$("span[id='thirdRegistryUser']").hide();
+	
 	$('#cancelDurationBtn').click(function() {
 		  window.location.href = "/pgadmissions/applications";
 	});
@@ -19,6 +22,20 @@ $(document).ready(function() {
 					window.location.href = "/pgadmissions/applications";
 				}
 			);
+		}
+	});
+	
+	$('#addAnother').click(function() {
+		if(!$("span[id='secondRegistryUser']").is(':visible')) {
+			$("span[id='secondRegistryUser']").show();
+		}
+		else if(!$("span[id='thirdRegistryUser']").is(':visible')) {
+			$("span[id='thirdRegistryUser']").show();
+		}
+		else{
+			$("span[id='secondRegistryUser']").show();
+			$("span[id='thirdRegistryUser']").show();
+			$("span[name='threeMaxMessage']").html("You cannot specify more than three registry users.");
 		}
 	});
 	

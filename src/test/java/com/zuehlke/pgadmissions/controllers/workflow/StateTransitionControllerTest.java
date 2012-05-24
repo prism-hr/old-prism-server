@@ -80,7 +80,7 @@ public class StateTransitionControllerTest {
 	}
 
 	@Test
-	public void shouldReturnCurrentd() {
+	public void shouldReturnCurrentUser() {
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(4).toUser();
 
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);

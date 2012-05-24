@@ -87,16 +87,19 @@
 										 </select>	
 		            				</div>
 		            			</div>
-		            			<#if reviewersWillingToInterview??>
+		            			<#if reviewersWillingToInterview??>		            			
 		            				<div class="row">
 			            				<label class="plain-label">Delegate interview management to</label>
-			            				<div class="field">		            				
-			            					<select class="max" name="appliationAdmin" id="appliationAdmin" disabled="disabled">
-												<option value="">Select...</option>
-												<#list reviewersWillingToInterview as reviewerWillingToInterview>
-													  <option value="${reviewerWillingToInterview.id?string('#####')}" >${reviewerWillingToInterview.firstName?html} ${reviewerWillingToInterview.lastName?html}</option>               
-												</#list>
-											 </select>	
+			            				<div class="field">		   
+			            					<form id="delegateForm" method ="POST" action="<@spring.url '/delegate' />">   
+			            						<input type="hidden" name = "applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>     				
+				            					<select class="max" name="applicationAdministrator" id="appliationAdmin" disabled="disabled">
+													<option value="">Select...</option>
+													<#list reviewersWillingToInterview as reviewerWillingToInterview>
+														  <option value="${reviewerWillingToInterview.id?string('#####')}" >${reviewerWillingToInterview.firstName?html} ${reviewerWillingToInterview.lastName?html}</option>               
+													</#list>
+												 </select>	
+											 </form>
 			            				</div>
 		            				</div>
 		            			</#if>

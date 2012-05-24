@@ -499,6 +499,20 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return usersWillingToSupervise;
 	}
 
+	
+	public List<RegisteredUser> getReviewersWillingToInterview() {
+		List<RegisteredUser> usersWillingToInterview = new ArrayList<RegisteredUser>();
+		for (Comment comment : applicationComments) {
+			if (comment instanceof ReviewComment ) {
+				ReviewComment reviewComment = (ReviewComment) comment;
+				if (reviewComment.getWillingToInterview()){
+					usersWillingToInterview.add(reviewComment.getUser());
+				}
+			}
+		}
+		return usersWillingToInterview;
+	}
+	
 	@Override
 	public int compareTo(ApplicationForm appForm) {
 

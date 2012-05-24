@@ -144,6 +144,11 @@
 																${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if> (*)
 															</option>
 														</#list>
+														<#list willingToInterviewReviewers as willingReviewer>									
+															<option value="${applicationForm.id?string("######")}|${willingReviewer.id?string('#####')}">
+																${willingReviewer.firstName?html} ${willingReviewer.lastName?html} <#if !willingReviewer.enabled> - Pending</#if> (*)
+															</option>
+														</#list>
 													</select>
 												</div>
 											</div>

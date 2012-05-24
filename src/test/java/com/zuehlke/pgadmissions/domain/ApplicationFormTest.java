@@ -225,5 +225,45 @@ public class ApplicationFormTest {
 	}
 	
 	
+	@Test
+	public void shouldReturnUsersWilingTointerview()  throws ParseException{
+		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
+		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).toUser();
+		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(7).toUser();
+		
+		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
+		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
+		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).toReviewComment();
+		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).toReviewComment();
+		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).toReviewComment();
+		InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervice(CheckedStatus.YES).id(12).user(reviewerUserTwo).toInterviewComment();
+		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervice(CheckedStatus.NO).id(12).user(reviewerUserOne).toInterviewComment();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review1, review2, review3, interviewComment, interviewComment1).toApplicationForm();
+		
+		List<RegisteredUser> users = applicationForm.getReviewersWillingToInterview();
+		assertEquals(2, users.size());		
+		
+		
+	}
+	
+	@Test
+	public void shouldReturnEmptyListIfNoUsersWillingToInterview() throws ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
+		RegisteredUser reviewerUserOne = new RegisteredUserBuilder().id(6).toUser();
+		RegisteredUser reviewerUserTwo = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(7).toUser();
+		
+		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
+		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
+		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).toReviewComment();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review2).toApplicationForm();
+		
+		List<RegisteredUser> users = applicationForm.getReviewersWillingToInterview();
+		assertEquals(Collections.EMPTY_LIST, users);	
+		
+	}
+	
+	
 
 }

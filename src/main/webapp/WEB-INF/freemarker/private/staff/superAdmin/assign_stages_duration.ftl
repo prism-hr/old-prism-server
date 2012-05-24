@@ -130,6 +130,89 @@
 			  					<hr/>
 			  					
 		  					
+			  					<!-- Add Registry Users -->
+			  					
+			  					 <h1> Add Registry Users</h1>
+							    <br/>
+							    <span name="threeMaxMessage"> </span>
+							     <form id="addRegistryForm">
+							     
+	   								<div class="row"> 
+			           					<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
+			            				<div class="field">	
+			            						<input type = "text" id="regUserfirstname" name="regUserFirstname" />
+		            					</div>
+									</div>
+									
+	   								<div class="row"> 
+			           					<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
+			            				<div class="field">	
+			            						<input type = "text" id="regUserLastname" name="regUserLastname" />
+		            					</div>
+									</div>
+									
+	   								<div class="row"> 
+			           					<span id="ru-email-lbl" class="plain-label">Email</span>
+			            				<div class="field">	
+			            						<input type = "text" id="regUserEmail" name="regUserEmail" />
+		            					</div>
+									</div>
+									
+									<span id="secondRegistryUser" >
+	   									<div class="row"> 
+			           						<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
+			            					<div class="field">	
+			            							<input type = "text" id="regUserfirstname" name="regUserFirstname" />
+		            						</div>
+										</div>
+									
+	   									<div class="row"> 
+			           						<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
+			            					<div class="field">	
+			            							<input type = "text" id="regUserLastname" name="regUserLastname" />
+		            						</div>
+										</div>
+									
+	   									<div class="row"> 
+			           						<span id="ru-email-lbl" class="plain-label">Email</span>
+			            					<div class="field">	
+			            							<input type = "text" id="regUserEmail" name="regUserEmail" />
+		            						</div>
+										</div>
+									</span>
+									
+	   								<span id="thirdRegistryUser">
+	   									<div class="row"> 
+			           						<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
+			            					<div class="field">	
+			            							<input type = "text" id="regUserfirstname" name="regUserFirstname" />
+		            						</div>
+										</div>
+									
+	   									<div class="row"> 
+			           						<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
+			            					<div class="field">	
+			            							<input type = "text" id="regUserLastname" name="regUserLastname" />
+		            						</div>
+										</div>
+									
+	   									<div class="row"> 
+			           						<span id="ru-email-lbl" class="plain-label">Email</span>
+			            					<div class="field">	
+			            							<input type = "text" id="regUserEmail" name="regUserEmail" />
+		            						</div>
+										</div>
+									</span>
+									
+			            			<div class="buttons">						        		
+			            				<button type="button" id="addAnother">Add Another</button>
+			            				<button type="button" id="cancelReminderBtn" value="cancel">Cancel</button>
+							       		<button class="blue" id="submitRIBtn" type="button" value="Submit">Submit</button>						        
+									</div>
+									</form>
+			  					<hr/>
+			  					
+		  					
 				        </div><!-- .content-box-inner -->
 				      </div><!-- .content-box -->
 				      

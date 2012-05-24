@@ -1,6 +1,8 @@
 $(document).ready(function(){
 
 	
+	var persImgCount = 0;
+	
 	//Adjust CSS to display multiple values in one line, delimited by comma ','
 	// in admin view.
 	
@@ -109,6 +111,7 @@ $(document).ready(function(){
 			$("#pres-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#pres-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#pres-info-bar-div .row span.error-hint").remove();
+			persImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
@@ -131,7 +134,10 @@ $(document).ready(function(){
 			
 			$("#pres-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
 			$("#pres-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			$("#pres-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			if(persImgCount == 0){
+				$("#pres-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+				persImgCount = persImgCount + 1;
+			}
 			addToolTips();
 			
 		}

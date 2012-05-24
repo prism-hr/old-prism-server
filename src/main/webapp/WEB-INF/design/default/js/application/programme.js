@@ -5,6 +5,8 @@ $(document).ready(function(){
 	$("#awareSupervisor").val("NO");
 	var unsavedSupervisors = 0;
 	
+	var progImgCount = 0;
+	
 	var superviworRowCount = $("#supervisors tbody").children().length;
 	if(superviworRowCount > 0){
 		$("#supervisors").show();
@@ -22,6 +24,7 @@ $(document).ready(function(){
 			$("#prog-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#prog-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#prog-info-bar-div .row span.error-hint").remove();
+			progImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
@@ -132,7 +135,6 @@ $(document).ready(function(){
 		}
 	});
 	
-	
 	$('#programmeSaveButton').on("click",function(){
 			if( $("#acceptTermsPDValue").val() =='NO'){ 
 				//$("span[name='nonAcceptedPD']").html('You must agree to the terms and conditions');
@@ -140,7 +142,11 @@ $(document).ready(function(){
 				
 				$("#prog-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
 				$("#prog-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-				$("#prog-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+				
+				if(progImgCount == 0){
+					$("#prog-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+					progImgCount = progImgCount + 1;
+				}
 				addToolTips();
 			}
 			else{

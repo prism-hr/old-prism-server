@@ -1,4 +1,7 @@
 $(document).ready(function(){
+	
+	var addImgCount = 0;
+	
 	$("#acceptTermsAIDValue").val("NO");
 	
 	limitTextArea();
@@ -49,6 +52,7 @@ $(document).ready(function(){
 			$("#add-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#add-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#add-info-bar-div .row span.error-hint").remove();
+			addImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
@@ -78,7 +82,10 @@ $(document).ready(function(){
 			
 			$("#add-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
 			$("#add-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			$("#add-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			if(addImgCount == 0){
+				$("#add-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+				addImgCount = addImgCount + 1;
+			}
 			addToolTips();
 			
 		}

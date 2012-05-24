@@ -1,4 +1,7 @@
 $(document).ready(function(){
+	
+	var addrImgCount = 0; 
+	
 	$("#acceptTermsADValue").val("NO");
 	limitTextArea();
 
@@ -32,6 +35,7 @@ $(document).ready(function(){
 			$("#addr-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#addr-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#addr-info-bar-div .row span.error-hint").remove();
+			addrImgCount = 0;
 
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
@@ -54,9 +58,11 @@ $(document).ready(function(){
 			
 			$("#addr-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
 			$("#addr-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			$("#addr-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			if(addrImgCount == 0){
+				$("#addr-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+				addrImgCount = addrImgCount + 1;
+			}
 			addToolTips();
-			
 			
 		}
 		else

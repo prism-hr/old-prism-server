@@ -1,5 +1,7 @@
 $(document).ready(function(){
 	
+	var fundImgCount = 0;
+	
 	$("#acceptTermsFDValue").val("NO");
 	limitTextArea();
 	
@@ -33,6 +35,7 @@ $(document).ready(function(){
 			$("#fund-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#fund-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#fund-info-bar-div .row span.error-hint").remove();
+			fundImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
@@ -55,7 +58,10 @@ $(document).ready(function(){
 			
 			$("#fund-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
 			$("#fund-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			$("#fund-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			if(fundImgCount == 0){
+				$("#fund-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+				fundImgCount = fundImgCount + 1;
+			}
 			addToolTips();
 			
 		}
@@ -77,7 +83,10 @@ $(document).ready(function(){
 			
 			$("#fund-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
 			$("#fund-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			$("#fund-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			if(fundImgCount == 0){
+				$("#fund-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+				fundImgCount = fundImgCount + 1;
+			}
 			addToolTips();
 			
 		}

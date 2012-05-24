@@ -19,9 +19,9 @@ $(document).ready(function(){
 			$("#acceptTermsPDValue").val("YES");
 			
 			$(".terms-box").attr('style','');
-			$("#info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
-			$("#info-bar-span").switchClass("invalid-info-text", "info-text", 1);
-			$("#info-bar-div .row span.error-hint").remove();
+			$("#prog-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
+			$("#prog-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
+			$("#prog-info-bar-div .row span.error-hint").remove();
 			
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
@@ -138,9 +138,9 @@ $(document).ready(function(){
 				//$("span[name='nonAcceptedPD']").html('You must agree to the terms and conditions');
 				$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
 				
-				$("#info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
-				$("#info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-				$("#info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+				$("#prog-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
+				$("#prog-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
+				$("#prog-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
 				addToolTips();
 			}
 			else{

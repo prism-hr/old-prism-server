@@ -24,9 +24,9 @@
 				 		</div>
 				 	</div>
 			 	<#else>
-				 	<div id="info-bar-div" class="section-info-bar">
+				 	<div id="prog-info-bar-div" class="section-info-bar">
 						<div class="row">
-							<span id="info-bar-span" class="info-text">
+							<span id="prog-info-bar-span" class="info-text">
 								<@spring.message 'programmeDetails.project'/> 
 							</span>
 						</div>

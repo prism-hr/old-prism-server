@@ -28,7 +28,12 @@ $(document).ready(function(){
 			$("#acceptTermsFDValue").val("NO");
 		} else {	
 			$("#acceptTermsFDValue").val("YES");
+			
 			$(".terms-box").attr('style','');
+			$("#fund-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
+			$("#fund-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
+			$("#fund-info-bar-div .row span.error-hint").remove();
+			
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
 				acceptedTerms: $("#acceptTermsFDValue").val()
@@ -43,8 +48,16 @@ $(document).ready(function(){
 		if ($('#acceptTermsFDValue').length != 0 && $("#acceptTermsFDValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
-			var $form = $('#fundingSection form');
-			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
+//			var $form = $('#fundingSection form');
+//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
+			
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+			
+			$("#fund-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
+			$("#fund-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
+			$("#fund-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			addToolTips();
+			
 		}
 		else
 		{
@@ -57,8 +70,16 @@ $(document).ready(function(){
 		if ($("#acceptTermsFDValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
-			var $form = $('#personalDetailsSection form');
-			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
+//			var $form = $('#personalDetailsSection form');
+//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
+			
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+			
+			$("#fund-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
+			$("#fund-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
+			$("#fund-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			addToolTips();
+			
 		}
 		else{
 			$("span[name='nonAcceptedFD']").html('');

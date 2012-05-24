@@ -16,17 +16,22 @@ import org.springframework.ui.ModelMap;
 import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.RegistryUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegistryUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.dto.RegistryUserDTO;
 import com.zuehlke.pgadmissions.dto.StageDurationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.propertyeditors.RegistryUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
+import com.zuehlke.pgadmissions.services.RegistryUserService;
 
 public class AssignStagesDurationControllerTest {
 
@@ -37,6 +42,8 @@ public class AssignStagesDurationControllerTest {
 	private UsernamePasswordAuthenticationToken authenticationToken;
 	private static final String CHANGE_STATES_DURATION_VIEW_NAME = "/private/staff/superAdmin/assign_stages_duration";
 	private ReminderIntervalDAO reminderIntervalDAOMock;
+	private RegistryUserService regisrtyUserServiceMock;
+	private RegistryUserPropertyEditor registryPropertyEditorMock;
 	
 
 	
@@ -78,6 +85,23 @@ public class AssignStagesDurationControllerTest {
 		
 	}
 	
+	
+	@Test
+	public void shouldSaveRegistryUsers() {
+		RegistryUser registryUserOne = new RegistryUserBuilder().id(1).toRegistryUser();
+		RegistryUser registryUserTwo = new RegistryUserBuilder().id(2).toRegistryUser();
+		RegistryUser registryUserThree = new RegistryUserBuilder().id(3).toRegistryUser();
+		RegistryUserDTO registryUserDTO = new RegistryUserDTO();
+		registryUserDTO.setRegistryUsers(Arrays.asList(registryUserOne, registryUserTwo, registryUserThree));
+		regisrtyUserServiceMock.save(registryUserOne);
+		regisrtyUserServiceMock.save(registryUserTwo);
+		regisrtyUserServiceMock.save(registryUserThree);
+		EasyMock.replay(regisrtyUserServiceMock);
+		controller.submitregistryUsers(registryUserDTO, new ModelMap());
+		EasyMock.verify(regisrtyUserServiceMock);
+		
+	}
+	
 	@Test
 	public void shouldSaveReminderInterval() {
 		ReminderInterval reminderInterval = new ReminderInterval();
@@ -98,7 +122,9 @@ public class AssignStagesDurationControllerTest {
 		stateDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
 		stageDurationPropertyEditorMock = EasyMock.createMock(StageDurationPropertyEditor.class);
 		reminderIntervalDAOMock = EasyMock.createMock(ReminderIntervalDAO.class);
-		controller = new AssignStagesDurationController(stateDurationDAOMock, stageDurationPropertyEditorMock, reminderIntervalDAOMock);
+		regisrtyUserServiceMock = EasyMock.createMock(RegistryUserService.class);
+		registryPropertyEditorMock = EasyMock.createMock(RegistryUserPropertyEditor.class);
+		controller = new AssignStagesDurationController(stateDurationDAOMock, stageDurationPropertyEditorMock, reminderIntervalDAOMock, regisrtyUserServiceMock, registryPropertyEditorMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

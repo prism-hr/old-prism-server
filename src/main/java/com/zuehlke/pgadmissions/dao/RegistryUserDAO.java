@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dao;
 
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,6 +29,11 @@ private final SessionFactory sessionFactory;
 	
 	public void save(RegistryUser registryUser) {
 		sessionFactory.getCurrentSession().saveOrUpdate(registryUser);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<RegistryUser> getAllRegistryUsers() {
+		return (List<RegistryUser>) sessionFactory.getCurrentSession().createCriteria(RegistryUser.class).list();
 	}
 
 }

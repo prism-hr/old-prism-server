@@ -65,9 +65,9 @@
 				 		</div>
 				 	</div>
 			 	<#else>
-				 	<div class="section-info-bar">
+				 	<div id="pres-info-bar-div" class="section-info-bar">
 						<div class="row">
-							<span class="info-text">
+							<span id="pres-info-bar-span" class="info-text">
 								<@spring.message 'personalDetails.sectionInfo'/> 
 							</span>
 						</div>

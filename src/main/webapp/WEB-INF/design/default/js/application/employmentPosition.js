@@ -36,7 +36,12 @@ $(document).ready(function(){
 			$("#acceptTermsEPValue").val("NO");
 		} else {	
 			$("#acceptTermsEPValue").val("YES");
+			
 			$(".terms-box").attr('style','');
+			$("#emp-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
+			$("#emp-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
+			$("#emp-info-bar-div .row span.error-hint").remove();
+			
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
 				acceptedTerms: $("#acceptTermsEPValue").val()
@@ -50,8 +55,16 @@ $(document).ready(function(){
 		if ($("#acceptTermsEPValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
-			var $form = $('#positionSection form');
-			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
+//			var $form = $('#positionSection form');
+//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
+			
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+			
+			$("#emp-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
+			$("#emp-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
+			$("#emp-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			addToolTips();
+			
 		}
 		else
 		{
@@ -64,6 +77,12 @@ $(document).ready(function(){
 		if($('#acceptTermsEPValue').length != 0  &&  $("#acceptTermsEPValue").val() =='NO'){ 
 			//$("span[name='nonAcceptedEP']").html('You must agree to the terms and conditions');
 			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+			
+			$("#emp-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
+			$("#emp-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
+			$("#emp-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			addToolTips();
+			
 		}
 		else{
 			$("span[name='nonAcceptedEP']").html('');

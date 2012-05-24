@@ -2,7 +2,6 @@ package com.zuehlke.pgadmissions.timers;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 
 import org.easymock.EasyMock;
@@ -33,7 +32,7 @@ public class AdminInterviewFeedbackNotificationTaskTest {
 	private CommentService commentServiceMock;
 	
 	@Test
-	public void shouldGetAdminsAndSendReminders() throws UnsupportedEncodingException {
+	public void shouldGetAdminsAndSendReminders() {
 		Transaction transactionOne = EasyMock.createMock(Transaction.class);
 		Transaction transactionTwo = EasyMock.createMock(Transaction.class);
 		Transaction transactionThree = EasyMock.createMock(Transaction.class);
@@ -54,11 +53,11 @@ public class AdminInterviewFeedbackNotificationTaskTest {
 		EasyMock.expect(commentServiceMock.getInterviewCommentsDueNotification()).andReturn(Arrays.asList(interviewComment1, interviewComment2));
 		transactionOne.commit();
 
-		adminMailSenderMock.sendAdminInterviewNotification(admin1, form, interviewer);
+		adminMailSenderMock.sendAdminInterviewNotification(form, interviewer);
 		commentServiceMock.save(interviewComment1);
 		transactionTwo.commit();
 
-		adminMailSenderMock.sendAdminInterviewNotification(admin1, form, interviewer);
+		adminMailSenderMock.sendAdminInterviewNotification(form, interviewer);
 		commentServiceMock.save(interviewComment2);
 		transactionThree.commit();
 

@@ -45,14 +45,10 @@ public class AdminRejectNotificationTask extends TimerTask {
 		Transaction transaction = session.beginTransaction();
 		session.refresh(application);
 
-		List<RegisteredUser> admins = application.getProgram().getAdministrators();
 		RegisteredUser approver = application.getApprover();
 		try {
-			for (RegisteredUser administrator : admins) {
-				if (!administrator.equals(approver)) {
-					adminMailSender.sendAdminRejectNotification(administrator, application, approver);
-				}
-			}
+			adminMailSender.sendAdminRejectNotification(application, approver);
+
 			application.setRejectNotificationDate(new Date());
 			applicationDAO.save(application);
 			transaction.commit();

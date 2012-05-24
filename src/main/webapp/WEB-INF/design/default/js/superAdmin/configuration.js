@@ -23,7 +23,7 @@ $(document).ready(function() {
 		var validationErrors = appendStagesJSON();
 		var stages = $('[input[name="stagesDuration"]');
 		if(!validationErrors){
-			$.post("/pgadmissions/assignStagesDuration/submit", 
+			$.post("/pgadmissions/configuration/submit", 
 				stages.serialize(),
 				function(data) {
 					window.location.href = "/pgadmissions/applications";
@@ -54,7 +54,7 @@ $(document).ready(function() {
 				unit : $('#reminderUnit').val()
 			};
 		if(!validationErrors){
-			$.post("/pgadmissions/assignStagesDuration/submitReminderInterval", 
+			$.post("/pgadmissions/configuration/submitReminderInterval", 
 					$.param(postData),
 					function(data) {
 				window.location.href = "/pgadmissions/applications";
@@ -68,7 +68,7 @@ $(document).ready(function() {
 		var validationErrors = appendRegistryUsersJSON();
 		var registryUsers = $('[input[name="registryUsers"]');
 		if(!validationErrors){
-			$.post("/pgadmissions/assignStagesDuration/submitRegistryUsers", 
+			$.post("/pgadmissions/configuration/submitRegistryUsers", 
 				registryUsers.serialize(),
 				function(data) {
 					window.location.href = "/pgadmissions/applications";

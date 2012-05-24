@@ -46,8 +46,8 @@ $(document).ready(function() {
 		window.location.href = "/pgadmissions/manageUsers/showPage";
 	});
 	
-	$('#configureStages').click(function(){
-		window.location.href = "/pgadmissions/assignStagesDuration";
+	$('#configuration').click(function(){
+		window.location.href = "/pgadmissions/configuration";
 	});
 
 	$("input[name*='appDownload']").click(function(){

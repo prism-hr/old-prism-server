@@ -29,22 +29,22 @@ import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.services.RegistryUserService;
 
 @Controller
-@RequestMapping("/assignStagesDuration")
-public class AssignStagesDurationController {
+@RequestMapping("/configuration")
+public class ConfigurationController {
 
 	private final StageDurationDAO stateDurationDao;
-	private static final String CHANGE_STATES_DURATION_VIEW_NAME = "/private/staff/superAdmin/assign_stages_duration";
+	private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
 	private final StageDurationPropertyEditor stageDurationPropertyEditor;
 	private final ReminderIntervalDAO reminderIntervalDAO;
 	private final RegistryUserService registryUserService;
 	private final RegistryUserPropertyEditor registryPropertyEditor;
 	
-	AssignStagesDurationController(){
+	ConfigurationController(){
 		this(null, null, null, null, null);
 	}
 	
 	@Autowired
-	public AssignStagesDurationController(StageDurationDAO stateDurationDao, StageDurationPropertyEditor stageDurationPropertyEditor, ReminderIntervalDAO reminderIntervalDAO, RegistryUserService registryUserService,
+	public ConfigurationController(StageDurationDAO stateDurationDao, StageDurationPropertyEditor stageDurationPropertyEditor, ReminderIntervalDAO reminderIntervalDAO, RegistryUserService registryUserService,
 			RegistryUserPropertyEditor registryPropertyEditor) {
 		this.stateDurationDao = stateDurationDao;
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
@@ -74,7 +74,7 @@ public class AssignStagesDurationController {
 		modelMap.put("durationDAO", stateDurationDao);
 		modelMap.put("intervalDAO", reminderIntervalDAO);
 		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
-		return CHANGE_STATES_DURATION_VIEW_NAME;
+		return CONFIGURATION_VIEW_NAME;
 	}
 	
 	@RequestMapping(value="/submit", method = RequestMethod.POST)
@@ -91,7 +91,7 @@ public class AssignStagesDurationController {
 		modelMap.put("durationDAO", stateDurationDao);
 		modelMap.put("intervalDAO", reminderIntervalDAO);
 		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
-		return CHANGE_STATES_DURATION_VIEW_NAME;
+		return CONFIGURATION_VIEW_NAME;
 	}
 	
 	@RequestMapping(value="/submitReminderInterval", method = RequestMethod.POST)
@@ -107,7 +107,7 @@ public class AssignStagesDurationController {
 		modelMap.put("durationDAO", stateDurationDao);
 		modelMap.put("intervalDAO", reminderIntervalDAO);
 		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
-		return CHANGE_STATES_DURATION_VIEW_NAME;
+		return CONFIGURATION_VIEW_NAME;
 	}
 	
 	@RequestMapping(value="/submitRegistryUsers", method = RequestMethod.POST)
@@ -124,7 +124,7 @@ public class AssignStagesDurationController {
 		modelMap.put("durationDAO", stateDurationDao);
 		modelMap.put("intervalDAO", reminderIntervalDAO);
 		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
-		return CHANGE_STATES_DURATION_VIEW_NAME;
+		return CONFIGURATION_VIEW_NAME;
 	}
 	
 	private RegisteredUser getCurrentUser() {

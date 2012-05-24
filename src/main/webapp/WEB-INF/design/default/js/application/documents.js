@@ -23,7 +23,12 @@ $(document).ready(function(){
 			$("#acceptTermsDDValue").val("NO");
 		} else {	
 			$("#acceptTermsDDValue").val("YES");
+			
 			$(".terms-box").attr('style','');
+			$("#doc-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
+			$("#doc-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
+			$("#doc-info-bar-div .row span.error-hint").remove();
+			
 			$.post("/pgadmissions/acceptTerms", {  
 				applicationId: $("#applicationId").val(), 
 				acceptedTerms: $("#acceptTermsDDValue").val()
@@ -37,8 +42,16 @@ $(document).ready(function(){
 		if( $("#acceptTermsDDValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
-			var $form = $('#documentSection form');
-			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
+//			var $form = $('#documentSection form');
+//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
+			
+			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+			
+			$("#doc-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
+			$("#doc-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
+			$("#doc-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			addToolTips();
+			
 		}
 		else
 		{

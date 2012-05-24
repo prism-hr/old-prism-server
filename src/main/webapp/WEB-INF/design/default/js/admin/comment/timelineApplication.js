@@ -2,7 +2,7 @@ $(document).ready(function()
 {
 
 	// Tabs.
-	$('#timelineview ul.tabs').tabs();
+	$('#timelineview').tabs();
 	
 	$('#application').html("");
 	/*$('#application').hide();*/

@@ -118,3 +118,21 @@ form select[multiple] { vertical-align: top; }
 /* Validation errors. */
 span.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; color: red; display: inline-block; margin-left: 10px; padding-left: 24px; }
 input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin: -1px; }
+
+
+/* SITE MESSAGES ----------------------------------------------------------------------------------------- */
+#site-message { background: #FFF; border-radius: 10px; box-shadow: 0 0 5px 0 #999; height: 340px; left: 50%; margin: -170px 0 0 -325px; position: absolute; top: 50%; width: 650px; }
+
+#site-message .header { position: absolute; left: 220px; right: 20px; top: 20px; height: 60px; }
+#site-message .header .logo { position: absolute; bottom: 0; height: 54px; overflow: hidden; }
+#site-message .header .logo img { height: 60px; }
+#site-message .header .tagline { color: #999; font-size: 12pt; font-weight: bold; line-height: 1.2; position: absolute; bottom: 0; left: 215px; }
+
+#site-message .content { border: 2px solid #AAA; border-width: 2px 0; font-size: 18pt; position: absolute; top: 100px; left: 20px; right: 20px; padding: 26px 5px 26px 200px; }
+#site-message .content h1 { font-weight: bold; margin-bottom: 1em; }
+#site-message .content p { color: #999; line-height: 1.2; margin-bottom: 0.5em; }
+#site-message .content p:last-child { margin-bottom: 0; }
+
+#site-message.success .content h1 { color: #AFBD21; }
+#site-message.notice .content h1 { color: #FFC220; }
+#site-message.error .content h1 { color: #B60050; }

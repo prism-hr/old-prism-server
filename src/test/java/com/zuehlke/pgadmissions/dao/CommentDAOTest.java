@@ -129,7 +129,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		save(application);
 		flushAndClearSession();
 		
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.NO).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
 		
 		assertNull(reviewComment.getId());
 		
@@ -164,12 +164,12 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		Comment comment = new CommentBuilder().user(user).comment("comment").application(application).toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.NO).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
-		ReviewComment reviewComment1 = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.YES).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
-		ReviewComment reviewComment2 = new ReviewCommentBuilder().application(application).adminsNotified(CheckedStatus.NO).comment("comment").user(user).commentType(CommentType.GENERIC).toReviewComment();
-		ReviewComment reviewComment3 = new ReviewCommentBuilder().application(application).adminsNotified(null).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment1 = new ReviewCommentBuilder().application(application).adminsNotified(true).comment("comment").user(user).commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment2 = new ReviewCommentBuilder().application(application).adminsNotified(false).comment("comment").user(user).commentType(CommentType.GENERIC).toReviewComment();
 		
-		save(comment, reviewComment, reviewComment1,reviewComment2, reviewComment3);
+		
+		save(comment, reviewComment, reviewComment1,reviewComment2);
 				
 		flushAndClearSession();
 		
@@ -179,7 +179,7 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		assertFalse(reloadedComments.contains(reviewComment2));
 		assertFalse(reloadedComments.contains(reviewComment1));
 		assertTrue(reloadedComments.contains(reviewComment));
-		assertTrue(reloadedComments.contains(reviewComment3));
+		
 	}
 
 	@Test

@@ -375,7 +375,7 @@
                    			
                    		</div>
                    		 <@spring.bind "personalDetails.requiresVisa" />
-             			<#list spring.status.errorMessages as error>
+             			<#list spring.status.errorMessages as error >
 							<div class="row">
 								<div class="field">
 									<span class="invalid">${error}</span>

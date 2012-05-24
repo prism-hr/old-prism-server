@@ -48,7 +48,7 @@ public class CommentServiceTest {
 	public void shouldGetAllReviewCommentsDueNotificationToAdmin() {
 		ReviewComment reviewComment = new ReviewCommentBuilder().id(1).toReviewComment();
 		ReviewComment reviewComment2 = new ReviewCommentBuilder().id(2)
-				.commentType(CommentType.REVIEW).adminsNotified(CheckedStatus.YES).toReviewComment();
+				.commentType(CommentType.REVIEW).adminsNotified(true).toReviewComment();
 		EasyMock.expect(commentDAOMock.getReviewCommentsDueNotification()).andReturn(Arrays.asList(reviewComment2));
 		EasyMock.replay(commentDAOMock);
 		List<ReviewComment> commentsDueNotification = service.getReviewCommentsDueNotification();

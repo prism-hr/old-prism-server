@@ -314,7 +314,7 @@ public class RegisteredUserMappingTest extends AutomaticRollbackTestCase {
 		sessionFactory.getCurrentSession().save(application);
 		
 		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).adminsNotified(CheckedStatus.NO).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).adminsNotified(false).comment("This is a review comment").commentType(CommentType.REVIEW).toReviewComment();
 		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").toComment();
 		
 		RegisteredUser admin1 = new RegisteredUserBuilder().username("email").firstName("bob").lastName("bobson").email("email@test.com").toUser();

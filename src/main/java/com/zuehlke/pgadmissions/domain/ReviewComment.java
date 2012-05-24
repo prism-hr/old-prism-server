@@ -9,7 +9,7 @@ import javax.persistence.OneToOne;
 
 import org.hibernate.annotations.Type;
 
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 /**
@@ -30,29 +30,22 @@ public class ReviewComment extends Comment{
 	@JoinColumn(name = "reviewer_id")
 	private Reviewer reviewer;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
-	@Column(name = "willing_to_supervise")
-	private CheckedStatus willingToInterview;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	@Column(name = "willing_to_interview")
+	private Boolean willingToInterview;
+	
+	
 	@Column(name="suitable_candidate")
-	private CheckedStatus suitableCandidate;
+	private Boolean suitableCandidate;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	
 	@Column(name = "decline")
-	private CheckedStatus decline;
+	private boolean decline;
 	
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CheckedStatusEnumUserType")
+	
 	@Column(name = "admins_notified")
-	private CheckedStatus adminsNotified;
+	private boolean adminsNotified;
 	
-	public CheckedStatus getAdminsNotified() {
-		return adminsNotified;
-	}
-
-	public void setAdminsNotified(CheckedStatus adminsNotified) {
-		this.adminsNotified = adminsNotified;
-	}
 
 	@Type(type = "com.zuehlke.pgadmissions.dao.custom.CommentTypeEnumUserType")
 	@Column(name="comment_type")
@@ -65,30 +58,7 @@ public class ReviewComment extends Comment{
 	public void setType(CommentType type) {
 		this.type = type;
 	}
-	
-	public CheckedStatus getWillingToInterview() {
-		return willingToInterview;
-	}
 
-	public void setWillingToInterview(CheckedStatus willingToSupervice) {
-		this.willingToInterview = willingToSupervice;
-	}
-
-	public CheckedStatus getSuitableCandidate() {
-		return suitableCandidate;
-	}
-
-	public void setSuitableCandidate(CheckedStatus suitableCandidate) {
-		this.suitableCandidate = suitableCandidate;
-	}
-
-	public CheckedStatus getDecline() {
-		return decline;
-	}
-
-	public void setDecline(CheckedStatus decline) {
-		this.decline = decline;
-	}
 
 	public Reviewer getReviewer() {
 		return reviewer;
@@ -96,6 +66,38 @@ public class ReviewComment extends Comment{
 
 	public void setReviewer(Reviewer reviewer) {
 		this.reviewer = reviewer;
+	}
+
+	public Boolean isWillingToInterview() {
+		return willingToInterview;
+	}
+
+	public void setWillingToInterview(Boolean willingToInterview) {
+		this.willingToInterview = willingToInterview;
+	}
+
+	public Boolean isSuitableCandidate() {
+		return suitableCandidate;
+	}
+
+	public void setSuitableCandidate(Boolean suitableCandidate) {
+		this.suitableCandidate = suitableCandidate;
+	}
+
+	public boolean isDecline() {
+		return decline;
+	}
+
+	public void setDecline(boolean decline) {
+		this.decline = decline;
+	}
+
+	public boolean isAdminsNotified() {
+		return adminsNotified;
+	}
+
+	public void setAdminsNotified(boolean adminsNotified) {
+		this.adminsNotified = adminsNotified;
 	}
 
 	

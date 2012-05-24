@@ -2,20 +2,18 @@ package com.zuehlke.pgadmissions.domain.builders;
 
 import java.util.Date;
 
-
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.Reviewer;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class ReviewCommentBuilder {
 	
-	private CheckedStatus willingToSupervice;
-	private CheckedStatus suitableCandidate;
-	private CheckedStatus decline;
-	private CheckedStatus adminsNotified;
+	private Boolean willingToInterview;
+	private Boolean suitableCandidate;
+	private boolean decline;
+	private boolean adminsNotified;
 	private ApplicationForm applicationForm;
 	private String comment;
 	private Integer id;
@@ -29,23 +27,23 @@ public class ReviewCommentBuilder {
 		return this;
 	}
 	
-	public ReviewCommentBuilder willingToSupervice(CheckedStatus willingToSupervice) {
-		this.willingToSupervice = willingToSupervice;
+	public ReviewCommentBuilder willingToInterview(Boolean willingToInterview) {
+		this.willingToInterview = willingToInterview;
 		return this;
 	}
 	
-	public ReviewCommentBuilder suitableCandidate(CheckedStatus suitableCandidate) {
+	public ReviewCommentBuilder suitableCandidate(Boolean suitableCandidate) {
 		this.suitableCandidate = suitableCandidate;
 		return this;
 	}
 	
-	public ReviewCommentBuilder decline(CheckedStatus decline) {
+	public ReviewCommentBuilder decline(boolean decline) {
 		this.decline = decline;
 		return this;
 	}
 	
 	
-	public ReviewCommentBuilder adminsNotified(CheckedStatus adminsNotified) {
+	public ReviewCommentBuilder adminsNotified(boolean adminsNotified) {
 		this.adminsNotified = adminsNotified;
 		return this;
 	}
@@ -82,7 +80,7 @@ public class ReviewCommentBuilder {
 		reviewComment.setId(id);
 		reviewComment.setSuitableCandidate(suitableCandidate);
 		reviewComment.setUser(user);
-		reviewComment.setWillingToInterview(willingToSupervice);
+		reviewComment.setWillingToInterview(willingToInterview);
 		reviewComment.setAdminsNotified(adminsNotified);
 		reviewComment.setReviewer(reviewer);
 		return reviewComment;

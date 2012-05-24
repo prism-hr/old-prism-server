@@ -67,8 +67,8 @@ public class AdminReviewFeedbackNotificationTaskTest {
 		adminReviewTask.run();
 
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, adminMailSenderMock, commentServiceMock);
-		assertEquals(CheckedStatus.YES, reviewComment1.getAdminsNotified());
-		assertEquals(CheckedStatus.YES, reviewComment2.getAdminsNotified());
+		assertEquals(true, reviewComment1.isAdminsNotified());
+		assertEquals(true, reviewComment2.isAdminsNotified());
 	}
 	
 	

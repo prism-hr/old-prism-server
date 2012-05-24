@@ -561,7 +561,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		for (Comment comment : comments) {
 			if (comment.getApplication().equals(application) && comment.getType().equals(CommentType.REVIEW)) {
 				ReviewComment reviewComment = (ReviewComment) comment;
-				if (reviewComment.getDecline().equals(CheckedStatus.YES)) {
+				if (reviewComment.isDecline()) {
 					return true;
 				}
 			}

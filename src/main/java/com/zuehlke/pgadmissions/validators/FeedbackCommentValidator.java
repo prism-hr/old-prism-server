@@ -22,11 +22,11 @@ public class FeedbackCommentValidator implements Validator{
 	public void validate(Object target, Errors errors) {
 		if (target instanceof ReviewComment) {
 			ReviewComment comment = (ReviewComment) target;
-			if(comment.getDecline() ==  CheckedStatus.NO){
-				if(comment.getSuitableCandidate() == null || (comment.getSuitableCandidate() != CheckedStatus.YES && comment.getSuitableCandidate() != CheckedStatus.NO)){
+			if(!comment.isDecline() ){
+				if(comment.isSuitableCandidate() == null ){
 					errors.rejectValue("suitableCandidate", "feedbackComment.suitableCandidate.notempty");
 				}
-				if(comment.getWillingToInterview() == null || (comment.getWillingToInterview() != CheckedStatus.YES && comment.getWillingToInterview() != CheckedStatus.NO)){
+				if(comment.isWillingToInterview() == null){
 					errors.rejectValue("willingToInterview", "feedbackComment.willingToInterview.notempty");
 				}
 				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "feedbackComment.comment.notempty");

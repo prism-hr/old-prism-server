@@ -209,9 +209,9 @@ public class ReviewerDAOTest extends AutomaticRollbackTestCase {
 		ReviewRound reviewRound = new ReviewRoundBuilder().application(application).reviewers(reviewer).toReviewRound();
 		application.setLatestReviewRound(reviewRound);
 		
-		ReviewComment reviewComment = new ReviewCommentBuilder().reviewer(reviewer).adminsNotified(CheckedStatus.NO).commentType(CommentType.REVIEW)
-				.comment("This is a review comment").suitableCandidate(CheckedStatus.NO).user(user).application(application).decline(CheckedStatus.YES)
-				.willingToSupervice(CheckedStatus.NO).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().reviewer(reviewer).adminsNotified(false).commentType(CommentType.REVIEW)
+				.comment("This is a review comment").suitableCandidate(false).user(user).application(application).decline(true)
+				.willingToInterview(false).toReviewComment();
 		save(application,reviewer, reviewRound, reviewComment);
 
 		flushAndClearSession();

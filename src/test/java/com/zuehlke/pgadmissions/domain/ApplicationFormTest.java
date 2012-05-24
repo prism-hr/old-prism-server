@@ -190,9 +190,9 @@ public class ApplicationFormTest {
 		
 		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
 		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
-		ReviewComment review1 = new ReviewCommentBuilder().willingToSupervice(CheckedStatus.YES).id(10).user(reviewerUserTwo).toReviewComment();
-		ReviewComment review2 = new ReviewCommentBuilder().willingToSupervice(CheckedStatus.NO).id(11).user(reviewerUserTwo).toReviewComment();
-		ReviewComment review3 = new ReviewCommentBuilder().willingToSupervice(CheckedStatus.YES).id(12).user(reviewerUserOne).toReviewComment();
+		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).toReviewComment();
+		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).toReviewComment();
+		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).toReviewComment();
 		InterviewComment interviewComment = new InterviewCommentBuilder().willingToSupervice(CheckedStatus.YES).id(12).user(reviewerUserTwo).toInterviewComment();
 		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervice(CheckedStatus.NO).id(12).user(reviewerUserOne).toInterviewComment();
 		
@@ -212,9 +212,9 @@ public class ApplicationFormTest {
 		
 		Comment commentOne = new CommentBuilder().date(format.parse("01 01 2011")).id(4).user(reviewerUserTwo).toComment();
 		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(6).user(reviewerUserOne).toComment();
-		ReviewComment review1 = new ReviewCommentBuilder().willingToSupervice(CheckedStatus.YES).id(10).user(reviewerUserTwo).toReviewComment();
-		ReviewComment review2 = new ReviewCommentBuilder().willingToSupervice(CheckedStatus.NO).id(11).user(reviewerUserTwo).toReviewComment();
-		ReviewComment review3 = new ReviewCommentBuilder().willingToSupervice(CheckedStatus.YES).id(12).user(reviewerUserOne).toReviewComment();
+		ReviewComment review1 = new ReviewCommentBuilder().willingToInterview(true).id(10).user(reviewerUserTwo).toReviewComment();
+		ReviewComment review2 = new ReviewCommentBuilder().willingToInterview(false).id(11).user(reviewerUserTwo).toReviewComment();
+		ReviewComment review3 = new ReviewCommentBuilder().willingToInterview(true).id(12).user(reviewerUserOne).toReviewComment();
 		InterviewComment interviewComment1 = new InterviewCommentBuilder().willingToSupervice(CheckedStatus.NO).id(12).user(reviewerUserOne).toInterviewComment();
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).comments(commentOne, commentTwo, review1, review2, review3, interviewComment1).toApplicationForm();

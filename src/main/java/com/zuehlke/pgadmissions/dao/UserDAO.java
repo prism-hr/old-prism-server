@@ -165,6 +165,17 @@ public class UserDAO {
 		}
 		return users;
 	}
+	@SuppressWarnings("unchecked")
+	public List<RegisteredUser> getReviewersWillingToInterview(ApplicationForm applicationForm) {
+		List<Reviewer> reviewers = sessionFactory.getCurrentSession().createCriteria(Reviewer.class).list();
+		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
+		for (Reviewer reviewer : reviewers) {
+			if(!users.contains(reviewer.getUser())){
+				users.add(reviewer.getUser());
+			}
+		}
+		return users;
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<RegisteredUser> getAllPreviousSupervisorsOfProgram(Program program) {

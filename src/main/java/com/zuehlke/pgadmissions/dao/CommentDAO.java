@@ -7,7 +7,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
@@ -46,7 +45,7 @@ public class CommentDAO {
 	public List<ReviewComment> getReviewCommentsDueNotification() {
 		return (List<ReviewComment>) sessionFactory.getCurrentSession().createCriteria(ReviewComment.class)
 				.add(Restrictions.eq("type", CommentType.REVIEW))
-				.add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified", CheckedStatus.NO)))
+				.add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified",false)))
 				.list();
 	}
 
@@ -54,7 +53,7 @@ public class CommentDAO {
 	public List<InterviewComment> getInterviewCommentsDueNotification() {
 		return (List<InterviewComment>) sessionFactory.getCurrentSession().createCriteria(InterviewComment.class)
 				.add(Restrictions.eq("type", CommentType.INTERVIEW))
-				.add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified", CheckedStatus.NO)))
+				.add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified",CheckedStatus.NO)))
 				.list();
 	}
 	

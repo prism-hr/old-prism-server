@@ -46,7 +46,7 @@ public class AdminReviewFeedbackNotificationTask extends TimerTask{
 				for (RegisteredUser admin : admins) {
 					adminMailSender.sendAdminReviewNotification(admin, comment.getApplication(), comment.getUser());
 				}
-				comment.setAdminsNotified(CheckedStatus.YES);
+				comment.setAdminsNotified(true);
 				commentService.save(comment);
 				transaction.commit();				
 				log.info("notification sent to admins for review comment " +  comment.getId());

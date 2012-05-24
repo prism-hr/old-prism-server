@@ -34,7 +34,7 @@ public class FeedbackCommentValidatorTest {
 	}
 	
 	@Test
-	public void shouldRejectIfNotDeclinedAndWillingToSuperviseIsEmpty() {
+	public void shouldRejectIfNotDeclinedAndWillingToInterviewIsEmpty() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "willingToInterview");
 		reviewComment.setWillingToInterview(null);
 		validator.validate(reviewComment, mappingResult);
@@ -55,7 +55,7 @@ public class FeedbackCommentValidatorTest {
 	@Test
 	public void shouldNotRejectAnyEmptyFieldIfItIsDeclined() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(reviewComment, "reviewComment");
-		reviewComment.setDecline(CheckedStatus.YES);
+		reviewComment.setDecline(true);
 		reviewComment.setComment(null);
 		reviewComment.setSuitableCandidate(null);
 		reviewComment.setWillingToInterview(null);
@@ -105,7 +105,7 @@ public class FeedbackCommentValidatorTest {
 	@Before
 	public void setup() {
 		validator = new FeedbackCommentValidator();
-		reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidate(CheckedStatus.NO).willingToSupervice(CheckedStatus.YES).decline(CheckedStatus.NO).toReviewComment();
+		reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidate(false).willingToInterview(true).decline(false).toReviewComment();
 		interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidate(CheckedStatus.NO).willingToSupervice(CheckedStatus.YES).decline(CheckedStatus.NO).toInterviewComment();
 	}
 }

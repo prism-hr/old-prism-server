@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.dao.mappings;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
@@ -44,7 +46,9 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase{
 		
 		flushAndClearSession();
 		
-		ReviewComment reviewComment = new ReviewCommentBuilder().reviewer(reviewer).adminsNotified(CheckedStatus.NO).commentType(CommentType.REVIEW).comment("This is a review comment").suitableCandidate(CheckedStatus.NO).user(reviewerUser).application(applicationForm).decline(CheckedStatus.YES).willingToSupervice(CheckedStatus.NO).toReviewComment();
+		ReviewComment reviewComment = new ReviewCommentBuilder().reviewer(reviewer).adminsNotified(false).commentType(CommentType.REVIEW)
+				.comment("This is a review comment").suitableCandidate(false).user(reviewerUser).application(applicationForm).decline(true)
+				.willingToInterview(false).toReviewComment();
 		save(reviewComment);
 		
 		assertNotNull(reviewComment.getId());
@@ -62,7 +66,10 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase{
 		assertEquals(reviewerUser, reloadedComment.getUser());
 		assertEquals(reviewer, reloadedComment.getReviewer());
 		assertEquals("This is a review comment", reloadedComment.getComment());
-		assertEquals(CheckedStatus.NO, reloadedComment.getSuitableCandidate());
+		assertFalse(reloadedComment.isSuitableCandidate());
+		assertFalse(reloadedComment.isAdminsNotified());
+		assertFalse(reloadedComment.isWillingToInterview());
+		assertTrue(reloadedComment.isDecline());
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(reloadedComment.getDate(), Calendar.DATE));
 		
 	}

@@ -16,7 +16,9 @@ import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.PendingRoleNotification;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
@@ -25,12 +27,15 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.PendingRoleNotificationBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class UserDAOTest extends AutomaticRollbackTestCase {
 	private UserDAO userDAO;
@@ -440,8 +445,29 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		List<RegisteredUser> users = userDAO.getAllPreviousReviewersOfProgram(program);
 		assertEquals(1, users.size());
 		assertTrue(users.contains(user));
+				
+	}
+	
+	@Test
+	public void shouldReturnUserWhoIsReviewerOfLatestRoundOfReviewsWhoAreWillingToInterview(){
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("somethingelse@test.com").username("somethingelse").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		Program program = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();		
+		save(applicant, program);
 		
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+	
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		Reviewer reviewer = new ReviewerBuilder().user(user).toReviewer();
+		ReviewComment reviewComment = new ReviewCommentBuilder().user(user).reviewer(reviewer).willingToInterview(true).application(applicationForm).comment("yep").commentType(CommentType.REVIEW).decline(false).toReviewComment();
+		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).reviewers(reviewer).toReviewRound();
+		save(user, applicationForm, reviewRound,reviewComment) ;
+		flushAndClearSession();
 		
+		List<RegisteredUser> users = userDAO.getReviewersWillingToInterview(applicationForm);
+		
+		assertTrue(users.contains(user));
 	}
 	
 	@Test
@@ -455,7 +481,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).supervisors(new SupervisorBuilder().user(user).toSupervisor()).toApprovalRound();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().application(applicationForm).supervisors(new SupervisorBuilder().user(user).email("email1@test.com").toSupervisor()).toApprovalRound();
 		save(user, applicationForm, approvalRound);
 		flushAndClearSession();
 		
@@ -465,6 +491,7 @@ public class UserDAOTest extends AutomaticRollbackTestCase {
 		
 		
 	}
+	
 	@Before
 	public void setup() {
 		userDAO = new UserDAO(sessionFactory);

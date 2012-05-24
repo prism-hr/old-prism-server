@@ -573,7 +573,7 @@ public class RegisteredUserTest {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).id(1).toApplicationForm();
 
 		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.YES).comment("This is a review comment")
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(true).comment("This is a review comment")
 				.commentType(CommentType.REVIEW).toReviewComment();
 		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").toComment();
 
@@ -592,7 +592,7 @@ public class RegisteredUserTest {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(applicant).id(1).toApplicationForm();
 
 		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.NO).comment("This is a review comment")
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(false).comment("This is a review comment")
 				.commentType(CommentType.REVIEW).toReviewComment();
 		Comment comment1 = new CommentBuilder().id(1).application(application).comment("This is another generic Comment").toComment();
 
@@ -609,7 +609,7 @@ public class RegisteredUserTest {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
 
 		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(CheckedStatus.NO).comment("This is a review comment")
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application).id(2).decline(false).comment("This is a review comment")
 				.commentType(CommentType.REVIEW).toReviewComment();
 		Comment comment1 = new CommentBuilder().id(3).application(application).comment("This is another generic Comment").toComment();
 
@@ -643,7 +643,7 @@ public class RegisteredUserTest {
 		ApplicationForm application2 = new ApplicationFormBuilder().program(program).id(2).toApplicationForm();
 
 		Comment comment = new CommentBuilder().id(1).application(application1).comment("This is a generic Comment").toComment();
-		ReviewComment reviewComment = new ReviewCommentBuilder().application(application2).id(2).decline(CheckedStatus.NO).comment("This is a review comment")
+		ReviewComment reviewComment = new ReviewCommentBuilder().application(application2).id(2).decline(false).comment("This is a review comment")
 				.commentType(CommentType.REVIEW).toReviewComment();
 		Comment comment1 = new CommentBuilder().id(3).application(application1).comment("This is another generic Comment").toComment();
 

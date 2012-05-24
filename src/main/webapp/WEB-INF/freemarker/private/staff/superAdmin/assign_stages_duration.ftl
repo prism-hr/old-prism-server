@@ -138,75 +138,75 @@
 							     <form id="addRegistryForm">
 							     
 							     <span id="firstRegistryUser">
-							     <input type="hidden" name="1_regUserId" id= "1_regUserId" />
+							     <input type="hidden" name="1_regUserId" id= "1_regUserId" value="${(allRegistryUsers[0].id)!}" />
 	   								<div class="row"> 
 			           					<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
 			            				<div class="field">	
-			            						<input type = "text" id="1_regUserfirstname" name="regUserFirstname" />
+			            						<input type = "text" id="1_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[0].firstname)!}" />
 		            					</div>
 									</div>
 									
 	   								<div class="row"> 
 			           					<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
 			            				<div class="field">	
-			            						<input type = "text" id="1_regUserLastname" name="regUserLastname" />
+			            						<input type = "text" id="1_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[0].lastname)!}" />
 		            					</div>
 									</div>
 									
 	   								<div class="row"> 
 			           					<span id="ru-email-lbl" class="plain-label">Email</span>
 			            				<div class="field">	
-			            						<input type = "text" id="1_regUserEmail" name="regUserEmail" />
+			            						<input type = "text" id="1_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[0].email)!}"/>
 		            					</div>
 									</div>
 									</span>
 									<span class="invalid" name="firstuserInvalid" style="display:none;"></span>
 									
 									<span id="secondRegistryUser" >
-										<input type="hidden" name="2_regUserId" id= "2_regUserId" />
+										<input type="hidden" name="2_regUserId" id= "2_regUserId" value="${(allRegistryUsers[1].id)!}"/>
 	   									<div class="row"> 
 			           						<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
 			            					<div class="field">	
-			            							<input type = "text" id="2_regUserfirstname" name="regUserFirstname" />
+			            							<input type = "text" id="2_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[1].firstname)!}"/>
 		            						</div>
 										</div>
 									
 	   									<div class="row"> 
 			           						<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
 			            					<div class="field">	
-			            							<input type = "text" id="2_regUserLastname" name="regUserLastname" />
+			            							<input type = "text" id="2_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[1].lastname)!}"/>
 		            						</div>
 										</div>
 									
 	   									<div class="row"> 
 			           						<span id="ru-email-lbl" class="plain-label">Email</span>
 			            					<div class="field">	
-			            							<input type = "text" id="2_regUserEmail" name="regUserEmail" />
+			            							<input type = "text" id="2_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[1].email)!}"/>
 		            						</div>
 										</div>
 									</span>
 										<span class="invalid" name="seconduserInvalid" style="display:none;"></span>
 									
 	   								<span id="thirdRegistryUser">
-	   								<input type="hidden" name="3_regUserId" id= "3_regUserId" />
+	   								<input type="hidden" name="3_regUserId" id= "3_regUserId" value="${(allRegistryUsers[2].id)!}"/>
 	   									<div class="row"> 
 			           						<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
 			            					<div class="field">	
-			            							<input type = "text" id="3_regUserfirstname" name="regUserFirstname" />
+			            							<input type = "text" id="3_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[2].firstname)!}"/>
 		            						</div>
 										</div>
 									
 	   									<div class="row"> 
 			           						<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
 			            					<div class="field">	
-			            							<input type = "text" id="3_regUserLastname" name="regUserLastname" />
+			            							<input type = "text" id="3_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[2].lastname)!}"/>
 		            						</div>
 										</div>
 									
 	   									<div class="row"> 
 			           						<span id="ru-email-lbl" class="plain-label">Email</span>
 			            					<div class="field">	
-			            							<input type = "text" id="3_regUserEmail" name="regUserEmail" />
+			            							<input type = "text" id="3_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[2].email)!}"/>
 		            						</div>
 										</div>
 									</span>

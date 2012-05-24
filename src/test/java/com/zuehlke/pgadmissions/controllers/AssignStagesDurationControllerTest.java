@@ -93,6 +93,7 @@ public class AssignStagesDurationControllerTest {
 		RegistryUser registryUserThree = new RegistryUserBuilder().id(3).toRegistryUser();
 		RegistryUserDTO registryUserDTO = new RegistryUserDTO();
 		registryUserDTO.setRegistryUsers(Arrays.asList(registryUserOne, registryUserTwo, registryUserThree));
+		EasyMock.expect(regisrtyUserServiceMock.getAllRegistryUsers()).andReturn(Arrays.asList(registryUserOne, registryUserTwo, registryUserThree));
 		regisrtyUserServiceMock.save(registryUserOne);
 		regisrtyUserServiceMock.save(registryUserTwo);
 		regisrtyUserServiceMock.save(registryUserThree);
@@ -118,7 +119,6 @@ public class AssignStagesDurationControllerTest {
 	
 	@Before
 	public void setUp(){
-		
 		stateDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
 		stageDurationPropertyEditorMock = EasyMock.createMock(StageDurationPropertyEditor.class);
 		reminderIntervalDAOMock = EasyMock.createMock(ReminderIntervalDAO.class);

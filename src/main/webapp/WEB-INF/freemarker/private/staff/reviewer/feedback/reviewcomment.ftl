@@ -65,8 +65,7 @@
 			            			<div class="row">
 										<label class="plain-label">Decline</label>
 										<div class="field">        
-	           								<input type="checkbox" name="declineCB" id="declineCB"/>
-	           								<input type="hidden" name="declineValue" id="declineValue"/>
+	           								<input type="checkbox" name="decline" id="decline"/>	           								
 	   								 	</div>
 	   								 </div>
 	   								<div class="row"> 
@@ -80,8 +79,12 @@
 	   								<div class="row">
 			            				<span id="supervise-lbl" class="plain-label">Willing to interview?<em>*</em></span>
 										<div class="field">
-											<label><input type="radio"   name="willingRB" value="TRUE" id="willingRB_true"/> Yes</label> 
-											<label><input type="radio"  name="willingRB" value="FALSE" id="willingRB_false"/> No</label> 
+											<label><input type="radio" name="willingToInterview" value="true" id="willingRB_true"
+											<#if comment.willingToInterviewSet && comment.willingToInterview> checked="checked"</#if> 
+											/> Yes</label> 
+											<label><input type="radio" name="willingToInterview" value="false" id="willingRB_false"
+											<#if comment.willingToInterviewSet && !comment.willingToInterview> checked="checked"</#if>
+											/> No</label> 
 											<@spring.bind "comment.willingToInterview" /> 
 	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
@@ -89,8 +92,12 @@
 	   								<div class="row">
 			    					<span id="suitable-lbl" class="plain-label">Is candidate suitable for UCL?<em>*</em></span>
 										<div class="field">
-											<label><input type="radio"  name="suitableRB" value="TRUE" id="suitableRB_true"/> Yes</label> 
-											<label><input type="radio"  name="suitableRB" value="FALSE" id="suitableRB_false"/> No</label> 
+											<label><input type="radio"  name="suitableCandidate" value="true" id="suitableRB_true"
+											<#if comment.suitableCandidateSet && comment.suitableCandidate> checked="checked"</#if>
+											/> Yes</label> 
+											<label><input type="radio"  name="suitableCandidate" value="false" id="suitableRB_false"
+											<#if comment.suitableCandidateSet && !comment.suitableCandidate> checked="checked"</#if>
+											/> No</label> 
 											<@spring.bind "comment.suitableCandidate" /> 
 	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
@@ -101,11 +108,13 @@
 			            				<button type="button" id="cancelReviewBtn" value="cancel">Cancel</button>
 							       		<button class="blue" id="submitReviewFeedback" type="button" value="Submit">Submit</button>						        
 									</div>
-									</form>
+									</form>									
 			  					<hr/>
 			  				<#else>
 			  					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 		  					</#if>
+		  					<form id ="reviewForm" method="POST" action="/pgadmissions/reviewFeedback">
+		  					</form>
 		  					<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 				        </div><!-- .content-box-inner -->
 				      </div><!-- .content-box -->

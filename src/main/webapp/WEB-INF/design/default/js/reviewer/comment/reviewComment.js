@@ -1,60 +1,33 @@
 $(document).ready(function(){
 
-	$("#declineValue").val("NO");
-	
 	
 	$('#cancelReviewBtn').click(function() {
 		window.location.href = "/pgadmissions/reviewFeedback?applicationId=" +  $('#applicationId').val();
 	});	
 	
-	$('#submitReviewFeedback').click(function() {
-			var application = $('#applicationId').val();
-			var willingSupervise = null;
-			if ($('#willingRB_true:checked').val() !== undefined) {
-				willingSupervise = 'YES';
+	$('#submitReviewFeedback').click(function() {		
+			$('#reviewForm').append("<input type='hidden' name='applicationId' value='" + $('#applicationId').val() + "'/>");
+			$('#reviewForm').append("<input type='hidden' name='type' value='REVIEW'/>");
+			$('#reviewForm').append("<input type='hidden' name='comment' value='"+ $('#review-comment').val() + "'/>");
+
+			
+			if ($('#decline:checked').length > 0) {
+				$('#reviewForm').append("<input type='hidden' name='decline' value='true'/>");
+				
 			}
-			if ($('#willingRB_false:checked').val() !== undefined) {
-				willingSupervise = 'NO';
+			if ($('input:radio[name=willingToInterview]:checked').length > 0) {
+				
+				$('#reviewForm').append("<input type='hidden' name='willingToInterview' value='"+ $('input:radio[name=willingToInterview]:checked').val() +"'/>");
 			}
-			var isSuitable = null;
-			if ($('#suitableRB_true:checked').val() !== undefined) {
-				isSuitable = 'YES';
+			if ($('input:radio[name=suitableCandidate]:checked').length > 0) {				
+				$('#reviewForm').append("<input type='hidden' name='suitableCandidate' value='"+ $('input:radio[name=suitableCandidate]:checked').val() +"'/>");
 			}
-			if ($('#suitableRB_false:checked').val() !== undefined) {
-				isSuitable = 'NO';
-			}
-			var postParams = {
-				applicationId: application,
-				type: 'REVIEW',
-				comment: $('#review-comment').val(),
-				decline: $("#declineValue").val()				
-			};
-			if(isSuitable){
-				postParams.suitableCandidate= isSuitable;
-			}
-			if(willingSupervise){
-				postParams.willingToInterview= willingSupervise;
-			}
-			$.post(
-					"/pgadmissions/reviewFeedback",
-					postParams,
-					function(data) {
-						window.location.href = "/pgadmissions/applications";
-						
-					}
-				);
+			
+			$('#reviewForm').submit();
 	});	
 	
-	$("input[name*='declineCB']").click(function() {
-		if ($("#declineValue").val() =='YES'){
-			$("#declineValue").val("NO");
-		} else {	
-			$("#declineValue").val("YES");
-		}
-		});
-	
-	$("input[name$='declineCB']").click(function() {
-		if($('#declineValue').val() == 'YES') {
+	$('#decline').click(function(){
+		if($('#decline:checked').length > 0) {
 			//comment field
 			var newLblText = $("#comment-lbl").text();
 			var starIndex = newLblText.lastIndexOf("*");
@@ -66,7 +39,7 @@ $(document).ready(function(){
 			$("#review-comment").addClass("grey-label");
 			$("#review-comment").attr("disabled", "disabled");
 			
-			//supervise radio
+			//itnerview radio
 			
 			var newLblText1 = $("#supervise-lbl").text();
 			var starIndex1 = newLblText1.lastIndexOf("*");
@@ -74,14 +47,11 @@ $(document).ready(function(){
 			  newLblText1 = newLblText1.substring(0, starIndex1);
 			}
 			$("#supervise-lbl").text(newLblText1).addClass("grey-label");
-			$('input[name="willingRB"]')[0].checked = false;
-			$('input[name="willingRB"]')[1].checked = false;
+			$('input[name="willingToInterview"]').removeAttr("checked");
 
-			$("#willingRB_true").addClass("grey-label");
-			$("#willingRB_true").attr("disabled", "disabled");
-			$("#willingRB_false").addClass("grey-label");
-			$("#willingRB_false").attr("disabled", "disabled");
-			
+			$('input[name="willingToInterview"]').addClass("grey-label");
+			$('input[name="willingToInterview"]').attr("disabled", "disabled");
+		
 			//suitable radio
 			
 			var newLblText2 = $("#suitable-lbl").text();
@@ -90,17 +60,16 @@ $(document).ready(function(){
 			  newLblText2 = newLblText2.substring(0, starIndex2);
 			}
 			$("#suitable-lbl").text(newLblText2).addClass("grey-label");
-			$('input[name="suitableRB"]')[0].checked = false;
-			$('input[name="suitableRB"]')[1].checked = false;
-			$("#suitableRB_true").addClass("grey-label");
-			$("#suitableRB_true").attr("disabled", "disabled");
-			$("#suitableRB_false").addClass("grey-label");
-			$("#suitableRB_false").attr("disabled", "disabled");
+			$('input[name="suitableCandidate"]').removeAttr("checked");
+
+			$('input[name="suitableCandidate"]').addClass("grey-label");
+			$('input[name="suitableCandidate"]').attr("disabled", "disabled");
+		
 			
 			//remove validation messages
 			$('span[class="invalid"]').html('');
 			
-		} else {
+		}else{
 			//comment field
 			$("#comment-lbl").append('<em>*</em>').removeClass("grey-label");
 			$("#review-comment").removeClass("grey-label");
@@ -109,21 +78,20 @@ $(document).ready(function(){
 			//supervise radio
 			
 			$("#supervise-lbl").append('<em>*</em>').removeClass("grey-label");
-			$("#willingRB_true").removeClass("grey-label");
-			$("#willingRB_true").removeAttr("disabled", "disabled");
-			$("#willingRB_false").removeClass("grey-label");
-			$("#willingRB_false").removeAttr("disabled", "disabled");
-			
+			('input[name="willingToInterview"]').removeClass("grey-label");
+			('input[name="willingToInterview"]').removeAttr("disabled", "disabled");
+	
 			//suitable radio
 			
 			$("#suitable-lbl").append('<em>*</em>').removeClass("grey-label");
-			$("#suitableRB_true").removeClass("grey-label");
-			$("#suitableRB_true").removeAttr("disabled", "disabled");
-			$("#suitableRB_false").removeClass("grey-label");
-			$("#suitableRB_false").removeAttr("disabled", "disabled");
-		};
-			
+			$('input[name="suitableCandidate"]').removeClass("grey-label");
+			$('input[name="suitableCandidate"]').removeAttr("disabled", "disabled");
+	
+		}
 	});
+	
+	
+
 	
 	
 });

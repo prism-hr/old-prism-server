@@ -18,10 +18,13 @@ table tbody td { background: url(../../../images/bg_table_row.jpg) repeat-x 0 10
 table select { width: 100%; }
 table thead th.headerSortDown, table thead th.headerSortUp { background-color: #06C; color: #FFF; }
 
-#timelineview {
-	clear: both;
-	margin-top: 10px;
-}
+#timelineview { clear: both; margin-top: 10px; }
+#timelineview ul.tabs { float: right; margin-right: 20px; height: 31px; overflow: hidden; }
+#timelineview ul.tabs li { background: url(../../../images/bg_tools_tabs.png) repeat-x; border-radius: 8px 8px 0 0; box-shadow: 0 0 5px #666; margin-left: 10px; padding: 0; }
+#timelineview ul.tabs li.current { background-position: 0 -31px; }
+#timelineview ul.tabs li a { color: #000; background-position: 6px center; }
+
+
 #application {
 	border: 1px solid #999;
 	height: 600px;

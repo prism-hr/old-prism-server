@@ -39,9 +39,9 @@
  		</#if>
  		
  		<#if timelineEntity.type?? && timelineEntity.type ==  "REVIEW">
- 			<td>Interview: ${(timelineEntity.willingToInterview.displayValue()?html)!}</td>
- 			<td>Suitable: ${(timelineEntity.suitableCandidate.displayValue()?html)!}</td>
- 			<td>Decline: ${(timelineEntity.decline.displayValue()?html)!}</td>
+ 			<td>Interview: ${(timelineEntity.willingToInterview?string)!}</td>
+ 			<td>Suitable: ${(timelineEntity.suitableCandidate?string)!}</td>
+ 			<td>Decline: ${(timelineEntity.decline?string)!}</td>
 		<#elseif timelineEntity.type?? && timelineEntity.type ==  "INTERVIEW">
  			<td>Supervise: ${(timelineEntity.willingToSupervice.displayValue()?html)!}</td>
  			<td>Suitable: ${(timelineEntity.suitableCandidate.displayValue()?html)!}</td>

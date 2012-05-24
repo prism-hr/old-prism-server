@@ -28,7 +28,6 @@ public class RegistryUserPropertyEditor extends PropertyEditorSupport {
 					Map.class);
 			RegistryUser registryUser = new RegistryUser();
 			registryUser.setFirstname(((String)properties.get("firstname")));
-			registryUser.setFirstname(((String)properties.get("firstname")));
 			registryUser.setLastname(((String) properties.get("lastname")));
 			registryUser.setEmail(((String) properties.get("email")));
 			if (StringUtils.isNotBlank((String) properties.get("id"))) {

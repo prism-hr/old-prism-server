@@ -73,6 +73,7 @@ public class AssignStagesDurationController {
 		modelMap.put("units", DurationUnitEnum.values());
 		modelMap.put("durationDAO", stateDurationDao);
 		modelMap.put("intervalDAO", reminderIntervalDAO);
+		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
 		return CHANGE_STATES_DURATION_VIEW_NAME;
 	}
 	
@@ -89,6 +90,7 @@ public class AssignStagesDurationController {
 		modelMap.put("units", DurationUnitEnum.values());
 		modelMap.put("durationDAO", stateDurationDao);
 		modelMap.put("intervalDAO", reminderIntervalDAO);
+		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
 		return CHANGE_STATES_DURATION_VIEW_NAME;
 	}
 	
@@ -104,6 +106,7 @@ public class AssignStagesDurationController {
 		modelMap.put("units", DurationUnitEnum.values());
 		modelMap.put("durationDAO", stateDurationDao);
 		modelMap.put("intervalDAO", reminderIntervalDAO);
+		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
 		return CHANGE_STATES_DURATION_VIEW_NAME;
 	}
 	
@@ -120,7 +123,7 @@ public class AssignStagesDurationController {
 		modelMap.put("units", DurationUnitEnum.values());
 		modelMap.put("durationDAO", stateDurationDao);
 		modelMap.put("intervalDAO", reminderIntervalDAO);
-		modelMap.put("registryDTO", registryUserDTO);
+		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
 		return CHANGE_STATES_DURATION_VIEW_NAME;
 	}
 	

@@ -137,77 +137,87 @@
 							    <span name="threeMaxMessage"> </span>
 							     <form id="addRegistryForm">
 							     
+							     <span id="firstRegistryUser">
+							     <input type="hidden" name="1_regUserId" id= "1_regUserId" />
 	   								<div class="row"> 
 			           					<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
 			            				<div class="field">	
-			            						<input type = "text" id="regUserfirstname" name="regUserFirstname" />
+			            						<input type = "text" id="1_regUserfirstname" name="regUserFirstname" />
 		            					</div>
 									</div>
 									
 	   								<div class="row"> 
 			           					<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
 			            				<div class="field">	
-			            						<input type = "text" id="regUserLastname" name="regUserLastname" />
+			            						<input type = "text" id="1_regUserLastname" name="regUserLastname" />
 		            					</div>
 									</div>
 									
 	   								<div class="row"> 
 			           					<span id="ru-email-lbl" class="plain-label">Email</span>
 			            				<div class="field">	
-			            						<input type = "text" id="regUserEmail" name="regUserEmail" />
+			            						<input type = "text" id="1_regUserEmail" name="regUserEmail" />
 		            					</div>
 									</div>
+									</span>
+									<span class="invalid" name="firstuserInvalid" style="display:none;"></span>
 									
 									<span id="secondRegistryUser" >
+										<input type="hidden" name="2_regUserId" id= "2_regUserId" />
 	   									<div class="row"> 
 			           						<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
 			            					<div class="field">	
-			            							<input type = "text" id="regUserfirstname" name="regUserFirstname" />
+			            							<input type = "text" id="2_regUserfirstname" name="regUserFirstname" />
 		            						</div>
 										</div>
 									
 	   									<div class="row"> 
 			           						<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
 			            					<div class="field">	
-			            							<input type = "text" id="regUserLastname" name="regUserLastname" />
+			            							<input type = "text" id="2_regUserLastname" name="regUserLastname" />
 		            						</div>
 										</div>
 									
 	   									<div class="row"> 
 			           						<span id="ru-email-lbl" class="plain-label">Email</span>
 			            					<div class="field">	
-			            							<input type = "text" id="regUserEmail" name="regUserEmail" />
+			            							<input type = "text" id="2_regUserEmail" name="regUserEmail" />
 		            						</div>
 										</div>
 									</span>
+										<span class="invalid" name="seconduserInvalid" style="display:none;"></span>
 									
 	   								<span id="thirdRegistryUser">
+	   								<input type="hidden" name="3_regUserId" id= "3_regUserId" />
 	   									<div class="row"> 
 			           						<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
 			            					<div class="field">	
-			            							<input type = "text" id="regUserfirstname" name="regUserFirstname" />
+			            							<input type = "text" id="3_regUserfirstname" name="regUserFirstname" />
 		            						</div>
 										</div>
 									
 	   									<div class="row"> 
 			           						<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
 			            					<div class="field">	
-			            							<input type = "text" id="regUserLastname" name="regUserLastname" />
+			            							<input type = "text" id="3_regUserLastname" name="regUserLastname" />
 		            						</div>
 										</div>
 									
 	   									<div class="row"> 
 			           						<span id="ru-email-lbl" class="plain-label">Email</span>
 			            					<div class="field">	
-			            							<input type = "text" id="regUserEmail" name="regUserEmail" />
+			            							<input type = "text" id="3_regUserEmail" name="regUserEmail" />
 		            						</div>
 										</div>
 									</span>
+									<span class="invalid" name="thirduserInvalid" style="display:none;"></span>
+									
+									<input type="hidden" name="registryUsers" id= "registryUsers" />
 									
 			            			<div class="buttons">						        		
 			            				<button type="button" id="addAnother">Add Another</button>
-			            				<button type="button" id="cancelReminderBtn" value="cancel">Cancel</button>
-							       		<button class="blue" id="submitRIBtn" type="button" value="Submit">Submit</button>						        
+			            				<button type="button" id="cancelRegistryBtn" value="cancel">Cancel</button>
+							       		<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
 									</div>
 									</form>
 			  					<hr/>

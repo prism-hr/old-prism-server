@@ -55,6 +55,20 @@ $(document).ready(function() {
 			);
 		}
 	});
+	
+	$('#submitRUBtn').click(function() {
+		$("#registryUsers").html('');
+		var validationErrors = appendRegistryUsersJSON();
+		var registryUsers = $('[input[name="registryUsers"]');
+		if(!validationErrors){
+			$.post("/pgadmissions/assignStagesDuration/submitRegistryUsers", 
+				registryUsers.serialize(),
+				function(data) {
+					window.location.href = "/pgadmissions/applications";
+				}
+			);
+		}
+	});
 });
 
 
@@ -112,5 +126,49 @@ function appendStagesJSON() {
 	    $("#stagesDuration").append('<input type="hidden" name="stagesDuration" id= "stagesDuration"  value=' +"'" + '{"stage":"' +  stageName+ '","duration":"' + stageDuration + '","unit":"' + stageUnit + '"} ' + "'" + "/>");
 	}
 	return validationErrors;
+	
+}
+
+function appendRegistryUsersJSON() {
+	var validationErrors = false;
+	//todo: change check for == "" with isBlank equivalent
+	//if first user is filled
+	if($('#1_regUserfirstname').val() != "" && $('#1_regUserLastname').val() != "" && $('#1_regUserEmail').val() != ""){
+		$("#registryUsers").append('<input type="hidden" name="registryUsers" id= "registryUsers"  value=' +"'" + '{"id":"' +  $('#1_regUserId').val() + '","firstname":"' + $('#1_regUserfirstname').val() + '","lastname":"' +  $('#1_regUserLastname').val() + '","email":"' + $('#1_regUserEmail').val()  + '"} ' + "'" + "/>");
+
+	}
+	else{
+		$("span[name='firstuserInvalid']").html('Please specify firstname lastname and email.');
+		$("span[name='firstuserInvalid']").show();
+		validationErrors = true;
+	}
+	//if second user is visible and filled
+	if($("span[id='secondRegistryUser']").is(':visible')) {
+		if($('#2_regUserfirstname').val() != "" && $('#2_regUserLastname').val() != "" && $('#2_regUserEmail').val() != ""){
+			$("#registryUsers").append('<input type="hidden" name="registryUsers" id= "registryUsers"  value=' +"'" + '{"id":"' +  $('#2_regUserId').val() + '","firstname":"' + $('#2_regUserfirstname').val() + '","lastname":"' +  $('#2_regUserLastname').val() + '","email":"' + $('#2_regUserEmail').val()  + '"} ' + "'" + "/>");
+		}
+		else{
+			$("span[name='seconduserInvalid']").html('Please specify firstname lastname and email.');
+			$("span[name='seconduserInvalid']").show();
+			validationErrors = true;
+		}
+	}
+	//if third user is visible and filled
+	else if($("span[id='thirdRegistryUser']").is(':visible')) {
+		if($('#3_regUserfirstname').val() != "" && $('#1_regUserLastname').val() != "" && $('#1_regUserEmail').val() != ""){
+			$("#registryUsers").append('<input type="hidden" name="registryUsers" id= "registryUsers"  value=' +"'" + '{"id":"' +  $('#3_regUserId').val() + '","firstname":"' + $('#3_regUserfirstname').val() + '","lastname":"' +  $('#3_regUserLastname').val() + '","email":"' + $('#3_regUserEmail').val()  + '"} ' + "'" + "/>");
+		}
+		else{
+			$("span[name='thirduserInvalid']").html('Please specify firstname lastname and email.');
+			$("span[name='thirduserInvalid']").show();
+			validationErrors = true;
+		}
+	}
+	return validationErrors;
+	
+	
+	
+	
+	
 	
 }

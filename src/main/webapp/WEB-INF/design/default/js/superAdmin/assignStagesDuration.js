@@ -14,6 +14,10 @@ $(document).ready(function() {
 		window.location.href = "/pgadmissions/applications";
 	});
 	
+	$('#cancelRegistryBtn').click(function() {
+		window.location.href = "/pgadmissions/applications";
+	});
+	
 	$('#submitDurationStages').click(function() {
 		$("#stagesDuration").html('');
 		var validationErrors = appendStagesJSON();

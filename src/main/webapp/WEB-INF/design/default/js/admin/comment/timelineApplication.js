@@ -1,26 +1,11 @@
 $(document).ready(function()
 {
 
-	/*
-	$('#application').html("");
-	$('#application').hide();
-	$.get("/pgadmissions/comments/view",
-			{
-				id:  $('#applicationId').val(),				
-				cacheBreaker: new Date().getTime() 
-			},
-			function(data) {
-				$('#timeline').html(data);				
-			}
-	);
-	*/
-	
-
 	// Timeline tab.	
-	$('#timelineBtn').click(function(e)
+	$('#timelineBtn').click(function()
 	{
 		// Set the current tab.
-		$('#timeline ul.tabs li').removeClass('current');
+		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 		
 		$('#application').hide();
@@ -36,14 +21,14 @@ $(document).ready(function()
 				}
 		);
 		
-		e.preventDefault();
+		return false;
 	});
 	
 	// Application tab.
-	$('#applicationBtn').click(function(e)
+	$('#applicationBtn').click(function()
 	{
 		// Set the current tab.
-		$('#timeline ul.tabs li').removeClass('current');
+		$('#timelineview ul.tabs li').removeClass('current');
 		$(this).parent('li').addClass('current');
 
 		$('#timeline').html("").hide();
@@ -65,9 +50,11 @@ $(document).ready(function()
 			);
 		}
 
-		e.preventDefault();
+		return false;
 	});
 	
+	$('#application').html("");
+
 	// "Open" the timeline tab by default.
 	$('#timelineBtn').trigger('click');
 	

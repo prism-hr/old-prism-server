@@ -33,14 +33,14 @@ import com.zuehlke.pgadmissions.propertyeditors.RegistryUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
 import com.zuehlke.pgadmissions.services.RegistryUserService;
 
-public class AssignStagesDurationControllerTest {
+public class ConfigurationControllerTest {
 
-	private AssignStagesDurationController controller;
+	private ConfigurationController controller;
 	private StageDurationDAO stateDurationDAOMock;
 	private RegisteredUser superAdmin;
 	private StageDurationPropertyEditor stageDurationPropertyEditorMock;
 	private UsernamePasswordAuthenticationToken authenticationToken;
-	private static final String CHANGE_STATES_DURATION_VIEW_NAME = "/private/staff/superAdmin/assign_stages_duration";
+	private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
 	private ReminderIntervalDAO reminderIntervalDAOMock;
 	private RegistryUserService regisrtyUserServiceMock;
 	private RegistryUserPropertyEditor registryPropertyEditorMock;
@@ -57,14 +57,14 @@ public class AssignStagesDurationControllerTest {
 		secContext.setAuthentication(authenticationToken);
 		SecurityContextHolder.setContext(secContext);
 		String view = controller.getAssignStagesDurationStage(modelMap);
-		assertEquals(CHANGE_STATES_DURATION_VIEW_NAME, view);
+		assertEquals(CONFIGURATION_VIEW_NAME, view);
 	}
 	
 	@Test
 	public void shouldGetAssignDurationOfStagesPageIfSuperAdmin() {
 		ModelMap modelMap = new ModelMap();
 		String view = controller.getAssignStagesDurationStage(modelMap);
-		assertEquals(CHANGE_STATES_DURATION_VIEW_NAME, view);
+		assertEquals(CONFIGURATION_VIEW_NAME, view);
 	}
 	
 	@Test
@@ -124,7 +124,7 @@ public class AssignStagesDurationControllerTest {
 		reminderIntervalDAOMock = EasyMock.createMock(ReminderIntervalDAO.class);
 		regisrtyUserServiceMock = EasyMock.createMock(RegistryUserService.class);
 		registryPropertyEditorMock = EasyMock.createMock(RegistryUserPropertyEditor.class);
-		controller = new AssignStagesDurationController(stateDurationDAOMock, stageDurationPropertyEditorMock, reminderIntervalDAOMock, regisrtyUserServiceMock, registryPropertyEditorMock);
+		controller = new ConfigurationController(stateDurationDAOMock, stageDurationPropertyEditorMock, reminderIntervalDAOMock, regisrtyUserServiceMock, registryPropertyEditorMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		superAdmin = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

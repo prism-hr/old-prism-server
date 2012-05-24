@@ -21,7 +21,7 @@
 		<![endif]-->
 	
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	    <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/assignStagesDuration.js' />"></script> 
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/superAdmin/configuration.js' />"></script> 
 	    
 	    
 	</head>

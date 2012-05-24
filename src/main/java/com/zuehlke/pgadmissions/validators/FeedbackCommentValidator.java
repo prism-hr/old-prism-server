@@ -23,10 +23,10 @@ public class FeedbackCommentValidator implements Validator{
 		if (target instanceof ReviewComment) {
 			ReviewComment comment = (ReviewComment) target;
 			if(!comment.isDecline() ){
-				if(comment.isSuitableCandidate() == null ){
+				if(comment.getSuitableCandidate() == null ){
 					errors.rejectValue("suitableCandidate", "feedbackComment.suitableCandidate.notempty");
 				}
-				if(comment.isWillingToInterview() == null){
+				if(comment.getWillingToInterview() == null){
 					errors.rejectValue("willingToInterview", "feedbackComment.willingToInterview.notempty");
 				}
 				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "feedbackComment.comment.notempty");

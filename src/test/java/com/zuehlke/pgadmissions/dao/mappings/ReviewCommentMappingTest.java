@@ -66,9 +66,9 @@ public class ReviewCommentMappingTest extends AutomaticRollbackTestCase{
 		assertEquals(reviewerUser, reloadedComment.getUser());
 		assertEquals(reviewer, reloadedComment.getReviewer());
 		assertEquals("This is a review comment", reloadedComment.getComment());
-		assertFalse(reloadedComment.isSuitableCandidate());
+		assertFalse(reloadedComment.getSuitableCandidate());
 		assertFalse(reloadedComment.isAdminsNotified());
-		assertFalse(reloadedComment.isWillingToInterview());
+		assertFalse(reloadedComment.getWillingToInterview());
 		assertTrue(reloadedComment.isDecline());
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(reloadedComment.getDate(), Calendar.DATE));
 		

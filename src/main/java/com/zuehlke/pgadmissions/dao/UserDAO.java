@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Role;
+import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
 @Repository
@@ -160,6 +161,19 @@ public class UserDAO {
 		for (Reviewer reviewer : reviewers) {
 			if(!users.contains(reviewer.getUser())){
 				users.add(reviewer.getUser());
+			}
+		}
+		return users;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<RegisteredUser> getAllPreviousSupervisorsOfProgram(Program program) {
+		List<Supervisor> supervisors = sessionFactory.getCurrentSession().createCriteria(Supervisor.class).createAlias("approvalRound", "approvalRound").createAlias("approvalRound.application", "application")
+				.add(Restrictions.eq("application.program", program)).list();
+		List<RegisteredUser> users = new ArrayList<RegisteredUser>();
+		for (Supervisor supervisor : supervisors) {
+			if(!users.contains(supervisor.getUser())){
+				users.add(supervisor.getUser());
 			}
 		}
 		return users;

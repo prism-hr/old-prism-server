@@ -575,6 +575,20 @@ public class UserServiceTest {
 		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));		
 	}
 	
+	
+	@Test
+	public void shouldGetAllPreviousSupervisorsOfProgam(){
+		RegisteredUser userOne = new RegisteredUserBuilder().id(5).toUser();
+		RegisteredUser userTwo = new RegisteredUserBuilder().id(6).toUser();
+		Program program = new ProgramBuilder().id(5).toProgram();
+		EasyMock.expect(userDAOMock.getAllPreviousSupervisorsOfProgram(program)).andReturn(Arrays.asList(userOne, userTwo));
+		EasyMock.replay(userDAOMock);
+		
+		List<RegisteredUser> users = userService.getAllPreviousSupervisorsOfProgram(program);
+		assertEquals(2, users.size());
+		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));		
+	}
+	
 	@Before
 	public void setUp() {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);

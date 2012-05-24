@@ -154,7 +154,18 @@ public abstract class ApprovalController {
 	@ModelAttribute("previousSupervisors")
 	public List<RegisteredUser> getPreviousSupervisors(@RequestParam Integer applicationId, @RequestParam(required = false) List<Integer> pendingSupervisors) {
 		List<RegisteredUser> availablePreviousSupervisors = new ArrayList<RegisteredUser>();
-		//to be written
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		List<RegisteredUser> previousSupervisorsOfProgram = userService.getAllPreviousSupervisorsOfProgram(applicationForm.getProgram());
+
+		List<RegisteredUser> pendingSupervisorsList = getPendingSupervisors(pendingSupervisors, applicationId);
+
+		for (RegisteredUser registeredUser : previousSupervisorsOfProgram) {
+			if (!registeredUser.isSupervisorOfApplicationForm(applicationForm) && !pendingSupervisorsList.contains(registeredUser)
+					&& !applicationForm.getProgram().getSupervisors().contains(registeredUser)) {
+				availablePreviousSupervisors.add(registeredUser);
+			}
+		}
+
 		return availablePreviousSupervisors;
 	}
 

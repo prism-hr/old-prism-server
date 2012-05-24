@@ -272,8 +272,15 @@ public class UserService {
 		return userDAO.getAllPreviousInterviewersOfProgram(program);
 	}
 
+	@Transactional
 	public List<RegisteredUser> getAllPreviousReviewersOfProgram(Program program) {
 		return userDAO.getAllPreviousReviewersOfProgram(program);
+	}
+
+	@Transactional
+	public List<RegisteredUser> getAllPreviousSupervisorsOfProgram(
+			Program program) {
+		return userDAO.getAllPreviousSupervisorsOfProgram(program);
 	}
 
 }

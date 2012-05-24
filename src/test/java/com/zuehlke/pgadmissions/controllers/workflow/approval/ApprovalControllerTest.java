@@ -3,6 +3,7 @@ package com.zuehlke.pgadmissions.controllers.workflow.approval;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,15 +18,20 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.controllers.workflow.approval.ApprovalController;
+import com.zuehlke.pgadmissions.controllers.workflow.review.ReviewController;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
@@ -63,7 +69,7 @@ public class ApprovalControllerTest {
 		controller.registerSupervisorValidators(binderMock);
 		EasyMock.verify(binderMock);
 	}
-
+	
 	@Test
 	public void shouldReturnExistingInterviewersBelongingToApplication() {
 		Program program = new ProgramBuilder().id(6).toProgram();
@@ -234,6 +240,54 @@ public class ApprovalControllerTest {
 		assertEquals(newUser1, newUsers.get(0));
 
 	}
+	
+	@Test
+	public void shouldGetListOfPreviousSupervisorsAndRemovePendingAssignedOrDefaultSupervisors(){
+		EasyMock.reset(userServiceMock);
+		final RegisteredUser defaultSupervisor = new RegisteredUserBuilder().id(7).toUser();
+		final RegisteredUser supervisor = new RegisteredUserBuilder().id(6).toUser();
+		final RegisteredUser pendingSupervisorUser = new RegisteredUserBuilder().id(8).toUser();
+		final RegisteredUser assignedSupervisor = new RegisteredUserBuilder().id(9).toUser();
+
+		final Program program = new ProgramBuilder().supervisors(defaultSupervisor).id(6).toProgram();
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).supervisors(new SupervisorBuilder().user(assignedSupervisor).toSupervisor()).toApprovalRound();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().latestApprovalRound(approvalRound).id(5).program(program).toApplicationForm();
+		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
+			@Override
+			public ApplicationForm getApplicationForm(Integer applicationId) {
+				if(applicationId == 5){
+					return applicationForm;
+				}
+				return null;
+			}
+
+		
+			@SuppressWarnings("unchecked")
+			@Override
+			public List<RegisteredUser> getPendingSupervisors(List<Integer> pendingSupervisor, Integer applicationId) {
+				if (pendingSupervisor.size() == 1 && pendingSupervisor.get(0) == 3) {
+					return Arrays.asList(pendingSupervisorUser);
+				}
+				return Collections.EMPTY_LIST;
+			}
+
+
+			@Override
+			public ApprovalRound getApprovalRound(Integer applicationId) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+		};
+		
+		EasyMock.expect(userServiceMock.getAllPreviousSupervisorsOfProgram(program)).andReturn(Arrays.asList(defaultSupervisor, supervisor, pendingSupervisorUser, assignedSupervisor));
+		EasyMock.replay(userServiceMock);
+		List<RegisteredUser> supervisorsUsers = controller.getPreviousSupervisors(5, Arrays.asList(3));
+		assertTrue(supervisorsUsers.contains(supervisor));
+		assertEquals(1, supervisorsUsers.size());
+		assertTrue(supervisorsUsers.contains(supervisor));
+	}
+
 
 
 	@Before

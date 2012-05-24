@@ -20,13 +20,17 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ValidationCommentBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -79,6 +83,15 @@ public class StateTransitionControllerTest {
 		controller.getApplicationForm(5);
 	}
 
+	@Test
+	public void shouldReturnAllValidationQuestionOptions(){
+		assertArrayEquals(ValidationQuestionOptions.values(), controller.getValidationQuestionOptions());
+	}
+	
+	@Test
+	public void shouldReturnHomeOrOverseasOptions(){
+		assertArrayEquals(HomeOrOverseas.values(), controller.getHomeOrOverseasOptions());
+	}
 	@Test
 	public void shouldReturnCurrentUser() {
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(4).toUser();
@@ -164,7 +177,7 @@ public class StateTransitionControllerTest {
 		EasyMock.expect(commentFactoryMock.createComment(applicationForm, user, strComment, type)).andReturn(comment);
 		commentServiceMock.save(comment);
 		EasyMock.replay(commentFactoryMock, commentServiceMock);
-		assertEquals("private/common/simpleMessage", controller.addComment(applicationForm, user, type, strComment));
+		assertEquals("private/common/simpleMessage", controller.addComment(applicationForm, user, type, strComment, null, null, null));
 		EasyMock.verify(commentServiceMock);
 	}
 
@@ -176,8 +189,25 @@ public class StateTransitionControllerTest {
 		CommentType type = CommentType.VALIDATION;
 
 		EasyMock.replay(commentFactoryMock, commentServiceMock);
-		controller.addComment(applicationForm, user, type, strComment);
+		controller.addComment(applicationForm, user, type, strComment,  null, null, null);
 		EasyMock.verify(commentServiceMock);
+	}
+	
+	@Test
+	public void shouldCreateValidationCommentWithQUestionalues() {
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		String strComment = "comment";
+		ValidationComment comment = new ValidationCommentBuilder().id(6).toValidationComment();
+		CommentType type = CommentType.VALIDATION;
+		EasyMock.expect(commentFactoryMock.createComment(applicationForm, user, strComment, type)).andReturn(comment);
+		commentServiceMock.save(comment);
+		EasyMock.replay(commentFactoryMock, commentServiceMock);
+		controller.addComment(applicationForm, user, type, strComment, ValidationQuestionOptions.NO, ValidationQuestionOptions.UNSURE, HomeOrOverseas.OVERSEAS);
+		EasyMock.verify(commentServiceMock);
+		assertEquals(ValidationQuestionOptions.NO, comment.getQualifiedForPhd());
+		assertEquals(ValidationQuestionOptions.UNSURE, comment.getEnglishCompentencyOk());
+		assertEquals(HomeOrOverseas.OVERSEAS, comment.getHomeOrOverseas());
 	}
 
 	@Before

@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ValidationComment;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
+import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
@@ -27,7 +30,7 @@ import com.zuehlke.pgadmissions.utils.CommentFactory;
 public class StateTransitionController {
 
 	private static final String STATE_TRANSITION_VIEW = "private/staff/admin/state_transition";
-	private static final String SIMPLE_MESSAGE_VIEW ="private/common/simpleMessage";
+	private static final String SIMPLE_MESSAGE_VIEW = "private/common/simpleMessage";
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
 	private final CommentService commentService;
@@ -59,7 +62,7 @@ public class StateTransitionController {
 	}
 
 	RegisteredUser getCurrentUser() {
-		
+
 		return userService.getCurrentUser();
 	}
 
@@ -81,21 +84,37 @@ public class StateTransitionController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String addComment(@ModelAttribute("applicationForm") ApplicationForm applicationForm, @ModelAttribute("user") RegisteredUser user,
-			@RequestParam CommentType type, @RequestParam String comment) {
+			@RequestParam CommentType type, @RequestParam String comment, @RequestParam(required = false) ValidationQuestionOptions qualifiedForPhd,
+			@RequestParam(required = false) ValidationQuestionOptions englishCompentencyOk, @RequestParam(required = false) HomeOrOverseas homeOrOverseas) {
 		if (StringUtils.isNotBlank(comment)) {
 			Comment newComment = commentFactory.createComment(applicationForm, user, comment, type);
+			if(newComment instanceof ValidationComment){
+				((ValidationComment) newComment).setEnglishCompentencyOk(englishCompentencyOk);
+				((ValidationComment) newComment).setQualifiedForPhd(qualifiedForPhd);
+				((ValidationComment) newComment).setHomeOrOverseas(homeOrOverseas);
+				
+			}
 			commentService.save(newComment);
 		}
 		return SIMPLE_MESSAGE_VIEW;
 	}
 
 	@ModelAttribute("reviewersWillingToInterview")
-	public List<RegisteredUser> getReviewersWillingToInterview( @RequestParam Integer application) {
+	public List<RegisteredUser> getReviewersWillingToInterview(@RequestParam Integer application) {
 		ApplicationForm applicationForm = getApplicationForm(application);
-		if(applicationForm.getStatus() == ApplicationFormStatus.REVIEW){
+		if (applicationForm.getStatus() == ApplicationFormStatus.REVIEW) {
 			return userService.getReviewersWillingToInterview(applicationForm);
 		}
 		return null;
+	}
+	@ModelAttribute("validationQuestionOptions")
+	public ValidationQuestionOptions[] getValidationQuestionOptions() {
+		return ValidationQuestionOptions.values();
+	}
+	
+	@ModelAttribute("homeOrOverseasOptions")
+	public HomeOrOverseas[] getHomeOrOverseasOptions() {
+		return HomeOrOverseas.values();
 	}
 
 }

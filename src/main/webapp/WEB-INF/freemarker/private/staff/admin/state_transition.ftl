@@ -75,6 +75,35 @@
 								    	<input type="hidden" id="commentType" value="INTERVIEW_EVALUATION"/>
 								    </#if>
 		            			</div>
+		        	         	<#if applicationForm.isInState('VALIDATION')>
+		        	         	
+			            			<div class="row">
+			            				<label class="plain-label">Is the applicant qualified for PhD entry to UCL?</label>
+			            				<div class="field">		            				
+			            					<#list validationQuestionOptions as option>
+			            					<input type="radio" name="qualifiedForPhd" value="${option}"/><label> ${option.displayValue}</label>
+			            				</#list>
+			            				</div>
+			            			</div>
+			            			
+			            			<div class="row">
+			            				<label class="plain-label">Does the applicant meeting the minimum required standard of English Language competence?</label>
+			            				<div class="field">		            				
+			            					<#list validationQuestionOptions as option>
+			            					<input type="radio" name="englishCompentencyOk" value="${option}"/><label> ${option.displayValue}</label>
+			            				</#list>
+			            				</div>
+			            			</div>
+			            			
+			            			<div class="row">
+			            				<label class="plain-label">What is the applicant's fee status?</label>
+			            				<div class="field">		            				
+			            					<#list homeOrOverseasOptions as option>
+			            					<input type="radio" name="homeOrOverseas" value="${option}"/><label> ${option.displayValue}</label>
+			            				</#list>
+			            				</div>
+			            			</div>
+		        	         	</#if>
 		        
 		            			<div class="row">
 		            				<label class="plain-label">Next stage</label>

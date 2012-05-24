@@ -116,8 +116,8 @@ public class RegisteredUserTest {
 	}
 
 	@Test
-	public void shouldReturnTrueIfUserIsAdministrator() {
-		RegisteredUser administrator = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
+	public void shouldReturnTrueIfUserIsSuperAdministrator() {
+		RegisteredUser administrator = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		assertTrue(administrator.canSee(applicationForm));
 
@@ -155,7 +155,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnFalseIfUserApproverAndApplicationInValidateStage() {
 		Program program = new ProgramBuilder().id(1).toProgram();
-		RegisteredUser approver = new RegisteredUserBuilder().programsOfWhichApprover(program)
+		RegisteredUser approver = new RegisteredUserBuilder().id(1).programsOfWhichApprover(program)
 				.roles(new RoleBuilder().authorityEnum(Authority.APPROVER).toRole()).toUser();
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).approver(approver).status(ApplicationFormStatus.VALIDATION)
@@ -165,13 +165,35 @@ public class RegisteredUserTest {
 	}
 
 	@Test
-	public void shouldReturnTrueIfUserAdminAndApplicationInValidateStage() {
-		RegisteredUser administrator = new RegisteredUserBuilder().roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+	public void shouldReturnTrueIfUserAdminInProgramOfApplication() {
+		RegisteredUser administrator = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).program(new ProgramBuilder().administrators(administrator).toProgram()).toApplicationForm();
 		assertTrue(administrator.canSee(applicationForm));
 
 	}
+	@Test
+	public void shouldReturnFalseIfUserAdminInProgramOfApplicationNotSubmitted() {
+		RegisteredUser administrator = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.ADMINISTRATOR).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).program(new ProgramBuilder().administrators(administrator).toProgram()).toApplicationForm();
+		assertFalse(administrator.canSee(applicationForm));
 
+	}
+	
+
+	@Test
+	public void shouldReturnTrueIfApplicationAdmin() {
+		RegisteredUser administrator = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicationAdministrator(administrator).toApplicationForm();
+		assertTrue(administrator.canSee(applicationForm));
+
+	}
+	@Test
+	public void shouldReturnFalseIfUserAdminOfApplicationNotSubmitted() {
+		RegisteredUser administrator = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.UNSUBMITTED).applicationAdministrator(administrator).toApplicationForm();
+		assertFalse(administrator.canSee(applicationForm));
+
+	}
 	@Test
 	public void shouldReturnTrueIfUserIsReviewerOfForm() {
 		RegisteredUser revieweruser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
@@ -746,4 +768,40 @@ public class RegisteredUserTest {
 		assertTrue(user.getInterviewersForApplicationForm(applicationForm).isEmpty());
 	}
 
+	@Test
+	public void shouldHaveAdminRightsOnAppIfAdministratorInApplicationProgram(){
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(new ProgramBuilder().administrators(user).toProgram()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertTrue(user.hasAdminRightsOnApplication(applicationForm));
+		
+	}
+	
+	@Test
+	public void shouldHaveAdminRightsOnAppIfAdministratorOfApplication(){
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationAdministrator(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertTrue(user.hasAdminRightsOnApplication(applicationForm));		
+	}
+	
+	
+	@Test
+	public void shouldHaveAdminRightsOnAppIfSuperadmin(){
+		RegisteredUser user = new RegisteredUserBuilder().id(8).roles(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertTrue(user.hasAdminRightsOnApplication(applicationForm));		
+	}
+	
+	@Test
+	public void shouldNotHaveAdminRightsOnAppNeihterAdministratorOfProgramOrApplication(){
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(new Program()).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		assertFalse(user.hasAdminRightsOnApplication(applicationForm));		
+	}
+	
+	@Test
+	public void shouldNotHaveAdminRightsOnUnsubmitteApplication(){
+		RegisteredUser user = new RegisteredUserBuilder().id(8).toUser();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationAdministrator(user).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		assertFalse(user.hasAdminRightsOnApplication(applicationForm));		
+	}
 }

@@ -51,7 +51,7 @@ public class StateTransitionController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer application) {
 		ApplicationForm applicationForm = applicationsService.getApplicationById(application);
-		if (applicationForm == null || !getCurrentUser().isInRoleInProgram(Authority.ADMINISTRATOR, applicationForm.getProgram())) {
+		if (applicationForm == null || !getCurrentUser().hasAdminRightsOnApplication(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;

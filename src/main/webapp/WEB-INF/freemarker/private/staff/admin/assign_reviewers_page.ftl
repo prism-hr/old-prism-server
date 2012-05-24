@@ -74,7 +74,7 @@
 		          </div>
 				<div id ="actions">
 
-			<#if model.applicationForm.isModifiable()  && (model.user.isInRole('SUPERADMINISTRATOR')||  model.user.isInRoleInProgram('ADMINISTRATOR',model.applicationForm.program) ||  model.user.isInRoleInProgram('APPROVER', model.applicationForm.program))>
+			<#if model.applicationForm.isModifiable()  && ( model.user.hasAdminRightsOnApplication(applicationForm) ||  model.user.isInRoleInProgram('APPROVER', model.applicationForm.program))>
 					<form id="approvalForm" action="<@spring.url '/approveOrReject'/>" method = "POST">
 						<input type="hidden" name="id" value="${model.applicationForm.id?string("######")!}"/>
 			          	<div class="row">

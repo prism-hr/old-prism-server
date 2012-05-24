@@ -141,6 +141,12 @@ public class ApplicationFormDAO {
 		if(!user.getProgramsOfWhichAdministrator().isEmpty()){
 			apps.addAll(getSubmittedApplicationsInProgramsOfWhichAdmin(user));
 		}
+		List<ApplicationForm> applicationsOfWhichApplicationAdministrator = getSubmittedApplicationsOfWhichApplicationAdministrator(user);
+		for (ApplicationForm applicationForm : applicationsOfWhichApplicationAdministrator) {
+			if(!apps.contains(applicationForm)){
+				apps.add(applicationForm);
+			}
+		}
 		if(!user.getProgramsOfWhichApprover().isEmpty()){
 			List<ApplicationForm> approverApps = getApprovedApplicationsInProgramsOfWhichApprover(user);
 			for (ApplicationForm applicationForm : approverApps) {
@@ -166,6 +172,15 @@ public class ApplicationFormDAO {
 		return apps;
 	}
 
+	
+	@SuppressWarnings("unchecked")
+	private List<ApplicationForm> getSubmittedApplicationsOfWhichApplicationAdministrator(RegisteredUser user) {
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+				.add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED)))
+				.add(Restrictions.eq("applicationAdministrator", user)).list();
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	private List<ApplicationForm> getSubmittedApplicationsInProgramsOfWhichAdmin(RegisteredUser user) {
 		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)

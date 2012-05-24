@@ -53,7 +53,7 @@
 				         <#include "/private/common/parts/application_info.ftl"/>
 				        
 				        
-				       	 	<#if user.isInRoleInProgram('ADMINISTRATOR', applicationForm.program) >			        		
+				       	 	<#if user.hasAdminRightsOnApplication(applicationForm) >			        		
 							    <h1>Add comment</h1>
 							    <br/><br/>
 							    <form method="POST" action= "<@spring.url '/comment'/>">

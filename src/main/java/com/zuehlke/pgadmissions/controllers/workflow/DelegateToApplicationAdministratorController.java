@@ -39,7 +39,7 @@ public class DelegateToApplicationAdministratorController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
 		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
-		if (applicationForm == null || !getCurrentUser().isInRoleInProgram(Authority.ADMINISTRATOR, applicationForm.getProgram())) {
+		if (applicationForm == null || !getCurrentUser().hasAdminRightsOnApplication(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;

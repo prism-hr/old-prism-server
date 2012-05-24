@@ -39,11 +39,11 @@ public class ApproveRejectController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView applyDecision(@ModelAttribute ApplicationForm applicationForm, @RequestParam ApplicationFormStatus decision) {
 		RegisteredUser approver = userService.getCurrentUser();
-		if(!(approver.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram()) || approver.isInRoleInProgram(Authority.ADMINISTRATOR, applicationForm.getProgram()))){
+		if(!(approver.isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram()) || approver.hasAdminRightsOnApplication(applicationForm))){
 			throw new ResourceNotFoundException();
 		}
 		
-		if ( approver.isInRoleInProgram(Authority.ADMINISTRATOR, applicationForm.getProgram()) && decision == ApplicationFormStatus.APPROVED){
+		if ( approver.hasAdminRightsOnApplication(applicationForm) && decision == ApplicationFormStatus.APPROVED){
 			throw new ResourceNotFoundException();
 		}
 		if(!applicationForm.isModifiable()){

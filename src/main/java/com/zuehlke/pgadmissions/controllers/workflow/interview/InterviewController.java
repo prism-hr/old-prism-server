@@ -126,7 +126,7 @@ public abstract class InterviewController {
 
 		ApplicationForm application = applicationsService.getApplicationById(applicationId);
 		if (application == null
-				|| (!userService.getCurrentUser().isInRoleInProgram(Authority.ADMINISTRATOR, application.getProgram()) && !userService.getCurrentUser()
+				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()
 						.isInterviewerOfApplicationForm(application))) {
 			throw new ResourceNotFoundException();
 		}

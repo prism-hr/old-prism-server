@@ -5,15 +5,18 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/admin/comment/timelineApplication.js'/>"></script>
 
 
-<div class="buttons">						        		
+<!--
+<div class="buttons">
 		<button type="button" id="timelineBtn" class="blue" >Timeline</button>
 		<button class="blue" id="applicationBtn" type="button" >Application</button>						        
 </div>
 <br/>
+-->
 <div id="timelineview">
-	<span id="timeline">
-	</span>
-	
-	<div id="application">
-	</div>
+	<ul class="tabs">
+		<li><a href="#timeline">Timeline</a></li>
+		<li><a href="#application">Application</a></li>
+	</ul>
+	<div id="timeline"></div>
+	<div id="application"></div>
 </div>

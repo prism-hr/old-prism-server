@@ -45,6 +45,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.ReminderInterval</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Rejection</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ApprovalRound</value>
+	     		<value>com.zuehlke.pgadmissions.domain.RegistryUser</value>
 	     	</list>    	        	
 	    </constructor-arg>			
 	</bean>

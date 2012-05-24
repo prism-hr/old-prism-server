@@ -67,16 +67,23 @@ public class ReviewComment extends Comment{
 	public void setReviewer(Reviewer reviewer) {
 		this.reviewer = reviewer;
 	}
+	
+	public boolean isWillingToInterviewSet() {
+		return willingToInterview != null;
+	}
 
-	public Boolean isWillingToInterview() {
+	public Boolean getWillingToInterview() {
 		return willingToInterview;
 	}
 
 	public void setWillingToInterview(Boolean willingToInterview) {
 		this.willingToInterview = willingToInterview;
 	}
-
-	public Boolean isSuitableCandidate() {
+	
+	public boolean isSuitableCandidateSet() {
+		return suitableCandidate != null;
+	}
+	public Boolean getSuitableCandidate() {
 		return suitableCandidate;
 	}
 

@@ -31,7 +31,7 @@
 				</#if>
 	
 	
-	  <div>
+	  <div class="row-group">
 			<div class="row">
         		<span class="plain-label">Personal Statement (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.personalStatement'/>"></span>	 

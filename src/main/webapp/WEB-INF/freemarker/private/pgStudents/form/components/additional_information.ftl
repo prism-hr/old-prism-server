@@ -31,6 +31,7 @@
 				</#if>
 	
     	<!-- Free text field for info. -->
+			<div class="row-group">
         <div class="row">
        		<span class="plain-label">Additional information relevant to your application</span>
     		<span class="hint" data-desc="<@spring.message 'additionalInformation.infotext'/>"></span>
@@ -41,9 +42,10 @@
                 <textarea readonly="readonly" id="informationText" name="informationText" class="max" rows="10" cols=80" >${(additionalInformation.informationText?html)!}</textarea>
             </#if>
             </div>
-		</div>
+				</div>
+			</div>
 
-		<div>
+		<div class="row-group">
 	    	
 	    	<!-- Radio buttons for convictions. -->
 			<div class="row">

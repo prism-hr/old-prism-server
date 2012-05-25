@@ -84,64 +84,61 @@
 						<hr />
 						<@spring.bind "applicationForm.*" />
 						<@spring.bind "availableReasons.*" />
-						<section class="folding violet">
+						<section class="form-rows violet">
 							<div>
 								<form method="POST" action="<@spring.url '/rejectApplication/moveApplicationToReject'/>">
-									<div>			
+									<div class="row-group">
 										
 										<div class="row">
-				                    		<label class="label">Reasons for rejections<em>*</em></label>
-					                   		<div id="reasonList" class="field">
-					                   			<ul>
-					                   			<#list availableReasons as reason>
-					                   				<li>
-												  		<input type="radio" name="rejectionReason" value="${reason.id?string("#######")}" class="reason"/><label>${reason.text}</label>
-													 </li> 
-												</#list>
+											<label class="label">Reasons for rejections<em>*</em></label>
+											<div id="reasonList" class="field">
+												<ul>
+													<#list availableReasons as reason>
+													<li>
+													<input type="radio" name="rejectionReason" value="${reason.id?string("#######")}" class="reason"/><label>${reason.text}</label>
+													</li> 
+													</#list>
 												</ul>
 												<@spring.bind "rejection.rejectionReason" /> 
-				                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list> 
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list> 
+											</div>
 										</div>
-											</div>
-											
 									</div>
-									<div>					
+
+									<div class="row-group">					
 										<div class="row">
-				                    		<label class="label">Include link to UCL prospectus?</label>
-					                   		<div class="field">					      
-												  <input type="checkbox" name="includeProspectusLink" id="includeProspectusLink" class="reason"/>											
+											<label class="label">Include link to UCL prospectus?</label>
+											<div class="field">					      
+												<input type="checkbox" name="includeProspectusLink" id="includeProspectusLink" class="reason"/>											
 											</div>
-							
 										</div>
 										
 										<div class="row">
 											<div class="field">
 												<span>
 													<button type="submit" id="rejectButton" class="blue">Reject application</button>
-													
 												</span>
 											</div>
 										</div>
 									</div>
-									<div>
+
+									<div class="row-group">
 										<div class="row">
-				                    		<label class="label"> Content of the e-mail for the applicant</label>
-					                   		<div  id="emailText">
-					                   
-											
-											</div> 
+											<label class="label"> Content of the e-mail for the applicant</label>
+											<div id="emailText"></div> 
 										</div>
 									</div>
+									
 									<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/> 
 								</form>
 							</div>
 						</section>
 					
+						<#include "/private/common/feedback.ftl"/>
 					
 					</div>
 					<!-- #actions -->
 
-					<#include "/private/common/feedback.ftl"/>
 				</div>
 				<!-- .content-box-inner -->
 		</div>

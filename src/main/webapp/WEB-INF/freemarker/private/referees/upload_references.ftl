@@ -48,11 +48,11 @@
 								
 								<section class="form-rows">
 									<div>
-                    
-										<div class="row-group">
-											<div class="row">
+										<form id="documentUploadForm" method="POST" action="<@spring.url '/referee/submitReference'/>">  
+
+											<div class="row-group">
+												<div class="row">
 											
-												<form id="documentUploadForm" method="POST" action="<@spring.url '/referee/submitReference'/>">  
 													<input type="hidden" name="application" value ='${applicationForm.id?string("######")}'/>           
 													<div class="field" id="referenceUploadFields">          
 														<label for="file">Upload file</label>
@@ -67,14 +67,13 @@
 														<div>Previous File: <a href="<@spring.url '/download/reference?referenceId=${reference.id?string("#######")}'/>">${reference.document.fileName?html}</a></div>
 														</#if>
 													</div>  
-													<br/>
 													<div class="buttons">
 														<button type="reset" value="cancel">Cancel</button>
 														<button class="blue" type="submit" id="referenceSaveButton" value="close">Submit</button>              
 													</div>                      
-												</form>
+												</div>
 											</div>
-										</div>
+										</form>
                     <!---------- End Reference -------------->
                   
                     <#if !reference.id?? >

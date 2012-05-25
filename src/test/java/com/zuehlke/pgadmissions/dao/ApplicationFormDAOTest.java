@@ -24,22 +24,26 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
@@ -765,6 +769,54 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertFalse(applications.contains(applicationFormOne));
 						
 	}
+	
+	@Test
+	public void shouldReturnAllApplicationsRefereeIsAssignedTo(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("applicant").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
+		save(applicant);
+		Country country = new CountryBuilder().code("1").name("country").toCountry();
+		save(country);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
+		save(refereeUser);
+		Referee referee = new RefereeBuilder().user(refereeUser).email("email@test.com").firstname("bob")
+				.lastname("smith").addressCountry(country).addressLocation("london").jobEmployer("zuhlke").jobTitle("se")
+				.messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
+		save(referee);
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).referees(referee).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		
+		save(applicationFormOne);	
+		flushAndClearSession();
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(refereeUser);
+		assertTrue(applications.contains(applicationFormOne));
+		
+	}
+	
+	@Test
+	public void shouldNotReturnApplicationsRefereeIsNotAssignedTo(){
+		RoleDAO roleDAO = new RoleDAO(sessionFactory);
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("applicant").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
+		save(applicant);
+		Country country = new CountryBuilder().code("1").name("country").toCountry();
+		save(country);
+		RegisteredUser refereeUser = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).role(roleDAO.getRoleByAuthority(Authority.REFEREE)).toUser();
+		save(refereeUser);
+		Referee referee = new RefereeBuilder().user(refereeUser).email("email@test.com").firstname("bob")
+				.lastname("smith").addressCountry(country).addressLocation("london").jobEmployer("zuhlke").jobTitle("se")
+				.messenger("skypeAddress").phoneNumber("hallihallo").toReferee();
+		save(referee);
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(applicant).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		
+		save(applicationFormOne);	
+		flushAndClearSession();
+		List<ApplicationForm> applications = applicationDAO.getVisibleApplications(refereeUser);
+		assertFalse(applications.contains(applicationFormOne));
+		
+	}
 	@Test
 	public void shouldReturnAllSubmittedApplicationsInProgramForAdmin(){		
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
@@ -1077,6 +1129,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertFalse(applications.contains(applicationForm));
 		
 	}
+	
 	
 	@Test
 	public void shouldReturnAppsSubmittedToUsersProgramsAsAdminAndAprrover(){

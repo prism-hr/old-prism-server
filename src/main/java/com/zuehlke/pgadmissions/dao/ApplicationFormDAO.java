@@ -137,6 +137,11 @@ public class ApplicationFormDAO {
 					.add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED))).list();
 		}
 		
+		if (user.isInRole(Authority.REFEREE)) {
+			return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+					.createAlias("referees", "referee").add(Restrictions.eq("referee.user", user)).list();
+		}
+		
 		List<ApplicationForm> apps = new ArrayList<ApplicationForm>();
 		if(!user.getProgramsOfWhichAdministrator().isEmpty()){
 			apps.addAll(getSubmittedApplicationsInProgramsOfWhichAdmin(user));

@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
+import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -21,17 +23,20 @@ public class DeclineController {
 	private final UserService userService;
 	private final CommentService commentService;
 	private final ApplicationsService applicationsService;
-	private static final String DECLINE_REVIEW_SUCCESS_VIEW_NAME = "/private/reviewers/decline_success_confirmation";
+	private static final String DECLINE_SUCCESS_VIEW_NAME = "/private/reviewers/decline_success_confirmation";
+	private final RefereeService refereeService;
 	
 	DeclineController() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public DeclineController(UserService userService, CommentService commentService, ApplicationsService applicationsService) {
+	public DeclineController(UserService userService, CommentService commentService, ApplicationsService applicationsService,
+			RefereeService refereeService) {
 		this.userService = userService;
 		this.commentService = commentService;
 		this.applicationsService = applicationsService;
+		this.refereeService = refereeService;
 	}
 	
 	@RequestMapping(value="/review", method = RequestMethod.GET)
@@ -39,12 +44,28 @@ public class DeclineController {
 		RegisteredUser reviewer = getReviewer(userId);
 		ApplicationForm application = getApplicationForm(applicationId);
 		commentService.declineReview(reviewer, application);
-		modelMap.put("applicant", application.getApplicant());
-		return DECLINE_REVIEW_SUCCESS_VIEW_NAME;
+		modelMap.put("message", "You have been successfully decline to provide a review for user " + application.getApplicant().getFirstName() + " "+ application.getApplicant().getLastName());
+		return DECLINE_SUCCESS_VIEW_NAME;
 	}
 	
-	@ModelAttribute("reviewer")
-	public RegisteredUser getReviewer(@RequestParam Integer userId) {
+	public Referee getReferee(@RequestParam Integer refereeId) {	
+		Referee referee = refereeService.getRefereeById(refereeId);
+		if(referee == null){
+			throw new ResourceNotFoundException();
+		}
+		return referee;
+	}
+
+	@RequestMapping(value = "/reference", method = RequestMethod.GET)
+	public String declineReference(@RequestParam Integer refereeId, ModelMap modelMap) {
+		Referee referee = getReferee(refereeId);
+		referee.setDeclined(true);
+		refereeService.saveReferenceAndSendDeclineNotifications(referee);
+		modelMap.put("message", "You have been successfully decline to provide a reference for user " + referee.getApplication().getApplicant().getFirstName() + " "+ referee.getApplication().getApplicant().getLastName());
+		return DECLINE_SUCCESS_VIEW_NAME;
+	}
+	
+	public RegisteredUser getReviewer(Integer userId) {
 		RegisteredUser reviewer = userService.getUser(userId);
 		if (reviewer == null){
 			throw new ResourceNotFoundException();
@@ -52,8 +73,7 @@ public class DeclineController {
 		return reviewer;
 	}
 	
-	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
+	public ApplicationForm getApplicationForm(Integer applicationId) {
 		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
 		if (applicationForm == null){
 			throw new ResourceNotFoundException();

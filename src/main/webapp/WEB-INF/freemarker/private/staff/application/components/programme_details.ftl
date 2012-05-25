@@ -77,7 +77,7 @@
             	<#if applicationForm.programmeDetails.supervisors?? && (applicationForm.programmeDetails.supervisors?size > 0) >
 	            	  <#list applicationForm.programmeDetails.supervisors! as supervisor>
 	            	  	
-	            	  	<div class="sub_section_admin">
+	            	  	<div class="row-admin">
 		            	  
 			            	 <div class="admin_row">
 			            	  	 <label class="admin_header">Supervision (${supervisor_index + 1})</label>

@@ -14,7 +14,7 @@ div.programme select { width: 300px; }
 
 table.data tbody td { background: #EEE; padding: 4px; }
 
-div.left-column { float: left; margin-right: 20px; width: 400px; }
-div.right-column { float: left; text-align: left; width: 400px; }
+div.left-column { float: left; width: 380px; }
+div.right-column { float: left; text-align: left; width: 380px; }
 
 .pending{ color: #999999;}

@@ -123,12 +123,14 @@
 															</#list>
 						              	</div>
 						           
-														<div class="buttons">
-															<button type="submit" value="adduser" >Add / update user</button>
-														</div>
 													</div>
 													
 												</div>
+												
+												<div class="buttons">
+													<button type="submit" value="adduser" >Add / update user</button>
+												</div>
+												
 											</div>
 											
 										</section>

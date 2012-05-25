@@ -17,6 +17,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/superadmin.css' />"/>
 		<!--[if lt IE 9]>
 		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -40,132 +41,135 @@
 		      		<div class="content-box">
 		      			<div class="content-box-inner">
 		        
-			          		<form id ="programmeForm" name="programmeForm" action="/pgadmissions/manageUsers/updateUserRoles" method="POST">
-			          
-			          			<h1>Add Existing programme users and assign roles</h1>
-			            		<p>Please add users to the programme.<br>You can select one or more roles for the user.</p>
-			            
-			            		<br>
-			            
-			            		<div class="row programme">
-				              		<label>Select programme</label>
-				              		<select name="selectedProgram" id="programId">
-											<option value="">Please select a program</option>
-											<option value="-1">All programs</option>
-	                                		<#list programs as program>"
-	                                    		<option value='${program.id?string("######")}' 
-	                                    			<#if selectedProgram?? && selectedProgram.id == program.id >
-													 selected = "selected"
-													</#if>
-												>${program.title}</option>               
-	                                		</#list>
-				              		</select>				              		
-			            		</div>
-			            		<@spring.bind "updateUserRolesDTO.selectedProgram" /> 
-								<#list spring.status.errorMessages as error>
-									<div class="row">
-										<div class="field">
-											<span class="invalid">${error}</span>
-										</div>
-									</div>
-								</#list>
-								<!-- // EXISTING USERS -->
-											
-				            	<hr>
-					          	<!-- Left side -->
-					          	<div class="left-column">
-					            
-					              	<div class="row">
-					                	<label>Please choose a user</label>
-					                	<select id="selectedUser" name="selectedUser">
-					                			<option value="">Please choose a user</option>
-					                			<#list availableUsers as user>						                			
-						                			<option value="${user.id?string("######")}"
-						                			<#if selectedUser?? && selectedUser.id == user.id >
-													 selected = "selected"
-													</#if>
-						                			<#if !user.enabled>class="pending"</#if>>${user.firstName?html} ${user.lastName?html} (${user.email?html})</option>      
-												</#list>
-					                		</select>
-				
-					              	</div>
-					              	<div class="row">
-					                	or <a href="/pgadmissions/manageUsers/createNewUser<#if selectedProgram??>?programId=${selectedProgram.id?string('#####')}</#if>" >add a new user</a>
-					              	</div>
-					              	<@spring.bind "updateUserRolesDTO.selectedUser" /> 
-									<#list spring.status.errorMessages as error>
-										<div class="row">
-											<div class="field">
-												<span class="invalid">${error}</span>
-											</div>
-										</div>
-									</#list>
-					            </div>
+									<form id ="programmeForm" name="programmeForm" action="/pgadmissions/manageUsers/updateUserRoles" method="POST">
+							
+										<h1>Add Existing programme users and assign roles</h1>
+										<p>Please add users to the programme.<br>You can select one or more roles for the user.</p>
 								
-								<!-- Right side -->
-								<div class="right-column">
+										<section class="form-rows">
+											<div>
+											
+												<div class="row-group">
+													<div class="row programme">
+														<label>Select programme</label>
+														<select name="selectedProgram" id="programId">
+															<option value="">Please select a program</option>
+															<option value="-1">All programs</option>
+															<#list programs as program>"
+															<option value='${program.id?string("######")}'<#if selectedProgram?? && selectedProgram.id == program.id >selected = "selected"</#if>>${program.title}</option>
+															</#list>
+														</select>				              		
+													</div>
+													
+													<@spring.bind "updateUserRolesDTO.selectedProgram" /> 
+													<#list spring.status.errorMessages as error>
+													<div class="row">
+														<div class="field">
+															<span class="invalid">${error}</span>
+														</div>
+													</div>
+													</#list>
+												</div>
+												
+												<!-- // EXISTING USERS -->
+												<div class="row-group">
+
+													<!-- Left side -->
+													<div class="left-column">
 					            
-					            	<div class="row">
-					                	<label>Role(s) in application process</label>
-					                	<select multiple size="6" id="roles" name="selectedAuthorities" >
-                        				<#list authorities as authority>
-                      						<option value="${authority}" <#if selectedUser?? && selectedUser.isInRoleInProgram(authority, selectedProgram)>selected="selected" </#if>>${authority}</option>
-                      					</#list>
-                      					</select>
-                      					 <@spring.bind "updateUserRolesDTO.selectedAuthorities" /> 
-										<#list spring.status.errorMessages as error>
-											<div class="row">
-												<div class="field">
-													<span class="invalid">${error}</span>
+														<div class="row">
+															<label>Please choose a user</label>
+															<select id="selectedUser" name="selectedUser">
+																<option value="">Please choose a user</option>
+																<#list availableUsers as user>						                			
+																<option value="${user.id?string("######")}"
+																<#if selectedUser?? && selectedUser.id == user.id >
+																 selected = "selected"
+																</#if>
+																<#if !user.enabled>class="pending"</#if>>${user.firstName?html} ${user.lastName?html} (${user.email?html})</option>      
+																</#list>
+					                		</select>
+						              	</div>
+														<div class="row">
+															or <a href="/pgadmissions/manageUsers/createNewUser<#if selectedProgram??>?programId=${selectedProgram.id?string('#####')}</#if>" >add a new user</a>
+														</div>
+														<@spring.bind "updateUserRolesDTO.selectedUser" /> 
+														<#list spring.status.errorMessages as error>
+														<div class="row">
+															<div class="field">
+																<span class="invalid">${error}</span>
+															</div>
+														</div>
+														</#list>
+													</div>
+								
+													<!-- Right side -->
+													<div class="right-column">
+													
+														<div class="row">
+															<label>Role(s) in application process</label>
+															<select multiple size="6" id="roles" name="selectedAuthorities">
+																<#list authorities as authority>
+																<option value="${authority}" <#if selectedUser?? && selectedUser.isInRoleInProgram(authority, selectedProgram)>selected="selected" </#if>>${authority}</option>
+																</#list>
+															</select>
+															<@spring.bind "updateUserRolesDTO.selectedAuthorities" /> 
+															<#list spring.status.errorMessages as error>
+															<div class="row">
+																<div class="field">
+																	<span class="invalid">${error}</span>
+																</div>
+															</div>
+															</#list>
+						              	</div>
+						           
+														<div class="buttons">
+															<button type="submit" value="adduser" >Add / update user</button>
+														</div>
+													</div>
+													
 												</div>
 											</div>
-										</#list>
-					            
-					              	</div>
-						           
-					              	<div class="buttons">
-					              		<button type="submit" value="adduser" >Add / update user</button>
-					            	</div>
-					              
-								</div>
-								
-							</form>
-		          
-		          			<hr>
-		          			
-		          			<table class="data" border="0">
-		            			<colgroup>
-		              				<col style="width: 220px;" />
-		              				<col style="width: auto;" />
-		              				<col style="width: 200px;" />
-		              				<col style="width: 100px;" />
-		            			</colgroup>
-		            			<thead>
-		              				<tr>
-		                				<th scope="col">Email address</th>
-		                				<th scope="col">Name</th>
-		                				<th scope="col">Role(s)</th>
-		                				<th scope="col">Action</th>
-		              				</tr>
-		            			</thead>
-		            			<tbody>
-		            				<#list usersInRoles as userInRole>
-			              				<tr <#if !userInRole.enabled>class="pending"</#if>>
-			                				<td scope="col">${userInRole.email?html}</td>
-						                	<td scope="col">${userInRole.firstName?html} ${userInRole.lastName?html}</td>
-						                	<td scope="col">${userInRole.getAuthoritiesForProgramAsString(selectedProgram)}</td>
-			                				<td scope="col"><a href="<@spring.url '/manageUsers/showPage?programId=${selectedProgram.id?string("#######")}&userId=${userInRole.id?string("#######")}'/>">Edit</a> / <a href="#" name="removeuser" id="remove_${userInRole.id?string("#######")}">Remove</a></td>
-			              				</tr>
-									</#list>			              			
-		            			</tbody>
-		          			</table>
+											
+										</section>
+							
+									</form>
+									
+									<hr>
+									
+									<table class="data" border="0">
+										<colgroup>
+											<col style="width: 220px;" />
+											<col style="width: auto;" />
+											<col style="width: 200px;" />
+											<col style="width: 100px;" />
+										</colgroup>
+										<thead>
+											<tr>
+												<th scope="col">Email address</th>
+												<th scope="col">Name</th>
+												<th scope="col">Role(s)</th>
+												<th scope="col">Action</th>
+											</tr>
+										</thead>
+										<tbody>
+											<#list usersInRoles as userInRole>
+											<tr <#if !userInRole.enabled>class="pending"</#if>>
+												<td scope="col">${userInRole.email?html}</td>
+												<td scope="col">${userInRole.firstName?html} ${userInRole.lastName?html}</td>
+												<td scope="col">${userInRole.getAuthoritiesForProgramAsString(selectedProgram)}</td>
+												<td scope="col"><a href="<@spring.url '/manageUsers/showPage?programId=${selectedProgram.id?string("#######")}&userId=${userInRole.id?string("#######")}'/>">Edit</a> / <a href="#" name="removeuser" id="remove_${userInRole.id?string("#######")}">Remove</a></td>
+											</tr>
+											</#list>			              			
+										</tbody>
+									</table>
 		
 		        		</div><!-- .content-box-inner -->
 		      		</div><!-- .content-box -->
 		      
-		    	</article>
-		    
-		  	</div>
+						</article>
+					
+					</div>
 		  
 		  	<!-- Footer. -->
 		  	<div id="footer">

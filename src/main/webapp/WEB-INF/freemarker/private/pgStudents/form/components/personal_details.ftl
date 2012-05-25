@@ -435,7 +435,7 @@
             	</div>
             </div>
             
-            <div>
+            <div class="row-group">
           		<div class="row">
           			<label class="group-heading-label">Equal Opportunities</label>
           		</div>

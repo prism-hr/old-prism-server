@@ -3,19 +3,19 @@
 /* Employment ---------------------------------------------------------------------------------------- */
 
 /* Background */
-#section.form-rows.violet > div { background: #FFFAF1; }
+#section.form-rows.yellow > div { background: #FFFAF1; }
 
 /* Border colours */
-section.form-rows.violet > div,
-section.form-rows.violet table.existing,
-section.form-rows.violet div.buttons { border-color: #F9CB54; }
+section.form-rows.yellow > div,
+section.form-rows.yellow table.existing,
+section.form-rows.yellow div.buttons { border-color: #F9CB54; }
 
 /* Buttons / existing rows areas */
-section.form-rows.violet table.existing, section.form-rows.violet div.buttons { background: #FFF4E1; }
+section.form-rows.yellow table.existing, section.form-rows.yellow div.buttons { background: #FFF4E1; }
 
 /* Buttons and table headers. */
-section.form-rows.violet h2,
-section.form-rows.violet div.add a.button,
+section.form-rows.yellow h2,
+section.form-rows.yellow div.add a.button,
 li.tool-button, li#tool-programme {
 	background: rgb(253,185,51); /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */

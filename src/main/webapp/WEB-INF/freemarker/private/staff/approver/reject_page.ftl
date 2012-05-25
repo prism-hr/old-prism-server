@@ -95,7 +95,10 @@
 												<ul>
 													<#list availableReasons as reason>
 													<li>
-													<input type="radio" name="rejectionReason" value="${reason.id?string("#######")}" class="reason"/><label>${reason.text}</label>
+														<label>
+															<input type="radio" name="rejectionReason" value="${reason.id?string("#######")}" class="reason"/>
+															${reason.text}
+														</label>
 													</li> 
 													</#list>
 												</ul>

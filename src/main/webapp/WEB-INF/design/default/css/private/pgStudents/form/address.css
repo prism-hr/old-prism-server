@@ -3,19 +3,19 @@
 /* Address ------------------------------------------------------------------------------------------- */
 
 /* Background */
-#section.form-rows.violet > div { background: #EFE8E7; }
+#section.form-rows.red > div { background: #EFE8E7; }
 
 /* Border colours */
-section.form-rows.violet > div,
-section.form-rows.violet table.existing,
-section.form-rows.violet div.buttons { border-color: #650729; }
+section.form-rows.red > div,
+section.form-rows.red table.existing,
+section.form-rows.red div.buttons { border-color: #650729; }
 
 /* Buttons / existing rows areas */
-section.form-rows.violet table.existing, section.form-rows.violet div.buttons { background: #E1D2D1; }
+section.form-rows.red table.existing, section.form-rows.red div.buttons { background: #E1D2D1; }
 
 /* Buttons and table headers. */
-section.form-rows.violet h2,
-section.form-rows.violet div.add a.button,
+section.form-rows.red h2,
+section.form-rows.red div.add a.button,
 li.tool-button, li#tool-programme {
 	background: rgb(112,18,40); /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */

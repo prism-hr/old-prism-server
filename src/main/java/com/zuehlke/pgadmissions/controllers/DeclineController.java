@@ -34,7 +34,7 @@ public class DeclineController {
 		this.applicationsService = applicationsService;
 	}
 	
-	@RequestMapping(value="/review", method = RequestMethod.POST)
+	@RequestMapping(value="/review", method = RequestMethod.GET)
 	public String declineReview(@RequestParam Integer userId, @RequestParam Integer applicationId, ModelMap modelMap) {
 		RegisteredUser reviewer = getReviewer(userId);
 		ApplicationForm application = getApplicationForm(applicationId);

@@ -59,6 +59,7 @@ public class CommentService {
 		reviewComment.setUser(reviewer);
 		reviewComment.setDecline(true);
 		reviewComment.setType(CommentType.REVIEW);
+		reviewComment.setComment("");
 		reviewComment.setReviewer(reviewer.getReviewersForApplicationForm(application).get(0));
 		save(reviewComment);
 	}

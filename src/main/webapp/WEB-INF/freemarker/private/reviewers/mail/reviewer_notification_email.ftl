@@ -52,7 +52,7 @@
 			      	</p>
 			         <p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/decline/review&applicationId=${application.id?string("######")}?userId=${reviewer.user.id?string('#######')}">Decline</a>
+			      			<a href="${host}/pgadmissions/decline/review?applicationId=${application.id?string("######")}&userId=${reviewer.user.id?string('#######')}">Decline</a>
 			      		</font>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You can view the application and provide your feedback by clicking the links below.</font>

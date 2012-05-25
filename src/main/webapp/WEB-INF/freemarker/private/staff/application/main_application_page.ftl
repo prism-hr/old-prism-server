@@ -88,45 +88,45 @@
 				 	 <#include "/private/common/parts/application_info.ftl"/>
 			
 					  <!-- Programme -->
-					  <section id="programmeDetailsSection" class="folding violet">
+					  <section id="programmeDetailsSection" class="folding form-rows violet">
 			          	<#include "/private/staff/application/components/programme_details.ftl"/>
 			          </section>
 			          
 			          <!-- Personal Details -->
-			           <section id="personalDetailsSection" class="folding purple">
+			           <section id="personalDetailsSection" class="folding form-rows purple">
 			          	<#include "/private/staff/application/components/personal_details.ftl"/>
 			          </section>
 			          
 			          <!-- Address -->
-			          <section class="folding red">
+			          <section class="folding form-rows red">
                         <#include "/private/staff/application/components/address_details.ftl"/>
 			          </section>
 			          
-			           <section class="folding orange">
+			           <section class="folding form-rows orange">
 			            <#include "/private/staff/application/components/qualification_details.ftl"/>
 			          </section>
 			          
-			           <section class="folding yellow">
+			           <section class="folding form-rows yellow">
 			             <#include "/private/staff/application/components/employment_position_details.ftl"/>
 			          </section>
 			          
-			           <section class="folding green">
+			           <section class="folding form-rows green">
 			             <#include "/private/staff/application/components/funding_details.ftl"/>
 			          </section>
 			          
 			          <#if !user.isRefereeOfApplicationForm(applicationForm) || user.isInRole('SUPERADMINISTRATOR') >
-			           <section class="folding navy">
+			           <section class="folding form-rows navy">
 			             <#include "/private/staff/application/components/references_details.ftl"/>
 			          </section>
 			          </#if>
 			          
-			           <section class="folding blue">
+			           <section class="folding form-rows blue">
 			             <#include "/private/staff/application/components/documents.ftl"/>
 			          </section>
 			          
-			          <section id="additionalInformationSection" class="folding lightblue">
-                           <#include "/private/staff/application/components/additional_information.ftl"/>
-                      </section>
+			          <section id="additionalInformationSection" class="folding form-rows lightblue">
+									 <#include "/private/staff/application/components/additional_information.ftl"/>
+								</section>
 			          
 			          
 			          <hr />

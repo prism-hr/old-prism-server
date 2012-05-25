@@ -23,6 +23,24 @@ section.form-rows h2.empty .status { background-position: 0 -30px; }
 section.form-rows > div { background: #BBB; border: 2px solid #999; padding: 10px; }
 
 
+/* EXISTING ROWS ----------------------------------------------------------------------------------------- */
+section.form-rows table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%;  margin: 8px -10px -10px; }
+section.form-rows table.existing th { background: url(../../images/bg_table_head.png) repeat-x; text-align: left; }
+/*  Temp Fix: Modified to accomodate backgournd for long strings : Manish */
+section.form-rows table.existing td { 
+	background: url("../../images/bg_table_row.jpg") repeat-x scroll left bottom #E6E8E7;
+	/* background: url(../../images/bg_table_row.jpg) repeat-x; text-align: left; */
+	padding: 3px;
+}
+/*  Modified to acomodate long strings : Manish */
+section.form-rows table.existing td,
+section.form-rows table.existing th { 
+	line-height: 25px; padding: 0 3px; vertical-align: text-top; 
+}
+/* Contrlloing the appearince of the text of the first column header */
+section.form-rows table.existing th#primary-header { padding-left: 33px; }
+
+
 /* ROW GROUPS (white boxes) ------------------------------------------------------------------------------ */
 section.form-rows .row-group { background: #FFF; border: 1px solid #999; margin-bottom: 2px; overflow: hidden; padding: 10px; }
 
@@ -37,35 +55,19 @@ section.form-rows .buttons { background: #DDD; border-style: solid; border-width
 section.form-rows header { background: #DDD; border-bottom: 1px solid #999; font-weight: bold; padding: 6px; }
 section.form-rows footer { background: #DDD; border-top: 1px solid #999; padding: 6px !important; text-align: right; }
 
-section.form-rows table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%; }
-section.form-rows table.existing th { background: url(../../images/bg_table_head.png) repeat-x; text-align: left; }
-/*  Temp Fix: Modified to accomodate backgournd for long strings : Manish */
-section.form-rows table.existing td { 
-	background: url("../../images/bg_table_row.jpg") repeat-x scroll left bottom #E6E8E7;
-	/* background: url(../../images/bg_table_row.jpg) repeat-x; text-align: left; */
-	padding: 3px;
-}
+
 
 /* Make the extra text hidden*/
 .row-extra-hide{
 	height:24px; width:655px; overflow:hidden;
 }
 ƒ
-/*  Modified to acomodate long strings : Manish */
-section.form-rows table.existing td, section.form-rows table.existing th { 
-	line-height: 25px; padding: 0 3px; 
-	vertical-align: text-top; 
-}
 
 /* Used to control the width of the last col in an existing table */
 #last-col{
 	width: 30px;
 }
 
-/* Contrlloing the appearince of the text of the first column header */
-section.form-rows table.existing th#primary-header{
-	padding-left: 33px;
-}
 
 
 

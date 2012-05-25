@@ -190,39 +190,39 @@
                 <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/>
                 
         
-								<section id="programmeDetailsSection" class="folding violet <#if programDetailsError || studyOptionError>error</#if>">                      
+								<section id="programmeDetailsSection" class="folding form-rows violet <#if programDetailsError || studyOptionError>error</#if>">                      
                 </section>
                 
-                      <section id="personalDetailsSection" class="folding purple <#if personalDetailsError>error</#if>">
+                      <section id="personalDetailsSection" class="folding form-rows purple <#if personalDetailsError>error</#if>">
                        </section>
                 
                       <!-- Address -->                      
-                      <section id="addressSection" class="folding red <#if currentAddressError || contactAddressError>error</#if>">                         
+                      <section id="addressSection" class="folding form-rows red <#if currentAddressError || contactAddressError>error</#if>">                         
                       </section>
                 
-                       <section id="qualificationsSection" class="folding orange">
+                       <section id="qualificationsSection" class="folding form-rows orange">
                       
                       </section>
                 
-                       <section id="positionSection" class="folding yellow">
+                       <section id="positionSection" class="folding form-rows yellow">
                          
                       </section>
                 
-                       <section id="fundingSection" class="folding green">                     
+                       <section id="fundingSection" class="folding form-rows green">                     
                       </section>
                 
-                       <section id="referencesSection" class="folding navy <#if refereesError> error</#if>">
+                       <section id="referencesSection" class="folding form-rows navy <#if refereesError> error</#if>">
                       </section>
                 
-                      <section id="documentSection" class="folding blue <#if personalStatementError>error</#if>">              
+                      <section id="documentSection" class="folding form-rows blue <#if personalStatementError>error</#if>">              
                       </section>
                 
-                      <section id="additionalInformationSection" class="folding lightblue" <#if additionalInformationError> error</#if>>
+                      <section id="additionalInformationSection" class="folding form-rows lightblue" <#if additionalInformationError> error</#if>>
                         
                       </section>
 
                       <#if applicationForm.isInState('UNSUBMITTED')>
-                        <section id="acceptTermsSection" class="folding lightgrey">
+                        <section id="acceptTermsSection" class="folding form-rows lightgrey">
                             </section>
                            </#if>  
 

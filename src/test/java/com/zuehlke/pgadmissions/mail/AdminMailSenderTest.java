@@ -332,7 +332,7 @@ public class AdminMailSenderTest {
 		RegisteredUser reviewerUser = new RegisteredUserBuilder().id(11).toUser();
 		Reviewer reviewer = new ReviewerBuilder().id(1).user(reviewerUser).toReviewer();
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
-		InternetAddress toAddress = new InternetAddress("bob@bobson.com", "Bob Bobson");
+		InternetAddress toAddress =  new InternetAddress("bob@bobson.com", "Bob Bobson") ;
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, null, "Notification - Reviewer assigned", "private/staff/admin/mail/reviewer_assigned_notification.ftl", model)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);

@@ -54,56 +54,58 @@
 							  <#include "/private/common/parts/application_info.ftl"/>
 				        		<input type="hidden" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 				        		
-				        		<#if applicationForm.isInState('VALIDATION')>
-							    	<h1>Validate application</h1>
-							    <#elseif applicationForm.isInState('REVIEW')>
-							    	<h1>Evaluate reviews</h1>
-							    <#elseif applicationForm.isInState('INTERVIEW')>
-							    	<h1>Evaluate interview feedback</h1>
-							    </#if>
-							    <br/><br/>
+										<section class="form-rows">
+
+										<#if applicationForm.isInState('VALIDATION')>
+											<h1>Validate application</h1>
+										<#elseif applicationForm.isInState('REVIEW')>
+											<h1>Evaluate reviews</h1>
+										<#elseif applicationForm.isInState('INTERVIEW')>
+											<h1>Evaluate interview feedback</h1>
+										</#if>
+
 		            			<div class="row">
 		            				<span class="plain-label">Comment</span>
 		            				<div class="field">		            				
 		            					<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
 		            				</div>
 	            					<#if applicationForm.isInState('VALIDATION')>
-								    	<input type="hidden" id="commentType" value="VALIDATION"/>
+												<input type="hidden" id="commentType" value="VALIDATION"/>
 								    <#elseif applicationForm.isInState('REVIEW')>
-								    	<input type="hidden" id="commentType" value="REVIEW_EVALUATION"/>
+												<input type="hidden" id="commentType" value="REVIEW_EVALUATION"/>
 								    <#elseif applicationForm.isInState('INTERVIEW')>
-								    	<input type="hidden" id="commentType" value="INTERVIEW_EVALUATION"/>
+												<input type="hidden" id="commentType" value="INTERVIEW_EVALUATION"/>
 								    </#if>
 		            			</div>
-		        	         	<#if applicationForm.isInState('VALIDATION')>
+											<#if applicationForm.isInState('VALIDATION')>
 		        	         	
-			            			<div class="row">
-			            				<label class="plain-label">Is the applicant qualified for PhD entry to UCL?</label>
-			            				<div class="field">		            				
-			            					<#list validationQuestionOptions as option>
-			            					<input type="radio" name="qualifiedForPhd" value="${option}"/><label> ${option.displayValue}</label>
-			            				</#list>
-			            				</div>
-			            			</div>
+											<div class="row">
+												<label class="plain-label">Is the applicant qualified for PhD entry to UCL?</label>
+												<div class="field">		            				
+													<#list validationQuestionOptions as option>
+													<input type="radio" name="qualifiedForPhd" value="${option}"/><label> ${option.displayValue}</label>
+												</#list>
+												</div>
+											</div>
 			            			
-			            			<div class="row">
-			            				<label class="plain-label">Does the applicant meeting the minimum required standard of English Language competence?</label>
-			            				<div class="field">		            				
-			            					<#list validationQuestionOptions as option>
-			            					<input type="radio" name="englishCompentencyOk" value="${option}"/><label> ${option.displayValue}</label>
-			            				</#list>
-			            				</div>
-			            			</div>
+											<div class="row">
+												<label class="plain-label">Does the applicant meeting the minimum required standard of English Language competence?</label>
+												<div class="field">		            				
+													<#list validationQuestionOptions as option>
+													<input type="radio" name="englishCompentencyOk" value="${option}"/><label> ${option.displayValue}</label>
+												</#list>
+												</div>
+											</div>
 			            			
-			            			<div class="row">
-			            				<label class="plain-label">What is the applicant's fee status?</label>
-			            				<div class="field">		            				
-			            					<#list homeOrOverseasOptions as option>
-			            					<input type="radio" name="homeOrOverseas" value="${option}"/><label> ${option.displayValue}</label>
-			            				</#list>
-			            				</div>
-			            			</div>
-		        	         	</#if>
+											<div class="row">
+												<label class="plain-label">What is the applicant's fee status?</label>
+												<div class="field">		            				
+													<#list homeOrOverseasOptions as option>
+													<input type="radio" name="homeOrOverseas" value="${option}"/><label> ${option.displayValue}</label>
+												</#list>
+												</div>
+											</div>
+											</#if>
 		        
 		            			<div class="row">
 		            				<label class="plain-label">Next stage</label>
@@ -111,31 +113,33 @@
 		            					<select class="max" name="status" id="status">
 											<option value="">Select...</option>
 											<#list stati as status>
-												  <option value="${status}" >${status.displayValue()}</option>               
+														<option value="${status}" >${status.displayValue()}</option>               
 											</#list>
-										 </select>	
+													</select>	
 		            				</div>
 		            			</div>
 		            			<#if reviewersWillingToInterview??>		            			
-		            				<div class="row">
-			            				<label class="plain-label">Delegate interview management to</label>
-			            				<div class="field">		   
-			            					<form id="delegateForm" method ="POST" action="<@spring.url '/delegate' />">   
-			            						<input type="hidden" name = "applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>     				
-				            					<select class="max" name="applicationAdministrator" id="appliationAdmin" disabled="disabled">
-													<option value="">Select...</option>
-													<#list reviewersWillingToInterview as reviewerWillingToInterview>
-														  <option value="${reviewerWillingToInterview.id?string('#####')}" >${reviewerWillingToInterview.firstName?html} ${reviewerWillingToInterview.lastName?html}</option>               
-													</#list>
-												 </select>	
-											 </form>
-			            				</div>
-		            				</div>
+											<div class="row">
+												<label class="plain-label">Delegate interview management to</label>
+												<div class="field">		   
+													<form id="delegateForm" method ="POST" action="<@spring.url '/delegate' />">   
+														<input type="hidden" name = "applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>     				
+														<select class="max" name="applicationAdministrator" id="appliationAdmin" disabled="disabled">
+															<option value="">Select...</option>
+												<#list reviewersWillingToInterview as reviewerWillingToInterview>
+															<option value="${reviewerWillingToInterview.id?string('#####')}" >${reviewerWillingToInterview.firstName?html} ${reviewerWillingToInterview.lastName?html}</option>               
+												</#list>
+														</select>	
+													</form>
+												</div>
+											</div>
 		            			</#if>
 		            			<div class="buttons">						        		
 		            				<button type="reset" value="cancel">Cancel</button>
-						       		<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>						        
-								</div>
+												<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>						        
+											</div>
+							
+										</section>
 							
 							<hr/>	
 							<#include "/private/staff/admin/comment/timeline_application.ftl"/>

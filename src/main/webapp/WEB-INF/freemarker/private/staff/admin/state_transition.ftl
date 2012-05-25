@@ -12,6 +12,7 @@
 		
 		<!-- Styles for Application List Page -->
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
 				<!-- Styles for Application List Page -->
 
@@ -55,6 +56,8 @@
 				        		<input type="hidden" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 				        		
 										<section class="form-rows">
+											<div>
+												<div class="row-group">
 
 										<#if applicationForm.isInState('VALIDATION')>
 											<h1>Validate application</h1>
@@ -77,6 +80,10 @@
 												<input type="hidden" id="commentType" value="INTERVIEW_EVALUATION"/>
 								    </#if>
 		            			</div>
+											
+												</div>
+												<div class="row-group">
+											
 											<#if applicationForm.isInState('VALIDATION')>
 		        	         	
 											<div class="row">
@@ -107,6 +114,9 @@
 											</div>
 											</#if>
 		        
+												</div>
+												<div class="row-group">
+
 		            			<div class="row">
 		            				<label class="plain-label">Next stage</label>
 		            				<div class="field">		            				
@@ -134,14 +144,17 @@
 												</div>
 											</div>
 		            			</#if>
+											
+											</div>
+											
 		            			<div class="buttons">						        		
 		            				<button type="reset" value="cancel">Cancel</button>
 												<button class="blue" type="button" id="changeStateButton" value="save">Submit</button>						        
 											</div>
 							
+											</div>
 										</section>
 							
-							<hr/>	
 							<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 		  
 				        </div><!-- .content-box-inner -->

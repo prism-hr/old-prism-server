@@ -13,48 +13,48 @@
 	
 			
 <!-- Programme -->
-<section id="programmeDetailsSection" class="folding violet">
+<section id="programmeDetailsSection" class="form-rows violet">
 <#include "/private/staff/application/components/programme_details.ftl"/>
 </section>
 
 <!-- Personal Details -->
-<section id="personalDetailsSection" class="folding purple">
+<section id="personalDetailsSection" class="form-rows purple">
 <#include "/private/staff/application/components/personal_details.ftl"/>
 </section>
 
 <!-- Address -->
-<section class="folding red">
+<section class="form-rows red">
 <#include "/private/staff/application/components/address_details.ftl"/>
 </section>
 
 <!-- Qualifications -->
-<section class="folding orange">
+<section class="form-rows orange">
 <#include "/private/staff/application/components/qualification_details.ftl"/>
 </section>
 
 <!-- Employment positions -->
-<section class="folding yellow">
+<section class="form-rows yellow">
 <#include "/private/staff/application/components/employment_position_details.ftl"/>
 </section>
 
 <!-- Funding -->
-<section class="folding green">
+<section class="form-rows green">
 <#include "/private/staff/application/components/funding_details.ftl"/>
 </section>
 
 <#if !user.isRefereeOfApplicationForm(applicationForm) || user.isInRole('SUPERADMINISTRATOR') >
 <!-- References -->
-<section class="folding navy">
+<section class="form-rows navy">
 <#include "/private/staff/application/components/references_details.ftl"/>
 </section>
 </#if>
 
 <!-- Documents -->
-<section class="folding blue">
+<section class="form-rows blue">
 <#include "/private/staff/application/components/documents.ftl"/>
 </section>
 
 <!-- Additional information -->
-<section id="additionalInformationSection" class="folding lightblue">
+<section id="additionalInformationSection" class="form-rows lightblue">
 <#include "/private/staff/application/components/additional_information.ftl"/>
 </section>

@@ -25,7 +25,7 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 #timelineview ul.tabs li a { color: #000; display: block; height: 100%; line-height: 31px; padding: 0 10px; }
 
 #timelineview .tab-page { clear: both; padding-top: 5px; }
-/*#application { border: 1px solid #999; height: 600px; overflow: auto; }*/
+
 #application div.admin_row .admin_row_label,
 #application div.admin_row .admin_header { line-height: 1.2; }
 #application div.admin_row .admin_row_label { margin: 4px 0; }

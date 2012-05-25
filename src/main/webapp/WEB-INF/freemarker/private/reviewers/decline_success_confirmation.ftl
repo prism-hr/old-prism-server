@@ -37,7 +37,7 @@
 			      	<div class="tagline">Your Gateway to<br />Research Opportunities</div>
 			    </header>
 	  			<h1>
-	  				You have been successfully decline to provide a review for user ${applicant.firstName?html} ${applicant.lastName?html}.
+	  				${message}.
 	  			</h1>
 	  		</div>
 	  	

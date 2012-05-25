@@ -46,6 +46,14 @@
 			      		</font>
 			      	</p>
 			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You can decline directly without registering by clicking the link below</font>
+			      	</p>
+			         <p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      			<a href="${host}/pgadmissions/decline/reference?refereeId=${referee.id?string('#######')}">Decline</a>
+			      		</font>
+			      	</p>
+			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">In the meantime, for further assistance <a href="mailto: ${adminsEmails}">email the administrator</a></font>
 			      	</p>
 			      	<p>

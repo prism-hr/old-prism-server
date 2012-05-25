@@ -1,8 +1,9 @@
 /* CSS Document */
+#reasonList { margin: 0 10px; padding-top: 10px; }
 #reasonList ul {clear:both; list-style-type: none}
 #reasonList li {margin-bottom: 15px;}
-#reasonList input.reason {margin-right:10px;}
-#reasonList label {     display: inline; }
+#reasonList input.reason {float: left; margin-left: -24px; margin-top: 0.4em; vertical-align: text-top; }
+#reasonList label { display: block; margin-left: 24px; }
 
 .reject-buttons .field { border-top: 2px solid #999; margin-top: 25px; text-align: center; width: 400px; }
 .reject-buttons .field span { background: #FFF; display: block; margin: -18px auto 0; padding: 4px; width: 210px; }

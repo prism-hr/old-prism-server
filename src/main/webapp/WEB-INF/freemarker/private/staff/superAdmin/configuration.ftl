@@ -137,7 +137,7 @@
 				  					<!-- Add Registry Users -->
 										<div class="row-group">
 											<h3>Add Registry Users</h3>
-									    <span name="threeMaxMessage"> </span>
+									    <span class="invalid"  name="threeMaxMessage"> </span>
 											<form id="addRegistryForm">
 							     
 												<div id="firstRegistryUser">
@@ -221,14 +221,14 @@
 									
 												<input type="hidden" name="registryUsers" id= "registryUsers" />
 									
-			            			<div class="buttons">						        		
-			            				<button type="button" id="addAnother">Add Another</button>
-			            				<button type="button" id="cancelRegistryBtn" value="cancel">Cancel</button>
-													<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
-												</div>
+										</div>
+			            					<div class="buttons">						        		
+			            						<button type="button" id="addAnother">Add Another</button>
+			            						<button type="button" id="cancelRegistryBtn" value="cancel">Cancel</button>
+												<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
+											</div>
 									
 											</form><!-- close .row-group -->
-										</div>
 										
 									</div>
 								</section>

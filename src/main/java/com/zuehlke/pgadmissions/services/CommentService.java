@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.CommentDAO;
+import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.InterviewComment;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
+import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Service
 public class CommentService {
@@ -47,6 +50,21 @@ public class CommentService {
 	@Transactional
 	public List<Comment> getAllComments() {
 		return commentDAO.getAllComments();
+	}
+
+	@Transactional
+	public void declineReview(RegisteredUser reviewer, ApplicationForm application) {
+		ReviewComment reviewComment = getNewReviewComment();
+		reviewComment.setApplication(application);
+		reviewComment.setUser(reviewer);
+		reviewComment.setDecline(true);
+		reviewComment.setType(CommentType.REVIEW);
+		reviewComment.setReviewer(reviewer.getReviewersForApplicationForm(application).get(0));
+		save(reviewComment);
+	}
+
+	public ReviewComment getNewReviewComment() {
+		return new ReviewComment();
 	}
 
 }

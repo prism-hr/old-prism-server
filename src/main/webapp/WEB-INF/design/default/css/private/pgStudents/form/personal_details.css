@@ -28,5 +28,4 @@ li.tool-button, li#tool-programme {
 	background: linear-gradient(top,  rgba(80,50,71,1) 0%,rgba(66,43,63,1) 50%,rgba(29,24,39,1) 51%,rgba(79,50,70,1) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#503247', endColorstr='#4f3246',GradientType=0 ); /* IE6-8 */
 }
-
 section.form-rows.purple table.existing th { background-position: 0 0; }

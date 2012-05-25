@@ -22,6 +22,8 @@ import org.junit.Test;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
+import com.zuehlke.pgadmissions.utils.Environment;
+
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 
@@ -34,7 +36,7 @@ public class MimeMessagePreparatorFactoryTest {
 	Map<String, Object> model;
 	private String subject;
 	private String template;
-	private InternetAddress to;
+	private InternetAddress[] tos;
 
 	@Before
 	public void setUp() throws AddressException {
@@ -42,19 +44,21 @@ public class MimeMessagePreparatorFactoryTest {
 		configMock = EasyMock.createMock(Configuration.class);
 		EasyMock.expect(freeMarkerConfigMock.getConfiguration()).andReturn(configMock);
 
-		to = new InternetAddress("email@bla.com");
+		tos = new InternetAddress[] { new InternetAddress("email@bla.com"), new InternetAddress("dummy@test.com") };
 		model = new HashMap<String, Object>();
 		model.put("test", "testValue");
 		subject = "subject";
 		template = "template";
 	}
 
+
+	
 	@Test
-	public void shouldPopulatedMimeMessageInProduction() throws Exception {
+	public void shouldPopulatedMimeMessageForSingleRecipientInProduction() throws Exception {
 		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(to, subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -65,6 +69,7 @@ public class MimeMessagePreparatorFactoryTest {
 		Address[] recipients = testMessage.getRecipients(RecipientType.TO);
 		Assert.assertEquals(1, recipients.length);
 		Assert.assertEquals("email@bla.com", ((InternetAddress) recipients[0]).getAddress());
+		
 
 		Address[] ccRecipients = testMessage.getRecipients(RecipientType.CC);
 		Assert.assertNull(ccRecipients);
@@ -76,13 +81,13 @@ public class MimeMessagePreparatorFactoryTest {
 	}
 
 	@Test
-	public void shouldPopulatedMimeMessageInProductionWithCCs() throws Exception {
+	public void shouldPopulatedMimeMessageForSingleRecipientWitCCsInProduction() throws Exception {
 		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
 		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
 		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(to, new InternetAddress[] { cc1, cc2 }, subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0],  new InternetAddress[] { cc1, cc2 }, subject, template, model);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -93,6 +98,65 @@ public class MimeMessagePreparatorFactoryTest {
 		Address[] recipients = testMessage.getRecipients(RecipientType.TO);
 		Assert.assertEquals(1, recipients.length);
 		Assert.assertEquals("email@bla.com", ((InternetAddress) recipients[0]).getAddress());
+		
+
+		Address[] ccRecipients = testMessage.getRecipients(RecipientType.CC);
+		Assert.assertEquals(2, ccRecipients.length);
+		Assert.assertEquals("cc1@bla.com", ((InternetAddress) ccRecipients[0]).getAddress());
+		Assert.assertEquals("cc2@bla.com", ((InternetAddress) ccRecipients[1]).getAddress());
+
+		Assert.assertEquals("subject", testMessage.getSubject());
+		Assert.assertEquals("ladida", testMessage.getContent());
+		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
+		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+	}
+
+	@Test
+	public void shouldPopulatedMimeMessageInProduction() throws Exception {
+		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
+
+		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, subject, template, model);
+
+		MimeMessage testMessage = new TestMessage();
+
+		EasyMock.replay(freeMarkerConfigMock, configMock);
+		prep.prepare(testMessage);
+
+		EasyMock.verify(freeMarkerConfigMock, configMock);
+		Address[] recipients = testMessage.getRecipients(RecipientType.TO);
+		Assert.assertEquals(2, recipients.length);
+		Assert.assertEquals("email@bla.com", ((InternetAddress) recipients[0]).getAddress());
+		Assert.assertEquals("dummy@test.com", ((InternetAddress) recipients[1]).getAddress());
+
+		Address[] ccRecipients = testMessage.getRecipients(RecipientType.CC);
+		Assert.assertNull(ccRecipients);
+
+		Assert.assertEquals("subject", testMessage.getSubject());
+		Assert.assertEquals("ladida", testMessage.getContent());
+		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
+		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+	}
+	
+	@Test
+	public void shouldPopulatedMimeMessageInProductionWithCCs() throws Exception {
+		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
+
+		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
+		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
+		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, new InternetAddress[] { cc1, cc2 }, subject, template, model);
+
+		MimeMessage testMessage = new TestMessage();
+
+		EasyMock.replay(freeMarkerConfigMock, configMock);
+		prep.prepare(testMessage);
+
+		EasyMock.verify(freeMarkerConfigMock, configMock);
+		Address[] recipients = testMessage.getRecipients(RecipientType.TO);
+		Assert.assertEquals(2, recipients.length);
+		Assert.assertEquals("email@bla.com", ((InternetAddress) recipients[0]).getAddress());
+		Assert.assertEquals("dummy@test.com", ((InternetAddress) recipients[1]).getAddress());
 
 		Address[] ccRecipients = testMessage.getRecipients(RecipientType.CC);
 		Assert.assertEquals(2, ccRecipients.length);
@@ -110,7 +174,7 @@ public class MimeMessagePreparatorFactoryTest {
 		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(to, subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, subject, template, model);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -119,8 +183,9 @@ public class MimeMessagePreparatorFactoryTest {
 
 		EasyMock.verify(freeMarkerConfigMock, configMock);
 		Address[] recipients = testMessage.getRecipients(RecipientType.TO);
-		Assert.assertEquals(1, recipients.length);
-		Assert.assertFalse("email@bla.com".equals(((InternetAddress) recipients[0]).getAddress()));
+		Assert.assertEquals(2, recipients.length);
+		Assert.assertEquals(Environment.getInstance().getEmailToAddress(), ((InternetAddress) recipients[0]).getAddress());
+		Assert.assertEquals(Environment.getInstance().getEmailToAddress(), ((InternetAddress) recipients[1]).getAddress());
 
 		Address[] ccRecipients = testMessage.getRecipients(RecipientType.CC);
 		Assert.assertNull(ccRecipients);
@@ -131,14 +196,13 @@ public class MimeMessagePreparatorFactoryTest {
 		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
 	}
 
+	
 	@Test
-	public void shouldPopulatedMimeMessageInDevWithCCs() throws Exception {
+	public void shouldPopulatedMimeMessageForSingleRecipientInDev() throws Exception {
 		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
-		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
-		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(to, new InternetAddress[] { cc1, cc2 }, subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -148,7 +212,63 @@ public class MimeMessagePreparatorFactoryTest {
 		EasyMock.verify(freeMarkerConfigMock, configMock);
 		Address[] recipients = testMessage.getRecipients(RecipientType.TO);
 		Assert.assertEquals(1, recipients.length);
-		Assert.assertFalse("email@bla.com".equals(((InternetAddress) recipients[0]).getAddress()));
+		Assert.assertEquals(Environment.getInstance().getEmailToAddress(), ((InternetAddress) recipients[0]).getAddress());
+		
+
+
+		Assert.assertEquals("subject", testMessage.getSubject());
+		Assert.assertEquals("ladida", testMessage.getContent());
+		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
+		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+	}
+	
+	@Test
+	public void shouldPopulatedMimeMessageForSingleRecipientWithCCsInDev() throws Exception {
+		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
+
+		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
+		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
+		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], new InternetAddress[] { cc1, cc2 }, subject, template, model);
+
+		MimeMessage testMessage = new TestMessage();
+
+		EasyMock.replay(freeMarkerConfigMock, configMock);
+		prep.prepare(testMessage);
+
+		EasyMock.verify(freeMarkerConfigMock, configMock);
+		Address[] recipients = testMessage.getRecipients(RecipientType.TO);
+		Assert.assertEquals(1, recipients.length);
+		Assert.assertEquals(Environment.getInstance().getEmailToAddress(), ((InternetAddress) recipients[0]).getAddress());
+		
+
+		Address[] ccRecipients = testMessage.getRecipients(RecipientType.CC);
+		Assert.assertNull(ccRecipients);
+
+		Assert.assertEquals("subject <NON-PROD-Message: CC to: [cc1@bla.com, cc2@bla.com]>", testMessage.getSubject());
+		Assert.assertEquals("ladida", testMessage.getContent());
+		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
+		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+	}
+	@Test
+	public void shouldPopulatedMimeMessageInDevWithCCs() throws Exception {
+		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
+
+		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
+		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
+		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, new InternetAddress[] { cc1, cc2 }, subject, template, model);
+
+		MimeMessage testMessage = new TestMessage();
+
+		EasyMock.replay(freeMarkerConfigMock, configMock);
+		prep.prepare(testMessage);
+
+		EasyMock.verify(freeMarkerConfigMock, configMock);
+		Address[] recipients = testMessage.getRecipients(RecipientType.TO);
+		Assert.assertEquals(2, recipients.length);
+		Assert.assertEquals(Environment.getInstance().getEmailToAddress(), ((InternetAddress) recipients[0]).getAddress());
+		Assert.assertEquals(Environment.getInstance().getEmailToAddress(), ((InternetAddress) recipients[1]).getAddress());
 
 		Address[] ccRecipients = testMessage.getRecipients(RecipientType.CC);
 		Assert.assertNull(ccRecipients);

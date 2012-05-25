@@ -59,7 +59,7 @@ public class DelegateToApplicationAdministratorControllerTest {
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfUserNotAdminInApplicationProgram() {
+	public void shouldThrowResourceNotFoundExceptionIfUserDoesNotHaveAdminRights() {
 
 		Program program = new ProgramBuilder().id(6).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();

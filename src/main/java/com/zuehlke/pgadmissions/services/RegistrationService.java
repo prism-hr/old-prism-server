@@ -97,7 +97,7 @@ public class RegistrationService {
 			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " " + newUser.getLastName());
 
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Registration confirmation",
-					"private/pgStudents/mail/registration_confirmation.ftl", model));
+					"private/pgStudents/mail/registration_confirmation.ftl", model, null));
 
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);

@@ -39,7 +39,7 @@ public class InterviewerMailSender extends MailSender {
 				+ interviewer.getUser().getLastName());
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + interviewer.getInterview().getApplication().getId() + " for "
 				+ interviewer.getInterview().getApplication().getProgram().getTitle() + " - Interviewer Notification",
-				"private/interviewers/mail/interviewer_notification_email.ftl", createModel(interviewer)));
+				"private/interviewers/mail/interviewer_notification_email.ftl", createModel(interviewer), null));
 
 	}
 
@@ -48,7 +48,7 @@ public class InterviewerMailSender extends MailSender {
 				+ interviewer.getUser().getLastName());
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + interviewer.getInterview().getApplication().getId() + " for "
 				+ interviewer.getInterview().getApplication().getProgram().getTitle() + " - Interview Feedback Reminder",
-				"private/interviewers/mail/interviewer_reminder_email.ftl", createModel(interviewer)));
+				"private/interviewers/mail/interviewer_reminder_email.ftl", createModel(interviewer), null));
 
 		
 	}

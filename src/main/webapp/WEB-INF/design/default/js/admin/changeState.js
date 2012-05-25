@@ -16,7 +16,7 @@ $(document).ready(function(){
 			}
 			
 			if($('#status').val() == 'INTERVIEW'){
-				if( $('#appliationAdmin').val() ==''){
+				if($('#appliationAdmin').length == 0 ||  $('#appliationAdmin').val() ==''){
 					saveComment(moveToInterview);
 				}else{
 					$('#delegateForm').submit();
@@ -31,6 +31,19 @@ $(document).ready(function(){
 		}else{
 			$('#appliationAdmin').attr('disabled', 'disabled');
 		}
+	});
+	
+	$('#notifyRegistryButton').click(function(){		
+		$.post( 
+			"/pgadmissions/registryHelpRequest",
+			{
+				applicationId: $('#applicationId').val()
+			
+			},
+			function(data) {
+			    $('#emailMessage').html(data);
+			 }
+		);
 	});
 });
 

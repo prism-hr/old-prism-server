@@ -26,11 +26,11 @@ public class RefereeMailSender extends MailSender {
 			InternetAddress toAddress = new InternetAddress(referee.getUser().getEmail(), referee.getUser().getFirstName() + " "
 					+ referee.getUser().getLastName());
 			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Reminder - reference required",
-					"private/referees/mail/existing_user_referee_reminder_email.ftl", createModel(referee)));
+					"private/referees/mail/existing_user_referee_reminder_email.ftl", createModel(referee), null));
 		} else {
 			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
 			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Reminder - reference required",
-					"private/referees/mail/referee_reminder_email.ftl", createModel(referee)));
+					"private/referees/mail/referee_reminder_email.ftl", createModel(referee), null));
 		}
 
 	}
@@ -41,11 +41,11 @@ public class RefereeMailSender extends MailSender {
 			InternetAddress toAddress = new InternetAddress(referee.getUser().getEmail(), referee.getUser().getFirstName() + " "
 					+ referee.getUser().getLastName());
 			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
-					"private/referees/mail/existing_user_referee_notification_email.ftl", createModel(referee)));
+					"private/referees/mail/existing_user_referee_notification_email.ftl", createModel(referee), null));
 		} else {
 			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
 			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
-					"private/referees/mail/referee_notification_email.ftl", createModel(referee)));
+					"private/referees/mail/referee_notification_email.ftl", createModel(referee), null));
 		}
 
 	}

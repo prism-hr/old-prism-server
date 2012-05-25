@@ -46,7 +46,7 @@
 	                		
 	                			<!-- Rendering part - Start -->
 	                
-		                	<div class="sub_section_amdin">
+		                	<div class="row-group">
 		                
 		                	        <!-- Header -->
 					                <div class="admin_row">

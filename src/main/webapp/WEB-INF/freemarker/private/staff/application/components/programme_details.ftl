@@ -24,15 +24,15 @@
 	<div>
     	<form>
                 
-			<div class="sub_section_amdin">
+			<div class="row-group">
             	
-	            	<!-- Programme name (disabled) -->
-	                <div class="admin_row">
-	                	<label class="admin_row_label">Programme</label>
-	                  
-	                    <div class="field">
-	                    	${(applicationForm.program.title?html)!}
-	                    </div>
+				<!-- Programme name (disabled) -->
+					<div class="admin_row">
+						<label class="admin_row_label">Programme</label>
+						
+							<div class="field">
+								${(applicationForm.program.title?html)!}
+							</div>
 					</div>
 	                  
 					<!-- Study option -->
@@ -77,7 +77,7 @@
             	<#if applicationForm.programmeDetails.supervisors?? && (applicationForm.programmeDetails.supervisors?size > 0) >
 	            	  <#list applicationForm.programmeDetails.supervisors! as supervisor>
 	            	  	
-	            	  	<div class="sub_section_amdin">
+	            	  	<div class="sub_section_admin">
 		            	  
 			            	 <div class="admin_row">
 			            	  	 <label class="admin_header">Supervision (${supervisor_index + 1})</label>
@@ -110,7 +110,7 @@
 	            	  </#list>
             	  	
             	  	<#else>
-            	  		<div class="sub_section_amdin">
+            	  		<div class="row-group">
 							<div class="row">
 				            	<label class="admin_header">Supervision</label>
 				            	<div class="field">Not Provided</div>

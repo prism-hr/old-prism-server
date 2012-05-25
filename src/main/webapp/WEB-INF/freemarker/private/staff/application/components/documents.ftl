@@ -6,7 +6,7 @@
     <div>
               
 		<form>
-            <div class="sub_section_amdin">
+            <div class="row-group">
 				<div class="admin_row">
 	        		<span class="admin_row_label">Personal Statement</span>
 	        		<div class="field">	        	

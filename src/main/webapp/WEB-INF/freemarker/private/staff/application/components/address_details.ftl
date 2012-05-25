@@ -17,7 +17,7 @@
 				
 				<input type="hidden" id="addressId" name="addressId"/>
             	
-            	<div class="sub_section_amdin">
+            	<div class="row-group">
                   	
                   	<!-- Address body -->
                   	<div class="admin_row">

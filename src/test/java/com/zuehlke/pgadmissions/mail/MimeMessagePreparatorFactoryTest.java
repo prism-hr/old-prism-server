@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.mail;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.junit.Test;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
+import com.sun.mail.handlers.message_rfc822;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 import freemarker.template.Configuration;
@@ -37,14 +39,16 @@ public class MimeMessagePreparatorFactoryTest {
 	private String subject;
 	private String template;
 	private InternetAddress[] tos;
+	private InternetAddress replyToAddress;
 
 	@Before
-	public void setUp() throws AddressException {
+	public void setUp() throws AddressException, UnsupportedEncodingException {
 		freeMarkerConfigMock = EasyMock.createMock(FreeMarkerConfig.class);
 		configMock = EasyMock.createMock(Configuration.class);
 		EasyMock.expect(freeMarkerConfigMock.getConfiguration()).andReturn(configMock);
 
 		tos = new InternetAddress[] { new InternetAddress("email@bla.com"), new InternetAddress("dummy@test.com") };
+		replyToAddress = new InternetAddress("replytome@test.com", "Jane Hurrah");
 		model = new HashMap<String, Object>();
 		model.put("test", "testValue");
 		subject = "subject";
@@ -58,7 +62,7 @@ public class MimeMessagePreparatorFactoryTest {
 		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -78,6 +82,10 @@ public class MimeMessagePreparatorFactoryTest {
 		Assert.assertEquals("ladida", testMessage.getContent());
 		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
 		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+		
+		Assert.assertEquals(1,testMessage.getReplyTo().length);
+		Assert.assertEquals("replytome@test.com", ((InternetAddress)testMessage.getReplyTo()[0]).getAddress());
+		Assert.assertEquals("Jane Hurrah", ((InternetAddress)testMessage.getReplyTo()[0]).getPersonal());
 	}
 
 	@Test
@@ -87,7 +95,7 @@ public class MimeMessagePreparatorFactoryTest {
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
 		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
 		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0],  new InternetAddress[] { cc1, cc2 }, subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0],  new InternetAddress[] { cc1, cc2 }, subject, template, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -109,6 +117,10 @@ public class MimeMessagePreparatorFactoryTest {
 		Assert.assertEquals("ladida", testMessage.getContent());
 		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
 		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+		
+		Assert.assertEquals(1,testMessage.getReplyTo().length);
+		Assert.assertEquals("replytome@test.com", ((InternetAddress)testMessage.getReplyTo()[0]).getAddress());
+		Assert.assertEquals("Jane Hurrah", ((InternetAddress)testMessage.getReplyTo()[0]).getPersonal());
 	}
 
 	@Test
@@ -116,7 +128,7 @@ public class MimeMessagePreparatorFactoryTest {
 		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, subject, template, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -136,6 +148,9 @@ public class MimeMessagePreparatorFactoryTest {
 		Assert.assertEquals("ladida", testMessage.getContent());
 		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
 		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+		Assert.assertEquals(1,testMessage.getReplyTo().length);
+		Assert.assertEquals("replytome@test.com", ((InternetAddress)testMessage.getReplyTo()[0]).getAddress());
+		Assert.assertEquals("Jane Hurrah", ((InternetAddress)testMessage.getReplyTo()[0]).getPersonal());
 	}
 	
 	@Test
@@ -145,7 +160,7 @@ public class MimeMessagePreparatorFactoryTest {
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
 		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
 		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, new InternetAddress[] { cc1, cc2 }, subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, new InternetAddress[] { cc1, cc2 }, subject, template, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -167,6 +182,10 @@ public class MimeMessagePreparatorFactoryTest {
 		Assert.assertEquals("ladida", testMessage.getContent());
 		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
 		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+		
+		Assert.assertEquals(1,testMessage.getReplyTo().length);
+		Assert.assertEquals("replytome@test.com", ((InternetAddress)testMessage.getReplyTo()[0]).getAddress());
+		Assert.assertEquals("Jane Hurrah", ((InternetAddress)testMessage.getReplyTo()[0]).getPersonal());
 	}
 
 	@Test
@@ -174,7 +193,7 @@ public class MimeMessagePreparatorFactoryTest {
 		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, subject, template, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -194,6 +213,10 @@ public class MimeMessagePreparatorFactoryTest {
 		Assert.assertEquals("ladida", testMessage.getContent());
 		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
 		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+		
+		Assert.assertEquals(1,testMessage.getReplyTo().length);
+		Assert.assertEquals(Environment.getInstance().getEmailToAddress(), ((InternetAddress)testMessage.getReplyTo()[0]).getAddress());
+		Assert.assertEquals("Jane Hurrah", ((InternetAddress)testMessage.getReplyTo()[0]).getPersonal());
 	}
 
 	
@@ -202,7 +225,7 @@ public class MimeMessagePreparatorFactoryTest {
 		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -220,6 +243,10 @@ public class MimeMessagePreparatorFactoryTest {
 		Assert.assertEquals("ladida", testMessage.getContent());
 		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
 		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+		
+		Assert.assertEquals(1,testMessage.getReplyTo().length);
+		Assert.assertEquals(Environment.getInstance().getEmailToAddress(), ((InternetAddress)testMessage.getReplyTo()[0]).getAddress());
+		Assert.assertEquals("Jane Hurrah", ((InternetAddress)testMessage.getReplyTo()[0]).getPersonal());
 	}
 	
 	@Test
@@ -229,7 +256,7 @@ public class MimeMessagePreparatorFactoryTest {
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
 		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
 		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], new InternetAddress[] { cc1, cc2 }, subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], new InternetAddress[] { cc1, cc2 }, subject, template, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -249,6 +276,10 @@ public class MimeMessagePreparatorFactoryTest {
 		Assert.assertEquals("ladida", testMessage.getContent());
 		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
 		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+		
+		Assert.assertEquals(1,testMessage.getReplyTo().length);
+		Assert.assertEquals(Environment.getInstance().getEmailToAddress(), ((InternetAddress)testMessage.getReplyTo()[0]).getAddress());
+		Assert.assertEquals("Jane Hurrah", ((InternetAddress)testMessage.getReplyTo()[0]).getPersonal());
 	}
 	@Test
 	public void shouldPopulatedMimeMessageInDevWithCCs() throws Exception {
@@ -257,7 +288,7 @@ public class MimeMessagePreparatorFactoryTest {
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, false);
 		InternetAddress cc1 = new InternetAddress("cc1@bla.com");
 		InternetAddress cc2 = new InternetAddress("cc2@bla.com");
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, new InternetAddress[] { cc1, cc2 }, subject, template, model);
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos, new InternetAddress[] { cc1, cc2 }, subject, template, model, replyToAddress);
 
 		MimeMessage testMessage = new TestMessage();
 
@@ -277,6 +308,10 @@ public class MimeMessagePreparatorFactoryTest {
 		Assert.assertEquals("ladida", testMessage.getContent());
 		Assert.assertEquals("text/html", testMessage.getDataHandler().getContentType());
 		Assert.assertFalse(ArrayUtils.isEmpty(testMessage.getFrom()));
+		
+		Assert.assertEquals(1,testMessage.getReplyTo().length);
+		Assert.assertEquals(Environment.getInstance().getEmailToAddress(), ((InternetAddress)testMessage.getReplyTo()[0]).getAddress());
+		Assert.assertEquals("Jane Hurrah", ((InternetAddress)testMessage.getReplyTo()[0]).getPersonal());
 	}
 
 	class TestTemplate extends Template {

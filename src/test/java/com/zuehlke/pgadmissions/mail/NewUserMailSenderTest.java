@@ -82,7 +82,7 @@ public class NewUserMailSenderTest {
 		InternetAddress toAddress = new InternetAddress("email@test.com", "Bob Smith");
 		
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "UCL Portal Registration", "private/staff/mail/new_user_suggestion.ftl", model)).andReturn(preparatorMock);
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "UCL Portal Registration", "private/staff/mail/new_user_suggestion.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);

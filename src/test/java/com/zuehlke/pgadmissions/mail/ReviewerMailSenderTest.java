@@ -71,7 +71,7 @@ public class ReviewerMailSenderTest {
 
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Application 4 for program abc - Reviewer Notification",
-						"private/reviewers/mail/reviewer_notification_email.ftl", model)).andReturn(preparatorMock);
+						"private/reviewers/mail/reviewer_notification_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
@@ -104,7 +104,7 @@ public class ReviewerMailSenderTest {
 
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Application 4 for program abc - Review Reminder",
-						"private/reviewers/mail/reviewer_reminder_email.ftl", model)).andReturn(preparatorMock);
+						"private/reviewers/mail/reviewer_reminder_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);

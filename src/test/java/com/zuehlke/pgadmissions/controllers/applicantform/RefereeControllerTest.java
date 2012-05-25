@@ -194,7 +194,37 @@ public class RefereeControllerTest {
 	}
 	
 	@Test
-	public void shouldNotSendEmailIfApplicationIsNotApprovedAndIfNoErrors() {
+	public void shouldSaveRefereeAndSendEmailIfApplicationInReviewStageAndIfNoErrors() {
+		ApplicationForm application = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
+		application.setReferees(Arrays.asList(referee));
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errors.hasErrors()).andReturn(false);
+		refereeServiceMock.processRefereesRoles(application.getReferees());
+		refereeServiceMock.sendRefereeMailNotification(referee);
+		EasyMock.replay(refereeServiceMock, errors);
+		String view = controller.editReferee(referee, errors);
+		EasyMock.verify(refereeServiceMock);
+		assertEquals( "redirect:/update/getReferee?applicationId=5", view);
+	}
+	
+	@Test
+	public void shouldSaveRefereeAndSendEmailIfApplicationInInterviewStageAndIfNoErrors() {
+		ApplicationForm application = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
+		application.setReferees(Arrays.asList(referee));
+		BindingResult errors = EasyMock.createMock(BindingResult.class);
+		EasyMock.expect(errors.hasErrors()).andReturn(false);
+		refereeServiceMock.processRefereesRoles(application.getReferees());
+		refereeServiceMock.sendRefereeMailNotification(referee);
+		EasyMock.replay(refereeServiceMock, errors);
+		String view = controller.editReferee(referee, errors);
+		EasyMock.verify(refereeServiceMock);
+		assertEquals( "redirect:/update/getReferee?applicationId=5", view);
+	}
+	
+	@Test
+	public void shouldNotSendEmailIfApplicationIsInValidationdAndIfNoErrors() {
 		ApplicationForm application = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
 		application.setReferees(Arrays.asList(referee));

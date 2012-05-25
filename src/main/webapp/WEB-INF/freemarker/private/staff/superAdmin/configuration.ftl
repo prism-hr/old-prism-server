@@ -73,7 +73,7 @@
 														<div class="field">	
 															<input type="hidden" id="stage" name="stage" value="${stage}" />
 															<#if durationDAO.getByStatus(stage)?? && durationDAO.getByStatus(stage).duration??>  				
-															<input type = "text" id="${stage}_duration" name="${stage}_duration" value="${durationDAO.getByStatus(stage).duration}" />
+															<input type = "text" id="${stage}_duration" name="${stage}_duration" value="${durationDAO.getByStatus(stage).duration?string("######")}" />
 															<#else>
 															<input type = "text" id="${stage}_duration" name="${stage}_duration"  />
 															</#if>
@@ -111,7 +111,7 @@
 			           					<span id="reminder-lbl" class="plain-label">Reminder Interval Duration</span>
 			            				<div class="field">	
 														<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
-														<input type = "text" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(intervalDAO.getReminderInterval().duration)!}" />
+														<input type = "text" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(intervalDAO.getReminderInterval().duration?string("######"))!}" />
 														<select name="reminderUnit" id="reminderUnit">
 															<option value="">Select...</option>
 														<#list units as unit>

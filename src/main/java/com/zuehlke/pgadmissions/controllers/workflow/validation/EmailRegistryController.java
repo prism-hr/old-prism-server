@@ -1,39 +1,55 @@
-package com.zuehlke.pgadmissions.controllers.workflow;
+package com.zuehlke.pgadmissions.controllers.workflow.validation;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
+import com.zuehlke.pgadmissions.mail.RegistryMailSender;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
-@RequestMapping("/delegate")
+@RequestMapping("/registryHelpRequest")
 @Controller
-public class DelegateToApplicationAdministratorController {
+public class EmailRegistryController {
 
+	private final Logger log = Logger.getLogger(EmailRegistryController.class);
+	private final RegistryMailSender registryMailSender;
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
-	private final UserPropertyEditor userPropertyEditor;
 
-	DelegateToApplicationAdministratorController() {
+	EmailRegistryController(){
 		this(null, null, null);
 	}
-
 	@Autowired
-	public DelegateToApplicationAdministratorController(ApplicationsService applicationsService, UserService userService, UserPropertyEditor userPropertyEditor) {
+	public EmailRegistryController(RegistryMailSender registryMailSender, ApplicationsService applicationsService, UserService userService) {
+		this.registryMailSender = registryMailSender;
 		this.applicationsService = applicationsService;
 		this.userService = userService;
-		this.userPropertyEditor = userPropertyEditor;
 	}
+
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView sendHelpRequestToRegistryContacts(@ModelAttribute("applicationForm") ApplicationForm applicationForm) {
+		ModelAndView modelAndView = new ModelAndView("private/common/simpleMessage");
+		try {
+			registryMailSender.sendApplicationToRegistryContacts(applicationForm);
+			modelAndView.getModel().put("message", "Email send");
+		} catch (Throwable e) {
+			log.error("Send email to registry contacts failed:", e);
+			modelAndView.getModel().put("message", "Email sending failed");			
+		}
+	
+	
+		return modelAndView;
+	}
+
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
@@ -47,19 +63,6 @@ public class DelegateToApplicationAdministratorController {
 	@ModelAttribute("user")
 	public RegisteredUser getCurrentUser() {
 		return userService.getCurrentUser();
-	}
-
-	@InitBinder(value = "applicationForm")
-	public void registerPropertyEditors(WebDataBinder dataBinder) {
-		dataBinder.registerCustomEditor(RegisteredUser.class, "applicationAdministrator", userPropertyEditor);
-
-	}
-
-	@RequestMapping(method = RequestMethod.POST)
-	public String delegateToApplicationAdministrator(@ModelAttribute("applicationForm") ApplicationForm applicationForm) {
-		applicationsService.save(applicationForm);
-
-		return "redirect:/applications";
 	}
 
 }

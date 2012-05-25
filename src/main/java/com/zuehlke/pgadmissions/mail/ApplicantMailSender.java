@@ -57,7 +57,7 @@ public class ApplicantMailSender extends StateChangeMailSender {
 	
 		
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + form.getId() + " for "
-				+ form.getProgram().getTitle() + " " + message, templatename, createModel(form)));
+				+ form.getProgram().getTitle() + " " + message, templatename, createModel(form), null));
 	
 	}
 }

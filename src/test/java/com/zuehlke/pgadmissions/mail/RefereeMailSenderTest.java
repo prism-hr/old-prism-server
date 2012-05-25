@@ -68,7 +68,7 @@ public class RefereeMailSenderTest {
 
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Reminder - reference required",
-						"private/referees/mail/referee_reminder_email.ftl", model)).andReturn(preparatorMock);
+						"private/referees/mail/referee_reminder_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
@@ -101,7 +101,7 @@ public class RefereeMailSenderTest {
 
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Reminder - reference required",
-						"private/referees/mail/existing_user_referee_reminder_email.ftl", model)).andReturn(preparatorMock);
+						"private/referees/mail/existing_user_referee_reminder_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
@@ -132,7 +132,7 @@ public class RefereeMailSenderTest {
 
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Referee Notification",
-						"private/referees/mail/referee_notification_email.ftl", model)).andReturn(preparatorMock);
+						"private/referees/mail/referee_notification_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
@@ -165,7 +165,7 @@ public class RefereeMailSenderTest {
 
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Referee Notification",
-						"private/referees/mail/existing_user_referee_notification_email.ftl", model)).andReturn(preparatorMock);
+						"private/referees/mail/existing_user_referee_notification_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);

@@ -73,7 +73,7 @@ public class InterviewerMailSenderTest {
 
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Application 4 for program abc - Interviewer Notification",
-						"private/interviewers/mail/interviewer_notification_email.ftl", model)).andReturn(preparatorMock);
+						"private/interviewers/mail/interviewer_notification_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
@@ -106,7 +106,7 @@ public class InterviewerMailSenderTest {
 
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Application 4 for program abc - Interview Feedback Reminder",
-						"private/interviewers/mail/interviewer_reminder_email.ftl", model)).andReturn(preparatorMock);
+						"private/interviewers/mail/interviewer_reminder_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);

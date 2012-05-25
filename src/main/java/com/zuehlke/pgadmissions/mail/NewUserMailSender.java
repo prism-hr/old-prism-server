@@ -40,7 +40,7 @@ public class NewUserMailSender extends MailSender {
 		InternetAddress toAddress = new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
 
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "UCL Portal Registration",
-				"private/staff/mail/new_user_suggestion.ftl", createModel(user)));
+				"private/staff/mail/new_user_suggestion.ftl", createModel(user), null));
 
 	}
 

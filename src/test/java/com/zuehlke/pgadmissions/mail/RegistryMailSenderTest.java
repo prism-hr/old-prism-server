@@ -24,6 +24,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegistryUserBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.Environment;
 
 import cucumber.annotation.lu.a;
 
@@ -44,6 +45,7 @@ public class RegistryMailSenderTest {
 		Map<String, Object> model = registryMailSender.createModel(applicationForm, currentAdminUser);
 		assertEquals(applicationForm, model.get("application"));
 		assertEquals(currentAdminUser, model.get("sender"));
+		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 	}
 	
 	@Test
@@ -76,7 +78,7 @@ public class RegistryMailSenderTest {
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.aryEq(new InternetAddress[] { toAddress1, toAddress2 }), EasyMock.aryEq(new InternetAddress[]{toAddress3}),
-						EasyMock.eq("Application 1 for UCL program name - Validation Request"), EasyMock.eq("private/staff/admin/mail/registry_validation_request.ftl"), EasyMock.eq(model))).andReturn(preparatorMock);
+						EasyMock.eq("Application 1 for UCL program name - Validation Request"), EasyMock.eq("private/staff/admin/mail/registry_validation_request.ftl"), EasyMock.eq(model), EasyMock.eq(toAddress3))).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);		
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
 		

@@ -89,7 +89,7 @@ public class RefereeService {
 				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 
 				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Applicant Reference Submitted",
-						"private/staff/admin/mail/reference_submit_confirmation.ftl", model));
+						"private/staff/admin/mail/reference_submit_confirmation.ftl", model, null));
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
 			}
@@ -110,7 +110,7 @@ public class RefereeService {
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Responded",
-					"private/pgStudents/mail/reference_respond_confirmation.ftl", model));
+					"private/pgStudents/mail/reference_respond_confirmation.ftl", model, null));
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}
@@ -216,7 +216,7 @@ public class RefereeService {
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Responded",
-					"private/pgStudents/mail/reference_respond_confirmation.ftl", model));
+					"private/pgStudents/mail/reference_respond_confirmation.ftl", model, null));
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}
@@ -243,10 +243,10 @@ public class RefereeService {
 			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
 			if (referee.getUser() != null && referee.getUser().isEnabled()) {
 				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
-						"private/referees/mail/existing_user_referee_notification_email.ftl", model));
+						"private/referees/mail/existing_user_referee_notification_email.ftl", model, null));
 			} else {
 				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
-						"private/referees/mail/referee_notification_email.ftl", model));
+						"private/referees/mail/referee_notification_email.ftl", model, null));
 			}
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);

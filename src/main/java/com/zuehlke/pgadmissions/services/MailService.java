@@ -63,7 +63,7 @@ public class MailService {
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Updated",
-						"private/staff/admin/mail/application_updated_confirmation.ftl", model));
+						"private/staff/admin/mail/application_updated_confirmation.ftl", model, null));
 
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -85,7 +85,7 @@ public class MailService {
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				InternetAddress toAddress = new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
 				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Withdrawn",
-						"private/staff/mail/application_withdrawn_notification.ftl", model));
+						"private/staff/mail/application_withdrawn_notification.ftl", model, null));
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
 			}
@@ -105,7 +105,7 @@ public class MailService {
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Withdrawn",
-						"private/staff/mail/application_withdrawn_notification.ftl", model));
+						"private/staff/mail/application_withdrawn_notification.ftl", model, null));
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
 			}
@@ -126,7 +126,7 @@ public class MailService {
 					model.put("applicant", form.getApplicant());
 					InternetAddress toAddress = new InternetAddress(reviewer.getEmail(), reviewer.getFirstName() + " " + reviewer.getLastName());
 					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Withdrawn",
-							"private/staff/mail/application_withdrawn_notification.ftl", model));
+							"private/staff/mail/application_withdrawn_notification.ftl", model, null));
 				} catch (Throwable e) {
 					log.warn("error while sending email", e);
 				}

@@ -9,6 +9,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />"/>
 
 		<!--[if lt IE 9]>

@@ -31,7 +31,7 @@
 				</#if>
         	
         		
-            	<div>
+            	<div class="row-group">
             		<div class="row">
           				<label class="group-heading-label">Current Address</label>
           			</div>
@@ -87,7 +87,7 @@
 				</#list>
 					
 				</div> 
-				<div>	
+				<div class="row-group">	
 					<div class="row">
           				<label class="group-heading-label">Contact Address</label>
           			</div>

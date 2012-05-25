@@ -165,7 +165,9 @@
 												</div>
 												<span class="invalid" name="firstuserInvalid" style="display:none;"></span>
 									
-												<div id="secondRegistryUser" >
+												<div id="secondRegistryUser">
+													<hr />
+
 													<input type="hidden" name="2_regUserId" id= "2_regUserId" value="${(allRegistryUsers[1].id)!}"/>
 													<div class="row"> 
 														<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
@@ -191,6 +193,8 @@
 												<span class="invalid" name="seconduserInvalid" style="display:none;"></span>
 									
 												<div id="thirdRegistryUser">
+													<hr />
+
 													<input type="hidden" name="3_regUserId" id= "3_regUserId" value="${(allRegistryUsers[2].id)!}"/>
 													<div class="row"> 
 														<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>

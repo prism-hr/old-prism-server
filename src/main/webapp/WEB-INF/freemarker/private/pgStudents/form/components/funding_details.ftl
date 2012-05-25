@@ -97,7 +97,7 @@
 					</div>	
 				</#if>
 
-		<div>
+		<div class="row-group">
 			<!-- Award type -->
             <div class="row">
               	<span class="plain-label">Funding Type<em>*</em></span>

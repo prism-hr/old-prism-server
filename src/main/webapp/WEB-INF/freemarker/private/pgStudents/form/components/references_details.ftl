@@ -92,7 +92,7 @@
 					</div>	
 				</#if>
   	
-    	<div>
+    	<div class="row-group">
 	   		<!-- First name -->
       		<div class="row">
         		<span class="plain-label">First Name<em>*</em></span>
@@ -143,7 +143,7 @@
     	
     	</div>
 
-    	<div>
+    	<div class="row-group">
     
       		<!-- Employer / company name -->
       		<div class="row">
@@ -194,7 +194,7 @@
       		
     	</div>
 
-    	<div>
+    	<div class="row-group">
     	     
 			<div class="row">
           		<label class="group-heading-label">Address</label>
@@ -253,7 +253,7 @@
   
     	</div>
 
-    	<div>
+    	<div class="row-group">
     	
     		<div class="row">
           		<label class="group-heading-label">Contact Details</label>
@@ -325,7 +325,7 @@
 		<#if referee.id??>
 		</div>
 		<div>
-			<div>
+			<div class="row-group">
           	            
           		<div class="row">
                   	<span class="label">Responded</span>                    

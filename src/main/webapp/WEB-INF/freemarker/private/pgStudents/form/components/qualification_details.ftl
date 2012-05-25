@@ -105,7 +105,7 @@
 				</#if>
 
 		
-		<div>
+		<div class="row-group">
 		
        		<div class="row">
         		<span class="plain-label">Institution Country<em>*</em></span>
@@ -259,7 +259,7 @@
 		</div>
 
 
-		<div>
+		<div class="row-group">
 
 			<div class="row">
 	           <span class="plain-label">Has this qualification been awarded?</span>

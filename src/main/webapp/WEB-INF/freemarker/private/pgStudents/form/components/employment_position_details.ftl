@@ -88,7 +88,7 @@
 				</#if>
     
     	
-    	<div id="employmentForm">
+    	<div class="row-group" id="employmentForm">
     		<!-- Country -->
 			<div class="row">
             	<span class="plain-label">Country<em>*</em></span>
@@ -267,7 +267,7 @@
             
         </div>
         
-        <div>
+        <div class="row-group">
             <div class="row">
                <span class="plain-label">Is this your current position?</span>
                <span class="hint" data-desc="<@spring.message 'employmentDetails.position.isOngoing'/>"></span>

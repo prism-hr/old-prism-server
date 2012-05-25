@@ -1,22 +1,34 @@
 @charset "utf-8";
 
+
 section.form-rows { margin-bottom: 10px; }
 
-section.form-rows > div { border: 2px solid #999; }
-
-
-/* Expandable content bars -------------------------------------------------------------------------------- */
-section.form-rows h2, li.tool-button { background: #444; border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; cursor: pointer; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; padding-left: 5px; }
+/* SECTION HEADINGS --------------------------------------------------------------------------------------- */
+section.form-rows h2,
+li.tool-button { background: #444; border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; cursor: pointer; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; padding-left: 5px; }
 section.form-rows h2 .left { background: url(../../images/bg_expand_arrow.png) no-repeat; float: left; height: 11px; margin: 5px 4px 0 0; width: 11px; }
 section.form-rows h2.open .left { background-position: 0 -11px; }
 section.form-rows h2 .status { 
 	/* background: url(../../images/bg_bar_status.png) no-repeat 0 14px; */ 
-	float: right; height: 14px; margin: 3px 3px 0 0; width: 14px; }
+	float: right; height: 14px; margin: 3px 3px 0 0; width: 14px;
+}
 
-/* Bar states */
+/* Heading/section states (icons to the header's right) */
 section.form-rows h2.tick .status { background-position: 0 0; }
 section.form-rows h2.cross .status { background-position: 0 -15px; }
 section.form-rows h2.empty .status { background-position: 0 -30px; }
+
+
+/* SECTION BODY ------------------------------------------------------------------------------------------ */
+section.form-rows > div { background: #BBB; border: 2px solid #999; padding: 10px; }
+
+
+/* ROW GROUPS (white boxes) ------------------------------------------------------------------------------ */
+section.form-rows .row-group { background: #FFF; border: 1px solid #999; margin-bottom: 2px; overflow: hidden; padding: 10px; }
+
+
+/* BUTTONS AREA ------------------------------------------------------------------------------------------ */
+section.form-rows .buttons { background: #DDD; border-style: solid; border-width: 1px 0 0; margin: 8px -10px -10px; padding: 10px; }
 
 /* Expandable content boxes */
 /*section.form-rows > div { border: 2px solid #999; margin-bottom: 10px; }*/
@@ -58,7 +70,6 @@ section.form-rows table.existing th#primary-header{
 
 
 .old-ie section.form-rows { *display: inline-block; } /* fixes unsightly space at the bottom of a folding section. */
-section.form-rows .row-group { background: #FFF; border: 1px solid #999; margin-bottom: 2px; overflow: hidden; padding: 10px; }
 section.form-rows h3 { margin-bottom: 1em; }
 section.form-rows .row { line-height: 24px; margin-bottom: 2px; clear: left; }
 
@@ -107,8 +118,9 @@ section.form-rows label.label { font-weight: bold; }
 }
 
 .group-heading-label { 
-	float: left; line-height: 
-	1.2; width: 195px; 
+	float: left;
+	line-height: 1.2;
+	width: 195px; 
 	font-weight: bold;
 	padding-top: 2px; 
 	padding-bottom: 10px;
@@ -126,8 +138,6 @@ section.form-rows .field label { display: inline-block; margin-right: 1em; min-w
 
 section.form-rows div.add { padding: 10px 5px; text-align: left; }
 
-/* Buttons */
-section.form-rows div.buttons { background: #DDD; border-width: 1px 0 0; margin: 8px -10px -10px; padding: 10px; }
 
 section.form-rows div.comment { display: none; }
 section.form-rows div.comment label { display: block; margin-bottom: 4px; }

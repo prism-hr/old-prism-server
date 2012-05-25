@@ -1,0 +1,199 @@
+@charset "utf-8";
+
+section.form-rows { margin-bottom: 10px; }
+
+section.form-rows > div { border: 2px solid #999; }
+
+
+/* Expandable content bars -------------------------------------------------------------------------------- */
+section.form-rows h2, li.tool-button { background: #444; border: 2px solid #FFF; border-radius: 11px; box-shadow: 0 0 3px 0 #999; color: #FFF; cursor: pointer; font-weight: bold; height: 20px; line-height: 20px; margin-bottom: 6px; padding-left: 5px; }
+section.form-rows h2 .left { background: url(../../images/bg_expand_arrow.png) no-repeat; float: left; height: 11px; margin: 5px 4px 0 0; width: 11px; }
+section.form-rows h2.open .left { background-position: 0 -11px; }
+section.form-rows h2 .status { 
+	/* background: url(../../images/bg_bar_status.png) no-repeat 0 14px; */ 
+	float: right; height: 14px; margin: 3px 3px 0 0; width: 14px; }
+
+/* Bar states */
+section.form-rows h2.tick .status { background-position: 0 0; }
+section.form-rows h2.cross .status { background-position: 0 -15px; }
+section.form-rows h2.empty .status { background-position: 0 -30px; }
+
+/* Expandable content boxes */
+/*section.form-rows > div { border: 2px solid #999; margin-bottom: 10px; }*/
+
+/* Expanding forms ---------------------------------------------------------------------------------------- */
+section.form-rows header { background: #DDD; border-bottom: 1px solid #999; font-weight: bold; padding: 6px; }
+section.form-rows footer { background: #DDD; border-top: 1px solid #999; padding: 6px !important; text-align: right; }
+
+section.form-rows table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%; }
+section.form-rows table.existing th { background: url(../../images/bg_table_head.png) repeat-x; text-align: left; }
+/*  Temp Fix: Modified to accomodate backgournd for long strings : Manish */
+section.form-rows table.existing td { 
+	background: url("../../images/bg_table_row.jpg") repeat-x scroll left bottom #E6E8E7;
+	/* background: url(../../images/bg_table_row.jpg) repeat-x; text-align: left; */
+	padding: 3px;
+}
+
+/* Make the extra text hidden*/
+.row-extra-hide{
+	height:24px; width:655px; overflow:hidden;
+}
+ƒ
+/*  Modified to acomodate long strings : Manish */
+section.form-rows table.existing td, section.form-rows table.existing th { 
+	line-height: 25px; padding: 0 3px; 
+	vertical-align: text-top; 
+}
+
+/* Used to control the width of the last col in an existing table */
+#last-col{
+	width: 30px;
+}
+
+/* Contrlloing the appearince of the text of the first column header */
+section.form-rows table.existing th#primary-header{
+	padding-left: 33px;
+}
+
+
+
+.old-ie section.form-rows { *display: inline-block; } /* fixes unsightly space at the bottom of a folding section. */
+section.form-rows .row-group { background: #FFF; border: 1px solid #999; margin-bottom: 2px; overflow: hidden; padding: 10px; }
+section.form-rows h3 { margin-bottom: 1em; }
+section.form-rows .row { line-height: 24px; margin-bottom: 2px; clear: left; }
+
+.admin_row { border-bottom: 1px solid #999; clear: left; line-height: 24px; margin-bottom: 2px; overflow: auto; }
+.admin_row_label { float: left; line-height: 1.2; width: 180px; margin-top: 4px; }
+.admin_header { float: left; line-height: 1.2; width: 180px; margin-top: 4px; font-weight: bold; }
+
+section.form-rows > div.sub_section_amdin { margin-bottom: 10px; overflow: hidden; padding-bottom: 8px; }
+
+/* Label lenght increased by 195px; - edited by Manish */
+section.form-rows .label { float: left; line-height: 1.2; width: 180px; }
+
+/* To align with label, increasing the width : Edited by Manish*/
+section.form-rows .field { margin-left: 235px; padding: 1px 0; }
+
+/* To align with label, increasing the width : Edited by Manish*/
+section.form-rows .hint { 
+	background: url(../../images/button_question.png) 
+	no-repeat; width: 25px; height: 20px; 
+	float: left; margin-left: 10px;
+	margin-top: 0.1em; 
+}
+
+section.form-rows .error-hint { 
+	background: url(../../images/button_exclaim.png) no-repeat 0 .1em; 
+	no-repeat; height: 24px; 
+	float: left;
+	width: 20px; 
+    margin-left: 3px;
+    margin-right: -3px;
+    margin-top: -2px;	
+}
+
+.individual-hint { margin-top: 2px;	} 
+ 	
+	
+section.form-rows label.label { font-weight: bold; }
+
+/* To avoid any nesting effect, implement this class where you need
+ * regular fields regardless of inside or outside of a form element - Edited by Manish*/
+.plain-label { 
+	float: left; line-height: 
+	1.2; width: 195px; 
+	padding-top: 4px; 
+	font-weight: normal; 
+}
+
+.group-heading-label { 
+	float: left; line-height: 
+	1.2; width: 195px; 
+	font-weight: bold;
+	padding-top: 2px; 
+	padding-bottom: 10px;
+}
+
+.grey-label{
+	color: #AAAAAA;
+}
+
+
+section.form-rows .field .max { width: 330px; }
+section.form-rows .field .full { width: 240px; }
+section.form-rows .field .half { width: 120px; }
+section.form-rows .field label { display: inline-block; margin-right: 1em; min-width: 48px; }
+
+section.form-rows div.add { padding: 10px 5px; text-align: left; }
+
+/* Buttons */
+section.form-rows div.buttons { background: #DDD; border-width: 1px 0 0; margin: 8px -10px -10px; padding: 10px; }
+
+section.form-rows div.comment { display: none; }
+section.form-rows div.comment label { display: block; margin-bottom: 4px; }
+section.form-rows div.comment textarea { width: 99%; }
+section.form-rows div.comment .buttons { background-color: transparent; padding: 5px; }
+section.form-rows div.comment .previous { margin-bottom: 10px; }
+section.form-rows div.comment .previous a.more { float: right; font-weight: bold; }
+section.form-rows div.comment .previous ul { list-style: none; margin: 10px 0; }
+section.form-rows div.comment .previous ul li { background: #DDD; margin-bottom: 0.5em; padding: 10px; }
+section.form-rows div.comment .previous ul li.even { background: #EEE; }
+section.form-rows div.comment .previous ul li span { display: block; }
+
+
+/* Floating toolbar */
+#view-toolbar { background: #333; border-radius: 5px 0 0 5px; list-style: none; padding: 5px 10px; position: fixed; right: 0; top: 200px; }
+#view-toolbar li { margin: 10px 0; }
+#view-toolbar li a { background: no-repeat; display: block; height: 15px; overflow: hidden; text-indent: 15px; width: 15px; }
+#view-toolbar li.top a { background-image: url(../../images/float_up.png) }
+#view-toolbar li.pdf a { background-image: url(../../images/float_download.png) }
+#view-toolbar li.print a { background-image: url(../../images/float_print.png) }
+#view-toolbar li.tool-separator a {
+    background-image: url("../../images/dots.png");
+	margin-bottom: -11px;
+}
+
+/* Rest of the button to jump to each section*/
+li.tool-button{
+	width: 8px;
+	height: 13px;
+}
+
+
+/* Dynamic Data Table */
+table.data-table { border-collapse: collapse; border-spacing: 0; }
+table.data-table td, table.data-table th { padding: 4px 3px 3px; text-align:left; } 
+table.data-table .odd td { background-color: #FFF; } 
+table.data-table .even td { background-color: #DDD; }
+table.data-table .deleteButton{
+	background-image: url("images/trash.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 24px;
+    overflow: hidden;
+    text-indent: 99px;
+    vertical-align: middle;
+    width: 24px;
+}
+table.data-table .editButton{
+	background-image: url("images/edit_grey.png");
+    background-repeat: no-repeat;
+    display: inline-block;
+    height: 24px;
+    overflow: hidden;
+    text-indent: 99px;
+    vertical-align: middle;
+    width: 24px;
+}
+
+
+/* Upload fields - #uploadFields id to be changed to something more generic. */
+#uploadFields a { display: none; } /* hide the displayed name of uploaded files */
+
+/* Show only the file link when a file is uploaded.*/
+#uploadFields.uploaded input { display: none; }
+#uploadFields.uploaded a { display: inline-block; vertical-align: top; }
+
+/* Deleted uploads. */
+#uploadFields.upload-delete a { display: none !important; }
+#uploadFields.upload-delete input[type="file"] { display: inline-block !important; }

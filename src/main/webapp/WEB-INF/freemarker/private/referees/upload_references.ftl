@@ -54,20 +54,20 @@
 											
 												<form id="documentUploadForm" method="POST" action="<@spring.url '/referee/submitReference'/>">  
 													<input type="hidden" name="application" value ='${applicationForm.id?string("######")}'/>           
-														<div class="field" id="referenceUploadFields">          
-															<label for="file">Upload file</label>
-															<input id="referenceDocument" class="full" type="file" name="file" value=""/>          
-															<span id="referenceUploadedDocument" ><input type="hidden" id="document_REFERENCE" value = "${(reference.document.id?string('######'))!}" name="document"/>
-																<@spring.bind "reference.document" /> 
-																<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>                                  
-															</span>
-															<span id="referenceDocumentProgress" style="display: none;" ></span>          
-														</div>  
-													</div>
+													<div class="field" id="referenceUploadFields">          
+														<label for="file">Upload file</label>
+														<input id="referenceDocument" class="full" type="file" name="file" value=""/>          
+														<span id="referenceUploadedDocument" ><input type="hidden" id="document_REFERENCE" value = "${(reference.document.id?string('######'))!}" name="document"/>
+															<@spring.bind "reference.document" /> 
+															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>                                  
+														</span>
+														<span id="referenceDocumentProgress" style="display: none;" ></span>          
+														<#if reference.id??>
+														<br />
+														<div>Previous File: <a href="<@spring.url '/download/reference?referenceId=${reference.id?string("#######")}'/>">${reference.document.fileName?html}</a></div>
+														</#if>
+													</div>  
 													<br/>
-													<#if reference.id??>
-													<div>Previous File: <a href="<@spring.url '/download/reference?referenceId=${reference.id?string("#######")}'/>">${reference.document.fileName?html}</a></div>
-													</#if>
 													<div class="buttons">
 														<button type="reset" value="cancel">Cancel</button>
 														<button class="blue" type="submit" id="referenceSaveButton" value="close">Submit</button>              

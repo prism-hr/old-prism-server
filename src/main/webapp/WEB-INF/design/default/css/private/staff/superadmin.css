@@ -18,6 +18,6 @@ div.left-column { float: left; width: 380px; }
 div.right-column { float: left; text-align: left; width: 380px; }
 
 div.left-column label { width: 90px !important; }
-div.left-column field { margin-left: 100px !important; }
+div.left-column .field { margin-left: 100px !important; }
 
 .pending{ color: #999999;}

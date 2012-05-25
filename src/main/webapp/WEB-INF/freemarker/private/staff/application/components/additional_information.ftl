@@ -34,11 +34,11 @@
 				</div>
 			</#if> 
 
-            <div class="buttons">
-                <button class="blue" id="additionalCloseButton" type="button">Close</button>
-			</div>
 
           </div>    
+			<div class="buttons">
+				<button class="blue" id="additionalCloseButton" type="button">Close</button>
+			</div>
 		</form>
 	</div>
 	

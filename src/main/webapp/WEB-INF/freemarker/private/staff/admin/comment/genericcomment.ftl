@@ -53,23 +53,25 @@
 				         <#include "/private/common/parts/application_info.ftl"/>
 				        
 				       	 	<#if user.hasAdminRightsOnApplication(applicationForm) >
-									<section class="folding">
+									<section class="form-rows">
 										<div>
 											<form method="POST" action= "<@spring.url '/comment'/>">
-												<h1>Add comment</h1>
-												<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
-												<div class="row">
-													<span class="plain-label">Comment</span>
-													<div class="field">		            				
-														<textarea name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
-														<@spring.bind "comment.comment" /> 
-														<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+												<div class="row-group">
+													<h1>Add comment</h1>
+													<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
+													<div class="row">
+														<span class="plain-label">Comment</span>
+														<div class="field">		            				
+															<textarea name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+															<@spring.bind "comment.comment" /> 
+															<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+														</div>
 													</div>
-												</div>
-							
-												<div class="buttons">						        		
-													<button type="reset" value="cancel">Cancel</button>
-													<button class="blue" type="submit" value="Submit">Submit</button>						        
+								
+													<div class="buttons">						        		
+														<button type="reset" value="cancel">Cancel</button>
+														<button class="blue" type="submit" value="Submit">Submit</button>						        
+													</div>
 												</div>
 											</form>
 										</div>

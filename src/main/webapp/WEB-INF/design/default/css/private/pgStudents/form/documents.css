@@ -3,7 +3,7 @@
 /* Documents ----------------------------------------------------------------------------------------- */
 
 section.form-rows.blue > div, section.form-rows.blue table.existing, section.form-rows.blue div.buttons { border-color: #008898; }
-section.form-rows.blue form { background: #EBF4F5; padding: 10px; }
+section.form-rows.blue { background: #EBF4F5; padding: 10px; }
 section.form-rows.blue table.existing, section.form-rows.blue div.buttons { background: #CCE4E7; }
 section.form-rows.blue h2, section.form-rows.blue div.add a.button, li.tool-button, li#tool-documents {
 	background: rgb(54,172,197); /* Old browsers */

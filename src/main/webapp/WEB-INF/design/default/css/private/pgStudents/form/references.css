@@ -3,7 +3,7 @@
 /* References ---------------------------------------------------------------------------------------- */
 
 section.form-rows.navy > div, section.form-rows.navy table.existing, section.form-rows.navy div.buttons { border-color: #285F93; }
-section.form-rows.navy form { background: #E5E8F1; padding: 10px; }
+section.form-rows.navy { background: #E5E8F1; padding: 10px; }
 section.form-rows.navy table.existing, section.form-rows.navy div.buttons { background: #D0D7E7; }
 section.form-rows.navy h2, section.form-rows.navy div.add a.button, li.tool-button, li#tool-references {
 	background: rgb(17,55,79); /* Old browsers */

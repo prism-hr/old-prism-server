@@ -3,7 +3,7 @@
 /* Personal details ---------------------------------------------------------------------------------- */
 
 section.form-rows.lightblue > div, section.form-rows.lightblue table.existing, section.form-rows.lightblue div.buttons { background: #CCE4E7; border-color: #53A2C3; }
-section.form-rows.lightblue form { background: #EAF2F7; padding: 10px; }
+section.form-rows.lightblue { background: #EAF2F7; padding: 10px; }
 section.form-rows.lightblue h2, section.form-rows.lightblue div.add a.button, li.tool-button, li#tool-information {
 	background: rgb(151,191,223); /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */

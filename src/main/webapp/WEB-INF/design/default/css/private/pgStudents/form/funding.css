@@ -4,7 +4,7 @@
 
 section.form-rows.green table.existing, section.form-rows.green div.buttons { background: #EEF0D8; }
 section.form-rows.green > div, section.form-rows.green table.existing, section.form-rows.green div.buttons { border-color: #AFBD22; }
-section.form-rows.green form { background: #F8F9EF; padding: 10px; }
+section.form-rows.green { background: #F8F9EF; padding: 10px; }
 section.form-rows.green h2, section.form-rows.green div.add a.button, li.tool-button, li#tool-funding {
 	background: rgb(185,197,55); /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */

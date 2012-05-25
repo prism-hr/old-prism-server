@@ -1,9 +1,9 @@
 $(document).ready(function() {
 	if($('#2_regUserId').val() == "") {
-		$("span[id='secondRegistryUser']").hide();
+		$("div[id='secondRegistryUser']").hide();
 	}
 	if($('#3_regUserId').val() == "") {
-		$("span[id='thirdRegistryUser']").hide();
+		$("div[id='thirdRegistryUser']").hide();
 	}
 	
 	$('#cancelDurationBtn').click(function() {
@@ -33,15 +33,15 @@ $(document).ready(function() {
 	});
 	
 	$('#addAnother').click(function() {
-		if(!$("span[id='secondRegistryUser']").is(':visible')) {
-			$("span[id='secondRegistryUser']").show();
+		if(!$("div[id='secondRegistryUser']").is(':visible')) {
+			$("div[id='secondRegistryUser']").show();
 		}
-		else if(!$("span[id='thirdRegistryUser']").is(':visible')) {
-			$("span[id='thirdRegistryUser']").show();
+		else if(!$("div[id='thirdRegistryUser']").is(':visible')) {
+			$("div[id='thirdRegistryUser']").show();
 		}
 		else{
-			$("span[id='secondRegistryUser']").show();
-			$("span[id='thirdRegistryUser']").show();
+			$("div[id='secondRegistryUser']").show();
+			$("div[id='thirdRegistryUser']").show();
 			$("span[name='threeMaxMessage']").html("You cannot specify more than three registry users.");
 		}
 	});
@@ -157,7 +157,7 @@ function appendRegistryUsersJSON() {
 		validationErrors = true;
 	}
 	
-	if($("span[id='secondRegistryUser']").is(':visible')) {
+	if($("div[id='secondRegistryUser']").is(':visible')) {
 		if($('#2_regUserfirstname').val() != "" && $('#2_regUserLastname').val() != "" && validateEmail($('#2_regUserEmail').val())){
 			$("span[name='seconduserInvalid']").html('');
 			$("span[name='seconduserInvalid']").hide();
@@ -175,7 +175,7 @@ function appendRegistryUsersJSON() {
 		}
 	}
 	//if third user is visible and filled
-	if($("span[id='thirdRegistryUser']").is(':visible')) {
+	if($("div[id='thirdRegistryUser']").is(':visible')) {
 		if($('#3_regUserfirstname').val() != "" && $('#3_regUserLastname').val() != "" && validateEmail($('#3_regUserEmail').val())){
 			$("span[name='thirduserInvalid']").html('');
 			$("span[name='thirduserInvalid']").hide();

@@ -69,11 +69,7 @@ public class ConfigurationController {
 		if (!getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
 			throw new ResourceNotFoundException();
 		}
-		modelMap.put("stages", getConfigurableStages());
-		modelMap.put("units", DurationUnitEnum.values());
-		modelMap.put("durationDAO", stateDurationDao);
-		modelMap.put("intervalDAO", reminderIntervalDAO);
-		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
+		populateModelMap(modelMap);
 		return CONFIGURATION_VIEW_NAME;
 	}
 	
@@ -86,11 +82,7 @@ public class ConfigurationController {
 		for (StageDuration stageDuration : stagesDuration) {
 			stateDurationDao.save(stageDuration);
 		}
-		modelMap.put("stages", getConfigurableStages());
-		modelMap.put("units", DurationUnitEnum.values());
-		modelMap.put("durationDAO", stateDurationDao);
-		modelMap.put("intervalDAO", reminderIntervalDAO);
-		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
+		populateModelMap(modelMap);
 		return CONFIGURATION_VIEW_NAME;
 	}
 	
@@ -102,11 +94,7 @@ public class ConfigurationController {
 		
 		reminderIntervalDAO.save(reminderInterval);
 		
-		modelMap.put("stages", getConfigurableStages());
-		modelMap.put("units", DurationUnitEnum.values());
-		modelMap.put("durationDAO", stateDurationDao);
-		modelMap.put("intervalDAO", reminderIntervalDAO);
-		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
+		populateModelMap(modelMap);
 		return CONFIGURATION_VIEW_NAME;
 	}
 	
@@ -119,11 +107,7 @@ public class ConfigurationController {
 		for (RegistryUser registryUser : registryUsers) {
 			registryUserService.save(registryUser);
 		}
-		modelMap.put("stages", getConfigurableStages());
-		modelMap.put("units", DurationUnitEnum.values());
-		modelMap.put("durationDAO", stateDurationDao);
-		modelMap.put("intervalDAO", reminderIntervalDAO);
-		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
+		populateModelMap(modelMap);
 		return CONFIGURATION_VIEW_NAME;
 	}
 	
@@ -134,6 +118,14 @@ public class ConfigurationController {
 	@ModelAttribute("stages")
 	public ApplicationFormStatus[] getConfigurableStages() {
 		return ApplicationFormStatus.getConfigurableStages();
+	}
+	
+	private void populateModelMap(ModelMap modelMap) {
+		modelMap.put("stages", getConfigurableStages());
+		modelMap.put("units", DurationUnitEnum.values());
+		modelMap.put("durationDAO", stateDurationDao);
+		modelMap.put("intervalDAO", reminderIntervalDAO);
+		modelMap.put("allRegistryUsers", registryUserService.getAllRegistryUsers());
 	}
 	
 }

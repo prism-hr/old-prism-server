@@ -87,34 +87,32 @@
 							
 							<hr />
 				          			
-							<section class="folding violet">
+							<section class="form-rows violet">
 								<div>
 									<form>
-										<div>			
-											<section id="assignReviewersToAppSection" >
+										<div id="assignReviewersToAppSection" class="row-group">			
 											
-												<div class="row">
-													<label class="label">Reviewers</label>
-													<div class="field">
-														<p>
-															<strong>Available Reviewers</strong>
-														</p>
-														<select id="programReviewers" multiple="multiple" size="${avaliableOptionsSize}">
-															<option value="" disabled="disabled" id="default">Default reviewers</option>
-															<#list programmeReviewers as reviewer>
-															  <option value="${applicationForm.id?string("######")}|${reviewer.id?string('#####')}" category="default">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
-															</#list>
-															<option value="" disabled="disabled"></option>
-															<option value="" disabled="disabled" id="previous">Previous reviewers in this programme</option>
-															
-															<#list previousReviewers as reviewer>
-															  <option value="${applicationForm.id?string("######")}|${reviewer.id?string('#####')}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
-															</#list>							
-															<option value="" disabled="disabled"></option>								
-														</select>
-													</div>
+											<div class="row">
+												<label class="label">Reviewers</label>
+												<div class="field">
+													<p>
+														<strong>Available Reviewers</strong>
+													</p>
+													<select id="programReviewers" multiple="multiple" size="${avaliableOptionsSize}">
+														<option value="" disabled="disabled" id="default">Default reviewers</option>
+														<#list programmeReviewers as reviewer>
+															<option value="${applicationForm.id?string("######")}|${reviewer.id?string('#####')}" category="default">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+														</#list>
+														<option value="" disabled="disabled"></option>
+														<option value="" disabled="disabled" id="previous">Previous reviewers in this programme</option>
+														
+														<#list previousReviewers as reviewer>
+															<option value="${applicationForm.id?string("######")}|${reviewer.id?string('#####')}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+														</#list>							
+														<option value="" disabled="disabled"></option>								
+													</select>
 												</div>
-											</section>	          				
+											</div>
 						
 					
 											<!-- Available Reviewer Buttons -->
@@ -150,7 +148,7 @@
 											<@spring.bind "reviewRound.reviewers" /> 
 				                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
-										<div>				
+										<div class="row-group">				
 											<#if mesage??>			
 												<p>${message?html}</p>
 											</#if>

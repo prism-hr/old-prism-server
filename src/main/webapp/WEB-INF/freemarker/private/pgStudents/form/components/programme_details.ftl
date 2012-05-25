@@ -34,7 +34,8 @@
 				</#if>
 		
         <input type="hidden" name="programmeDetailsId" id="programmeDetailsId" value="${(programmeDetails.id?string("######"))!}"/>
-		<div>
+
+		<div class="row-group">
 			<#if programError?? && programError=='true'>
                 	<span class="invalid"><@spring.message 'application.program.invalid'/></span>
              </#if>
@@ -159,7 +160,7 @@
 
 		<#-- Supervisor Data Table: Include the following section for supervisor table! -->
 		<#--
-		<div>
+		<div class="row-group">
 			<#include "/private/common/parts/supervisor_data_table.ftl"/>
 		</div>
 		-->

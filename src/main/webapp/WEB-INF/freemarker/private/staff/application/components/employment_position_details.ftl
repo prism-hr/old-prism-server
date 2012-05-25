@@ -36,7 +36,7 @@
 			    	<!-- All hidden input - End --> 
 	                		
 	                <!-- Rendering part - Start -->
-		        	<div class="sub_section_amdin">
+		        	<div class="row-group">
 		                     
 						<!-- Header -->
 					    <div class="admin_row">
@@ -101,7 +101,7 @@
 			<#else>
 			
 	                <!-- Rendering part - Start -->
-		        	<div class="sub_section_amdin">
+		        	<div class="row-group">
 		                     
 		                <div class="row">
 		                	<span class="admin_header">Employment</span>                 

@@ -29,7 +29,7 @@
             <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
               	
             <!-- Basic Details -->
-			<div class="sub_section_amdin">
+			<div class="row-group">
 					
 				<div class="admin_row">
                   		<label class="admin_row_label">First Name</label>

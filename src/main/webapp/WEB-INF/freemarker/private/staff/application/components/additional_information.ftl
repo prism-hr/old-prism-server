@@ -6,7 +6,7 @@
     
     <div>
     	<form>
-          <div class="sub_section_amdin">
+          <div class="row-group">
         	<!-- Free text field for info. -->
             <div class="admin_row">
     	        <span class="admin_row_label">Additional Information</span>

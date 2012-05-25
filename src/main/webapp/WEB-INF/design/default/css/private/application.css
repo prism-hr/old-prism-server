@@ -43,6 +43,7 @@ section.form-rows table.existing th#primary-header { padding-left: 33px; }
 
 /* ROW GROUPS (white boxes) ------------------------------------------------------------------------------ */
 section.form-rows .row-group { background: #FFF; border: 1px solid #999; margin-bottom: 2px; overflow: hidden; padding: 10px; }
+section.form-rows .row-group .admin_row:last-child { border-bottom: none; }
 
 
 /* BUTTONS AREA ------------------------------------------------------------------------------------------ */
@@ -79,7 +80,7 @@ section.form-rows .row { line-height: 24px; margin-bottom: 2px; clear: left; }
 .admin_row_label { float: left; line-height: 1.2; width: 180px; margin-top: 4px; }
 .admin_header { float: left; line-height: 1.2; width: 180px; margin-top: 4px; font-weight: bold; }
 
-section.form-rows > div.sub_section_amdin { margin-bottom: 10px; overflow: hidden; padding-bottom: 8px; }
+section.form-rows > div.sub_section_admin { margin-bottom: 10px; overflow: hidden; padding-bottom: 8px; }
 
 /* Label lenght increased by 195px; - edited by Manish */
 section.form-rows .label { float: left; line-height: 1.2; width: 180px; }

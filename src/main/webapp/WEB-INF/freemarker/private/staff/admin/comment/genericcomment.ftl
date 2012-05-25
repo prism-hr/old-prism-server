@@ -12,6 +12,7 @@
 		
 		<!-- Styles for Application List Page -->
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 		<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
 				<!-- Styles for Application List Page -->
 
@@ -57,7 +58,7 @@
 										<div>
 											<form method="POST" action= "<@spring.url '/comment'/>">
 												<div class="row-group">
-													<h1>Add comment</h1>
+													<h3>Add comment</h3>
 													<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 													<div class="row">
 														<span class="plain-label">Comment</span>

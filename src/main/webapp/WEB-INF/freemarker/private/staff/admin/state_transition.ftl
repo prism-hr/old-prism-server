@@ -60,11 +60,11 @@
 												<div class="row-group">
 
 										<#if applicationForm.isInState('VALIDATION')>
-											<h1>Validate application</h1>
+											<h3>Validate application</h3>
 										<#elseif applicationForm.isInState('REVIEW')>
-											<h1>Evaluate reviews</h1>
+											<h3>Evaluate reviews</h3>
 										<#elseif applicationForm.isInState('INTERVIEW')>
-											<h1>Evaluate interview feedback</h1>
+											<h3>Evaluate interview feedback</h3>
 										</#if>
 
 		            			<div class="row">
@@ -82,15 +82,15 @@
 		            			</div>
 											
 												</div>
-												<div class="row-group">
 											
 											<#if applicationForm.isInState('VALIDATION')>
+												<div class="row-group">
 		        	         	
 											<div class="row">
 												<label class="plain-label">Is the applicant qualified for PhD entry to UCL?</label>
 												<div class="field">		            				
 													<#list validationQuestionOptions as option>
-													<input type="radio" name="qualifiedForPhd" value="${option}"/><label> ${option.displayValue}</label>
+													<label><input type="radio" name="qualifiedForPhd" value="${option}"/> ${option.displayValue}</label>
 												</#list>
 												</div>
 											</div>
@@ -99,7 +99,7 @@
 												<label class="plain-label">Does the applicant meeting the minimum required standard of English Language competence?</label>
 												<div class="field">		            				
 													<#list validationQuestionOptions as option>
-													<input type="radio" name="englishCompentencyOk" value="${option}"/><label> ${option.displayValue}</label>
+													<label><input type="radio" name="englishCompentencyOk" value="${option}"/> ${option.displayValue}</label>
 												</#list>
 												</div>
 											</div>
@@ -108,13 +108,13 @@
 												<label class="plain-label">What is the applicant's fee status?</label>
 												<div class="field">		            				
 													<#list homeOrOverseasOptions as option>
-													<input type="radio" name="homeOrOverseas" value="${option}"/><label> ${option.displayValue}</label>
+													<label><input type="radio" name="homeOrOverseas" value="${option}"/> ${option.displayValue}</label>
 												</#list>
 												</div>
 											</div>
+										</div>
 											</#if>
 		        
-												</div>
 												<div class="row-group">
 
 		            			<div class="row">

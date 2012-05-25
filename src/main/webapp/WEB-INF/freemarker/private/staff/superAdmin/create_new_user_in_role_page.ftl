@@ -145,12 +145,11 @@
 													</#list>
 					              	</div>
 					            
-					              	<div class="buttons">
-					              		<button type="submit" value="createuser" >Create user</button>
-					            	</div>
-					              
 											</div>
-								
+										</div>
+										
+										<div class="buttons">
+											<button type="submit" value="createuser" >Create user</button>
 										</div>
 								</div>
 								</section>

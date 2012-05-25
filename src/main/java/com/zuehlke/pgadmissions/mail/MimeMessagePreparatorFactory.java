@@ -1,30 +1,21 @@
 package com.zuehlke.pgadmissions.mail;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.activation.DataSource;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
-import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.utils.Environment;
-import com.zuehlke.pgadmissions.utils.PdfDocumentBuilder;
-
-import cucumber.annotation.cs.Ataké;
 
 public class MimeMessagePreparatorFactory {
 	static final Logger log = Logger.getLogger(MimeMessagePreparatorFactory.class);

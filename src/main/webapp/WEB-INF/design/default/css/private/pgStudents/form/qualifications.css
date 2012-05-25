@@ -3,7 +3,7 @@
 /* Qualifications ------------------------------------------------------------------------------------ */
 
 section.form-rows.orange > div, section.form-rows.orange table.existing, section.form-rows.orange div.buttons { border-color: #F58149; }
-section.form-rows.orange form { background: #FFF9F6; padding: 10px; }
+section.form-rows.orange { background: #FFF9F6; padding: 10px; }
 section.form-rows.orange table.existing, section.form-rows.orange div.buttons { background: #FEE8D9; }
 section.form-rows.orange h2, section.form-rows.orange div.add a.button, li.tool-button, li#tool-qualification {
 	background: rgb(239,114,58); /* Old browsers */

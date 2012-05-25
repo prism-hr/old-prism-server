@@ -3,7 +3,7 @@
 /* Address ------------------------------------------------------------------------------------------- */
 
 section.form-rows.red > div, section.form-rows.red table.existing, section.form-rows.red div.buttons { border-color: #650729; }
-section.form-rows.red form { background: #EFE8E7; padding: 10px; }
+section.form-rows.red { background: #EFE8E7; padding: 10px; }
 section.form-rows.red table.existing, section.form-rows.red div.buttons { background: #E1D2D1; }
 section.form-rows.red h2, section.form-rows.red div.add a.button, li.tool-button, li#tool-address {
 	background: rgb(112,18,40); /* Old browsers */

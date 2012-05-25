@@ -3,7 +3,7 @@
 /* Personal details ---------------------------------------------------------------------------------- */
 
 section.form-rows.purple > div, section.form-rows.purple table.existing, section.form-rows.purple div.buttons { border-color: #826C7C; }
-section.form-rows.purple form { background: #E2DEE1; padding: 10px; }
+section.form-rows.purple { background: #E2DEE1; padding: 10px; }
 section.form-rows.purple table.existing, section.form-rows.purple div.buttons { background: #D5CED3; }
 section.form-rows.purple h2, section.form-rows.purple div.add a.button, li.tool-button, li#tool-personal {
 	background: rgb(80,50,71); /* Old browsers */

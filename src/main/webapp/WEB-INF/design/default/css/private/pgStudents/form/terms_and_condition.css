@@ -6,7 +6,7 @@ section.form-rows.lightgrey > div, section.form-rows.lightgrey table.existing, s
 	background: #CCE4E7; 
 	border-color: #ffffff; 
 }
-section.form-rows.lightgrey form {
+section.form-rows.lightgrey {
 	background: #939598;
 	padding: 10px; 
 }

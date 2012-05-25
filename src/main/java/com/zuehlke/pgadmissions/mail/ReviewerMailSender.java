@@ -39,7 +39,7 @@ public class ReviewerMailSender extends MailSender {
 				+ reviewer.getUser().getLastName());
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + reviewer.getReviewRound().getApplication().getId() + " for "
 				+ reviewer.getReviewRound().getApplication().getProgram().getTitle() + " - Reviewer Notification",
-				"private/reviewers/mail/reviewer_notification_email.ftl", createModel(reviewer)));
+				"private/reviewers/mail/reviewer_notification_email.ftl", createModel(reviewer), null));
 
 	}
 
@@ -48,7 +48,7 @@ public class ReviewerMailSender extends MailSender {
 				+ reviewer.getUser().getLastName());
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + reviewer.getReviewRound().getApplication().getId() + " for "
 				+ reviewer.getReviewRound().getApplication().getProgram().getTitle() + " - Review Reminder",
-				"private/reviewers/mail/reviewer_reminder_email.ftl", createModel(reviewer)));
+				"private/reviewers/mail/reviewer_reminder_email.ftl", createModel(reviewer), null));
 
 		
 	}

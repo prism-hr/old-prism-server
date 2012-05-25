@@ -112,10 +112,14 @@
 												</#list>
 												</div>
 											</div>
-										</div>
+												
+											<button class="blue registry" type="button" id="notifyRegistryButton">Request registry assistance</button>	
+											
 											</#if>
-		        
-												<div class="row-group">
+		      							 
+									</div>
+									
+									<div class="row-group">
 
 		            			<div class="row">
 		            				<label class="plain-label">Next stage</label>

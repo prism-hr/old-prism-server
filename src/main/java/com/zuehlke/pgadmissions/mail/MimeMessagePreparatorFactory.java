@@ -31,27 +31,27 @@ public class MimeMessagePreparatorFactory {
 	}
 
 	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress toAddress, InternetAddress[] ccAddresses,
-			String subject, String templatename, Map<String, Object> model) {
-		 return getMimeMessagePreparator(new InternetAddress[]{toAddress}, ccAddresses, subject, templatename, model);
+			String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress) {
+		 return getMimeMessagePreparator(new InternetAddress[]{toAddress}, ccAddresses, subject, templatename, model, replyToAddress);
 	}
 	
 	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress toAddress,
-			String subject, String templatename, Map<String, Object> model) {
-		 return getMimeMessagePreparator(new InternetAddress[]{toAddress}, null, subject, templatename, model);
+			String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress) {
+		 return getMimeMessagePreparator(new InternetAddress[]{toAddress}, null, subject, templatename, model,replyToAddress);
 	}
 
 	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress[] toAddresses,//
-			String subject, String templatename, Map<String, Object> model) {
-		return getMimeMessagePreparator(toAddresses, null, subject, templatename, model);
+			String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress) {
+		return getMimeMessagePreparator(toAddresses, null, subject, templatename, model, replyToAddress);
 	}
 
 	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,//
-			String subject, String templatename, Map<String, Object> model) {
+			String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress) {
 
 		if (prod) {
-			return new ProductionMessagePreparator(toAddresses, ccAddresses, subject, templatename, model);
+			return new ProductionMessagePreparator(toAddresses, ccAddresses, subject, templatename, model, replyToAddress);
 		}
-		return new DevelopmentMessagePreparator(toAddresses, ccAddresses, subject, templatename, model);
+		return new DevelopmentMessagePreparator(toAddresses, ccAddresses, subject, templatename, model, replyToAddress);
 	}
 
 	class ProductionMessagePreparator implements MimeMessagePreparator {
@@ -61,14 +61,16 @@ public class MimeMessagePreparatorFactory {
 		private final String subject;
 		private final String templatename;
 		private final Map<String, Object> model;
+		private final InternetAddress replyToAddress;
 
 		public ProductionMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,//
-				String subject, String templatename, Map<String, Object> model) {
+				String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress) {
 			this.toAddresses = toAddresses;
 			this.ccAddresses = ccAddresses;
 			this.subject = subject;
 			this.templatename = templatename;
 			this.model = model;
+			this.replyToAddress = replyToAddress;
 		}
 
 		protected String getSubject() {
@@ -92,6 +94,9 @@ public class MimeMessagePreparatorFactory {
 			if (!ArrayUtils.isEmpty(getCCAddresses())) {
 				message.setCc(getCCAddresses());
 			}
+			if(replyToAddress != null){
+				message.setReplyTo(replyToAddress);
+			}
 			message.setSubject(getSubject());
 			message.setFrom(Environment.getInstance().getEmailFromAddress()); // could
 																				// be
@@ -104,10 +109,13 @@ public class MimeMessagePreparatorFactory {
 	class DevelopmentMessagePreparator extends ProductionMessagePreparator {
 
 		public DevelopmentMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,//
-				String subject, String templatename, Map<String, Object> model) {
-			super(toAddresses, ccAddresses, subject, templatename, model);
+				String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress) {
+			super(toAddresses, ccAddresses, subject, templatename, model, replyToAddress);
 			for (InternetAddress internetAddress : toAddresses) {
 				internetAddress.setAddress(Environment.getInstance().getEmailToAddress());
+			}
+			if(replyToAddress != null){
+				replyToAddress.setAddress(Environment.getInstance().getEmailToAddress());				
 			}
 
 		}

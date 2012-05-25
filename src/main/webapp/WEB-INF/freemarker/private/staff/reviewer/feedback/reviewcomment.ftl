@@ -59,7 +59,7 @@
 							    <h1>Review feedback</h1>
 							    <br/>
 							     <p style="color:red;">Please note that once you submit your feedback you cannot re-submit or edit it.</p> 
-							     <form>
+							     <form id ="reviewForm" method="POST" action= "<@spring.url '/reviewFeedback'/>"/>
 							   
 							    	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 			            			<div class="row">
@@ -106,15 +106,13 @@
 			    
 			            			<div class="buttons">						        		
 			            				<button type="button" id="cancelReviewBtn" value="cancel">Cancel</button>
-							       		<button class="blue" id="submitReviewFeedback" type="button" value="Submit">Submit</button>						        
+							       		<button class="blue" id="submitReviewFeedback" type="submit" value="Submit">Submit</button>						        
 									</div>
 									</form>									
 			  					<hr/>
 			  				<#else>
 			  					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
 		  					</#if>
-		  					<form id ="reviewForm" method="POST" action="/pgadmissions/reviewFeedback">
-		  					</form>
 		  					<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 				        </div><!-- .content-box-inner -->
 				      </div><!-- .content-box -->

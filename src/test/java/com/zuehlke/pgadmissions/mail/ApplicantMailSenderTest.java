@@ -43,7 +43,7 @@ public class ApplicantMailSenderTest {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
-		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock,applicationServiceMock);
+		applicantMailSender = new ApplicantMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, applicationServiceMock);
 	}
 
 	@Test
@@ -76,7 +76,7 @@ public class ApplicantMailSenderTest {
 		Rejection rejection = new RejectionBuilder().id(1).rejectionReason(reason).toRejection();
 		rejection.setIncludeProspectusLink(true);
 		form.setRejection(rejection);
-		
+
 		EasyMock.expect(applicationServiceMock.getStageComingFrom(form)).andReturn(ApplicationFormStatus.INTERVIEW);
 		EasyMock.replay(applicationServiceMock);
 		Map<String, Object> model = applicantMailSender.createModel(form);
@@ -102,14 +102,15 @@ public class ApplicantMailSenderTest {
 		};
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).applicant(applicant).program(new ProgramBuilder().title("Some Program").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicant(applicant).program(new ProgramBuilder().title("Some Program").toProgram())
+				.toApplicationForm();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("jane.smith@test.com", "Jane Smith");
 
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Application 4 for Some Program now being reviewed",//
-						"private/pgStudents/mail/moved_to_review_notification.ftl", model)).andReturn(preparatorMock);
+						"private/pgStudents/mail/moved_to_review_notification.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);

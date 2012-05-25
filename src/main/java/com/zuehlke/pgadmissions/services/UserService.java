@@ -107,7 +107,7 @@ public class UserService {
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstName() + " " + referee.getLastName());
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Registration",
-					"private/referees/mail/register_referee_confirmation.ftl", model));
+					"private/referees/mail/register_referee_confirmation.ftl", model, null));
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}

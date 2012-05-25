@@ -156,7 +156,7 @@ public class RegistrationServiceTest {
 		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Registration confirmation",
-						"private/pgStudents/mail/registration_confirmation.ftl", modelMap)).andReturn(preparatorMock);
+						"private/pgStudents/mail/registration_confirmation.ftl", modelMap, null)).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
@@ -227,7 +227,7 @@ public class RegistrationServiceTest {
 		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Registration confirmation"),
-						EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class))).andReturn(preparatorMock);
+						EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress)EasyMock.isNull())).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));

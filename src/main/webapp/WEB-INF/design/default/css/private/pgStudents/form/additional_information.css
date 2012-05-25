@@ -8,7 +8,7 @@ section.form-rows.lightblue > div { background: #EAF2F7; }
 /* Border colours */
 section.form-rows.lightblue > div,
 section.form-rows.lightblue table.existing,
-section.form-rows.lightblue div.buttons { border-color: #8D5AA1; }
+section.form-rows.lightblue div.buttons { border-color: #4D9FC0; }
 
 /* Buttons / existing rows areas */
 section.form-rows.lightblue table.existing, section.form-rows.lightblue div.buttons { background: #CCE4E7; }

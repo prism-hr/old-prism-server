@@ -201,14 +201,11 @@
 								</form>
 							</div>
 						</section>
-						<form id="postReviewForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/review/assign'/>"<#else> action ="<@spring.url '/review/move'/>" </#if>>
-							
-						</form>
-						<form id="postReviewerForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/review/assignNewReviewer'/>" <#else> action ="<@spring.url '/review/createReviewer'/>" </#if>>				
+						
+						<#include "/private/common/feedback.ftl"/>
 					
-							
-						</form>
-					<#include "/private/common/feedback.ftl"/>
+						<form id="postReviewForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/review/assign'/>"<#else> action ="<@spring.url '/review/move'/>" </#if>></form>
+						<form id="postReviewerForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/review/assignNewReviewer'/>" <#else> action ="<@spring.url '/review/createReviewer'/>" </#if>></form>
 				</div>
 				<!-- .content-box-inner -->
 		</div>

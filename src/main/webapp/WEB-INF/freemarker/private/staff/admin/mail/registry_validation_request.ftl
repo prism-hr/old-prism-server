@@ -38,7 +38,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We have recently received the attached application to the UCL ${application.program.title?html} programme.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We would be most grateful if you could assist us in validating the applicant's academic and English language qualifications and establishing their fee status.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We would be most grateful if you could assist us in validating the applicant's academic and English language qualifications as well as establishing their fee status.</font>
 			      	</p>
 			    
 			      	<p>

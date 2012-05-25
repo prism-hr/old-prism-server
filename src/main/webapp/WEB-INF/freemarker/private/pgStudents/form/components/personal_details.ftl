@@ -74,7 +74,7 @@
 					</div>	
 				</#if>
             
-          	<div>
+          	<div class="row-group">
 				<div class="row">
 					<label class="plain-label grey-label">First Name<em class="grey-label">*</em></label>
 					 <span class="hint" data-desc="<@spring.message 'personalDetails.firstname'/>"></span>
@@ -143,7 +143,7 @@
 				
 			</div>
 		
-          	<div>
+          	<div class="row-group">
           		<div class="row">
           			<label class="group-heading-label">Nationality</label>
           		</div>
@@ -280,7 +280,7 @@
               	 
             </div>
           	
-          	<div>
+          	<div class="row-group">
           	     <div class="row">
 					<label class="group-heading-label">Language</label>
 				</div>	                   
@@ -320,7 +320,7 @@
 				                              
             </div>
 
-          	<div>
+          	<div class="row-group">
           		<div class="row">
             		<label class="group-heading-label">Residence</label>
             	</div>
@@ -386,7 +386,7 @@
 				</div>
             </div>
 
-          	<div>
+          	<div class="row-group">
           		<div class="row">
             		<label class="group-heading-label">Contact Details</label>
             	</div>

@@ -160,11 +160,11 @@
 
 		<#-- Supervisor Data Table: Include the following section for supervisor table! -->
 		<#--
-		<div class="row-group">
+		<div>
 			<#include "/private/common/parts/supervisor_data_table.ftl"/>
 		</div>
 		-->
-        <div>
+        <div class="row-group">
         	
         	<label class="group-heading-label">Supervision</label>
              <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.supervisor'/>"></span>

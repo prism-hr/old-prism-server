@@ -3,13 +3,16 @@ package com.zuehlke.pgadmissions.controllers.workflow.validation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.itextpdf.text.DocumentException;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
@@ -29,7 +32,7 @@ public class EmailRegistryControllerTest {
 	private UserService userServiceMock;
 
 	@Test
-	public void shouldSendEmailToRegistryContacts() throws UnsupportedEncodingException {
+	public void shouldSendEmailToRegistryContacts() throws MalformedURLException, DocumentException, IOException {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		registryMailSenderMock.sendApplicationToRegistryContacts(applicationForm);
 		EasyMock.replay(registryMailSenderMock);
@@ -40,7 +43,7 @@ public class EmailRegistryControllerTest {
 	}
 
 	@Test
-	public void shouldReturnCorrectMessageIfEmailSendFails() throws UnsupportedEncodingException {
+	public void shouldReturnCorrectMessageIfEmailSendFails() throws MalformedURLException, DocumentException, IOException {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		registryMailSenderMock.sendApplicationToRegistryContacts(applicationForm);
 		EasyMock.expectLastCall().andThrow(new UnsupportedEncodingException("ALL WRONG!"));

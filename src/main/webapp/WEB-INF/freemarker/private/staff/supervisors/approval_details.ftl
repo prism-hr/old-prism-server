@@ -85,13 +85,12 @@
 						        </#if>
 							</div>
 							
-							<hr />
-				          			
-							<section class="folding violet">
+							<section class="form-rows">
 								<div>
 									<form>
-										<div>			
-											<section id="assignSupervisorsToAppSection" >
+									
+										<div class="row-group">			
+											<section id="assignSupervisorsToAppSection">
 											
 												<div class="row">
 													<label class="label">Supervisors</label>
@@ -99,7 +98,7 @@
 														<p>
 															<strong>Available Supervisors</strong>
 														</p>
-														<select id="programSupervisors" multiple="multiple" size="${avaliableOptionsSize}">
+														<select id="programSupervisors" class="max" multiple="multiple" size="${avaliableOptionsSize}">
 															<option value="" disabled="disabled" id="default">Default supervisors</option>
 															<#list programmeSupervisors as supervisor>
 															  <option value="${applicationForm.id?string("######")}|${supervisor.id?string('#####')}" category="default">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
@@ -133,7 +132,7 @@
 													<p>
 														<strong>Selected Supervisors</strong>
 													</p>
-													<select id="applicationSupervisors" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
+													<select id="applicationSupervisors" class="max" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 														<#list applicationSupervisors as supervisor>
 															<option value="${applicationForm.id?string("######")}|${supervisor.id?string('#####')}">
 																${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if>
@@ -155,7 +154,9 @@
 											<@spring.bind "approvalRound.supervisors" /> 
 				                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
-										<div>				
+										
+										<!-- Create supervisor -->
+										<div class="row-group">				
 											<#if mesage??>			
 												<p>${message?html}</p>
 											</#if>
@@ -207,12 +208,14 @@
 								</form>
 							</div>
 						</section>
+						
+						<#include "/private/common/feedback.ftl"/>
+						
 						<form id="postApprovalForm" method="post" action ="<@spring.url '/approval/move'/>" >
 							
 						</form>
 						<form id="postSupervisorForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/approval/assignNewSupervisor'/>" <#else> action ="<@spring.url '/approval/createSupervisor'/>" </#if>>				
 					
-					<#include "/private/common/feedback.ftl"/>
 				</div>
 				<!-- .content-box-inner -->
 		</div>

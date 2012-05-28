@@ -20,20 +20,14 @@
         	
         	<colgroup>
               	<col style="width: 30px" />
-              	<col style="width: 160px" />
-              	<col style="width: 160px" />
-              	<col style="width: 240px" />
-              	<col />          
-              	<col />
+              	<col/>
+              	<col style="width: 30px" />
               	<col style="width: 30px" />
         	</colgroup>
         
         	<thead>
           		<tr>
-                    <th id="primary-header" colspan="2">First name</th>
-                    <th>Surname</th>
-                    <th>Job Title</th>
-                    <th>Email</th>              
+                    <th id="primary-header" colspan="2">Reference</th>
                     <th>&nbsp;</th>  
                     <th id="last-col">&nbsp;</th>
               	</tr>
@@ -43,10 +37,8 @@
         		<#list applicationForm.referees as existingReferee>
                   	<tr>
 	                    <td><a class="row-arrow">-</a></td>
-	                    <td>${(existingReferee.firstname?html)!}</td>
-	                    <td>${(existingReferee.lastname?html)!}</td>
-	                    <td>${(existingReferee.jobTitle?html)!}</td>
-	                    <td>${(existingReferee.email?html)!}</td>
+	                    <td>${(existingReferee.firstname?html)!} ${(existingReferee.lastname?html)!} 
+	                    (${(existingReferee.email?html)!})</td>
 	                  	<#if !existingReferee.editable>		                    
 		                    <td><a name="editRefereeLink" data-desc="Show" id="referee_${existingReferee.id?string('#######')}" class="button-edit button-hint">show</a></td>
 		                    <#if existingReferee.declined || existingReferee.hasProvidedReference()>

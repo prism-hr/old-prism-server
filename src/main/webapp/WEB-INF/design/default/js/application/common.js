@@ -119,19 +119,19 @@ function addToolTips(){
 
 function watchUpload($field)
 {
-	var $section    = $field.closest('section.folding');
   var $container  = $field.parent('div.field');
-  var $hidden     = $container.find('input[type="hidden"]');
   var $progress   = $container.find('span.progress');
 
   $container.on('change', $field, function()
   {
-		if ($field[0].files[0].size < 10485760) // 10MB in bytes
+    var $this    = $(this);
+    var $hidden  = $container.find('input[type="hidden"]');
+		if ($this[0].files[0].size < 10485760) // 10MB in bytes
     {
 			deleteUploadedFile($hidden);
 			$progress.html('uploading file...');
 			$field.attr("readonly", "readonly");
-			doUpload($field);
+			doUpload($this);
 			$field.removeAttr("readonly");
 		 }
      else
@@ -151,7 +151,6 @@ function deleteUploadedFile($hidden_field)
 
 function doUpload($upload_field)
 {	
-	var $section    = $upload_field.closest('section.folding');
   var $container  = $upload_field.parent('div.field');
   var $hidden     = $container.find('input[type="hidden"]');
   var $hfParent   = $hidden.parent();

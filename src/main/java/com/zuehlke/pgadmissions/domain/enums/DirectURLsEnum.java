@@ -2,9 +2,9 @@ package com.zuehlke.pgadmissions.domain.enums;
 
 public enum DirectURLsEnum {
 	
-	ADD_REVIEW("/pgadmissions/reviewFeedback?applicationId="), // 
-	ADD_INTERVIEW("/pgadmissions/interviewFeedback?applicationId="), // 
-	ADD_REFERENCE("/pgadmissions/referee/addReferences?application="), //
+	ADD_REVIEW("/reviewFeedback?applicationId="), // 
+	ADD_INTERVIEW("/interviewFeedback?applicationId="), // 
+	ADD_REFERENCE("/referee/addReferences?application="), //
 	;
 	
 	private final String displayValue;

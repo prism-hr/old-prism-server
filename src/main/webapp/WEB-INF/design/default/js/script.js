@@ -2,64 +2,64 @@ $(document).ready(function()
 {
 
   // Select all checkbox implementation
-	// Listen for click on toggle checkbox
-	$('#select-all').click(function(event) {
-		
-		var selectAllValue = this.checked;
-		
-		//Iterate each checkbox
-	    $(':checkbox').each(function() {
-	    	this.checked = selectAllValue;                        
-	    });
-	});
-	
-	
+  // Listen for click on toggle checkbox
+  $('#select-all').click(function(event) {
+    
+    var selectAllValue = this.checked;
+    
+    //Iterate each checkbox
+      $(':checkbox').each(function() {
+        this.checked = selectAllValue;                        
+      });
+  });
+  
+  
   // Toggle grey-label class where you find instances of "Not Provided" text.
-	$('.field').each(function(){
-		 
-		 var strValue = $(this).text();
-		
-		 if(strValue.match("Not Provided")){
-			 $(this).toggleClass('grey-label');
-			 
-			 var labelValue = $(this).prev().text();
-			 
-			 if(labelValue.match("Additional Information")){
-				 $(this).prev().css("font-weight","bold");
-			 }
-			 
-		 }
-		 
-	});
-	
-	//$('body.old-ie button').wrap('<span />');
-	
-	  
+  $('.field').each(function(){
+     
+     var strValue = $(this).text();
+    
+     if(strValue.match("Not Provided")){
+       $(this).toggleClass('grey-label');
+       
+       var labelValue = $(this).prev().text();
+       
+       if(labelValue.match("Additional Information")){
+         $(this).prev().css("font-weight","bold");
+       }
+       
+     }
+     
+  });
+  
+  //$('body.old-ie button').wrap('<span />');
+  
+    
   fn = window['addToolTips'];
   if(typeof  fn  == 'function'){
-	  addToolTips();
+    addToolTips();
   }
   
   
 
   // Delete button tooltips.
   $('.button-delete').qtip({
-	    content: {
-	        text: function(api) {
-	          // Retrieve content from custom attribute of the $('.selector') elements.
-	          return "Tooltip demonstration.";
-	       } 
-	     },
-	     position: {
-	        my: 'bottom right', // Use the corner...
-	        at: 'top center', // ...and opposite corner
-	        viewport: $(window),
-	        adjust: {
-	           method: 'flip shift'
-	        }
-	     },
-	     style: 'tooltip-pgr ui-tooltip-shadow'
-	   });
+      content: {
+          text: function(api) {
+            // Retrieve content from custom attribute of the $('.selector') elements.
+            return "Tooltip demonstration.";
+         } 
+       },
+       position: {
+          my: 'bottom right', // Use the corner...
+          at: 'top center', // ...and opposite corner
+          viewport: $(window),
+          adjust: {
+             method: 'flip shift'
+          }
+       },
+       style: 'tooltip-pgr ui-tooltip-shadow'
+     });
   
 
   $('section.folding a.row-arrow').each(function()
@@ -115,7 +115,7 @@ $(document).ready(function()
   
   fn = window['bindDatePickers'];
   if(typeof fn == 'function'){
-	  bindDatePickers();
+    bindDatePickers();
   }
   
   
@@ -126,98 +126,97 @@ $(document).ready(function()
   //Adding style to delete button to make it free from inherited style
   
   var styleMap = {
-		'padding':'0',
-  		'background' : 'none'
+    'padding':'0',
+      'background' : 'none'
   } 
   
   $('.button-delete').parent().css(styleMap);
   
   
-	// ------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------
   // Toolbar button action when jumping on a specific part of the application
-	// ------------------------------------------------------------------------------
+  // ------------------------------------------------------------------------------
   $('.tool-button a').click(function()
-	{
-	  var buttonId  = $(this).parent().attr("id");
-	  var sectionId = "";
-	  
-	  switch(buttonId)
-		{
-	  	case "tool-programme":
-	  		sectionId = "programme-H2";
-	  		break;
-	  	case "tool-personal":
-	  		sectionId = "personalDetails-H2";
-	  		break;
-	  	case "tool-funding":
-	  		sectionId = "funding-H2";
-	  		break;
-	  	case "tool-employment":
-	  		sectionId = "position-H2";
-	  		break;
-	  	case "tool-address":
-	  		sectionId = "address-H2";
-	  		break;
-	  	case "tool-information":
-	  		sectionId = "additional-H2";
-	  		break;
-	  	case "tool-qualification":
-	  		sectionId = "qualifications-H2";
-	  		break;
-	  	case "tool-documents":
-	  		sectionId = "documents-H2";
-	  		break;
-			case "tool-references":
-	  		sectionId = "referee-H2";
-	  		break;
-	  	default:
-	  		return false;
-	  }
-	  
-	  $('section.folding h2').each(function()
-		{
-		  if (sectionId != $(this).attr('id'))
-			{
-			  $(this).removeClass('open');
-			  $(this).next('div').hide();
-		  }
-			else
-			{
-			  $(this).addClass('open');
-			  $(this).next('div').show();
-		  }
-	  });
-		
-		$.scrollTo('#'+sectionId, 1000);
-		return false;
+  {
+    var buttonId  = $(this).parent().attr("id");
+    var sectionId = "";
+    
+    switch(buttonId)
+    {
+      case "tool-programme":
+        sectionId = "programme-H2";
+        break;
+      case "tool-personal":
+        sectionId = "personalDetails-H2";
+        break;
+      case "tool-funding":
+        sectionId = "funding-H2";
+        break;
+      case "tool-employment":
+        sectionId = "position-H2";
+        break;
+      case "tool-address":
+        sectionId = "address-H2";
+        break;
+      case "tool-information":
+        sectionId = "additional-H2";
+        break;
+      case "tool-qualification":
+        sectionId = "qualifications-H2";
+        break;
+      case "tool-documents":
+        sectionId = "documents-H2";
+        break;
+      case "tool-references":
+        sectionId = "referee-H2";
+        break;
+      default:
+        return false;
+    }
+    
+    $('section.folding h2').each(function()
+    {
+      if (sectionId != $(this).attr('id'))
+      {
+        $(this).removeClass('open');
+        $(this).next('div').hide();
+      }
+      else
+      {
+        $(this).addClass('open');
+        $(this).next('div').show();
+      }
+    });
+    
+    $.scrollTo('#'+sectionId, 1000);
+    return false;
   });
 
 
-	// ------------------------------------------------------------------------------
-	// Opening and closing each section with a "sliding" animation.
-	// ------------------------------------------------------------------------------
-	$(document).on('click', 'section.folding h2', function()
-	{
-		var $header = $(this);
-		var $content = $header.next('div');
-		
-		if ($content.not(':animated'))
-		{
-			var state = $content.is(':visible');
-			if (state)
-			{
-				$header.removeClass('open');
-				$content.slideUp(800);
-			}
-			else
-			{
-				$header.addClass('open');
-				$content.slideDown(800);
-			}
-		}
-	});
-	
-	
+  // ------------------------------------------------------------------------------
+  // Opening and closing each section with a "sliding" animation.
+  // ------------------------------------------------------------------------------
+  $(document).on('click', 'section.folding h2', function()
+  {
+    var $header = $(this);
+    var $content = $header.next('div');
+    
+    if ($content.not(':animated'))
+    {
+      var state = $content.is(':visible');
+      if (state)
+      {
+        $header.removeClass('open');
+        $content.slideUp(800);
+      }
+      else
+      {
+        $header.addClass('open');
+        $content.slideDown(800);
+      }
+    }
+  });
+  
 });
 
 
@@ -241,6 +240,6 @@ function msg(message, type)
 // ------------------------------------------------------------------------------
 function backToTop()
 {
-	$.scrollTo('#wrapper', 900);
+  $.scrollTo('#wrapper', 900);
 }
 

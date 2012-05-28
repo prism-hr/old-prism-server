@@ -79,7 +79,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		application.setStatus(ApplicationFormStatus.APPROVED);
 		application.setProjectTitle("bob");
 		application.setApplicationAdministrator(applicationAdmin);
-
+		application.setApplicationNumber("ABC");
 		assertNotNull(application.getPersonalDetails());
 		assertNull(application.getId());
 
@@ -106,6 +106,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(lastUpdatedDate, application.getLastUpdated());
 		assertNull(application.getPersonalDetails().getId());
 		assertEquals(applicationAdmin, application.getApplicationAdministrator());
+		assertEquals("ABC", application.getApplicationNumber());
 	}
 
 	@Test

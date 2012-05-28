@@ -178,7 +178,7 @@ public class ReviewCommentControllerTest {
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		commentServiceMock.save(comment);
 		EasyMock.replay(errorsMock, commentServiceMock);
-		assertEquals("redirect:/review/assignReviewers?applicationId=" + applicationForm.getId(), controller.addComment(comment, errorsMock));
+		assertEquals("redirect:/review/assignReviewers?applicationId=" + applicationForm.getApplicationNumber(), controller.addComment(comment, errorsMock));
 		EasyMock.verify(errorsMock, commentServiceMock);
 		
 	

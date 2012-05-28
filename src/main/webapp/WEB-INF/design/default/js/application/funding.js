@@ -127,7 +127,11 @@ $(document).ready(function(){
 	
 	bindDatePicker('#fundingAwardDate');
 	addToolTips();
-		
+
+  // Generic file upload solution...
+	watchUpload($('#fundingDocument'));
+
+/*
 	$('#fundingUploadFields').on('change','#fundingDocument', function(event){	
 		if(this.files[0].size < 10485760){
 			fundingDocumentDelete();
@@ -139,7 +143,7 @@ $(document).ready(function(){
 			 alert("Sorry, document must be at most 10MB.");
 		 }
 	});
-	
+*/
 		
 });
 

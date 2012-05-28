@@ -1,0 +1,1 @@
+ALTER TABLE APPLICATION_FORM ADD last_submission_notification DATE DEFAULT NULL;

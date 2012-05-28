@@ -89,31 +89,28 @@
 								<div>
 									<form>
 									
-										<div class="row-group">			
-											<section id="assignSupervisorsToAppSection">
-											
-												<div class="row">
-													<label class="label">Supervisors</label>
-													<div class="field">
-														<p>
-															<strong>Available Supervisors</strong>
-														</p>
-														<select id="programSupervisors" class="max" multiple="multiple" size="${avaliableOptionsSize}">
-															<option value="" disabled="disabled" id="default">Default supervisors</option>
-															<#list programmeSupervisors as supervisor>
-															  <option value="${applicationForm.id?string("######")}|${supervisor.id?string('#####')}" category="default">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
-															</#list>
-															<option value="" disabled="disabled"></option>
-															<option value="" disabled="disabled" id="previous">Previous supervisors in this programme</option>
-															
-															<#list previousSupervisors as supervisor>
-															  <option value="${applicationForm.id?string("######")}|${supervisor.id?string('#####')}" category="previous">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
-															</#list>							
-															<option value="" disabled="disabled"></option>								
-														</select>
-													</div>
+										<div class="row-group" id="assignSupervisorsToAppSection">			
+											<div class="row">
+												<label class="label">Supervisors</label>
+												<div class="field">
+													<p>
+														<strong>Available Supervisors</strong>
+													</p>
+													<select id="programSupervisors" class="max" multiple="multiple" size="${avaliableOptionsSize}">
+														<option value="" disabled="disabled" id="default">Default supervisors</option>
+														<#list programmeSupervisors as supervisor>
+															<option value="${applicationForm.id?string("######")}|${supervisor.id?string('#####')}" category="default">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
+														</#list>
+														<option value="" disabled="disabled"></option>
+														<option value="" disabled="disabled" id="previous">Previous supervisors in this programme</option>
+														
+														<#list previousSupervisors as supervisor>
+															<option value="${applicationForm.id?string("######")}|${supervisor.id?string('#####')}" category="previous">${supervisor.firstName?html} ${supervisor.lastName?html} <#if !supervisor.enabled> - Pending</#if></option>
+														</#list>							
+														<option value="" disabled="disabled"></option>								
+													</select>
 												</div>
-											</section>	          				
+											</div>
 						
 					
 											<!-- Available Supervisor Buttons -->
@@ -126,7 +123,7 @@
 												</div>
 											</div>
 						
-										<!-- Already supervisors of this application -->
+											<!-- Already supervisors of this application -->
 											<div class="row">
 												<div class="field">
 													<p>
@@ -152,7 +149,7 @@
 												</div>
 											</div>
 											<@spring.bind "approvalRound.supervisors" /> 
-				                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+										 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
 										
 										<!-- Create supervisor -->
@@ -168,30 +165,31 @@
 											</p>									
 											
 											<div class="row">
-				                               	<label class="label normal">Supervisor First Name<em>*</em></label> 
-			                                   	<div class="field">
-				                                   <input class="full" type="text" name="newSupervisorFirstName" id="newSupervisorFirstName" value="${(supervisor.firstName?html)!}"/>
-				                               	</div>
-				                               	<@spring.bind "supervisor.firstName" /> 
-					                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
-					                        </div>
-			                                <div class="row">
-			                                    <label class="label normal">Supervisor Last Name<em>*</em></label>
-			                                    <div class="field">
-			                                        <input class="full" type="text" name="newSupervisorLastName" id="newSupervisorLastName" value="${(supervisor.lastName?html)!}"/>			                                      
-			                                    </div>
-			                                      <@spring.bind "supervisor.lastName" /> 
-				                			   		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-			                                </div>
-					                                
-				                             <div class="row">
-			                                	<label class="label normal">Email<em>*</em></label>
-		                                        <div class="field">
-		                                         	<input class="full" type="text"  name="newSupervisorEmail" id="newSupervisorEmail" value="${(supervisor.email?html)!}"/>			                                         
-		                                        </div>
-		                                         <@spring.bind "supervisor.email" /> 
-			                			   		 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-				                             </div>
+												<label class="label normal">Supervisor First Name<em>*</em></label> 
+													<div class="field">
+														<input class="full" type="text" name="newSupervisorFirstName" id="newSupervisorFirstName" value="${(supervisor.firstName?html)!}"/>
+													</div>
+													<@spring.bind "supervisor.firstName" /> 
+												 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
+											</div>
+											
+											<div class="row">
+												<label class="label normal">Supervisor Last Name<em>*</em></label>
+												<div class="field">
+													<input class="full" type="text" name="newSupervisorLastName" id="newSupervisorLastName" value="${(supervisor.lastName?html)!}"/>			                                      
+												</div>
+												<@spring.bind "supervisor.lastName" /> 
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											</div>
+											
+											<div class="row">
+												<label class="label normal">Email<em>*</em></label>
+												<div class="field">
+													<input class="full" type="text"  name="newSupervisorEmail" id="newSupervisorEmail" value="${(supervisor.email?html)!}"/>			                                         
+												</div>
+												<@spring.bind "supervisor.email" /> 
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											</div>
 										
 											<div class="row">
 												<div class="field">
@@ -204,7 +202,7 @@
 															
 										<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/>
 										<input type="hidden" id="approvalRoundId" name="approvalRoundId" value="${(approvalRound.id?string("######"))!}"/>  
-									</div>
+
 								</form>
 							</div>
 						</section>

@@ -125,7 +125,7 @@ function watchUpload($field)
   $container.on('change', $field, function()
   {
     var input    = this.children[0];
-    var $hidden  = $container.find('input[type="hidden"]');
+    var $hidden  = $container.find('span input');
 		if (input.files[0].size < 10485760) // 10MB in bytes
     {
 			deleteUploadedFile($hidden);
@@ -152,7 +152,7 @@ function deleteUploadedFile($hidden_field)
 function doUpload($upload_field)
 {	
   var $container  = $upload_field.parent('div.field');
-  var $hidden     = $container.find('input[type="hidden"]');
+  var $hidden     = $container.find('span input');
   var $hfParent   = $hidden.parent();
   var $progress   = $container.find('span.progress');
 
@@ -184,11 +184,11 @@ function doUpload($upload_field)
 				$container.append(data);
         console.log(data);
       }
-      /*else if ()
+      else if ($(data).find('span[name=supportingDocumentSpan]').length == 0)
       {
         // There was a server error.
-        console.log(data);
-      }*/
+        $container.append('<span class="invalid">Could not upload file.</span>');
+      }
 			else
 			{
 				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.

@@ -11,7 +11,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -50,6 +49,9 @@ public class RegisterController {
 		RegisteredUser record = new RegisteredUser();
 		if (userId != null) {
 			RegisteredUser suggestedUser = userService.getUser(userId);
+			if (suggestedUser == null) {
+				throw new ResourceNotFoundException();
+			}
 			record.setFirstName(suggestedUser.getFirstName());
 			record.setLastName(suggestedUser.getLastName());
 			record.setEmail(suggestedUser.getEmail());

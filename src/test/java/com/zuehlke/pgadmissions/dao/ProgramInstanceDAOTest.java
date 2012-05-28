@@ -153,4 +153,26 @@ public class ProgramInstanceDAOTest extends AutomaticRollbackTestCase {
 		List<ProgramInstance> matchedInstances = dao.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, StudyOption.FULL_TIME);
 		assertFalse(matchedInstances.contains(programInstance));
 	}
+	
+	
+	@Test
+	public void shouldFindProgramInstanceForToday(){
+		Program program = new ProgramBuilder().code("aaaaa").title("hi").toProgram();
+		save(program);
+		Date now = Calendar.getInstance().getTime();
+		Date eightMonthsAgo = DateUtils.addMonths(now, -8);
+		Date fourMonthsFromNow = DateUtils.addMonths(now, 4);
+		Date oneYearAndfourMonthsFromNow = DateUtils.addMonths(now, 16);
+		ProgramInstance programInstanceOne = new ProgramInstanceBuilder().program(program).applicationDeadline(eightMonthsAgo).sequence(1).studyOption(StudyOption.FULL_TIME_DISTANCE).toProgramInstance();
+		
+		ProgramInstance programInstanceTwo = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow).sequence(2).studyOption(StudyOption.FULL_TIME_DISTANCE).toProgramInstance();
+		ProgramInstance programInstanceThree = new ProgramInstanceBuilder().program(program).applicationDeadline(oneYearAndfourMonthsFromNow).sequence(3).studyOption(StudyOption.FULL_TIME_DISTANCE).toProgramInstance();
+		ProgramInstance programInstanceFour = new ProgramInstanceBuilder().program(program).applicationDeadline(fourMonthsFromNow).sequence(4).studyOption(StudyOption.PART_TIME).toProgramInstance();
+		save(programInstanceOne,  programInstanceThree,programInstanceFour, programInstanceTwo);
+		flushAndClearSession();
+		
+		ProgramInstanceDAO dao = new ProgramInstanceDAO(sessionFactory);
+		ProgramInstance programInstance = dao.getCurrentProgramInstanceForStudyOption(program, StudyOption.FULL_TIME_DISTANCE);
+		assertEquals(programInstanceTwo, programInstance);
+	}
 }

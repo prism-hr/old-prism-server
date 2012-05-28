@@ -1,10 +1,21 @@
 package com.zuehlke.pgadmissions.domain;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+
+import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Test;
+
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
+import com.zuehlke.pgadmissions.interceptors.KeyContextHolder;
 
 public class DomainObjectTest {
 	@Test
@@ -83,6 +94,33 @@ public class DomainObjectTest {
 		objectTwo.setId(1);
 		assertEquals(objectOne.hashCode(), objectTwo.hashCode());
 
+	}
+	
+	@Test
+	public void shouldReturnEncryptedId() throws Exception{
+		String random = RandomStringUtils.randomAlphanumeric(16);
+		System.err.println(random);
+		SecretKeySpec key = new SecretKeySpec(random.getBytes(), "AES");
+		KeyContextHolder.setContext(key);
+		Integer id = 5;
+		EncryptionHelper encryptionHelper = new EncryptionHelper();
+		String encryptedId = encryptionHelper.encrypt(id.toString());
+		DomainObject<Integer> objectOne = new MyDomainObject();
+		objectOne.setId(id);
+		assertEquals(encryptedId, objectOne.getEncryptedId());
+	}
+
+	@Test
+	public void shouldReturnNullIfIdIsNull() throws Exception{
+		String random = RandomStringUtils.randomAlphanumeric(16);
+		System.err.println(random);
+		SecretKeySpec key = new SecretKeySpec(random.getBytes(), "AES");
+		KeyContextHolder.setContext(key);
+
+				
+		DomainObject<Integer> objectOne = new MyDomainObject();
+
+		assertNull(objectOne.getEncryptedId());
 	}
 
 	@SuppressWarnings("serial")

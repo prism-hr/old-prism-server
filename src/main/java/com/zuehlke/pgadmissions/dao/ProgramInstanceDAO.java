@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -47,6 +48,19 @@ public class ProgramInstanceDAO {
 				.add(Restrictions.eq("studyOption", studyOption))
 				.add(Restrictions.ge("applicationDeadline", today))
 				.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public ProgramInstance getCurrentProgramInstanceForStudyOption(Program program, StudyOption studyOption) {
+		Date today = DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE);
+		List<ProgramInstance> futureInstances = sessionFactory.getCurrentSession()
+				.createCriteria(ProgramInstance.class)
+				.add(Restrictions.eq("program", program))
+				.add(Restrictions.eq("studyOption", studyOption))
+				.add(Restrictions.ge("applicationDeadline", today))		
+				.addOrder(Order.asc("applicationDeadline"))
+				.list();
+			return futureInstances.get(0);
 	}
 
 }

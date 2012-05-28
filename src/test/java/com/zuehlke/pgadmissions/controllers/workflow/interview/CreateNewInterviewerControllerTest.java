@@ -1,8 +1,6 @@
 package com.zuehlke.pgadmissions.controllers.workflow.interview;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.services.InterviewService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -45,7 +44,7 @@ public class CreateNewInterviewerControllerTest {
 		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, null, null)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application.getId())).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		EasyMock.expect(
@@ -69,7 +68,7 @@ public class CreateNewInterviewerControllerTest {
 		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, null, null)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application.getId())).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		EasyMock.expect(
@@ -96,7 +95,7 @@ public class CreateNewInterviewerControllerTest {
 		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, null, null)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application.getId())).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		ModelAndView modelAndView = controller.createInterviewerForNewInterview(user, bindingResultMock, application, pedningInterviewers, Collections.EMPTY_LIST);

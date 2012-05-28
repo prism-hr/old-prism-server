@@ -189,9 +189,11 @@
 											<div class="row">
 												<div class="field">
 													<button class="blue" type="button" id="createReviewer">Create reviewer</button>
-													<button class="blue" type="button" id="moveToReviewBtn">Continue</button>
-										
 												</div>
+											</div>
+											
+											<div class="buttons">
+												<button class="blue" type="button" id="moveToReviewBtn">Continue</button>
 											</div>
 										</div>
 															

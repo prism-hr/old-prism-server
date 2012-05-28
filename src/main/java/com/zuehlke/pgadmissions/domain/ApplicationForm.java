@@ -35,6 +35,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	private static final long serialVersionUID = -7671357234815343496L;
 	
+	@Column(name = "application_number")
+	private String applicationNumber;
+	
 	@ManyToOne
 	@JoinColumn(name = "app_administrator_id")
 	private RegisteredUser applicationAdministrator;
@@ -157,7 +160,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	@OneToOne(mappedBy = "application")
 	private AdditionalInformation additionalInformation;
-
 
 
 	@Column(name = "reject_notification_date")
@@ -601,6 +603,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setApplicationAdministrator(RegisteredUser applicationAdministrator) {
 		this.applicationAdministrator = applicationAdministrator;
+	}
+
+	public String getApplicationNumber() {
+		return applicationNumber;
+	}
+
+	public void setApplicationNumber(String applicationNumber) {
+		this.applicationNumber = applicationNumber;
 	}
 
 }

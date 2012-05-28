@@ -70,14 +70,14 @@
 		            
 		          	<div class="row half">
 		            	<label>Application Number</label>
-		              <input disabled size="20" value="${model.applicationForm.id?string("######")!}" />
+		              <input disabled size="20" value="${model.applicationForm.applicationNumber}" />
 		            </div>
 		          </div>
 				<div id ="actions">
 
 			<#if model.applicationForm.isModifiable()  && ( model.user.hasAdminRightsOnApplication(applicationForm) ||  model.user.isInRoleInProgram('APPROVER', model.applicationForm.program))>
 					<form id="approvalForm" action="<@spring.url '/approveOrReject'/>" method = "POST">
-						<input type="hidden" name="id" value="${model.applicationForm.id?string("######")!}"/>
+						<input type="hidden" name="id" value="${model.applicationForm.applicationNumber!}"/>
 			          	<div class="row">
 			          		<#if model.user.isInRoleInProgram('APPROVER', model.applicationForm.program) && model.applicationForm.isInState('APPROVAL')>
 			            		<label><input type="radio" name="decision" value="APPROVED"/> Approve</label>

@@ -55,7 +55,7 @@
 					<!-- FLOATING TOOLBAR -->
 		            <ul id="view-toolbar">
 		            	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-		                <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
+		                <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" title="Print">Print</a></li>
 					</ul>
 
 				<!-- content box -->
@@ -71,7 +71,7 @@
 					            
 					        <div class="row">
 					        	<label class="label">Application Number</label>
-					            ${applicationForm.id?string("######")} 
+					            ${applicationForm.applicationNumber} 
 					        </div>
 					        
 					        <#if applicationForm.isSubmitted()>
@@ -132,7 +132,7 @@
 										</div>
 									</div>
 									
-									<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/> 
+									<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/> 
 								</form>
 							</div>
 						</section>

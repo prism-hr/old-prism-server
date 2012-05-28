@@ -6,7 +6,7 @@
     
   	<div class="row">
     	<label>Application Number</label>
-        ${applicationForm.id?string("######")}
+        ${applicationForm.applicationNumber}
     </div>
     
      

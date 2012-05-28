@@ -80,14 +80,14 @@
 					            </thead>
 					            <tbody>
 					            	<#list applications as application>
-							        	<tr id="row_${application.id?string("######")}" name="applicationRow">
+							        	<tr id="row_${application.applicationNumber}" name="applicationRow">
 							                <td><a class="row-arrow" href="#">&gt;</a></td>
-							                <td name="idColumn">${application.id?string("######")}</td>
+							                <td name="idColumn">${application.applicationNumber}</td>
 							                <td class="applicant-name">${application.applicant.firstName} ${application.applicant.lastName}</td>
 							                <td>${application.program.code} - ${application.program.title}</td>								                
 							               	<td id="statusColumn" name="statusColumn">${application.status.displayValue()}</td>
 							                <td class="centre">
-							                	<select class="actionType" name="app_[${application.id?string('#####')}]">
+							                	<select class="actionType" name="app_[${application.applicationNumber}]">
 							                		<option>Select...</option>
 							                		<option value="view">View</option>
 							                		<option value="print">Print</option>
@@ -125,7 +125,7 @@
 							                  	</select>
 							                </td>
 							                <td class="centre">${(application.submittedDate?string("dd MMM yyyy"))!}</td>							  
-							                <td class="centre"><input type="checkbox" name="appDownload" id="appDownload_${application.id?string('#####')}"/></td>
+							                <td class="centre"><input type="checkbox" name="appDownload" id="appDownload_${application.applicationNumber}"/></td>
 						              	</tr>
 					              	</#list>
 					            </tbody>

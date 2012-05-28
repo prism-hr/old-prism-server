@@ -59,7 +59,7 @@
 											<form method="POST" action= "<@spring.url '/comment'/>">
 												<div class="row-group">
 													<h3>Add comment</h3>
-													<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
+													<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 													<div class="row">
 														<span class="plain-label">Comment</span>
 														<div class="field">		            				
@@ -78,7 +78,7 @@
 										</div>
 									</section>
 			  				<#else>
-			  					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
+			  					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 		  					</#if>
 		  					<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 		  					

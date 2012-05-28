@@ -25,7 +25,7 @@
     <div id="personal-details-section" class="open">
 		<form method="post" method = "GET">
             <input type ="hidden" id="view-type-personal-form" value="${viewType}"/>
-            <input type="hidden" name="id" value="${applicationForm.id?string("######")}"/>
+            <input type="hidden" name="id" value="${applicationForm.applicationNumber}"/>
             <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
               	
             <!-- Basic Details -->

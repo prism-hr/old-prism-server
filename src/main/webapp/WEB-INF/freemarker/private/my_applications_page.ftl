@@ -107,7 +107,7 @@
 									    			<#if !user.isInRole('APPLICANT') && !user.isRefereeOfApplicationForm(application)>
 								    					<option value="comment">Comment</option>								    				
 								      				</#if>      												
-							                	    <#if (user.isReviewerInLatestReviewRoundOfApplicationForm(application) || user.hasAdminRightsOnApplication(application)) && application.isInState('REVIEW') && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn() >
+							                	    <#if (user.isReviewerInLatestReviewRoundOfApplicationForm(application) && user.hasRespondedToProvideReviewForApplication(application))>
       													<option value="assignReviewer">Assign Reviewer</option>
         		  									</#if>							                	   
 									    			<#if user.isReviewerInLatestReviewRoundOfApplicationForm(application) && application.isInState('REVIEW') && !user.hasRespondedToProvideReviewForApplication(application)> 

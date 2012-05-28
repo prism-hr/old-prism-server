@@ -354,7 +354,7 @@
     	</div>
 	
        <#if applicationForm.isModifiable() && !applicationForm.isInState('UNSUBMITTED') && (referee.id?? || applicationForm.referees?size &lt; 3)>
-       <div class="terms-box">
+       <div class="row-group terms-box">
 			<div class="row">
 				<span class="terms-label">
 					I understand that in accepting this declaration I am confirming

@@ -565,7 +565,7 @@ public class UserServiceTest {
 		
 		EasyMock.verify(userDAOMock, userFactoryMock);
 		assertEquals(newUser, createdUser);				
-		assertEquals("/pgadmissions/reviewFeedback?applicationId=1", createdUser.getDirectToUrl());				
+		assertEquals("/reviewFeedback?applicationId=1", createdUser.getDirectToUrl());				
 		
 		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
 		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
@@ -590,7 +590,7 @@ public class UserServiceTest {
 		
 		EasyMock.verify(userDAOMock, userFactoryMock);
 		assertEquals(newUser, createdUser);				
-		assertEquals("/pgadmissions/interviewFeedback?applicationId=1", createdUser.getDirectToUrl());				
+		assertEquals("/interviewFeedback?applicationId=1", createdUser.getDirectToUrl());				
 		
 		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
 		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
@@ -615,7 +615,7 @@ public class UserServiceTest {
 		
 		EasyMock.verify(userDAOMock, userFactoryMock);
 		assertEquals(newUser, createdUser);				
-		assertEquals("/pgadmissions/referee/addReferences?application=1", createdUser.getDirectToUrl());				
+		assertEquals("/referee/addReferences?application=1", createdUser.getDirectToUrl());				
 		
 		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
 		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());

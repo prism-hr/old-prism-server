@@ -4,7 +4,7 @@
 	<form> 
 		<div class="row-group">      
 			<div class="row">
-				<input type="hidden" id="ATapplicationFormId" name="applicationId" 	value="${applicationForm.id?string("######")}"/>
+				<input type="hidden" id="ATapplicationFormId" name="applicationId" 	value="${applicationForm.applicationNumber}"/>
 				<span class="terms-label">
 			    	I understand that in accepting this declaration I am confirming
 					that the information contained in this application is true and accurate. 

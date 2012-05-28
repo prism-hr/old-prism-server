@@ -53,7 +53,7 @@
 			<div class="content-box">
 				<div class="content-box-inner">
 					<#include "/private/common/parts/application_info.ftl"/>
-					<input type="hidden" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
+					<input type="hidden" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 					
 					<section class="form-rows">
 						<div>
@@ -137,7 +137,7 @@
 									<label class="plain-label">Delegate interview management to</label>
 									<div class="field">		   
 										<form id="delegateForm" method ="POST" action="<@spring.url '/delegate' />">   
-											<input type="hidden" name = "applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>     				
+											<input type="hidden" name = "applicationId" value =  "${(applicationForm.applicationNumber)!}"/>     				
 											<select class="max" name="applicationAdministrator" id="appliationAdmin" disabled="disabled">
 												<option value="">Select...</option>
 												<#list reviewersWillingToInterview as reviewerWillingToInterview>

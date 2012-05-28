@@ -137,14 +137,14 @@
             
             <div id="tools">
 								<ul class="left">
-										<li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>">Print Page</a></li>
+										<li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Print Page</a></li>
 								</ul>
 						</div>
             
             <!-- FLOATING TOOLBAR -->
 						<ul id="view-toolbar">
 							<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-								<li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
+								<li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" title="Print">Print</a></li>
 								
 								<li class="tool-separator"><a href="#"></a></li>
 								
@@ -175,7 +175,7 @@
 									
 									<div class="row">
 										<label class="label">Application Number</label>
-										${applicationForm.id?string("######")} 
+										${applicationForm.applicationNumber} 
 									</div>
 									<#if applicationForm.isSubmitted()>
 										<div class="row">
@@ -187,7 +187,7 @@
 								</div>
 					
 								<hr/>
-                <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/>
+                <input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
                 
         
 								<section id="programmeDetailsSection" class="folding form-rows violet <#if programDetailsError || studyOptionError>error</#if>">                      
@@ -238,13 +238,13 @@
                           <#include "/private/common/modal_window.ftl">
                         
                     <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
-                      <input type="hidden" id="wapplicationFormId" name="applicationId"   value="${applicationForm.id?string("######")}"/>
+                      <input type="hidden" id="wapplicationFormId" name="applicationId"   value="${applicationForm.applicationNumber}"/>
                       <button id="withdrawButton" class="blue">Withdraw</button>
                       <a class="button" href="<@spring.url '/applications'/>">Close</a>                        
                     </form>                                      
                         <#elseif !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>                     
                            <form id="submitApplicationForm" action="<@spring.url "/submit"/>" method="POST">
-                                <input type="hidden" id="applicationFormId" name="applicationId" value="${applicationForm.id?string("######")}"/>
+                                <input type="hidden" id="applicationFormId" name="applicationId" value="${applicationForm.applicationNumber}"/>
                                 <button id="submitAppButton" type="button" class="blue">Submit</button>
                                 <a class="button" href="<@spring.url '/applications'/>">Close</a>
                     </form>

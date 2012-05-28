@@ -68,7 +68,7 @@
 			    <!-- "Tools" -->
                 <div id="tools">
                     <ul class="left">
-                        <li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>">Print Page</a></li>
+                        <li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Print Page</a></li>
                     </ul>
     
                 </div>
@@ -77,7 +77,7 @@
 			      <!-- FLOATING TOOLBAR -->
 		          <ul id="view-toolbar">
 		          	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-		          	<li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
+		          	<li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" title="Print">Print</a></li>
 		          </ul>
 			      
 			      

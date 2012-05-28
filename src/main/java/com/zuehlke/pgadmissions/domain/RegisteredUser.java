@@ -21,6 +21,8 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import sun.reflect.generics.visitor.Reifier;
+
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -543,7 +545,8 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.notificationRecords.addAll(notificationRecords);
 	}
 
-	public boolean hasRespondedToProvideReviewForApplication(ApplicationForm application) {
+	public boolean hasRespondedToProvideReviewForApplication(ApplicationForm application) {	
+		
 		for (Comment comment : comments) {
 			if (comment.getApplication().equals(application) && comment.getType().equals(CommentType.REVIEW)) {
 				return true;

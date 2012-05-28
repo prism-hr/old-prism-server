@@ -39,7 +39,7 @@ public class CreateNewReviewerControllerTest {
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewReviewRoundForNewReviewRoundUserIfUserDoesNotExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application.getId())).andReturn(user);
@@ -52,7 +52,7 @@ public class CreateNewReviewerControllerTest {
 		ModelAndView modelAndView = controller.createReviewerForNewReviewRound(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/review/moveToReview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(5)));
@@ -63,7 +63,7 @@ public class CreateNewReviewerControllerTest {
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewReviewRoundForExistingReviewRoundUserIfUserDoesNotExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application.getId())).andReturn(user);
@@ -76,7 +76,7 @@ public class CreateNewReviewerControllerTest {
 		ModelAndView modelAndView = controller.createReviewerForExistingReviewRound(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/review/assignReviewers", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(5)));
@@ -90,7 +90,7 @@ public class CreateNewReviewerControllerTest {
 		List<RegisteredUser> pedningReviewers = new ArrayList<RegisteredUser>(Arrays.asList(new RegisteredUserBuilder().id(1).toUser(),
 				new RegisteredUserBuilder().id(2).toUser()));
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application.getId())).andReturn(user);
@@ -100,7 +100,7 @@ public class CreateNewReviewerControllerTest {
 
 		Assert.assertEquals("redirect:/review/moveToReview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(3, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(1, 2, 5)));
@@ -112,7 +112,7 @@ public class CreateNewReviewerControllerTest {
 
 		EasyMock.reset(userServiceMock);
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(new ProgramBuilder().toProgram())
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").program(new ProgramBuilder().toProgram())
 				.latestReviewRound(new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(user).toReviewer()).toReviewRound()).toApplicationForm();
 
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(user);
@@ -126,7 +126,7 @@ public class CreateNewReviewerControllerTest {
 
 		Assert.assertEquals("redirect:/review/moveToReview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertTrue(newUser.isEmpty());
 		assertEquals("message", modelAndView.getModel().get("message"));
@@ -139,7 +139,7 @@ public class CreateNewReviewerControllerTest {
 		List<RegisteredUser> pedningReviewers = new ArrayList<RegisteredUser>(Arrays.asList(existingPendingReviewer));
 		EasyMock.reset(userServiceMock);
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(new ProgramBuilder().toProgram())
+		ApplicationForm application = new ApplicationFormBuilder().applicationNumber("ABC").id(2).program(new ProgramBuilder().toProgram())
 				.latestReviewRound(new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(user).toReviewer()).toReviewRound()).toApplicationForm();
 
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingPendingReviewer);
@@ -153,7 +153,7 @@ public class CreateNewReviewerControllerTest {
 
 		Assert.assertEquals("redirect:/review/moveToReview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
 		assertEquals((Integer) 1, newUser.get(0));
@@ -165,7 +165,7 @@ public class CreateNewReviewerControllerTest {
 	public void shouldAddUserToPendingReviewersIfExistingUserInPreviousReviewerOfProgram() {
 		RegisteredUser existingPreviousReviewer = new RegisteredUserBuilder().id(8).firstName("Robert").lastName("Bobson").email("bobson@bob.com").toUser();
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingPreviousReviewer);
 		EasyMock.replay(userServiceMock);
@@ -179,7 +179,7 @@ public class CreateNewReviewerControllerTest {
 				Arrays.asList(existingPreviousReviewer));
 		Assert.assertEquals("redirect:/review/moveToReview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(8)));
@@ -191,7 +191,7 @@ public class CreateNewReviewerControllerTest {
 	public void shouldAddUserToPendingReviewersIfExistingUserIsDefaultReviewRoundOfProgram() {
 		RegisteredUser existingDefaultReviewer = new RegisteredUserBuilder().id(8).firstName("Robert").lastName("Bobson").email("bobson@bob.com").toUser();
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(new ProgramBuilder().reviewers(existingDefaultReviewer).toProgram())
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").program(new ProgramBuilder().reviewers(existingDefaultReviewer).toProgram())
 				.toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingDefaultReviewer);
@@ -205,7 +205,7 @@ public class CreateNewReviewerControllerTest {
 		ModelAndView modelAndView = controller.createReviewerForNewReviewRound(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/review/moveToReview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(8)));
@@ -217,7 +217,7 @@ public class CreateNewReviewerControllerTest {
 	public void shouldAddExistingUserToPendingIfUserExistsAndIsNewToAppAndProgram() {
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(8).firstName("Robert").lastName("Bobson").email("bobson@bob.com").toUser();
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(new ProgramBuilder().toProgram()).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").program(new ProgramBuilder().toProgram()).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingUser);
 		EasyMock.replay(userServiceMock);
@@ -230,7 +230,7 @@ public class CreateNewReviewerControllerTest {
 		ModelAndView modelAndView = controller.createReviewerForNewReviewRound(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/review/moveToReview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(8)));

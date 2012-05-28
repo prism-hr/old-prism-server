@@ -41,7 +41,7 @@ public class CreateNewInterviewerControllerTest {
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewInterviewForNewInterviewUserIfUserDoesNotExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application.getId())).andReturn(user);
@@ -54,7 +54,7 @@ public class CreateNewInterviewerControllerTest {
 		ModelAndView modelAndView = controller.createInterviewerForNewInterview(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/interview/moveToInterview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(5)));
@@ -65,7 +65,7 @@ public class CreateNewInterviewerControllerTest {
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewInterviewForExistingInterviewUserIfUserDoesNotExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application.getId())).andReturn(user);
@@ -78,7 +78,7 @@ public class CreateNewInterviewerControllerTest {
 		ModelAndView modelAndView = controller.createInterviewerForExistingInterview(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/interview/assignInterviewers", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(5)));
@@ -92,7 +92,7 @@ public class CreateNewInterviewerControllerTest {
 		List<RegisteredUser> pedningInterviewers = new ArrayList<RegisteredUser>(Arrays.asList(new RegisteredUserBuilder().id(1).toUser(),
 				new RegisteredUserBuilder().id(2).toUser()));
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, application.getId())).andReturn(user);
@@ -102,7 +102,7 @@ public class CreateNewInterviewerControllerTest {
 
 		Assert.assertEquals("redirect:/interview/moveToInterview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(3, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(1, 2, 5)));
@@ -114,7 +114,7 @@ public class CreateNewInterviewerControllerTest {
 
 		EasyMock.reset(userServiceMock);
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(new ProgramBuilder().toProgram())
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").program(new ProgramBuilder().toProgram())
 				.latestInterview(new InterviewBuilder().interviewers(new InterviewerBuilder().user(user).toInterviewer()).toInterview()).toApplicationForm();
 
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(user);
@@ -128,7 +128,7 @@ public class CreateNewInterviewerControllerTest {
 
 		Assert.assertEquals("redirect:/interview/moveToInterview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertTrue(newUser.isEmpty());
 		assertEquals("message", modelAndView.getModel().get("message"));
@@ -141,7 +141,7 @@ public class CreateNewInterviewerControllerTest {
 		List<RegisteredUser> pedningInterviewers = new ArrayList<RegisteredUser>(Arrays.asList(existingPendingInterviewer));
 		EasyMock.reset(userServiceMock);
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(new ProgramBuilder().toProgram())
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").program(new ProgramBuilder().toProgram())
 				.latestInterview(new InterviewBuilder().interviewers(new InterviewerBuilder().user(user).toInterviewer()).toInterview()).toApplicationForm();
 
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingPendingInterviewer);
@@ -155,7 +155,7 @@ public class CreateNewInterviewerControllerTest {
 
 		Assert.assertEquals("redirect:/interview/moveToInterview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
 		assertEquals((Integer) 1, newUser.get(0));
@@ -167,7 +167,7 @@ public class CreateNewInterviewerControllerTest {
 	public void shouldAddUserToPendingInterviewersIfExistingUserInPreviousInterviewerOfProgram() {
 		RegisteredUser existingPreviousInterviewer = new RegisteredUserBuilder().id(8).firstName("Robert").lastName("Bobson").email("bobson@bob.com").toUser();
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingPreviousInterviewer);
 		EasyMock.replay(userServiceMock);
@@ -181,7 +181,7 @@ public class CreateNewInterviewerControllerTest {
 				Arrays.asList(existingPreviousInterviewer));
 		Assert.assertEquals("redirect:/interview/moveToInterview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(8)));
@@ -193,7 +193,7 @@ public class CreateNewInterviewerControllerTest {
 	public void shouldAddUserToPendingInterviewersIfExistingUserIsDefaultInterviewOfProgram() {
 		RegisteredUser existingDefaultInterviewer = new RegisteredUserBuilder().id(8).firstName("Robert").lastName("Bobson").email("bobson@bob.com").toUser();
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(new ProgramBuilder().interviewers(existingDefaultInterviewer).toProgram())
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").program(new ProgramBuilder().interviewers(existingDefaultInterviewer).toProgram())
 				.toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingDefaultInterviewer);
@@ -207,7 +207,7 @@ public class CreateNewInterviewerControllerTest {
 		ModelAndView modelAndView = controller.createInterviewerForNewInterview(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/interview/moveToInterview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(8)));
@@ -219,7 +219,7 @@ public class CreateNewInterviewerControllerTest {
 	public void shouldAddExistingUserToPendingIfUserExistsAndIsNewToAppAndProgram() {
 		RegisteredUser existingUser = new RegisteredUserBuilder().id(8).firstName("Robert").lastName("Bobson").email("bobson@bob.com").toUser();
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(new ProgramBuilder().toProgram()).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().applicationNumber("ABC").id(2).program(new ProgramBuilder().toProgram()).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingUser);
 		EasyMock.replay(userServiceMock);
@@ -232,7 +232,7 @@ public class CreateNewInterviewerControllerTest {
 		ModelAndView modelAndView = controller.createInterviewerForNewInterview(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/interview/moveToInterview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingInterviewer");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(8)));
@@ -267,7 +267,12 @@ public class CreateNewInterviewerControllerTest {
 		Interview interview = controller.getInterview(null);
 		assertNull(interview.getId());
 	}
-
+	
+	@Test
+	public void shouldReturnNewInterviewIfInterviewIdIsBlank(){
+		Interview interview = controller.getInterview("");
+		assertNull(interview.getId());
+	}
 	@Test
 	public void shouldReturnInterviewIfIdGiven(){
 		Interview interview = new InterviewBuilder().id(4).toInterview();

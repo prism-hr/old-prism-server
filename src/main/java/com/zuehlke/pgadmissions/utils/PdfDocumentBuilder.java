@@ -49,7 +49,7 @@ public class PdfDocumentBuilder {
 
 	public void buildDocument(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
 
-		document.add(new Paragraph("Application id: " + application.getId(), boldFont));
+		document.add(new Paragraph("Application id: " + application.getApplicationNumber(), boldFont));
 		document.add(new Paragraph("Applicant: " + application.getApplicant().getFirstName() + " " + application.getApplicant().getLastName(), boldFont));
 
 		addSectionSeparators(document);

@@ -113,7 +113,7 @@ public class CreateNewReviewerController extends ReviewController {
 	private ModelAndView getCreateReviewerModelAndView(ApplicationForm applicationForm, List<Integer> newUserIds, String message, String viewName) {
 
 		ModelAndView modelAndView = new ModelAndView(viewName);
-		modelAndView.getModel().put("applicationId", applicationForm.getId());
+		modelAndView.getModel().put("applicationId", applicationForm.getApplicationNumber());
 		modelAndView.getModel().put("pendingReviewer", newUserIds);
 		modelAndView.getModel().put("message", message);
 		return modelAndView;

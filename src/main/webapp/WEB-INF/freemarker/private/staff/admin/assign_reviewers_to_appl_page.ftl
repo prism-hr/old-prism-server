@@ -58,7 +58,7 @@
 					<!-- FLOATING TOOLBAR -->
 		            <ul id="view-toolbar">
 		            	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-		                <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.id?string("######")}'/>" title="Print">Print</a></li>
+		                <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" title="Print">Print</a></li>
 					</ul>
 
 				<!-- content box -->
@@ -74,7 +74,7 @@
 						            
 						        <div class="row">
 						        	<label class="label">Application Number</label>
-						            ${applicationForm.id?string("######")} 
+						            ${applicationForm.applicationNumber} 
 						        </div>
 						        
 						        <#if applicationForm.isSubmitted()>
@@ -100,13 +100,13 @@
 													<select id="programReviewers" multiple="multiple" size="${avaliableOptionsSize}">
 														<option value="" disabled="disabled" id="default">Default reviewers</option>
 														<#list programmeReviewers as reviewer>
-														<option value="${applicationForm.id?string("######")}|${reviewer.id?string('#####')}" category="default">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+														<option value="${applicationForm.applicationNumber}|${reviewer.id?string('#####')}" category="default">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
 														</#list>
 														<option value="" disabled="disabled"></option>
 														<option value="" disabled="disabled" id="previous">Previous reviewers in this programme</option>
 														
 														<#list previousReviewers as reviewer>
-														<option value="${applicationForm.id?string("######")}|${reviewer.id?string('#####')}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+														<option value="${applicationForm.applicationNumber}|${reviewer.id?string('#####')}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
 														</#list>							
 														<option value="" disabled="disabled"></option>								
 													</select>
@@ -133,12 +133,12 @@
 													</p>
 													<select id="applicationReviewers" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 														<#list applicationReviewers as reviewer>
-															<option value="${applicationForm.id?string("######")}|${reviewer.id?string('#####')}">
+															<option value="${applicationForm.applicationNumber}|${reviewer.id?string('#####')}">
 																${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if>
 															</option>
 														</#list>
 														<#list pendingReviewers as unsaved>									
-															<option value="${applicationForm.id?string("######")}|${unsaved.id?string('#####')}">
+															<option value="${applicationForm.applicationNumber}|${unsaved.id?string('#####')}">
 																${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if> (*)
 															</option>
 														</#list>
@@ -197,7 +197,7 @@
 											</div>
 										</div>
 															
-										<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/>
+										<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
 										<input type="hidden" id="reviewRoundId" name="reviewRoundId" value="${(reviewRound.id?string("######"))!}"/>  
 
 								</form>

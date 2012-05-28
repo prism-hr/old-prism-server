@@ -46,7 +46,7 @@ public class CreateNewSupervisorControllerTest {
 		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, null, null)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		EasyMock.expect(
@@ -70,7 +70,7 @@ public class CreateNewSupervisorControllerTest {
 		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, null, null)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		EasyMock.expect(
@@ -97,7 +97,7 @@ public class CreateNewSupervisorControllerTest {
 		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR)).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, null, null)).andReturn(user);
 		EasyMock.replay(userServiceMock);
 
 		ModelAndView modelAndView = controller.createSupervisorForNewApprovalRound(user, bindingResultMock, application, pedningSupervisors, Collections.EMPTY_LIST);

@@ -17,9 +17,17 @@ import org.springframework.web.servlet.ModelAndView;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
@@ -73,6 +81,7 @@ public class RegisterControllerTest {
 		assertSame(errorsMock, ((RegisterPageModel) modelAndView.getModel().get("model")).getResult());
 		EasyMock.verify(registrationServiceMock);
 	}
+	
 	@Ignore
 	@Test
 	public void shouldCreateAndSaveNewUserIfNoErrors(){
@@ -97,21 +106,35 @@ public class RegisterControllerTest {
 		EasyMock.verify(registrationServiceMock);
 	}
 	
-
-	
 	
 	@Test
-	public void shouldActivateAccountAndRedirectToDefaultViewIfNoProgram(){
+	public void shouldActivateAccountAndRedirectToApplicationListIfNoDirectURL(){
 		String activationCode = "ul5oaij68186jbcg";
-		RegisteredUser user = new RegisteredUserBuilder().id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
+		RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
 		EasyMock.expect(registrationServiceMock.findUserForActivationCode(activationCode)).andReturn(user);		
 		userServiceMock.save(user);
 		EasyMock.replay(registrationServiceMock);
-		ModelAndView modelAndView = registerController.activateAccountSubmit( activationCode);		
+		ModelAndView modelAndView = registerController.activateAccountSubmit(activationCode);		
 		EasyMock.verify(registrationServiceMock);
 		assertEquals("redirect:/applications", modelAndView.getViewName());
 		assertTrue(user.isEnabled());
 	}
+	
+	
+	@Test
+	public void shouldActivateAccountAndRedirectToDirectURLIfProvided(){
+		String activationCode = "ul5oaij68186jbcg";
+		RegisteredUser user = new RegisteredUserBuilder().directURL("/directLink").role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
+		EasyMock.expect(registrationServiceMock.findUserForActivationCode(activationCode)).andReturn(user);		
+		userServiceMock.save(user);
+		EasyMock.replay(registrationServiceMock);
+		ModelAndView modelAndView = registerController.activateAccountSubmit(activationCode);		
+		EasyMock.verify(registrationServiceMock);
+		assertEquals("redirect:/directLink", modelAndView.getViewName());
+		assertTrue(user.isEnabled());
+	}
+	
+	
 	
 	@Test
 	public void shouldCreatNewApplicationAndRedirectToItIfUserHasOriginalProgram(){
@@ -135,7 +158,7 @@ public class RegisterControllerTest {
 		String activationCode = "differentactivationcode";
 		EasyMock.expect(registrationServiceMock.findUserForActivationCode(activationCode)).andReturn(null);		
 		EasyMock.replay(registrationServiceMock);
-		ModelAndView modelAndView = registerController.activateAccountSubmit( activationCode);
+		ModelAndView modelAndView = registerController.activateAccountSubmit(activationCode);
 		assertEquals("public/register/register_info", modelAndView.getViewName());
 		RegisterPageModel model = (RegisterPageModel) modelAndView.getModel().get("model");
 		assertEquals("Sorry, the system was unable to process the activation request.", model.getMessage());

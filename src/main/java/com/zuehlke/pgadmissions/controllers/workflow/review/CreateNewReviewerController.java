@@ -18,6 +18,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
@@ -104,7 +105,7 @@ public class CreateNewReviewerController extends ReviewController {
 
 		}
 
-		RegisteredUser newUser = userService.createNewUserInRole(reviewer.getFirstName(), reviewer.getLastName(), reviewer.getEmail(), Authority.REVIEWER);
+		RegisteredUser newUser = userService.createNewUserInRole(reviewer.getFirstName(), reviewer.getLastName(), reviewer.getEmail(), Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, applicationForm.getId());
 		newUserIds.add(newUser.getId());
 		return getCreateReviewerModelAndView(applicationForm, newUserIds, getCreateReviewerMessage("assignReviewer.user.created", newUser), viewName);
 	}

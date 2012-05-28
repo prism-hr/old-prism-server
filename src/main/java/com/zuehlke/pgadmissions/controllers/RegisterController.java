@@ -11,6 +11,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
@@ -21,7 +23,7 @@ import com.zuehlke.pgadmissions.validators.RegisterFormValidator;
 @RequestMapping(value = { "/register" })
 public class RegisterController {
 
-	private static final String REGISTER_APPLICANT_VIEW_NAME = "public/register/register_applicant";
+	private static final String REGISTER_USERS_VIEW_NAME = "public/register/register_applicant";
 	private static final String REGISTER_INFO_VIEW_NAME = "public/register/register_info";
 	private static final String REGISTER_COMPLETE_VIEW_NAME = "/register/complete";
 	private final UserService userService;
@@ -53,9 +55,8 @@ public class RegisterController {
 			record.setEmail(suggestedUser.getEmail());
 			model.setIsSuggestedUser(userId);
 		}
-
 		model.setRecord(record);
-		return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
+		return new ModelAndView(REGISTER_USERS_VIEW_NAME, "model", model);
 	}
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
@@ -72,7 +73,7 @@ public class RegisterController {
 			RegisterPageModel model = new RegisterPageModel();
 			model.setRecord(record);
 			model.setResult(errors);
-			return new ModelAndView(REGISTER_APPLICANT_VIEW_NAME, "model", model);
+			return new ModelAndView(REGISTER_USERS_VIEW_NAME, "model", model);
 		}
 		registrationService.generateAndSaveNewUser(record, isSuggestedUser);
 
@@ -95,7 +96,12 @@ public class RegisterController {
 			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProgramOriginallyAppliedTo());
 			redirectView = redirectView + "/application?applicationId=" + newApplicationForm.getId();
 		} else {
-			redirectView = redirectView + "/applications";
+			if(user.getDirectToUrl() != null){
+				redirectView = redirectView + user.getDirectToUrl();
+			}
+			else{
+				redirectView = redirectView + "/applications";
+			}
 		}
 
 		return new ModelAndView(redirectView);

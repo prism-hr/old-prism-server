@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.UserFactory;
@@ -223,12 +224,15 @@ public class UserService {
 	}
 	
 	@Transactional
-	public RegisteredUser createNewUserInRole(String firstName, String lastName, String email, Authority authority)  {
+	public RegisteredUser createNewUserInRole(String firstName, String lastName, String email, Authority authority, DirectURLsEnum directURL, Integer applicationId)  {
 		RegisteredUser newUser = userDAO.getUserByEmail(email);
 		if (newUser != null) {
 			throw new IllegalStateException(String.format("user with email: %s already exists!", email));
 		}
 		newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authority);
+		if(directURL != null && applicationId != null){
+			newUser.setDirectToUrl(directURL.displayValue()+applicationId);
+		}
 		userDAO.save(newUser);
 		return newUser;
 	}

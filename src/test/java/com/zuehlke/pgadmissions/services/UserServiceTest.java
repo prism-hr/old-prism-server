@@ -40,6 +40,7 @@ import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.UserFactory;
 
@@ -521,7 +522,7 @@ public class UserServiceTest {
 		
 		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(existingUser);
 		EasyMock.replay(userDAOMock);
-		userService.createNewUserInRole( "la", "le", "some@email.com", Authority.APPROVER);
+		userService.createNewUserInRole( "la", "le", "some@email.com", Authority.APPROVER, null, null);
 	}
 	
 	
@@ -535,11 +536,87 @@ public class UserServiceTest {
 
 		EasyMock.replay(userDAOMock, userFactoryMock);
 		
-		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.REVIEWER);
+		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.REVIEWER, null, null);
 
 		EasyMock.verify(userDAOMock, userFactoryMock);
 		assertEquals(newUser, createdUser);				
 
+		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichInterviewer().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichReviewer().isEmpty());
+		
+		assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
+		
+	}
+	
+	
+	@Test
+	public void shouldCreateUserWithDirectToLinkToAddReview() {
+		
+		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(null);
+		RegisteredUser newUser = new RegisteredUserBuilder().id(5).toUser();
+		EasyMock.expect(userFactoryMock.createNewUserInRoles("la", "le", "some@email.com", Authority.REVIEWER)).andReturn(newUser);
+		userDAOMock.save(newUser);		
+		
+		EasyMock.replay(userDAOMock, userFactoryMock);
+		
+		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, 1);
+		
+		EasyMock.verify(userDAOMock, userFactoryMock);
+		assertEquals(newUser, createdUser);				
+		assertEquals("/pgadmissions/reviewFeedback?applicationId=1", createdUser.getDirectToUrl());				
+		
+		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichInterviewer().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichReviewer().isEmpty());
+		
+		assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
+		
+	}
+	
+	@Test
+	public void shouldCreateUserWithDirectToLinkToAddInterview() {
+		
+		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(null);
+		RegisteredUser newUser = new RegisteredUserBuilder().id(5).toUser();
+		EasyMock.expect(userFactoryMock.createNewUserInRoles("la", "le", "some@email.com", Authority.INTERVIEWER)).andReturn(newUser);
+		userDAOMock.save(newUser);		
+		
+		EasyMock.replay(userDAOMock, userFactoryMock);
+		
+		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, 1);
+		
+		EasyMock.verify(userDAOMock, userFactoryMock);
+		assertEquals(newUser, createdUser);				
+		assertEquals("/pgadmissions/interviewFeedback?applicationId=1", createdUser.getDirectToUrl());				
+		
+		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichInterviewer().isEmpty());
+		assertTrue(createdUser.getProgramsOfWhichReviewer().isEmpty());
+		
+		assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
+		
+	}
+	
+	@Test
+	public void shouldCreateUserWithDirectToLinkToAddReference() {
+		
+		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(null);
+		RegisteredUser newUser = new RegisteredUserBuilder().id(5).toUser();
+		EasyMock.expect(userFactoryMock.createNewUserInRoles("la", "le", "some@email.com", Authority.REFEREE)).andReturn(newUser);
+		userDAOMock.save(newUser);		
+		
+		EasyMock.replay(userDAOMock, userFactoryMock);
+		
+		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.REFEREE, DirectURLsEnum.ADD_REFERENCE, 1);
+		
+		EasyMock.verify(userDAOMock, userFactoryMock);
+		assertEquals(newUser, createdUser);				
+		assertEquals("/pgadmissions/referee/addReferences?application=1", createdUser.getDirectToUrl());				
+		
 		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
 		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
 		assertTrue(createdUser.getProgramsOfWhichInterviewer().isEmpty());

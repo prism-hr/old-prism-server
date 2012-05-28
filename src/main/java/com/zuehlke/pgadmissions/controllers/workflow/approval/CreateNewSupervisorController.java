@@ -110,7 +110,7 @@ public class CreateNewSupervisorController extends ApprovalController {
 
 			}
 
-			RegisteredUser newUser = userService.createNewUserInRole(supervisor.getFirstName(), supervisor.getLastName(), supervisor.getEmail(), Authority.SUPERVISOR);
+			RegisteredUser newUser = userService.createNewUserInRole(supervisor.getFirstName(), supervisor.getLastName(), supervisor.getEmail(), Authority.SUPERVISOR, null, null);
 			newUserIds.add(newUser.getId());
 			return getCreateSupervisorModelAndView(applicationForm, newUserIds, getCreateSupervisorMessage("assignSupervisor.user.created", newUser), viewName);
 		}

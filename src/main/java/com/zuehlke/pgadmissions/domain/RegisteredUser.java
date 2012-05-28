@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -54,6 +55,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "user_id")
 	private List<Comment> comments = new ArrayList<Comment>();
+	
+	@Column(name = "direct_to_url")
+	private String directToUrl;
 
 	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
@@ -643,6 +647,14 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 		return false;
 
+	}
+
+	public String getDirectToUrl() {
+		return directToUrl;
+	}
+
+	public void setDirectToUrl(String directToUrl) {
+		this.directToUrl = directToUrl;
 	}
 
 }

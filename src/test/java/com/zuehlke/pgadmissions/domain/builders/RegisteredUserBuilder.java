@@ -20,6 +20,7 @@ public class RegisteredUserBuilder {
 	private String username;
 	private String password;
 	private String confirmPassword;
+	private String directURL;
 	private Integer id;
 	private boolean enabled = true;
 	private boolean accountNonExpired = true;
@@ -109,6 +110,12 @@ public class RegisteredUserBuilder {
 		return this;
 	}
 	
+	
+	public RegisteredUserBuilder directURL(String directURL) {
+		this.directURL = directURL;
+		return this;
+	}
+	
 	public RegisteredUserBuilder lastName(String lastName) {
 		this.lastName = lastName;
 		return this;
@@ -190,6 +197,7 @@ public class RegisteredUserBuilder {
 		user.setComments(comments);
 		user.setNotificationRecords(notificationRecords);
 		user.setPendingRoleNotifications(pendingRoleNotifications);
+		user.setDirectToUrl(directURL);
 		return user;
 	}
 

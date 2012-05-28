@@ -1,0 +1,8 @@
+CREATE TABLE REJECTION (
+  id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  reject_reason_id INTEGER UNSIGNED,  
+  includeProspectusLink TINYINT(1) NOT NULL,
+  CONSTRAINT reason_rejection_fk FOREIGN KEY (reject_reason_id) REFERENCES REJECT_REASON(id),
+  PRIMARY KEY (id)
+)
+ENGINE = InnoDB;

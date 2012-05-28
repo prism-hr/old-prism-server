@@ -565,20 +565,24 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	}
 	
 	public boolean hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(ApplicationForm application) {
-		List<Interviewer> interviewers = application.getLatestInterview().getInterviewers();
-		for (Interviewer interviewer : interviewers) {
-			if(interviewer.getInterview().equals(application.getLatestInterview()) && this.equals(interviewer.getUser())){
-				return true;
+		if(application.getLatestInterview()!=null){
+			List<Interviewer> interviewers = application.getLatestInterview().getInterviewers();
+			for (Interviewer interviewer : interviewers) {
+				if(interviewer.getInterview().equals(application.getLatestInterview()) && this.equals(interviewer.getUser())){
+					return true;
+				}
 			}
 		}
-		return false;
+			return false;
 	}
 	
 	public boolean hasRespondedToProvideReviewForApplicationLatestRound(ApplicationForm application) {
-		List<Reviewer> reviewers = application.getLatestReviewRound().getReviewers();
-		for (Reviewer reviewer : reviewers) {
-			if(reviewer.getReviewRound().equals(application.getLatestReviewRound()) && this.equals(reviewer.getUser()) && reviewer.getReview() != null){
-				return true;
+		if(application.getLatestReviewRound()!=null){
+			List<Reviewer> reviewers = application.getLatestReviewRound().getReviewers();
+			for (Reviewer reviewer : reviewers) {
+				if(reviewer.getReviewRound().equals(application.getLatestReviewRound()) && this.equals(reviewer.getUser()) && reviewer.getReview() != null){
+					return true;
+				}
 			}
 		}
 		return false;

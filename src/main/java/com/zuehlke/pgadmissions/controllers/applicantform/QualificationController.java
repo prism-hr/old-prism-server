@@ -109,7 +109,7 @@ public class QualificationController {
 		qualificationService.save(qualification);
 		qualification.getApplication().setLastUpdated(new Date());
 		applicationService.save(qualification.getApplication());
-		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getId();
+		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber();
 			
 	}
 
@@ -142,8 +142,8 @@ public class QualificationController {
 	}
 	
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {		
-		ApplicationForm application = applicationService.getApplicationById(applicationId);
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
+		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
 		if(application == null || !getCurrentUser().canSee(application)){
 			throw new ResourceNotFoundException();
 		}

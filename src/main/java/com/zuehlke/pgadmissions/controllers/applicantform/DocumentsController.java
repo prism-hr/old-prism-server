@@ -62,7 +62,7 @@ public class DocumentsController{
 		}
 		applicationForm.setLastUpdated(new Date());
 		applicationsService.save(applicationForm);
-		return "redirect:/update/getDocuments?applicationId=" + applicationForm.getId();
+		return "redirect:/update/getDocuments?applicationId=" + applicationForm.getApplicationNumber();
 			
 	}
 
@@ -76,8 +76,8 @@ public class DocumentsController{
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {		
-		ApplicationForm application = applicationsService.getApplicationById(applicationId);
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
+		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if(application == null || !getCurrentUser().canSee(application)){
 			throw new ResourceNotFoundException();
 		}

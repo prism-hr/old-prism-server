@@ -42,20 +42,20 @@ public class DelegateToApplicationAdministratorControllerTest {
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
-		ApplicationForm returnedForm = controller.getApplicationForm(5);
+		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
 
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicatioNDoesNotExist() {
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(null);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationServiceMock);
 
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -67,10 +67,10 @@ public class DelegateToApplicationAdministratorControllerTest {
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 	}
 
 	@Test

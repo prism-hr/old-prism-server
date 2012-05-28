@@ -58,11 +58,11 @@ public class FileUploadController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam(required=false)Integer id) {
+	public ApplicationForm getApplicationForm(@RequestParam(required=false)String id) {
 		if(id  == null){
 			return null;
 		}
-		ApplicationForm applicationform = applicationService.getApplicationById(id);
+		ApplicationForm applicationform = applicationService.getApplicationByApplicationNumber(id);
 		if (applicationform == null || !SecurityContextHolder.getContext().getAuthentication().getDetails().equals(applicationform.getApplicant())) {
 			throw new ResourceNotFoundException();
 		}

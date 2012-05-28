@@ -20,11 +20,11 @@ public class AcceptTermsController {
 
 	private final ApplicationsService applicationsService;
 	private static final String TERMS_AND_CONDITIONS_VIEW_NAME = "/private/pgStudents/form/components/terms_and_conditions";
-	
-	AcceptTermsController(){
+
+	AcceptTermsController() {
 		this(null);
 	}
-	
+
 	@Autowired
 	public AcceptTermsController(ApplicationsService applicationsServiceMock) {
 		this.applicationsService = applicationsServiceMock;
@@ -33,19 +33,19 @@ public class AcceptTermsController {
 	@RequestMapping(method = RequestMethod.POST)
 	public String acceptTermsAndGetApplicationPage(@ModelAttribute ApplicationForm applicationForm) {
 		applicationsService.save(applicationForm);
-		return "redirect:/application?view=view&applicationId="+applicationForm.getId();
+		return "redirect:/application?view=view&applicationId=" + applicationForm.getApplicationNumber();
 	}
-	
+
 	@ModelAttribute
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
-		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
-		if(applicationForm == null || !getCurrentUser().canSee(applicationForm) ){
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
+		if (applicationForm == null || !getCurrentUser().canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;
-		
+
 	}
-	
+
 	@RequestMapping(value = "/getTermsAndConditions", method = RequestMethod.GET)
 	public String getAcceptedTermsView() {
 
@@ -54,7 +54,7 @@ public class AcceptTermsController {
 		}
 		return TERMS_AND_CONDITIONS_VIEW_NAME;
 	}
-	
+
 	private RegisteredUser getCurrentUser() {
 		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 	}

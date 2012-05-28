@@ -1233,6 +1233,22 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
 	}
 
+	@Test
+	public void shouldGetApplicationByApplicationNumber(){
+		Program program = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(program);
+		
+	
+		
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
+		save(applicationFormOne);
+
+		flushAndClearSession();
+		
+		ApplicationForm returnedForm = applicationDAO.getApplicationByApplicationNumber("ABC");
+		assertEquals(applicationFormOne, returnedForm);
+	}
 	private List<Qualification> getQualificationsBelongingToSameApplication() throws ParseException {
 
 		application = new ApplicationForm();

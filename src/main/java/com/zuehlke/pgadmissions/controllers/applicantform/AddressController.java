@@ -82,7 +82,7 @@ public class AddressController {
 		applicationForm.setLastUpdated(new Date());
 		applicationService.save(applicationForm);
 		
-		return "redirect:/update/getAddress?applicationId=" + applicationForm.getId();
+		return "redirect:/update/getAddress?applicationId=" + applicationForm.getApplicationNumber();
 	}
 
 	@RequestMapping(value = "/getAddress", method = RequestMethod.GET)
@@ -101,8 +101,8 @@ public class AddressController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
-		ApplicationForm application = applicationService.getApplicationById(applicationId);
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
 		if (application == null || !getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();
 		}
@@ -119,7 +119,7 @@ public class AddressController {
 	}
 
 	@ModelAttribute("addressSectionDTO")
-	public AddressSectionDTO getAddressDTO(Integer applicationId) {
+	public AddressSectionDTO getAddressDTO(String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		AddressSectionDTO sectionDTO = new AddressSectionDTO();
 		Address contactAddress = applicationForm.getContactAddress();

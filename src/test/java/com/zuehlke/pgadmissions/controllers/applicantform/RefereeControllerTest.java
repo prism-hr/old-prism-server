@@ -97,17 +97,17 @@ public class RefereeControllerTest {
 		authenticationToken.setDetails(currentUser);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
-		ApplicationForm returnedApplicationForm = controller.getApplicationForm(1);
+		ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
 		assertEquals(applicationForm, returnedApplicationForm);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(1);
+		controller.getApplicationForm("1");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -115,10 +115,10 @@ public class RefereeControllerTest {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		authenticationToken.setDetails(currentUser);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, currentUser);
-		controller.getApplicationForm(1);
+		controller.getApplicationForm("1");
 
 	}
 
@@ -166,7 +166,7 @@ public class RefereeControllerTest {
 
 	@Test
 	public void shouldSaveRefereeAndRedirectIfNoErrors() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber("ABC").id(5).toApplicationForm();
 		Referee referee = new RefereeBuilder().id(1).application(applicationForm).toReferee();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -175,12 +175,12 @@ public class RefereeControllerTest {
 		EasyMock.replay(refereeServiceMock,applicationsServiceMock,  errors);
 		String view = controller.editReferee(referee, errors);
 		EasyMock.verify(refereeServiceMock, applicationsServiceMock);
-		assertEquals( "redirect:/update/getReferee?applicationId=5", view);
+		assertEquals( "redirect:/update/getReferee?applicationId=ABC", view);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationInApprovalStageAndIfNoErrors() {
-		ApplicationForm application = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
@@ -190,12 +190,12 @@ public class RefereeControllerTest {
 		EasyMock.replay(refereeServiceMock, errors);
 		String view = controller.editReferee(referee, errors);
 		EasyMock.verify(refereeServiceMock);
-		assertEquals( "redirect:/update/getReferee?applicationId=5", view);
+		assertEquals( "redirect:/update/getReferee?applicationId=ABC", view);
 	}
 	
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationInReviewStageAndIfNoErrors() {
-		ApplicationForm application = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
@@ -205,12 +205,12 @@ public class RefereeControllerTest {
 		EasyMock.replay(refereeServiceMock, errors);
 		String view = controller.editReferee(referee, errors);
 		EasyMock.verify(refereeServiceMock);
-		assertEquals( "redirect:/update/getReferee?applicationId=5", view);
+		assertEquals( "redirect:/update/getReferee?applicationId=ABC", view);
 	}
 	
 	@Test
 	public void shouldSaveRefereeAndSendEmailIfApplicationInInterviewStageAndIfNoErrors() {
-		ApplicationForm application = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
 		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
@@ -220,12 +220,12 @@ public class RefereeControllerTest {
 		EasyMock.replay(refereeServiceMock, errors);
 		String view = controller.editReferee(referee, errors);
 		EasyMock.verify(refereeServiceMock);
-		assertEquals( "redirect:/update/getReferee?applicationId=5", view);
+		assertEquals( "redirect:/update/getReferee?applicationId=ABC", view);
 	}
 	
 	@Test
 	public void shouldNotSendEmailIfApplicationIsInValidationdAndIfNoErrors() {
-		ApplicationForm application = new ApplicationFormBuilder().id(5).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(5).applicationNumber("ABC").status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		Referee referee = new RefereeBuilder().id(1).application(application).toReferee();
 		application.setReferees(Arrays.asList(referee));
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
@@ -234,7 +234,7 @@ public class RefereeControllerTest {
 		EasyMock.replay(applicationsServiceMock);
 		String view = controller.editReferee(referee, errors);
 		EasyMock.verify(applicationsServiceMock);
-		assertEquals( "redirect:/update/getReferee?applicationId=5", view);
+		assertEquals( "redirect:/update/getReferee?applicationId=ABC", view);
 	}
 
 	@Test

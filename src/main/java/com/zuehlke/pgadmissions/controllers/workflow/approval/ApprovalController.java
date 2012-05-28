@@ -70,7 +70,7 @@ public abstract class ApprovalController {
 	}
 
 	@ModelAttribute("programmeSupervisors")
-	public List<RegisteredUser> getProgrammeSupervisors(@RequestParam Integer applicationId, @RequestParam(required = false) List<Integer> pendingSupervisors) {
+	public List<RegisteredUser> getProgrammeSupervisors(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingSupervisors) {
 		ApplicationForm application = getApplicationForm(applicationId);
 		Program program = application.getProgram();
 		List<RegisteredUser> availableSupervisors = new ArrayList<RegisteredUser>();
@@ -95,7 +95,7 @@ public abstract class ApprovalController {
 	}
 
 	@ModelAttribute("applicationSupervisors")
-	public Set<RegisteredUser> getApplicationSupervisorsAsUsers(@RequestParam Integer applicationId) {
+	public Set<RegisteredUser> getApplicationSupervisorsAsUsers(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Set<RegisteredUser> existingSupervisors = new HashSet<RegisteredUser>();
 		ApprovalRound latestRound = applicationForm.getLatestApprovalRound();
@@ -116,9 +116,9 @@ public abstract class ApprovalController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 
-		ApplicationForm application = applicationsService.getApplicationById(applicationId);
+		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (application == null
 				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()
 						.isSupervisorOfApplicationForm(application))) {
@@ -127,10 +127,10 @@ public abstract class ApprovalController {
 		return application;
 	}
 
-	public abstract ApprovalRound getApprovalRound(@RequestParam Integer applicationId);
+	public abstract ApprovalRound getApprovalRound(@RequestParam String applicationId);
 
 	@ModelAttribute("pendingSupervisors")
-	public List<RegisteredUser> getPendingSupervisors(@RequestParam(required = false) List<Integer> pendingSupervisors, @RequestParam Integer applicationId) {
+	public List<RegisteredUser> getPendingSupervisors(@RequestParam(required = false) List<Integer> pendingSupervisors, @RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> newUsers = new ArrayList<RegisteredUser>();
 		if (pendingSupervisors != null) {
@@ -146,13 +146,13 @@ public abstract class ApprovalController {
 	}
 	
 	@ModelAttribute("willingToSuperviseUsers")
-	public List<RegisteredUser> getWillingToSuperviseusers(@RequestParam Integer applicationId) {
+	public List<RegisteredUser> getWillingToSuperviseusers(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		return applicationForm.getUsersWillingToSupervise();
 	}
 
 	@ModelAttribute("previousSupervisors")
-	public List<RegisteredUser> getPreviousSupervisors(@RequestParam Integer applicationId, @RequestParam(required = false) List<Integer> pendingSupervisors) {
+	public List<RegisteredUser> getPreviousSupervisors(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingSupervisors) {
 		List<RegisteredUser> availablePreviousSupervisors = new ArrayList<RegisteredUser>();
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> previousSupervisorsOfProgram = userService.getAllPreviousSupervisorsOfProgram(applicationForm.getProgram());

@@ -29,15 +29,15 @@ public class ApplicationFormPropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(applicationsService.getApplicationById(Integer.parseInt(strId)));
+		setValue(applicationsService.getApplicationByApplicationNumber(strId));
 
 	}
 
 	@Override
 	public String getAsText() {
-		if (getValue() == null || ((ApplicationForm) getValue()).getId() == null) {
+		if (getValue() == null ) {
 			return null;
 		}
-		return ((ApplicationForm) getValue()).getId().toString();
+		return ((ApplicationForm) getValue()).getApplicationNumber().toString();
 	}
 }

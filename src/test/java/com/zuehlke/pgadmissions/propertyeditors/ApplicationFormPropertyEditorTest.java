@@ -20,7 +20,7 @@ public class ApplicationFormPropertyEditorTest {
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(form);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(form);
 		EasyMock.replay(applicationsServiceMock);
 		
 		editor.setAsText("1");
@@ -28,10 +28,6 @@ public class ApplicationFormPropertyEditorTest {
 		
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldThrowIllegalArgumentExceptionIfIdNotInteger(){			
-		editor.setAsText("bob");			
-	}
 	
 	@Test	
 	public void shouldReturNullIfIdIsNull(){			
@@ -44,16 +40,11 @@ public class ApplicationFormPropertyEditorTest {
 		editor.setValue(null);
 		assertNull(editor.getAsText());
 	}
+
 	
 	@Test	
-	public void shouldReturnNullIfValueIdIsNull(){			
-		editor.setValue(new ApplicationFormBuilder().toApplicationForm());
-		assertNull(editor.getAsText());
-	}
-	
-	@Test	
-	public void shouldReturnIsAsString(){			
-		editor.setValue(new ApplicationFormBuilder().id(5).toApplicationForm());
+	public void shouldReturnApplicationNumbersAsString(){			
+		editor.setValue(new ApplicationFormBuilder().applicationNumber("5").toApplicationForm());
 		assertEquals("5", editor.getAsText());
 	}
 	

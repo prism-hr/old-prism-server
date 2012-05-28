@@ -47,7 +47,7 @@ public class ReferenceControllerTest {
 		authenticationToken.setDetails(currentUser);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator) {
 			@Override
@@ -55,15 +55,15 @@ public class ReferenceControllerTest {
 				return currentUser;
 			}
 		};
-		ApplicationForm returnedApplicationForm = controller.getApplicationForm(1);
+		ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
 		assertEquals(applicationForm, returnedApplicationForm);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(1);
+		controller.getApplicationForm("1");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -72,7 +72,7 @@ public class ReferenceControllerTest {
 		authenticationToken.setDetails(currentUser);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(false);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator) {
 			@Override
@@ -80,7 +80,7 @@ public class ReferenceControllerTest {
 				return currentUser;
 			}
 		};
-		controller.getApplicationForm(1);
+		controller.getApplicationForm("1");
 	}
 
 	@Test
@@ -112,7 +112,7 @@ public class ReferenceControllerTest {
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator) {
 
 			@Override
-			public ApplicationForm getApplicationForm(Integer application) {
+			public ApplicationForm getApplicationForm(String application) {
 				return applicationForm;
 			}
 			@Override
@@ -124,7 +124,7 @@ public class ReferenceControllerTest {
 		Referee referee = new RefereeBuilder().id(8).reference(reference).toReferee();
 		EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
 		EasyMock.replay(currentUser);
-		Reference returnedReference = controller.getReference(1);
+		Reference returnedReference = controller.getReference( "1");
 		assertEquals(reference, returnedReference);
 	}
 
@@ -136,7 +136,7 @@ public class ReferenceControllerTest {
 		controller = new ReferenceController(applicationsServiceMock, refereeServiceMock, userServiceMock, documentPropertyEditor, referenceValidator) {
 
 			@Override
-			public ApplicationForm getApplicationForm(Integer application) {
+			public ApplicationForm getApplicationForm(String application) {
 				return applicationForm;
 			}
 			@Override
@@ -148,7 +148,7 @@ public class ReferenceControllerTest {
 		Referee referee = new RefereeBuilder().id(8).toReferee();
 		EasyMock.expect(currentUser.getRefereeForApplicationForm(applicationForm)).andReturn(referee);
 		EasyMock.replay(currentUser);
-		Reference returnedReference = controller.getReference(1);
+		Reference returnedReference = controller.getReference( "1");
 		assertNull(returnedReference.getId());
 		assertEquals(referee, returnedReference.getReferee());
 	}

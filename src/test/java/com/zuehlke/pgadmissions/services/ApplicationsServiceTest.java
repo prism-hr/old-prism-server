@@ -8,9 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -31,7 +29,6 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -79,6 +76,7 @@ public class ApplicationsServiceTest {
 		assertEquals(appThree, visibleApps.get(2));
 		assertEquals(appOne, visibleApps.get(3));
 	}
+	
 	@Test
 	public void shouldGetApplicationById() {
 		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
@@ -87,7 +85,17 @@ public class ApplicationsServiceTest {
 		EasyMock.replay(application, applicationFormDAOMock);
 		Assert.assertEquals(application, applicationsService.getApplicationById(234));
 	}
+	
 	@Test
+	public void shouldGetApplicationbyApplicationNumber() {
+		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
+		EasyMock.expect(applicationFormDAOMock.getApplicationByApplicationNumber("ABC")).andReturn(application);
+
+		EasyMock.replay(application, applicationFormDAOMock);
+		Assert.assertEquals(application, applicationsService.getApplicationByApplicationNumber("ABC"));
+	}
+	
+	@Test	
 	public void shouldCreateAndSaveNewApplicationForm() {
 		Program program = new ProgramBuilder().code("KLOP").id(1).toProgram();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();

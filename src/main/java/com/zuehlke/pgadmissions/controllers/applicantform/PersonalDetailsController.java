@@ -99,7 +99,7 @@ public class PersonalDetailsController {
 		personalDetailsService.save(personalDetails);
 		personalDetails.getApplication().setLastUpdated(new Date());
 		applicationsService.save(personalDetails.getApplication());
-		return "redirect:/update/getPersonalDetails?applicationId=" + personalDetails.getApplication().getId();
+		return "redirect:/update/getPersonalDetails?applicationId=" + personalDetails.getApplication().getApplicationNumber();
 			
 	}
 
@@ -155,7 +155,7 @@ public class PersonalDetailsController {
 	}
 
 	@ModelAttribute
-	public PersonalDetails getPersonalDetails(@RequestParam Integer applicationId) {
+	public PersonalDetails getPersonalDetails(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		
 		if (applicationForm.getPersonalDetails() == null) {
@@ -166,8 +166,8 @@ public class PersonalDetailsController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {		
-		ApplicationForm application = applicationsService.getApplicationById(applicationId);
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
+		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if(application == null || !getCurrentUser().canSee(application)){
 			throw new ResourceNotFoundException();
 		}

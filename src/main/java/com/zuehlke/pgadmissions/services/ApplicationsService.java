@@ -41,6 +41,10 @@ public class ApplicationsService {
 		return applicationFormDAO.get(id);
 	}
 
+	public ApplicationForm getApplicationByApplicationNumber(String applicationNumber) {
+		return applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
+	}
+	
 	@Transactional
 	public void save(ApplicationForm application) {
 		applicationFormDAO.save(application);
@@ -100,6 +104,8 @@ public class ApplicationsService {
 		}
 		return null;
 	}
+
+	
 
 
 

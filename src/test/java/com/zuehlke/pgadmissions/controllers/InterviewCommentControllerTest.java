@@ -54,17 +54,17 @@ public class InterviewCommentControllerTest {
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser, userServiceMock);
 		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		ApplicationForm returnedApplication = controller.getApplicationForm(5);
+		ApplicationForm returnedApplication = controller.getApplicationForm("5");
 		assertEquals(returnedApplication, applicationForm);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -77,9 +77,9 @@ public class InterviewCommentControllerTest {
 		EasyMock.expect(currentUser.isInterviewerOfApplicationForm(applicationForm)).andReturn(false);
 		EasyMock.replay(currentUser, userServiceMock);
 		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 
 	}
 	
@@ -97,9 +97,9 @@ public class InterviewCommentControllerTest {
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(currentUser, userServiceMock);
 		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 
 	}
 
@@ -127,7 +127,7 @@ public class InterviewCommentControllerTest {
 		controller = new  InterviewCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, reviewFeedbackValidatorMock){
 
 			@Override
-			public ApplicationForm getApplicationForm(Integer id) {
+			public ApplicationForm getApplicationForm(String id) {
 				return applicationForm;
 			}
 			
@@ -137,7 +137,7 @@ public class InterviewCommentControllerTest {
 			}
 			
 		};
-		InterviewComment comment = controller.getComment(5);
+		InterviewComment comment = controller.getComment("5");
 		
 		assertNull(comment.getId());
 		assertEquals(applicationForm, comment.getApplication());

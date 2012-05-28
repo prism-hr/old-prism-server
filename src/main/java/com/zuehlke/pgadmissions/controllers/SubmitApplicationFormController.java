@@ -73,8 +73,8 @@ public class SubmitApplicationFormController {
 	}
 
 	@ModelAttribute
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
-		ApplicationForm applicationForm = applicationService.getApplicationById(applicationId);
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
 		if(applicationForm == null || !getCurrentUser().canSee(applicationForm) ){
 			throw new ResourceNotFoundException();
 		}

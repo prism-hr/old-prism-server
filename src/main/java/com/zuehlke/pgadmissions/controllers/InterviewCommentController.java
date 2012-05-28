@@ -47,9 +47,9 @@ public class InterviewCommentController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		RegisteredUser currentUser = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
+		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (applicationForm == null  || !currentUser.isInterviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm) ){
 			throw new ResourceNotFoundException();
 		}
@@ -67,7 +67,7 @@ public class InterviewCommentController {
 	}
 
 	@ModelAttribute("comment")
-	public InterviewComment getComment(@RequestParam Integer applicationId) {
+	public InterviewComment getComment(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		InterviewComment interviewComment = new InterviewComment();
 		interviewComment.setApplication(applicationForm);

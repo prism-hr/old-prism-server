@@ -104,7 +104,8 @@ public class EmploymentController {
 		employmentPositionService.save(employment);
 		employment.getApplication().setLastUpdated(new Date());
 		applicationService.save(employment.getApplication());
-		return "redirect:/update/getEmploymentPosition?applicationId=" + employment.getApplication().getId();
+		return "redirect:/update/getEmploymentPosition?applicationId=" + employment.getApplication().getApplicationNumber();
+		
 
 	}
 
@@ -125,8 +126,8 @@ public class EmploymentController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
-		ApplicationForm application = applicationService.getApplicationById(applicationId);
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
 		if (application == null || !getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();
 		}

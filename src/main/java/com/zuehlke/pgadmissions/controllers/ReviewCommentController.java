@@ -47,9 +47,9 @@ public class ReviewCommentController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		RegisteredUser currentUser = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
+		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (applicationForm == null  || !currentUser.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm) ){
 			throw new ResourceNotFoundException();
 		}
@@ -67,7 +67,7 @@ public class ReviewCommentController {
 	}
 
 	@ModelAttribute("comment")
-	public ReviewComment getComment(@RequestParam Integer applicationId) {
+	public ReviewComment getComment(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		ReviewComment reviewComment = new ReviewComment();
 		reviewComment.setApplication(applicationForm);

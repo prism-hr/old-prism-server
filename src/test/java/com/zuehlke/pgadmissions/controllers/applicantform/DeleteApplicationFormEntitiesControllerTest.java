@@ -83,7 +83,7 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	}
 	@Before
 	public void setup(){
-		applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().id(2).applicationNumber("2").toApplicationForm();
 		qualificationServiceMock = EasyMock.createMock(QualificationService.class);
 		employmentServiceMock = EasyMock.createMock(EmploymentPositionService.class);
 		fundingServiceMock = EasyMock.createMock(FundingService.class);

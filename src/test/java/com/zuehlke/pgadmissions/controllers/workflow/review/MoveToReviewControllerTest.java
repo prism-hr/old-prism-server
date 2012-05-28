@@ -57,10 +57,10 @@ public class MoveToReviewControllerTest {
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 
-		ApplicationForm returnedForm = controller.getApplicationForm(5);
+		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
 
 	}
@@ -79,7 +79,7 @@ public class MoveToReviewControllerTest {
 		
 		controller = new MoveToReviewController(applicationServiceMock, userServiceMock, userValidatorMock,null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock) {
 			@Override
-			public ApplicationForm getApplicationForm(Integer applicationId) {
+			public ApplicationForm getApplicationForm(String applicationId) {
 				return application;
 			}
 
@@ -88,7 +88,7 @@ public class MoveToReviewControllerTest {
 		reviewServiceMock.moveApplicationToReview(application, reviewRound);
 		EasyMock.replay(reviewServiceMock);
 		
-		String view = controller.moveToReview(application.getId(), reviewRound, bindingResultMock);
+		String view = controller.moveToReview(application.getApplicationNumber(), reviewRound, bindingResultMock);
 		assertEquals("redirect:/applications", view);
 		EasyMock.verify(reviewServiceMock);
 		
@@ -100,16 +100,16 @@ public class MoveToReviewControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		controller = new MoveToReviewController(applicationServiceMock, userServiceMock, userValidatorMock,null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock){
 			@Override
-			public ApplicationForm getApplicationForm(Integer applicationId) {
+			public ApplicationForm getApplicationForm(String applicationId) {
 				return applicationForm;
 			}
 
 		};
 		ReviewRound reviewRound = new ReviewRoundBuilder().application(applicationForm).toReviewRound();
-		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, applicationServiceMock);
-		assertEquals(REVIEW_DETAILS_VIEW_NAME, controller.moveToReview(1, reviewRound, errorsMock));
+		assertEquals(REVIEW_DETAILS_VIEW_NAME, controller.moveToReview("1", reviewRound, errorsMock));
 
 	}
 

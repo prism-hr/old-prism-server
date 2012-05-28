@@ -231,4 +231,10 @@ public class ApplicationFormDAO {
 				.add(Restrictions.between("applicationTimestamp", startYear, endYear)).list().size();
 
 	}
+
+	public ApplicationForm getApplicationByApplicationNumber(String applicationNumber) {
+		return  (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicationNumber",applicationNumber)).uniqueResult();
+				
+		
+	}
 }

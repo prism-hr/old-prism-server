@@ -46,9 +46,9 @@ public class GenericCommentController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		RegisteredUser currentUser = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
+		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (applicationForm == null || currentUser.isInRole(Authority.APPLICANT) || currentUser.isRefereeOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm)){
 			throw new ResourceNotFoundException();
 		}
@@ -66,7 +66,7 @@ public class GenericCommentController {
 	}
 
 	@ModelAttribute("comment")
-	public Comment getComment(@RequestParam Integer applicationId) {
+	public Comment getComment(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Comment comment = new Comment();
 		comment.setApplication(applicationForm);
@@ -86,6 +86,6 @@ public class GenericCommentController {
 			return GENERIC_COMMENT_PAGE;
 		}
 		commentService.save(comment);
-		return "redirect:/comment?applicationId=" + comment.getApplication().getId();
+		return "redirect:/comment?applicationId=" + comment.getApplication().getApplicationNumber();
 	}
 }

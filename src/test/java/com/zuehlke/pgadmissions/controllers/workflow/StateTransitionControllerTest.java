@@ -52,20 +52,20 @@ public class StateTransitionControllerTest {
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
-		ApplicationForm returnedForm = controller.getApplicationForm(5);
+		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
 
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicatioNDoesNotExist() {
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(null);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationServiceMock);
 
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -77,10 +77,10 @@ public class StateTransitionControllerTest {
 		RegisteredUser currentUserMock = EasyMock.createMock(RegisteredUser.class);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUserMock);
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, userServiceMock, currentUserMock);
 
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 	}
 
 	@Test
@@ -103,14 +103,14 @@ public class StateTransitionControllerTest {
 
 	@Test
 	public void shouldReturnReviewersWillingToInterviewIfAppliationInReview() {
-		final Integer applicationId = 5;
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(applicationId).status(ApplicationFormStatus.REVIEW).toApplicationForm();
+		final String applicationNumber = "5";
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).applicationNumber(applicationNumber).status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock) {
 
 			@Override
-			public ApplicationForm getApplicationForm(Integer application) {
+			public ApplicationForm getApplicationForm(String application) {
 				
-				if (application == applicationId) {
+				if (application == applicationNumber) {
 					return applicationForm;
 				}
 				return null;
@@ -122,21 +122,21 @@ public class StateTransitionControllerTest {
 		
 		EasyMock.expect(userServiceMock.getReviewersWillingToInterview(applicationForm)).andReturn(Arrays.asList(userOne, userTwo));
 		EasyMock.replay(userServiceMock);
-		List<RegisteredUser> willingToInterview = controller.getReviewersWillingToInterview(applicationId);
+		List<RegisteredUser> willingToInterview = controller.getReviewersWillingToInterview(applicationNumber);
 		assertEquals(2, willingToInterview.size());
 		assertTrue(willingToInterview.containsAll(Arrays.asList(userOne, userTwo)));
 	}
 	
 	@Test
 	public void shouldReturnNullIfppliationNotInReview() {
-		final Integer applicationId = 5;
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(applicationId).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		final String applicationNumber = "5";
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicationNumber(applicationNumber).id(5).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
 		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock) {
 
 			@Override
-			public ApplicationForm getApplicationForm(Integer application) {
+			public ApplicationForm getApplicationForm(String application) {
 				
-				if (application == applicationId) {
+				if (application == applicationNumber) {
 					return applicationForm;
 				}
 				return null;
@@ -145,7 +145,7 @@ public class StateTransitionControllerTest {
 		};
 		
 		EasyMock.replay(userServiceMock);
-		assertNull(controller.getReviewersWillingToInterview(applicationId));
+		assertNull(controller.getReviewersWillingToInterview(applicationNumber));
 		EasyMock.verify(userServiceMock);
 	}
 	@Test
@@ -154,12 +154,12 @@ public class StateTransitionControllerTest {
 		controller = new StateTransitionController(applicationServiceMock, userServiceMock, commentServiceMock, commentFactoryMock) {
 
 			@Override
-			public ApplicationForm getApplicationForm(Integer application) {
+			public ApplicationForm getApplicationForm(String application) {
 				return applicationForm;
 			}
 
 		};
-		assertArrayEquals(ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.VALIDATION), controller.getAvailableNextStati(5));
+		assertArrayEquals(ApplicationFormStatus.getAvailableNextStati(ApplicationFormStatus.VALIDATION), controller.getAvailableNextStati("5"));
 	}
 
 	@Test

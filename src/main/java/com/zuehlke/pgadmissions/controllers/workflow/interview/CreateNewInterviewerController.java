@@ -132,11 +132,11 @@ public class CreateNewInterviewerController extends InterviewController {
 
 	@Override
 	@ModelAttribute("interview")
-	public Interview getInterview(@RequestParam Integer interviewId) {	
+	public Interview getInterview(@RequestParam Object interviewId) {	
 		if(interviewId == null){
 			return new Interview();
 		}
-		return interviewService.getInterviewById(interviewId);
+		return interviewService.getInterviewById((Integer)interviewId);
 	}
 	
 

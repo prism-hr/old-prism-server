@@ -30,7 +30,7 @@ public class ReviewerPropertyEditorTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock);
 		
 		editor.setAsText("2|1");
@@ -47,7 +47,7 @@ public class ReviewerPropertyEditorTest {
 		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).toReviewRound();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).latestReviewRound(reviewRound).toApplicationForm();
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
 		EasyMock.replay(userServiceMock, applicationsServiceMock);
 		
 		editor.setAsText("2|1");
@@ -81,7 +81,7 @@ public class ReviewerPropertyEditorTest {
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldThrowIllegalArgumentExceptionIfNoApplicationForm(){			
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);		
 		editor.setAsText("2|1");
 	}

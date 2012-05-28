@@ -76,7 +76,7 @@ public abstract class InterviewController {
 	}
 
 	@ModelAttribute("programmeInterviewers")
-	public List<RegisteredUser> getProgrammeInterviewers(@RequestParam Integer applicationId, @RequestParam(required = false) List<Integer> pendingInterviewer) {
+	public List<RegisteredUser> getProgrammeInterviewers(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingInterviewer) {
 		ApplicationForm application = getApplicationForm(applicationId);
 		Program program = application.getProgram();
 		List<RegisteredUser> availableInterviewers = new ArrayList<RegisteredUser>();
@@ -101,7 +101,7 @@ public abstract class InterviewController {
 	}
 
 	@ModelAttribute("applicationInterviewers")
-	public Set<RegisteredUser> getApplicationInterviewersAsUsers(@RequestParam Integer applicationId) {
+	public Set<RegisteredUser> getApplicationInterviewersAsUsers(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Set<RegisteredUser> existingInterviewers = new HashSet<RegisteredUser>();
 		Interview latestInterview = applicationForm.getLatestInterview();
@@ -122,9 +122,9 @@ public abstract class InterviewController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 
-		ApplicationForm application = applicationsService.getApplicationById(applicationId);
+		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (application == null
 				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()
 						.isInterviewerOfApplicationForm(application))) {
@@ -133,10 +133,10 @@ public abstract class InterviewController {
 		return application;
 	}
 
-	public abstract Interview getInterview(@RequestParam Integer applicationId);
+	public abstract Interview getInterview(@RequestParam Object id);
 
 	@ModelAttribute("pendingInterviewers")
-	public List<RegisteredUser> getPendingInterviewers(@RequestParam(required = false) List<Integer> pendingInterviewer, @RequestParam Integer applicationId) {
+	public List<RegisteredUser> getPendingInterviewers(@RequestParam(required = false) List<Integer> pendingInterviewer, @RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> newUsers = new ArrayList<RegisteredUser>();
 		if (pendingInterviewer != null) {
@@ -152,7 +152,7 @@ public abstract class InterviewController {
 	}
 
 	@ModelAttribute("previousInterviewers")
-	public List<RegisteredUser> getPreviousInterviewers(@RequestParam Integer applicationId, @RequestParam(required = false) List<Integer> pendingInterviewer) {
+	public List<RegisteredUser> getPreviousInterviewers(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingInterviewer) {
 		List<RegisteredUser> availablePreviousInterviewers = new ArrayList<RegisteredUser>();
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> previousInterviewersOfProgram = userService.getAllPreviousInterviewersOfProgram(applicationForm.getProgram());
@@ -170,7 +170,7 @@ public abstract class InterviewController {
 	}
 	
 	@ModelAttribute("willingToInterviewReviewers")
-	public List<RegisteredUser> getWillingToInterviewReviewers(@RequestParam Integer applicationId) {
+	public List<RegisteredUser> getWillingToInterviewReviewers(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		return applicationForm.getReviewersWillingToInterview();
 	}

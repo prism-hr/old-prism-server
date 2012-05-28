@@ -83,15 +83,15 @@ public class ProgrammeDetailsControllerTest {
 
 	@Test
 	public void shouldReturnAvaialbeStudyOptionLevels() {
-		final Integer applicationId = 1;
-		Program program = new ProgramBuilder().id(applicationId).toProgram();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(applicationId).program(program).toApplicationForm();
+		final String applicationNumber = "1";
+		Program program = new ProgramBuilder().id(7).toProgram();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicationNumber(applicationNumber).program(program).toApplicationForm();
 		controller =  new ProgrammeDetailsController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock,
 				supervisorJSONPropertyEditorMock, programmeDetailsValidatorMock, programmeDetailsServiceMock){
 
 					@Override
-					public ApplicationForm getApplicationForm(Integer id) {
-						if(applicationId == id){
+					public ApplicationForm getApplicationForm(String id) {
+						if(applicationNumber == id){
 							return applicationForm;
 						}
 						return null;
@@ -102,7 +102,7 @@ public class ProgrammeDetailsControllerTest {
 		EasyMock.expect(programmeDetailsServiceMock.getAvailableStudyOptions(program)).andReturn(
 				Arrays.asList(StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE));
 		EasyMock.replay(programmeDetailsServiceMock);
-		StudyOption[] studyOptions = controller.getStudyOptions(applicationId);
+		StudyOption[] studyOptions = controller.getStudyOptions(applicationNumber);
 		assertArrayEquals(studyOptions, new StudyOption[] { StudyOption.FULL_TIME, StudyOption.PART_TIME_DISTANCE });
 	}
 
@@ -118,17 +118,17 @@ public class ProgrammeDetailsControllerTest {
 		authenticationToken.setDetails(currentUser);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock, currentUser);
-		ApplicationForm returnedApplicationForm = controller.getApplicationForm(1);
+		ApplicationForm returnedApplicationForm = controller.getApplicationForm("1");
 		assertEquals(applicationForm, returnedApplicationForm);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNoFoundExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(1);
+		controller.getApplicationForm("1");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -136,10 +136,10 @@ public class ProgrammeDetailsControllerTest {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		authenticationToken.setDetails(currentUser);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, currentUser);
-		controller.getApplicationForm(1);
+		controller.getApplicationForm("1");
 
 	}
 
@@ -161,25 +161,25 @@ public class ProgrammeDetailsControllerTest {
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).toProgrammeDetails();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
 		applicationForm.setProgrammeDetails(programmeDetails);
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		authenticationToken.setDetails(currentUser);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(applicationsServiceMock, currentUser);
 
-		ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails(5);
+		ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
 		assertEquals(programmeDetails, returnedProgrammeDetails);
 	}
 
 	@Test
 	public void shouldReturnNewProgrammeDetailsIfApplicationFormHasNoProgrammeDetails() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		authenticationToken.setDetails(currentUser);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(applicationsServiceMock, currentUser);
-		ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails(5);
+		ProgrammeDetails returnedProgrammeDetails = controller.getProgrammeDetails("5");
 		assertNull(returnedProgrammeDetails.getId());
 	}
 
@@ -187,7 +187,7 @@ public class ProgrammeDetailsControllerTest {
 	public void shouldThrowResourceNotFoundExceptionIfProgrammeDetailsDoesNotExist() {
 		EasyMock.expect(programmeDetailsServiceMock.getProgrammeDetailsById(1)).andReturn(null);
 		EasyMock.replay(programmeDetailsServiceMock);
-		controller.getProgrammeDetails(1);
+		controller.getProgrammeDetails("1");
 
 	}
 
@@ -199,7 +199,7 @@ public class ProgrammeDetailsControllerTest {
 
 	@Test
 	public void shouldSaveProgrammeDetailsAndApplicationAndRedirectIfNoErrors() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").toApplicationForm();
 		ProgrammeDetails programmeDetails = new ProgrammeDetailsBuilder().id(1).applicationForm(applicationForm).toProgrammeDetails();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
@@ -208,7 +208,7 @@ public class ProgrammeDetailsControllerTest {
 		EasyMock.replay(programmeDetailsServiceMock,applicationsServiceMock, errors);
 		String view = controller.editProgrammeDetails(programmeDetails, errors);
 		EasyMock.verify(programmeDetailsServiceMock, applicationsServiceMock);
-		assertEquals("redirect:/update/getProgrammeDetails?applicationId=5", view);
+		assertEquals("redirect:/update/getProgrammeDetails?applicationId=ABC", view);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 

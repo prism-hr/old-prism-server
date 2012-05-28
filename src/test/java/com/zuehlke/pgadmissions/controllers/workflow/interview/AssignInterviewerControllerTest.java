@@ -65,11 +65,11 @@ public class AssignInterviewerControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).latestInterview(interview).toApplicationForm();
 		
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);		
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 
 		
-		assertEquals(interview, controller.getInterview(5));
+		assertEquals(interview, controller.getInterview("5"));
 	}
 
 	@Test

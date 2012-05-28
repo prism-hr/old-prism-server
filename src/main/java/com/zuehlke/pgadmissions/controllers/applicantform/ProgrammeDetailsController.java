@@ -76,7 +76,7 @@ public class ProgrammeDetailsController {
 		programmeDetailsService.save(programmeDetails);
 		programmeDetails.getApplication().setLastUpdated(new Date());
 		applicationsService.save(programmeDetails.getApplication());
-		return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getId();
+		return "redirect:/update/getProgrammeDetails?applicationId=" + programmeDetails.getApplication().getApplicationNumber();
 
 	}
 
@@ -90,7 +90,7 @@ public class ProgrammeDetailsController {
 	}
 
 	@ModelAttribute("studyOptions")
-	public StudyOption[] getStudyOptions(@RequestParam Integer applicationId) {
+	public StudyOption[] getStudyOptions(@RequestParam String applicationId) {
 		return (StudyOption[]) programmeDetailsService.getAvailableStudyOptions(getApplicationForm(applicationId).getProgram()).toArray(new StudyOption[]{});
 	}
 
@@ -100,9 +100,9 @@ public class ProgrammeDetailsController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		
-		ApplicationForm application = applicationsService.getApplicationById(applicationId);
+		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (application == null || !getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();
 		}
@@ -124,7 +124,7 @@ public class ProgrammeDetailsController {
 	}
 
 	@ModelAttribute
-	public ProgrammeDetails getProgrammeDetails(@RequestParam Integer applicationId) {
+	public ProgrammeDetails getProgrammeDetails(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 
 		if (applicationForm.getProgrammeDetails() == null) {

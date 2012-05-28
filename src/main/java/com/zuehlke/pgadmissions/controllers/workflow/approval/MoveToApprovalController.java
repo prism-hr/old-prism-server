@@ -43,7 +43,7 @@ public class MoveToApprovalController extends ApprovalController {
 	}
 
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
-	public String moveToApproval(@RequestParam Integer applicationId, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound, BindingResult bindingResult) {
+	public String moveToApproval(@RequestParam String applicationId, @Valid @ModelAttribute("approvalRound") ApprovalRound approvalRound, BindingResult bindingResult) {
 
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		if (bindingResult.hasErrors()) {
@@ -56,7 +56,7 @@ public class MoveToApprovalController extends ApprovalController {
 	
 	
 	@ModelAttribute("approvalRound")
-	public ApprovalRound getApprovalRound(@RequestParam Integer applicationId) {
+	public ApprovalRound getApprovalRound(@RequestParam String applicationId) {
 		return new ApprovalRound();
 	}
 

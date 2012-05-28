@@ -63,10 +63,10 @@ public class MoveToInterviewControllerTest {
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 
-		ApplicationForm returnedForm = controller.getApplicationForm(5);
+		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
 
 	}
@@ -86,7 +86,7 @@ public class MoveToInterviewControllerTest {
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
 				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock) {
 			@Override
-			public ApplicationForm getApplicationForm(Integer applicationId) {
+			public ApplicationForm getApplicationForm(String applicationId) {
 				return application;
 			}
 
@@ -95,7 +95,7 @@ public class MoveToInterviewControllerTest {
 		interviewServiceMock.moveApplicationToInterview(interview, application);
 		EasyMock.replay(interviewServiceMock);
 
-		String view = controller.moveToInterview(application.getId(), interview, bindingResultMock);
+		String view = controller.moveToInterview(application.getApplicationNumber(), interview, bindingResultMock);
 		assertEquals("redirect:/applications", view);
 		EasyMock.verify(interviewServiceMock);
 
@@ -108,16 +108,16 @@ public class MoveToInterviewControllerTest {
 		controller = new MoveToInterviewController(applicationServiceMock, userServiceMock, userValidatorMock, messageSourceMock, interviewServiceMock,
 				interviewValidator, datePropertyEditorMock, interviewerPropertyEditorMock) {
 			@Override
-			public ApplicationForm getApplicationForm(Integer applicationId) {
+			public ApplicationForm getApplicationForm(String applicationId) {
 				return applicationForm;
 			}
 
 		};
 		Interview interview = new InterviewBuilder().application(applicationForm).toInterview();
-		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, applicationServiceMock);
-		assertEquals(INTERVIEW_DETAILS_VIEW_NAME, controller.moveToInterview(1, interview, errorsMock));
+		assertEquals(INTERVIEW_DETAILS_VIEW_NAME, controller.moveToInterview("1", interview, errorsMock));
 
 	}
 

@@ -45,19 +45,17 @@ public class DeleteApplicationFormEntitiesController {
 	public String deleteQualification(@RequestParam Integer id) {
 		Qualification qualification = qualificationService
 				.getQualificationById(id);
-		Integer applicationFormId = qualification.getApplication().getId();
 		qualificationService.delete(qualification);
 
 		return "redirect:/update/getQualification?applicationId="
-				+ applicationFormId + "&message=deleted";
+				+ qualification.getApplication().getApplicationNumber() + "&message=deleted";
 	}
 
 	@RequestMapping(value = "/funding", method = RequestMethod.POST)
 	public String deleteFunding(@RequestParam Integer id) {
 		Funding funding = fundingService.getFundingById(id);
-		Integer applicationFormId = funding.getApplication().getId();
 		fundingService.delete(funding);
-		return "redirect:/update/getFunding?applicationId=" + applicationFormId
+		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber()
 				+ "&message=deleted";
 	}
 
@@ -65,18 +63,16 @@ public class DeleteApplicationFormEntitiesController {
 	public String deleteEmployment(@RequestParam Integer id) {
 		EmploymentPosition position = employmentService
 				.getEmploymentPositionById(id);
-		Integer applicationFormId = position.getApplication().getId();
 		employmentService.delete(position);
 		return "redirect:/update/getEmploymentPosition?applicationId="
-				+ applicationFormId + "&message=deleted";
+				+ position.getApplication().getApplicationNumber() + "&message=deleted";
 	}
 
 	@RequestMapping(value = "/referee", method = RequestMethod.POST)
 	public String deleteReferee(@RequestParam Integer id) {
 		Referee referee = refereeService.getRefereeById(id);
-		Integer applicationFormId = referee.getApplication().getId();
 		refereeService.delete(referee);
-		return "redirect:/update/getReferee?applicationId=" + applicationFormId
+		return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getApplicationNumber()
 				+ "&message=deleted";
 	}
 

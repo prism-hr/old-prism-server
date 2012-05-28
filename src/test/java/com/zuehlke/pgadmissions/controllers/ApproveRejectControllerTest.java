@@ -35,30 +35,30 @@ public class ApproveRejectControllerTest {
 	public void shouldGetApplicationFromFromService() {
 		Program program = new ProgramBuilder().id(4).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).program(program).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.expect(approverMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(approverMock, applicationsServiceMock);
-		assertEquals(applicationForm, controller.getApplicationForm(5));
+		assertEquals(applicationForm, controller.getApplicationForm("5"));
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionApplicationFormDoesNotExist() {
 
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfCurrentUserCannotSeeApplication() {
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.expect(approverMock.isInRole(Authority.APPROVER)).andReturn(true);
 		EasyMock.expect(approverMock.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(approverMock, applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)

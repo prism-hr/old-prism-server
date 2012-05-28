@@ -73,7 +73,7 @@ public class ApplicationFormControllerTest {
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
 		
 		ModelAndView modelAndView = applicationController.createNewApplicationForm(12);
-		assertEquals(applicationForm.getId(), modelAndView.getModel().get("applicationId"));
+		assertEquals(applicationForm.getApplicationNumber(), modelAndView.getModel().get("applicationId"));
 		assertEquals("redirect:/application", modelAndView.getViewName());
 
 	}
@@ -115,7 +115,7 @@ public class ApplicationFormControllerTest {
 	@Before
 	public void setUp() {
 
-		applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		applicationForm = new ApplicationFormBuilder().id(1).applicationNumber("ABC").toApplicationForm();
 
 		programDAOMock = EasyMock.createMock(ProgramDAO.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);

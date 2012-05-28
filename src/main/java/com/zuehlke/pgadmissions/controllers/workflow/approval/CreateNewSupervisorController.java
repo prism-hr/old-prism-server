@@ -128,7 +128,7 @@ public class CreateNewSupervisorController extends ApprovalController {
 
 	@Override
 	@ModelAttribute("approvalRound")
-	public ApprovalRound getApprovalRound(Integer applicationId) {	
+	public ApprovalRound getApprovalRound(String applicationId) {	
 		return new ApprovalRound();
 	}
 	

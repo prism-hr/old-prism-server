@@ -87,10 +87,11 @@
 							
 							<hr />
 				          			
-							<section class="folding violet">
+							<section class="form-rows">
 								<div>
 									<form>
-										<div>			
+									
+										<div class="row-group">			
 											<section id="assignInterviewersToAppSection" >
 											
 												<div class="row">
@@ -116,7 +117,6 @@
 												</div>
 											</section>	          				
 						
-					
 											<!-- Available Reviewer Buttons -->
 											<div class="row interviewer-buttons">
 												<div class="field">
@@ -155,7 +155,8 @@
 											<@spring.bind "interview.interviewers" /> 
 				                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
-										<div>				
+										
+										<div class="row-group">				
 											<#if mesage??>			
 												<p>${message?html}</p>
 											</#if>
@@ -167,11 +168,11 @@
 											</p>									
 											
 											<div class="row">
-				                               	<label class="label normal">Interviewer First Name<em>*</em></label> 
-			                                   	<div class="field">
-				                                   <input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"  value="${(interviewer.firstName?html)!}"/>
-				                               	</div>
-				                               	<@spring.bind "interviewer.firstName" /> 
+														<label class="label normal">Interviewer First Name<em>*</em></label> 
+															<div class="field">
+															 <input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"  value="${(interviewer.firstName?html)!}"/>
+														</div>
+														<@spring.bind "interviewer.firstName" /> 
 					                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
 					                        </div>
 			                                <div class="row">
@@ -199,7 +200,8 @@
 												</div>
 											</div>
 										</div>
-										<div>
+										
+										<div class="row-group">
 											<p>
 												<strong>Interview Details</strong>
 											</p>
@@ -266,6 +268,8 @@
 								</form>
 							</div>
 						</section>
+						
+						<#include "/private/common/feedback.ftl"/>
 						<form id="postInterviewForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/interview/assign'/>"<#else> action ="<@spring.url '/interview/move'/>" </#if>>
 							
 						</form>
@@ -273,7 +277,6 @@
 					
 							
 						</form>
-					<#include "/private/common/feedback.ftl"/>
 				</div>
 				<!-- .content-box-inner -->
 		</div>

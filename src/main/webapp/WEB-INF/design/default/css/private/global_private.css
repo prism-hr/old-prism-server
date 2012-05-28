@@ -222,7 +222,7 @@ section.folding form > div.section-error-bar {
   padding: 10px;
 }
 section.folding form > div.section-error-bar .row { background: none; margin-bottom: 0; }
-section.folding form > div.section-error-bar .invalid-info-text { padding: 0; }
+section.folding form > div.section-error-bar .invalid-info-text { margin: 0; padding: 0; }
 section.folding form > div.section-error-bar .error-hint { margin: 0 8px 0 0; }
 
 

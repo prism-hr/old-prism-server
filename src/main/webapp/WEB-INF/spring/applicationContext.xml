@@ -10,7 +10,9 @@
 		http://www.directwebremoting.org/schema/spring-dwr http://www.directwebremoting.org/schema/spring-dwr-3.0.xsd">
 		
 	<!--import resource="schedules/Spring-Scheduler.xml" /-->
-	
+	<mvc:interceptors>
+    	<bean class="com.zuehlke.pgadmissions.interceptors.Utf8Interceptor" />
+	</mvc:interceptors>
 	<mvc:resources mapping="/design/**" location="/WEB-INF/design/" />
 
 	<context:annotation-config id="springConfig"/>
@@ -62,6 +64,8 @@
 		<property name="cache" value="true" />
 		<property name="prefix" value="" />
 		<property name="suffix" value=".ftl" />
+		<property name="contentType" value="text/html;charset=UTF-8"/>
+		  
 	</bean>
 
 

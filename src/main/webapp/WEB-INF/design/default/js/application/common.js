@@ -183,11 +183,11 @@ function doUpload($upload_field)
 				$container.append(data);
         console.log(data);
       }
-      else if ()
+      /*else if ()
       {
         // There was a server error.
         console.log(data);
-      }
+      }*/
 			else
 			{
 				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.

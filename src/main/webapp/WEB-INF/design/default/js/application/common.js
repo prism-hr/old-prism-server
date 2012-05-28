@@ -184,13 +184,16 @@ function doUpload($upload_field)
 				$container.append(data);
         console.log(data);
       }
+      /*
       else if ($(data).find('span[name="supportingDocumentSpan"]').length == 0)
       {
         // There was a server error.
         $container.append('<span class="invalid">Could not upload.</span>');
       }
+      */
 			else
 			{
+        console.log($(data).find('span[name="supportingDocumentSpan"]').length);
 				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
 				$hfParent.html(data).show();
 				$container.addClass('uploaded');

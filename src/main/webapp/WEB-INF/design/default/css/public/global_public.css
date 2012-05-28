@@ -118,3 +118,63 @@ form select[multiple] { vertical-align: top; }
 /* Validation errors. */
 span.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; color: red; display: inline-block; margin-left: 10px; padding-left: 24px; }
 input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin: -1px; }
+
+
+/* SITE MESSAGES ----------------------------------------------------------------------------------------- */
+#site-message {
+	background: #FFF;
+	border-radius: 10px;
+	box-shadow: 0 0 5px 0 #999;
+	height: 300px;
+	left: 50%;
+	margin: -150px 0 0 -300px;
+	position: absolute;
+	top: 50%;
+	width: 600px;
+}
+#site-message .header {
+	height: 60px;
+	left: 180px;
+	position: absolute;
+	right: 20px;
+	top: 20px;
+}
+#site-message .header .logo {
+	bottom: 0;
+	height: 54px;
+	overflow: hidden;
+	position: absolute;
+}
+#site-message .header .logo img { height: 60px; }
+#site-message .header .tagline {
+	bottom: 0;
+	color: #999;
+	font-size: 12pt;
+	font-weight: bold;
+	left: 215px;
+	line-height: 1.2;
+	position: absolute;
+}
+
+#site-message .content {
+	background: none no-repeat scroll 10px 1em transparent;
+	border-top: 2px solid #AAA;
+	color: #666;
+	font-size: 18pt;
+	left: 20px;
+	padding: 1em 5px 0 160px;
+	position: absolute;
+	right: 20px;
+	top: 100px;
+}
+#site-message .content h1 { font-weight: bold; margin-bottom: 1em; }
+#site-message .content p { color: #666; line-height: 1.2; margin-bottom: 0.5em; }
+#site-message .content p:last-child { margin-bottom: 0; }
+
+#site-message.success .content { background-image: url(../../images/circle_lrg_grn.png); }
+#site-message.notice .content { background-image: url(../../images/circle_lrg_org.png); }
+#site-message.error .content { background-image: url(../../images/circle_lrg_red.png); }
+
+#site-message.success .content h1 { color: #AFBD21; }
+#site-message.notice .content h1 { color: #FFC220; }
+#site-message.error .content h1 { color: #B60050; }

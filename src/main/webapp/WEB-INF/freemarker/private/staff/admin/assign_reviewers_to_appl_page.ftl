@@ -197,7 +197,7 @@
 															
 										<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.id?string("######")}"/>
 										<input type="hidden" id="reviewRoundId" name="reviewRoundId" value="${(reviewRound.id?string("######"))!}"/>  
-									</div>
+
 								</form>
 							</div>
 						</section>

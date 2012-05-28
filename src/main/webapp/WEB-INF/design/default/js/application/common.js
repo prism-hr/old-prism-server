@@ -126,7 +126,7 @@ function watchUpload($field)
 
   $container.on('change', $field, function()
   {
-		if (this.files[0].size < 10485760) // 10MB in bytes
+		if ($field[0].files[0].size < 10485760) // 10MB in bytes
     {
 			deleteUploadedFile($hidden);
 			$progress.html('uploading file...');

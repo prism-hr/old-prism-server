@@ -52,6 +52,9 @@ public class RegisterController {
 			if (suggestedUser == null) {
 				throw new ResourceNotFoundException();
 			}
+			if(suggestedUser.isEnabled() && suggestedUser.getDirectToUrl() != null){
+				return new ModelAndView("redirect:"+ suggestedUser.getDirectToUrl());
+			}
 			record.setFirstName(suggestedUser.getFirstName());
 			record.setLastName(suggestedUser.getLastName());
 			record.setEmail(suggestedUser.getEmail());

@@ -59,6 +59,17 @@ public class RegisterControllerTest {
 		assertEquals("public/register/register_applicant", modelAndView.getViewName());
 	}
 	
+	
+	@Test
+	public void shouldRedirectToDirectURLIfUserExistsIsEnabledAndHasADirectURL(){
+		RegisteredUser user = new RegisteredUserBuilder().enabled(true).id(1).directURL("/directHere").toUser();
+		EasyMock.expect(userServiceMock.getUser(user.getId())).andReturn(user);
+		EasyMock.replay(userServiceMock);
+		ModelAndView modelAndView = registerController.getRegisterPage(user.getId());
+		EasyMock.verify(userServiceMock);
+		assertEquals("redirect:/directHere", modelAndView.getViewName());
+	}
+	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundIfUserDoesNotExists(){
 		ModelAndView modelAndView = registerController.getRegisterPage(1);

@@ -209,3 +209,8 @@ table.data-table .editButton{
 /* Deleted uploads. */
 #uploadFields.upload-delete a { display: none !important; }
 #uploadFields.upload-delete input[type="file"] { display: inline-block !important; }
+
+
+.addremove-buttons .field { border-top: 2px solid #999; margin-top: 25px; text-align: center; width: 400px; }
+.addremove-buttons .field span { background: #FFF; display: block; margin: -18px auto 0; padding: 4px; width: 210px; }
+.addremove-buttons .field button { margin: 0 5px; width: 90px; }

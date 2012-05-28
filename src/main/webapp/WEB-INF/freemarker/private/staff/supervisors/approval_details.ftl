@@ -117,7 +117,7 @@
 						
 					
 											<!-- Available Supervisor Buttons -->
-											<div class="row supervisor-buttons">
+											<div class="row addremove-buttons">
 												<div class="field">
 													<span>
 														<button class="blue" type="button" id="addSupervisorBtn">Add</button>

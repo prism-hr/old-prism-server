@@ -28,6 +28,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.RegistrationService;
@@ -55,6 +56,12 @@ public class RegisterControllerTest {
 	@Test
 	public void shouldReturnRegisterPage(){
 		ModelAndView modelAndView = registerController.getRegisterPage(null);
+		assertEquals("public/register/register_applicant", modelAndView.getViewName());
+	}
+	
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourceNotFoundIfUserDoesNotExists(){
+		ModelAndView modelAndView = registerController.getRegisterPage(1);
 		assertEquals("public/register/register_applicant", modelAndView.getViewName());
 	}
 	

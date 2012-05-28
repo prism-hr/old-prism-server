@@ -63,6 +63,13 @@ public class ApplicationFormBuilder {
 	private Rejection rejection;	
 	private RegisteredUser applicationAdministrator;
 	
+	private String applicationNumber;
+	
+	public ApplicationFormBuilder applicationNumber(String applicationNumber) {
+		this.applicationNumber = applicationNumber;
+		return this;
+	}
+	
 	public ApplicationFormBuilder applicationAdministrator(RegisteredUser applicationAdministrator) {
 		this.applicationAdministrator = applicationAdministrator;
 		return this;
@@ -300,6 +307,7 @@ public class ApplicationFormBuilder {
 		application.setLatestReviewRound(latestReviewRound);
 		application.setRejection(rejection);
 		application.setApplicationAdministrator(applicationAdministrator);
+		application.setApplicationNumber(applicationNumber);
 		return application;
 	}
 }

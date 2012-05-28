@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.util.Arrays;
 
@@ -172,15 +171,15 @@ public class ReviewCommentControllerTest {
 	}
 	
 	@Test
-	public void shouldSaveCommentAndToApplicationListIfNoErrors(){
-		ReviewComment comment = new ReviewCommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).toApplicationForm()).toReviewComment();		
+	public void shouldSaveCommentAndRedirectToAssignReviewersPageIfNoErrors(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(6).toApplicationForm();
+		ReviewComment comment = new ReviewCommentBuilder().id(1).application(applicationForm).toReviewComment();		
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		commentServiceMock.save(comment);
 		EasyMock.replay(errorsMock, commentServiceMock);
-		assertEquals("redirect:/applications", controller.addComment(comment, errorsMock));
+		assertEquals("redirect:/review/assignReviewers?applicationId=" + applicationForm.getId(), controller.addComment(comment, errorsMock));
 		EasyMock.verify(errorsMock, commentServiceMock);
-		
 		
 	
 	}

@@ -10,6 +10,5 @@ public class DirectURLsEnumTest {
 	public void shouldOutputCorrectDisplayValues(){
 		Assert.assertEquals("/interviewFeedback?applicationId=", DirectURLsEnum.ADD_INTERVIEW.displayValue());
 		Assert.assertEquals("/reviewFeedback?applicationId=", DirectURLsEnum.ADD_REVIEW.displayValue());
-		Assert.assertEquals("/referee/addReferences?application=", DirectURLsEnum.ADD_REFERENCE.displayValue());
 	}
 }

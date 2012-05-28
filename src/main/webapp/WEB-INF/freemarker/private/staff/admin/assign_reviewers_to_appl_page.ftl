@@ -92,7 +92,7 @@
 									<form>
 									
 										<div id="assignReviewersToAppSection" class="row-group">			
-											
+											<p style:"color: red;">You can optionally assign new reviewers here. </p>
 											<div class="row">
 												<label class="label">Reviewers</label>
 												<div class="field">

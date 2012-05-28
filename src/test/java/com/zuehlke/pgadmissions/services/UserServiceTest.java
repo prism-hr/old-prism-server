@@ -602,31 +602,6 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void shouldCreateUserWithDirectToLinkToAddReference() {
-		
-		EasyMock.expect(userDAOMock.getUserByEmail("some@email.com")).andReturn(null);
-		RegisteredUser newUser = new RegisteredUserBuilder().id(5).toUser();
-		EasyMock.expect(userFactoryMock.createNewUserInRoles("la", "le", "some@email.com", Authority.REFEREE)).andReturn(newUser);
-		userDAOMock.save(newUser);		
-		
-		EasyMock.replay(userDAOMock, userFactoryMock);
-		
-		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.REFEREE, DirectURLsEnum.ADD_REFERENCE, 1);
-		
-		EasyMock.verify(userDAOMock, userFactoryMock);
-		assertEquals(newUser, createdUser);				
-		assertEquals("/referee/addReferences?application=1", createdUser.getDirectToUrl());				
-		
-		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
-		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
-		assertTrue(createdUser.getProgramsOfWhichInterviewer().isEmpty());
-		assertTrue(createdUser.getProgramsOfWhichReviewer().isEmpty());
-		
-		assertTrue(createdUser.getPendingRoleNotifications().isEmpty());
-		
-	}
-	
-	@Test
 	public void shouldGetAllPreviousInterviewersOfProgam(){
 		RegisteredUser userOne = new RegisteredUserBuilder().id(5).toUser();
 		RegisteredUser userTwo = new RegisteredUserBuilder().id(6).toUser();

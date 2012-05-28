@@ -184,10 +184,10 @@ function doUpload($upload_field)
 				$container.append(data);
         console.log(data);
       }
-      else if ($(data).find('span[name=supportingDocumentSpan]').length == 0)
+      else if ($(data).find('span[name="supportingDocumentSpan"]').length == 0)
       {
         // There was a server error.
-        $container.append('<span class="invalid">Could not upload file.</span>');
+        $container.append('<span class="invalid">Could not upload.</span>');
       }
 			else
 			{

@@ -199,6 +199,8 @@ $(document).ready(function(){
 	bindDatePicker('#qualificationStartDate');
 	bindDatePicker('#qualificationAwardDate');
 	addToolTips();
+	
+	watchUpload($('#proofOfAward'));
 		
 	$('#uploadFields').on('change','#proofOfAward', function(event){	
 		if(this.files[0].size < 10485760){

@@ -124,14 +124,13 @@ function watchUpload($field)
 
   $container.on('change', $field, function()
   {
-    var $this    = $(this);
     var $hidden  = $container.find('input[type="hidden"]');
-		if ($this[0].files[0].size < 10485760) // 10MB in bytes
+		if ($field.files[0].size < 10485760) // 10MB in bytes
     {
 			deleteUploadedFile($hidden);
 			$progress.html('uploading file...');
 			$field.attr("readonly", "readonly");
-			doUpload($this);
+			doUpload($field);
 			$field.removeAttr("readonly");
 		 }
      else
@@ -178,17 +177,23 @@ function doUpload($upload_field)
     data:           { type: $upload_field.attr('data-type') },
     success: function (data)
     {		
-			if ($(data).find('span.invalid').length == 0)
+			if ($(data).find('span.invalid').length > 0)
+			{
+        // There was an uploading error.
+				$container.append(data);
+        console.log(data);
+      }
+      else if ()
+      {
+        // There was a server error.
+        console.log(data);
+      }
+			else
 			{
 				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
 				$hfParent.html(data).show();
 				$container.addClass('uploaded');
 				//$('a.button-edit', $hfParent).attr({'id':'editQualiPOA','data-desc':'Edit Proof Of Award'});
-			}
-			else
-			{
-        // There was an uploading error.
-				$container.append(data);
 			}
     }
   });

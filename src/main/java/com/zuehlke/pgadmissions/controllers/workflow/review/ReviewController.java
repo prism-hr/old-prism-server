@@ -71,7 +71,7 @@ public abstract class ReviewController {
 	}
 
 	@ModelAttribute("programmeReviewers")
-	public List<RegisteredUser> getProgrammeReviewers(@RequestParam Integer applicationId, @RequestParam(required = false) List<Integer> pendingReviewer) {
+	public List<RegisteredUser> getProgrammeReviewers(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingReviewer) {
 		ApplicationForm application = getApplicationForm(applicationId);
 		Program program = application.getProgram();
 		List<RegisteredUser> availableReviewers = new ArrayList<RegisteredUser>();
@@ -96,7 +96,7 @@ public abstract class ReviewController {
 	}
 
 	@ModelAttribute("applicationReviewers")
-	public Set<RegisteredUser> getApplicationReviewersAsUsers(@RequestParam Integer applicationId) {
+	public Set<RegisteredUser> getApplicationReviewersAsUsers(@RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		Set<RegisteredUser> existingReviewers = new HashSet<RegisteredUser>();
 		ReviewRound latestReviewRound = applicationForm.getLatestReviewRound();
@@ -117,9 +117,9 @@ public abstract class ReviewController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 
-		ApplicationForm application = applicationsService.getApplicationById(applicationId);
+		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (application == null
 				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()
 						.isReviewerInLatestReviewRoundOfApplicationForm(application))) {
@@ -128,10 +128,10 @@ public abstract class ReviewController {
 		return application;
 	}
 
-	public abstract ReviewRound getReviewRound(@RequestParam Integer applicationId);
+	public abstract ReviewRound getReviewRound(@RequestParam Object id);
 
 	@ModelAttribute("pendingReviewers")
-	public List<RegisteredUser> getPendingReviewers(@RequestParam(required = false) List<Integer> pendingReviewer, @RequestParam Integer applicationId) {
+	public List<RegisteredUser> getPendingReviewers(@RequestParam(required = false) List<Integer> pendingReviewer, @RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> newUsers = new ArrayList<RegisteredUser>();
 		if (pendingReviewer != null) {
@@ -147,7 +147,7 @@ public abstract class ReviewController {
 	}
 
 	@ModelAttribute("previousReviewers")
-	public List<RegisteredUser> getPreviousReviewers(@RequestParam Integer applicationId, @RequestParam(required = false) List<Integer> pendingReviewer) {
+	public List<RegisteredUser> getPreviousReviewers(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingReviewer) {
 		List<RegisteredUser> availablePreviousReviewers = new ArrayList<RegisteredUser>();
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> previousReviewersOfProgram = userService.getAllPreviousReviewersOfProgram(applicationForm.getProgram());

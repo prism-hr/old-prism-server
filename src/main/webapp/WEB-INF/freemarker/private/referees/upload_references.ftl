@@ -44,7 +44,7 @@
 								<#else>
 								<p>Please upload your reference as a PDF document using the field below.</p>                                        
 								</#if>
-								<p>You can view ${applicationForm.applicant.firstName}'s application <a href="<@spring.url '/application?applicationId=${applicationForm.id?string("######")}' />" target="_blank">here</a></p>
+								<p>You can view ${applicationForm.applicant.firstName}'s application <a href="<@spring.url '/application?applicationId=${applicationForm.applicationNumber}' />" target="_blank">here</a></p>
 								
 								<section class="form-rows">
 									<div>
@@ -53,7 +53,7 @@
 											<div class="row-group">
 												<div class="row">
 											
-													<input type="hidden" name="application" value ='${applicationForm.id?string("######")}'/>           
+													<input type="hidden" name="application" value ='${applicationForm.applicationNumber}'/>           
 													<div class="field" id="referenceUploadFields">          
 														<label for="file">Upload file</label>
 														<input id="referenceDocument" class="full" type="file" name="file" value=""/>          

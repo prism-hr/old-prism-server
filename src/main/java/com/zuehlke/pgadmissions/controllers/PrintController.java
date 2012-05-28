@@ -41,8 +41,8 @@ public class PrintController {
 	@RequestMapping(method = RequestMethod.GET)
 	public Document printPage(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			Integer applicationFormId = ServletRequestUtils.getIntParameter(request, "applicationFormId");
-			ApplicationForm application = applicationSevice.getApplicationById(applicationFormId);
+			String applicationFormNumber = ServletRequestUtils.getStringParameter(request, "applicationFormId");
+			ApplicationForm application = applicationSevice.getApplicationByApplicationNumber(applicationFormNumber);
 			if (application == null) {
 				throw new ResourceNotFoundException();
 			}
@@ -68,7 +68,7 @@ public class PrintController {
 			response.setHeader("Expires", "0");
 			response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
 			response.setHeader("Pragma", "public");
-			response.setHeader("Content-Disposition", "inline; filename=\"application"+applicationFormId+".pdf\"");
+			response.setHeader("Content-Disposition", "inline; filename=\"application"+applicationFormNumber+".pdf\"");
 			response.setContentType("application/pdf");
 			response.setContentLength(baos.size());
 			ServletOutputStream out = response.getOutputStream();
@@ -96,7 +96,7 @@ public class PrintController {
 
 		document.open();
 		for (String applicationId : applications) {
-			ApplicationForm application = applicationSevice.getApplicationById(new Integer(applicationId));
+			ApplicationForm application = applicationSevice.getApplicationByApplicationNumber(applicationId);
 			builder.buildDocument(application, document);
 			document.newPage();
 		}

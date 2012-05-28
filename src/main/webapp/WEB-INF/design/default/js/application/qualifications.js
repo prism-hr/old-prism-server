@@ -200,8 +200,10 @@ $(document).ready(function(){
 	bindDatePicker('#qualificationAwardDate');
 	addToolTips();
 	
+  // Generic file upload solution...
 	watchUpload($('#proofOfAward'));
-		
+	
+  /*
 	$('#uploadFields').on('change','#proofOfAward', function(event){	
 		if(this.files[0].size < 10485760){
 			ajaxProofOfAwardDelete();
@@ -213,14 +215,14 @@ $(document).ready(function(){
 			 alert("Sorry, document must be at most 10MB.");
 		 }
 	});
+  */
 	
 	
-	/* Show the upload field if edit button is clicked */
-	$(document).on('click','a.button-edit', function(){
-		
+	/* Show the upload field if edit button is clicked. */
+	$(document).on('click','a.button-edit', function()
+  {
 		$(this).closest('.uploaded').removeClass('uploaded');
 		$(this).hide();
-		
 	});
 	
 	

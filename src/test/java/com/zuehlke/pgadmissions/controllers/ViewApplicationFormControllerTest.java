@@ -29,19 +29,19 @@ public class ViewApplicationFormControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getViewApplicationPage(null, 1, null, null, null);
+		controller.getViewApplicationPage(null, "1", null, null, null);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowExceptionIfCurrentCannotSeeApplicatioForm() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, userMock);
 
-		controller.getViewApplicationPage(null, 1, null, null, null);
+		controller.getViewApplicationPage(null,  "1", null, null, null);
 	}
 
 	@Test
@@ -49,7 +49,7 @@ public class ViewApplicationFormControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(userMock).toApplicationForm();
 		String uploadErrorCode = "abc";
 		String view = "def";
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
 		ApplicationPageModel model = new ApplicationPageModel();
 		
@@ -57,7 +57,7 @@ public class ViewApplicationFormControllerTest {
 		
 		EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock);
 
-		ModelAndView modelAndView = controller.getViewApplicationPage(view, 1, uploadErrorCode, null, null);
+		ModelAndView modelAndView = controller.getViewApplicationPage(view, "1", uploadErrorCode, null, null);
 		
 		assertEquals("private/pgStudents/form/main_application_page", modelAndView.getViewName());
 		assertEquals(model, modelAndView.getModel().get("model"));
@@ -68,14 +68,14 @@ public class ViewApplicationFormControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).applicant(new RegisteredUserBuilder().toUser()).toApplicationForm();
 		String uploadErrorCode = "abc";
 		String view = "def";
-		EasyMock.expect(applicationsServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
 
 		ApplicationPageModel model = new ApplicationPageModel();
 		EasyMock.expect(applicationPageModelBuilderMock.createAndPopulatePageModel(applicationForm, uploadErrorCode, view, null, null)).andReturn(model);
 		EasyMock.replay(applicationsServiceMock, userMock, applicationPageModelBuilderMock);
 		
-		ModelAndView modelAndView = controller.getViewApplicationPage(view, 1, uploadErrorCode, null, null);
+		ModelAndView modelAndView = controller.getViewApplicationPage(view,  "1", uploadErrorCode, null, null);
 		
 		assertEquals("private/staff/application/main_application_page", modelAndView.getViewName());
 		assertEquals(model, modelAndView.getModel().get("model"));

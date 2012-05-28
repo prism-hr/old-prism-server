@@ -76,12 +76,12 @@ public class ApprovalControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
 				@Override
-			public ApplicationForm getApplicationForm(Integer applicationId) {
+			public ApplicationForm getApplicationForm(String applicationId) {
 				return applicationForm;
 			}
 
 			@Override
-			public ApprovalRound getApprovalRound(Integer applicationId) {
+			public ApprovalRound getApprovalRound(String applicationId) {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -101,7 +101,7 @@ public class ApprovalControllerTest {
 		applicationServiceMock.save(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 
-		Set<RegisteredUser> interviewersUsers = controller.getApplicationSupervisorsAsUsers(applicationForm.getId());
+		Set<RegisteredUser> interviewersUsers = controller.getApplicationSupervisorsAsUsers(applicationForm.getApplicationNumber());
 		assertEquals(2, interviewersUsers.size());
 	}
 
@@ -118,22 +118,22 @@ public class ApprovalControllerTest {
 				.id(5).program(program).toApplicationForm();
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
 				@Override
-			public ApplicationForm getApplicationForm(Integer applicationId) {
-				if (applicationId == 5) {
+			public ApplicationForm getApplicationForm(String applicationId) {
+				if (applicationId == "5") {
 					return applicationForm;
 				}
 				return null;
 			}
 
 			@Override
-			public ApprovalRound getApprovalRound(Integer applicationId) {
+			public ApprovalRound getApprovalRound(String applicationId) {
 				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@SuppressWarnings("unchecked")
 			@Override
-			public List<RegisteredUser> getPendingSupervisors(List<Integer> pendingSupervisors, Integer applicationId) {
+			public List<RegisteredUser> getPendingSupervisors(List<Integer> pendingSupervisors, String applicationId) {
 				if (pendingSupervisors.size() == 1 && pendingSupervisors.get(0) == 3) {
 					return Arrays.asList(superUser3);
 				}
@@ -142,7 +142,7 @@ public class ApprovalControllerTest {
 
 		};
 
-		List<RegisteredUser> supervisorsUsers = controller.getProgrammeSupervisors(5, Arrays.asList(3));
+		List<RegisteredUser> supervisorsUsers = controller.getProgrammeSupervisors("5", Arrays.asList(3));
 		assertEquals(2, supervisorsUsers.size());
 	}
 
@@ -160,10 +160,10 @@ public class ApprovalControllerTest {
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 
-		ApplicationForm returnedForm = controller.getApplicationForm(5);
+		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
 
 	}
@@ -175,20 +175,20 @@ public class ApprovalControllerTest {
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isSupervisorOfApplicationForm(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 
-		ApplicationForm returnedForm = controller.getApplicationForm(5);
+		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
 
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicatioDoesNotExist() {
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(null);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationServiceMock);
 
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -200,10 +200,10 @@ public class ApprovalControllerTest {
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(false);
 		EasyMock.expect(currentUserMock.isSupervisorOfApplicationForm(applicationForm)).andReturn(false);
 
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 	}
 
 	@Test
@@ -217,25 +217,25 @@ public class ApprovalControllerTest {
 		EasyMock.expect(userServiceMock.getUser(8)).andReturn(newUser2);
 		EasyMock.replay(userServiceMock);
 
-		Integer applicationId = 5;
+		String applicationNumber = "5";
 		final ApplicationForm applicationForm = new ApplicationFormBuilder()
-				.latestApprovalRound(new ApprovalRoundBuilder().supervisors(new SupervisorBuilder().user(newUser2).toSupervisor()).toApprovalRound()).id(applicationId)
+				.latestApprovalRound(new ApprovalRoundBuilder().supervisors(new SupervisorBuilder().user(newUser2).toSupervisor()).toApprovalRound()).id(2).applicationNumber(applicationNumber)
 				.toApplicationForm();
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
 				@Override
-			public ApplicationForm getApplicationForm(Integer applicationId) {
-				if (5 == applicationId) {
+			public ApplicationForm getApplicationForm(String applicationId) {
+				if ("5".equals(applicationId)) {
 					return applicationForm;
 				}
 				return null;
 			}
 
 			@Override
-			public ApprovalRound getApprovalRound(Integer applicationId) {
+			public ApprovalRound getApprovalRound(String applicationId) {
 				return null;
 			}
 		};
-		List<RegisteredUser> newUsers = controller.getPendingSupervisors(ids, applicationId);
+		List<RegisteredUser> newUsers = controller.getPendingSupervisors(ids, applicationNumber);
 		assertEquals(1, newUsers.size());
 		assertEquals(newUser1, newUsers.get(0));
 
@@ -254,8 +254,8 @@ public class ApprovalControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().latestApprovalRound(approvalRound).id(5).program(program).toApplicationForm();
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
 			@Override
-			public ApplicationForm getApplicationForm(Integer applicationId) {
-				if(applicationId == 5){
+			public ApplicationForm getApplicationForm(String applicationId) {
+				if(applicationId == "5"){
 					return applicationForm;
 				}
 				return null;
@@ -264,7 +264,7 @@ public class ApprovalControllerTest {
 		
 			@SuppressWarnings("unchecked")
 			@Override
-			public List<RegisteredUser> getPendingSupervisors(List<Integer> pendingSupervisor, Integer applicationId) {
+			public List<RegisteredUser> getPendingSupervisors(List<Integer> pendingSupervisor, String applicationId) {
 				if (pendingSupervisor.size() == 1 && pendingSupervisor.get(0) == 3) {
 					return Arrays.asList(pendingSupervisorUser);
 				}
@@ -273,7 +273,7 @@ public class ApprovalControllerTest {
 
 
 			@Override
-			public ApprovalRound getApprovalRound(Integer applicationId) {
+			public ApprovalRound getApprovalRound(String applicationId) {
 				// TODO Auto-generated method stub
 				return null;
 			}
@@ -282,7 +282,7 @@ public class ApprovalControllerTest {
 		
 		EasyMock.expect(userServiceMock.getAllPreviousSupervisorsOfProgram(program)).andReturn(Arrays.asList(defaultSupervisor, supervisor, pendingSupervisorUser, assignedSupervisor));
 		EasyMock.replay(userServiceMock);
-		List<RegisteredUser> supervisorsUsers = controller.getPreviousSupervisors(5, Arrays.asList(3));
+		List<RegisteredUser> supervisorsUsers = controller.getPreviousSupervisors("5", Arrays.asList(3));
 		assertTrue(supervisorsUsers.contains(supervisor));
 		assertEquals(1, supervisorsUsers.size());
 		assertTrue(supervisorsUsers.contains(supervisor));
@@ -310,7 +310,7 @@ public class ApprovalControllerTest {
 
 		controller = new ApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
 			@Override
-			public ApprovalRound getApprovalRound(Integer applicationId) {
+			public ApprovalRound getApprovalRound(String applicationId) {
 				// TODO Auto-generated method stub
 				return null;
 			}

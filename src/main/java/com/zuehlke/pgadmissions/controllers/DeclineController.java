@@ -39,7 +39,7 @@ public class DeclineController {
 	}
 	
 	@RequestMapping(value="/review", method = RequestMethod.GET)
-	public String declineReview(@RequestParam Integer userId, @RequestParam Integer applicationId, ModelMap modelMap) {
+	public String declineReview(@RequestParam Integer userId, @RequestParam String applicationId, ModelMap modelMap) {
 		RegisteredUser reviewer = getReviewer(userId);
 		ApplicationForm application = getApplicationForm(applicationId);
 		commentService.declineReview(reviewer, application);
@@ -72,8 +72,8 @@ public class DeclineController {
 		return reviewer;
 	}
 	
-	public ApplicationForm getApplicationForm(Integer applicationId) {
-		ApplicationForm applicationForm = applicationsService.getApplicationById(applicationId);
+	public ApplicationForm getApplicationForm(String applicationId) {
+		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (applicationForm == null){
 			throw new ResourceNotFoundException();
 		}

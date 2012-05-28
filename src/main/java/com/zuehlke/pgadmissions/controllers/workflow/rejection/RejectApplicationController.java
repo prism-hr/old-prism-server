@@ -109,8 +109,8 @@ public class RejectApplicationController {
 
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
-		ApplicationForm application = applicationService.getApplicationById(applicationId);
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
 		checkPermissionForApplication(application);
 		checkApplicationStatus(application);
 		return application;

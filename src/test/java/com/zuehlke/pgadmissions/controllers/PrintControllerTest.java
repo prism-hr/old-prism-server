@@ -56,7 +56,7 @@ public class PrintControllerTest {
 		
 		applicationForm.setProgram(new Program());
 		
-		EasyMock.expect(applicationSevice.getApplicationById(23)).andReturn(applicationForm);
+		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationForm);
 		
 		EasyMock.replay(request, response, applicationSevice);
 		
@@ -87,8 +87,8 @@ public class PrintControllerTest {
 		
 		applicationForm.setProgram(new Program());
 		
-		EasyMock.expect(applicationSevice.getApplicationById(23)).andReturn(applicationForm);
-		EasyMock.expect(applicationSevice.getApplicationById(34)).andReturn(applicationForm);
+		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("23")).andReturn(applicationForm);
+		EasyMock.expect(applicationSevice.getApplicationByApplicationNumber("34")).andReturn(applicationForm);
 		
 		EasyMock.replay(request, response, applicationSevice);
 		

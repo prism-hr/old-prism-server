@@ -52,8 +52,8 @@ public class StateTransitionController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer application) {
-		ApplicationForm applicationForm = applicationsService.getApplicationById(application);
+	public ApplicationForm getApplicationForm(@RequestParam String application) {
+		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(application);
 		if (applicationForm == null || !getCurrentUser().hasAdminRightsOnApplication(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
@@ -67,7 +67,7 @@ public class StateTransitionController {
 	}
 
 	@ModelAttribute("stati")
-	public ApplicationFormStatus[] getAvailableNextStati(@RequestParam Integer application) {
+	public ApplicationFormStatus[] getAvailableNextStati(@RequestParam String application) {
 		ApplicationForm applicationForm = getApplicationForm(application);
 		return ApplicationFormStatus.getAvailableNextStati(applicationForm.getStatus());
 	}
@@ -100,7 +100,7 @@ public class StateTransitionController {
 	}
 
 	@ModelAttribute("reviewersWillingToInterview")
-	public List<RegisteredUser> getReviewersWillingToInterview(@RequestParam Integer application) {
+	public List<RegisteredUser> getReviewersWillingToInterview(@RequestParam String application) {
 		ApplicationForm applicationForm = getApplicationForm(application);
 		if (applicationForm.getStatus() == ApplicationFormStatus.REVIEW) {
 			return userService.getReviewersWillingToInterview(applicationForm);

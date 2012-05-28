@@ -91,7 +91,7 @@
 				            
 				          	<div class="row half">
 				            	<label>Application Number</label>
-				              <input id="applicationNumber" disabled size="20" value="${applicationForm.id?string("######")}" />
+				              <input id="applicationNumber" disabled size="20" value="${applicationForm.applicationNumber}" />
 				            </div>
 				               
 						     <#if applicationForm.isSubmitted()>

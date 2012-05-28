@@ -61,10 +61,10 @@ public class MoveToApprovalControllerTest {
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
 		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 
-		ApplicationForm returnedForm = controller.getApplicationForm(5);
+		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
 
 	}
@@ -83,7 +83,7 @@ public class MoveToApprovalControllerTest {
 		
 		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
 			@Override
-				public ApplicationForm getApplicationForm(Integer applicationId) {
+				public ApplicationForm getApplicationForm(String applicationId) {
 				return application;
 			}
 
@@ -92,7 +92,7 @@ public class MoveToApprovalControllerTest {
 		approvalServiceMock.moveApplicationToApproval(application, approvalround);
 		EasyMock.replay(approvalServiceMock);
 		
-		String view = controller.moveToApproval(application.getId(), approvalround, bindingResultMock);
+		String view = controller.moveToApproval(application.getApplicationNumber(), approvalround, bindingResultMock);
 		assertEquals("redirect:/applications", view);
 		EasyMock.verify(approvalServiceMock);
 		
@@ -104,16 +104,16 @@ public class MoveToApprovalControllerTest {
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
 			@Override
-			public ApplicationForm getApplicationForm(Integer applicationId) {
+			public ApplicationForm getApplicationForm(String applicationId) {
 				return applicationForm;
 			}
 
 		};
 		ApprovalRound approvalround = new ApprovalRoundBuilder().application(applicationForm).toApprovalRound();
-		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
 		EasyMock.replay(errorsMock, applicationServiceMock);
-		assertEquals(APROVAL_DETAILS_VIEW_NAME, controller.moveToApproval(1, approvalround, errorsMock));
+		assertEquals(APROVAL_DETAILS_VIEW_NAME, controller.moveToApproval("1", approvalround, errorsMock));
 
 	}
 

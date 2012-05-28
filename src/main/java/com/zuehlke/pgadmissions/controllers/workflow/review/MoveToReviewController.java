@@ -43,7 +43,7 @@ public class MoveToReviewController extends ReviewController {
 	}
 
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
-	public String moveToReview(@RequestParam Integer applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult) {
+	public String moveToReview(@RequestParam String applicationId, @Valid @ModelAttribute("reviewRound") ReviewRound reviewRound, BindingResult bindingResult) {
 
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		if (bindingResult.hasErrors()) {
@@ -57,7 +57,7 @@ public class MoveToReviewController extends ReviewController {
 	
 	
 	@ModelAttribute("reviewRound")
-	public ReviewRound getReviewRound(@RequestParam Integer applicationId) {
+	public ReviewRound getReviewRound(@RequestParam Object applicationId) {
 		return new ReviewRound();
 	}
 

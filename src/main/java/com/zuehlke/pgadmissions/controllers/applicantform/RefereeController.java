@@ -84,7 +84,7 @@ public class RefereeController {
 		}
 		application.setLastUpdated(new Date());
 		applicationsService.save(application);
-		return "redirect:/update/getReferee?applicationId=" + application.getId();
+		return "redirect:/update/getReferee?applicationId=" + application.getApplicationNumber();
 			
 	}
 
@@ -95,8 +95,8 @@ public class RefereeController {
 	
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {		
-		ApplicationForm application = applicationsService.getApplicationById(applicationId);
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
+		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if(application == null || !getCurrentUser().canSee(application)){
 			throw new ResourceNotFoundException();
 		}

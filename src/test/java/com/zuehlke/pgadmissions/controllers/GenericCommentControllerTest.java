@@ -44,17 +44,17 @@ public class GenericCommentControllerTest {
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser, userServiceMock);
 		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		ApplicationForm returnedApplication = controller.getApplicationForm(5);
+		ApplicationForm returnedApplication = controller.getApplicationForm("5");
 		assertEquals(returnedApplication, applicationForm);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -67,9 +67,9 @@ public class GenericCommentControllerTest {
 		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
 		EasyMock.replay(currentUser, userServiceMock);
 		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 
 	}
 	@Test(expected = ResourceNotFoundException.class)
@@ -83,9 +83,9 @@ public class GenericCommentControllerTest {
 		EasyMock.expect(currentUser.isRefereeOfApplicationForm(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser, userServiceMock);
 		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 
 	}
 
@@ -101,9 +101,9 @@ public class GenericCommentControllerTest {
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(currentUser, userServiceMock);
 		
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 
 	}
 
@@ -129,12 +129,12 @@ public class GenericCommentControllerTest {
 		controller = new  GenericCommentController(applicationsServiceMock, userServiceMock, commentServiceMock, genericCommentValidatorMock){
 
 			@Override
-			public ApplicationForm getApplicationForm(Integer id) {
+			public ApplicationForm getApplicationForm(String id) {
 				return applicationForm;
 			}
 			
 		};
-		Comment comment = controller.getComment(5);
+		Comment comment = controller.getComment("5");
 		assertNull(comment.getId());
 		assertEquals(applicationForm, comment.getApplication());
 		assertEquals(currentUser, comment.getUser());
@@ -161,12 +161,12 @@ public class GenericCommentControllerTest {
 	
 	@Test
 	public void shouldSaveCommentAndRedirectBackToPageIfNoErrors(){
-		Comment comment = new CommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).toApplicationForm()).toComment();		
+		Comment comment = new CommentBuilder().id(1).application(new ApplicationFormBuilder().id(6).applicationNumber("ABC").toApplicationForm()).toComment();		
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(false);
 		commentServiceMock.save(comment);
 		EasyMock.replay(errorsMock, commentServiceMock);
-		assertEquals("redirect:/comment?applicationId=6", controller.addComment(comment, errorsMock));
+		assertEquals("redirect:/comment?applicationId=ABC", controller.addComment(comment, errorsMock));
 	}
 	@Before
 	public void setUp() {

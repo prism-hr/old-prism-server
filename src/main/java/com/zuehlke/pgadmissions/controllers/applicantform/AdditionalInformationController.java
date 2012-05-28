@@ -68,7 +68,7 @@ public class AdditionalInformationController {
 		additionalService.save(info);
 		info.getApplication().setLastUpdated(new Date());
 		applicationService.save(info.getApplication());
-		return "redirect:/update/getAdditionalInformation?applicationId=" + info.getApplication().getId();
+		return "redirect:/update/getAdditionalInformation?applicationId=" + info.getApplication().getApplicationNumber();
 
 	}
 
@@ -81,8 +81,8 @@ public class AdditionalInformationController {
 	}
 
 	@ModelAttribute("additionalInformation")
-	public AdditionalInformation getAdditionalInformation(@RequestParam Integer applicationId) {
-		ApplicationForm application = applicationService.getApplicationById(applicationId);
+	public AdditionalInformation getAdditionalInformation(@RequestParam String applicationId) {
+		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
 		if (application == null || !getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();
 		}
@@ -112,8 +112,8 @@ public class AdditionalInformationController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
-		ApplicationForm application = applicationService.getApplicationById(applicationId);
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
 		if (application == null || !getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();
 		}

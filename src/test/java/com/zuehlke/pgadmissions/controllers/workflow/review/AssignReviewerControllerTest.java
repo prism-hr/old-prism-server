@@ -64,11 +64,11 @@ public class AssignReviewerControllerTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).latestReviewRound(reviewRound).toApplicationForm();
 		
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);		
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 
 		
-		assertEquals(reviewRound, controller.getReviewRound(5));
+		assertEquals(reviewRound, controller.getReviewRound("5"));
 	}
 
 	@Test

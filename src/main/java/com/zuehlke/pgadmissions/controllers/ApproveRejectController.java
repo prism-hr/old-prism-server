@@ -58,9 +58,9 @@ public class ApproveRejectController {
 
 	
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(Integer id) {
+	public ApplicationForm getApplicationForm(String id) {
 		RegisteredUser approver = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationsService.getApplicationById(id);
+		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(id);
 		if(applicationForm == null || !approver.canSee(applicationForm)){
 			throw new ResourceNotFoundException();
 		}

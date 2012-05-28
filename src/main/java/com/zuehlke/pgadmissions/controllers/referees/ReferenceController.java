@@ -50,8 +50,8 @@ public class ReferenceController {
 	}
 
 	@ModelAttribute
-	public ApplicationForm getApplicationForm(@RequestParam Integer application) {
-		ApplicationForm applicationForm = applicationsService.getApplicationById(application);
+	public ApplicationForm getApplicationForm(@RequestParam String application) {
+		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(application);
 		if (applicationForm == null || !getCurrentUser().isRefereeOfApplicationForm(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
@@ -77,7 +77,7 @@ public class ReferenceController {
 	}
 
 	@ModelAttribute
-	public Reference getReference(@RequestParam Integer application) {
+	public Reference getReference(@RequestParam String application) {
 		Referee referee = getCurrentUser().getRefereeForApplicationForm(getApplicationForm(application));
 		if (referee.getReference() == null) {
 			

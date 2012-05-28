@@ -24,7 +24,7 @@ section.form-rows > div { background: #BBB; border: 2px solid #999; padding: 10p
 
 
 /* EXISTING ROWS ----------------------------------------------------------------------------------------- */
-section.form-rows table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%;  margin: 8px -10px -10px; }
+section.form-rows table.existing { background: #DDD; border-bottom: 1px solid #999; border-collapse: collapse; text-align: left; width: 100%;  margin: -10px -10px 10px; width: 824px; }
 section.form-rows table.existing th { background: url(../../images/bg_table_head.png) repeat-x; text-align: left; }
 /*  Temp Fix: Modified to accomodate backgournd for long strings : Manish */
 section.form-rows table.existing td { 

@@ -40,17 +40,17 @@ public class CommentTimelineControllerTest {
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.replay(currentUser, userServiceMock);
 
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		ApplicationForm returnedApplication = controller.getApplicationForm(5);
+		ApplicationForm returnedApplication = controller.getApplicationForm("5");
 		assertEquals(returnedApplication, applicationForm);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -60,9 +60,9 @@ public class CommentTimelineControllerTest {
 		EasyMock.expect(currentUser.isInRole(Authority.APPLICANT)).andReturn(true);
 		EasyMock.replay(currentUser, userServiceMock);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 
 	}
 
@@ -75,9 +75,9 @@ public class CommentTimelineControllerTest {
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(currentUser, userServiceMock);
 
-		EasyMock.expect(applicationsServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		controller.getApplicationForm(5);
+		controller.getApplicationForm("5");
 
 	}
 
@@ -103,12 +103,12 @@ public class CommentTimelineControllerTest {
 		controller = new CommentTimelineController( applicationsServiceMock, userServiceMock){
 
 			@Override
-			public ApplicationForm getApplicationForm(Integer id) {			
+			public ApplicationForm getApplicationForm(String id) {			
 				return applicationForm;
 			}
 			
 		};
-		List<TimelineEntity> sortedTimelineList = controller.getSortedTimelineList(5);
+		List<TimelineEntity> sortedTimelineList = controller.getSortedTimelineList("5");
 		assertEquals(4, sortedTimelineList.size());
 		assertEquals(commentTwo, sortedTimelineList.get(0));
 		assertEquals(eventOne, sortedTimelineList.get(1));

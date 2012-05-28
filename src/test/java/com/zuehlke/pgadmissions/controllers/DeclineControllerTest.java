@@ -50,9 +50,9 @@ public class DeclineControllerTest {
 	@Test
 	public void shouldGetApplicationFromId() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock);
-		ApplicationForm returnedForm = controller.getApplicationForm(5);
+		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
 
 	}
@@ -61,9 +61,9 @@ public class DeclineControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfApplicationNotExists() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
-		EasyMock.expect(applicationServiceMock.getApplicationById(5)).andReturn(null);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(null);
 		EasyMock.replay(applicationServiceMock);
-		ApplicationForm returnedForm = controller.getApplicationForm(5);
+		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
 	}
 	
@@ -90,20 +90,20 @@ public class DeclineControllerTest {
 	@Test
 	public void shouldDeclineReviewAndReturnMessageView() {
 		final RegisteredUser reviewer = new RegisteredUserBuilder().id(5).toUser();
-		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).toApplicationForm();
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().applicant(new RegisteredUserBuilder().firstName("").lastName("").toUser()).id(5).applicationNumber("ABC").toApplicationForm();
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock){
 			@Override
 			public RegisteredUser getReviewer(Integer userId){
 				return reviewer;
 			}
 			@Override
-			public ApplicationForm getApplicationForm(Integer applicationId){
+			public ApplicationForm getApplicationForm(String applicationId){
 				return applicationForm;
 			}
 		}; 
 		commentServiceMock.declineReview(reviewer, applicationForm);
 		EasyMock.replay(commentServiceMock);
-		String view = controller.declineReview(reviewer.getId(), applicationForm.getId(), new ModelMap());
+		String view = controller.declineReview(reviewer.getId(), applicationForm.getApplicationNumber(), new ModelMap());
 		EasyMock.verify(commentServiceMock);
 		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);
 	}

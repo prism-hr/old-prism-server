@@ -40,9 +40,9 @@ public class CommentTimelineController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		RegisteredUser currentUser = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationService.getApplicationById(applicationId);
+		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
 		if (applicationForm == null || currentUser.isInRole(Authority.APPLICANT) || !currentUser.canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}
@@ -57,7 +57,7 @@ public class CommentTimelineController {
 
 
 	@ModelAttribute("timelineEntities")
-	public List<TimelineEntity> getSortedTimelineList(@RequestParam Integer id) {
+	public List<TimelineEntity> getSortedTimelineList(@RequestParam String id) {
 		List<TimelineEntity> timelineList = new ArrayList<TimelineEntity>();
 		timelineList.addAll(getApplicationForm(id).getVisibleComments(userService.getCurrentUser()));
 		timelineList.addAll(getApplicationForm(id).getEvents());

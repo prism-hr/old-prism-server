@@ -143,9 +143,9 @@ public class SubmitApplicationFormControllerTest {
 
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).status(ApplicationFormStatus.UNSUBMITTED).applicant(student)
 				.toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
-		ApplicationForm returnedApplicationForm = applicationController.getApplicationForm(2);
+		ApplicationForm returnedApplicationForm = applicationController.getApplicationForm("2");
 		assertEquals(applicationForm, returnedApplicationForm);
 
 	}
@@ -161,9 +161,9 @@ public class SubmitApplicationFormControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfSubmittedApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationsServiceMock.getApplicationById(2)).andReturn(null);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(null);
 		EasyMock.replay(applicationsServiceMock);
-		applicationController.getApplicationForm(2);
+		applicationController.getApplicationForm("2");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -177,11 +177,11 @@ public class SubmitApplicationFormControllerTest {
 		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
 		authenticationToken.setDetails(userMock);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
-		EasyMock.expect(applicationsServiceMock.getApplicationById(3)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("3")).andReturn(applicationForm);
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationsServiceMock, userMock);
 
-		applicationController.getApplicationForm(3);
+		applicationController.getApplicationForm("3");
 	}
 
 	@Before

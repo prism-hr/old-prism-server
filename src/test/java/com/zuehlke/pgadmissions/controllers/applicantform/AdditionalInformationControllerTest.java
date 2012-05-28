@@ -123,7 +123,7 @@ public class AdditionalInformationControllerTest {
 
 	@Test
 	public void shouldSaveAdditionalInfoAndRedirect() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).applicationNumber("ABC").toApplicationForm();
 		AdditionalInformation info = new AdditionalInformationBuilder().id(1).applicationForm(applicationForm).toAdditionalInformation();
 
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
@@ -135,7 +135,7 @@ public class AdditionalInformationControllerTest {
 		EasyMock.replay(errors, applicationServiceMock, addInfoServiceMock);
 		String viewID = controller.editAdditionalInformation(info, errors);
 		EasyMock.verify(errors, applicationServiceMock, addInfoServiceMock);
-		Assert.assertEquals("redirect:/update/getAdditionalInformation?applicationId=5", viewID);
+		Assert.assertEquals("redirect:/update/getAdditionalInformation?applicationId=ABC", viewID);
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
@@ -148,19 +148,19 @@ public class AdditionalInformationControllerTest {
 		applicationForm.setAdditionalInformation(additionalInfo);
 
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationById(100)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
 
 		EasyMock.replay(userMock, applicationServiceMock, addInfoServiceMock);
-		AdditionalInformation returnedAddInfo = controller.getAdditionalInformation(100);
+		AdditionalInformation returnedAddInfo = controller.getAdditionalInformation("100");
 		Assert.assertEquals(additionalInfo, returnedAddInfo);
 		EasyMock.verify(userMock, applicationServiceMock, addInfoServiceMock);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void throwRNFEIfApplicationFormDoesNotExist() {
-		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(null);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
 		EasyMock.replay(applicationServiceMock, addInfoServiceMock);
-		controller.getAdditionalInformation(1);
+		controller.getAdditionalInformation("1");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -172,10 +172,10 @@ public class AdditionalInformationControllerTest {
 		applicationForm.setAdditionalInformation(additionalInfo);
 
 		EasyMock.expect(userMock.canSee(applicationForm)).andReturn(false);
-		EasyMock.expect(applicationServiceMock.getApplicationById(100)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
 
 		EasyMock.replay(userMock, applicationServiceMock, addInfoServiceMock);
-		controller.getAdditionalInformation(100);
+		controller.getAdditionalInformation("100");
 	}
 
 	@Test
@@ -195,18 +195,18 @@ public class AdditionalInformationControllerTest {
 		authenticationToken.setDetails(currentUser);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
-		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("100")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUser);
-		ApplicationForm returnedApplicationForm = controller.getApplicationForm(1);
+		ApplicationForm returnedApplicationForm = controller.getApplicationForm("100");
 		Assert.assertEquals(applicationForm, returnedApplicationForm);
 		EasyMock.verify(applicationServiceMock);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowRNFEIfNullApplication() {
-		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(null);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(null);
 		EasyMock.replay(applicationServiceMock);
-		controller.getApplicationForm(1);
+		controller.getApplicationForm("1");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -214,10 +214,10 @@ public class AdditionalInformationControllerTest {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
 		authenticationToken.setDetails(currentUser);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		EasyMock.expect(applicationServiceMock.getApplicationById(1)).andReturn(applicationForm);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
 		EasyMock.replay(applicationServiceMock, currentUser);
-		controller.getApplicationForm(1);
+		controller.getApplicationForm("1");
 
 	}
 }

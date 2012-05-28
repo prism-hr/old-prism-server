@@ -121,7 +121,7 @@ public class CreateNewReviewerController extends ReviewController {
 
 	@Override
 	@ModelAttribute("reviewRound")
-	public ReviewRound getReviewRound(Integer applicationId) {
+	public ReviewRound getReviewRound(Object applicationId) {
 
 		return new ReviewRound();
 	}

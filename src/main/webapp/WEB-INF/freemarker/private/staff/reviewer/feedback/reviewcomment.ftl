@@ -61,7 +61,7 @@
 							     <p style="color:red;">Please note that once you submit your feedback you cannot re-submit or edit it.</p> 
 							     <form id ="reviewForm" method="POST" action= "<@spring.url '/reviewFeedback'/>"/>
 							   
-							    	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
+							    	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 			            			<div class="row">
 										<label class="plain-label">Decline</label>
 										<div class="field">        
@@ -111,7 +111,7 @@
 									</form>									
 			  					<hr/>
 			  				<#else>
-			  					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.id?string('#####'))!}"/>
+			  					<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 		  					</#if>
 		  					<#include "/private/staff/admin/comment/timeline_application.ftl"/>
 				        </div><!-- .content-box-inner -->

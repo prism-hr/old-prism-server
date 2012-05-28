@@ -122,36 +122,36 @@ public class RejectApplicationControllerTest {
 	// ----------- check for application states:
 	@Test(expected =ResourceNotFoundException.class)
 	public void throwCUAEIfApplicationIsUnsubmitted() {
-		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
 
 		application.setStatus(ApplicationFormStatus.UNSUBMITTED);
-		controllerUT.getApplicationForm(10);
+		controllerUT.getApplicationForm("10");
 	}
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void throwCUAEIfApplicationIsWithdrawn() {
-		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
 
 		application.setStatus(ApplicationFormStatus.WITHDRAWN);
-		controllerUT.getApplicationForm(10);
+		controllerUT.getApplicationForm("10");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void throwRNFEIfApplicationDoesntExist() {
-		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(null);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(null);
 		EasyMock.replay(applicationServiceMock);
-		controllerUT.getApplicationForm(10);
+		controllerUT.getApplicationForm("10");
 	}
 
 	@Test
 	public void returnApplicationIfApplicationHasValidState() {
 		// setup of application status is VALIDATION
-		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
 
-		ApplicationForm applicationForm = controllerUT.getApplicationForm(10);
+		ApplicationForm applicationForm = controllerUT.getApplicationForm("10");
 		Assert.assertNotNull(applicationForm);
 		Assert.assertEquals(application, applicationForm);
 		EasyMock.verify(applicationServiceMock);
@@ -179,7 +179,7 @@ public class RejectApplicationControllerTest {
 	// ----------- check for user roles:
 	@Test(expected = ResourceNotFoundException.class)
 	public void throwRNFEIfUserIsApplicant() {
-		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
 		RegisteredUser applicant = new RegisteredUserBuilder().id(2023).username("applicant").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		EasyMock.reset(userServiceMock);
@@ -187,7 +187,7 @@ public class RejectApplicationControllerTest {
 		EasyMock.replay(userServiceMock);
 		
 
-		controllerUT.getApplicationForm(10);
+		controllerUT.getApplicationForm("10");
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
@@ -196,10 +196,10 @@ public class RejectApplicationControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(wrongApprover).anyTimes();
 		EasyMock.replay(userServiceMock);
-		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
 		EasyMock.replay(applicationServiceMock);	
 
-		controllerUT.getApplicationForm(10);
+		controllerUT.getApplicationForm("10");
 	}
 
 	@Test
@@ -207,10 +207,10 @@ public class RejectApplicationControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(approver).anyTimes();
 		EasyMock.replay(userServiceMock);
-		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
 
-		ApplicationForm applicationForm = controllerUT.getApplicationForm(10);
+		ApplicationForm applicationForm = controllerUT.getApplicationForm("10");
 		Assert.assertNotNull(applicationForm);
 		Assert.assertEquals(application, applicationForm);
 		EasyMock.verify(applicationServiceMock);
@@ -226,10 +226,10 @@ public class RejectApplicationControllerTest {
 		EasyMock.reset(userServiceMock);
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(userMock).anyTimes();
 		EasyMock.replay(userServiceMock);
-		EasyMock.expect(applicationServiceMock.getApplicationById(10)).andReturn(application);
+		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("10")).andReturn(application);
 		EasyMock.replay(applicationServiceMock);
 
-		ApplicationForm applicationForm = controllerUT.getApplicationForm(10);
+		ApplicationForm applicationForm = controllerUT.getApplicationForm("10");
 		Assert.assertNotNull(applicationForm);
 		Assert.assertEquals(application, applicationForm);
 		EasyMock.verify(applicationServiceMock);

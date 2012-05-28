@@ -45,7 +45,7 @@ public class MoveToInterviewController extends InterviewController {
 	}
 
 	@RequestMapping(value = "/move", method = RequestMethod.POST)
-	public String moveToInterview(@RequestParam Integer applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult) {
+	public String moveToInterview(@RequestParam String applicationId, @Valid @ModelAttribute("interview") Interview interview, BindingResult bindingResult) {
 
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		if (bindingResult.hasErrors()) {
@@ -59,7 +59,7 @@ public class MoveToInterviewController extends InterviewController {
 	
 	
 	@ModelAttribute("interview")
-	public Interview getInterview(@RequestParam Integer applicationId) {
+	public Interview getInterview(@RequestParam Object applicationId) {
 		return new Interview();
 	}
 

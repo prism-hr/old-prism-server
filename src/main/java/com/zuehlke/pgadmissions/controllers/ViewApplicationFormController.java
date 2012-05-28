@@ -36,11 +36,11 @@ public class ViewApplicationFormController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getViewApplicationPage(@RequestParam(required = false) String view, @RequestParam Integer id,
+	public ModelAndView getViewApplicationPage(@RequestParam(required = false) String view, @RequestParam String id,
 			@RequestParam(required = false) String uploadErrorCode, @RequestParam(required = false) String uploadTwoErrorCode, 
 			@RequestParam(required = false) String fundingErrors) {
 		RegisteredUser currentuser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-		ApplicationForm applicationForm = applicationService.getApplicationById(id);
+		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
 		if (applicationForm == null || !currentuser.canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}

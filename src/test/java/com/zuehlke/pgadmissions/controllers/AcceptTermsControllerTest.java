@@ -29,12 +29,12 @@ public class AcceptTermsControllerTest {
 	
 	@Test
 	public void shouldUpdateApplicationWithAcceptedTermsAndReturnApplicationPage() {
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).applicant(student).id(2).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.UNSUBMITTED).applicationNumber("ABC").applicant(student).id(2).toApplicationForm();
 		applicationsServiceMock.save(applicationForm);
 		EasyMock.replay(applicationsServiceMock);
 		String view =acceptTermsController.acceptTermsAndGetApplicationPage(applicationForm);
 		EasyMock.verify(applicationsServiceMock);
-		assertEquals("redirect:/application?view=view&applicationId="+applicationForm.getId(), view);
+		assertEquals("redirect:/application?view=view&applicationId="+applicationForm.getApplicationNumber(), view);
 	}
 	
 	

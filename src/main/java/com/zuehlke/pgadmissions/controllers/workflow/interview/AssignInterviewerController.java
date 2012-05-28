@@ -44,8 +44,8 @@ public class AssignInterviewerController extends InterviewController {
 
 	@Override
 	@ModelAttribute("interview")
-	public Interview getInterview(@RequestParam Integer applicationId) {
-		return getApplicationForm(applicationId).getLatestInterview();
+	public Interview getInterview(@RequestParam Object applicationId) {
+		return getApplicationForm((String) applicationId).getLatestInterview();
 
 	}
 	

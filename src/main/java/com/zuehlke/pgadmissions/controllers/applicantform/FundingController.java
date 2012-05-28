@@ -91,7 +91,7 @@ public class FundingController {
 		fundingService.save(funding);
 		funding.getApplication().setLastUpdated(new Date());
 		applicationService.save(funding.getApplication());
-		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getId();
+		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber();
 			
 	}
 
@@ -123,8 +123,8 @@ public class FundingController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam Integer applicationId) {		
-		ApplicationForm application = applicationService.getApplicationById(applicationId);
+	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
+		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
 		if(application == null || !getCurrentUser().canSee(application)){
 			throw new ResourceNotFoundException();
 		}

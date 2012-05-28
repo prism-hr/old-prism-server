@@ -52,7 +52,7 @@ public class ApplicationFormController {
 		}
 		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog);
 
-		return new ModelAndView("redirect:/application", "applicationId", applicationForm.getId());
+		return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
 
 	}
 

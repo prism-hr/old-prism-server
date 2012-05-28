@@ -46,8 +46,8 @@ public class AssignReviewerController extends ReviewController {
 
 	@Override
 	@ModelAttribute("reviewRound")
-	public ReviewRound getReviewRound(@RequestParam Integer applicationId) {
-		return getApplicationForm(applicationId).getLatestReviewRound();
+	public ReviewRound getReviewRound(@RequestParam Object applicationId) {
+		return getApplicationForm((String) applicationId).getLatestReviewRound();
 
 	}
 	

@@ -43,14 +43,14 @@ public class ReviewerPropertyEditor extends PropertyEditorSupport {
 		if (split.length != 2) {
 			throw new IllegalArgumentException();
 		}
-		Integer appId = Integer.parseInt(split[0]);
+		String appId = split[0];
 		Integer userId = Integer.parseInt(split[1]);
 		RegisteredUser user = userService.getUser(userId);
 		if (user == null) {
 			throw new IllegalArgumentException("no such user: " + split[1]);
 		}
 
-		ApplicationForm applicationForm = applicationsService.getApplicationById(appId);
+		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(appId);
 		if (applicationForm == null) {
 			throw new IllegalArgumentException("no such applications: " + split[0]);
 		}

@@ -158,7 +158,7 @@ public class RegisterControllerTest {
 	public void shouldCreatNewApplicationAndRedirectToItIfUserHasOriginalProgram(){
 		String activationCode = "ul5oaij68186jbcg";
 		Program program = new ProgramBuilder().id(1).toProgram();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).toApplicationForm();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(1).programOriginallyAppliedTo(program).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
 		EasyMock.expect(registrationServiceMock.findUserForActivationCode(activationCode)).andReturn(user);		
 		userServiceMock.save(user);
@@ -166,7 +166,7 @@ public class RegisterControllerTest {
 		EasyMock.replay(registrationServiceMock, applicationsServiceMock);
 		ModelAndView modelAndView = registerController.activateAccountSubmit(activationCode);		
 		EasyMock.verify(registrationServiceMock);
-		assertEquals("redirect:/application?applicationId=21", modelAndView.getViewName());		
+		assertEquals("redirect:/application?applicationId=ABC", modelAndView.getViewName());		
 		assertTrue(user.isEnabled());
 	}
 	

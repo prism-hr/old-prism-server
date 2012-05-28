@@ -100,9 +100,9 @@ section.form-rows .error-hint {
 	no-repeat; height: 24px; 
 	float: left;
 	width: 20px; 
-    margin-left: 3px;
-    margin-right: -3px;
-    margin-top: -2px;	
+  margin-left: 3px;
+  margin-right: -3px;
+  margin-top: -2px;	
 }
 
 .individual-hint { margin-top: 2px;	} 

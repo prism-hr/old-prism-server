@@ -79,7 +79,7 @@ public class ApplicationsServiceTest {
 		assertEquals(appThree, visibleApps.get(2));
 		assertEquals(appOne, visibleApps.get(3));
 	}
-
+	@Test
 	public void shouldGetApplicationById() {
 		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
 		EasyMock.expect(applicationFormDAOMock.get(234)).andReturn(application);
@@ -87,9 +87,9 @@ public class ApplicationsServiceTest {
 		EasyMock.replay(application, applicationFormDAOMock);
 		Assert.assertEquals(application, applicationsService.getApplicationById(234));
 	}
-
+	@Test
 	public void shouldCreateAndSaveNewApplicationForm() {
-		Program program = new ProgramBuilder().id(1).toProgram();
+		Program program = new ProgramBuilder().code("KLOP").id(1).toProgram();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
 		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		applicationsService = new ApplicationsService(applicationFormDAOMock) {
@@ -99,6 +99,8 @@ public class ApplicationsServiceTest {
 				return newApplicationForm;
 			}
 		};
+		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
+		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23);
 		applicationFormDAOMock.save(newApplicationForm);
 		EasyMock.replay(applicationFormDAOMock);
 		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program);
@@ -106,6 +108,7 @@ public class ApplicationsServiceTest {
 		assertSame(newApplicationForm, returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
 		assertEquals(program, returnedForm.getProgram());
+		assertEquals("KLOP-2012-24", returnedForm.getApplicationNumber());
 
 	}
 

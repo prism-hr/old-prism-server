@@ -12,6 +12,7 @@
 	<import resource="schedules/Spring-Scheduler.xml" />
 	<mvc:interceptors>
     	<bean class="com.zuehlke.pgadmissions.interceptors.Utf8Interceptor" />
+    	<bean class="com.zuehlke.pgadmissions.interceptors.EncryptionKeyInterceptor" />    	
 	</mvc:interceptors>
 	<mvc:resources mapping="/design/**" location="/WEB-INF/design/" />
 

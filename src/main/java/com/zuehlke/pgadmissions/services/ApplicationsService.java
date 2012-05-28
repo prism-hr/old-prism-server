@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +49,12 @@ public class ApplicationsService {
 	
 	@Transactional
 	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Program program) {
-
+		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
 		ApplicationForm applicationForm = newApplicationForm();
 		applicationForm.setApplicant(user);
 		applicationForm.setProgram(program);
+		int runningCount = applicationFormDAO.getApplicationsInProgramThisYear(program, thisYear);
+		applicationForm.setApplicationNumber(program.getCode() + "-" +  thisYear + "-" + ++runningCount);
 		applicationFormDAO.save(applicationForm);
 		return applicationForm;
 	}

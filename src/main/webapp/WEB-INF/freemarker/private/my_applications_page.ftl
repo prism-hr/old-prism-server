@@ -87,7 +87,7 @@
 							                <td>${application.program.code} - ${application.program.title}</td>								                
 							               	<td id="statusColumn" name="statusColumn">${application.status.displayValue()}</td>
 							                <td class="centre">
-							                	<select class="actionType" name="app_[${application.id?string("######")}]">
+							                	<select class="actionType" name="app_[${application.id?string('#####')}]">
 							                		<option>Select...</option>
 							                		<option value="view">View</option>
 							                		<option value="print">Print</option>
@@ -125,7 +125,7 @@
 							                  	</select>
 							                </td>
 							                <td class="centre">${(application.submittedDate?string("dd MMM yyyy"))!}</td>							  
-							                <td class="centre"><input type="checkbox" name="appDownload" id="appDownload_${application.id?string("######")}"/></td>
+							                <td class="centre"><input type="checkbox" name="appDownload" id="appDownload_${application.id?string('#####')}"/></td>
 						              	</tr>
 					              	</#list>
 					            </tbody>

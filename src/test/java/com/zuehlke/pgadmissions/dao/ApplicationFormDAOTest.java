@@ -21,6 +21,7 @@ import junit.framework.Assert;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.dao.DataAccessException;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -1193,6 +1194,44 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Assert.assertNotNull(applications);
 		Assert.assertEquals(numOfRejecteAppl, applications.size());
 	}
+	
+	
+	@Test
+	public void shouldReturnNumberOfApplicationsInProgramThisYear(){
+		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
+		String lastYear = new Integer(Integer.parseInt(thisYear) - 1).toString();
+		String nextYear = new Integer(Integer.parseInt(thisYear) + 1).toString();
+		Program program = new ProgramBuilder().code("ZZZZZZZ").title("another title").toProgram();
+		save(program);		
+		flushAndClearSession();
+		
+		int number =  applicationDAO.getApplicationsInProgramThisYear(program, thisYear);
+		assertEquals(0, number);
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+
+		save( applicationFormOne);
+
+		flushAndClearSession();	
+		
+		assertEquals(1,applicationDAO.getApplicationsInProgramThisYear(program, thisYear));
+		
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION).toApplicationForm();
+		save( applicationFormTwo);
+
+		flushAndClearSession();
+		
+		assertEquals(2, applicationDAO.getApplicationsInProgramThisYear(program, thisYear));
+		assertEquals(0 ,applicationDAO.getApplicationsInProgramThisYear(program,lastYear));
+		assertEquals(0 ,applicationDAO.getApplicationsInProgramThisYear(program, nextYear));
+
+
+	}
+	@Test(expected=IllegalArgumentException.class)
+	public void shouldThrowDataAccessAcceptionOnParseException(){
+	
+	  applicationDAO.getApplicationsInProgramThisYear(program, "bob");	
+
+	}
 
 	private List<Qualification> getQualificationsBelongingToSameApplication() throws ParseException {
 
@@ -1227,4 +1266,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		qualifications.add(qualification1);
 		return qualifications;
 	}
+	
+	
+	
 }

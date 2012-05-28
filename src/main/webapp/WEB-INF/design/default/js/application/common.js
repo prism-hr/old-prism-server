@@ -115,3 +115,24 @@ function addToolTips(){
 	});
 	
 }
+
+
+function watchUpload($field)
+{
+	var $section = $field.closest('section.folding');
+	console.log($field.attr('id') + ': ' + $section.attr('id'));
+	return;
+	
+		$('#cvUploadFields').on('change','#cvDocument', function(event){
+		if(this.files[0].size < 10485760){
+			cvDelete();
+			$('#cvDocumentProgress').html("uploading file...");
+			$('#cvDocument').attr("readonly", "readonly");
+			cvUpload();
+			$('#cvDocument').removeAttr("readonly");
+		 }else{
+			 alert("Sorry, document must be at most 10MB.");
+		 }
+	});
+
+}

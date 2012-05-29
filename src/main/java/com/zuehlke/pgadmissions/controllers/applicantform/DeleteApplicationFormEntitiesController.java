@@ -31,9 +31,7 @@ public class DeleteApplicationFormEntitiesController {
 	}
 
 	@Autowired
-	public DeleteApplicationFormEntitiesController(
-			QualificationService qualificationService,
-			EmploymentPositionService employmentService,
+	public DeleteApplicationFormEntitiesController(QualificationService qualificationService, EmploymentPositionService employmentService,
 			FundingService fundingService, RefereeService refereeService, EncryptionHelper encryptionHelper) {
 
 		this.qualificationService = qualificationService;
@@ -45,38 +43,32 @@ public class DeleteApplicationFormEntitiesController {
 	}
 
 	@RequestMapping(value = "/qualification", method = RequestMethod.POST)
-	public String deleteQualification(@RequestParam Integer id) {
-		Qualification qualification = qualificationService
-				.getQualificationById(id);
+	public String deleteQualification(@RequestParam("id") String encryptedQualificationId) {
+		Qualification qualification = qualificationService.getQualificationById(encryptionHelper.decryptToInteger(encryptedQualificationId));
 		qualificationService.delete(qualification);
 
-		return "redirect:/update/getQualification?applicationId="
-				+ qualification.getApplication().getApplicationNumber() + "&message=deleted";
+		return "redirect:/update/getQualification?applicationId=" + qualification.getApplication().getApplicationNumber() + "&message=deleted";
 	}
 
 	@RequestMapping(value = "/funding", method = RequestMethod.POST)
-	public String deleteFunding(@RequestParam("id")  String encryptedFundingId) {
+	public String deleteFunding(@RequestParam("id") String encryptedFundingId) {
 		Funding funding = fundingService.getFundingById(encryptionHelper.decryptToInteger(encryptedFundingId));
 		fundingService.delete(funding);
-		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber()
-				+ "&message=deleted";
+		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber() + "&message=deleted";
 	}
 
 	@RequestMapping(value = "/employment", method = RequestMethod.POST)
 	public String deleteEmployment(@RequestParam("id") String encryptedEmploymentId) {
-		EmploymentPosition position = employmentService
-				.getEmploymentPositionById(encryptionHelper.decryptToInteger(encryptedEmploymentId));
+		EmploymentPosition position = employmentService.getEmploymentPositionById(encryptionHelper.decryptToInteger(encryptedEmploymentId));
 		employmentService.delete(position);
-		return "redirect:/update/getEmploymentPosition?applicationId="
-				+ position.getApplication().getApplicationNumber() + "&message=deleted";
+		return "redirect:/update/getEmploymentPosition?applicationId=" + position.getApplication().getApplicationNumber() + "&message=deleted";
 	}
 
 	@RequestMapping(value = "/referee", method = RequestMethod.POST)
 	public String deleteReferee(@RequestParam Integer id) {
 		Referee referee = refereeService.getRefereeById(id);
 		refereeService.delete(referee);
-		return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getApplicationNumber()
-				+ "&message=deleted";
+		return "redirect:/update/getReferee?applicationId=" + referee.getApplication().getApplicationNumber() + "&message=deleted";
 	}
 
 }

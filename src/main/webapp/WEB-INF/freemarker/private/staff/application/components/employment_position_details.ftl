@@ -17,23 +17,7 @@
 			<#if hasEmploymentPositions>
 		    	<#list applicationForm.employmentPositions as position>
 			         
-			        <!-- All hidden input - Start -->
-			                    
-					<input type="hidden" id="${position.id?string('#######')}_positionId" value="${encrypter.encrypt(position.id)}"/>
-	                <input type="hidden" id="${position.id?string('#######')}_employerName" value="${(position.employerName?html)!}"/>
-	                <input type="hidden" id="${position.id?string('#######')}_employerAddress" value="${(position.employerAddress?html)!}"/>
-	                <input type="hidden" id="${position.id?string('#######')}_employerCountry" value="${(position.employerCountry.name?html)!}"/>
-	                <input type="hidden" id="${position.id?string('#######')}_positionTitle" value="${position.position}"/>
-	                <input type="hidden" id="${position.id?string('#######')}_remit" value="${(position.remit?html)!}"/>
-	                <input type="hidden" id="${position.id?string('#######')}_language" value="${(position.language.name?html)!}"/>
-	                            
-	                <input type="hidden" id="${position.id?string('#######')}_positionStartDate" value="${(position.startDate?string('dd-MMM-yyyy'))!}"/>
-	                <input type="hidden" id="${position.id?string('#######')}_positionEndDate" value="${(position.endDate?string('dd-MMM-yyyy'))!}"/>
-			        <input type="hidden" id="${position.id?string('#######')}_positionCurrent" value="<#if position.current>Yes<#else>No</#if>"/>
-					
-					<input type="hidden" id="positionId" name="positionId" value=""/>    
-			    
-			    	<!-- All hidden input - End --> 
+
 	                		
 	                <!-- Rendering part - Start -->
 		        	<div class="row-group">

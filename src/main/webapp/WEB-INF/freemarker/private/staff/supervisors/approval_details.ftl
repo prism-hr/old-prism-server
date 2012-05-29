@@ -67,23 +67,25 @@
 
 						<div id="programme-details">			          
 						    	
-						    	<div class="row">
-						        	<label class="label">Programme</label>
-						           	${applicationForm.program.code} - ${applicationForm.program.title}
-						        </div>
-						            
-						        <div class="row">
-						        	<label class="label">Application Number</label>
-						            ${applicationForm.applicationNumber} 
-						        </div>
-						        
-						        <#if applicationForm.isSubmitted()>
-						        	<div class="row">
-						            	<label>Date Submitted</label>
-						              	${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}
-						            </div>
-						        </#if>
+							<div class="row">
+								<label class="label">Programme</label>
+								${applicationForm.program.code} - ${applicationForm.program.title}
 							</div>
+							
+							<div class="row">
+								<label class="label">Application Number</label>
+								${applicationForm.applicationNumber} 
+							</div>
+							
+							<#if applicationForm.isSubmitted()>
+							<div class="row">
+								<label>Date Submitted</label>
+								${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}
+							</div>
+							</#if>
+						</div>
+						
+						<br />
 							
 							<section class="form-rows">
 								<div>

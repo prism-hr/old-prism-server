@@ -55,13 +55,13 @@
 			      	<#else>
 				      	<p>
 				      		<font face="Arial, Helvetica, sans-serif" size="2">
-				      			<a href="${host}/pgadmissions/reviewFeedback?applicationId=${application.id?string("######")}">Provide feedback</a>
+				      			<a href="${host}/pgadmissions/reviewFeedback?applicationId=${application.applicationNumber}">Provide feedback</a>
 				      		</font>
 				      	</p>
 			      	</#if>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/decline/review?applicationId=${application.id?string("######")}&userId=${reviewer.user.id?string('#######')}">Decline</a>
+			      			<a href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&userId=${reviewer.user.id?string('#######')}">Decline</a>
 			      		</font>
 			        <p>
 			      	</p>

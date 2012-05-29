@@ -61,11 +61,11 @@
 	                  	<#else>Expected</#if></td>
 	                  	  
 	                  	  	   <td>
-	                  	  	   		<a name="editQualificationLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="qualification_${existingQualification.id?string('#######')}" class="button-edit button-hint">edit</a>
+	                  	  	   		<a name="editQualificationLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="qualification_${encrypter.encrypt(existingQualification.id)}" class="button-edit button-hint">edit</a>
 	                  	  	   </td>
 	                  	  	<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	                  	  	   <td>
-		                			<a name="deleteQualificationButton" data-desc="Delete" id="qualification_${existingQualification.id?string('#######')}" class="button-delete button-hint">delete</a>
+		                			<a name="deleteQualificationButton" data-desc="Delete" id="qualification_${encrypter.encrypt(existingQualification.id)}" class="button-delete button-hint">delete</a>
 		                	   </td>
 		                	<#else>
 		                		<td></td><td></td>		                		
@@ -79,7 +79,7 @@
   		
   	</#if>
   
-  	<input type="hidden" id="qualificationId" name="qualificationId" value="${(qualification.id?string('#######'))!}"/>
+  	<input type="hidden" id="qualificationId" name="qualificationId" value="<#if qualification?? && qualification.id??>${encrypter.encrypt(qualification.id)}</#if>"/>
   	
   	<form>
 

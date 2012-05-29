@@ -35,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${referee.firstname?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">${applicant.firstName?html} ${applicant.lastName?html} has recently submitted an Application ${application.id?string("######")} for PhD study at University College London in ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${applicant.firstName?html} ${applicant.lastName?html} has recently submitted an Application ${application.applicationNumber} for PhD study at University College London in ${application.program.title}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated as one of their referees.</font>
@@ -45,7 +45,7 @@
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/referee/addReferences?application=${application.id?string('######')}">Add Reference</a>
+			      			<a href="${host}/pgadmissions/referee/addReferences?application=${application.applicationNumber}">Add Reference</a>
 			      		</font>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
 			      			<a href="${host}/pgadmissions/decline/reference?refereeId=${referee.id?string('#######')}">Decline</a>

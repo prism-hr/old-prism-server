@@ -35,11 +35,11 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">An interview comment has been added for application ${application.id?string("######")} by ${interviewer.firstName?html} ${interviewer.lastName?html}. You can view the interview here: </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">An interview comment has been added for application ${application.applicationNumber} by ${interviewer.firstName?html} ${interviewer.lastName?html}. You can view the interview here: </font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/comment?applicationId=${application.id?string("######")}">View comments</a>
+			      			<a href="${host}/pgadmissions/comment?applicationId=${application.applicationNumber}">View comments</a>
 			      		</font>
 			      	</p>
 			      	<p>

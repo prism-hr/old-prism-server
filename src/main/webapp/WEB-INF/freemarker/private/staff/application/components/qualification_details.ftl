@@ -17,23 +17,6 @@
             
 					<#list applicationForm.qualifications as qualification>
 							
-						<!-- All hidden input - Start -->				                  	     
-                        <input type="hidden" id="${qualification.id?string('#######')}_qualificationIdDP" value="${qualification.id?string('#######')}"/>
-                        <input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionCountryDP" value="${(qualification.institutionCountry.name?html)!}"/>
-                        <input type="hidden" id="${qualification.id?string('#######')}_qualificationInstitutionDP" value="${(qualification.qualificationInstitution?html)!}"/>
-                        <input type="hidden"  id="${qualification.id?string('#######')}_qualificationTypeDP" value="${(qualification.qualificationType?html)!}"/> 
-                        <input type="hidden" id="${qualification.id?string('#######')}_qualificationSubjectDP" value="${(qualification.qualificationSubject?html)!}"/> 
-                        <input type="hidden"  id="${qualification.id?string('#######')}_qualificationLanguageDP" value="${qualification.qualificationLanguage.name!}"/> 
-                        <input type="hidden"  id="${qualification.id?string('#######')}_qualificationStartDateDP" value="${(qualification.qualificationStartDate?string('dd-MMM-yyyy'))!}"/>
-                        <input type="hidden"  id="${qualification.id?string('#######')}_qualificationCompletedDP" value="${(qualification.completed?html)!}"/>  
-                        <input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${(qualification.qualificationGrade?html)!}"/> 
-                        <input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/>
-                        <input type="hidden" id="${qualification.id?string('#######')}_qualdocname" value="${(qualification.proofOfAward.fileName)!}"/>
-                        <input type="hidden" id="${qualification.id?string('#######')}_qualdocurl" value="/pgadmissions/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}"/> 
-						<input type="hidden" id="qualificationId" name="qualificationId"/>
-						
-						<!-- All hidden input - End --> 
-	                		
 	                	<!-- Rendering part - Start -->
 					
 						<div class="row-group">

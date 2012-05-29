@@ -18,20 +18,7 @@
 			<#if hasFundings>
 		            
 				<#list applicationForm.fundings as funding>		
-				
-					<!-- All hidden input - Start -->
-					
-			    	<input type="hidden" id="${funding.id?string('#######')}_fundingIdDP" value="${funding.id?string('#######')}"/>
-	                <input type="hidden" id="${funding.id?string('#######')}_fundingTypeDP" value="${funding.type?html}"/>
-	                <input type="hidden" id="${funding.id?string('#######')}_fundingValueDP" value="${funding.value?html}"/>
-	                <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description?html}"/>
-	                <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
-	                <input type="hidden" id="${funding.id?string('#######')}_docname" value="${(funding.document.fileName?html)!}"/>
-	                <input type="hidden" id="${funding.id?string('#######')}_docurl" value="/pgadmissions/download?documentId=${(encrypter.encrypt(funding.document.id))!}"/>
-	                
-	        		<input type="hidden" id="fundingId" name="fundingId"/>                
-					
-			    	<!-- All hidden input - End --> 
+
 	                		
 	                <!-- Rendering part - Start -->
 		        	<div class="row-group">

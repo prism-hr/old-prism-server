@@ -8,6 +8,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,14 +33,15 @@ public class RegistrationService {
 	private final MimeMessagePreparatorFactory mimeMessagePreparatorFactory;
 	private final Logger log = Logger.getLogger(RegistrationService.class);
 	private final ProgramDAO programDAO;
+	private final MessageSource msgSource;
 
 	RegistrationService() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public RegistrationService(EncryptionUtils encryptionUtils, RoleDAO roleDAO, UserDAO userDAO, ProgramDAO programDAO,
-			MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender) {
+			MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, MessageSource msgSource) {
 		this.encryptionUtils = encryptionUtils;
 		this.roleDAO = roleDAO;
 		this.userDAO = userDAO;
@@ -47,6 +49,7 @@ public class RegistrationService {
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 
 		this.mailsender = mailsender;
+		this.msgSource = msgSource;
 
 	}
 
@@ -96,9 +99,10 @@ public class RegistrationService {
 			}
 			InternetAddress toAddress = new InternetAddress(newUser.getEmail(), newUser.getFirstName() + " " + newUser.getLastName());
 
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Registration confirmation",
+			String subject = msgSource.getMessage("registration.confirmation", null, null);
+			
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
 					"private/pgStudents/mail/registration_confirmation.ftl", model, null));
-
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}

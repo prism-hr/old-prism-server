@@ -35,18 +35,18 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to inform you that ${referee.firstname} ${referee.lastname} has responded to your request to provide a for application ${application.id?string("######")}. You can view the application here: </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Your nominated referee ${referee.firstname} ${referee.lastname} has provided their reference for your Application ${application.id?string("######")} for UCL ${application.program.title}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View your application</a>
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View application</a>
 			      		</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">In the meantime, for further assistance <a href="mailto: ${adminsEmails}">email the administrator</a></font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards, <br />UCL Portal</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

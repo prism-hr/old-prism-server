@@ -16,6 +16,7 @@ import junit.framework.Assert;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
@@ -42,6 +43,7 @@ public class RegistrationServiceTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private ProgramDAO programDAOMock;
+	private MessageSource msgSourceMock;
 
 	@Test
 	public void shouldCreateNewUserFromDTO() {
@@ -133,7 +135,7 @@ public class RegistrationServiceTest {
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson")
 				.programOriginallyAppliedTo(program).toUser();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, programDAOMock, mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock) {
+				javaMailSenderMock, msgSourceMock) {
 
 			@Override
 			public RegisteredUser createNewUser(RegisteredUser record) {
@@ -154,16 +156,19 @@ public class RegistrationServiceTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
+		
+		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation", null, null)).andReturn("registration subject");
+		
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Registration confirmation",
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "registration subject",
 						"private/pgStudents/mail/registration_confirmation.ftl", modelMap, null)).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
-		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
 		registrationService.generateAndSaveNewUser(expectedRecord, null);
 
-		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		assertEquals(newUser, modelMap.get("user"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), modelMap.get("host"));
 		assertEquals("email1@test.com, email2@test.com", modelMap.get("adminsEmails"));
@@ -175,7 +180,7 @@ public class RegistrationServiceTest {
 		expectedRecord.setEmail("email@test.com");
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).toUser();
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, programDAOMock, mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock) {
+				javaMailSenderMock, msgSourceMock) {
 
 			@Override
 			public RegisteredUser createNewUser(RegisteredUser record) {
@@ -190,14 +195,14 @@ public class RegistrationServiceTest {
 		userDAOMock.save(newUser);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("aaaaaaaaaaargh"));
 
-		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		try {
 			registrationService.generateAndSaveNewUser(expectedRecord, null);
 		} catch (RuntimeException e) {
 			// expected...ignore
 		}
 
-		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
 	}
 
@@ -209,7 +214,7 @@ public class RegistrationServiceTest {
 		final RegisteredUser newUser = new RegisteredUserBuilder().id(1).email("email@test.com").firstName("bob").lastName("bobson").toUser();
 
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, programDAOMock, mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock) {
+				javaMailSenderMock, msgSourceMock) {
 
 			@Override
 			public RegisteredUser createNewUser(RegisteredUser record) {
@@ -225,16 +230,18 @@ public class RegistrationServiceTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("email@test.com", "bob bobson");
+		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation", null, null)).andReturn("reg subject");
+		
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("Registration confirmation"),
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), EasyMock.eq("reg subject"),
 						EasyMock.eq("private/pgStudents/mail/registration_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress)EasyMock.isNull())).andReturn(preparatorMock);
 
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
-		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		EasyMock.replay(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 		registrationService.generateAndSaveNewUser(expectedRecord, null);
 
-		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		EasyMock.verify(userDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
 	}
 
@@ -256,7 +263,9 @@ public class RegistrationServiceTest {
 		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
+		msgSourceMock = EasyMock.createMock(MessageSource.class);
+		
 		registrationService = new RegistrationService(encryptionUtilsMock, roleDAOMock, userDAOMock, programDAOMock, mimeMessagePreparatorFactoryMock,
-				javaMailSenderMock);
+				javaMailSenderMock, msgSourceMock);
 	}
 }

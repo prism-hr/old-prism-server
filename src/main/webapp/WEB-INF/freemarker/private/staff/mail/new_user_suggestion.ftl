@@ -35,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${newUser.firstName?html},</font>
 		      		</h1>		
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been suggested as a new user for the UCL portal in the role(s): ${newRoles}<#if program??> for the "${program.title?html}" programme by ${admin.firstName?html} ${admin.lastName?html}</#if>. Please click below to accept this role.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${admin.firstName?html} ${admin.lastName?html} has added you as a ${newRoles}<#if program??> for UCL ${program.title?html}</#if>. Register to start using UCL Elect in this role.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
@@ -43,10 +43,7 @@
 			      		</font>
 			      	</p>			      	
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You will be asked to register.</font>
-			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards,<br />UCL Portal</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

@@ -35,15 +35,15 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">A reference has been provided for application ${application.id?string("######")} by ${referee.firstname?html} ${referee.lastname?html}. You can view the application here: </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The nominated referee ${referee.firstname?html} ${referee.lastname?html} has provided their reference for Application ${application.id?string("######")} for UCL ${application.program.title}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View the application</a>
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View application</a>
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards, <br />UCL Portal</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

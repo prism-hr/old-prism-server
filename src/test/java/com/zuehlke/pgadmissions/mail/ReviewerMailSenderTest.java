@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
@@ -11,6 +12,7 @@ import javax.mail.internet.InternetAddress;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
@@ -28,6 +30,7 @@ public class ReviewerMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private ReviewerMailSender reviewerMailSender;
+	private MessageSource msgSourceMock;
 
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
@@ -52,7 +55,7 @@ public class ReviewerMailSenderTest {
 	@Test
 	public void shouldSendReviewerNotificationForReviewer() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		reviewerMailSender = new ReviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
+		reviewerMailSender = new ReviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
 
 			@Override
 			Map<String, Object> createModel(Reviewer reviewer) {
@@ -68,24 +71,27 @@ public class ReviewerMailSenderTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
-
+		
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("review.request"),// 
+				EasyMock.aryEq(new Object[] { 4, "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
+		
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Application 4 for program abc - Reviewer Notification",
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",
 						"private/reviewers/mail/reviewer_notification_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
 		reviewerMailSender.sendReviewerNotification(reviewer);
 
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 
 	}
 	
 	@Test
 	public void shouldSendReviewerReminderForReviewer() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
-		reviewerMailSender = new ReviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock) {
+		reviewerMailSender = new ReviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
 
 			@Override
 			Map<String, Object> createModel(Reviewer reviewer) {
@@ -102,25 +108,28 @@ public class ReviewerMailSenderTest {
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
 
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("review.request.reminder"),// 
+				EasyMock.aryEq(new Object[] { 4, "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved reminder subject");
+		
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "Application 4 for program abc - Review Reminder",
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved reminder subject",
 						"private/reviewers/mail/reviewer_reminder_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
 		reviewerMailSender.sendReviewerReminder(reviewer);
 
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock);
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 
 	}
 	@Before
 	public void setUp() {
-
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-
-		reviewerMailSender = new ReviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock);
+		msgSourceMock = EasyMock.createMock(MessageSource.class);
+			
+		reviewerMailSender = new ReviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 
 	}
 }

@@ -9,6 +9,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,16 +28,20 @@ public class MailService {
 	private final ApplicationsService applicationsService;
 
 	private final Logger log = Logger.getLogger(MailService.class);
+	private final MessageSource msgSource;
 
 	public MailService() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public MailService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, ApplicationsService applicationsService) {
+	public MailService(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender,//
+			ApplicationsService applicationsService, MessageSource msgSource) {
+
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
 		this.applicationsService = applicationsService;
+		this.msgSource = msgSource;
 	}
 
 	@Transactional
@@ -55,6 +60,7 @@ public class MailService {
 	public void sendApplicationUpdatedMailToAdmins(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 
+		String mailSubject = resolveMessage("application.update", form.getId(), form.getProgram().getTitle());
 		for (RegisteredUser admin : administrators) {
 			try {
 				Map<String, Object> model = new HashMap<String, Object>();
@@ -62,7 +68,8 @@ public class MailService {
 				model.put("application", form);
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Updated",
+
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, mailSubject,//
 						"private/staff/admin/mail/application_updated_confirmation.ftl", model, null));
 
 			} catch (Throwable e) {
@@ -73,66 +80,49 @@ public class MailService {
 		createOrUpdateUpdateNotificationRecord(form);
 	}
 
+	@Transactional
 	public void sendWithdrawMailToReferees(List<Referee> referees) {
 		for (Referee referee : referees) {
-			try {
-				RegisteredUser user = referee.getUser();
-				System.out.println(user.getEmail());
-				Map<String, Object> model = new HashMap<String, Object>();
-				model.put("user", user);
-				model.put("application", referee.getApplication());
-				model.put("applicant", referee.getApplication().getApplicant());
-				model.put("host", Environment.getInstance().getApplicationHostName());
-				InternetAddress toAddress = new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Withdrawn",
-						"private/staff/mail/application_withdrawn_notification.ftl", model, null));
-			} catch (Throwable e) {
-				log.warn("error while sending email", e);
-			}
-
+			RegisteredUser user = referee.getUser();
+			internalSendWithdraw(user, referee.getApplication());
 		}
-
 	}
 
+	@Transactional
 	public void sendWithdrawToAdmins(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 		for (RegisteredUser admin : administrators) {
-			try {
-				Map<String, Object> model = new HashMap<String, Object>();
-				model.put("user", admin);
-				model.put("application", form);
-				model.put("applicant", form.getApplicant());
-				model.put("host", Environment.getInstance().getApplicationHostName());
-				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Withdrawn",
-						"private/staff/mail/application_withdrawn_notification.ftl", model, null));
-			} catch (Throwable e) {
-				log.warn("error while sending email", e);
-			}
-
+			internalSendWithdraw(admin, form);
 		}
-
 	}
 
+	@Transactional
 	public void sendWithdrawToReviewers(ApplicationForm form) {
 		List<RegisteredUser> reviewers = form.getProgram().getProgramReviewers();
 		for (RegisteredUser reviewer : reviewers) {
-		
-				try {
-					Map<String, Object> model = new HashMap<String, Object>();
-					model.put("user", reviewer);
-					model.put("application", form);
-					model.put("host", Environment.getInstance().getApplicationHostName());
-					model.put("applicant", form.getApplicant());
-					InternetAddress toAddress = new InternetAddress(reviewer.getEmail(), reviewer.getFirstName() + " " + reviewer.getLastName());
-					mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application Withdrawn",
-							"private/staff/mail/application_withdrawn_notification.ftl", model, null));
-				} catch (Throwable e) {
-					log.warn("error while sending email", e);
-				}
-		
+			internalSendWithdraw(reviewer, form);
 		}
-
 	}
 
+	private void internalSendWithdraw(RegisteredUser recipient, ApplicationForm application) {
+		try {
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("user", recipient);
+			model.put("application", application);
+			model.put("applicant", application.getApplicant());
+			model.put("host", Environment.getInstance().getApplicationHostName());
+
+			InternetAddress toAddress = new InternetAddress(recipient.getEmail(), recipient.getFirstName() + " " + recipient.getLastName());
+			String mailSubject = resolveMessage("application.withdrawal", application.getId(), application.getProgram().getTitle());
+
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress,// 
+					mailSubject, "private/staff/mail/application_withdrawn_notification.ftl", model, null));
+		} catch (Throwable e) {
+			log.warn("error while sending email", e);
+		}
+	}
+
+	private String resolveMessage(String code, Object... args) {
+		return msgSource.getMessage(code, args, null);
+	}
 }

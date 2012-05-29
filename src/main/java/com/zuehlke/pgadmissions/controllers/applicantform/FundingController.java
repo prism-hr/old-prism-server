@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -24,11 +25,13 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.FundingService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
 
 @Controller
@@ -44,15 +47,17 @@ public class FundingController {
 	private final FundingValidator fundingValidator;
 	private final FundingService fundingService;
 	private final DocumentPropertyEditor documentPropertyEditor;
+	private final UserService userService;
+	private final EncryptionHelper encryptionHelper;
 
 	FundingController() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public FundingController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
 			DatePropertyEditor datePropertyEditor, FundingValidator fundingValidator, FundingService fundingService,
-			DocumentPropertyEditor documentPropertyEditor) {
+			DocumentPropertyEditor documentPropertyEditor, UserService userService, EncryptionHelper encryptionHelper) {
 		this.applicationService = applicationsService;
 
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
@@ -60,10 +65,8 @@ public class FundingController {
 		this.fundingValidator = fundingValidator;
 		this.fundingService = fundingService;
 		this.documentPropertyEditor = documentPropertyEditor;
-	}
-
-	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+		this.userService = userService;
+		this.encryptionHelper = encryptionHelper;
 	}
 
 	@InitBinder(value="funding")
@@ -79,7 +82,7 @@ public class FundingController {
 	@RequestMapping(value = "/editFunding", method = RequestMethod.POST)
 	public String editFunding(@Valid Funding funding, BindingResult result) {
 
-		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
 		if(funding.getApplication().isDecided()){
@@ -99,18 +102,18 @@ public class FundingController {
 	@RequestMapping(value = "/getFunding", method = RequestMethod.GET)
 	public String getFundingView() {
 
-		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
 		return STUDENT_FUNDING_DETAILS_VIEW;
 	}
 
 	@ModelAttribute
-	public Funding getFunding(@RequestParam(required=false) Integer fundingId) {
-		if (fundingId == null) {
-			return new Funding();
+	public Funding getFunding(@RequestParam(value="fundingId", required=false) String encryptedFundingId) {
+		if (StringUtils.isBlank(encryptedFundingId)) {
+			return new Funding();	
 		}
-		Funding funding = fundingService.getFundingById(fundingId);
+		Funding funding = fundingService.getFundingById(encryptionHelper.decryptToInteger(encryptedFundingId));
 		if (funding == null) {
 			throw new ResourceNotFoundException();
 		}
@@ -125,7 +128,7 @@ public class FundingController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
 		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-		if(application == null || !getCurrentUser().canSee(application)){
+		if(application == null || !userService.getCurrentUser().canSee(application)){
 			throw new ResourceNotFoundException();
 		}
 		return application;

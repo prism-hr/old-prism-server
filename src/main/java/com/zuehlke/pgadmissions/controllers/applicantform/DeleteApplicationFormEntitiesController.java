@@ -55,8 +55,8 @@ public class DeleteApplicationFormEntitiesController {
 	}
 
 	@RequestMapping(value = "/funding", method = RequestMethod.POST)
-	public String deleteFunding(@RequestParam Integer id) {
-		Funding funding = fundingService.getFundingById(id);
+	public String deleteFunding(@RequestParam("id")  String encryptedFundingId) {
+		Funding funding = fundingService.getFundingById(encryptionHelper.decryptToInteger(encryptedFundingId));
 		fundingService.delete(funding);
 		return "redirect:/update/getFunding?applicationId=" + funding.getApplication().getApplicationNumber()
 				+ "&message=deleted";

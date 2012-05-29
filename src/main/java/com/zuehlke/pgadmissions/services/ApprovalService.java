@@ -67,4 +67,12 @@ public class ApprovalService {
 		approvalRoundDAO.save(approvalRound);
 	}
 
+	@Transactional
+	public void moveApplicationToApproved(ApplicationForm application) {
+		StageDuration approveStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
+		application.setDueDate(DateUtils.addMinutes(new Date(), approveStageDuration.getDurationInMinutes()));
+		application.setStatus(ApplicationFormStatus.APPROVAL);
+		applicationDAO.save(application);
+	}
+
 }

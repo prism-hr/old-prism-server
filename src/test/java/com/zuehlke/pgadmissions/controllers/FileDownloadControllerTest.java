@@ -13,9 +13,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Reference;
@@ -24,22 +22,26 @@ import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceBuilder;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.ReferenceService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 public class FileDownloadControllerTest {
 	private DocumentService documentServiceMock;
 	private FileDownloadController controller;
 	private RegisteredUser currentUser;
 	private ReferenceService referenceServiceMock;
+	private UserService userServiceMock;
+	private EncryptionHelper encryptionHelperMock;
 	
 
 	@Test
 	public void shouldGetApplicationFormDocumentFromServiceAndWriteContentToResponse() throws IOException {
-
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(1).toDocument();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
-		EasyMock.replay(documentServiceMock);
+		EasyMock.replay(documentServiceMock, encryptionHelperMock);
 
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 		final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -59,7 +61,7 @@ public class FileDownloadControllerTest {
 		responseMock.setContentType("application/pdf");
 		responseMock.setContentLength(document.getContent().length);
 		EasyMock.replay(responseMock);
-		controller.downloadApplicationDocument(1, responseMock);
+		controller.downloadApplicationDocument("encryptedId", responseMock);
 
 		EasyMock.verify(documentServiceMock, responseMock);
 
@@ -69,28 +71,30 @@ public class FileDownloadControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfDocumentTypeIsReference() throws IOException {
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		Document document = new DocumentBuilder().type(DocumentType.REFERENCE).content("aaaa".getBytes()).id(1).toDocument();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
-		EasyMock.replay(documentServiceMock);
+		EasyMock.replay(documentServiceMock, encryptionHelperMock);
 
-		controller.downloadApplicationDocument(1, new MockHttpServletResponse());
+
+		controller.downloadApplicationDocument("encryptedId", new MockHttpServletResponse());
 	}
 
 	@Test
 	public void shouldNotThrowResourceNotFoundExceptionIfDocumentTypeIsProofOfAward() throws IOException {
-
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		Document document = new DocumentBuilder().type(DocumentType.PROOF_OF_AWARD).content("aaaa".getBytes()).id(1).toDocument();
 
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
-		EasyMock.replay(documentServiceMock);
+		EasyMock.replay(documentServiceMock, encryptionHelperMock);
 
-		controller.downloadApplicationDocument(1, new MockHttpServletResponse());
+		controller.downloadApplicationDocument("encryptedId", new MockHttpServletResponse());
 	}
 
 	@Test
 	public void shouldGetReferenceDocumentFromServiceAndWriteContentToResponse() throws IOException {
-
-		
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
+		EasyMock.replay(encryptionHelperMock);
 		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).toDocument();
 		Reference reference = new ReferenceBuilder().id(1).document(document).toReference();
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
@@ -118,7 +122,7 @@ public class FileDownloadControllerTest {
 		responseMock.setContentType("application/pdf");
 		responseMock.setContentLength(document.getContent().length);
 		EasyMock.replay(responseMock);
-		controller.downloadReferenceDocument(1, responseMock);
+		controller.downloadReferenceDocument("encryptedId", responseMock);
 
 		EasyMock.verify(referenceServiceMock, responseMock);
 
@@ -128,29 +132,33 @@ public class FileDownloadControllerTest {
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfReferenceDoesNotHaveDocument() throws IOException {
-
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
+		EasyMock.replay(encryptionHelperMock);
 		Reference reference = new ReferenceBuilder().id(1).toReference();
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(reference);
 		EasyMock.replay(referenceServiceMock);
-		controller.downloadReferenceDocument(1, responseMock);
+		controller.downloadReferenceDocument("encryptedId", responseMock);
 
 		EasyMock.verify(referenceServiceMock);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfReferenceDoesNotExistt() throws IOException {
-
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
+		EasyMock.replay(encryptionHelperMock);
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
 		EasyMock.expect(referenceServiceMock.getReferenceById(1)).andReturn(null);
 		EasyMock.replay(referenceServiceMock);
-		controller.downloadReferenceDocument(1, responseMock);
+		controller.downloadReferenceDocument("encryptedId", responseMock);
 
 		EasyMock.verify(referenceServiceMock);
 	}
 
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionUserCannotSeeReference() throws IOException {		
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
+		EasyMock.replay(encryptionHelperMock);
 		Document document = new DocumentBuilder().content("aaaa".getBytes()).id(101).toDocument();
 		Reference reference = new ReferenceBuilder().id(1).document(document).toReference();
 		HttpServletResponse responseMock = EasyMock.createMock(HttpServletResponse.class);
@@ -159,7 +167,7 @@ public class FileDownloadControllerTest {
 		EasyMock.expect(currentUser.canSeeReference(reference)).andReturn(false);
 		EasyMock.replay(currentUser);
 
-		controller.downloadReferenceDocument(1, responseMock);
+		controller.downloadReferenceDocument("encryptedId", responseMock);
 
 		EasyMock.verify(referenceServiceMock);
 	}
@@ -171,14 +179,13 @@ public class FileDownloadControllerTest {
 
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
 		referenceServiceMock = EasyMock.createMock(ReferenceService.class);		
-		controller = new FileDownloadController(documentServiceMock, referenceServiceMock);
+		userServiceMock = EasyMock.createMock(UserService.class);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		controller = new FileDownloadController(documentServiceMock, referenceServiceMock, userServiceMock, encryptionHelperMock);
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-
-		authenticationToken.setDetails(currentUser);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
+		
 	}
 
 	@After

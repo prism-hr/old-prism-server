@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Country;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 import com.zuehlke.pgadmissions.services.CountryService;
 
@@ -14,14 +15,16 @@ import com.zuehlke.pgadmissions.services.CountryService;
 public class CountryPropertyEditor extends PropertyEditorSupport {
 
 	private final CountryService countryService;
+	private final EncryptionHelper encryptionHelper;
 
 	CountryPropertyEditor(){
-		this(null);
+		this(null, null);
 	}
 	
 	@Autowired
-	public CountryPropertyEditor(CountryService countryService) {
-		this.countryService = countryService;	
+	public CountryPropertyEditor(CountryService countryService, EncryptionHelper encryptionHelper) {
+		this.countryService = countryService;
+		this.encryptionHelper = encryptionHelper;	
 	}
 	
 	@Override
@@ -30,7 +33,7 @@ public class CountryPropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(countryService.getCountryById(Integer.parseInt(strId)));
+		setValue(countryService.getCountryById(encryptionHelper.decryptToInteger(strId)));
 		
 	}
 
@@ -39,6 +42,6 @@ public class CountryPropertyEditor extends PropertyEditorSupport {
 		if(getValue() == null || ((Country)getValue()).getId() == null){
 			return null;
 		}
-		return ((Country)getValue()).getId().toString();
+		return encryptionHelper.encrypt(((Country)getValue()).getId());
 	}
 }

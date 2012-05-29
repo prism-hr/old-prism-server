@@ -11,14 +11,14 @@ public class EncryptionKeyInterceptor extends HandlerInterceptorAdapter{
 
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-		SecretKey key = (SecretKey) request.getSession().getAttribute("key");
-		KeyContextHolder.setContext(key);
+		SecretKey key = (SecretKey) request.getSession().getAttribute("key");		
+		KeyContextHolder.setContext(key);		
 		return true;
 	}
 
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-		KeyContextHolder.clearContext();
+	
 	}
 
 }

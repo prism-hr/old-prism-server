@@ -29,7 +29,7 @@
                         <input type="hidden"  id="${qualification.id?string('#######')}_qualificationGradeDP" value="${(qualification.qualificationGrade?html)!}"/> 
                         <input type="hidden"  id="${qualification.id?string('#######')}_qualificationAwardDateDP" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"/>
                         <input type="hidden" id="${qualification.id?string('#######')}_qualdocname" value="${(qualification.proofOfAward.fileName)!}"/>
-                        <input type="hidden" id="${qualification.id?string('#######')}_qualdocurl" value="/pgadmissions/download?documentId=${(qualification.proofOfAward.id?string("#######"))!}"/> 
+                        <input type="hidden" id="${qualification.id?string('#######')}_qualdocurl" value="/pgadmissions/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}"/> 
 						<input type="hidden" id="qualificationId" name="qualificationId"/>
 						
 						<!-- All hidden input - End --> 

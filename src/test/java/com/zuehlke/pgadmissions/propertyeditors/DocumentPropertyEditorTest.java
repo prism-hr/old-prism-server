@@ -9,26 +9,31 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.DocumentService;
 
 public class DocumentPropertyEditorTest {
 	private DocumentService documentServiceMock;
 	private DocumentPropertyEditor editor;
+	private EncryptionHelper encryptionHelperMock;
 
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		Document document = new DocumentBuilder().id(1).toDocument();
 		EasyMock.expect(documentServiceMock.getDocumentById(1)).andReturn(document);
-		EasyMock.replay(documentServiceMock);
+		EasyMock.replay(encryptionHelperMock, documentServiceMock);
 		
-		editor.setAsText("1");
+		editor.setAsText("bob");
 		assertEquals(document, editor.getValue());
 		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void shouldThrowIllegalArgumentExceptionIfIdNotInteger(){			
+	public void shouldThrowIllegalArgumentExceptionIfIdNotInteger(){		
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andThrow(new IllegalArgumentException());
+		EasyMock.replay(encryptionHelperMock);
 		editor.setAsText("bob");			
 	}
 	
@@ -56,14 +61,17 @@ public class DocumentPropertyEditorTest {
 	}
 	
 	@Test	
-	public void shouldReturnIdAsString(){			
+	public void shouldReturnEncryptedIdAsString(){			
 		editor.setValue(new DocumentBuilder().id(5).toDocument());
-		assertEquals("5", editor.getAsText());
+		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
+		EasyMock.replay(encryptionHelperMock);
+		assertEquals("bob", editor.getAsText());
 	}
 	
 	@Before
 	public void setup(){
 		documentServiceMock = EasyMock.createMock(DocumentService.class);
-		editor = new DocumentPropertyEditor(documentServiceMock);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		editor = new DocumentPropertyEditor(documentServiceMock,encryptionHelperMock);
 	}
 }

@@ -7,20 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Document;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.DocumentService;
 
 @Component
 public class DocumentPropertyEditor extends PropertyEditorSupport{
 
 	private final DocumentService documentService;
+	private final EncryptionHelper encryptionHelper;
 	
 	DocumentPropertyEditor(){
-		this(null);
+		this(null, null);
 	}
 	
 	@Autowired
-	public DocumentPropertyEditor(DocumentService documentService) {
-		this.documentService = documentService;	
+	public DocumentPropertyEditor(DocumentService documentService, EncryptionHelper encryptionHelper) {
+		this.documentService = documentService;
+		this.encryptionHelper = encryptionHelper;	
 	}
 	
 	@Override
@@ -29,7 +32,7 @@ public class DocumentPropertyEditor extends PropertyEditorSupport{
 			setValue(null);
 			return;
 		}
-		setValue(documentService.getDocumentById(Integer.parseInt(strId)));
+		setValue(documentService.getDocumentById(encryptionHelper.decryptToInteger(strId)));
 		
 	}
 
@@ -38,6 +41,6 @@ public class DocumentPropertyEditor extends PropertyEditorSupport{
 		if(getValue() == null || ((Document)getValue()).getId() == null){
 			return null;
 		}
-		return ((Document)getValue()).getId().toString();
+		return encryptionHelper.encrypt(((Document)getValue()).getId());
 	}
 }

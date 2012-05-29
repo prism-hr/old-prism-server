@@ -154,11 +154,11 @@
                   		<select class="full" name="country" id="country" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
                   			<option value="">Select...</option>
                     		<#list countries as country>
-                          	<option value="${country.id?string('#######')}"
+                          	<option value="${encrypter.encrypt(country.id)}"
 							<#if personalDetails.country?? &&  personalDetails.country.id == country.id >
 							selected="selected"
 							</#if>   
-                          >${country.name}</option>               
+                          >${country.name?html}</option>               
                     	</#list>
                  	 	</select>
 						
@@ -189,7 +189,7 @@
 			              	  
 			              	  	<div class="nationality-item">
 			              					<label class="full">${nationality.name}</label>  
-			              	  				<input type="hidden" name="candidateNationalities" value='${nationality.id?string("#######")}'/>
+			              	  				<input type="hidden" name="candidateNationalities" value='${encrypter.encrypt(nationality.id)}'/>
 											<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
 			              	  	</div>                  		
 			              	  </#list>
@@ -198,7 +198,7 @@
 						<select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
 								<option value="">Select...</option>
 								<#list countries as country>
-								  <option value="${country.id?string('#######')}">${country.name}</option>               
+								  <option value="${encrypter.encrypt(country.id)}">${country.name?html}</option>               
 								</#list>
 						</select>             	 
 						 
@@ -229,7 +229,7 @@
 							 <#list personalDetails.maternalGuardianNationalities as nationality >
 								<div class="nationality-item">
 											<label class="full">${nationality.name}</label>  
-											<input type="hidden" name="maternalGuardianNationalities" value='${nationality.id?html}'/>
+											<input type="hidden" name="maternalGuardianNationalities" value='${encrypter.encrypt(nationality.id)}'/>
 											<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
 								</div>            
 							 </#list>
@@ -238,7 +238,7 @@
                      	 <select class="full" name="maternalNationalityCountry" id="maternalNationalityCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
                       		<option value="">Select...</option>
                         	<#list countries as country>
-                              <option value="${country.id?string('#######')}">${country.name}</option>               
+                              <option value="${encrypter.encrypt(country.id)}">${country.name?html}</option>               
                        	 </#list>
                      	 </select>             	 
                    	 </div>
@@ -258,7 +258,7 @@
                   	 		<#list personalDetails.paternalGuardianNationalities as nationality >
                   	 			<div class="nationality-item">
 									<label class="full">${nationality.name?html}</label>  
-									<input type="hidden" name="paternalGuardianNationalities" value='${nationality.id?string("#######")}'/>
+									<input type="hidden" name="paternalGuardianNationalities" value='${encrypter.encrypt(nationality.id)}'/>
 									<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
                   	 			</div>
                   	 		</#list>
@@ -267,7 +267,7 @@
                      	 <select class="full" name="paternalNationalityCountry" id="paternalNationalityCountry" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
                       		<option value="">Select...</option>
                         	<#list countries as country>
-                              <option value="${country.id?string('#######')}">${country.name?html}</option>               
+                              <option value="${encrypter.encrypt(country.id)}">${country.name?html}</option>               
                        	 </#list>
                      	 </select>             	 
                    	 </div>
@@ -331,11 +331,11 @@
 						<select class="full" name="residenceCountry" id="residenceCountry" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
 							<option value="">Select...</option>
 								<#list countries as country>
-								  <option value="${country.id?string('#######')}"
+								  <option value="${encrypter.encrypt(country.id)}"
 								  	<#if personalDetails.residenceCountry?? &&  personalDetails.residenceCountry.id == country.id >
 										selected="selected"
 									</#if>  
-								  >${country.name}</option>               
+								  >${country.name?html}</option>               
 								</#list>
 						 </select>
 						

@@ -27,7 +27,7 @@
 	                <input type="hidden" id="${funding.id?string('#######')}_fundingDescriptionDP" value="${funding.description?html}"/>
 	                <input type="hidden" id="${funding.id?string('#######')}_fundingAwardDateDP" value="${funding.awardDate?string('dd-MMM-yyyy')}"/>
 	                <input type="hidden" id="${funding.id?string('#######')}_docname" value="${(funding.document.fileName?html)!}"/>
-	                <input type="hidden" id="${funding.id?string('#######')}_docurl" value="/pgadmissions/download?documentId=${(funding.document.id?string("#######"))!}"/>
+	                <input type="hidden" id="${funding.id?string('#######')}_docurl" value="/pgadmissions/download?documentId=${(encrypter.encrypt(funding.document.id))!}"/>
 	                
 	        		<input type="hidden" id="fundingId" name="fundingId"/>                
 					
@@ -71,7 +71,7 @@
 							<span class="admin_row_label">Proof of award</span>
 							<#if funding.document?has_content>
 								<div class="field"  id="proofOfAward">
-					        		<a href="<@spring.url '/pgadmissions/download?documentId=${(funding.document.id?string("#######"))!}'/>">
+					        		<a href="<@spring.url '/pgadmissions/download?documentId=${(encrypter.encrypt(funding.document.id))!}'/>">
 					            		${(funding.document.fileName?html)!}</a>
 					            </div>
 					        <#else> 

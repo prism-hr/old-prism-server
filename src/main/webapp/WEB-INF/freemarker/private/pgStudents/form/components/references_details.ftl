@@ -227,7 +227,7 @@
                 </#if>>
                 <option value="">Select...</option>
                     <#list countries as country>
-                        <option value="${country.id?string('#######')}" <#if referee.addressCountry?? && referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                        <option value="${encrypter.encrypt(country.id)}" <#if referee.addressCountry?? && referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
                     </#list>
                 </select>
 

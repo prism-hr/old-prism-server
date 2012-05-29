@@ -71,7 +71,7 @@
                             </#if>>
                             <option value="">Select...</option>
                             	<#list countries as country>
-                                	<option value="${country.id?string('#######')}" <#if addressSectionDTO.currentAddressCountry?? && addressSectionDTO.currentAddressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                                	<option value="${encrypter.encrypt(country.id)}" <#if addressSectionDTO.currentAddressCountry?? && addressSectionDTO.currentAddressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
                             	</#list>
                             </select>
                       	         
@@ -155,7 +155,7 @@
                             </#if>>
                             <option value="">Select...</option>
                                 <#list countries as country>
-                                    <option value="${country.id?string('#######')}" <#if addressSectionDTO.contactAddressCountry?? && addressSectionDTO.contactAddressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
+                                    <option value="${encrypter.encrypt(country.id)}" <#if addressSectionDTO.contactAddressCountry?? && addressSectionDTO.contactAddressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
                                 </#list>
                             </select>            
                             	        	 

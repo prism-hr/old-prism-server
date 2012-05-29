@@ -98,7 +98,7 @@
                    		<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
                     	<option value="">Select...</option>
                     	<#list countries as country>
-                     		<option value="${country.id?string('#######')}" <#if employmentPosition.employerCountry?? && employmentPosition.employerCountry.id == country.id> selected="selected"</#if>>${country.name}</option>
+                     		<option value="${encrypter.encrypt(country.id)}" <#if employmentPosition.employerCountry?? && employmentPosition.employerCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>
                      	</#list>
                  	 </select>
                  	 

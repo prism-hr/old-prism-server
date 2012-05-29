@@ -9,27 +9,32 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.CountryService;
 
 public class CountryPropertyEditorTest {
 
 	private CountryService countryServiceMock;
 	private CountryPropertyEditor editor;
+	private EncryptionHelper encryptionHelperMock;
 
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		Country country = new CountryBuilder().id(1).toCountry();
 		EasyMock.expect(countryServiceMock.getCountryById(1)).andReturn(country);
-		EasyMock.replay(countryServiceMock);
+		EasyMock.replay(countryServiceMock,encryptionHelperMock);
 		
-		editor.setAsText("1");
+		editor.setAsText("bob");
 		assertEquals(country, editor.getValue());
 		
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void shouldThrowIllegalArgumentExceptionIfIdNotInteger(){			
+	public void shouldThrowIllegalArgumentExceptionIfIdNotInteger(){		
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andThrow(new IllegalArgumentException());
+		EasyMock.replay(encryptionHelperMock);
 		editor.setAsText("bob");			
 	}
 	
@@ -57,14 +62,17 @@ public class CountryPropertyEditorTest {
 	}
 	
 	@Test	
-	public void shouldReturnIdAsString(){			
+	public void shouldReturnEncryptedIdAsString(){			
 		editor.setValue(new CountryBuilder().id(5).toCountry());
-		assertEquals("5", editor.getAsText());
+		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
+		EasyMock.replay(encryptionHelperMock);
+		assertEquals("bob", editor.getAsText());
 	}
 	
 	@Before
 	public void setup(){
 		countryServiceMock = EasyMock.createMock(CountryService.class);
-		editor = new CountryPropertyEditor(countryServiceMock);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		editor = new CountryPropertyEditor(countryServiceMock,encryptionHelperMock);
 	}
 }

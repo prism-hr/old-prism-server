@@ -17,8 +17,10 @@ import com.zuehlke.pgadmissions.domain.Reference;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.DocumentType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.DocumentService;
 import com.zuehlke.pgadmissions.services.ReferenceService;
+import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
 @RequestMapping("/download")
@@ -26,21 +28,25 @@ public class FileDownloadController {
 
 	private final DocumentService documentService;
 	private final ReferenceService referenceService;
+	private final UserService userService;
+	private final EncryptionHelper encryptionHelper;
 
 	FileDownloadController() {
-		this(null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public FileDownloadController(DocumentService documentService, ReferenceService referenceService) {
+	public FileDownloadController(DocumentService documentService, ReferenceService referenceService, UserService userService, EncryptionHelper encryptionHelper) {
 		this.documentService = documentService;
 		this.referenceService = referenceService;
+		this.userService = userService;
+		this.encryptionHelper = encryptionHelper;
 
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public void downloadApplicationDocument(@RequestParam("documentId") Integer documentId, HttpServletResponse response) throws IOException {
-		Document document = documentService.getDocumentById(documentId);
+	public void downloadApplicationDocument(@RequestParam("documentId") String encryptedDocumentId, HttpServletResponse response) throws IOException {
+		Document document = documentService.getDocumentById(encryptionHelper.decryptToInteger(encryptedDocumentId));
 		if (DocumentType.REFERENCE == document.getType()) {
 			throw new ResourceNotFoundException();
 		}
@@ -49,9 +55,9 @@ public class FileDownloadController {
 	}
 
 	@RequestMapping(value = "/reference", method = RequestMethod.GET)
-	public void downloadReferenceDocument(@RequestParam("referenceId") Integer referenceId, HttpServletResponse response) throws IOException {
-		Reference reference = referenceService.getReferenceById(referenceId);
-		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+	public void downloadReferenceDocument(@RequestParam("referenceId") String encryptedReferenceId, HttpServletResponse response) throws IOException {
+		Reference reference = referenceService.getReferenceById(encryptionHelper.decryptToInteger(encryptedReferenceId));
+		RegisteredUser currentUser =userService.getCurrentUser();
 		if (reference == null || reference.getDocument() == null || !currentUser.canSeeReference(reference)) {
 			throw new ResourceNotFoundException();
 		}

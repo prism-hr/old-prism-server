@@ -1,14 +1,6 @@
 package com.zuehlke.pgadmissions.domain;
 
 import java.io.Serializable;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-
-import javax.crypto.NoSuchPaddingException;
-
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-
-import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @SuppressWarnings("serial")
 public abstract class DomainObject<T> implements Serializable {
@@ -46,12 +38,6 @@ public abstract class DomainObject<T> implements Serializable {
 		return LARGE_PRIME * id.hashCode();
 	}
 
-	public String getEncryptedId() throws Exception {
-		if(id == null){
-			return null;
-		}
-		return  new EncryptionHelper().encrypt(id.toString());
-
-	}
+	
 
 }

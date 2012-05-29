@@ -115,14 +115,6 @@
 												<input type="checkbox" name="includeProspectusLink" id="includeProspectusLink" class="reason"/>											
 											</div>
 										</div>
-										
-										<div class="row">
-											<div class="field">
-												<span>
-													<button type="submit" id="rejectButton" class="blue">Reject application</button>
-												</span>
-											</div>
-										</div>
 									</div>
 
 									<div class="row-group">
@@ -130,6 +122,10 @@
 											<label class="label"> Content of the e-mail for the applicant</label>
 											<div id="emailText"></div> 
 										</div>
+									</div>
+									
+									<div class="buttons">
+										<button type="submit" id="rejectButton" class="blue">Reject application</button>
 									</div>
 									
 									<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/> 

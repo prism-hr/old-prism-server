@@ -240,16 +240,14 @@
 										<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 									</div>
 									
-									<div class="row">
-										<div class="field">							
-											<button class="blue" type="button" id="moveToInterviewBtn">Continue</button>
-										</div>
-									</div>								
-									
-									<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
-									<input type="hidden" id="interviewId" name="interviewId" value="${(interview.id?string("######"))!}"/> 
 								</div>
 								
+								<div class="buttons">
+									<button class="blue" type="button" id="moveToInterviewBtn">Continue</button>
+								</div>								
+								
+								<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
+								<input type="hidden" id="interviewId" name="interviewId" value="${(interview.id?string("######"))!}"/> 
 							</form>
 						</div>
 					</section>

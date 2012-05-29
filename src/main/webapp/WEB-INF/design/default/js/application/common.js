@@ -1,26 +1,31 @@
-/*function bindDatePickers(){
- // Date pickers.
 
-	$('input.date').each(function(){
-		if(!$(this).hasClass()){
-			$(this).attr("readonly", "readonly");	
-			$(this).datepicker({
-	  				dateFormat: 'dd-M-yy',
-	 				changeMonth: true,
-	  				changeYear: true,
-	  				yearRange: '1900:c+20' });
-		}
-	});
+var tooltipSettings = {
+		content: {
+			text: function(api) {
+				// Retrieve content from custom attribute of the $('.selector') elements.
+				return $(this).attr('data-desc');
+			} 
+		},
+		position: {
+			my: 'bottom right', // Use the corner...
+			at: 'top center', // ...and opposite corner
+			viewport: $(window),
+			adjust: {
+				method: 'flip shift'
+			}
+		},
+		style: 'tooltip-pgr ui-tooltip-shadow'
+	};
+});
 
-}*/
 
-function bindDatePicker(selector){
+function bindDatePicker(selector)
+{
 	// Date pickers.
-
 	$(selector).each(function(){
 
-		if(!$(this).hasClass('hasDatepicker')){
-
+		if(!$(this).hasClass('hasDatepicker'))
+		{
 			$(this).attr("readonly", "readonly");	
 			$(this).datepicker({
 				dateFormat: 'dd-M-yy',
@@ -100,7 +105,6 @@ function addToolTips(){
 			text: function(api) {
 				// Retrieve content from custom attribute of the $('.selector') elements.
 				return $(this).attr('data-desc');
-
 			} 
 		},
 		position: {
@@ -194,9 +198,14 @@ function doUpload($upload_field)
 				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
 				$hfParent.html(data).show();
 				$container.addClass('uploaded');
-				//$('a.button-edit', $hfParent).attr({'id':'editQualiPOA','data-desc':'Edit Proof Of Award'});
+				var doc_type = $upload_field.attr('data-type').replace('_',' ').capitalize();
+				$('a.button-edit', $hfParent).attr({ 'data-desc': 'Edit ' + doc_type })
+                                     .qtip(tooltipSettings);
 			}
     }
   });
 }
 
+String.prototype.capitalize = function(){
+   return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
+  };

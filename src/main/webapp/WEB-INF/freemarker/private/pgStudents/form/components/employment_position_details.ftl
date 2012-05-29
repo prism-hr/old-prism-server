@@ -44,12 +44,12 @@
 	                     
 	                    	<td>		                		
 		                		<a name="positionEditButton" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if>
-		                				id="position_${position.id?string('#######')}" class="button-edit button-hint">edit</a>
+		                				id="position_${encrypter.encrypt(position.id)}" class="button-edit button-hint">edit</a>
 		                	</td>
 	                    <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 	                    	<td>		                		
 		                		<a name="deleteEmploymentButton" data-desc="Delete" 
-		                				id="position_${position.id?string('#######')}" class="button-delete button-hint">delete</a>
+		                				id="position_${encrypter.encrypt(position.id)}" class="button-delete button-hint">delete</a>
 		                	</td>
 		            
 						<#else>
@@ -64,7 +64,7 @@
 		</table>
 	</#if>
     
-    <input type="hidden" id="positionId" name="positionId" value="${(employmentPosition.id?string('#######'))!}"/>
+    <input type="hidden" id="positionId" name="positionId" value="<#if employmentPosition?? && employmentPosition.id??>${(encrypter.encrypt(employmentPosition.id))!}</#if>"/>
     
     <form>
     

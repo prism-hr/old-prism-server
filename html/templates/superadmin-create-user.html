@@ -1,0 +1,55 @@
+          <form>
+          
+          	<h1>Add New programme users and assign roles</h1>
+            <p>Please create a new user to administer the programme.</p>
+            
+            <br>
+            
+            <div class="row programme">
+              <label>Select programme</label>
+              <select>
+                <option>LoLo EngD</option>
+              </select>
+            </div>
+
+            <hr>
+            
+          	<!-- Left side -->
+          	<div class="left-column">
+            
+              <div class="row">
+                <label>First name</label>
+                <input type="text" name="firstname" />
+              </div>
+              
+              <div class="row">
+                <label>Surname</label>
+                <input type="text" name="surname" />
+              </div>
+              
+              <div class="row">
+                <label>Email address</label>
+                <input type="text" name="email" />
+              </div>
+              
+            </div>
+
+						<!-- Right side -->
+						<div class="right-column">
+            
+              <div class="row">
+                <label>Role(s) in application process</label>
+                <select multiple size="4">
+                  <option>Administrator</option>
+                  <option>Approver</option>
+                  <option>Interviewer</option>
+                  <option>Reviewer</option>
+                </select>
+              </div>
+            
+              <div class="buttons">
+	              <button>Create user</button>
+              </div>
+              
+            </div>
+          </form>

@@ -37,7 +37,7 @@
 			                    	</#if>"/>
 			                    	 
 			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_url" value="<#if referee.hasProvidedReference() && referee.reference.document?? >
-			                    	 	<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/></#if>"
+			                    	 	<@spring.url '/download/reference?referenceId=${encrypter.encrypt(referee.reference.id)}'/></#if>"
 			                    	 />
 			                    	 <input type="hidden" id="${referee.id?string('#######')}_reference_document_name" value="<#if referee.hasProvidedReference()><#if referee.reference.document??>${referee.reference.document.fileName?html}</#if><#else>No document uploaded</#if>" />
                                      <input type="hidden" id="${referee.id?string('#######')}_email" value="${(referee.email?html)!}"/>
@@ -127,7 +127,7 @@
 					                  	<span class="admin_row_label">Document</span>
 					                  	<#if referee.hasProvidedReference() >
 					                  		<div class="field">
-					                  			<a href="<@spring.url '/download/reference?referenceId=${referee.reference.id?string("#######")}'/>">
+					                  			<a href="<@spring.url '/download/reference?referenceId=${encrypter.encrypt(referee.reference.id)}'/>">
 					                  			${referee.reference.document.fileName?html}</a>
 					                  		</div>
 					                  	<#else> 

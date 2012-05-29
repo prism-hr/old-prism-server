@@ -217,7 +217,7 @@
                       	</#if>>
             			<option value="">Select...</option>
              			<#list languages as language>
-             				<option value="${language.id?string('#######')}"  <#if qualification.qualificationLanguage?? && qualification.qualificationLanguage.id == language.id> selected="selected"</#if>>${language.name?html}</option>
+             				<option value="${encrypter.encrypt(language.id)}"  <#if qualification.qualificationLanguage?? && qualification.qualificationLanguage.id == language.id> selected="selected"</#if>>${language.name?html}</option>
              			</#list>
           			</select>
  

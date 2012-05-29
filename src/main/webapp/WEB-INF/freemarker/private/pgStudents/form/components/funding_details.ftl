@@ -50,16 +50,14 @@
 	                  	${existingFunding.type.displayValue} ${(existingFunding.value?html)!}</a>
 	                  	</td>
 	                  	<td>${existingFunding.description}</td>
-	                  	<#--
-	                  	<td ><a href="<@spring.url '/download'/>?documentId=${existingFunding.document.id?string('#######')}">
-                        <#if existingFunding.document.fileName?length <20 >${existingFunding.document.fileName}<#else>${existingFunding.document.fileName?substring(0,17)}...</#if></a></td>-->
+	                
 	                  	<td>${existingFunding.awardDate?string('dd-MMM-yyyy')}</td>
 								<td>				                  		                		
-		                			<a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_${existingFunding.id?string('#######')}" class="button-edit button-hint">edit</a>
+		                			<a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-edit button-hint">edit</a>
 		                		</td>
 		                		<td>
 	                  	     <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-		                			<a name="deleteFundingButton" data-desc="Delete" id="funding_${existingFunding.id?string('#######')}" class="button-delete button-hint">delete</a>
+		                			<a name="deleteFundingButton" data-desc="Delete" id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-delete button-hint">delete</a>
 		                		</td>
 		                	<#else>
 		                		<td></td><td></td>		                		
@@ -75,7 +73,7 @@
     <!-- Non-rendering data -->
           
 	<form >
-    <input type="hidden" id="fundingId" name="fundingId" value="${(funding.id?string('#######'))!}"/>    
+    <input type="hidden" id="fundingId" name="fundingId" value="<#if funding?? && funding.id??>${(encrypter.encrypt(funding.id))!}</#if>"/>    
 
 
 				<#if errorCode?? && errorCode=="true">

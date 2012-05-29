@@ -49,13 +49,14 @@ public class DeleteApplicationFormEntitiesControllerTest {
 
 	@Test
 	public void shoulGetFundingFromServiceAndDelete(){
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		Funding funding = new FundingBuilder().id(1).application(applicationForm).toFunding();
 		
 		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(funding);
 		fundingServiceMock.delete(funding);
-		EasyMock.replay(fundingServiceMock);
-		String viewName = controller.deleteFunding(1);
-		EasyMock.verify(fundingServiceMock);
+		EasyMock.replay(fundingServiceMock, encryptionHelperMock);
+		String viewName = controller.deleteFunding("encryptedId");
+		EasyMock.verify(fundingServiceMock, encryptionHelperMock);
 		assertEquals("redirect:/update/getFunding?applicationId=2&message=deleted",viewName);
 	}
 	

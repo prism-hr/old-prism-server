@@ -7,7 +7,7 @@ $(document).ready(function() {
 	);
 	
 	
-	$('select.actionType').change(function() {
+	$(document).on('change', 'select.actionType', function() {
 		var name = this.name;
 		var id = name.substring(5).replace(']', '');
 

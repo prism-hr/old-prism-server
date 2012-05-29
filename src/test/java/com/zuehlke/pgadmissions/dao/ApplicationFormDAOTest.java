@@ -1302,14 +1302,14 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldGetApplicationBelongingToProgramWithCodeScienceAndOtherTitle(){
-		Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
+		Program programOne = new ProgramBuilder().code("Program_ZZZZZ_1").title("empty").toProgram();
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		
 		save(programOne, applicationFormOne);
 		
 		flushAndClearSession();
 		
-		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("sCiEnce", SearchCategories.PROGRAMME_NAME);
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("zzZZz", SearchCategories.PROGRAMME_NAME);
 		
 		flushAndClearSession();
 
@@ -1319,14 +1319,14 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldGetApplicationBelongingToProgramWithTitleScienceAndOtherCode(){
-		Program programOne = new ProgramBuilder().code("empty").title("Program_Science_1").toProgram();
+		Program programOne = new ProgramBuilder().code("empty").title("Program_ZZZZZ_1").toProgram();
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		
 		save(programOne, applicationFormOne);
 		
 		flushAndClearSession();
 		
-		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("sCiEnce", SearchCategories.PROGRAMME_NAME);
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("zzZZz", SearchCategories.PROGRAMME_NAME);
 		
 		flushAndClearSession();
 		
@@ -1343,7 +1343,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		
-		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("sCiEnce", SearchCategories.PROGRAMME_NAME);
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("zzZZz", SearchCategories.PROGRAMME_NAME);
 		
 		flushAndClearSession();
 		
@@ -1354,7 +1354,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldGetApplicationBelongingToApplicantMatchingFirstNameFred(){
 		Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
-		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("Frederick").lastName("Doe").email("email@test.com").username("freddy").password("password")
+		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("FredzzZZZZZerick").lastName("Doe").email("email@test.com").username("freddy").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		
@@ -1362,7 +1362,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		
-		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("fred", SearchCategories.APPLICANT_NAME);
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("zzZZz", SearchCategories.APPLICANT_NAME);
 		
 		flushAndClearSession();
 
@@ -1371,9 +1371,9 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
-	public void shouldGetApplicationBelongingToApplicantMatchingLastNameuni(){
+	public void shouldGetApplicationBelongingToApplicantMatchingLastName(){
 		Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
-		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").username("freddy").password("password")
+		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com").username("freddy").password("password")
 				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		
@@ -1381,7 +1381,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		
 		flushAndClearSession();
 		
-		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("uni", SearchCategories.APPLICANT_NAME);
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("zzZZz", SearchCategories.APPLICANT_NAME);
 		
 		flushAndClearSession();
 		

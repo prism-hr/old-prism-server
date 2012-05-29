@@ -16,7 +16,6 @@ var tooltipSettings = {
 		},
 		style: 'tooltip-pgr ui-tooltip-shadow'
 	};
-});
 
 
 function bindDatePicker(selector)

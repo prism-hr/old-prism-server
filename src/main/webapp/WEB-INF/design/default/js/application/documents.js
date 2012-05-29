@@ -67,6 +67,11 @@ $(document).ready(function(){
 	});
 	addToolTips();
 
+  // Generic file upload solution...
+	watchUpload($('#cvDocument'));
+	watchUpload($('#psDocument'));
+
+/*
 	$('#cvUploadFields').on('change','#cvDocument', function(event){
 		if(this.files[0].size < 10485760){
 			cvDelete();
@@ -90,6 +95,7 @@ $(document).ready(function(){
 			 alert("Sorry, document must be at most 10MB.");
 		 }
 	});
+*/
 	
 	
 });

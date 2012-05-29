@@ -193,7 +193,8 @@ function doUpload($upload_field)
       */
 			else
 			{
-        console.log($(data).find('span[name="supportingDocumentSpan"]').length);
+        console.log('SPAN test: '+$(data).find('span[name="supportingDocumentSpan"]').length);
+        console.log('INPUT test: '+$(data).find('input').length);
 				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
 				$hfParent.html(data).show();
 				$container.addClass('uploaded');

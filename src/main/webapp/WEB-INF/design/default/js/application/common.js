@@ -132,7 +132,6 @@ function doUpload($upload_field)
 			{
         // There was an uploading error.
 				$container.append(data);
-        console.log(data);
       }
       else if ($(data).find('input').length == 0)
       {

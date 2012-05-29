@@ -48,7 +48,7 @@
 				      	</p>
 			      	</#if>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place at ${interviewer.interview.interviewDueDate?datetime("hh:mm a")} on ${interviewer.interview.interviewDueDate?datetime("dd/MM/yyyy")}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place at ${interviewer.interview.interviewTime?datetime("hh:mm a")} on ${interviewer.interview.interviewDueDate?datetime("dd/MM/yyyy")}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">${interviewer.interview.furtherDetails?html}</font>

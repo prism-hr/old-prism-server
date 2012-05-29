@@ -35,21 +35,22 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to inform you that your application ${application.id?string("######")} to join ${application.program.title}, is now being formally reviewed by admissions staff. To view your application, click the link below: </font>
+			      		<#if (previousStage.displayValue() = "Validation")>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to inform you that your application has been advanced to academic assessment. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?date}.</font>
+			            <#else>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">In order to obtain further feedback on your application it has been advanced to a second stage of academic assessment. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?date}.</font>
+			            </#if>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View your application</a>
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View application</a>
 			      		</font>
-			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We will be in touch with further updates in due course.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">In the meantime, for further assistance <a href="mailto: ${adminsEmails}">email the administrator</a></font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards, <br />UCL Portal</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

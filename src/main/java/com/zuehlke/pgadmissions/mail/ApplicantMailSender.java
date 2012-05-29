@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.mail;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -17,12 +17,10 @@ import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApplicantMailSender extends StateChangeMailSender {
 
-
-	
 	private final ApplicationsService applicationsService;
 
-	public ApplicantMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, ApplicationsService applicationsService) {
-		super(mimeMessagePreparatorFactory, mailSender);
+	public ApplicantMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, ApplicationsService applicationsService, MessageSource msgSource) {
+		super(mimeMessagePreparatorFactory, mailSender, msgSource);
 		this.applicationsService = applicationsService;
 	}
 
@@ -40,24 +38,27 @@ public class ApplicantMailSender extends StateChangeMailSender {
 
 		if (ApplicationFormStatus.REJECTED.equals(form.getStatus())) {
 			model.put("reason", form.getRejection().getRejectionReason());
-			if(form.getRejection().isIncludeProspectusLink()){
+			if (form.getRejection().isIncludeProspectusLink()) {
 				model.put("prospectusLink", Environment.getInstance().getUCLProspectusLink());
 			}
-			
-			model.put("stage", applicationsService.getStageComingFrom(form));
+
 		}
+		model.put("previousStage", applicationsService.getStageComingFrom(form));
 		return model;
 	}
-	
+
 	@Override
-	public  void sendMailsForApplication(ApplicationForm form, String message, String templatename) throws UnsupportedEncodingException {
-		
-		InternetAddress toAddress = new InternetAddress(form.getApplicant().getEmail(), form.getApplicant().getFirstName() + " "
-				+ form.getApplicant().getLastName());
-	
-		
-		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + form.getId() + " for "
-				+ form.getProgram().getTitle() + " " + message, templatename, createModel(form), null));
-	
+	public void sendMailsForApplication(ApplicationForm form, String messageCode, String templatename) {
+		InternetAddress toAddress = createAddress(form.getApplicant());
+		String subject = resolveSubject(form, messageCode);
+
+		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject, templatename, createModel(form), null));
+	}
+
+	private String resolveSubject(ApplicationForm form, String messageCode) {
+		ApplicationFormStatus previousStage = applicationsService.getStageComingFrom(form);
+
+		String subject = resolveMessage(messageCode, form, previousStage);
+		return subject;
 	}
 }

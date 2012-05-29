@@ -58,7 +58,7 @@ public class PersonalDetailsValidatorTest {
 		Assert.assertEquals("personalDetails.email.notempty", mappingResult.getFieldError("email").getCode());
 	}
 
-	@Ignore
+	
 	@Test
 	public void shouldRejectIfEmailNotValidEmail() {
 		personalDetails.setEmail("rerewrew");

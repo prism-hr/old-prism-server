@@ -12,7 +12,6 @@ import junit.framework.Assert;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.validation.DirectFieldBindingResult;
 
@@ -159,16 +158,6 @@ public class ProgrammeDetailsValidatorTest {
 		Assert.assertEquals("programmeDetails.studyOption.invalid", mappingResult.getFieldError("studyOption").getCode());
 	}
 
-	@Ignore
-	@Test
-	public void shouldRejectIfSupervisorEmailIsNonValid() {
-		programmeDetail.getSupervisors().get(0).setEmail("");
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "supervisors");
-		programmeDetailsValidator.validate(programmeDetail, mappingResult);
-
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("programmeDetails.email.invalid", mappingResult.getFieldError("supervisors").getCode());
-	}
 
 	@Before
 	public void setup() throws ParseException {

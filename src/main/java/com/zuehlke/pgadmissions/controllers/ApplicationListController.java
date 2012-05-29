@@ -18,7 +18,8 @@ import com.zuehlke.pgadmissions.services.UserService;
 @RequestMapping(value = {"","applications"})
 public class ApplicationListController {
 
-	private static final String APPLICATION_LIST_VIEW_NAME = "private/my_applications_page";
+	private static final String APPLICATION_LIST_PAGE_VIEW_NAME = "private/my_applications_page";
+	private static final String APPLICATION_LIST_SECTION_VIEW_NAME = "private/my_applications_section";
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
 	
@@ -34,9 +35,14 @@ public class ApplicationListController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String getApplicationListPage() {			
-		return APPLICATION_LIST_VIEW_NAME;
+		return APPLICATION_LIST_PAGE_VIEW_NAME;
 	}
-
+	
+	@RequestMapping(value="/section", method = RequestMethod.GET)
+	public String getApplicationListSection() {			
+		return APPLICATION_LIST_SECTION_VIEW_NAME;
+	}
+	
 	@ModelAttribute("user")
 	public RegisteredUser getUser() {
 		return userService.getCurrentUser();

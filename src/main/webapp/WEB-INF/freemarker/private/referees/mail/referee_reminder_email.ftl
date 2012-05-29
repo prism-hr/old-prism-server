@@ -35,22 +35,30 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${referee.firstname?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to remind you that you have been nominated as a referee by ${applicant.firstName?html} ${applicant.lastName?html} who is currently applying to the UCL Faculty to join the Postgraduate research Programme in ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that {applicant.firstName?html} ${applicant.lastName?html} has submitted an Application ${application.id?string("######")} for PhD study at University College London (UCL) in ${application.program.title}.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We would be most grateful for your comments on this candidate. To submit your reference, you first need to register via the link below:</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated as one of their referees.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to upload a short PDF document confirming their suitability for PhD study. You may create your own document, or work from our template (attached). If you feel unable to provide a reference, you may also decline.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
 			      			<a href="${host}/pgadmissions/referee/register?activationCode=${referee.activationCode!}">Register</a>
 			      		</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      			<a href="${host}/pgadmissions/decline/reference?refereeId=${referee.id?string('#######')}">Decline</a>
+			      		</font>
 			      	</p>
-			      	
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We will continue to send reminders until you respond to this request.</font>
+			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">In the meantime, for further assistance <a href="mailto: ${adminsEmails}">email the administrator</a></font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Many Thanks, <br />UCL Portal</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

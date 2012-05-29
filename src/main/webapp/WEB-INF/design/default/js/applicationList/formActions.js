@@ -1,4 +1,12 @@
 $(document).ready(function() {
+	
+	$.get("/pgadmissions/applications/section",
+			function(data) {
+				$('#applicationListSection').html(data);
+			}
+	);
+	
+	
 	$('select.actionType').change(function() {
 		var name = this.name;
 		var id = name.substring(5).replace(']', '');

@@ -12,7 +12,7 @@
 		<constructor-arg index="3"
 			value="APPLICANT_SUBMISSION_NOTIFICATION" />
 		<constructor-arg index="4" value="VALIDATION" />
-		<constructor-arg index="5" value="has been received" />
+		<constructor-arg index="5" value="validation.submission.applicant" />
 		<constructor-arg index="6"
 			value="private/pgStudents/mail/application_submit_confirmation.ftl" />
 	</bean>
@@ -32,7 +32,7 @@
 		<constructor-arg index="3"
 			value="APPLICANT_MOVED_TO_REVIEW_NOTIFICATION" />
 		<constructor-arg index="4" value="REVIEW" />
-		<constructor-arg index="5" value="now being reviewed" />
+		<constructor-arg index="5" value="review.notification.applicant" />
 		<constructor-arg index="6"
 			value="private/pgStudents/mail/moved_to_review_notification.ftl" />
 	</bean>
@@ -52,14 +52,14 @@
 		<constructor-arg index="3"
 			value="APPLICATION_MOVED_TO_REJECT_NOTIFICATION" />
 		<constructor-arg index="4" value="REJECTED" />
-		<constructor-arg index="5" value="was rejected" />
+		<constructor-arg index="5" value="rejection.notification" />
 		<constructor-arg index="6"
 			value="private/pgStudents/mail/rejected_notification.ftl" />
 	</bean>
 
 	<bean id="moveToRejectNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay" value="10000" />
-		<property name="period" value="60000" />
+		<property name="delay" value="1000" />
+		<property name="period" value="10000" />
 		<property name="timerTask" ref="moveToRejectNotificationTimerTask" />
 	</bean>
 
@@ -73,7 +73,7 @@
 		<constructor-arg index="3"
 			value="APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION" />
 		<constructor-arg index="4" value="INTERVIEW" />
-		<constructor-arg index="5" value="interview arranged" />
+		<constructor-arg index="5" value="interview.notification.applicant" />
 		<constructor-arg index="6"
 			value="private/pgStudents/mail/moved_to_interview_notification.ftl" />
 	</bean>

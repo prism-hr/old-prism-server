@@ -26,11 +26,17 @@ public class ApplicationListControllerTest {
 	private UserService userServiceMock;
 
 	@Test
-	public void shouldReturnCorrectView() {
+	public void shouldReturnCorrectViewForApplicationListPage() {
 
 		assertEquals("private/my_applications_page", controller.getApplicationListPage());
 	}
 
+	@Test
+	public void shouldReturnCorrectViewForApplicationListSection() {
+		
+		assertEquals("private/my_applications_section", controller.getApplicationListSection());
+	}
+	
 	@Test
 	public void shouldAddUserCurrentUser() {
 		

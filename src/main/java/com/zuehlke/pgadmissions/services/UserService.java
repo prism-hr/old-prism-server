@@ -9,6 +9,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -36,19 +37,21 @@ public class UserService {
 	private final JavaMailSender mailsender;
 	private final Logger log = Logger.getLogger(UserService.class);
 	private final UserFactory userFactory;
+	private final MessageSource msgSource;
 
 	UserService() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
-			JavaMailSender mailsender) {
+			JavaMailSender mailsender, MessageSource msgSource) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
 		this.userFactory = userFactory;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
+		this.msgSource = msgSource;
 	}
 
 	public RegisteredUser getUser(Integer id) {
@@ -107,7 +110,9 @@ public class UserService {
 			model.put("adminsEmails", adminsEmails);
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstName() + " " + referee.getLastName());
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Registration",
+			String subject = msgSource.getMessage("registration.confirmation.referee", null, null);
+			
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
 					"private/referees/mail/register_referee_confirmation.ftl", model, null));
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);

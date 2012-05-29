@@ -36,9 +36,9 @@
 		      		</h1>
 			      	<p>
 			      		<#if (previousStage.displayValue() = "Validation")>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to inform you that your application has been advanced to academic assessment. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?date}.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">We are pleased to inform you that your application has been advanced to academic assessment. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?datetime("dd/MM/yyyy")}.</font>
 			            <#else>
-			      		  <font face="Arial, Helvetica, sans-serif" size="2">In order to obtain further feedback on your application it has been advanced to a second stage of academic assessment. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?date}.</font>
+			      		  <font face="Arial, Helvetica, sans-serif" size="2">In order to obtain further feedback on your application it has been advanced to a second stage of academic assessment. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?datetime("dd/MM/yyyy")}.</font>
 			            </#if>
 			      	</p>
 			      	<p>

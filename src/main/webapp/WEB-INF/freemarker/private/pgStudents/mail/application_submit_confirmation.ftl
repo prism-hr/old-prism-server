@@ -35,14 +35,14 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your application for UCL ${application.program.title}. Your application number is ${application.id?string("######")}. Please quote this number in all correspondence.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for your application for UCL ${application.program.title}. Your application number is ${application.applicationNumber}. Please quote this number in all correspondence.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">An admissions officer will now make a preliminary assessment of your suitability. We aim to be back in contact with the outcome of this assessment by close of business on ${application.dueDate?date}.
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View application</a>
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">View application</a>
 			      		</font>
 			      	</p>
 			      	<p>

@@ -4,12 +4,14 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 
+import javax.activation.DataSource;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
@@ -33,22 +35,22 @@ public class MimeMessagePreparatorFactory {
 	}
 
 	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress toAddress, InternetAddress[] ccAddresses, String subject, String templatename,
-			Map<String, Object> model, InternetAddress replyToAddress, File... attachments) {
+			Map<String, Object> model, InternetAddress replyToAddress, InputStreamSource... attachments) {
 		return getMimeMessagePreparator(new InternetAddress[] { toAddress }, ccAddresses, subject, templatename, model, replyToAddress, attachments);
 	}
 
 	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress toAddress, String subject, String templatename, Map<String, Object> model,
-			InternetAddress replyToAddress, File... attachments) {
+			InternetAddress replyToAddress, InputStreamSource... attachments) {
 		return getMimeMessagePreparator(new InternetAddress[] { toAddress }, null, subject, templatename, model, replyToAddress, attachments);
 	}
 
 	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress[] toAddresses,//
-			String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, File... attachments) {
+			String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, InputStreamSource... attachments) {
 		return getMimeMessagePreparator(toAddresses, null, subject, templatename, model, replyToAddress, attachments);
 	}
 
 	public MimeMessagePreparator getMimeMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,//
-			String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, File... attachments) {
+			String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, InputStreamSource... attachments) {
 
 		if (prod) {
 			return new ProductionMessagePreparator(toAddresses, ccAddresses, subject, templatename, model, replyToAddress, attachments);
@@ -69,10 +71,10 @@ public class MimeMessagePreparatorFactory {
 		private final String templatename;
 		private final Map<String, Object> model;
 		private final InternetAddress replyToAddress;
-		private final File[] attachments;
+		private final InputStreamSource[] attachments;
 
 		public ProductionMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,//
-				String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, File... attachments) {
+				String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, InputStreamSource... attachments) {
 			this.toAddresses = toAddresses;
 			this.ccAddresses = ccAddresses;
 			this.subject = subject;
@@ -110,10 +112,11 @@ public class MimeMessagePreparatorFactory {
 			messageHelper.setSubject(getSubject());
 			messageHelper.setFrom(Environment.getInstance().getEmailFromAddress());
 
-			for (File file : attachments) {
-				System.err.println("adding " + file.getAbsolutePath());
-				messageHelper.addAttachment(file.getName(), file);
-				System.err.println( file.getAbsolutePath()  + " was added");
+			for (InputStreamSource file : attachments) {
+				DataSource inputStreamSource;
+				//messageHelper.addAttachment(attachmentFilename, inputStreamSource)
+				//messageHelper.addAttachment(file.getName(), file);
+				
 
 			}
 
@@ -126,7 +129,7 @@ public class MimeMessagePreparatorFactory {
 	class DevelopmentMessagePreparator extends ProductionMessagePreparator {
 
 		public DevelopmentMessagePreparator(InternetAddress[] toAddresses, InternetAddress[] ccAddresses,//
-				String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, File... attachments) {
+				String subject, String templatename, Map<String, Object> model, InternetAddress replyToAddress, InputStreamSource... attachments) {
 			super(toAddresses, ccAddresses, subject, templatename, model, replyToAddress, attachments);
 			for (InternetAddress internetAddress : toAddresses) {
 				internetAddress.setAddress(Environment.getInstance().getEmailToAddress());

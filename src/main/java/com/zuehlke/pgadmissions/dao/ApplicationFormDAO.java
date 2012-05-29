@@ -12,6 +12,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -29,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.domain.enums.SearchCategories;
 
 @Repository
 public class ApplicationFormDAO {
@@ -237,4 +239,23 @@ public class ApplicationFormDAO {
 				
 		
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getAllApplicationsContainingTermInCategory(String term, SearchCategories category) {
+		if(category ==  SearchCategories.APPLICATION_CODE){
+			return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.ilike("applicationNumber", term, MatchMode.ANYWHERE)).list();
+		}
+		if(category ==  SearchCategories.PROGRAMME_NAME){
+			return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+					.createAlias("program", "program")  
+			        .add(Restrictions.or(Restrictions.ilike("program.code", term, MatchMode.ANYWHERE), Restrictions.ilike("program.title", term, MatchMode.ANYWHERE))).list();
+		}
+		if(category ==  SearchCategories.APPLICANT_NAME){
+			return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+					.createAlias("applicant", "applicant")  
+					.add(Restrictions.or(Restrictions.ilike("applicant.firstName", term, MatchMode.ANYWHERE), Restrictions.ilike("applicant.lastName", term, MatchMode.ANYWHERE))).list();
+		}
+		return null;
+	}
+
 }

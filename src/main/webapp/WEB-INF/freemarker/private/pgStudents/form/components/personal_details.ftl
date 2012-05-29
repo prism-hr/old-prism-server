@@ -471,7 +471,7 @@
                   		<select class="full" name="disability" id="disability" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
                   			<option value="">Select...</option>
                     		<#list disabilities as disability>
-                          	<option value="${disability.id?string('#######')}"
+                          	<option value="${encrypter.encrypt(disability.id)}"
 							<#if personalDetails.disability?? &&  personalDetails.disability.id == disability.id >
 							selected="selected"
 							</#if>   

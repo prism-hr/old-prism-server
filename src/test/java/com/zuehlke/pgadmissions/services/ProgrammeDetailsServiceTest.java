@@ -27,14 +27,7 @@ public class ProgrammeDetailsServiceTest {
 	private ProgrammeDetailsService programmeService;
 	private ProgramInstanceDAO programInstanceDAOMock;
 
-	@Test
-	public void shouldGetProgrammeById() {
-		ProgrammeDetails program = EasyMock.createMock(ProgrammeDetails.class);
-		program.setId(2);
-		EasyMock.expect(programmeDetailDAOMock.getProgrammeDetailWithId(2)).andReturn(program);
-		EasyMock.replay(program, programmeDetailDAOMock);
-		Assert.assertEquals(program, programmeService.getProgrammeDetailsById(2));
-	}
+	
 	
 	@Test
 	public void shouldDelegateSaveToDAO() {

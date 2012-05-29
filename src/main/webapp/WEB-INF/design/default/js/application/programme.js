@@ -287,22 +287,6 @@ $(document).ready(function(){
 		$("#awareSupervisor").val("NO");
 	});
 	
-//	$('#updateSupervisorButton').on('click', function(){
-//		
-//		$.post("/pgadmissions/programme/supervisors/updateSupervisor",
-//				{ 
-//					firstname: $("#supervisorFirstname").val(),
-//					lastname: $("#supervisorLastname").val(), 
-//					email: $("#supervisorEmail").val(), 
-//					primarySupervisor: $("#primarySupervisor").val(), 
-//					programmeDetailsId: $("#programmeDetailsId").val(),
-//					supervisorId: $("#supervisorId").val(),
-//					awareSupervisor: $("#awareSupervisor").val() 
-//				},
-//				function(data) {
-//					$('#programmeDetailsSection').html(data);
-//				});
-//	});
 	
 	$('#programmeCloseButton').click(function(){
 		$('#programme-H2').trigger('click');
@@ -323,7 +307,6 @@ function postProgrammeData(message){
 			startDate: $("#startDate").val(),
 			referrer: $("#referrer").val(),
 			application: $("#appId1").val(),
-			programmeDetailsId: $("#programmeDetailsId").val(),
 			application: $('#applicationId').val(),
 			applicationId: $('#applicationId').val(),
 			supervisors: "",

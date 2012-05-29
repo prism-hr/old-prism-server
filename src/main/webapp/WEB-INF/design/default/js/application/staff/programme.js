@@ -41,8 +41,7 @@ $(document).ready(function(){
 			studyOption: $("#studyOption").val(), 
 			startDate: $("#startDate").val(),
 			referrer: $("#referrer").val(),
-			application: $("#appId1").val(),
-			programmeDetailsId: $("#programmeDetailsId").val(),
+			application: $("#appId1").val(),			
 			supervisors: ""
 		}
 		

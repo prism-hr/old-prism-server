@@ -3,20 +3,25 @@ package com.zuehlke.pgadmissions.propertyeditors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 
 public class SupervisorJSONPropertyEditorTest {
 	private SupervisorJSONPropertyEditor editor;
+	private EncryptionHelper encryptionHelperMock;
 
 	@Test	
 	public void shouldParseAndSetAsValue(){
-		editor.setAsText("{\"id\": \"1\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"awareSupervisor\": \"YES\"}");
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
+		EasyMock.replay(encryptionHelperMock);
+		editor.setAsText("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"awareSupervisor\": \"YES\"}");
 		Supervisor expected = new SupervisorBuilder().id(1).firstname("Mark").lastname("Johnson").email("test@gmail.com").awareSupervisor(AwareStatus.YES).toSupervisor();
 		Supervisor supervisor =   (Supervisor) editor.getValue();
 		assertEquals(expected.getFirstname(), supervisor.getFirstname());
@@ -56,13 +61,15 @@ public class SupervisorJSONPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnCorrectjsonString(){			
+		EasyMock.expect(encryptionHelperMock.encrypt(1)).andReturn("bob");
+		EasyMock.replay(encryptionHelperMock);
 		editor.setValue(new SupervisorBuilder().firstname("Mark").id(1).lastname("Johnson").email("test@gmail.com").awareSupervisor(AwareStatus.NO).toSupervisor());
-		assertEquals("{\"id\": \"1\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\", \"awareSupervisor\": \"NO\"}", editor.getAsText());
+		assertEquals("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\", \"awareSupervisor\": \"NO\"}", editor.getAsText());
 	}
 	
 	@Before
 	public void setup(){
-		
-		editor = new SupervisorJSONPropertyEditor();
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		editor = new SupervisorJSONPropertyEditor(encryptionHelperMock);
 	}
 }

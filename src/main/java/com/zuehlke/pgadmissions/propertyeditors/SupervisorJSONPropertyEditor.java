@@ -6,33 +6,41 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @Component
 public class SupervisorJSONPropertyEditor extends PropertyEditorSupport {
+
+	private final EncryptionHelper encryptionHelper;
+
+	@Autowired
+	public SupervisorJSONPropertyEditor(EncryptionHelper encryptionHelper) {
+		this.encryptionHelper = encryptionHelper;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public void setAsText(String jsonStirng) throws IllegalArgumentException {
+	public void setAsText(String jsonString) throws IllegalArgumentException {
 		try {
-			if (jsonStirng == null || StringUtils.isBlank(jsonStirng)) {
+			if (jsonString == null || StringUtils.isBlank(jsonString)) {
 				setValue(null);
 				return;
 			}
 			ObjectMapper objectMapper = new ObjectMapper();
 
-			Map<String, Object> properties = objectMapper.readValue(jsonStirng,
-					Map.class);
+			Map<String, Object> properties = objectMapper.readValue(jsonString, Map.class);
 			Supervisor supervisor = new Supervisor();
 			supervisor.setFirstname((String) properties.get("firstname"));
 			supervisor.setLastname((String) properties.get("lastname"));
 			supervisor.setEmail((String) properties.get("email"));
-			supervisor.setAwareSupervisor(AwareStatus
-					.valueOf((String) properties.get("awareSupervisor")));
+			supervisor.setAwareSupervisor(AwareStatus.valueOf((String) properties.get("awareSupervisor")));
 			if (StringUtils.isNotBlank((String) properties.get("id"))) {
-							supervisor.setId(Integer.parseInt((String) properties.get("id")));
+				supervisor.setId(encryptionHelper.decryptToInteger((String) properties.get("id")));
 			}
 
 			setValue(supervisor);
@@ -47,11 +55,7 @@ public class SupervisorJSONPropertyEditor extends PropertyEditorSupport {
 			return null;
 		}
 		Supervisor supervisor = (Supervisor) getValue();
-		return "{\"id\": \""
-				+ supervisor.getId() + "\",\"firstname\": \""
-				+ supervisor.getFirstname() + "\",\"lastname\": \""
-				+ supervisor.getLastname() + "\",\"email\": \""
-				+ supervisor.getEmail() + "\", \"awareSupervisor\": \""
-				+ supervisor.getAwareSupervisor() + "\"}";
+		return "{\"id\": \"" + encryptionHelper.encrypt(supervisor.getId()) + "\",\"firstname\": \"" + supervisor.getFirstname() + "\",\"lastname\": \"" + supervisor.getLastname()
+				+ "\",\"email\": \"" + supervisor.getEmail() + "\", \"awareSupervisor\": \"" + supervisor.getAwareSupervisor() + "\"}";
 	}
 }

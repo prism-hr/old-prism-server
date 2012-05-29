@@ -32,11 +32,6 @@ public class ProgrammeDetailsService {
 	}
 
 	@Transactional
-	public ProgrammeDetails getProgrammeDetailsById(Integer id) {
-		return programmeDetailDAO.getProgrammeDetailWithId(id);
-	}
-
-	@Transactional
 	public void save(ProgrammeDetails pd) {
 		programmeDetailDAO.save(pd);
 	}

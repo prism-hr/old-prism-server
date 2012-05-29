@@ -59,8 +59,7 @@
 					
 							<section class="form-rows">
 							
-								<h1>Review feedback</h1>
-								<br/>
+								<h3>Review feedback</h3>
 								<p style="color:red;">Please note that once you submit your feedback you cannot re-submit or edit it.</p>
 
 								<form id ="reviewForm" method="POST" action= "<@spring.url '/reviewFeedback'/>"/>
@@ -73,7 +72,9 @@
 												<input type="checkbox" name="decline" id="decline"/>	           								
 											</div>
 										</div>
+									</div>
 										
+									<div class="row-group">
 										<div class="row"> 
 											<span id="comment-lbl" class="plain-label">Comment<em>*</em></span>
 											<div class="field">		            				

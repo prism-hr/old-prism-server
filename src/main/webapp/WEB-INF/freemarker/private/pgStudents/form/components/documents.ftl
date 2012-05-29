@@ -36,12 +36,12 @@
         		<span class="plain-label">Personal Statement (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.personalStatement'/>"></span>	 
         		<div class="field" id="psUploadFields">        	
-            			<input id="psDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
+            			<input id="psDocument" class="full" data-type="PERSONAL_STATEMENT" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="psUploadedDocument" ><input type="hidden" id="document_PERSONAL_STATEMENT" value = "${(applicationForm.personalStatement.id?string('######'))!}"/>
 				<input type="hidden" name="MAX_FILE_SIZE" value="500" />
                 	  
 					<a href="<@spring.url '/download?documentId=${(applicationForm.personalStatement.id?string("#######"))!}'/>">${(applicationForm.personalStatement.fileName?html)!}</a></span>
-					<span id="psDocumentProgress" style="display: none;" ></span>					
+					<span id="psDocumentProgress" class="progress" style="display: none;" ></span>					
         		</div>  
         		
       		</div>
@@ -58,11 +58,11 @@
         		<span class="plain-label">CV / Resume (PDF)</span>
         		<span class="hint" data-desc="<@spring.message 'supportingDocuments.cv'/>"></span>
         		<div class="field" id="cvUploadFields">        	
-          			<input id="cvDocument" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
+          			<input id="cvDocument" class="full" type="file" data-type="CV" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="cvUploadedDocument" ><input type="hidden" id="document_CV" value = "${(applicationForm.cv.id?string('######'))!}"/>
 					
 					<a href="<@spring.url '/download?documentId=${(applicationForm.cv.id?string("#######"))!}'/>">${(applicationForm.cv.fileName)!}</a></span>
-					<span id="cvDocumentProgress" style="display: none;" ></span>					
+					<span id="cvDocumentProgress" class="progress" style="display: none;" ></span>					
         		</div>  
         		
       		</div>

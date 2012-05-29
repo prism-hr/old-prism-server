@@ -26,67 +26,50 @@ $(document).ready(function(){
 			$('#reviewForm').submit();
 	});	
 	
-	$('#decline').click(function(){
-		if($('#decline:checked').length > 0) {
-			//comment field
-			var newLblText = $("#comment-lbl").text();
-			var starIndex = newLblText.lastIndexOf("*");
-			if( starIndex > 0) {
-			  newLblText = newLblText.substring(0, starIndex);
-			}
-			$("#comment-lbl").text(newLblText).addClass("grey-label");
+	$('#decline').click(function()
+	{
+		if ($(this).is(':checked'))
+		{
+			// Comment field.
+			$("#comment-lbl").addClass("grey-label");
+			$("#comment-lbl em").remove();
 			$("#review-comment").val("");
 			$("#review-comment").addClass("grey-label");
 			$("#review-comment").attr("disabled", "disabled");
 			
-			//itnerview radio
-			
-			var newLblText1 = $("#supervise-lbl").text();
-			var starIndex1 = newLblText1.lastIndexOf("*");
-			if( starIndex1 > 0) {
-			  newLblText1 = newLblText1.substring(0, starIndex1);
-			}
-			$("#supervise-lbl").text(newLblText1).addClass("grey-label");
-			$('input[name="willingToInterview"]').removeAttr("checked");
-
-			$('input[name="willingToInterview"]').addClass("grey-label");
-			$('input[name="willingToInterview"]').attr("disabled", "disabled");
+			// "Willing to interview" radio buttons.
+			$("#supervise-lbl").addClass("grey-label");
+			$("#supervise-lbl em").remove();
+			$('input[name="willingToInterview"]').removeAttr("checked")
+			                                     .addClass("grey-label")
+																					 .attr("disabled", "disabled");
 		
-			//suitable radio
-			
-			var newLblText2 = $("#suitable-lbl").text();
-			var starIndex2 = newLblText2.lastIndexOf("*");
-			if( starIndex2 > 0) {
-			  newLblText2 = newLblText2.substring(0, starIndex2);
-			}
-			$("#suitable-lbl").text(newLblText2).addClass("grey-label");
-			$('input[name="suitableCandidate"]').removeAttr("checked");
-
-			$('input[name="suitableCandidate"]').addClass("grey-label");
-			$('input[name="suitableCandidate"]').attr("disabled", "disabled");
+			// "Suitable for UCL" radio buttons.			
+			$("#suitable-lbl").addClass("grey-label");
+			$("#suitable-lbl em").remove();
+			$('input[name="suitableCandidate"]').removeAttr("checked")
+			                                    .addClass("grey-label")
+																					.attr("disabled", "disabled");
 		
-			
 			//remove validation messages
 			$('span[class="invalid"]').html('');
 			
-		}else{
+		}
+		else
+		{
 			//comment field
 			$("#comment-lbl").append('<em>*</em>').removeClass("grey-label");
-			$("#review-comment").removeClass("grey-label");
-			$("#review-comment").removeAttr("disabled", "disabled");
+			$("#review-comment").removeClass("grey-label").removeAttr("disabled");
 			
-			//supervise radio
-			
+			// "Willing to interview" radio buttons.
 			$("#supervise-lbl").append('<em>*</em>').removeClass("grey-label");
-			('input[name="willingToInterview"]').removeClass("grey-label");
-			('input[name="willingToInterview"]').removeAttr("disabled", "disabled");
-	
-			//suitable radio
-			
+			$('input[name="willingToInterview"]').addClass("grey-label")
+			                                     .removeAttr("disabled");
+
+			// "Suitable for UCL" radio buttons.			
 			$("#suitable-lbl").append('<em>*</em>').removeClass("grey-label");
-			$('input[name="suitableCandidate"]').removeClass("grey-label");
-			$('input[name="suitableCandidate"]').removeAttr("disabled", "disabled");
-	
+			$('input[name="suitableCandidate"]').removeClass("grey-label")
+			                                    .removeAttr("disabled");
 		}
 	});
 	

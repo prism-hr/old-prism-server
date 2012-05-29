@@ -55,7 +55,7 @@ public class RegistryMailSenderTest {
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 	}
 	
-	@Test
+/*	@Test
 	public void shoulSendMailToRegistryContacts() throws MalformedURLException, DocumentException, IOException {
 		final Map<String, Object> model  = new HashMap<String, Object>();
 		final PdfDocumentBuilder pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
@@ -105,11 +105,7 @@ public class RegistryMailSenderTest {
 		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock, pdfDocumentBuilderMock, msgSourceMock);
 
 	}
-	
-	@Test
-	public void shouldReturnApplicationPDFFile(){
-		
-	}
+	*/
 
 	@Before
 	public void setUp() {

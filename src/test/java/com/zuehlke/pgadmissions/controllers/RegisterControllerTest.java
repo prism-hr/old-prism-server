@@ -76,10 +76,11 @@ public class RegisterControllerTest {
 		assertEquals("public/register/register_applicant", modelAndView.getViewName());
 	}
 	
-	@Ignore
+	
 	@Test
 	public void shouldReturnToRegistrationPageIfErrors(){
 		RegisteredUser record = new RegisteredUser();
+		record.setId(4);
 		record.setFirstName("Mark");
 		record.setLastName("Euston");
 		record.setEmail("meuston@gmail.com");
@@ -100,10 +101,11 @@ public class RegisterControllerTest {
 		EasyMock.verify(registrationServiceMock);
 	}
 	
-	@Ignore
+	
 	@Test
 	public void shouldCreateAndSaveNewUserIfNoErrors(){
 		RegisteredUser record = new RegisteredUser();
+		record.setId(9);
 		record.setFirstName("Mark");
 		record.setLastName("Euston");
 		record.setEmail("emailofmarkeuston@gmail.com");

@@ -1,0 +1,1 @@
+UPDATE REVIEWER set review_round_id = (select distinct REVIEW_ROUND.id from REVIEW_ROUND where REVIEW_ROUND.application_form_id = REVIEWER.application_form_id);

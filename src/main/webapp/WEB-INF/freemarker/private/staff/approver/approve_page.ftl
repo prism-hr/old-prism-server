@@ -1,141 +1,101 @@
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
-
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-		<title>UCL Postgraduate Admissions</title>
+
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>UCL Postgraduate Admissions</title>
+
+<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+<!-- Styles for Application List Page -->
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/state_transition.css' />"/>
+<!-- Styles for Application List Page -->
+
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+<script type="text/javascript" src="<@spring.url '/design/default/js/approver/approve_page.js'/>"></script>
+
+
+</head>
+
+<!--[if IE 9]>
+<body class="ie9">
+<![endif]-->
+<!--[if lt IE 9]>
+<body class="old-ie">
+<![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<body>
+<!--<![endif]-->
+
+<!-- Wrapper Starts -->
+<div id="wrapper">
+
+	<#include "/private/common/global_header.ftl"/>
+	
+	<!-- Middle Starts -->
+	<div id="middle">
+	
+		<#include "/private/common/parts/nav_with_user_info.ftl"/>
 		
-		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<!-- Main content area. -->
+		<article id="content" role="main">		    
 		
-		<link type="text/css" rel="stylesheet" 
-			href="<@spring.url '/design/default/css/private/global_private.css'/>" />
-		<link type="text/css" rel="stylesheet" 
-			href="<@spring.url '/design/default/css/private/application.css'/>" />
-		
-		<link type="text/css" rel="stylesheet" 
-			href="<@spring.url '/design/default/css/private/staff/reject.css'/>" />
-		
-		<link type="text/css" rel="stylesheet"
-				href="<@spring.url '/design/default/css/actions.css' />" />
-		
-		
-		<!--[if lt IE 9]>
-		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-		<![endif]-->
-	</head>
-
-	<!--[if IE 9]>
-	<body class="ie9">
-	<![endif]-->
-	<!--[if lt IE 9]>
-	<body class="old-ie">
-	<![endif]-->
-	<!--[if (gte IE 9)|!(IE)]><!-->
-	<body>
-	<!--<![endif]-->
-
-		<div id="wrapper">
-
-			<#include "/private/common/global_header.ftl"/>
-
-			<!-- Middle. -->
-			<div id="middle">
-
-				<#include "/private/common/parts/nav_with_user_info.ftl"/>
-
-				<!-- Main content area. -->
-				<article id="content" role="main">
-
-				    <#if !user.isInRole('APPLICANT')>
-				    	<#include "/private/common/parts/tools.ftl"/>
-				    </#if>
-
-					<!-- FLOATING TOOLBAR -->
-		            <ul id="view-toolbar">
-		            	<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
-		                <li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" title="Print">Print</a></li>
-					</ul>
-
-				<!-- content box -->
-				<div class="content-box">
-					<div class="content-box-inner">
-				
-						<div id="programme-details">			          
-						    	
-					    	<div class="row">
-					        	<label class="label">Programme</label>
-					           	${applicationForm.program.code} - ${applicationForm.program.title}
-					        </div>
-					            
-					        <div class="row">
-					        	<label class="label">Application Number</label>
-					            ${applicationForm.applicationNumber} 
-					        </div>
-					        
-					        <#if applicationForm.isSubmitted()>
-					        	<div class="row">
-					            	<label>Date Submitted</label>
-					              	${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}
-					            </div>
-					        </#if>
-						</div>
-						<hr />
+			<!-- content box -->				      
+			<div class="content-box">
+				<div class="content-box-inner">
+					<#include "/private/common/parts/application_info.ftl"/>
+					<input type="hidden" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
 					
-						<section class="folding violet">
-							<div>
-								<form method="POST" action="<@spring.url '/approveOrReject'/>">
-									<div>			
-										
-										<input type="hidden" id="applicationId" name="id" value="${applicationForm.applicationNumber}"/>
-										<input type="hidden" id="decision" name="decision" value="APPROVED"/> 
-										<div class="row">
-											<div class="field">
-												<span>
-													<button type="submit" id="approveButton" class="blue">Approve application</button>
-													
-												</span>
-											</div>
-										</div>
-									</div>									
-								</form>
+					<section class="form-rows">
+						<div>
+							<div class="row-group">
+							
+								<h3>Recommend Application As Approved</h3>
+
+								<div class="row">
+									<span class="plain-label">Comment</span>
+									<div class="field">		            				
+										<textarea id="comment" name="comment" class="max" rows="6" cols="80" maxlength='5000'></textarea>
+									</div>
+									<input type="hidden" id="commentType" value="APPROVAL"/>
+								</div>
+
+							</div><!-- close .row-group -->
+
+
+							<div class="buttons">						        		
+								<button id="cancelApproved" value="cancel">Cancel</button>
+								<button type="button" id="approveButton" class="blue">Approve application</button>		        
 							</div>
-						</section>
-					
- 
-					</div>
-					<!-- #actions -->
 
-					<#include "/private/common/feedback.ftl"/>
-				</div>
-				<!-- .content-box-inner -->
-		</div>
-		<!-- .content-box -->
+						</div>
+					</section>
+
+					<#include "/private/staff/admin/comment/timeline_application.ftl"/>
+					
+				</div><!-- .content-box-inner -->
+			</div><!-- .content-box -->
 
 		</article>
 
-	</div>
 
-	<!-- Footer. -->
-	<div id="footer">
-		<ul>
-			<li><a href="#">Privacy</a></li>
-			<li><a href="#">Terms &amp; conditions</a></li>
-			<li><a href="#">Contact us</a></li>
-			<li><a href="#">Glossary</a></li>
-		</ul>
-	</div>
 
 	</div>
+<!-- Middle Ends -->
 
-	<script type="text/javascript"
-		src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	<script type="text/javascript"
-		src="<@spring.url '/design/default/js/libraries.js'/>"></script>
-	<script type="text/javascript"
-		src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
-	<script type="text/javascript"
-		src="<@spring.url '/design/default/js/approver/reject_page.js'/>"></script>
+<#include "/private/common/global_footer.ftl"/>
+
+</div>
+<!-- Wrapper Ends -->
+
 </body>
 </html>

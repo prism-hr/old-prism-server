@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -21,10 +21,10 @@ import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.Qualification;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -34,6 +34,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.LanguageService;
 import com.zuehlke.pgadmissions.services.QualificationService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.QualificationValidator;
 
 @RequestMapping("/update")
@@ -50,16 +51,18 @@ public class QualificationController {
 	private final CountryService countryService;
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
 	private final DocumentPropertyEditor documentPropertyEditor;
+	private final UserService userService;
+	private final EncryptionHelper encryptionHelper;
 
 	QualificationController() {
-		this(null, null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public QualificationController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
 			DatePropertyEditor datePropertyEditor, CountryService countryService, LanguageService languageService,
 			LanguagePropertyEditor languagePropertyEditor, CountryPropertyEditor countryPropertyEditor, QualificationValidator qualificationValidator,
-			QualificationService qualificationService, DocumentPropertyEditor documentPropertyEditor) {
+			QualificationService qualificationService, DocumentPropertyEditor documentPropertyEditor, UserService userService, EncryptionHelper encryptionHelper) {
 		this.applicationService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.datePropertyEditor = datePropertyEditor;
@@ -70,6 +73,8 @@ public class QualificationController {
 		this.qualificationValidator = qualificationValidator;
 		this.qualificationService = qualificationService;
 		this.documentPropertyEditor = documentPropertyEditor;
+		this.userService = userService;
+		this.encryptionHelper = encryptionHelper;
 
 	}
 	
@@ -88,7 +93,7 @@ public class QualificationController {
 	@RequestMapping(value = "/getQualification", method = RequestMethod.GET)
 	public String getQualificationView() {
 
-		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
 		return APPLICATION_QUALIFICATION_APPLICANT_VIEW_NAME;
@@ -97,7 +102,7 @@ public class QualificationController {
 	@RequestMapping(value = "/editQualification", method = RequestMethod.POST)
 	public String editQualification(@Valid Qualification qualification, BindingResult result) {
 
-		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
 		if(qualification.getApplication().isDecided()){
@@ -114,20 +119,18 @@ public class QualificationController {
 	}
 
 	@ModelAttribute
-	public Qualification getQualification(@RequestParam(required=false) Integer qualificationId) {
-		if (qualificationId == null) {
+	public Qualification getQualification(@RequestParam(value="qualificationId", required=false) String encryptedQualificationId) {
+		if (StringUtils.isBlank(encryptedQualificationId)) {
 			return new Qualification();
 		}
-		Qualification qualification = qualificationService.getQualificationById(qualificationId);
+		Qualification qualification = qualificationService.getQualificationById(encryptionHelper.decryptToInteger(encryptedQualificationId));
 		if (qualification == null) {
 			throw new ResourceNotFoundException();
 		}
 		return qualification;
 	}
 
-	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-	}
+	
 
 	/* Reference data section */
 	
@@ -144,7 +147,7 @@ public class QualificationController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {		
 		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-		if(application == null || !getCurrentUser().canSee(application)){
+		if(application == null || !userService.getCurrentUser().canSee(application)){
 			throw new ResourceNotFoundException();
 		}
 		return application;

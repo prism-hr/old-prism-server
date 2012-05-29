@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.FundingBuilder;
+import com.zuehlke.pgadmissions.domain.builders.QualificationBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FundingService;
@@ -36,13 +37,12 @@ public class DeleteApplicationFormEntitiesControllerTest {
 	
 	@Test
 	public void shoulGetQualificationFromServiceAndDelete(){
-		Qualification qual = new Qualification();
-		qual.setApplication(applicationForm);
-		qual.setId(1);
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
+		Qualification qual = new QualificationBuilder().application(applicationForm).id(1).toQualification();
 		EasyMock.expect(qualificationServiceMock.getQualificationById(1)).andReturn(qual);
 		qualificationServiceMock.delete(qual);
-		EasyMock.replay(qualificationServiceMock);
-		String viewName = controller.deleteQualification(1);		
+		EasyMock.replay(qualificationServiceMock, encryptionHelperMock);
+		String viewName = controller.deleteQualification("encryptedId");		
 		EasyMock.verify(qualificationServiceMock);
 		assertEquals("redirect:/update/getQualification?applicationId=2&message=deleted",viewName);
 	}

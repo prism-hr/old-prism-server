@@ -14,9 +14,7 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
@@ -35,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -43,11 +42,12 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 
 public class EmploymentControllerTest {
 
-	private UsernamePasswordAuthenticationToken authenticationToken;
+	
 	private RegisteredUser currentUser;
 	private EmploymentPositionService employmentServiceMock;
 	private EmploymentController controller;
@@ -59,6 +59,8 @@ public class EmploymentControllerTest {
 	private CountryPropertyEditor countryPropertyEditor;
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
 	private EmploymentPositionValidator employmentValidatorMock;
+	private UserService userServiceMock;
+	private EncryptionHelper encryptionHelperMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -109,7 +111,9 @@ public class EmploymentControllerTest {
 	@Test
 	public void shouldReturnApplicationForm() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
@@ -128,7 +132,9 @@ public class EmploymentControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
@@ -152,10 +158,11 @@ public class EmploymentControllerTest {
 
 	@Test
 	public void shouldGetEmploymentFromServiceIfIdProvided() {
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EmploymentPosition employment = new EmploymentPositionBuilder().id(1).toEmploymentPosition();
 		EasyMock.expect(employmentServiceMock.getEmploymentPositionById(1)).andReturn(employment);
-		EasyMock.replay(employmentServiceMock);
-		EmploymentPosition returnedEmploymentPosition = controller.getEmploymentPosition(1);
+		EasyMock.replay(employmentServiceMock,encryptionHelperMock);
+		EmploymentPosition returnedEmploymentPosition = controller.getEmploymentPosition("bob");
 		assertEquals(employment, returnedEmploymentPosition);
 	}
 
@@ -165,11 +172,17 @@ public class EmploymentControllerTest {
 		assertNull(returnedEmploymentPosition.getId());
 	}
 
+	@Test
+	public void shouldReturnNewEmploymentIfIdIsBlank() {
+		EmploymentPosition returnedEmploymentPosition = controller.getEmploymentPosition("");
+		assertNull(returnedEmploymentPosition.getId());
+	}
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfEmploymentDoesNotExist() {
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.expect(employmentServiceMock.getEmploymentPositionById(1)).andReturn(null);
-		EasyMock.replay(employmentServiceMock);
-		controller.getEmploymentPosition(1);
+		EasyMock.replay(employmentServiceMock, encryptionHelperMock);
+		controller.getEmploymentPosition("bob");
 
 	}
 	
@@ -223,16 +236,16 @@ public class EmploymentControllerTest {
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
 
 		employmentValidatorMock = EasyMock.createMock(EmploymentPositionValidator.class);
-
+		userServiceMock = EasyMock.createMock(UserService.class);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
 		controller = new EmploymentController(employmentServiceMock, languageServiceMock, countriesServiceMock, applicationsServiceMock,
-				languagePropertyEditorMock, datePropertyEditorMock, countryPropertyEditor, applicationFormPropertyEditorMock, employmentValidatorMock);
+				languagePropertyEditorMock, datePropertyEditorMock, countryPropertyEditor, applicationFormPropertyEditorMock, employmentValidatorMock, userServiceMock, encryptionHelperMock);
 
-		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(currentUser);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
+
 
 	}
 

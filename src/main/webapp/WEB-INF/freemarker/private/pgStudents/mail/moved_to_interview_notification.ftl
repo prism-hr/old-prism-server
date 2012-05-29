@@ -35,7 +35,10 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${application.applicant.firstName},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to inform you that an interview has been arranged for you on ${application.latestInterview.interviewDueDate?string("dd MMM yyyy")} in connection with your application ${application.id?string("######")} to join ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to confirm the arrangements for your interview for Application ${application.id?string("######")} for UCL ${application.program.title}.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place at ${application.latestInterview.interviewDueDate?time} on ${application.latestInterview.interviewDueDate?date}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">The details of the interview are as follows:</font>
@@ -45,28 +48,19 @@
 			      	</p>
 			      	<#if application.latestInterview.locationURL??>
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">Please click the following link for more details about the location at which the interview will take place:</font>
-				      	</p>
-				      	<p>
 				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${application.latestInterview.locationURL}">Location details</a></font>
 				      	</p>
 				      </#if>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You can view your application by following the link below:</font>
-			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
 			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View your application</a>
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We will be in touch with further updates in due course.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Please let us know by <a href="mailto: ${adminsEmails}">e-mail</a> if you are unable to attend.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">In the meantime, for further assistance <a href="mailto: ${adminsEmails}">email the administrator</a></font>
-			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards, <br />UCL Portal</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

@@ -35,17 +35,9 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${interviewer.user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is a reminder to provide your feedback on the recent interview with ${applicant.firstName?html} ${applicant.lastName?html} in connection with their application ${application.id?string('#####')} to join the Postgraduate research Programme in ${application.program.title} at UCL.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">This is a reminder to provide feedback on your recent interview with ${applicant.firstName?html} ${applicant.lastName?html} for Application ${application.id?string('#####')} for UCL ${application.program.title}.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You can view the application and provide your feedback by clicking the links below.</font>
-			      	</p>
-			         <p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View the application</a>
-			      		</font>
-			      	</p>
-			      	     <p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
 			      			<a href="${host}/pgadmissions/interviewFeedback?applicationId=${application.id?string("######")}">Provide feedback</a>
 			      		</font>
@@ -54,7 +46,7 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">In the meantime, for further assistance <a href="mailto: ${adminsEmails}">email the administrator</a></font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Many Thanks, <br />UCL Portal</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

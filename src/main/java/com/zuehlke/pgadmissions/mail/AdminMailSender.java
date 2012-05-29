@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.mail;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,20 +7,24 @@ import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
-import org.apache.log4j.Logger;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Reviewer;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class AdminMailSender extends StateChangeMailSender {
-	private final Logger log = Logger.getLogger(AdminMailSender.class);
-
-	public AdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender) {
-		super(mimeMessagePreparatorFactory, mailSender);
+	
+	private final ApplicationsService applicationService;
+	
+	public AdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, ApplicationsService applicationService,MessageSource msgSource) {
+		super(mimeMessagePreparatorFactory, mailSender, msgSource);
+		this.applicationService = applicationService;
 
 	}
 
@@ -34,38 +37,34 @@ public class AdminMailSender extends StateChangeMailSender {
 	}
 
 	@Override
-	public void sendMailsForApplication(ApplicationForm form, String subjectMessage, String templatename) {
+	public void sendMailsForApplication(ApplicationForm form, String messageCode, String templatename) {
 		Map<String, Object> model = createModel(form);
-
-		String subject = "Application " + form.getId() + // 
-				" by " + form.getApplicant().getFirstName() + " " + form.getApplicant().getLastName()// 
-				+ " " + subjectMessage;
-
-		internalSend(form, subject, templatename, model);
+		internalSend(form, messageCode, templatename, model);
 	}
 
 	public void sendAdminReviewNotification(ApplicationForm form, RegisteredUser reviewer) {
 		Map<String, Object> model = createModel(form);
 		model.put("reviewer", reviewer);
 
-		internalSend(form, "Notification - review added", "private/staff/admin/mail/review_submission_notification.ftl", model);
+		internalSend(form, "review.provided.admin", "private/staff/admin/mail/review_submission_notification.ftl", model);
 	}
 
 	public void sendAdminInterviewNotification(ApplicationForm form, RegisteredUser interviewer) {
 		Map<String, Object> model = createModel(form);
 		model.put("interviewer", interviewer);
-		internalSend(form, "Notification - Interview added", "private/staff/admin/mail/interview_submission_notification.ftl", model);
+		internalSend(form, "interview.feedback.notification", "private/staff/admin/mail/interview_submission_notification.ftl", model);
 	}
 
 	public void sendAdminRejectNotification(ApplicationForm application, RegisteredUser approver) {
 		Map<String, Object> model = createModel(application);
 		model.put("approver", approver);
 		model.put("reason", application.getRejection().getRejectionReason());
+		model.put("previousStage", applicationService.getStageComingFrom(application));
 
 		List<RegisteredUser> administrators = new ArrayList<RegisteredUser>(application.getProgram().getAdministrators());
 		administrators.remove(approver);
 		if (!administrators.isEmpty()) {
-			internalSend(application, administrators, "Notification - rejected application", "private/staff/admin/mail/rejected_notification.ftl", model);
+			internalSend(application, administrators, "rejection.notification", "private/staff/admin/mail/rejected_notification.ftl", model);
 		}
 	}
 
@@ -73,16 +72,19 @@ public class AdminMailSender extends StateChangeMailSender {
 		Map<String, Object> model = createModel(applicationForm);
 		model.put("newReviewer", newReviewer);
 
-		internalSend(applicationForm, "Notification - Reviewer assigned", "private/staff/admin/mail/reviewer_assigned_notification.ftl", model);
+		internalSend(applicationForm, "reviewer.assigned.admin", "private/staff/admin/mail/reviewer_assigned_notification.ftl", model);
 	}
 
-	private void internalSend(ApplicationForm applicationForm, String subject, String template, Map<String, Object> model) {
+	private void internalSend(ApplicationForm applicationForm, String messageCode, String template, Map<String, Object> model) {
 		List<RegisteredUser> programAdmins = applicationForm.getProgram().getAdministrators();
-		internalSend(applicationForm, programAdmins, subject, template, model);
+		internalSend(applicationForm, programAdmins, messageCode, template, model);
 	}
 
-	private void internalSend(ApplicationForm applicationForm, List<RegisteredUser> adminRecipients, String subject, String template, Map<String, Object> model) {
-		RegisteredUser applicationAdmin = applicationForm.getApplicationAdministrator();
+	private void internalSend(ApplicationForm form, List<RegisteredUser> adminRecipients, String messageCode, String template, Map<String, Object> model) {
+		RegisteredUser applicationAdmin = form.getApplicationAdministrator();
+		ApplicationFormStatus previousStage = applicationService.getStageComingFrom(form);
+		
+		String subject = resolveMessage(messageCode, form, previousStage);
 		if (applicationAdmin == null) { // send email to all program administrators
 			for (RegisteredUser admin : adminRecipients) {
 				InternetAddress toAddress = createAddress(admin);
@@ -100,15 +102,6 @@ public class AdminMailSender extends StateChangeMailSender {
 			InternetAddress toAddress = createAddress(applicationAdmin);
 			model.put("admin", applicationAdmin);
 			delegateToMailSender(toAddress, ccAddresses, subject, template, model);
-		}
-	}
-
-	private InternetAddress createAddress(RegisteredUser user) {
-		try {
-			return new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
-		} catch (UnsupportedEncodingException uee) {// this shouldn't happen...
-			log.error("error creating email-address: " + user.getEmail(), uee);
-			throw new RuntimeException(uee);
 		}
 	}
 

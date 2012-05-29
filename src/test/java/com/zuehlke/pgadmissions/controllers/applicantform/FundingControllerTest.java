@@ -31,11 +31,13 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.FundingType;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DocumentPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.FundingService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.FundingValidator;
 
 public class FundingControllerTest {
@@ -49,13 +51,17 @@ public class FundingControllerTest {
 	private FundingService fundingServiceMock;
 	private FundingController controller;
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
-	private UsernamePasswordAuthenticationToken authenticationToken;
+
 	private DocumentPropertyEditor documentPropertyEditorMock;
+
+	private UserService userServiceMock;
+
+	private EncryptionHelper encryptionHelperMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
-		Funding funding = new FundingBuilder().id(1)
-				.application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm()).toFunding();
+		Funding funding = new FundingBuilder().id(1).application(new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(5).toApplicationForm())
+				.toFunding();
 		BindingResult errors = EasyMock.createMock(BindingResult.class);
 		EasyMock.replay(fundingServiceMock, errors);
 		controller.editFunding(funding, errors);
@@ -90,7 +96,10 @@ public class FundingControllerTest {
 	@Test
 	public void shouldReturnApplicationForm() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
+	
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
@@ -109,7 +118,11 @@ public class FundingControllerTest {
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfUserCAnnotSeeApplFormOnGet() {
 		currentUser = EasyMock.createMock(RegisteredUser.class);
-		authenticationToken.setDetails(currentUser);
+		
+		EasyMock.reset(userServiceMock);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
+	
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(currentUser.canSee(applicationForm)).andReturn(false);
@@ -132,10 +145,12 @@ public class FundingControllerTest {
 
 	@Test
 	public void shouldGetFundingFromServiceIfIdProvided() {
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
+		
 		Funding funding = new FundingBuilder().id(1).toFunding();
 		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(funding);
-		EasyMock.replay(fundingServiceMock);
-		Funding returnedFunding = controller.getFunding(1);
+		EasyMock.replay(fundingServiceMock, encryptionHelperMock);
+		Funding returnedFunding = controller.getFunding("encryptedId");
 		assertEquals(funding, returnedFunding);
 	}
 
@@ -144,12 +159,19 @@ public class FundingControllerTest {
 		Funding returnedFunding = controller.getFunding(null);
 		assertNull(returnedFunding.getId());
 	}
-
+	
+	@Test	
+	public void shouldReturnNewFundingIfIdIsBlank() {
+		Funding returnedFunding = controller.getFunding("");
+		assertNull(returnedFunding.getId());
+	}
+	
 	@Test(expected = ResourceNotFoundException.class)
 	public void shouldThrowResourceNotFoundExceptionIfFundingDoesNotExist() {
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
 		EasyMock.expect(fundingServiceMock.getFundingById(1)).andReturn(null);
-		EasyMock.replay(fundingServiceMock);
-		controller.getFunding(1);
+		EasyMock.replay(fundingServiceMock, encryptionHelperMock);
+		controller.getFunding("encryptedId");
 
 	}
 
@@ -167,11 +189,11 @@ public class FundingControllerTest {
 		EasyMock.expect(errors.hasErrors()).andReturn(false);
 		fundingServiceMock.save(funding);
 		applicationsServiceMock.save(applicationForm);
-		EasyMock.replay(fundingServiceMock,applicationsServiceMock, errors);
+		EasyMock.replay(fundingServiceMock, applicationsServiceMock, errors);
 		String view = controller.editFunding(funding, errors);
 		EasyMock.verify(fundingServiceMock, applicationsServiceMock);
 		assertEquals("redirect:/update/getFunding?applicationId=ABC", view);
-		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
 	}
 
 	@Test
@@ -187,7 +209,7 @@ public class FundingControllerTest {
 	}
 
 	@Before
-	public void setUp(){
+	public void setUp() {
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
@@ -197,23 +219,16 @@ public class FundingControllerTest {
 		fundingServiceMock = EasyMock.createMock(FundingService.class);
 
 		documentPropertyEditorMock = EasyMock.createMock(DocumentPropertyEditor.class);
+		userServiceMock = EasyMock.createMock(UserService.class);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
 
 		controller = new FundingController(applicationsServiceMock, applicationFormPropertyEditorMock, datePropertyEditorMock, fundingValidatorMock,
-				fundingServiceMock, documentPropertyEditorMock);
-
-		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+				fundingServiceMock, documentPropertyEditorMock, userServiceMock, encryptionHelperMock);
 
 		currentUser = new RegisteredUserBuilder().id(1).role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		authenticationToken.setDetails(currentUser);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser).anyTimes();
+		EasyMock.replay(userServiceMock);
 
-	}
-
-	@After
-	public void tearDown() {
-		SecurityContextHolder.clearContext();
 	}
 
 }

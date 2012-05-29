@@ -20,19 +20,19 @@ public class StateChangeNotificationTask extends TimerTask {
 	private final SessionFactory sessionFactory;
 	private final ApplicationFormDAO applicationFormDAO;
 	private final StateChangeMailSender applicantMailSender;
-	private final String subjectMessage;
+	private final String messageCode;
 	private final String emailTemplate;
 	private final NotificationType notificationType;
 	private final ApplicationFormStatus newStatus;
 
 	public StateChangeNotificationTask(SessionFactory sessionFactory, ApplicationFormDAO applicationFormDAO, StateChangeMailSender applicantMailSender,
-			NotificationType notificationType, ApplicationFormStatus newStatus, String subjectMessage, String emailTemplate) {
+			NotificationType notificationType, ApplicationFormStatus newStatus, String messageCode, String emailTemplate) {
 		this.sessionFactory = sessionFactory;
 		this.applicationFormDAO = applicationFormDAO;
 		this.applicantMailSender = applicantMailSender;
 		this.notificationType = notificationType;
 		this.newStatus = newStatus;
-		this.subjectMessage = subjectMessage;
+		this.messageCode = messageCode;
 		this.emailTemplate = emailTemplate;
 
 	}
@@ -49,8 +49,7 @@ public class StateChangeNotificationTask extends TimerTask {
 			transaction = sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().refresh(application);
 			try {
-
-				applicantMailSender.sendMailsForApplication(application, subjectMessage, emailTemplate);
+				applicantMailSender.sendMailsForApplication(application, messageCode, emailTemplate);
 				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(notificationType);

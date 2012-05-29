@@ -11,19 +11,7 @@ import com.zuehlke.pgadmissions.domain.builders.PersonalDetailsBuilder;
 
 public class PersonalDetailsServiceTest {
 
-	@Test
-	public void shouldGetPersonalDetailsFromDAO(){
-		PersonalDetailDAO personalDetailDAOMock = EasyMock.createMock(PersonalDetailDAO.class);
-		PersonalDetailsService detailsService = new PersonalDetailsService(personalDetailDAOMock);
-		
-		PersonalDetails personalDetails = new PersonalDetailsBuilder().id(1).toPersonalDetails();
-		EasyMock.expect(personalDetailDAOMock.getPersonalDetailsById(1)).andReturn(personalDetails);
-		EasyMock.replay(personalDetailDAOMock);
-		
-		PersonalDetails details = detailsService.getPersonalDetailsById(1);
-		assertEquals(personalDetails, details);
-		
-	}
+
 	
 	@Test
 	public void shouldUserDAOToSavePersonalDetails(){

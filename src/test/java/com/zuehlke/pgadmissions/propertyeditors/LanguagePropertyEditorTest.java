@@ -9,27 +9,33 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Language;
 import com.zuehlke.pgadmissions.domain.builders.LanguageBuilder;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.LanguageService;
 
 public class LanguagePropertyEditorTest {
 
 	private LanguageService languageServiceMock;
 	private LanguagePropertyEditor editor;
+	private EncryptionHelper encryptionHelperMock;
 
 
 	@Test	
 	public void shouldLoadByIdAndSetAsValue(){
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("encryptedId")).andReturn(1);
+		
 		Language language = new LanguageBuilder().id(1).toLanguage();
 		EasyMock.expect(languageServiceMock.getLanguageById(1)).andReturn(language);
-		EasyMock.replay(languageServiceMock);
+		EasyMock.replay(languageServiceMock, encryptionHelperMock);
 		
-		editor.setAsText("1");
+		editor.setAsText("encryptedId");
 		assertEquals(language, editor.getValue());
 		
 	}
 	
-	@Test(expected=IllegalArgumentException.class)
-	public void shouldThrowIllegalArgumentExceptionIfIdNotInteger(){			
+	@Test(expected=IllegalArgumentException.class)			
+	public void shouldThrowIllegalArgumentExceptionIfIdNotInteger(){		
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andThrow(new IllegalArgumentException());
+		EasyMock.replay( encryptionHelperMock);
 		editor.setAsText("bob");			
 	}
 	
@@ -57,14 +63,17 @@ public class LanguagePropertyEditorTest {
 	}
 	
 	@Test	
-	public void shouldReturnIdAsString(){			
+	public void shouldReturnEnctyptedIdAsString(){			
 		editor.setValue(new LanguageBuilder().id(5).toLanguage());
-		assertEquals("5", editor.getAsText());
+		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
+		EasyMock.replay(encryptionHelperMock);
+		assertEquals("bob", editor.getAsText());
 	}
 	
 	@Before
 	public void setup(){
 		languageServiceMock = EasyMock.createMock(LanguageService.class);
-		editor = new LanguagePropertyEditor(languageServiceMock);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		editor = new LanguagePropertyEditor(languageServiceMock, encryptionHelperMock);
 	}
 }

@@ -36,33 +36,32 @@
 		      		</h1>
 			      	</br>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Outcome of the application during phase  <b>${(stage.displayValue())!}</b></font>
+				      	<#if (previousStage.displayValue() = "Validation")>
+				      		<font face="Arial, Helvetica, sans-serif" size="2">Our admissions officer has now completed their assessment of your Application ${application.id?string("######")} for UCL ${application.program.title}.</font>
+				      	</#if> 
+				      	<#if (previousStage.displayValue() = "Review")>
+				      		<font face="Arial, Helvetica, sans-serif" size="2">We have completed our academic review of your Application ${application.id?string("######")} for UCL ${application.program.title}.</font>
+				      	</#if> 
+				      	<#if (previousStage.displayValue() = "Interview")>
+				      		<font face="Arial, Helvetica, sans-serif" size="2">Thank you for presenting for your recent interview for your Application ${application.id?string("######")} for UCL ${application.program.title}.</font>
+				      	</#if> 
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to inform you that your application ${application.id?string("######")} to join ${application.program.title} was rejected by admissions staff. To view your application, click the link below: </font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We regret to inform you that your application has been rejected. The reason for rejection is as follows: ${(reason.text?html)!}.</font>
 			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View your application</a>
-			      		</font>
-			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Reason for the rejection:
-			      			<ul>			      		 
-				      		 <li>${(reason.text?html)!}</li>						
-			      		</ul>
-			      		</font>
-			      	</p
 			      	<#if prospectusLink??>
 				      	<p>
 				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${prospectusLink}">Browse other progammes</a></font>
 				      	</p>
 			      	</#if>
 			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We wish you success in your search for postgraduate study.</font>
+			      	</p>
+			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">For further assistance <a href="mailto: ${adminsEmails}">email the administrator</a></font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Best Regards, <br />UCL Portal</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

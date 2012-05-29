@@ -27,16 +27,7 @@ public class EncryptionKeyInterceptorTest {
 		assertSame(keyMock, KeyContextHolder.getContext());
 	}
 
-	@Test
-	@Ignore
-	public void shouldClearContext() throws Exception{
-		SecretKey keyMock = EasyMock.createMock(SecretKey.class);
-		EncryptionKeyInterceptor interceptor = new EncryptionKeyInterceptor();
-		KeyContextHolder.setContext(keyMock);
-			
-		interceptor.postHandle(null,null, null, null);
-		assertNull(KeyContextHolder.getContext());
-	}
+
 	
 	
 	@Before

@@ -7,18 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Language;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.LanguageService;
 @Component
 public class LanguagePropertyEditor extends PropertyEditorSupport {
 
 	private final LanguageService languageService;
+	private final EncryptionHelper encryptionHelper;
 
 	LanguagePropertyEditor(){
-		this(null);
+		this(null, null);
 	}
 	@Autowired
-	public LanguagePropertyEditor(LanguageService languageService) {
+	public LanguagePropertyEditor(LanguageService languageService, EncryptionHelper encryptionHelper) {
 		this.languageService = languageService;
+		this.encryptionHelper = encryptionHelper;
 	 
 	}
 	@Override
@@ -27,7 +30,7 @@ public class LanguagePropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(languageService.getLanguageById(Integer.parseInt(strId)));
+		setValue(languageService.getLanguageById(encryptionHelper.decryptToInteger(strId)));
 		
 	}
 
@@ -36,6 +39,6 @@ public class LanguagePropertyEditor extends PropertyEditorSupport {
 		if(getValue() == null || ((Language)getValue()).getId() == null){
 			return null;
 		}
-		return ((Language)getValue()).getId().toString();
+		return encryptionHelper.encrypt(((Language)getValue()).getId());
 	}
 }

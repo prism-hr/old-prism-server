@@ -69,7 +69,7 @@ public class ReviewerReminderTaskTest {
 	}
 
 	@Test
-	public void shouldRollBackTransactionIfExceptionOccurs() throws UnsupportedEncodingException {
+	public void shouldRollBackTransactionIfExceptionOccurs()  {
 		Transaction transactionOne = EasyMock.createMock(Transaction.class);
 		Transaction transactionTwo = EasyMock.createMock(Transaction.class);
 		Transaction transactionThree = EasyMock.createMock(Transaction.class);
@@ -86,7 +86,7 @@ public class ReviewerReminderTaskTest {
 		transactionOne.commit();
 		mailServiceMock.sendReviewerReminder(reviewerOne);
 
-		EasyMock.expectLastCall().andThrow(new RuntimeException());
+		EasyMock.expectLastCall().andThrow(new RuntimeException("lalal"));
 		transactionTwo.rollback();
 		mailServiceMock.sendReviewerReminder(reviewerTwo);
 		reviewerDAOMock.save(reviewerTwo);

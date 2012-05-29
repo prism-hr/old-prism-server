@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.CountryPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
@@ -32,6 +34,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CountryService;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.LanguageService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.EmploymentPositionValidator;
 
 @RequestMapping("/update")
@@ -48,16 +51,18 @@ public class EmploymentController {
 	private final CountryPropertyEditor countryPropertyEditor;
 	private final EmploymentPositionValidator employmentPositionValidator;
 	private final ApplicationFormPropertyEditor applicationFormPropertyEditor;
+	private final UserService userService;
+	private final EncryptionHelper encryptionHelper;
 
 	EmploymentController() {
-		this(null, null, null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public EmploymentController(EmploymentPositionService employmentPositionService, LanguageService languageService, CountryService countryService,
 			ApplicationsService applicationsService, LanguagePropertyEditor languagePropertyEditor, DatePropertyEditor datePropertyEditor,
 			CountryPropertyEditor countryPropertyEditor, ApplicationFormPropertyEditor applicationFormPropertyEditor,
-			EmploymentPositionValidator employmentPositionValidator) {
+			EmploymentPositionValidator employmentPositionValidator, UserService userService, EncryptionHelper encryptionHelper) {
 		this.employmentPositionService = employmentPositionService;
 		this.languageService = languageService;
 		this.countryService = countryService;
@@ -67,6 +72,8 @@ public class EmploymentController {
 		this.countryPropertyEditor = countryPropertyEditor;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;
 		this.employmentPositionValidator = employmentPositionValidator;
+		this.userService = userService;
+		this.encryptionHelper = encryptionHelper;
 
 	}
 
@@ -83,7 +90,7 @@ public class EmploymentController {
 	}
 	@RequestMapping(value = "/getEmploymentPosition", method = RequestMethod.GET)
 	public String getEmploymentView() {
-		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
 		return STUDENTS_EMPLOYMENT_DETAILS_VIEW;
@@ -92,7 +99,7 @@ public class EmploymentController {
 	
 	@RequestMapping(value = "/editEmploymentPosition", method = RequestMethod.POST)
 	public String editEmployment(@Valid EmploymentPosition employment, BindingResult result) {
-		if (!getCurrentUser().isInRole(Authority.APPLICANT)) {
+		if (!userService.getCurrentUser().isInRole(Authority.APPLICANT)) {
 			throw new ResourceNotFoundException();
 		}
 		if(employment.getApplication().isDecided()){
@@ -111,10 +118,6 @@ public class EmploymentController {
 
 
 
-	private RegisteredUser getCurrentUser() {
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-	}
-
 	@ModelAttribute("languages")
 	public List<Language> getAllLanguages() {
 		return languageService.getAllLanguages();
@@ -128,18 +131,19 @@ public class EmploymentController {
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
-		if (application == null || !getCurrentUser().canSee(application)) {
+		if (application == null || !userService.getCurrentUser().canSee(application)) {
 			throw new ResourceNotFoundException();
 		}
 		return application;
 	}
 
 	@ModelAttribute
-	public EmploymentPosition getEmploymentPosition(@RequestParam(required=false) Integer employmentId) {
-		if (employmentId == null) {
+	public EmploymentPosition getEmploymentPosition(@RequestParam(value="employmentId", required=false) String encryptedEmploymentId) {
+
+		if (StringUtils.isBlank(encryptedEmploymentId)) {
 			return new EmploymentPosition();
 		}
-		EmploymentPosition employment = employmentPositionService.getEmploymentPositionById(employmentId);
+		EmploymentPosition employment = employmentPositionService.getEmploymentPositionById(encryptionHelper.decryptToInteger(encryptedEmploymentId));
 		if (employment == null) {
 			throw new ResourceNotFoundException();
 		}

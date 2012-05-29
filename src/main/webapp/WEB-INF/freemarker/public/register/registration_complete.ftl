@@ -31,26 +31,28 @@
 			<!-- Middle. -->
 			<div id="middle">
 	  
-			    <header>
-					<!-- App logo and tagline. -->
-			      	<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png'/>" alt="" /></div>
-			      	<div class="tagline">Your Gateway to<br />Research Opportunities</div>
-			    </header>
-		    	<!-- New user form. -->
-	  			<h1>
-	  				You have been successfully registered. To activate your account please check your emails and click on the activation link.
-	  			</h1>
-	  		</div>
+        <div id="site-message" class="success">
+          <div class="header">
+            <div class="logo"><@spring.url '/design/default/images/ph_logo_login.png'/></div>
+            <div class="tagline">Your Gateway to<br />Research Opportunities</div>
+          </div>
+          <div class="content">
+            <h1>You have been successfully registered.</h1>
+            <p>To activate your account please check your emails and click on the activation link.</p>
+          </div>
+        </div>
+        
+      </div>
 	  	
-		  	<!-- Footer. -->
-		  	<div id="footer">
-		    	<ul>
-		      		<li><a href="#">Privacy</a></li>
-		      		<li><a href="#">Terms &amp; conditions</a></li>
-		      		<li><a href="#">Contact us</a></li>
-		      		<li><a href="#">Glossary</a></li>
-		    	</ul>
-		  	</div>
+      <!-- Footer. -->
+      <div id="footer">
+        <ul>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms &amp; conditions</a></li>
+            <li><a href="#">Contact us</a></li>
+            <li><a href="#">Glossary</a></li>
+        </ul>
+      </div>
 	
 		</div>
 		<!-- Scripts -->

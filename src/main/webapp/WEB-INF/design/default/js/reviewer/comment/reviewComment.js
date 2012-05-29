@@ -43,6 +43,7 @@ $(document).ready(function(){
 			$('input[name="willingToInterview"]').removeAttr("checked")
 			                                     .addClass("grey-label")
 																					 .attr("disabled", "disabled");
+			$('input[name="willingToInterview"]').parent().addClass("grey-label");
 		
 			// "Suitable for UCL" radio buttons.			
 			$("#suitable-lbl").addClass("grey-label");
@@ -50,6 +51,7 @@ $(document).ready(function(){
 			$('input[name="suitableCandidate"]').removeAttr("checked")
 			                                    .addClass("grey-label")
 																					.attr("disabled", "disabled");
+			$('input[name="suitableCandidate"]').parent().addClass("grey-label");
 		
 			//remove validation messages
 			$('span[class="invalid"]').html('');
@@ -65,16 +67,14 @@ $(document).ready(function(){
 			$("#supervise-lbl").append('<em>*</em>').removeClass("grey-label");
 			$('input[name="willingToInterview"]').addClass("grey-label")
 			                                     .removeAttr("disabled");
+			$('input[name="willingToInterview"]').parent().removeClass("grey-label");
 
 			// "Suitable for UCL" radio buttons.			
 			$("#suitable-lbl").append('<em>*</em>').removeClass("grey-label");
 			$('input[name="suitableCandidate"]').removeClass("grey-label")
 			                                    .removeAttr("disabled");
+			$('input[name="suitableCandidate"]').parent().removeClass("grey-label");
 		}
 	});
-	
-	
-
-	
 	
 });

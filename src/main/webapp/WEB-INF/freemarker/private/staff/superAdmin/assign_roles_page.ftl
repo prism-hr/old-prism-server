@@ -78,7 +78,7 @@
 													<div class="left-column">
 					            
 														<div class="row">
-															<label>Please choose a user</label>
+															<strong>Please choose a user</strong><br />
 															<select id="selectedUser" name="selectedUser">
 																<option value="">Please choose a user</option>
 																<#list availableUsers as user>						                			
@@ -107,7 +107,7 @@
 													<div class="right-column">
 													
 														<div class="row">
-															<label>Role(s) in application process</label>
+															<strong>Role(s) in application process</strong><br />
 															<select multiple size="6" id="roles" name="selectedAuthorities">
 																<#list authorities as authority>
 																<option value="${authority}" <#if selectedUser?? && selectedUser.isInRoleInProgram(authority, selectedProgram)>selected="selected" </#if>>${authority}</option>

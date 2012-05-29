@@ -194,12 +194,14 @@
 											<div class="row">
 												<div class="field">
 													<button class="blue" type="button" id="createSupervisor">Create supervisor</button>
-													<button class="blue" type="button" id="moveToApprovalBtn">Continue</button>
-										
 												</div>
 											</div>
 										</div>
 															
+										<div class="buttons">
+											<button class="blue" type="button" id="moveToApprovalBtn">Continue</button>
+										</div>
+
 										<input type="hidden" id="applicationId" name="applicationId" value="${applicationForm.applicationNumber}"/>
 										<input type="hidden" id="approvalRoundId" name="approvalRoundId" value="${(approvalRound.id?string("######"))!}"/>  
 

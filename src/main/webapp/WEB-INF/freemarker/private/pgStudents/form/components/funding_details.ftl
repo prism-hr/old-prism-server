@@ -206,13 +206,13 @@
         		<span class="plain-label">Proof of Award (PDF)<em>*</em></span>
         		<span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
         		<div class="field" id="fundingUploadFields">        	
-          			<input id="fundingDocument" data-type="SUPPORTING_FUNDING" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
+          			<input id="fundingDocument" data-type="SUPPORTING_FUNDING" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="fundingUploadedDocument">
 						<input type="hidden" id="document_SUPPORTING_FUNDING" value = "${(funding.document.id?string('######'))!}"/>
                 		<!--  
 						<a href="<@spring.url '/download?documentId=${(funding.document.id?string("#######"))!}'/>">${(funding.document.fileName)!}</a>-->
 					</span>
-					<span id="fundingDocumentProgress" class="progress" style="display: none;" ></span>					
+					<span id="fundingDocumentProgress" class="progress" style="display: none;"></span>					
         		</div>  
         		
       		</div>

@@ -33,7 +33,7 @@
 					</div>	
 				</#if>
 		
-        <input type="hidden" name="programmeDetailsId" id="programmeDetailsId" value="${(programmeDetails.id?string("######"))!}"/>
+        
 
 		<div class="row-group">
 			<#if programError?? && programError=='true'>
@@ -159,12 +159,7 @@
 		
 		</div>
 
-		<#-- Supervisor Data Table: Include the following section for supervisor table! -->
-		<#--
-		<div>
-			<#include "/private/common/parts/supervisor_data_table.ftl"/>
-		</div>
-		-->
+
         <div class="row-group">
         	
         	<label class="group-heading-label">Supervision</label>
@@ -191,15 +186,15 @@
                      <td> ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} </td>
                      <td> ${supervisor.email?html} </td>
                      <td><#if supervisor.awareSupervisor == "YES"> Yes <#else> No </#if></td>
-                     <td> <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete" name="deleteSupervisor" id="supervisorDelete_${(supervisor.id?string('#######'))!}">delete</a> <a class="button-edit"  id="supervisor_${(supervisor.id?string('#######'))!}" name ="editSupervisorLink">edit</a></#if></td>
+                     <td> <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete" name="deleteSupervisor" id="supervisorDelete_${encrypter.encrypt(supervisor.id)}">delete</a> <a class="button-edit"  id="supervisor_${encrypter.encrypt(supervisor.id)}" name ="editSupervisorLink">edit</a></#if></td>
                  </tr>
-                    <input type="hidden" id="${(supervisor.id?string('#######'))!}_supervisorId" name = "sId" value="${(supervisor.id?string('#######'))!}"/>
-                    <input type="hidden" id="${(supervisor.id?string('#######'))!}_firstname" name = "sFN" value="${(supervisor.firstname?html)!}"/>
-                    <input type="hidden" id="${(supervisor.id?string('#######'))!}_lastname" name = "sLN" value="${(supervisor.lastname?html)!}"/>
-                    <input type="hidden" id="${(supervisor.id?string('#######'))!}_email" name = "sEM"  value="${(supervisor.email?html)!}"/>
-                    <input type="hidden" id="${(supervisor.id?string('#######'))!}_aware" name = "sAS" value="${(supervisor.primarySupervisor?html)!}"/>                    
+                    <input type="hidden" id="${encrypter.encrypt(supervisor.id)}_supervisorId" name = "sId" value="${encrypter.encrypt(supervisor.id)}"/>
+                    <input type="hidden" id="${encrypter.encrypt(supervisor.id)}_firstname" name = "sFN" value="${(supervisor.firstname?html)!}"/>
+                    <input type="hidden" id="${encrypter.encrypt(supervisor.id)}_lastname" name = "sLN" value="${(supervisor.lastname?html)!}"/>
+                    <input type="hidden" id="${encrypter.encrypt(supervisor.id)}_email" name = "sEM"  value="${(supervisor.email?html)!}"/>
+                    <input type="hidden" id="${encrypter.encrypt(supervisor.id)}_aware" name = "sAS" value="${(supervisor.primarySupervisor?html)!}"/>                    
                                
-                   <input type="hidden" name="supervisors" id="${(supervisor.id?string('#######'))!}_supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
+                   <input type="hidden" name="supervisors" id="${encrypter.encrypt(supervisor.id)}_supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
               </span>
               </#list>
                </tbody>

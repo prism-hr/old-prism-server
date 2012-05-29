@@ -183,13 +183,7 @@ public class ProgrammeDetailsControllerTest {
 		assertNull(returnedProgrammeDetails.getId());
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfProgrammeDetailsDoesNotExist() {
-		EasyMock.expect(programmeDetailsServiceMock.getProgrammeDetailsById(1)).andReturn(null);
-		EasyMock.replay(programmeDetailsServiceMock);
-		controller.getProgrammeDetails("1");
-
-	}
+	
 
 	@Test
 	public void shouldReturnMessage() {

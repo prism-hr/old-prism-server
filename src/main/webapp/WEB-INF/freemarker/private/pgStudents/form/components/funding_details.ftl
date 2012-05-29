@@ -207,8 +207,7 @@
           			<input id="fundingDocument" data-type="SUPPORTING_FUNDING" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="fundingUploadedDocument">
 						<input type="hidden" id="document_SUPPORTING_FUNDING" value = "${(encrypter.encrypt(funding.document.id))!}"/>
-                		<!--  
-						<a href="<@spring.url '/download?documentId=${(funding.document.id?string("#######"))!}'/>">${(funding.document.fileName)!}</a>-->
+                		
 					</span>
 					<span id="fundingDocumentProgress" class="progress" style="display: none;"></span>					
         		</div>  

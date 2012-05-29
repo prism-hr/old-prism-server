@@ -221,14 +221,6 @@ public class PersonalDetailsControllerTest {
 		assertNull(returnedPersonalDetails.getId());
 	}
 
-	@Test(expected = ResourceNotFoundException.class)
-	public void shouldThrowResourceNotFoundExceptionIfPersonalDetailsDoesNotExist() {
-		EasyMock.expect(personalDetailsServiceMock.getPersonalDetailsById(1)).andReturn(null);
-		EasyMock.replay(personalDetailsServiceMock);
-		controller.getPersonalDetails("1");
-
-	}
-
 	@Test
 	public void shouldReturnMessage() {
 		assertEquals("bob", controller.getMessage("bob"));

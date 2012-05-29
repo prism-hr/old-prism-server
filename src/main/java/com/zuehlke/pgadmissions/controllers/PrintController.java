@@ -28,14 +28,16 @@ import com.zuehlke.pgadmissions.utils.PdfDocumentBuilder;
 public class PrintController {
 
 	private final ApplicationsService applicationSevice;
+	private final PdfDocumentBuilder builder;
 
 	public PrintController(){
-		this(null);
+		this(null, null);
 	}
 
 	@Autowired
-	public PrintController(ApplicationsService applicationSevice){
+	public PrintController(ApplicationsService applicationSevice, PdfDocumentBuilder builder){
 		this.applicationSevice = applicationSevice;
+		this.builder = builder;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -52,7 +54,7 @@ public class PrintController {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 			PdfWriter writer = PdfWriter.getInstance(document, baos);
-			PdfDocumentBuilder builder = new PdfDocumentBuilder(writer);
+
 
 			document.open();
 
@@ -62,7 +64,7 @@ public class PrintController {
 			//String htmlSource = buildHtml();
 			//htmlWorker.parse(new StringReader(htmlSource));
 
-			builder.buildDocument(application, document);
+			builder.buildDocument(application, document, writer);
 			document.close();
 
 			response.setHeader("Expires", "0");
@@ -92,12 +94,12 @@ public class PrintController {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 		PdfWriter writer = PdfWriter.getInstance(document, baos);
-		PdfDocumentBuilder builder = new PdfDocumentBuilder(writer);
+	
 
 		document.open();
 		for (String applicationId : applications) {
 			ApplicationForm application = applicationSevice.getApplicationByApplicationNumber(applicationId);
-			builder.buildDocument(application, document);
+			builder.buildDocument(application, document, writer);
 			document.newPage();
 		}
 

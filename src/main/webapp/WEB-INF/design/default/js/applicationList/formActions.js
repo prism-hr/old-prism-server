@@ -6,8 +6,8 @@ $(document).ready(function() {
 			}
 	);
 	
+	$("#applicationListSection").on("change", "select.actionType", function(){	
 	
-	$('select.actionType').change(function() {
 		var name = this.name;
 		var id = name.substring(5).replace(']', '');
 

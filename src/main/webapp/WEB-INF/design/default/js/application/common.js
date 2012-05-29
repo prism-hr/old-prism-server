@@ -1,21 +1,21 @@
 
 var tooltipSettings = {
-		content: {
-			text: function(api) {
-				// Retrieve content from custom attribute of the $('.selector') elements.
-				return $(this).attr('data-desc');
-			} 
-		},
-		position: {
-			my: 'bottom right', // Use the corner...
-			at: 'top center', // ...and opposite corner
-			viewport: $(window),
-			adjust: {
-				method: 'flip shift'
-			}
-		},
-		style: 'tooltip-pgr ui-tooltip-shadow'
-	};
+	content: {
+		text: function(api) {
+			// Retrieve content from custom attribute of the $('.selector') elements.
+			return $(this).attr('data-desc');
+		} 
+	},
+	position: {
+		my: 'bottom right', // Use the corner...
+		at: 'top center', // ...and opposite corner
+		viewport: $(window),
+		adjust: {
+			method: 'flip shift'
+		}
+	},
+	style: 'tooltip-pgr ui-tooltip-shadow'
+};
 
 
 function bindDatePicker(selector)
@@ -58,68 +58,13 @@ function limitTextArea(){
 	});
 }
 
-function addToolTips(){
-	// Form hint tooltips.
-	$('body span.hint').qtip({
-		content: {
-			text: function(api) {
-				// Retrieve content from custom attribute of the $('.selector') elements.
-				return $(this).attr('data-desc');
-
-			} 
-		},
-		position: {
-			my: 'bottom right', // Use the corner...
-			at: 'top center', // ...and opposite corner
-			viewport: $(window),
-			adjust: {
-				method: 'flip shift'
-			}
-		},
-		style: 'tooltip-pgr ui-tooltip-shadow'
-	});
-	
-	$('.button-hint').qtip({
-		content: {
-			text: function(api) {
-				// Retrieve content from custom attribute of the $('.selector') elements.
-				return $(this).attr('data-desc');
-
-			} 
-		},
-		position: {
-			my: 'bottom right', // Use the corner...
-			at: 'top center', // ...and opposite corner
-			viewport: $(window),
-			adjust: {
-				method: 'flip shift'
-			}
-		},
-		style: 'tooltip-pgr ui-tooltip-shadow'
-	});
-		
-
-	$('.error-hint').qtip({
-		content: {
-			text: function(api) {
-				// Retrieve content from custom attribute of the $('.selector') elements.
-				return $(this).attr('data-desc');
-			} 
-		},
-		position: {
-			my: 'bottom right', // Use the corner...
-			at: 'top center', // ...and opposite corner
-			viewport: $(window),
-			adjust: {
-				method: 'flip shift'
-			}
-		},
-		style: 'tooltip-pgr ui-tooltip-shadow'
-	});
-	
+// Form hint tooltips.
+function addToolTips()
+{
+	$('body span.hint, .button-hint, .error-hint').qtip(tooltipSettings);
 }
 
-
+// Set up file uploading functionality.
 function watchUpload($field)
 {
   var $container  = $field.parent('div.field');
@@ -144,6 +89,7 @@ function watchUpload($field)
   });
 }
 
+// Delete any associated file uploads.
 function deleteUploadedFile($hidden_field)
 {
 	if ($hidden_field && $hidden_field.val() != '')
@@ -152,6 +98,7 @@ function deleteUploadedFile($hidden_field)
 	}
 }
 
+// Process a file selected for uploading.
 function doUpload($upload_field)
 {	
   var $container  = $upload_field.parent('div.field');
@@ -205,6 +152,7 @@ function doUpload($upload_field)
   });
 }
 
-String.prototype.capitalize = function(){
-   return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
-  };
+String.prototype.capitalize = function()
+{
+	return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
+};

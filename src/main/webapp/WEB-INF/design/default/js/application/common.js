@@ -144,15 +144,10 @@ function doUpload($upload_field)
 				// i.e. if there are no uploading errors, which would be indicated by the presence of a SPAN.invalid tag.
 				$hfParent.html(data).show();
 				$container.addClass('uploaded');
-				var doc_type = $upload_field.attr('data-type').replace('_',' ').capitalize();
+				var doc_type = $upload_field.attr('data-reference');
 				$('a.button-edit', $hfParent).attr({ 'data-desc': 'Edit ' + doc_type })
                                      .qtip(tooltipSettings);
 			}
     }
   });
 }
-
-String.prototype.capitalize = function()
-{
-	return this.replace( /(^|\s)([a-z])/g , function(m,p1,p2){ return p1+p2.toUpperCase(); } );
-};

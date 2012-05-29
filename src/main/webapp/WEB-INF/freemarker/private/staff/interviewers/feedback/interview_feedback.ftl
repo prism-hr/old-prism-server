@@ -54,7 +54,7 @@
 				        <div class="content-box-inner">
 				         <#include "/private/common/parts/application_info.ftl"/>
 				       	 <!--	if user is reviewer in program and haven't already declined-->	
-				       	 	<#if !user.hasRespondedToProvideInterviewFeedbackForApplication(applicationForm)  >			        		
+				       	 	<#if !user.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(applicationForm)  >			        		
 							
 							    <h1>Interview feedback</h1>
 							    <br/>

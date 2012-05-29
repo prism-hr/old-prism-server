@@ -99,7 +99,7 @@ public class DomainObjectTest {
 	@Test
 	public void shouldReturnEncryptedId() throws Exception{
 		String random = RandomStringUtils.randomAlphanumeric(16);
-		System.err.println(random);
+		
 		SecretKeySpec key = new SecretKeySpec(random.getBytes(), "AES");
 		KeyContextHolder.setContext(key);
 		Integer id = 5;
@@ -113,7 +113,7 @@ public class DomainObjectTest {
 	@Test
 	public void shouldReturnNullIfIdIsNull() throws Exception{
 		String random = RandomStringUtils.randomAlphanumeric(16);
-		System.err.println(random);
+	
 		SecretKeySpec key = new SecretKeySpec(random.getBytes(), "AES");
 		KeyContextHolder.setContext(key);
 

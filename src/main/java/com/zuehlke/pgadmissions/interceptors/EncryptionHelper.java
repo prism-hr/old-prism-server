@@ -11,9 +11,8 @@ import org.apache.commons.codec.binary.Base64;
 
 public class EncryptionHelper {
 
-	private static byte[] linebreak = {}; // Remove Base64 encoder default
-											// linebreak	
-											// be 16
+	private static byte[] linebreak = {}; // Remove Base64 encoder default linebreak	
+										
 	private static Cipher cipher;
 	private static Base64 coder;
 

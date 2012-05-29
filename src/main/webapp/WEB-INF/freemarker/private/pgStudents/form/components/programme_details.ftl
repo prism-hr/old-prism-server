@@ -82,15 +82,16 @@
                 	</#if>
                 </div>
 			</div>
-				<@spring.bind "programmeDetails.studyOption" /> 
-				<#list spring.status.errorMessages as error>
+				<@spring.bind "programmeDetails.studyOption" />
+				
+				<#if spring.status.errorMessages?has_content>
 					<div class="row">
 						<div class="field">
-							<span class="invalid">${error}</span>
+							<span class="invalid">${spring.status.errorMessages[0]!}</span>
 						</div>
 					</div>
-				</#list>
-
+				</#if>
+				
 			<!-- Project -->
 			<div class="row">
                 <label class="plain-label grey-label">Project</label>

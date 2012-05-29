@@ -35,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The application ${application.id?string("######")} was rejected by ${approver.firstName?html} ${approver.lastName?html}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The application ${application.applicationNumber} was rejected by ${approver.firstName?html} ${approver.lastName?html}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">Reason for the rejection:
@@ -50,7 +50,7 @@
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View application</a>
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">View application</a>
 			      		</font>
 			      	</p>
 			      	<p>

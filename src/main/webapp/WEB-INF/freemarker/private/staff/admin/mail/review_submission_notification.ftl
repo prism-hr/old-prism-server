@@ -35,11 +35,11 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The reviewer ${reviewer.firstName?html} ${reviewer.lastName?html} has provided their review for Application ${application.id?string("######")} for UCL ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The reviewer ${reviewer.firstName?html} ${reviewer.lastName?html} has provided their review for Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/comment?applicationId=${application.id?string("######")}">View comments</a>
+			      			<a href="${host}/pgadmissions/comment?applicationId=${application.applicationNumber}">View comments</a>
 			      		</font>
 			      	</p>
 			      	<p>

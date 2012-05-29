@@ -35,11 +35,11 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that a new application has been submitted for ${application.program.title}. The application number is ${application.id?string("#######")}. You must now validate the application.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that a new application has been submitted for ${application.program.title}. The application number is ${application.applicationNumber}. You must now validate the application.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View the application</a>
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">View the application</a>
 			      		</font>
 			      	</p>
 			      	<p>

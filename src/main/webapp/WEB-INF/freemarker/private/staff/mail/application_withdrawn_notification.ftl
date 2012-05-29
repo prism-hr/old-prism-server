@@ -35,11 +35,11 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">${applicant.firstName} ${applicant.lastName} has withdrawn Application ${application.id?string('######')} for UCL ${application.program.title}.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${applicant.firstName} ${applicant.lastName} has withdrawn Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
 			      	</p>
 					<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string('######')}">View application</a>
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">View application</a>
 			      		</font>
 			      	</p>
 			      	<p>

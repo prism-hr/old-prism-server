@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -34,20 +35,18 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 
+@Component
 public class PdfDocumentBuilder {
 
 	private Font grayFont = new Font(FontFamily.HELVETICA, 16, Font.BOLD | Font.UNDERLINE, BaseColor.DARK_GRAY);
 	private static Font boldFont = new Font(FontFamily.HELVETICA, 16, Font.BOLD);
 	private static Font smallBoldFont = new Font(FontFamily.HELVETICA, 12, Font.BOLD);
 	private static Font smallerBoldFont = new Font(FontFamily.HELVETICA, 10, Font.BOLD);
-	private final PdfWriter writer;
+
 	private final BaseColor grayColor = new BaseColor(220, 220, 220);
 
-	public PdfDocumentBuilder(PdfWriter writer) {
-		this.writer = writer;
-	}
 
-	public void buildDocument(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
+	public void buildDocument(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
 
 		document.add(new Paragraph("Application id: " + application.getApplicationNumber(), boldFont));
 		document.add(new Paragraph("Applicant: " + application.getApplicant().getFirstName() + " " + application.getApplicant().getLastName(), boldFont));
@@ -66,7 +65,7 @@ public class PdfDocumentBuilder {
 
 		addSectionSeparators(document);
 
-		addQualificationSection(application, document);
+		addQualificationSection(application, document, writer);
 
 		addSectionSeparators(document);
 
@@ -74,7 +73,7 @@ public class PdfDocumentBuilder {
 
 		addSectionSeparators(document);
 
-		addFundingSection(application, document);
+		addFundingSection(application, document, writer);
 
 		addSectionSeparators(document);
 
@@ -86,12 +85,12 @@ public class PdfDocumentBuilder {
 
 		addSectionSeparators(document);
 
-		addSupportingDocuments(application, document);
+		addSupportingDocuments(application, document, writer);
 
 		addSectionSeparators(document);
 		RegisteredUser currentUser = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 		if (!currentUser.isInRole(Authority.APPLICANT) && !currentUser.isRefereeOfApplicationForm(application)) {
-			addUploadedReferences(application, document);
+			addUploadedReferences(application, document,writer);
 		}
 
 	}
@@ -286,7 +285,7 @@ public class PdfDocumentBuilder {
 
 	}
 
-	private void addQualificationSection(ApplicationForm application, Document document) throws DocumentException, IOException {
+	private void addQualificationSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {
 		document.add(new Paragraph("Qualification                                                                                         ", grayFont));
 		if (application.getQualifications().isEmpty()) {
 			document.add(new Paragraph(createMessage("qualification information")));
@@ -308,7 +307,7 @@ public class PdfDocumentBuilder {
 				if (qualification.getProofOfAward() != null) {
 					document.newPage();
 					document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));
-					readPdf(document, qualification.getProofOfAward());
+					readPdf(document, qualification.getProofOfAward(), writer);
 					document.newPage();
 				}
 
@@ -348,7 +347,7 @@ public class PdfDocumentBuilder {
 
 	}
 
-	private void addFundingSection(ApplicationForm application, Document document) throws DocumentException, IOException {
+	private void addFundingSection(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, IOException {
 		document.add(new Paragraph("Funding                                                                                                ", grayFont));
 
 		if (application.getFundings().isEmpty()) {
@@ -363,7 +362,7 @@ public class PdfDocumentBuilder {
 
 				document.newPage();
 				document.add(new Paragraph("Proof of award(PDF)", smallBoldFont));
-				readPdf(document, funding.getDocument());
+				readPdf(document, funding.getDocument(),  writer);
 				document.newPage();
 
 				document.add(new Paragraph(" "));
@@ -423,7 +422,7 @@ public class PdfDocumentBuilder {
 		}
 	}
 
-	private void addSupportingDocuments(ApplicationForm application, Document document) throws DocumentException, MalformedURLException, IOException {
+	private void addSupportingDocuments(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
 
 		com.zuehlke.pgadmissions.domain.Document doc = application.getCv();
 		if (doc != null) {
@@ -437,7 +436,7 @@ public class PdfDocumentBuilder {
 				String content = new String(doc.getContent());
 				document.add(new Chunk(content));
 			} else if (doc.getFileName().endsWith(".pdf")) {
-				readPdf(document, doc);
+				readPdf(document, doc, writer);
 			}
 		}
 		doc = application.getPersonalStatement();
@@ -452,22 +451,22 @@ public class PdfDocumentBuilder {
 				String content = new String(doc.getContent());
 				document.add(new Chunk(content));
 			} else if (doc.getFileName().endsWith(".pdf")) {
-				readPdf(document, doc);
+				readPdf(document, doc, writer);
 			}
 		}
 	}
 
-	private void addUploadedReferences(ApplicationForm application, Document document) throws IOException, DocumentException {
+	private void addUploadedReferences(ApplicationForm application, Document document, PdfWriter writer) throws IOException, DocumentException {
 		for (Referee referee : application.getReferees()) {
 			if (referee.getReference() != null) {
 				document.newPage();
 				document.add(new Paragraph("Reference from " + referee.getFirstname() + " " + referee.getLastname(), boldFont));
-				readPdf(document, referee.getReference().getDocument());
+				readPdf(document, referee.getReference().getDocument(), writer);
 			}
 		}
 	}
 
-	private void readPdf(Document document, com.zuehlke.pgadmissions.domain.Document doc) throws IOException {
+	private void readPdf(Document document, com.zuehlke.pgadmissions.domain.Document doc, PdfWriter writer) throws IOException {
 		PdfReader pdfReader = new PdfReader(doc.getContent());
 		PdfContentByte cb = writer.getDirectContent();
 		for (int i = 1; i <= pdfReader.getNumberOfPages(); i++) {

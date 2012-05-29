@@ -53,6 +53,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
+import com.zuehlke.pgadmissions.domain.enums.SearchCategories;
 
 public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 
@@ -1283,6 +1284,128 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		return qualifications;
 	}
 	
+	@Test
+	public void shouldGetAllApplicationsContainingBiologyInTheirNumber(){
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		ApplicationForm applicationFormThree = new ApplicationFormBuilder().applicationNumber("ABCD").program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
+		save(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("BiOlOgY", SearchCategories.APPLICATION_CODE);
+		assertEquals(2, applications.size());
+		
+	}
 	
+	@Test
+	public void shouldGetApplicationBelongingToProgramWithCodeScienceAndOtherTitle(){
+		Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
+		save(programOne, applicationFormOne);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("sCiEnce", SearchCategories.PROGRAMME_NAME);
+		
+		flushAndClearSession();
+
+		assertEquals(1, applications.size());
+		
+	}
+	
+	@Test
+	public void shouldGetApplicationBelongingToProgramWithTitleScienceAndOtherCode(){
+		Program programOne = new ProgramBuilder().code("empty").title("Program_Science_1").toProgram();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
+		save(programOne, applicationFormOne);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("sCiEnce", SearchCategories.PROGRAMME_NAME);
+		
+		flushAndClearSession();
+		
+		assertEquals(1, applications.size());
+		
+	}
+	
+	@Test
+	public void shouldNotReturnAppIfTermNotInProgrameCodeOrTitle(){
+		Program programOne = new ProgramBuilder().code("empty").title("empty").toProgram();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
+		save(programOne, applicationFormOne);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("sCiEnce", SearchCategories.PROGRAMME_NAME);
+		
+		flushAndClearSession();
+		
+		assertEquals(0, applications.size());
+		
+	}
+	
+	@Test
+	public void shouldGetApplicationBelongingToApplicantMatchingFirstNameFred(){
+		Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
+		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("Frederick").lastName("Doe").email("email@test.com").username("freddy").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
+		save(programOne, applicant, applicationFormOne);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("fred", SearchCategories.APPLICANT_NAME);
+		
+		flushAndClearSession();
+
+		assertEquals(1, applications.size());
+		
+	}
+	
+	@Test
+	public void shouldGetApplicationBelongingToApplicantMatchingLastNameuni(){
+		Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
+		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").username("freddy").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
+		save(programOne, applicant, applicationFormOne);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("uni", SearchCategories.APPLICANT_NAME);
+		
+		flushAndClearSession();
+		
+		assertEquals(1, applications.size());
+		
+	}
+	
+	@Test
+	public void shouldNotReturnAppIfTermNotInApplicantNameFirstOrLastName(){
+		Program programOne = new ProgramBuilder().code("empty").title("empty").toProgram();
+		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").username("freddy").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+	
+		save(programOne, applicant, applicationFormOne);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("empty", SearchCategories.APPLICANT_NAME);
+		
+		flushAndClearSession();
+		
+		assertEquals(0, applications.size());
+		
+	}
 	
 }

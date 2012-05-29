@@ -60,8 +60,7 @@ public class RegistryMailSender extends MailSender {
 		String templatename = "private/staff/admin/mail/registry_validation_request.ftl";
 
 		MimeMessagePreparator mimeMessagePreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddresses,
-				new InternetAddress[] { ccAdminAddres }, subject, templatename, createModel(applicationForm, currentUser), ccAdminAddres,
-				getAttachment(applicationForm));
+				new InternetAddress[] { ccAdminAddres }, subject, templatename, createModel(applicationForm, currentUser), ccAdminAddres);
 		javaMailSender.send(mimeMessagePreparator);
 		System.err.println("send!");
 	}
@@ -75,7 +74,7 @@ public class RegistryMailSender extends MailSender {
 
 	}
 
-	public File getAttachment(ApplicationForm applicationForm) throws DocumentException, MalformedURLException, IOException {
+	/*/public File getAttachment(ApplicationForm applicationForm) throws DocumentException, MalformedURLException, IOException {
 
 		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
 		File file = new File("Application " + applicationForm.getId() + ".pdf");
@@ -118,6 +117,6 @@ public class RegistryMailSender extends MailSender {
 
 	 PdfDocumentBuilder newPdfDocumentWriter(PdfWriter writer) {
 		return new PdfDocumentBuilder(writer);
-	}
+	}*/
 
 }

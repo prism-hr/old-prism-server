@@ -42,17 +42,6 @@ public class RefereeValidatorTest {
 		Assert.assertEquals("referee.lastname.notempty", mappingResult.getFieldError("lastname").getCode());
 	}
 
-	@Ignore
-	@Test
-	public void shouldRejectIfEmailIsEmpty() {
-		referee.setEmail(null);
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(referee, "email");
-		refereeValidator.validate(referee, mappingResult);
-		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("referee.email.notempty", mappingResult.getFieldError("email").getCode());
-	}
-
-	
 	@Test
 	public void shouldRejectIfAddressLocationIsEmpty() {
 		referee.setAddressLocation(null);

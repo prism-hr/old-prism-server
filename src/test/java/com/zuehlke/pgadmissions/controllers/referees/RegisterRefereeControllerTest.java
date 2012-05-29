@@ -33,7 +33,7 @@ public class RegisterRefereeControllerTest {
 	private RefereePropertyEditor refereePropertyEditorMock;
 	
 	@Test
-	@Ignore
+	
 	public void shouldSaveRefereeAndEnableAccountIfNoErrors() {
 	/*	ApplicationForm application = new ApplicationFormBuilder().id(1).toApplicationForm();
 		Referee referee = new RefereeBuilder().firstname("f").lastname("l").email("e@test.com").application(application).toReferee();

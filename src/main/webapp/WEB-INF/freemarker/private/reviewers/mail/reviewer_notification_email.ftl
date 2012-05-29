@@ -35,7 +35,13 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${reviewer.user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated to review ${applicant.firstName?html} ${applicant.lastName?html}'s application ${application.id?string('#####')} to join the Postgraduate research Programme in ${application.program.title} at UCL.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">${applicant.firstName?html} ${applicant.lastName?html} has recently submitted an Application ${application.id?string('#####')} for PhD study at University College London in ${application.program.title}.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been selected to review their application.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to complete a short questionnaire confirming their suitability for PhD study. If you feel unable to provide a review, you may also decline.</font>
 			      	</p>
 			      	<#if !reviewer.user.enabled>
 			      		<p>
@@ -46,32 +52,27 @@
 				      			<a href="${host}/pgadmissions/register?userId=${reviewer.user.id?string('#######')}">Register</a>
 				      		</font>
 				      	</p>
+			      	<#else>
+				      	<p>
+				      		<font face="Arial, Helvetica, sans-serif" size="2">
+				      			<a href="${host}/pgadmissions/reviewFeedback?applicationId=${application.id?string("######")}">Provide feedback</a>
+				      		</font>
+				      	</p>
 			      	</#if>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You can decline directly without registering by clicking the link below</font>
-			      	</p>
-			         <p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
 			      			<a href="${host}/pgadmissions/decline/review?applicationId=${application.id?string("######")}&userId=${reviewer.user.id?string('#######')}">Decline</a>
 			      		</font>
+			        <p>
+			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You can view the application and provide your feedback by clicking the links below.</font>
-			      	</p>
-			         <p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View the application</a>
-			      		</font>
-			      	</p>
-			      	     <p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/reviewFeedback?applicationId=${application.id?string("######")}">Provide feedback</a>
-			      		</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">In the meantime, for further assistance <a href="mailto: ${adminsEmails}">email the administrator</a></font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Many Thanks, <br />UCL Portal</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

@@ -19,6 +19,7 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -55,6 +56,7 @@ public class UserServiceTest {
 	private UserService userServiceWithCurrentUserOverride;
 	private RegisteredUser currentUserMock;
 	private UserFactory userFactoryMock;
+	private MessageSource msgSourceMock;
 
 	@Test
 	public void shouldGetUserFromDAO() {
@@ -141,7 +143,7 @@ public class UserServiceTest {
 	public void shouldSaveRefereeAndSendEmailToReferee() throws UnsupportedEncodingException {
 
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		Program program = new ProgramBuilder().administrators(administrator).toProgram();
+		Program program = new ProgramBuilder().title("program name").administrators(administrator).toProgram();
 
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("applicant").lastName("hen").email("applicant@test.com").toUser();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).program(program).toApplicationForm();
@@ -155,29 +157,48 @@ public class UserServiceTest {
 
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress1 = new InternetAddress("hh@test.com", "harry hen");
+		
+		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation.referee", null, null)).andReturn("resolved subject");
+		
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Referee Registration"),
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("resolved subject"),
 						EasyMock.eq("private/referees/mail/register_referee_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress)EasyMock.isNull())).andReturn(preparatorMock1);
 		mailsenderMock.send(preparatorMock1);
 
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock);
 
 		userService.saveAndEmailRegisterConfirmationToReferee(refereeUser);
-		EasyMock.verify(mimeMessagePreparatorFactoryMock, mailsenderMock);
+		EasyMock.verify(mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock);
 	}
 
 	@Test
-	public void shouldNotSendEmailIfSaveFails() throws UnsupportedEncodingException {
-		userService.save(null);
-		EasyMock.expectLastCall().andThrow(new RuntimeException("aaaaaaaaaaargh"));
+	public void shouldNotSendEmailIfSaveFails() {
+		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
+		Program program = new ProgramBuilder().title("program name").administrators(administrator).toProgram();
+
+		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("applicant").lastName("hen").email("applicant@test.com").toUser();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).program(program).toApplicationForm();
+		Referee referee = new RefereeBuilder().application(form).toReferee();
+		RegisteredUser refereeUser = new RegisteredUserBuilder().id(2).referees(referee).firstName("harry").lastName("hen").email("hh@test.com").toUser();
+		refereeUser.setCurrentReferee(referee);
+		ProgrammeDetails programmeDetails = new ProgrammeDetails();
+		programmeDetails.setId(1);
+		form.setProgrammeDetails(programmeDetails);
+		userService =new UserService(userDAOMock, roleDAOMock,userFactoryMock,
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock){
+				
+			@Override
+			public void save(RegisteredUser user) {
+				throw new RuntimeException("aaaaaaaaaaargh");
+			}
+		};
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock);
 		try {
-			userService.saveAndEmailRegisterConfirmationToReferee(null);
-		} catch (RuntimeException e) {
-			// expected...ignore
+			userService.saveAndEmailRegisterConfirmationToReferee(refereeUser);
+		} catch (RuntimeException rte) {
+			Assert.assertTrue(rte.getMessage().startsWith("aaaaaa"));
 		}
-
 		EasyMock.verify(mimeMessagePreparatorFactoryMock, mailsenderMock);
 	}
 
@@ -185,7 +206,7 @@ public class UserServiceTest {
 	@Test
 	public void shouldNotThrowExceptionIfEmailSendingFails() throws UnsupportedEncodingException {
 		RegisteredUser administrator = new RegisteredUserBuilder().id(1).firstName("benny").lastName("brack").email("bb@test.com").toUser();
-		Program program = new ProgramBuilder().administrators(administrator).toProgram();
+		Program program = new ProgramBuilder().title("program name").administrators(administrator).toProgram();
 
 		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("applicant").lastName("hen").email("applicant@test.com").toUser();
 		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).id(2).program(program).toApplicationForm();
@@ -199,16 +220,18 @@ public class UserServiceTest {
 
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress1 = new InternetAddress("hh@test.com", "harry hen");
+		
+		EasyMock.expect(msgSourceMock.getMessage("registration.confirmation.referee", null, null)).andReturn("resolved subject");
 		EasyMock.expect(
-				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("Referee Registration"),
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("resolved subject"),
 						EasyMock.eq("private/referees/mail/register_referee_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress)EasyMock.isNull())).andReturn(preparatorMock1);
 
 		mailsenderMock.send(preparatorMock1);
 		EasyMock.expectLastCall().andThrow(new RuntimeException("AARrrgggg"));
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock);
 		userService.saveAndEmailRegisterConfirmationToReferee(refereeUser);
 
-		EasyMock.verify(mimeMessagePreparatorFactoryMock);
+		EasyMock.verify(mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock);
 
 	}
 
@@ -669,8 +692,11 @@ public class UserServiceTest {
 		userDAOMock = EasyMock.createMock(UserDAO.class);		
 		roleDAOMock = EasyMock.createMock(RoleDAO.class);
 		userFactoryMock = EasyMock.createMock(UserFactory.class);
-		userService = new UserService(userDAOMock, roleDAOMock,userFactoryMock,  mimeMessagePreparatorFactoryMock, mailsenderMock);
-		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,  mimeMessagePreparatorFactoryMock, mailsenderMock){
+		msgSourceMock = EasyMock.createMock(MessageSource.class);
+		
+		userService = new UserService(userDAOMock, roleDAOMock,userFactoryMock,  mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock);
+		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock){
 
 			@Override
 			public RegisteredUser getCurrentUser() {

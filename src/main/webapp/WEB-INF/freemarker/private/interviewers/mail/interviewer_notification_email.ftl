@@ -35,7 +35,7 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${interviewer.user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">You have been nominated to interview ${applicant.firstName?html} ${applicant.lastName?html} in connection with their application ${application.id?string('#####')} to join the Postgraduate research Programme in ${application.program.title} at UCL.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">This is to confirm the arrangements for your interview of ${applicant.firstName?html} ${applicant.lastName?html} for Application ${application.id?string('#####')} for UCL ${application.program.title}.</font>
 			      	</p>
 			      	<#if !interviewer.user.enabled>
 			      		<p>
@@ -48,35 +48,26 @@
 				      	</p>
 			      	</#if>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">After logging in, you can view the application by clicking the following link:</font>
-			      	</p>
-			         <p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View the application</a>
-			      		</font>
-			      	</p>
-			      	  <p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place on ${interviewer.interview.interviewDueDate?string("dd MMM yyyy")} at ${interviewer.interview.interviewTime?html}.</font>
-			      	</p>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The details of the interview are as follows:</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The interview will take place at ${interviewer.interview.interviewDueDate?time} on ${interviewer.interview.interviewDueDate?date}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">${interviewer.interview.furtherDetails?html}</font>
 			      	</p>
 			      	<#if interviewer.interview.locationURL??>
 				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">Please click the following link for more details about the location at which the interview will take place:</font>
-				      	</p>
-				      	<p>
 				      		<font face="Arial, Helvetica, sans-serif" size="2"><a href="${interviewer.interview.locationURL}">Location details</a></font>
 				      	</p>
-				      </#if>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">In the meantime, for further assistance <a href="mailto: ${adminsEmails}">email the administrator</a></font>
+				    </#if>
+			        <p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.id?string("######")}">View application</a>
+			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">Many Thanks, <br />UCL Portal</font>
+			      	  <font face="Arial, Helvetica, sans-serif" size="2">Please let us know by <a href="mailto: ${adminsEmails}">e-mail</a> if you are unable to attend.</font>
+			      	</p>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>
 		    	</td>
 		    	<td width="50"><img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="10" alt="" /></td>

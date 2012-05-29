@@ -8,6 +8,7 @@ import javax.mail.internet.InternetAddress;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,19 +32,21 @@ public class RefereeService {
 	private final RefereeDAO refereeDAO;
 	private final UserService userService;
 	private final RoleDAO roleDAO;
+	private final MessageSource messageSource;
 
 	RefereeService() {
-		this(null, null, null, null, null);
+		this(null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public RefereeService(RefereeDAO refereeDAO, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, UserService userService,
-			RoleDAO roleDAO) {
+			RoleDAO roleDAO, MessageSource messageSource) {
 		this.refereeDAO = refereeDAO;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
 		this.userService = userService;
 		this.roleDAO = roleDAO;
+		this.messageSource = messageSource;
 
 	}
 
@@ -78,6 +81,7 @@ public class RefereeService {
 	private void sendMailToAdministrators(Referee referee) {
 		ApplicationForm form = referee.getApplication();
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
+		String subject = resolveMessage("reference.provided.admin", form);
 
 		for (RegisteredUser admin : administrators) {
 			try {
@@ -88,7 +92,7 @@ public class RefereeService {
 				model.put("host", Environment.getInstance().getApplicationHostName());
 				InternetAddress toAddress = new InternetAddress(admin.getEmail(), admin.getFirstName() + " " + admin.getLastName());
 
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Applicant Reference Submitted",
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
 						"private/staff/admin/mail/reference_submit_confirmation.ftl", model, null));
 			} catch (Throwable e) {
 				log.warn("error while sending email", e);
@@ -109,12 +113,14 @@ public class RefereeService {
 			model.put("application", form);
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Responded",
+			
+			String subject = resolveMessage("reference.provided.applicant", form);
+			
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
 					"private/pgStudents/mail/reference_respond_confirmation.ftl", model, null));
 		} catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}
-
 	}
 
 	private String getAdminsEmailsCommaSeparatedAsString(List<RegisteredUser> administrators) {
@@ -204,28 +210,11 @@ public class RefereeService {
 	@Transactional
 	public void saveReferenceAndSendDeclineNotifications(Referee referee) {
 		refereeDAO.save(referee);
-		try {
-			ApplicationForm form = referee.getApplication();
-			RegisteredUser applicant = form.getApplicant();
-			List<RegisteredUser> administrators = form.getProgram().getAdministrators();
-			String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
-			Map<String, Object> model = new HashMap<String, Object>();
-			model.put("adminsEmails", adminsEmails);
-			model.put("referee", referee);
-			model.put("application", form);
-			model.put("host", Environment.getInstance().getApplicationHostName());
-			InternetAddress toAddress = new InternetAddress(applicant.getEmail(), applicant.getFirstName() + " " + applicant.getLastName());
-			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Responded",
-					"private/pgStudents/mail/reference_respond_confirmation.ftl", model, null));
-		} catch (Throwable e) {
-			log.warn("error while sending email", e);
-		}
-
+		sendMailToApplicant(referee);
 	}
 
 	public void sendRefereeMailNotification(Referee referee) {
 		sendMailToReferee(referee);
-		
 	}
 
 	private void sendMailToReferee(Referee referee) {
@@ -241,11 +230,13 @@ public class RefereeService {
 			model.put("programme", form.getProgrammeDetails());
 			model.put("host", Environment.getInstance().getApplicationHostName());
 			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstname() + " " + referee.getLastname());
+			
+			String subject = resolveMessage("reference.request", form);
 			if (referee.getUser() != null && referee.getUser().isEnabled()) {
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
 						"private/referees/mail/existing_user_referee_notification_email.ftl", model, null));
 			} else {
-				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Referee Notification",
+				mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
 						"private/referees/mail/referee_notification_email.ftl", model, null));
 			}
 		} catch (Throwable e) {
@@ -253,4 +244,15 @@ public class RefereeService {
 		}
 	}
 
+	private String resolveMessage(String code, ApplicationForm form) {
+		RegisteredUser applicant = form.getApplicant();
+		Object[] args;
+		if (applicant == null) {
+			args = new Object[] { form.getId(), form.getProgram().getTitle() };
+		} else {
+			args = new Object[] { form.getId(), form.getProgram().getTitle(),//
+					applicant.getFirstName(), applicant.getLastName() };
+		}
+		return messageSource.getMessage(code, args, null);
+	}
 }

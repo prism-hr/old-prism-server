@@ -8,48 +8,50 @@
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="1" ref="mailSender" />
 		<constructor-arg index="2" ref="mailApplicationsService" />
+		<constructor-arg index="3" ref="messageSource" />
 	</bean>
 
 	<bean id="refereeMailSender" class="com.zuehlke.pgadmissions.mail.RefereeMailSender"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="1" ref="mailSender" />
+		<constructor-arg index="2" ref="messageSource" />
 	</bean>
 
 	<bean id="reviewerMailSender" class="com.zuehlke.pgadmissions.mail.ReviewerMailSender"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="1" ref="mailSender" />
+		<constructor-arg index="2" ref="messageSource" />
 	</bean>
 	<bean id="interviewerMailSender" class="com.zuehlke.pgadmissions.mail.InterviewerMailSender"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="1" ref="mailSender" />
+		<constructor-arg index="2" ref="messageSource" />
 	</bean>
-	<bean id="mailAdminMailSender" class="com.zuehlke.pgadmissions.mail.AdminMailSender"
-		autowire-candidate="false">
-		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
-		<constructor-arg index="1" ref="mailSender" />
-	</bean>
-
 
 	<bean id="applicantMailSender" class="com.zuehlke.pgadmissions.mail.ApplicantMailSender"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="1" ref="mailSender" />
 		<constructor-arg index="2" ref="mailApplicationsService" />
+		<constructor-arg index="3" ref="messageSource" />
 	</bean>
 
 	<bean id="adminMailSender" class="com.zuehlke.pgadmissions.mail.AdminMailSender"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="1" ref="mailSender" />
+		<constructor-arg index="2" ref="mailApplicationsService" />
+		<constructor-arg index="3" ref="messageSource" />
 	</bean>
 	
 	<bean id="newUserMailSender" class="com.zuehlke.pgadmissions.mail.NewUserMailSender"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="1" ref="mailSender" />
+		<constructor-arg index="2" ref="messageSource" />
 	</bean>
 	
 

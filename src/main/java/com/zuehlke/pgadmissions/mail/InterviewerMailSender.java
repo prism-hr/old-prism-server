@@ -1,12 +1,12 @@
 package com.zuehlke.pgadmissions.mail;
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -16,8 +16,8 @@ import com.zuehlke.pgadmissions.utils.Environment;
 
 public class InterviewerMailSender extends MailSender {
 
-	public InterviewerMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender) {
-		super(mimeMessagePreparatorFactory, mailSender);	
+	public InterviewerMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource) {
+		super(mimeMessagePreparatorFactory, mailSender, msgSource);	
 	}
 
 	Map<String, Object> createModel(Interviewer interviewer) {
@@ -34,22 +34,19 @@ public class InterviewerMailSender extends MailSender {
 		return model;
 	}
 
-	public void sendInterviewerNotification(Interviewer interviewer) throws UnsupportedEncodingException {
-		InternetAddress toAddress = new InternetAddress(interviewer.getUser().getEmail(), interviewer.getUser().getFirstName() + " "
-				+ interviewer.getUser().getLastName());
-		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + interviewer.getInterview().getApplication().getId() + " for "
-				+ interviewer.getInterview().getApplication().getProgram().getTitle() + " - Interviewer Notification",
-				"private/interviewers/mail/interviewer_notification_email.ftl", createModel(interviewer), null));
-
+	public void sendInterviewerNotification(Interviewer interviewer) {
+		internalSendMail(interviewer, "interview.notification.interviewer", "private/interviewers/mail/interviewer_notification_email.ftl");
 	}
 
-	public void sendInterviewerReminder(Interviewer interviewer) throws UnsupportedEncodingException {
-		InternetAddress toAddress = new InternetAddress(interviewer.getUser().getEmail(), interviewer.getUser().getFirstName() + " "
-				+ interviewer.getUser().getLastName());
-		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, "Application " + interviewer.getInterview().getApplication().getId() + " for "
-				+ interviewer.getInterview().getApplication().getProgram().getTitle() + " - Interview Feedback Reminder",
-				"private/interviewers/mail/interviewer_reminder_email.ftl", createModel(interviewer), null));
-
+	public void sendInterviewerReminder(Interviewer interviewer) {
+		internalSendMail(interviewer, "interview.feedback.request.reminder", "private/interviewers/mail/interviewer_reminder_email.ftl");
+	}
+	
+	private void internalSendMail(Interviewer interviewer, String subjectCode, String template) {
+		InternetAddress toAddress = createAddress(interviewer.getUser());
+		String subject = resolveMessage(subjectCode, interviewer.getInterview().getApplication());
 		
+		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
+				template, createModel(interviewer), null));
 	}
 }

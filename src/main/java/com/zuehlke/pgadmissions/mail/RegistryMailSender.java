@@ -1,26 +1,17 @@
 package com.zuehlke.pgadmissions.mail;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.DataSource;
 import javax.mail.internet.InternetAddress;
-import javax.mail.util.ByteArrayDataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamSource;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
@@ -44,13 +35,13 @@ public class RegistryMailSender extends MailSender {
 	private final UserService userService;
 
 	RegistryMailSender() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, RegistryUserDAO registryUserDAO,
-			UserService userService) {
-		super(mimeMessagePreparatorFactory, mailSender);
+			UserService userService, MessageSource msgSource) {
+		super(mimeMessagePreparatorFactory, mailSender, msgSource);
 		this.registryUserDAO = registryUserDAO;
 		this.userService = userService;
 	}
@@ -63,8 +54,9 @@ public class RegistryMailSender extends MailSender {
 			toAddresses[counter++] = new InternetAddress(registryUser.getEmail(), registryUser.getFirstname() + " " + registryUser.getLastname());
 		}
 		RegisteredUser currentUser = userService.getCurrentUser();
-		InternetAddress ccAdminAddres = new InternetAddress(currentUser.getEmail(), currentUser.getFirstName() + " " + currentUser.getLastName());
-		String subject = "Application " + applicationForm.getId() + " for UCL " + applicationForm.getProgram().getTitle() + " - Validation Request";
+		InternetAddress ccAdminAddres = createAddress(currentUser);
+		
+		String subject = resolveMessage("validation.request.registry.contacts", applicationForm);
 		String templatename = "private/staff/admin/mail/registry_validation_request.ftl";
 
 		MimeMessagePreparator mimeMessagePreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddresses,

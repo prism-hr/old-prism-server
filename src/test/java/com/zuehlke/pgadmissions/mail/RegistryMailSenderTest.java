@@ -4,10 +4,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
@@ -15,6 +15,7 @@ import javax.mail.internet.InternetAddress;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
@@ -33,8 +34,6 @@ import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.PdfDocumentBuilder;
 
-import cucumber.annotation.lu.a;
-
 public class RegistryMailSenderTest {
 
 	private JavaMailSender javaMailSenderMock;
@@ -42,9 +41,10 @@ public class RegistryMailSenderTest {
 	private RegistryMailSender registryMailSender;
 	private RegistryUserDAO registryUserDAOMock;
 	private UserService userServiceMock;
+	private MessageSource msgSourceMock;
 
 	@Test
-	public void shouldReturnModelWithApplicationForm() throws UnsupportedEncodingException {
+	public void shouldReturnModelWithApplicationForm() {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
 		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").toUser();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentAdminUser);
@@ -59,7 +59,7 @@ public class RegistryMailSenderTest {
 	public void shoulSendMailToRegistryContacts() throws MalformedURLException, DocumentException, IOException {
 		final Map<String, Object> model  = new HashMap<String, Object>();
 		final PdfDocumentBuilder pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);
-		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, registryUserDAOMock, userServiceMock){
+		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, registryUserDAOMock, userServiceMock, msgSourceMock){
 
 			@Override
 			public Map<String, Object> createModel(ApplicationForm applicationForm, RegisteredUser currentAdminUser) {
@@ -90,17 +90,19 @@ public class RegistryMailSenderTest {
 		InternetAddress toAddress3 = new InternetAddress("hobnob@test.com", "Hanna Hobnop");
 		
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("validation.request.registry.contacts"),// 
+				EasyMock.aryEq(new Object[] { 1, "program name" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.aryEq(new InternetAddress[] { toAddress1, toAddress2 }), EasyMock.aryEq(new InternetAddress[]{toAddress3}),
-						EasyMock.eq("Application 1 for UCL program name - Validation Request"), EasyMock.eq("private/staff/admin/mail/registry_validation_request.ftl"), EasyMock.eq(model), EasyMock.eq(toAddress3), EasyMock.isA(File.class))).andReturn(preparatorMock);
+						EasyMock.eq("resolved subject"), EasyMock.eq("private/staff/admin/mail/registry_validation_request.ftl"), EasyMock.eq(model), EasyMock.eq(toAddress3), EasyMock.isA(File.class))).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 		
 		pdfDocumentBuilderMock.buildDocument(EasyMock.eq(applicationForm), EasyMock.isA(Document.class));
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, pdfDocumentBuilderMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, pdfDocumentBuilderMock, msgSourceMock);
 		
 		registryMailSender.sendApplicationToRegistryContacts(applicationForm);
 		
-		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock, pdfDocumentBuilderMock);
+		EasyMock.verify(mimeMessagePreparatorFactoryMock, javaMailSenderMock, pdfDocumentBuilderMock, msgSourceMock);
 
 	}
 	
@@ -115,6 +117,8 @@ public class RegistryMailSenderTest {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		registryUserDAOMock = EasyMock.createMock(RegistryUserDAO.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, registryUserDAOMock, userServiceMock);
+		msgSourceMock = EasyMock.createMock(MessageSource.class);
+		
+		registryMailSender = new RegistryMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, registryUserDAOMock, userServiceMock, msgSourceMock);
 	}
 }

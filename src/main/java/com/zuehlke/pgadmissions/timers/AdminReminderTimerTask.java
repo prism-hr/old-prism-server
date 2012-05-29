@@ -24,18 +24,18 @@ public class AdminReminderTimerTask extends TimerTask {
 	private final AdminMailSender adminMailSender;
 	private final NotificationType notificationType;
 	private final ApplicationFormStatus status;
-	private final String subjectMessage;
+	private final String subjectCode;
 	private final String emailTemplate;
 
 	public AdminReminderTimerTask(SessionFactory sessionFactory, ApplicationFormDAO applicationFormDAO, AdminMailSender adminMailSender,
-			NotificationType notificationType, ApplicationFormStatus status, String subjectMessage, String emailTemplate) {
+			NotificationType notificationType, ApplicationFormStatus status, String subjectCode, String emailTemplate) {
 				this.sessionFactory = sessionFactory;
 
 				this.applicationFormDAO = applicationFormDAO;
 				this.adminMailSender = adminMailSender;
 				this.notificationType = notificationType;
 				this.status = status;
-				this.subjectMessage = subjectMessage;
+				this.subjectCode = subjectCode;
 				this.emailTemplate = emailTemplate;
 	}
 
@@ -52,7 +52,7 @@ public class AdminReminderTimerTask extends TimerTask {
 			sessionFactory.getCurrentSession().refresh(application);
 			try {
 
-				adminMailSender.sendMailsForApplication(application, subjectMessage, emailTemplate);
+				adminMailSender.sendMailsForApplication(application, subjectCode, emailTemplate);
 				NotificationRecord notificationRecord = application.getNotificationForType(notificationType);
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(notificationType);

@@ -10,6 +10,7 @@ import com.zuehlke.pgadmissions.domain.EmploymentPosition;
 import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.EmploymentPositionService;
 import com.zuehlke.pgadmissions.services.FundingService;
 import com.zuehlke.pgadmissions.services.QualificationService;
@@ -23,21 +24,23 @@ public class DeleteApplicationFormEntitiesController {
 	private final EmploymentPositionService employmentService;
 	private final FundingService fundingService;
 	private final RefereeService refereeService;
+	private final EncryptionHelper encryptionHelper;
 
 	DeleteApplicationFormEntitiesController() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
 	public DeleteApplicationFormEntitiesController(
 			QualificationService qualificationService,
 			EmploymentPositionService employmentService,
-			FundingService fundingService, RefereeService refereeService) {
+			FundingService fundingService, RefereeService refereeService, EncryptionHelper encryptionHelper) {
 
 		this.qualificationService = qualificationService;
 		this.employmentService = employmentService;
 		this.fundingService = fundingService;
 		this.refereeService = refereeService;
+		this.encryptionHelper = encryptionHelper;
 
 	}
 
@@ -60,9 +63,9 @@ public class DeleteApplicationFormEntitiesController {
 	}
 
 	@RequestMapping(value = "/employment", method = RequestMethod.POST)
-	public String deleteEmployment(@RequestParam Integer id) {
+	public String deleteEmployment(@RequestParam("id") String encryptedEmploymentId) {
 		EmploymentPosition position = employmentService
-				.getEmploymentPositionById(id);
+				.getEmploymentPositionById(encryptionHelper.decryptToInteger(encryptedEmploymentId));
 		employmentService.delete(position);
 		return "redirect:/update/getEmploymentPosition?applicationId="
 				+ position.getApplication().getApplicationNumber() + "&message=deleted";

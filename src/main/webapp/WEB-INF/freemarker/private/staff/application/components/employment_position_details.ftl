@@ -19,7 +19,7 @@
 			         
 			        <!-- All hidden input - Start -->
 			                    
-					<input type="hidden" id="${position.id?string('#######')}_positionId" value="${position.id?string('#######')}"/>
+					<input type="hidden" id="${position.id?string('#######')}_positionId" value="${encrypter.encrypt(position.id)}"/>
 	                <input type="hidden" id="${position.id?string('#######')}_employerName" value="${(position.employerName?html)!}"/>
 	                <input type="hidden" id="${position.id?string('#######')}_employerAddress" value="${(position.employerAddress?html)!}"/>
 	                <input type="hidden" id="${position.id?string('#######')}_employerCountry" value="${(position.employerCountry.name?html)!}"/>

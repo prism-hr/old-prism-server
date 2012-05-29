@@ -7,20 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.Ethnicity;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.EthnicityService;
 
 @Component
 public class EthnicityPropertyEditor extends PropertyEditorSupport {
 
 	private final EthnicityService ethnicityService;
+	private final EncryptionHelper encryptionHelper;
 
 	EthnicityPropertyEditor(){
-		this(null);
+		this(null, null);
 	}
 	
 	@Autowired
-	public EthnicityPropertyEditor(EthnicityService ethService) {
-		this.ethnicityService = ethService;	
+	public EthnicityPropertyEditor(EthnicityService ethService, EncryptionHelper encryptionHelper) {
+		this.ethnicityService = ethService;
+		this.encryptionHelper = encryptionHelper;	
 	}
 	
 	@Override
@@ -29,7 +32,7 @@ public class EthnicityPropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(ethnicityService.getEthnicityById(Integer.parseInt(strId)));
+		setValue(ethnicityService.getEthnicityById(encryptionHelper.decryptToInteger(strId)));
 	}
 
 	@Override
@@ -37,6 +40,6 @@ public class EthnicityPropertyEditor extends PropertyEditorSupport {
 		if(getValue() == null || ((Ethnicity)getValue()).getId() == null){
 			return null;
 		}
-		return ((Ethnicity)getValue()).getId().toString();
+		return encryptionHelper.encrypt(((Ethnicity)getValue()).getId());
 	}
 }

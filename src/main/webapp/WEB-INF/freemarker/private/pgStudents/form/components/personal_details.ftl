@@ -50,8 +50,7 @@
 <div>    
 
 	<form>		
-	
-			<input type="hidden" name="id" id="personalDetailsId" value="${(personalDetails.id?string("######"))!}"/>			
+				
             <input type="hidden" id="form-display-state" value="${formDisplayState!}"/>
 
 			
@@ -446,7 +445,7 @@
                   		<select class="full" name="ethnicity" id="ethnicity" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> >
                   			<option value="">Select...</option>
                     		<#list ethnicities as ethnicity>
-                          	<option value="${ethnicity.id?string('#######')}"
+                          	<option value="${encrypter.encrypt(ethnicity.id)}"
 							<#if personalDetails.ethnicity?? &&  personalDetails.ethnicity.id == ethnicity.id >
 							selected="selected"
 							</#if>   

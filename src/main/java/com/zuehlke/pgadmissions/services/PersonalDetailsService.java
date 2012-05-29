@@ -21,10 +21,6 @@ public class PersonalDetailsService {
 		this.personalDetailDAO = personalDetailDAO;
 
 	}
-
-	public PersonalDetails getPersonalDetailsById(Integer id) {
-		return personalDetailDAO.getPersonalDetailsById(id);
-	}
 	
 	@Transactional
 	public void save(PersonalDetails personalDetails) {

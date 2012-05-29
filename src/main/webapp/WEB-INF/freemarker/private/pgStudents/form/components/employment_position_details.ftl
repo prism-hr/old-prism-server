@@ -229,7 +229,7 @@
                    		<#if (applicationForm.isDecided() || applicationForm.isWithdrawn())>disabled="disabled"</#if>>
                     	<option value="">Select...</option>
                     	<#list languages as language>
-                     		<option value="${language.id?string('#######')}" <#if employmentPosition.language?? && employmentPosition.language.id == language.id> selected="selected"</#if>>${language.name}</option>
+                     		<option value="${encrypter.encrypt(language.id)}" <#if employmentPosition.language?? && employmentPosition.language.id == language.id> selected="selected"</#if>>${language.name}</option>
                      	</#list>
                  	 </select>
                  	  

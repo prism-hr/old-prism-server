@@ -691,6 +691,115 @@ public class RegisteredUserTest {
 	}
 	
 	@Test
+	public void shouldReturnFalseIfInterviewerUserRespondedInPreviousRoundsButNotInLatest() {
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		RegisteredUser interviewerUser1 = new RegisteredUserBuilder().id(1).toUser();
+		Interviewer interviewer1 = new InterviewerBuilder().interview(new InterviewBuilder().id(1).toInterview()).id(1).user(interviewerUser1).toInterviewer();
+		Interviewer interviewer2 = new InterviewerBuilder().id(1).user(interviewerUser1).toInterviewer();
+		Interview interview1 = new InterviewBuilder().id(1).interviewers(interviewer1).toInterview();
+		Interview interview2 = new InterviewBuilder().id(1).interviewers(interviewer2).toInterview();
+		interviewer1.setInterview(interview1);
+		interviewer2.setInterview(interview2);
+		
+		application.setInterviews(Arrays.asList(interview1, interview2));
+		application.setLatestInterview(interview2);
+		assertFalse(interviewerUser1.hasRespondedToProvideInterviewFeedbackForApplication(application));
+		
+	}
+	
+	@Test
+	public void shouldReturnTrueIfInterviewerUserRespondedInLatestRound() {
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		RegisteredUser interviewerUser1 = new RegisteredUserBuilder().id(1).toUser();
+		Interviewer interviewer1 = new InterviewerBuilder().id(1).user(interviewerUser1).toInterviewer();
+		Interviewer interviewer2 = new InterviewerBuilder().interview(new InterviewBuilder().id(2).toInterview()).id(1).user(interviewerUser1).toInterviewer();
+		Interview reviewRound1 = new InterviewBuilder().id(1).interviewers(interviewer1).toInterview();
+		Interview reviewRound2 = new InterviewBuilder().id(1).interviewers(interviewer2).toInterview();
+		interviewer1.setInterview(reviewRound1);
+		interviewer2.setInterview(reviewRound2);
+		
+		application.setInterviews(Arrays.asList(reviewRound1, reviewRound2));
+		application.setLatestInterview(reviewRound2);
+		assertTrue(interviewerUser1.hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(application));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfReviewerUserRespondedInPreviousRoundsButNotInLatest() {
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(1).toUser();
+		Reviewer reviewer1 = new ReviewerBuilder().review(new ReviewCommentBuilder().id(1).toReviewComment()).id(1).user(reviewerUser1).toReviewer();
+		Reviewer reviewer2 = new ReviewerBuilder().id(1).user(reviewerUser1).toReviewer();
+		ReviewRound reviewRound1 = new ReviewRoundBuilder().id(1).reviewers(reviewer1).toReviewRound();
+		ReviewRound reviewRound2 = new ReviewRoundBuilder().id(1).reviewers(reviewer2).toReviewRound();
+		reviewer1.setReviewRound(reviewRound1);
+		reviewer2.setReviewRound(reviewRound2);
+		
+		application.setReviewRounds(Arrays.asList(reviewRound1, reviewRound2));
+		application.setLatestReviewRound(reviewRound2);
+		assertFalse(reviewerUser1.hasRespondedToProvideReviewForApplicationLatestRound(application));
+		
+	}
+	
+	
+	@Test
+	public void shouldReturnFalseIfReviewerUserDidNotRespondInAnyRound() {
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(1).toUser();
+		Reviewer reviewer1 = new ReviewerBuilder().id(1).user(reviewerUser1).toReviewer();
+		Reviewer reviewer2 = new ReviewerBuilder().id(1).user(reviewerUser1).toReviewer();
+		ReviewRound reviewRound1 = new ReviewRoundBuilder().id(1).reviewers(reviewer1).toReviewRound();
+		ReviewRound reviewRound2 = new ReviewRoundBuilder().id(1).reviewers(reviewer2).toReviewRound();
+		reviewer1.setReviewRound(reviewRound1);
+		reviewer2.setReviewRound(reviewRound2);
+		
+		application.setReviewRounds(Arrays.asList(reviewRound1, reviewRound2));
+		application.setLatestReviewRound(reviewRound2);
+		assertFalse(reviewerUser1.hasRespondedToProvideReviewForApplicationLatestRound(application));
+		
+	}
+	
+	
+	@Test
+	public void shouldReturnTrueIfReviewerUserRespondedInLatestRoundAndInPrevious() {
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(1).toUser();
+		Reviewer reviewer1 = new ReviewerBuilder().review(new ReviewCommentBuilder().id(1).toReviewComment()).id(1).user(reviewerUser1).toReviewer();
+		Reviewer reviewer2 = new ReviewerBuilder().review(new ReviewCommentBuilder().id(2).toReviewComment()).id(1).user(reviewerUser1).toReviewer();
+		ReviewRound reviewRound1 = new ReviewRoundBuilder().id(1).reviewers(reviewer1).toReviewRound();
+		ReviewRound reviewRound2 = new ReviewRoundBuilder().id(1).reviewers(reviewer2).toReviewRound();
+		reviewer1.setReviewRound(reviewRound1);
+		reviewer2.setReviewRound(reviewRound2);
+		
+		application.setReviewRounds(Arrays.asList(reviewRound1, reviewRound2));
+		application.setLatestReviewRound(reviewRound2);
+		assertTrue(reviewerUser1.hasRespondedToProvideReviewForApplicationLatestRound(application));
+		
+	}
+	
+	@Test
+	public void shouldReturnTrueIfReviewerUserRespondedInLatestRound() {
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm application = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
+		RegisteredUser reviewerUser1 = new RegisteredUserBuilder().id(1).toUser();
+		Reviewer reviewer1 = new ReviewerBuilder().id(1).user(reviewerUser1).toReviewer();
+		Reviewer reviewer2 = new ReviewerBuilder().review(new ReviewCommentBuilder().id(2).toReviewComment()).id(1).user(reviewerUser1).toReviewer();
+		ReviewRound reviewRound1 = new ReviewRoundBuilder().id(1).reviewers(reviewer1).toReviewRound();
+		ReviewRound reviewRound2 = new ReviewRoundBuilder().id(1).reviewers(reviewer2).toReviewRound();
+		reviewer1.setReviewRound(reviewRound1);
+		reviewer2.setReviewRound(reviewRound2);
+		
+		application.setReviewRounds(Arrays.asList(reviewRound1, reviewRound2));
+		application.setLatestReviewRound(reviewRound2);
+		assertTrue(reviewerUser1.hasRespondedToProvideReviewForApplicationLatestRound(application));
+		
+	}
+	
+	@Test
 	public void shouldReturnFalseIfUserIsInterviewerOfApplicationButHasNotProvidedInterviewFeedback() {
 		
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).username("applicantemail").firstName("bob").lastName("bobson").email("email@test.com")

@@ -760,3 +760,24 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 .ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
 .ui-slider-vertical .ui-slider-range-min { bottom: 0; }
 .ui-slider-vertical .ui-slider-range-max { top: 0; }
+
+/* Application status icons. */
+span.icon-update,
+span.icon-validation,
+span.icon-approval,
+span.icon-interview,
+span.icon-review {
+	background-repeat: no-repeat;
+	display: inline-block;
+	height: 24px;
+	overflow: hidden;
+	text-indent: 24px;
+	vertical-align: top;
+	white-space: nowrap;
+	width: 24px;
+}
+span.icon-update { background-image: url(../../images/status_update.png); }
+span.icon-validation { background-image: url(../../images/status_validation.png); }
+span.icon-approval { background-image: url(../../images/status_approval.png); }
+span.icon-interview { background-image: url(../../images/status_interview.png); }
+span.icon-review { background-image: url(../../images/status_review.png); }

@@ -777,7 +777,9 @@ button span.icon-up, button span.icon-down {
 	background-repeat: no-repeat;
 	display: inline-block !important;
 	height: 10px !important;
+	margin: 0 !important;
 	overflow: hidden;
+	padding: 0 !important;
 	text-indent: 10px;
 	vertical-align: middle;
 	white-space: nowrap;

@@ -3,6 +3,7 @@ $(document).ready(function() {
 	$.get("/pgadmissions/applications/section",
 			function(data) {
 				$('#applicationListSection').html(data);
+				addToolTips();
 			}
 	);
 	

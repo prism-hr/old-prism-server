@@ -773,15 +773,15 @@ span.icon-role.applicant { background-image: url(../../images/role_applicant.png
 span.icon-role.referee { background-image: url(../../images/role_referee.png); }
 
 
-span.icon-up, span.icon-down {
+button span.icon-up, button span.icon-down {
 	background-repeat: no-repeat;
-	display: inline-block;
-	height: 10px;
+	display: inline-block !important;
+	height: 10px !important;
 	overflow: hidden;
 	text-indent: 10px;
 	vertical-align: middle;
 	white-space: nowrap;
-	width: 10px;
+	width: 10px !important;
 }
-span.icon-up { background-image(../../images/icon_arrow_up.png); }
-span.icon-down { background-image(../../images/icon_arrow_down.png); }
+span.icon-up { background-image(../../images/icon_arrow_up.png) !important; }
+span.icon-down { background-image(../../images/icon_arrow_down.png) !important; }

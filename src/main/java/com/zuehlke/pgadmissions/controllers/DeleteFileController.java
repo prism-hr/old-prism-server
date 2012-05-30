@@ -39,7 +39,7 @@ public class DeleteFileController {
 		if(document != null && userService.getCurrentUser().equals(document.getUploadedBy()) ){
 			documentService.delete(document);
 		}
-		return new ModelAndView("/private/common/simpleMessage", "message", "ok");
+		return new ModelAndView("/private/common/simpleMessage", "message", "document.deleted");
 
 
 	}

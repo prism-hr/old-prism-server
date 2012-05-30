@@ -114,7 +114,9 @@
 								</div>
 
 								<div class="row">
+									<div class="registry"><#if applicationForm.getNotificationForType('REGISTRY_HELP_REQUEST')?? >The registry was last contacted on ${applicationForm.getNotificationForType('REGISTRY_HELP_REQUEST').date?string('dd-MMM-yyyy HH:mm')}.</#if></div>
 									<button class="blue registry" type="button" id="notifyRegistryButton">Request registry assistance</button>
+									<div id="emailMessage"  class="registry"></div>
 								</div>
 								
 							</div><!-- close .row-group -->

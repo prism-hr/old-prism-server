@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow.validation;
 
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.mail.RegistryMailSender;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -40,10 +44,17 @@ public class EmailRegistryController {
 		ModelAndView modelAndView = new ModelAndView("private/common/simpleMessage");
 		try {
 			registryMailSender.sendApplicationToRegistryContacts(applicationForm);
-			modelAndView.getModel().put("message", "Email send");
+			NotificationRecord notificationRecord = applicationForm.getNotificationForType(NotificationType.REGISTRY_HELP_REQUEST);
+			if (notificationRecord == null) {
+				notificationRecord = new NotificationRecord(NotificationType.REGISTRY_HELP_REQUEST);
+				applicationForm.getNotificationRecords().add(notificationRecord);
+			}
+			notificationRecord.setDate(new Date());
+			applicationsService.save(applicationForm);
+			modelAndView.getModel().put("message", "registry.email.send");
 		} catch (Throwable e) {
 			log.error("Send email to registry contacts failed:", e);
-			modelAndView.getModel().put("message", "Email sending failed");			
+			modelAndView.getModel().put("message", "registry.email.failed");			
 		}
 	
 	

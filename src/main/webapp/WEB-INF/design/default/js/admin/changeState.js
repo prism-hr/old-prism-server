@@ -29,11 +29,14 @@ $(document).ready(function(){
 		if($('#status').val() == 'INTERVIEW'){
 			$('#appliationAdmin').removeAttr('disabled');
 		}else{
-			$('#appliationAdmin').attr('disabled', 'disabled');
+			$('#appliationAdmin')
 		}
 	});
 	
-	$('#notifyRegistryButton').click(function(){		
+	$('#notifyRegistryButton').click(function(){
+		$('#notifyRegistryButton').attr('disabled', 'disabled');
+		$('#notifyRegistryButton').removeClass("blue");
+		$('body').css('cursor', 'wait');
 		$.post( 
 			"/pgadmissions/registryHelpRequest",
 			{
@@ -42,6 +45,9 @@ $(document).ready(function(){
 			},
 			function(data) {
 			    $('#emailMessage').html(data);
+			    $('#notifyRegistryButton').removeAttr('disabled');
+			    $('#notifyRegistryButton').addClass("blue");
+				$('body').css('cursor', 'auto');
 			 }
 		);
 	});

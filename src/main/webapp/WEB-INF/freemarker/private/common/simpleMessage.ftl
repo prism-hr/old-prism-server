@@ -1,3 +1,4 @@
+<#import "/spring.ftl" as spring />
 <#if message??>
-${message?html}
+<@spring.message message/> 
 </#if>

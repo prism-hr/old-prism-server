@@ -38,7 +38,7 @@ public class DeleteFileControllerTest {
 		ModelAndView modelAndView = controller.asyncdelete("encryptedId");
 		
 		assertEquals("/private/common/simpleMessage", modelAndView.getViewName());
-		assertEquals("ok", modelAndView.getModel().get("message"));
+		assertEquals("document.deleted", modelAndView.getModel().get("message"));
 		EasyMock.verify(documentServiceMock);
 	}
 	
@@ -50,7 +50,7 @@ public class DeleteFileControllerTest {
 		EasyMock.replay(documentServiceMock, encryptionHelperMock);
 		ModelAndView modelAndView = controller.asyncdelete("encryptedId");
 		assertEquals("/private/common/simpleMessage", modelAndView.getViewName());
-		assertEquals("ok", modelAndView.getModel().get("message"));
+		assertEquals("document.deleted", modelAndView.getModel().get("message"));
 		EasyMock.verify(documentServiceMock);
 	}
 	
@@ -61,7 +61,7 @@ public class DeleteFileControllerTest {
 		EasyMock.replay(documentServiceMock, encryptionHelperMock);
 		ModelAndView modelAndView = controller.asyncdelete("encryptedId");
 		assertEquals("/private/common/simpleMessage", modelAndView.getViewName());
-		assertEquals("ok", modelAndView.getModel().get("message"));
+		assertEquals("document.deleted", modelAndView.getModel().get("message"));
 		EasyMock.verify(documentServiceMock);
 	}
 	@Before

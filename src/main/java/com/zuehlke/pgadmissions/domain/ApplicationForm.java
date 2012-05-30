@@ -451,6 +451,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return null;
 	}
 
+	public NotificationRecord getNotificationForType(String strType) {
+		return getNotificationForType(NotificationType.valueOf(strType));
+	}
+
 	public boolean hasAcceptedTheTerms() {
 		return acceptedTerms == CheckedStatus.YES;
 	}

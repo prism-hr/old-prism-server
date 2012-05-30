@@ -750,3 +750,22 @@ table.data thead th.headerSortDown span.arrow { background-position: 100% -19px;
 .ui-slider-vertical .ui-slider-range { left: 0; width: 100%; }
 .ui-slider-vertical .ui-slider-range-min { bottom: 0; }
 .ui-slider-vertical .ui-slider-range-max { top: 0; }
+
+
+/* User role icons. -------------------------------------------------------------------------------------- */
+span.icon-role {
+	background-repeat: no-repeat;
+	display: inline-block;
+	height: 24px;
+	overflow: hidden;
+	text-indent: 24px;
+	vertical-align: top;
+	white-space: nowrap;
+	width: 24px;
+}
+span.icon-role.admin { background-image: url(../../images/role_admin.png); }
+span.icon-role.reviewer { background-image: url(../../images/role_reviewer.png); }
+span.icon-role.interviewer { background-image: url(../../images/role_interviewer.png); }
+span.icon-role.approver { background-image: url(../../images/role_approver.png); }
+span.icon-role.applicant { background-image: url(../../images/role_applicant.png); }
+span.icon-role.referee { background-image: url(../../images/role_referee.png); }

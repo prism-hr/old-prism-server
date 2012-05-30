@@ -11,5 +11,6 @@ public class SearchCategoriesTest {
 		assertEquals("Application Code",  SearchCategories.APPLICATION_CODE.displayValue());
 		assertEquals("Applicant Name",  SearchCategories.APPLICANT_NAME.displayValue());
 		assertEquals("Programme Name",  SearchCategories.PROGRAMME_NAME.displayValue());
+		assertEquals("Application Status",  SearchCategories.APPLICATION_STATUS.displayValue());
 	}
 }

@@ -1408,4 +1408,73 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		
 	}
 	
+
+	@Test
+	public void shouldGetAllApplicationsInValidationStage(){
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicationNumber("ABC").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).applicationNumber("ABCD").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program).applicant(user).toApplicationForm();
+		
+		save(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("validati", SearchCategories.APPLICATION_STATUS);
+		assertTrue(applications.contains(applicationFormOne));
+		assertTrue(applications.contains(applicationFormThree));
+		
+	}
+	
+	
+	@Test
+	public void shouldGetAllApplicationsInApprovalStage(){
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVAL).applicationNumber("ABC").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program).applicant(user).toApplicationForm();
+		
+		save(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("approval", SearchCategories.APPLICATION_STATUS);
+		assertTrue(applications.contains(applicationFormOne));
+		
+	}
+	
+	@Test
+	public void shouldGetAllApplicationsInApprovedStage(){
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program).applicant(user).toApplicationForm();
+		
+		save(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("approveD", SearchCategories.APPLICATION_STATUS);
+		assertTrue(applications.contains(applicationFormOne));
+		
+	}
+	
+	
+	@Test
+	public void shouldNotReturnAppIfNoStatusMatching(){
+		ApplicationForm applicationFormOne = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormThree = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).applicant(user).toApplicationForm();
+		ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program).applicant(user).toApplicationForm();
+		
+		save(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo);
+		
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getAllApplicationsContainingTermInCategory("lalala", SearchCategories.APPLICATION_STATUS);
+		assertNull(applications);
+		
+	}
+	
+	
 }

@@ -4,7 +4,8 @@ public enum SearchCategories {
 	
 	APPLICATION_CODE("Application Code"),
 	APPLICANT_NAME("Applicant Name"),
-	PROGRAMME_NAME("Programme Name");
+	PROGRAMME_NAME("Programme Name"),
+	APPLICATION_STATUS("Application Status");
 	
 	private final String displayValue;
 

@@ -20,3 +20,21 @@ table.data tr td, table.data tr th { border-bottom: 1px solid #999; }
 table.data tbody td { background: url(../../images/bg_table_row.jpg) repeat-x 0 100%; }
 table.data select { width: 100%; }
 table.data thead th.headerSortDown, table.data thead th.headerSortUp { background-color: #06C; color: #FFF; }
+
+
+/* Application status icons. ------------------------------------------------------------------------- */
+span.icon-status {
+	background: url(../../images/status_icons.png) no-repeat 0 -125px;
+	display: inline-block;
+	height: 25px;
+	overflow: hidden;
+	text-indent: 25px;
+	vertical-align: top;
+	white-space: nowrap;
+	width: 25px;
+}
+span.icon-status.interview { background-position: 0 0; }
+span.icon-status.withdrawn { background-position: 0 -25px; }
+span.icon-status.review { background-position: 0 -50px; }
+span.icon-status.approval { background-position: 0 -75px; }
+span.icon-status.rejected { background-position: 0 -100px; }

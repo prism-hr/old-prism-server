@@ -73,9 +73,9 @@
 														<div class="field">	
 															<input type="hidden" id="stage" name="stage" value="${stage}" />
 															<#if durationDAO.getByStatus(stage)?? && durationDAO.getByStatus(stage).duration??>  				
-															<input type = "text" id="${stage}_duration" name="${stage}_duration" value="${durationDAO.getByStatus(stage).duration?string("######")}" />
+															<input type="text" size="4" id="${stage}_duration" name="${stage}_duration" value="${durationDAO.getByStatus(stage).duration?string("######")}" />
 															<#else>
-															<input type = "text" id="${stage}_duration" name="${stage}_duration"  />
+															<input type="text" size="4" id="${stage}_duration" name="${stage}_duration"  />
 															</#if>
 		            							<select name="${stage}_unit" id="${stage}_unit">
 																<option value="">Select...</option>
@@ -111,7 +111,7 @@
 			           					<span id="reminder-lbl" class="plain-label">Reminder Interval Duration</span>
 			            				<div class="field">	
 														<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
-														<input type = "text" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(intervalDAO.getReminderInterval().duration?string("######"))!}" />
+														<input type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(intervalDAO.getReminderInterval().duration?string("######"))!}" />
 														<select name="reminderUnit" id="reminderUnit">
 															<option value="">Select...</option>
 														<#list units as unit>
@@ -145,21 +145,21 @@
 													<div class="row"> 
 														<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
 														<div class="field">	
-															<input type = "text" id="1_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[0].firstname)!}" />
+															<input type="text" class="full" id="1_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[0].firstname)!}" />
 														</div>
 													</div>
 												
 													<div class="row"> 
 														<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
 														<div class="field">	
-															<input type = "text" id="1_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[0].lastname)!}" />
+															<input type="text" class="full" id="1_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[0].lastname)!}" />
 														</div>
 													</div>
 									
 													<div class="row"> 
 														<span id="ru-email-lbl" class="plain-label">Email</span>
 														<div class="field">	
-															<input type = "text" id="1_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[0].email)!}"/>
+															<input type="text" class="full" id="1_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[0].email)!}"/>
 														</div>
 													</div>
 												</div>
@@ -172,21 +172,21 @@
 													<div class="row"> 
 														<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
 														<div class="field">	
-																<input type = "text" id="2_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[1].firstname)!}"/>
+																<input type="text" class="full" id="2_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[1].firstname)!}"/>
 														</div>
 													</div>
 									
 													<div class="row"> 
 														<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
 														<div class="field">	
-															<input type = "text" id="2_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[1].lastname)!}"/>
+															<input type="text" class="full" id="2_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[1].lastname)!}"/>
 														</div>
 													</div>
 									
 													<div class="row"> 
 														<span id="ru-email-lbl" class="plain-label">Email</span>
 														<div class="field">	
-															<input type = "text" id="2_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[1].email)!}"/>
+															<input type="text" class="full" id="2_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[1].email)!}"/>
 														</div>
 													</div>
 												</span>
@@ -199,21 +199,21 @@
 													<div class="row"> 
 														<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
 														<div class="field">	
-															<input type = "text" id="3_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[2].firstname)!}"/>
+															<input type="text" class="full" id="3_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[2].firstname)!}"/>
 														</div>
 													</div>
 												
 													<div class="row"> 
 														<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
 														<div class="field">	
-															<input type = "text" id="3_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[2].lastname)!}"/>
+															<input type="text" class="full" id="3_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[2].lastname)!}"/>
 														</div>
 													</div>
 												
 													<div class="row"> 
 														<span id="ru-email-lbl" class="plain-label">Email</span>
 														<div class="field">	
-															<input type = "text" id="3_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[2].email)!}"/>
+															<input type="text" class="full" id="3_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[2].email)!}"/>
 														</div>
 													</div>
 												</div>

@@ -55,7 +55,6 @@
 				        <div class="content-box-inner">
 							
 									<p style="color:red;">${(message?html)!}</p>
-									
 									<div id="search-applications" class="row"> 
 										<div class="field">	
 											<label for="searchTerm" id="searchLbl">Search</label>

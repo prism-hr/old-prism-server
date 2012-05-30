@@ -47,6 +47,7 @@
 				<ref bean="adminInterviewFeedbackNotificationSchedule"/>
 				<ref bean="adminInterviewReminderSchedule"/>
 				<ref bean="adminAssignedReviewerNotificationSchedule"/>
+				<ref bean="moveToApprovalNotificationSchedule"/>
 			</list>
 		</property>
 	</bean>

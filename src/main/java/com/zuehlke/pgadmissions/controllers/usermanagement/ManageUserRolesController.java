@@ -22,7 +22,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UpdateUserRolesDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.UpdateUserRolesDTOValidator;
@@ -33,7 +33,7 @@ public class ManageUserRolesController {
 	private static final String ROLES_PAGE_VIEW_NAME = "private/staff/superAdmin/assign_roles_page";
 	private final UserService userService;
 	private final ProgramsService programsService;
-	private final UserPropertyEditor userPropertyEditor;
+	private final PlainTextUserPropertyEditor userPropertyEditor;
 	private final ProgramPropertyEditor programPropertyEditor;
 	private final UpdateUserRolesDTOValidator updateUserRolesDTOValidator;
 
@@ -42,7 +42,7 @@ public class ManageUserRolesController {
 	}
 	
 	@Autowired
-	public ManageUserRolesController(UserService userService, ProgramsService programsService, UserPropertyEditor userPropertyEditor, ProgramPropertyEditor programPropertyEditor, UpdateUserRolesDTOValidator updateUserRolesDTOValidator) {
+	public ManageUserRolesController(UserService userService, ProgramsService programsService, PlainTextUserPropertyEditor userPropertyEditor, ProgramPropertyEditor programPropertyEditor, UpdateUserRolesDTOValidator updateUserRolesDTOValidator) {
 		this.userService = userService;	
 		this.programsService = programsService;
 		this.userPropertyEditor = userPropertyEditor;

@@ -19,7 +19,7 @@ import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.UpdateUserRolesDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ProgramPropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ProgramsService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.UpdateUserRolesDTOValidator;
@@ -30,7 +30,7 @@ public class ManageUserRolesControllerTest {
 	private ProgramsService programsServiceMock;
 	private ManageUserRolesController controller;
 	private RegisteredUser currentUserMock;
-	private UserPropertyEditor userPropertyEditorMock;
+	private PlainTextUserPropertyEditor userPropertyEditorMock;
 	private ProgramPropertyEditor programPropertyEditorMock;
 	private UpdateUserRolesDTOValidator updateUserRolesDTOValidatorMock;
 	
@@ -286,7 +286,7 @@ public class ManageUserRolesControllerTest {
 	public void setUp(){
 		userServiceMock = EasyMock.createMock(UserService.class);
 		programsServiceMock = EasyMock.createMock(ProgramsService.class);
-		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
+		userPropertyEditorMock = EasyMock.createMock(PlainTextUserPropertyEditor.class);
 		programPropertyEditorMock = EasyMock.createMock(ProgramPropertyEditor.class);
 		updateUserRolesDTOValidatorMock = EasyMock.createMock(UpdateUserRolesDTOValidator.class);
 		currentUserMock = EasyMock.createMock(RegisteredUser.class);		

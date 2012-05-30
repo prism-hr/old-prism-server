@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -22,14 +22,14 @@ public class DelegateToApplicationAdministratorController {
 
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
-	private final UserPropertyEditor userPropertyEditor;
+	private final PlainTextUserPropertyEditor userPropertyEditor;
 
 	DelegateToApplicationAdministratorController() {
 		this(null, null, null);
 	}
 
 	@Autowired
-	public DelegateToApplicationAdministratorController(ApplicationsService applicationsService, UserService userService, UserPropertyEditor userPropertyEditor) {
+	public DelegateToApplicationAdministratorController(ApplicationsService applicationsService, UserService userService, PlainTextUserPropertyEditor userPropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.userPropertyEditor = userPropertyEditor;

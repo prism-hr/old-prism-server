@@ -10,16 +10,16 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Component
-public class UserPropertyEditor extends PropertyEditorSupport {
+public class PlainTextUserPropertyEditor extends PropertyEditorSupport {
 
 	private final UserService userService;
 	
-	UserPropertyEditor() {
+	PlainTextUserPropertyEditor() {
 		this(null);
 	
 	}
 	@Autowired
-	public UserPropertyEditor(UserService userService) {
+	public PlainTextUserPropertyEditor(UserService userService) {
 		this.userService = userService;
 	
 	}

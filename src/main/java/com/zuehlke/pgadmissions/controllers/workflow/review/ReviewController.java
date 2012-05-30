@@ -35,7 +35,7 @@ public abstract class ReviewController {
 	protected final MessageSource messageSource;
 	protected final ReviewerPropertyEditor reviewerPropertyEditor;
 	protected final ReviewRoundValidator reviewRoundValidator;
-	private final EncryptionHelper encryptionHelper;
+	protected final EncryptionHelper encryptionHelper;
 
 	ReviewController() {
 		this(null, null, null, null, null, null, null, null);

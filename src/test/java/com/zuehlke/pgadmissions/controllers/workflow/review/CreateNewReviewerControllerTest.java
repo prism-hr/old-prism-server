@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class CreateNewReviewerControllerTest {
@@ -34,6 +35,7 @@ public class CreateNewReviewerControllerTest {
 	private UserService userServiceMock;
 	private MessageSource messageSourceMock;
 	private BindingResult bindingResultMock;
+	private EncryptionHelper encryptionHelperMock;
 
 	@Test
 	@SuppressWarnings("unchecked")
@@ -41,9 +43,10 @@ public class CreateNewReviewerControllerTest {
 		EasyMock.reset(userServiceMock);
 		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
+		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application.getId())).andReturn(user);
-		EasyMock.replay(userServiceMock);
+		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		EasyMock.expect(
 				messageSourceMock.getMessage(EasyMock.eq("assignReviewer.user.created"), EasyMock.aryEq(new Object[] { "bob bobson", "bobson@bob.com" }),
@@ -53,9 +56,9 @@ public class CreateNewReviewerControllerTest {
 		Assert.assertEquals("redirect:/review/moveToReview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
-		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
+		List<String> newUser = (List<String>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(5)));
+		assertTrue(newUser.contains("bob"));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 
@@ -65,9 +68,10 @@ public class CreateNewReviewerControllerTest {
 		EasyMock.reset(userServiceMock);
 		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
+		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application.getId())).andReturn(user);
-		EasyMock.replay(userServiceMock);
+		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		EasyMock.expect(
 				messageSourceMock.getMessage(EasyMock.eq("assignReviewer.user.created"), EasyMock.aryEq(new Object[] { "bob bobson", "bobson@bob.com" }),
@@ -79,7 +83,7 @@ public class CreateNewReviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(5)));
+		assertTrue(newUser.contains("bob"));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 
@@ -92,18 +96,21 @@ public class CreateNewReviewerControllerTest {
 		EasyMock.reset(userServiceMock);
 		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
+		EasyMock.expect(encryptionHelperMock.encrypt(1)).andReturn("ab");
+		EasyMock.expect(encryptionHelperMock.encrypt(2)).andReturn("cd");
+		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("ef");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application.getId())).andReturn(user);
-		EasyMock.replay(userServiceMock);
+		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		ModelAndView modelAndView = controller.createReviewerForNewReviewRound(user, bindingResultMock, application, pedningReviewers, Collections.EMPTY_LIST);
 
 		Assert.assertEquals("redirect:/review/moveToReview", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
-		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
+		List<String> newUser = (List<String>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(3, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(1, 2, 5)));
+		assertTrue(newUser.containsAll(Arrays.asList("ab", "cd", "ef")));
 	}
 
 	@Test
@@ -139,11 +146,12 @@ public class CreateNewReviewerControllerTest {
 		List<RegisteredUser> pedningReviewers = new ArrayList<RegisteredUser>(Arrays.asList(existingPendingReviewer));
 		EasyMock.reset(userServiceMock);
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
+		EasyMock.expect(encryptionHelperMock.encrypt(1)).andReturn("bob");
 		ApplicationForm application = new ApplicationFormBuilder().applicationNumber("ABC").id(2).program(new ProgramBuilder().toProgram())
 				.latestReviewRound(new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(user).toReviewer()).toReviewRound()).toApplicationForm();
 
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingPendingReviewer);
-		EasyMock.replay(userServiceMock);
+		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		EasyMock.expect(
 				messageSourceMock.getMessage(EasyMock.eq("assignReviewer.user.pending"), EasyMock.aryEq(new Object[] { "Robert Bobson", "bobson@bob.com" }),
@@ -156,7 +164,7 @@ public class CreateNewReviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
-		assertEquals((Integer) 1, newUser.get(0));
+		assertTrue(newUser.contains("bob"));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 
@@ -167,8 +175,9 @@ public class CreateNewReviewerControllerTest {
 		EasyMock.reset(userServiceMock);
 		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
+		EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("bob");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingPreviousReviewer);
-		EasyMock.replay(userServiceMock);
+		EasyMock.replay(userServiceMock,encryptionHelperMock);
 
 		EasyMock.expect(
 				messageSourceMock.getMessage(EasyMock.eq("assignReviewer.user.previous"),
@@ -182,7 +191,7 @@ public class CreateNewReviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(8)));
+		assertTrue(newUser.contains("bob"));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 
@@ -194,8 +203,9 @@ public class CreateNewReviewerControllerTest {
 		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").program(new ProgramBuilder().reviewers(existingDefaultReviewer).toProgram())
 				.toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
+		EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("bob");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingDefaultReviewer);
-		EasyMock.replay(userServiceMock);
+		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		EasyMock.expect(
 				messageSourceMock.getMessage(EasyMock.eq("assignReviewer.user.alreadyInProgramme"),
@@ -208,7 +218,7 @@ public class CreateNewReviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(8)));
+		assertTrue(newUser.contains("bob"));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 
@@ -219,8 +229,9 @@ public class CreateNewReviewerControllerTest {
 		EasyMock.reset(userServiceMock);
 		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("ABC").program(new ProgramBuilder().toProgram()).toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
+		EasyMock.expect(encryptionHelperMock.encrypt(8)).andReturn("bob");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingUser);
-		EasyMock.replay(userServiceMock);
+		EasyMock.replay(userServiceMock,encryptionHelperMock);
 
 		EasyMock.expect(
 				messageSourceMock.getMessage(EasyMock.eq("assignReviewer.user.added"), EasyMock.aryEq(new Object[] { "Robert Bobson", "bobson@bob.com" }),
@@ -233,7 +244,7 @@ public class CreateNewReviewerControllerTest {
 		assertEquals("ABC", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingReviewer");
 		assertEquals(1, newUser.size());
-		assertTrue(newUser.containsAll(Arrays.asList(8)));
+		assertTrue(newUser.contains("bob"));
 		assertEquals("message", modelAndView.getModel().get("message"));
 	}
 
@@ -267,6 +278,7 @@ public class CreateNewReviewerControllerTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		messageSourceMock = EasyMock.createMock(MessageSource.class);
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
-		controller = new CreateNewReviewerController(null, userServiceMock, null, null, null, messageSourceMock, null, null);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		controller = new CreateNewReviewerController(null, userServiceMock, null, null, null, messageSourceMock, null, encryptionHelperMock);
 	}
 }

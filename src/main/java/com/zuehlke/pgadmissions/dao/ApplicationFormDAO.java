@@ -255,6 +255,18 @@ public class ApplicationFormDAO {
 					.createAlias("applicant", "applicant")  
 					.add(Restrictions.or(Restrictions.ilike("applicant.firstName", term, MatchMode.ANYWHERE), Restrictions.ilike("applicant.lastName", term, MatchMode.ANYWHERE))).list();
 		}
+		if(category ==  SearchCategories.APPLICATION_STATUS){
+			ApplicationFormStatus matchedStatus = null;
+			for (ApplicationFormStatus status : ApplicationFormStatus.values()) {
+				if(status.displayValue().toLowerCase().contains(term.toLowerCase())){
+					matchedStatus = status;
+				}
+			}
+			if(matchedStatus != null){
+				return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
+					.add(Restrictions.eq("status", matchedStatus)).list();
+			}
+		}
 		return null;
 	}
 

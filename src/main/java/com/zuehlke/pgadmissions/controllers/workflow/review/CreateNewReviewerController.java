@@ -71,9 +71,9 @@ public class CreateNewReviewerController extends ReviewController {
 			
 			return modelAndView;
 		}
-		List<Integer> newUserIds = new ArrayList<Integer>();
-		for (RegisteredUser registeredUser : pendingReviewers) {
-			newUserIds.add(registeredUser.getId());
+		List<String> newUserIds = new ArrayList<String>();
+		for (RegisteredUser registeredUser : pendingReviewers) {			
+			newUserIds.add(encryptionHelper.encrypt(registeredUser.getId()));
 		}
 
 		RegisteredUser existingUser = userService.getUserByEmailIncludingDisabledAccounts(reviewer.getEmail());
@@ -90,28 +90,28 @@ public class CreateNewReviewerController extends ReviewController {
 			}
 
 			if (previousReviewers.contains(existingUser)) {
-				newUserIds.add(existingUser.getId());
+				newUserIds.add(encryptionHelper.encrypt(existingUser.getId()));
 				return getCreateReviewerModelAndView(applicationForm, newUserIds, getCreateReviewerMessage("assignReviewer.user.previous", existingUser),
 						viewName);
 			}
 
 			if (applicationForm.getProgram().getProgramReviewers().contains(existingUser)) {
-				newUserIds.add(existingUser.getId());
+				newUserIds.add(encryptionHelper.encrypt(existingUser.getId()));
 				return getCreateReviewerModelAndView(applicationForm, newUserIds,
 						getCreateReviewerMessage("assignReviewer.user.alreadyInProgramme", existingUser), viewName);
 			}
 
-			newUserIds.add(existingUser.getId());
+			newUserIds.add(encryptionHelper.encrypt(existingUser.getId()));
 			return getCreateReviewerModelAndView(applicationForm, newUserIds, getCreateReviewerMessage("assignReviewer.user.added", existingUser), viewName);
 
 		}
 
 		RegisteredUser newUser = userService.createNewUserInRole(reviewer.getFirstName(), reviewer.getLastName(), reviewer.getEmail(), Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, applicationForm.getId());
-		newUserIds.add(newUser.getId());
+		newUserIds.add(encryptionHelper.encrypt(newUser.getId()));
 		return getCreateReviewerModelAndView(applicationForm, newUserIds, getCreateReviewerMessage("assignReviewer.user.created", newUser), viewName);
 	}
 
-	private ModelAndView getCreateReviewerModelAndView(ApplicationForm applicationForm, List<Integer> newUserIds, String message, String viewName) {
+	private ModelAndView getCreateReviewerModelAndView(ApplicationForm applicationForm, List<String> newUserIds, String message, String viewName) {
 
 		ModelAndView modelAndView = new ModelAndView(viewName);
 		modelAndView.getModel().put("applicationId", applicationForm.getApplicationNumber());

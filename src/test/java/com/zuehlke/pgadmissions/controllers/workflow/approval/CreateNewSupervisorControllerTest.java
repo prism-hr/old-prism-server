@@ -43,7 +43,7 @@ public class CreateNewSupervisorControllerTest {
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewApprovalRoundForNewSupervisorUserIfUserDoesNotExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("bob").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, null, null)).andReturn(user);
@@ -56,7 +56,7 @@ public class CreateNewSupervisorControllerTest {
 		ModelAndView modelAndView = controller.createSupervisorForNewApprovalRound(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/approval/moveToApproval", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("bob", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingSupervisors");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(5)));
@@ -67,7 +67,7 @@ public class CreateNewSupervisorControllerTest {
 	@SuppressWarnings("unchecked")
 	public void shouldCreateNewApprovalRoundForExistingSupervisorUserIfUserDoesNotExists() {
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("bob").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, null, null)).andReturn(user);
@@ -80,7 +80,7 @@ public class CreateNewSupervisorControllerTest {
 		ModelAndView modelAndView = controller.createSupervisorForNewApprovalRound(user, bindingResultMock, application, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 		Assert.assertEquals("redirect:/approval/moveToApproval", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("bob", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingSupervisors");
 		assertEquals(1, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(5)));
@@ -94,7 +94,7 @@ public class CreateNewSupervisorControllerTest {
 		List<RegisteredUser> pedningSupervisors = new ArrayList<RegisteredUser>(Arrays.asList(new RegisteredUserBuilder().id(1).toUser(),
 				new RegisteredUserBuilder().id(2).toUser()));
 		EasyMock.reset(userServiceMock);
-		ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("bob").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
 		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.SUPERVISOR, null, null)).andReturn(user);
@@ -104,7 +104,7 @@ public class CreateNewSupervisorControllerTest {
 
 		Assert.assertEquals("redirect:/approval/moveToApproval", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("bob", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingSupervisors");
 		assertEquals(3, newUser.size());
 		assertTrue(newUser.containsAll(Arrays.asList(1, 2, 5)));
@@ -116,7 +116,7 @@ public class CreateNewSupervisorControllerTest {
 
 		EasyMock.reset(userServiceMock);
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(new ProgramBuilder().toProgram())
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("bob").program(new ProgramBuilder().toProgram())
 				.latestApprovalRound(new ApprovalRoundBuilder().supervisors(new SupervisorBuilder().user(user).toSupervisor()).toApprovalRound()).toApplicationForm();
 
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(user);
@@ -130,7 +130,7 @@ public class CreateNewSupervisorControllerTest {
 
 		Assert.assertEquals("redirect:/approval/moveToApproval", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("bob", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingSupervisors");
 		assertTrue(newUser.isEmpty());
 		assertEquals("message", modelAndView.getModel().get("message"));
@@ -143,7 +143,7 @@ public class CreateNewSupervisorControllerTest {
 		List<RegisteredUser> pedningSupervisors = new ArrayList<RegisteredUser>(Arrays.asList(existingPendingSupervisors));
 		EasyMock.reset(userServiceMock);
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
-		ApplicationForm application = new ApplicationFormBuilder().id(2).program(new ProgramBuilder().toProgram())
+		ApplicationForm application = new ApplicationFormBuilder().id(2).applicationNumber("bob").program(new ProgramBuilder().toProgram())
 				.latestApprovalRound(new ApprovalRoundBuilder().supervisors(new SupervisorBuilder().user(user).toSupervisor()).toApprovalRound()).toApplicationForm();
 
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(existingPendingSupervisors);
@@ -157,7 +157,7 @@ public class CreateNewSupervisorControllerTest {
 
 		Assert.assertEquals("redirect:/approval/moveToApproval", modelAndView.getViewName());
 		EasyMock.verify(userServiceMock);
-		assertEquals(2, modelAndView.getModel().get("applicationId"));
+		assertEquals("bob", modelAndView.getModel().get("applicationId"));
 		List<Integer> newUser = (List<Integer>) modelAndView.getModel().get("pendingSupervisors");
 		assertEquals(1, newUser.size());
 		assertEquals((Integer) 1, newUser.get(0));

@@ -20,7 +20,6 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 
-
 @Entity(name = "INTERVIEW")
 @Access(AccessType.FIELD)
 public class Interview extends DomainObject<Integer> {
@@ -33,33 +32,31 @@ public class Interview extends DomainObject<Integer> {
 
 	@Column(name = "interview_time")
 	private String interviewTime;
-	
+
 	@Column(name = "created_date", insertable = false)
 	@Generated(GenerationTime.INSERT)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
-	
+
 	@Column(name = "further_details")
 	private String furtherDetails;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "application_form_id")
 	private ApplicationForm application;
-	
+
 	@Column(name = "location_url")
 	private String locationURL;
-	
+
 	@Temporal(TemporalType.DATE)
-	@Column(name="due_date")
+	@Column(name = "due_date")
 	private Date interviewDueDate;
-	
 
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "interview_id")
 	private List<Interviewer> interviewers = new ArrayList<Interviewer>();
-	
-	
+
 	public Date getLastNotified() {
 		return lastNotified;
 	}
@@ -100,7 +97,6 @@ public class Interview extends DomainObject<Integer> {
 		this.interviewDueDate = dueDate;
 	}
 
-	
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
@@ -137,5 +133,17 @@ public class Interview extends DomainObject<Integer> {
 	public void setInterviewTime(String interviewTime) {
 		this.interviewTime = interviewTime;
 	}
-	
+
+	public String[] getTimeParts() {
+		String[] parts = new String[3];
+		if (interviewTime != null) {
+			int semiColonPosition = interviewTime.indexOf(":");
+			int emptySpacePosition = interviewTime.indexOf(" ", semiColonPosition);
+			parts[0] = interviewTime.substring(0, semiColonPosition);
+			parts[1] = interviewTime.substring(semiColonPosition + 1, emptySpacePosition);
+			parts[2] = interviewTime.substring(emptySpacePosition + 1);
+		}
+		return parts;
+	}
+
 }

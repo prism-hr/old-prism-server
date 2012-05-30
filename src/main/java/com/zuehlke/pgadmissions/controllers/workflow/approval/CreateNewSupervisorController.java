@@ -12,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -119,7 +118,7 @@ public class CreateNewSupervisorController extends ApprovalController {
 		private ModelAndView getCreateSupervisorModelAndView(ApplicationForm applicationForm, List<Integer> newUserIds, String message, String viewName) {
 
 			ModelAndView modelAndView = new ModelAndView(viewName);
-			modelAndView.getModel().put("applicationId", applicationForm.getId());
+			modelAndView.getModel().put("applicationId", applicationForm.getApplicationNumber());
 			modelAndView.getModel().put("pendingSupervisors", newUserIds);
 			modelAndView.getModel().put("message", message);
 			return modelAndView;

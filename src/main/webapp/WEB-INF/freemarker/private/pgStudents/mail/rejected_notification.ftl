@@ -58,9 +58,6 @@
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We wish you success in your search for postgraduate study.</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">For further assistance <a href="mailto: ${adminsEmails}">email the administrator</a></font>
-			      	</p>
-			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>
 		    	</td>

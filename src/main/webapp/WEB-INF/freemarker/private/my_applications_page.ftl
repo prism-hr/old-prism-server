@@ -72,10 +72,14 @@
                       	    
 				          <p class="right">
 				            <#if (user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR'))>
+<!--
                                 <a id="manageUsersButton" class="button">Manage Users</a>
+-->
                             </#if>
 				            <#if (user.isInRole('SUPERADMINISTRATOR'))>
+<!--
                                 <a id="configuration" class="button">Configuration</a>
+-->
                             </#if>
                             <#if (applications?size > 0)>
 				          		<a class="button" name="downloadAll" id="downloadAll">Download</a>

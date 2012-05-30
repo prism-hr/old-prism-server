@@ -119,8 +119,8 @@
 											<div class="row reviewer-buttons">
 												<div class="field">
 													<span>
-														<button class="blue" type="button" id="addReviewerBtn">Add</button>
-														<button class="blue" type="button" id="removeReviewerBtn">Remove</button>
+														<button class="blue" type="button" id="addReviewerBtn">Add Reviewer <span class="icon-down"></span></button>
+														<button class="blue" type="button" id="removeReviewerBtn"><span class="icon-up"> Remove Reviewer</span></button>
 													</span>
 												</div>
 											</div>

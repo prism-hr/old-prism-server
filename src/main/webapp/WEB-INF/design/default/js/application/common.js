@@ -61,7 +61,7 @@ function limitTextArea(){
 // Form hint tooltips.
 function addToolTips()
 {
-	$('body span.hint, .button-hint, .error-hint').qtip(tooltipSettings);
+	$('body span.hint, .button-hint, .error-hint, .icon-status').qtip(tooltipSettings);
 }
 
 // Set up file uploading functionality.

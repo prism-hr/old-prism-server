@@ -30,7 +30,9 @@
 							                <td name="idColumn">${application.applicationNumber}</td>
 							                <td class="applicant-name">${application.applicant.firstName} ${application.applicant.lastName}</td>
 							                <td>${application.program.code} - ${application.program.title}</td>								                
-							               	<td id="statusColumn" name="statusColumn">${application.status.displayValue()}</td>
+							               	<td id="statusColumn" name="statusColumn">
+																<span class="icon-status ${application.status.displayValue()?lower_case}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>
+															</td>
 							                <td class="centre">
 							                	<select class="actionType" name="app_[${application.applicationNumber}]">
 							                		<option>Select...</option>

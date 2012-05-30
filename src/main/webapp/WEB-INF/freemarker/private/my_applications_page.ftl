@@ -21,6 +21,7 @@
 	
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>	    
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js' />"></script>
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/common.js' />"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
 	</head>
@@ -53,26 +54,22 @@
 				      <div class="content-box">
 				        <div class="content-box-inner">
 							
-							<p style="color:red;">${(message?html)!}</p>
-							
-							<div class="row"> 
-			            			<div class="field">	
-			           				<span id="searchLbl" class="plain-label">Search</span>
-											<input type = "text" id="searchTerm" name="searchTerm"/>
+									<p style="color:red;">${(message?html)!}</p>
+									
+									<div id="search-applications" class="row"> 
+										<div class="field">	
+											<label for="searchTerm" id="searchLbl">Search</label>
+											<input type="text" id="searchTerm" name="searchTerm" />
 											<select name="searchCategory" id="searchCategory">
 												<option value="">Column...</option>
-													<#list searchCategories as category>
-												 		 <option value="${category}">
-														${category.displayValue()}</option>               
-													</#list>
-														</select>	
+												<#list searchCategories as category>
+												<option value="${category}">${category.displayValue()}</option>               
+												</#list>
+											</select>	
+										</div>
 									</div>
-							</div>
 							
-				            <section id="applicationListSection">
-                      	    </section>
-                      	    
-                      	    
+									<section id="applicationListSection"></section>
                       	    
 				          <p class="right">
 				            <#if (user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR'))>

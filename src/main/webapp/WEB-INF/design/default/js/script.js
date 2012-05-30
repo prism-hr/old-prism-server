@@ -120,8 +120,10 @@ $(document).ready(function()
   
   
   // Sortable tables.
-  $('table.data').tablesorter();
+  /*
+	$('table.data').tablesorter();
   $('table.data thead th').not(':first,:last').wrapInner('<span class="arrow" />');
+	*/
   
   //Adding style to delete button to make it free from inherited style
   

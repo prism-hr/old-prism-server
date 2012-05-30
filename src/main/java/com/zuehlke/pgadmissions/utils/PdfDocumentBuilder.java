@@ -1,6 +1,8 @@
 package com.zuehlke.pgadmissions.utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,6 +15,7 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Paragraph;
@@ -34,6 +37,7 @@ import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.exceptions.PDFException;
 
 @Component
 public class PdfDocumentBuilder {
@@ -45,8 +49,24 @@ public class PdfDocumentBuilder {
 
 	private final BaseColor grayColor = new BaseColor(220, 220, 220);
 
+	public byte[] buildPdf(ApplicationForm...applications) {
+		try {
+			Document document = new Document(PageSize.A4, 50, 50, 50, 50);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			PdfWriter writer = PdfWriter.getInstance(document, baos);
+			document.open();
+			for (ApplicationForm applicationForm : applications) {
+				buildDocument(applicationForm, document, writer);
+				document.newPage();
+			}
+			document.close();
+			return baos.toByteArray();
+		} catch (Exception e) {
+			throw new PDFException(e);
+		}
+	}
 
-	public void buildDocument(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
+	private void buildDocument(ApplicationForm application, Document document, PdfWriter writer) throws DocumentException, MalformedURLException, IOException {
 
 		document.add(new Paragraph("Application id: " + application.getApplicationNumber(), boldFont));
 		document.add(new Paragraph("Applicant: " + application.getApplicant().getFirstName() + " " + application.getApplicant().getLastName(), boldFont));

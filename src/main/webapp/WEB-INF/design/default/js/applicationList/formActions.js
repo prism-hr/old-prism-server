@@ -59,16 +59,18 @@ $(document).ready(function() {
 		window.location.href = "/pgadmissions/configuration";
 	});
 
-	$("input[name*='appDownload']").click(function(){
+	$(document).on('click', "input[name*='appDownload']", function(){		
 		var id = this.id;
 		id = id.replace('appDownload_', '');
-		var currentAppList = $('#appList').val();
-		if ($('#appDownload_'+id).attr('checked')){
-			$('#appList').val(currentAppList+id+";");
+	
+		var currentAppList = $('#appList').val();		
+		if ($(this).attr('checked')){
+			$('#appList').val(currentAppList + id + ";");
 		} else {
-			$('#appList').val(currentAppList.replace(id+";", ''));
+			$('#appList').val(currentAppList.replace(id  +";", ''));
 		}
-		var appListValue = $('#appList').val();
+	
+		
 	});
 
 	$('#downloadAll').click(function(){

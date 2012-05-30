@@ -1,7 +1,8 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -14,13 +15,11 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfWriter;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.utils.PdfDocumentBuilder;
 
 @Controller
@@ -29,94 +28,74 @@ public class PrintController {
 
 	private final ApplicationsService applicationSevice;
 	private final PdfDocumentBuilder builder;
+	private final UserService userService;
 
-	public PrintController(){
-		this(null, null);
+	public PrintController() {
+		this(null, null, null);
 	}
 
 	@Autowired
-	public PrintController(ApplicationsService applicationSevice, PdfDocumentBuilder builder){
+	public PrintController(ApplicationsService applicationSevice, PdfDocumentBuilder builder, UserService userService) {
 		this.applicationSevice = applicationSevice;
 		this.builder = builder;
+		this.userService = userService;
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public Document printPage(HttpServletRequest request, HttpServletResponse response) {
-		try {
-			String applicationFormNumber = ServletRequestUtils.getStringParameter(request, "applicationFormId");
-			ApplicationForm application = applicationSevice.getApplicationByApplicationNumber(applicationFormNumber);
-			if (application == null) {
-				throw new ResourceNotFoundException();
-			}
+	public void printPage(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletRequestBindingException {
 
+		String applicationFormNumber = ServletRequestUtils.getStringParameter(request, "applicationFormId");
 
-			Document document = new Document(PageSize.A4, 50, 50, 50, 50);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-			PdfWriter writer = PdfWriter.getInstance(document, baos);
-
-
-			document.open();
-
-			//Un-comment this to try the html to pdf conversion
-
-			//HTMLWorker htmlWorker = new HTMLWorker(document);
-			//String htmlSource = buildHtml();
-			//htmlWorker.parse(new StringReader(htmlSource));
-
-			builder.buildDocument(application, document, writer);
-			document.close();
-
-			response.setHeader("Expires", "0");
-			response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
-			response.setHeader("Pragma", "public");
-			response.setHeader("Content-Disposition", "inline; filename=\"application"+applicationFormNumber+".pdf\"");
-			response.setContentType("application/pdf");
-			response.setContentLength(baos.size());
-			ServletOutputStream out = response.getOutputStream();
-			baos.writeTo(out); 
-			out.flush();
-			out.close();
-
-			return document;
-		} catch (Exception e) {
-			e.printStackTrace();
+		ApplicationForm application = applicationSevice.getApplicationByApplicationNumber(applicationFormNumber);
+		if (application == null || !userService.getCurrentUser().canSee(application)) {
+			throw new ResourceNotFoundException();
 		}
-		return null;
+
+		sendPDF(response, applicationFormNumber, builder.buildPdf(application));
+
 	}
 
+
 	@RequestMapping(value = "/all", method = RequestMethod.GET)
-	public Document printAll(HttpServletRequest request, HttpServletResponse response) throws ServletRequestBindingException, DocumentException, IOException {
+	public void printAll(HttpServletRequest request, HttpServletResponse response) throws ServletRequestBindingException, DocumentException, IOException {
 		String appListToPrint = ServletRequestUtils.getStringParameter(request, "appList");
-		String[] applications = appListToPrint.split(";");
+		String[] applicationIds = appListToPrint.split(";");
+		List<ApplicationForm> applicationList = new ArrayList<ApplicationForm>();
 
-		Document document = new Document(PageSize.A4, 50, 50, 50, 50);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		for (String applicationId : applicationIds) {
+			ApplicationForm applicationForm = applicationSevice.getApplicationByApplicationNumber(applicationId);
+			if (applicationForm != null && userService.getCurrentUser().canSee(applicationForm)) {
+				applicationList.add(applicationForm);
+			}
 
-		PdfWriter writer = PdfWriter.getInstance(document, baos);
-	
-
-		document.open();
-		for (String applicationId : applications) {
-			ApplicationForm application = applicationSevice.getApplicationByApplicationNumber(applicationId);
-			builder.buildDocument(application, document, writer);
-			document.newPage();
 		}
+		sendPDF(response, "", builder.buildPdf(applicationList.toArray(new ApplicationForm[] {})));
 
-		document.close();
+	}
 
+	private void sendPDF(HttpServletResponse response, String pdfFileNamePostFix, byte[] pdf) throws IOException {
 		response.setHeader("Expires", "0");
 		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
 		response.setHeader("Pragma", "public");
-		response.setHeader("Content-Disposition", "attachment; filename=\"applications.pdf\"");
+		response.setHeader("Content-Disposition", "inline; filename=\"application" + pdfFileNamePostFix + ".pdf\"");
 		response.setContentType("application/pdf");
-		response.setContentLength(baos.size());
-		ServletOutputStream out = response.getOutputStream();
-		baos.writeTo(out); 
-		out.flush();
-		out.close();
-		
-		return document;
-	}
+		response.setContentLength(pdf.length);
+		ServletOutputStream out = null;
+		try {
+			out = response.getOutputStream();
+			out.write(pdf);
 
+		} finally {
+			try {
+				out.flush();
+			} catch (Throwable e) {
+
+			}
+			try {
+				out.close();
+			} catch (Exception e) {
+
+			}
+		}
+	}
 }

@@ -40,9 +40,9 @@ public class CommentTimelineController {
 	}
 
 	@ModelAttribute("applicationForm")
-	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
+	public ApplicationForm getApplicationForm(@RequestParam String id) {
 		RegisteredUser currentUser = userService.getCurrentUser();
-		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(applicationId);
+		ApplicationForm applicationForm = applicationService.getApplicationByApplicationNumber(id);
 		if (applicationForm == null || currentUser.isInRole(Authority.APPLICANT) || !currentUser.canSee(applicationForm)) {
 			throw new ResourceNotFoundException();
 		}

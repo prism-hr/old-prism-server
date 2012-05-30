@@ -5,7 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -30,7 +29,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfig;
 
-
+import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 import freemarker.template.Configuration;
@@ -328,13 +327,18 @@ public class MimeMessagePreparatorFactoryTest {
 		assertEquals("Jane Hurrah", ((InternetAddress)testMessage.getReplyTo()[0]).getPersonal());
 	}
 
-	/*@Test
+	@Test
 	public void shouldCreateMulipartMessageIfAttacmentsProvided() throws Exception {
 		EasyMock.expect(configMock.getTemplate(template)).andReturn(new TestTemplate());
 
 		mimeMessagePreparatorFactory = new MimeMessagePreparatorFactory(freeMarkerConfigMock, true);
-
-		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress, new File("hi.pdf"), new File("bob.pdf"));
+		PdfAttachmentInputSource attachmentOne = EasyMock.createMock(PdfAttachmentInputSource.class);
+		EasyMock.expect(attachmentOne.getAttachmentFilename()).andReturn("fileOne");
+		PdfAttachmentInputSource attachmentTwo = EasyMock.createMock(PdfAttachmentInputSource.class);
+		EasyMock.expect(attachmentTwo.getAttachmentFilename()).andReturn("fileTwo");
+		EasyMock.replay(attachmentOne, attachmentTwo);
+		
+		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress, attachmentOne, attachmentTwo);
 		MimeMessage testMessage = new TestMessage();
 
 		EasyMock.replay(freeMarkerConfigMock, configMock);
@@ -362,13 +366,17 @@ public class MimeMessagePreparatorFactoryTest {
 			
 		};
 
-		File attachmentOne = new File("hi.pdf");
-		File attachmentTwo = new File("bob.pdf");
+		PdfAttachmentInputSource attachmentOne = EasyMock.createMock(PdfAttachmentInputSource.class);
+		EasyMock.expect(attachmentOne.getAttachmentFilename()).andReturn("fileOne");
+		PdfAttachmentInputSource attachmentTwo = EasyMock.createMock(PdfAttachmentInputSource.class);
+		EasyMock.expect(attachmentTwo.getAttachmentFilename()).andReturn("fileTwo");
+		EasyMock.replay(attachmentOne, attachmentTwo);
+		
 		MimeMessagePreparator prep = mimeMessagePreparatorFactory.getMimeMessagePreparator(tos[0], subject, template, model, replyToAddress, attachmentOne, attachmentTwo);
 		MimeMessage testMessage = new TestMessage();
 		
-		mimeMessageHelperMock.addAttachment("hi.pdf", attachmentOne);
-		mimeMessageHelperMock.addAttachment("bob.pdf", attachmentTwo);
+		mimeMessageHelperMock.addAttachment("fileOne", attachmentOne, "application/pdf");
+		mimeMessageHelperMock.addAttachment("fileTwo", attachmentTwo, "application/pdf");
 		
 		EasyMock.replay(freeMarkerConfigMock, configMock, mimeMessageHelperMock);
 		prep.prepare(testMessage);
@@ -377,7 +385,7 @@ public class MimeMessagePreparatorFactoryTest {
 	
 	
 	}
-*/
+
 	
 	class TestTemplate extends Template {
 

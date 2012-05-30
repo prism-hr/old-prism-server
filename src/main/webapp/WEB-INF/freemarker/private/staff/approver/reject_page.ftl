@@ -96,7 +96,7 @@
 													<#list availableReasons as reason>
 													<li>
 														<label>
-															<input type="radio" name="rejectionReason" value="${reason.id?string("#######")}" class="reason"/>
+															<input type="radio" name="rejectionReason" value="${encrypter.encrypt(reason.id)}" class="reason"/>
 															${reason.text}
 														</label>
 													</li> 
@@ -105,7 +105,7 @@
 												<@spring.bind "rejection.rejectionReason" /> 
 												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list> 
 											</div>
-										</div>
+										</div> 
 									</div>
 
 									<div class="row-group">					

@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -23,17 +24,19 @@ public class ReviewerPropertyEditorTest {
 	private UserService userServiceMock;
 	private ReviewerPropertyEditor editor;
 	private ApplicationsService applicationsServiceMock;
+	private EncryptionHelper encryptionHelperMock;
 
 
 	@Test	
 	public void shouldCreateNewReviewerWithUserAndSetAsValueIfUserNotReviewerInLatestRoundOfApplication(){
 		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
-		EasyMock.replay(userServiceMock, applicationsServiceMock);
+		EasyMock.replay(userServiceMock, applicationsServiceMock, encryptionHelperMock);
 		
-		editor.setAsText("2|1");
+		editor.setAsText("2|bob");
 		Reviewer reviewer = (Reviewer) editor.getValue();
 		assertNull(reviewer.getId());
 		assertEquals(user, reviewer.getUser());
@@ -46,11 +49,12 @@ public class ReviewerPropertyEditorTest {
 		Reviewer reviewer = new ReviewerBuilder().id(3).user(user).toReviewer();
 		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(reviewer).toReviewRound();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(2).latestReviewRound(reviewRound).toApplicationForm();
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
 		EasyMock.expect(applicationsServiceMock.getApplicationByApplicationNumber("2")).andReturn(applicationForm);
-		EasyMock.replay(userServiceMock, applicationsServiceMock);
+		EasyMock.replay(userServiceMock, applicationsServiceMock,encryptionHelperMock);
 		
-		editor.setAsText("2|1");
+		editor.setAsText("2|bob");
 		Reviewer returnedReviewer = (Reviewer) editor.getValue();
 		assertEquals(reviewer, returnedReviewer);
 		
@@ -68,15 +72,17 @@ public class ReviewerPropertyEditorTest {
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
-	public void shouldThrowIllegalArgumentExceptionIfUseerIddNotCorretFormat(){			
+	public void shouldThrowIllegalArgumentExceptionIfUserIdNotCorrectFormat(){
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("b")).andThrow(new IllegalArgumentException());
 		editor.setAsText("2|b");			
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldThrowIllegalArgumentExceptionIfNoSuchUser(){			
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(null);
-		EasyMock.replay(userServiceMock);		
-		editor.setAsText("2|1");
+		EasyMock.replay(userServiceMock, encryptionHelperMock);		
+		editor.setAsText("2|bob");
 	}
 	
 	@Test(expected=IllegalArgumentException.class)
@@ -108,6 +114,7 @@ public class ReviewerPropertyEditorTest {
 	public void setup(){
 		userServiceMock = EasyMock.createMock(UserService.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		editor = new ReviewerPropertyEditor(userServiceMock, applicationsServiceMock);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		editor = new ReviewerPropertyEditor(userServiceMock, applicationsServiceMock,encryptionHelperMock);
 	}
 }

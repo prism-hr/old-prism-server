@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
@@ -33,13 +34,13 @@ public class CreateNewReviewerController extends ReviewController {
 	private static final String REDIRECT_REVIEW_MOVE_TO_REVIEW = "redirect:/review/moveToReview";
 
 	CreateNewReviewerController() {
-		this(null, null, null, null, null,null, null);
+		this(null, null, null, null, null,null,null, null);
 	}
 
 	@Autowired
 	public CreateNewReviewerController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator, ReviewRoundValidator reviewRoundValidator,
-			ReviewService reviewService, MessageSource messageSource, ReviewerPropertyEditor reviewerPropertyEditor) {
-		super(applicationsService, userService, reviewerValidator, reviewRoundValidator, reviewService, messageSource, reviewerPropertyEditor);
+			ReviewService reviewService, MessageSource messageSource, ReviewerPropertyEditor reviewerPropertyEditor, EncryptionHelper encryptionHelper) {
+		super(applicationsService, userService, reviewerValidator, reviewRoundValidator, reviewService, messageSource, reviewerPropertyEditor, encryptionHelper);
 
 	}
 

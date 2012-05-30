@@ -128,7 +128,7 @@ public class AssignReviewerControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 		
-		controller = new AssignReviewerController(applicationServiceMock, userServiceMock, userValidatorMock, null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock);		
+		controller = new AssignReviewerController(applicationServiceMock, userServiceMock, userValidatorMock, null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, null);		
 	}
 			
 }

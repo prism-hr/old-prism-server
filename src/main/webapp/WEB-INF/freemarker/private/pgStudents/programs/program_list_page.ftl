@@ -32,7 +32,7 @@
 					<td/>
 				</tr>
 			<#list programs as program>
-				<tr id = "${program.title}" > 
+				<tr id = "${program.code}" > 
 					<td> ${program.code} </td>
 					<td> ${program.title} </td>										
 					<td> <button id="${program.id?string("######")}" class="apply">Apply now</button></td>

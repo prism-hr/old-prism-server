@@ -100,13 +100,13 @@
 													<select id="programReviewers" multiple="multiple" size="${avaliableOptionsSize}">
 														<option value="" disabled="disabled" id="default">Default reviewers</option>
 														<#list programmeReviewers as reviewer>
-														<option value="${applicationForm.applicationNumber}|${reviewer.id?string('#####')}" category="default">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+														<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="default">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
 														</#list>
 														<option value="" disabled="disabled"></option>
 														<option value="" disabled="disabled" id="previous">Previous reviewers in this programme</option>
 														
 														<#list previousReviewers as reviewer>
-														<option value="${applicationForm.applicationNumber}|${reviewer.id?string('#####')}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
+														<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}" category="previous">${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if></option>
 														</#list>							
 														<option value="" disabled="disabled"></option>								
 													</select>
@@ -133,12 +133,12 @@
 													</p>
 													<select id="applicationReviewers" multiple="multiple" <#if assignOnly?? && assignOnly> disabled="disabled"</#if> size="${selectedOptionsSize}">
 														<#list applicationReviewers as reviewer>
-															<option value="${applicationForm.applicationNumber}|${reviewer.id?string('#####')}">
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(reviewer.id)}">
 																${reviewer.firstName?html} ${reviewer.lastName?html} <#if !reviewer.enabled> - Pending</#if>
 															</option>
 														</#list>
 														<#list pendingReviewers as unsaved>									
-															<option value="${applicationForm.applicationNumber}|${unsaved.id?string('#####')}">
+															<option value="${applicationForm.applicationNumber}|${encrypter.encrypt(unsaved.id)}">
 																${unsaved.firstName?html} ${unsaved.lastName?html} <#if !unsaved.enabled> - Pending</#if> (*)
 															</option>
 														</#list>

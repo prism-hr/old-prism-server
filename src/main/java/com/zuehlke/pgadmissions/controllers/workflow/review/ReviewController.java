@@ -17,8 +17,8 @@ import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
-import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
@@ -35,30 +35,34 @@ public abstract class ReviewController {
 	protected final MessageSource messageSource;
 	protected final ReviewerPropertyEditor reviewerPropertyEditor;
 	protected final ReviewRoundValidator reviewRoundValidator;
-	
+	private final EncryptionHelper encryptionHelper;
+
 	ReviewController() {
-		this(null, null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
-	public ReviewController(ApplicationsService applicationsService, UserService userService,NewUserByAdminValidator reviewerValidator, ReviewRoundValidator reviewRoundValidator, ReviewService reviewService, MessageSource messageSource, ReviewerPropertyEditor reviewerPropertyEditor) {
+	public ReviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator,
+			ReviewRoundValidator reviewRoundValidator, ReviewService reviewService, MessageSource messageSource, ReviewerPropertyEditor reviewerPropertyEditor,
+			EncryptionHelper encryptionHelper) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.reviewerValidator = reviewerValidator;
 		this.reviewRoundValidator = reviewRoundValidator;
-		
+
 		this.reviewService = reviewService;
 		this.messageSource = messageSource;
 		this.reviewerPropertyEditor = reviewerPropertyEditor;
-		
+		this.encryptionHelper = encryptionHelper;
+
 	}
 
 	@InitBinder(value = "reviewer")
 	public void registerReviewerValidators(WebDataBinder binder) {
 		binder.setValidator(reviewerValidator);
-		
+
 	}
-	
+
 	@InitBinder(value = "reviewRound")
 	public void registerReviewRoundValidator(WebDataBinder binder) {
 		binder.setValidator(reviewRoundValidator);
@@ -71,7 +75,7 @@ public abstract class ReviewController {
 	}
 
 	@ModelAttribute("programmeReviewers")
-	public List<RegisteredUser> getProgrammeReviewers(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingReviewer) {
+	public List<RegisteredUser> getProgrammeReviewers(@RequestParam String applicationId, @RequestParam(required = false) List<String> pendingReviewer) {
 		ApplicationForm application = getApplicationForm(applicationId);
 		Program program = application.getProgram();
 		List<RegisteredUser> availableReviewers = new ArrayList<RegisteredUser>();
@@ -131,12 +135,12 @@ public abstract class ReviewController {
 	public abstract ReviewRound getReviewRound(@RequestParam Object id);
 
 	@ModelAttribute("pendingReviewers")
-	public List<RegisteredUser> getPendingReviewers(@RequestParam(required = false) List<Integer> pendingReviewer, @RequestParam String applicationId) {
+	public List<RegisteredUser> getPendingReviewers(@RequestParam(value="pendingReviewer",required = false) List<String> encryptedPendingReviewerIds, @RequestParam String applicationId) {
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> newUsers = new ArrayList<RegisteredUser>();
-		if (pendingReviewer != null) {
-			for (Integer id : pendingReviewer) {
-				RegisteredUser user = userService.getUser(id);
+		if (encryptedPendingReviewerIds != null) {
+			for (String encryptedId : encryptedPendingReviewerIds) {
+				RegisteredUser user = userService.getUser(encryptionHelper.decryptToInteger(encryptedId));
 				if (!user.isReviewerInLatestReviewRoundOfApplicationForm(applicationForm)) {
 					newUsers.add(user);
 				}
@@ -147,7 +151,7 @@ public abstract class ReviewController {
 	}
 
 	@ModelAttribute("previousReviewers")
-	public List<RegisteredUser> getPreviousReviewers(@RequestParam String applicationId, @RequestParam(required = false) List<Integer> pendingReviewer) {
+	public List<RegisteredUser> getPreviousReviewers(@RequestParam String applicationId, @RequestParam(required = false) List<String> pendingReviewer) {
 		List<RegisteredUser> availablePreviousReviewers = new ArrayList<RegisteredUser>();
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		List<RegisteredUser> previousReviewersOfProgram = userService.getAllPreviousReviewersOfProgram(applicationForm.getProgram());
@@ -163,9 +167,5 @@ public abstract class ReviewController {
 
 		return availablePreviousReviewers;
 	}
-
-	
-
-
 
 }

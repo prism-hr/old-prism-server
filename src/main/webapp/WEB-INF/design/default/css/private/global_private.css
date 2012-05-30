@@ -774,7 +774,8 @@ span.icon-role.referee { background-image: url(../../images/role_referee.png); }
 
 
 button span.icon-up, button span.icon-down {
-	background: transparent no-repeat !important;
+	background-color: transparent !important;
+	background-repeat: no-repeat !important;
 	display: inline-block !important;
 	height: 10px !important;
 	margin: 0 !important;
@@ -785,5 +786,5 @@ button span.icon-up, button span.icon-down {
 	white-space: nowrap;
 	width: 10px !important;
 }
-span.icon-up { background-image: url(../../images/icon_arrow_up.png) !important; }
-span.icon-down { background-image: url(../../images/icon_arrow_down.png) !important; }
+button span.icon-up { background-image: url(../../images/icon_arrow_up.png) !important; }
+button span.icon-down { background-image: url(../../images/icon_arrow_down.png) !important; }

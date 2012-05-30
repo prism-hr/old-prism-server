@@ -1,0 +1,36 @@
+@charset "utf-8";
+
+/* REGISTRATION page * previous design * -------------------------------------------------------------------------------------------- */
+#form-box { background: #FFF; border-radius: 8px; box-shadow: 0 0 4px #999; bottom: 30px; left: 35px; padding: 20px; position: absolute; }
+#form-box h1 { color: #F30; font-size: 16pt; margin-bottom: 1em; }
+#form-box div.row label { float: left; font-weight: bold; width: 150px; }
+#form-box div.row div.field { margin-left: 160px; width: 350px; }
+#form-box div.row input { margin-bottom: 4px; width: 90%; }
+#form-box div.row select { margin-bottom: 4px; width: 92%; }
+
+
+/* REGISTRATION page * new design - date:27-03-12 * -------------------------------------------------------------------------------------------- */
+#registration-box {
+	background: #828386 url(../../images/bg_login_box.jpg) repeat-x; /* Old browsers */
+	background: -moz-linear-gradient(top, #e6e6e7 0%, #828386 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e6e6e7), color-stop(100%,#828386)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #e6e6e7 0%,#828386 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #e6e6e7 0%,#828386 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #e6e6e7 0%,#828386 100%); /* IE10+ */
+	background: linear-gradient(top, #e6e6e7 0%,#828386 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e6e6e7', endColorstr='#828386',GradientType=0 ); /* IE6-9 */
+	/* Mofified height from 173px to auto - Manish*/
+	border-radius: 10px; color: #58585a; font-size: 8.5pt; font-weight: bold; height: auto; position: absolute; right: 35px; top: 35px; width: 240px;
+}
+
+#registration-box form { padding: 10px; }
+#registration-box p { line-height: 24px; }
+#registration-box form button { position: absolute; bottom: 4px; right: 15px; width: 50px; }
+#registration-box form input { font-size: 8.5pt; margin-top: 3px; width: 208px; }
+
+/* Changed - Manish*/
+#registration-box a {color: white; font-size: 8.5pt; margin: 10px; margin-top: 0px; float:left;}
+#registration-box form span.invalid { 
+	color:white; padding-bottom:10px; padding-top:10px;
+	background: url("../../images/button_exclaim.png") no-repeat scroll 0 0.5em transparent;
+}

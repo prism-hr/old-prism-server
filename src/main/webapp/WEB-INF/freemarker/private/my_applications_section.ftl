@@ -1,6 +1,6 @@
 <table class="data" border="0" >
 					          	<colgroup>
-					            	<col style="width: 30px" />
+					            	<col style="width: 24px" />
 					            	<col style="" />
 					            	<col/>
 					            	<col/>

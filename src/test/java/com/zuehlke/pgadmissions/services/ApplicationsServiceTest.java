@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.SearchCategories;
 
 public class ApplicationsServiceTest {
 
@@ -226,6 +228,101 @@ public class ApplicationsServiceTest {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).events(validationEvent).toApplicationForm();
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		Assert.assertEquals(application.getStatus(), stage);
+	}
+	
+	@Test
+	public void shouldReturnVisibleApplicationMatchedTheProgrammeName() {
+		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		final ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().code("Program_Science_1").id(1).toProgram()).toApplicationForm();
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(application);
+			}
+		};
+		
+		EasyMock.expect(applicationFormDAOMock.getAllApplicationsContainingTermInCategory("sCiEnce", SearchCategories.PROGRAMME_NAME)).andReturn(Arrays.asList(application));
+		EasyMock.replay(applicationFormDAOMock);
+		List<ApplicationForm> apps = applicationsService.getAllVisibleAndMatchedApplications("sCiEnce", SearchCategories.PROGRAMME_NAME, user);
+		EasyMock.verify(applicationFormDAOMock);
+		assertEquals(1, apps.size());
+	}
+	
+	
+	@Test
+	public void shouldReturnVisibleApplicationMatchedTheApplicationCode() {
+		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		final ApplicationForm application = new ApplicationFormBuilder().applicationNumber("Application_117_").id(1).program(new ProgramBuilder().code("Program_Science_1").id(1).toProgram()).toApplicationForm();
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(application);
+			}
+		};
+		
+		EasyMock.expect(applicationFormDAOMock.getAllApplicationsContainingTermInCategory("117", SearchCategories.APPLICATION_CODE)).andReturn(Arrays.asList(application));
+		EasyMock.replay(applicationFormDAOMock);
+		List<ApplicationForm> apps = applicationsService.getAllVisibleAndMatchedApplications("117", SearchCategories.APPLICATION_CODE, user);
+		EasyMock.verify(applicationFormDAOMock);
+		assertEquals(1, apps.size());
+	}
+	
+	
+	@Test
+	public void shouldReturnVisibleApplicationMatchedTheApplicantName() {
+		final RegisteredUser user = new RegisteredUserBuilder().firstName("Freeman").id(1).toUser();
+		final ApplicationForm application = new ApplicationFormBuilder().applicant(user).applicationNumber("Application_117_").id(1).program(new ProgramBuilder().code("Program_Science_1").id(1).toProgram()).toApplicationForm();
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(application);
+			}
+		};
+		
+		EasyMock.expect(applicationFormDAOMock.getAllApplicationsContainingTermInCategory("free", SearchCategories.APPLICANT_NAME)).andReturn(Arrays.asList(application));
+		EasyMock.replay(applicationFormDAOMock);
+		List<ApplicationForm> apps = applicationsService.getAllVisibleAndMatchedApplications("free", SearchCategories.APPLICANT_NAME, user);
+		EasyMock.verify(applicationFormDAOMock);
+		assertEquals(1, apps.size());
+	}
+	
+	
+	@Test
+	public void shouldReturnEmptyListIfMatchedApplicationsAreNotVisibleToTheUser() {
+		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		final ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().code("Program_Science_1").id(1).toProgram()).toApplicationForm();
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(new ApplicationForm());
+			}
+		};
+		
+		EasyMock.expect(applicationFormDAOMock.getAllApplicationsContainingTermInCategory("sCiEnce", SearchCategories.PROGRAMME_NAME)).andReturn(Arrays.asList(application));
+		EasyMock.replay(applicationFormDAOMock);
+		List<ApplicationForm> apps = applicationsService.getAllVisibleAndMatchedApplications("sCiEnce", SearchCategories.PROGRAMME_NAME, user);
+		EasyMock.verify(applicationFormDAOMock);
+		assertEquals(0, apps.size());
+	}
+	
+	
+	
+	@Test
+	public void shouldReturnEmptyListIfNoMatchedApplications() {
+		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		final ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().code("Program_Science_1").id(1).toProgram()).toApplicationForm();
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(application);
+			}
+		};
+		
+		EasyMock.expect(applicationFormDAOMock.getAllApplicationsContainingTermInCategory("different", SearchCategories.PROGRAMME_NAME)).andReturn(Collections.EMPTY_LIST);
+		EasyMock.replay(applicationFormDAOMock);
+		List<ApplicationForm> apps = applicationsService.getAllVisibleAndMatchedApplications("different", SearchCategories.PROGRAMME_NAME, user);
+		EasyMock.verify(applicationFormDAOMock);
+		assertEquals(0, apps.size());
 	}
 	
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.SearchCategories;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -46,6 +47,12 @@ public class ApplicationListController {
 	@ModelAttribute("user")
 	public RegisteredUser getUser() {
 		return userService.getCurrentUser();
+	}
+	
+	
+	@ModelAttribute("searchCategories")
+	public SearchCategories[] getSearchCategories() {
+		return SearchCategories.values();
 	}
 	
 	@ModelAttribute("applications")

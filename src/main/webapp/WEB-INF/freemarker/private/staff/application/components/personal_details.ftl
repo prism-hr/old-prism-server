@@ -79,7 +79,7 @@
 			                        <#else>
 			                        	<label class="half multiples">${nationality.name!"Not Provided"}.</label>
 			                       	</#if>
-									<input type="hidden" name="candidateNationalities" value='${nationality.id?string("#######")}'/>
+									
 			                    </#list>
 			                <#else>
 			                	<label class="admin_row_label">My Nationality</label>
@@ -104,7 +104,7 @@
 			                        <#else>
 			                        	<label class="half multiples">${nationality.name!"Not Provided"}.</label>
 			                       	</#if>
-									<input type="hidden" name="candidateNationalities" value='${nationality.id?string("#######")}'/>
+									
 			                    </#list>
 			                <#else>
 			                    Not Provided
@@ -128,7 +128,7 @@
 			                        <#else>
 			                        	<label class="half multiples">${nationality.name!"Not Provided"}.</label>
 			                       	</#if>
-									<input type="hidden" name="candidateNationalities" value='${nationality.id?string("#######")}'/>
+									
 			                    </#list>
 			                <#else>
 			                    Not Provided

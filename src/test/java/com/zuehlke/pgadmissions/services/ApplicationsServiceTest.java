@@ -1,7 +1,9 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -231,99 +233,223 @@ public class ApplicationsServiceTest {
 	}
 	
 	@Test
-	public void shouldReturnVisibleApplicationMatchedTheProgrammeName() {
-		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		final ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().code("Program_Science_1").id(1).toProgram()).toApplicationForm();
+	public void shouldGetAllApplicationsContainingBiologyInTheirNumber(){
+		Program program = new ProgramBuilder().id(1).toProgram();
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().applicationNumber("ABCD").program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
 		applicationsService = new ApplicationsService(applicationFormDAOMock){
 			@Override
 			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
-				return Arrays.asList(application);
+				return Arrays.asList(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour);
 			}
 		};
 		
-		EasyMock.expect(applicationFormDAOMock.getAllApplicationsContainingTermInCategory("sCiEnce", SearchCategories.PROGRAMME_NAME)).andReturn(Arrays.asList(application));
-		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> apps = applicationsService.getAllVisibleAndMatchedApplications("sCiEnce", SearchCategories.PROGRAMME_NAME, user);
-		EasyMock.verify(applicationFormDAOMock);
-		assertEquals(1, apps.size());
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications("BiOlOgY", SearchCategories.APPLICATION_CODE, user);
+		assertEquals(2, applications.size());
+		
+	}
+	
+	@Test
+	public void shouldGetApplicationBelongingToProgramWithCodeScienceAndOtherTitle(){
+		Program programOne = new ProgramBuilder().code("Program_ZZZZZ_1").title("empty").toProgram();
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(applicationFormOne);
+			}
+		};
+		
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications("zzZZz", SearchCategories.PROGRAMME_NAME, user);
+		
+		assertEquals(1, applications.size());
+		
+	}
+	
+	@Test
+	public void shouldGetApplicationBelongingToProgramWithTitleScienceAndOtherCode(){
+		Program programOne = new ProgramBuilder().code("empty").title("Program_ZZZZZ_1").toProgram();
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(applicationFormOne);
+			}
+		};
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications("zzZZz", SearchCategories.PROGRAMME_NAME, user);
+		
+		assertEquals(1, applications.size());
+		
+	}
+	
+	@Test
+	public void shouldNotReturnAppIfTermNotInProgrameCodeOrTitle(){
+		Program programOne = new ProgramBuilder().code("empty").title("empty").toProgram();
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(applicationFormOne);
+			}
+		};
+		
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications("zzZZz", SearchCategories.PROGRAMME_NAME, user);
+		
+		assertEquals(0, applications.size());
+		
+	}
+	
+	@Test
+	public void shouldGetApplicationBelongingToApplicantMatchingFirstNameFred(){
+		Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
+		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("FredzzZZZZZerick").lastName("Doe").email("email@test.com").username("freddy").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(applicationFormOne);
+			}
+		};
+		
+		
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications("zzZZz", SearchCategories.APPLICANT_NAME, user);
+
+		assertEquals(1, applications.size());
+		
+	}
+	
+	@Test
+	public void shouldGetApplicationBelongingToApplicantMatchingLastName(){
+		Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
+		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com").username("freddy").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(applicationFormOne);
+			}
+		};
+		
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications("zzZZz", SearchCategories.APPLICANT_NAME, user);
+		
+		assertEquals(1, applications.size());
+		
+	}
+	
+	@Test
+	public void shouldNotReturnAppIfTermNotInApplicantNameFirstOrLastName(){
+		Program programOne = new ProgramBuilder().code("empty").title("empty").toProgram();
+		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").username("freddy").password("password")
+				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(applicationFormOne);
+			}
+		};
+		
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications("empty", SearchCategories.APPLICANT_NAME, user);
+		
+		assertEquals(0, applications.size());
+		
+	}
+	
+
+	@Test
+	public void shouldGetAllApplicationsInValidationStage(){
+		Program program = new ProgramBuilder().code("empty").title("empty").toProgram(); 
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).applicationNumber("ABC").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicationNumber("App_Biology").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.VALIDATION).applicationNumber("ABCD").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().id(4).applicationNumber("BIOLOGY1").program(program).applicant(user).toApplicationForm();
+
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo);
+			}
+		};
+		
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications("validati", SearchCategories.APPLICATION_STATUS, user);
+		assertEquals(2, applications.size());
+		assertTrue(applications.contains(applicationFormOne));
+		assertTrue(applications.contains(applicationFormThree));
+		
 	}
 	
 	
 	@Test
-	public void shouldReturnVisibleApplicationMatchedTheApplicationCode() {
-		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		final ApplicationForm application = new ApplicationFormBuilder().applicationNumber("Application_117_").id(1).program(new ProgramBuilder().code("Program_Science_1").id(1).toProgram()).toApplicationForm();
+	public void shouldGetAllApplicationsInApprovalStage(){
+		Program program = new ProgramBuilder().code("empty").title("empty").toProgram(); 
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVAL).applicationNumber("ABC").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicationNumber("App_Biology").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().id(4).applicationNumber("BIOLOGY1").program(program).applicant(user).toApplicationForm();
+
 		applicationsService = new ApplicationsService(applicationFormDAOMock){
 			@Override
 			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
-				return Arrays.asList(application);
+				return Arrays.asList(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo);
 			}
 		};
 		
-		EasyMock.expect(applicationFormDAOMock.getAllApplicationsContainingTermInCategory("117", SearchCategories.APPLICATION_CODE)).andReturn(Arrays.asList(application));
-		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> apps = applicationsService.getAllVisibleAndMatchedApplications("117", SearchCategories.APPLICATION_CODE, user);
-		EasyMock.verify(applicationFormDAOMock);
-		assertEquals(1, apps.size());
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications("approval", SearchCategories.APPLICATION_STATUS, user);
+		assertEquals(1, applications.size());
+		assertTrue(applications.contains(applicationFormOne));
+		
+	}
+	
+	@Test
+	public void shouldGetAllApplicationsInApprovedStage(){
+		Program program = new ProgramBuilder().code("empty").title("empty").toProgram(); 
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicationNumber("App_Biology").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().id(4).applicationNumber("BIOLOGY1").program(program).applicant(user).toApplicationForm();
+		
+		applicationsService = new ApplicationsService(applicationFormDAOMock){
+			@Override
+			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
+				return Arrays.asList(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo);
+			}
+		};
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications("approveD", SearchCategories.APPLICATION_STATUS, user);
+		assertTrue(applications.contains(applicationFormOne));
+		
 	}
 	
 	
 	@Test
-	public void shouldReturnVisibleApplicationMatchedTheApplicantName() {
-		final RegisteredUser user = new RegisteredUserBuilder().firstName("Freeman").id(1).toUser();
-		final ApplicationForm application = new ApplicationFormBuilder().applicant(user).applicationNumber("Application_117_").id(1).program(new ProgramBuilder().code("Program_Science_1").id(1).toProgram()).toApplicationForm();
+	public void shouldNotReturnAppIfNoStatusMatching(){
+		Program program = new ProgramBuilder().code("empty").title("empty").toProgram(); 
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicationNumber("App_Biology").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).applicant(user).toApplicationForm();
+		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().id(4).applicationNumber("BIOLOGY1").program(program).applicant(user).toApplicationForm();
+		
 		applicationsService = new ApplicationsService(applicationFormDAOMock){
 			@Override
 			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
-				return Arrays.asList(application);
+				return Arrays.asList(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo);
 			}
 		};
 		
-		EasyMock.expect(applicationFormDAOMock.getAllApplicationsContainingTermInCategory("free", SearchCategories.APPLICANT_NAME)).andReturn(Arrays.asList(application));
-		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> apps = applicationsService.getAllVisibleAndMatchedApplications("free", SearchCategories.APPLICANT_NAME, user);
-		EasyMock.verify(applicationFormDAOMock);
-		assertEquals(1, apps.size());
-	}
-	
-	
-	@Test
-	public void shouldReturnEmptyListIfMatchedApplicationsAreNotVisibleToTheUser() {
-		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		final ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().code("Program_Science_1").id(1).toProgram()).toApplicationForm();
-		applicationsService = new ApplicationsService(applicationFormDAOMock){
-			@Override
-			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
-				return Arrays.asList(new ApplicationForm());
-			}
-		};
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications("lalala", SearchCategories.APPLICATION_STATUS, user);
+		assertEquals(0, applications.size());
 		
-		EasyMock.expect(applicationFormDAOMock.getAllApplicationsContainingTermInCategory("sCiEnce", SearchCategories.PROGRAMME_NAME)).andReturn(Arrays.asList(application));
-		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> apps = applicationsService.getAllVisibleAndMatchedApplications("sCiEnce", SearchCategories.PROGRAMME_NAME, user);
-		EasyMock.verify(applicationFormDAOMock);
-		assertEquals(0, apps.size());
 	}
 	
-	
-	
-	@Test
-	public void shouldReturnEmptyListIfNoMatchedApplications() {
-		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		final ApplicationForm application = new ApplicationFormBuilder().id(1).program(new ProgramBuilder().code("Program_Science_1").id(1).toProgram()).toApplicationForm();
-		applicationsService = new ApplicationsService(applicationFormDAOMock){
-			@Override
-			public List<ApplicationForm> getVisibleApplications(RegisteredUser user){
-				return Arrays.asList(application);
-			}
-		};
-		
-		EasyMock.expect(applicationFormDAOMock.getAllApplicationsContainingTermInCategory("different", SearchCategories.PROGRAMME_NAME)).andReturn(Collections.EMPTY_LIST);
-		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> apps = applicationsService.getAllVisibleAndMatchedApplications("different", SearchCategories.PROGRAMME_NAME, user);
-		EasyMock.verify(applicationFormDAOMock);
-		assertEquals(0, apps.size());
-	}
 	
 
 	@After

@@ -49,6 +49,21 @@ $(document).ready(function() {
 				}
 			}
 	});
+	
+	
+	$('#searchCategory').change(function(){
+		if($('#searchCategory').val() != ""){
+			$.get("/pgadmissions/search",
+				{
+					searchCategory: $('#searchCategory').val(),
+					searchTerm:  $('#searchTerm').val()
+				},
+				function(data) {
+					$('#applicationListSection').html(data);
+				}
+			);
+		}
+	});
 
 
 	$('#manageUsersButton').click(function(){

@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.SearchCategories;
 
 @Service("applicationsService")
 public class ApplicationsService {
@@ -103,6 +105,21 @@ public class ApplicationsService {
 			}
 		}
 		return null;
+	}
+
+	@Transactional
+	public List<ApplicationForm> getAllVisibleAndMatchedApplications(String term, SearchCategories category, RegisteredUser user) {
+		List<ApplicationForm> visibleAndMatchedApplications = new ArrayList<ApplicationForm>();
+		List<ApplicationForm> visibleApplications = getVisibleApplications(user);
+		List<ApplicationForm> allMatchedApplications = applicationFormDAO.getAllApplicationsContainingTermInCategory(term, category);
+		if(allMatchedApplications != null && !allMatchedApplications.isEmpty()){
+			for (ApplicationForm applicationForm : visibleApplications) {
+				if(allMatchedApplications.contains(applicationForm)){
+					visibleAndMatchedApplications.add(applicationForm);
+				}
+			}
+		}
+		return visibleAndMatchedApplications;
 	}
 
 	

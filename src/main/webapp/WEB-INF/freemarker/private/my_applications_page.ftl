@@ -55,6 +55,19 @@
 							
 							<p style="color:red;">${(message?html)!}</p>
 							
+							<div class="row"> 
+			            			<div class="field">	
+			           				<span id="searchLbl" class="plain-label">Search</span>
+											<input type = "text" id="searchTerm" name="searchTerm"/>
+											<select name="searchCategory" id="searchCategory">
+												<option value="">Column...</option>
+													<#list searchCategories as category>
+												 		 <option value="${category}">
+														${category.displayValue()}</option>               
+													</#list>
+														</select>	
+									</div>
+							</div>
 							
 				            <section id="applicationListSection">
                       	    </section>

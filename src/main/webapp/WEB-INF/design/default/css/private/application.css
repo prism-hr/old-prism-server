@@ -199,9 +199,8 @@ table.data-table .editButton{
 
 
 /* Upload fields - #uploadFields id to be changed to something more generic. */
-section.form-rows .field a { display: none; } /* hide the displayed name of uploaded files */
 
-/* Show only the file link when a file is uploaded.*/
+/* Show only the file link when a file is uploaded. */
 section.form-rows .field.uploaded input { display: none; }
 section.form-rows .field.uploaded a { display: inline-block; vertical-align: top; }
 

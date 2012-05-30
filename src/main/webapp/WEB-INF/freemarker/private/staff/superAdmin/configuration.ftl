@@ -100,7 +100,12 @@
 												</form>
 										
 											</div><!-- close .row-group -->
+											
+										</div>
+									</section>
 
+									<section class="form-rows">
+										<div>
 			  					
 					  					<!-- Configure Reminder Interval -->
 											<div class="row-group">
@@ -132,7 +137,12 @@
 												</div>
 											</form>
 										</div><!-- close .row-group -->
+											
+									</div>
+								</section>
 
+								<section class="form-rows">
+									<div>
 
 				  					<!-- Add Registry Users -->
 										<div class="row-group">
@@ -222,13 +232,14 @@
 												<input type="hidden" name="registryUsers" id= "registryUsers" />
 									
 										</div>
-			            					<div class="buttons">						        		
-			            						<button type="button" id="addAnother">Add Another</button>
-			            						<button type="button" id="cancelRegistryBtn" value="cancel">Cancel</button>
-												<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
-											</div>
-									
-											</form><!-- close .row-group -->
+										
+										<div class="buttons">						        		
+											<button type="button" id="addAnother">Add Another</button>
+											<button type="button" id="cancelRegistryBtn" value="cancel">Cancel</button>
+											<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
+										</div>
+								
+										</form><!-- close .row-group -->
 										
 									</div>
 								</section>

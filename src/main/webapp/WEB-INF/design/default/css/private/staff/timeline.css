@@ -66,6 +66,12 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 #timeline-statuses .approval ul .box { background-color: #F5F7CF; }
 #timeline-statuses .approval ul .box .title { background: #E4E466; }
 
+#timeline-statuses .rejected .box { background: #E0CED7; }
+#timeline-statuses .rejected .box .title { background: #C3ABBB; }
+#timeline-statuses .rejected .box p { background-image: url(../../../images/bg_status_rejected.gif); }
+#timeline-statuses .rejected ul .box { background-color: #EEE3E8; }
+#timeline-statuses .rejected ul .box .title { background: #D6BFCA; }
+
 
 /* Application tab ---------------------------------------------------------------------------------------- */
 #application div.admin_row .admin_row_label,

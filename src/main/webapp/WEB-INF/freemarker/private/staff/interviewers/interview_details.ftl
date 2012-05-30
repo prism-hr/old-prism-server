@@ -136,10 +136,10 @@
 													</option>
 													</#list>
 												</select>
+												<@spring.bind "interview.interviewers" /> 
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 											</div>
 										</div>
-										<@spring.bind "interview.interviewers" /> 
-										<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 									</div>
 		
 									<div class="row-group">				
@@ -155,27 +155,27 @@
 											<label class="label normal">Interviewer First Name<em>*</em></label> 
 											<div class="field">
 												<input class="full" type="text" name="newInterviewerFirstName" id="newInterviewerFirstName"  value="${(interviewer.firstName?html)!}"/>
+												<@spring.bind "interviewer.firstName" /> 
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
 											</div>
-											<@spring.bind "interviewer.firstName" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
 										</div>
 										
 										<div class="row">
 											<label class="label normal">Interviewer Last Name<em>*</em></label>
 											<div class="field">
 												<input class="full" type="text" name="newInterviewerLastName" id="newInterviewerLastName" value="${(interviewer.lastName?html)!}"/>			                                      
+												<@spring.bind "interviewer.lastName" /> 
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 											</div>
-											<@spring.bind "interviewer.lastName" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
 			
 										<div class="row">
 											<label class="label normal">Email<em>*</em></label>
 											<div class="field">
 												<input class="full" type="text"  name="newInterviewerEmail" id="newInterviewerEmail" value="${(interviewer.email?html)!}"/>			                                         
+												<@spring.bind "interviewer.email" /> 
+												<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 											</div>
-											<@spring.bind "interviewer.email" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
 		
 										<div class="row">

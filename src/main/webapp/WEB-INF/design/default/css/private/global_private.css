@@ -125,6 +125,8 @@ span.indicator { border-width: 1px; margin-left: 5px; padding: 1px 5px; vertical
 .button-delete { background-image: url(../../images/trash.png);  cursor: pointer;}
 .button-question { background-image: url(../../images/button_question.png); margin-top: 0; width: 20px; height: 20px; }
 
+table.existing .button-edit, table.existing .button-delete { margin: 3px 0; }
+
 /* Row arrows */
 .row-arrow { background: url(../../images/button_arrow.png) no-repeat; width: 20px; height: 21px; display: inline-block; text-indent: 99px; overflow: hidden; vertical-align: middle; /*margin-top: -4px;*/ }
 .row-arrow.open { background-position: 0 -21px; }

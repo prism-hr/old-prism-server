@@ -223,7 +223,7 @@
 											<textarea id="furtherDetails" name="furtherDetails" class="max" rows="6" cols="80" maxlength='5000'>${interview.furtherDetails!}</textarea>
 											</#if>
 											<@spring.bind "interview.furtherDetails" /> 
-											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											<#list spring.status.errorMessages as error><br /><span class="invalid">${error}</span></#list>
 										</div>
 									</div>
 		
@@ -235,9 +235,9 @@
 											<#else>
 											<textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${(interview.locationURL?html)!}</textarea>
 											</#if>				                                            
+											<@spring.bind "interview.locationURL" /> 
+											<#list spring.status.errorMessages as error><br /><span class="invalid">${error}</span></#list>
 										</div>
-										<@spring.bind "interview.locationURL" /> 
-										<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 									</div>
 									
 								</div>

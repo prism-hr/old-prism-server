@@ -77,7 +77,7 @@ public class MoveToReviewControllerTest {
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(4).toReviewRound();
 		final ApplicationForm application = new ApplicationFormBuilder().id(2).toApplicationForm();
 		
-		controller = new MoveToReviewController(applicationServiceMock, userServiceMock, userValidatorMock,null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock) {
+		controller = new MoveToReviewController(applicationServiceMock, userServiceMock, userValidatorMock,null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, null) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				return application;
@@ -98,7 +98,7 @@ public class MoveToReviewControllerTest {
 	public void shouldNotSaveReviewRoundAndReturnToReviewRoundPageIfHasErrors() {
 		BindingResult errorsMock = EasyMock.createMock(BindingResult.class);
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
-		controller = new MoveToReviewController(applicationServiceMock, userServiceMock, userValidatorMock,null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock){
+		controller = new MoveToReviewController(applicationServiceMock, userServiceMock, userValidatorMock,null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, null){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				return applicationForm;
@@ -132,7 +132,7 @@ public class MoveToReviewControllerTest {
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 
-		controller = new MoveToReviewController(applicationServiceMock, userServiceMock, userValidatorMock,null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock);
+		controller = new MoveToReviewController(applicationServiceMock, userServiceMock, userValidatorMock,null, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, null);
 
 	}
 

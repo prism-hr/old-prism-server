@@ -30,6 +30,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
@@ -51,6 +52,7 @@ public class ReviewControllerTest {
 	private RegisteredUser currentUserMock;
 	private ReviewerPropertyEditor reviewerPropertyEditorMock;
 	private ReviewRoundValidator reviewRoundValidator;
+	private EncryptionHelper encryptionHelperMock;
 
 	@Test
 	public void shouldAddRegisteredUserValidatorAndReviewerPropertyEditor() {
@@ -75,7 +77,7 @@ public class ReviewControllerTest {
 	public void shouldReturnExistingReviewersBelongingToApplication() {
 		Program program = new ProgramBuilder().id(6).toProgram();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).program(program).toApplicationForm();
-		controller = new ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock) {
+		controller = new ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				return applicationForm;
@@ -118,7 +120,7 @@ public class ReviewControllerTest {
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).reviewers(new ReviewerBuilder().user(interUser4).toReviewer()).toReviewRound();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().reviewRounds(reviewRound).latestReviewRound(reviewRound).acceptedTerms(CheckedStatus.NO)
 				.id(5).program(program).toApplicationForm();
-		controller =  new ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock) {
+		controller =  new ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if(applicationId == "5"){
@@ -126,13 +128,12 @@ public class ReviewControllerTest {
 				}
 				return null;
 			}
-
-			
+		
 
 			@SuppressWarnings("unchecked")
 			@Override
-			public List<RegisteredUser> getPendingReviewers(List<Integer> pendingReviewer, String applicationId) {
-				if (pendingReviewer.size() == 1 && pendingReviewer.get(0) == 3) {
+			public List<RegisteredUser> getPendingReviewers(List<String> pendingReviewer, String applicationId) {
+				if (pendingReviewer.size() == 1 && pendingReviewer.get(0) == "3") {
 					return Arrays.asList(interUser3);
 				}
 				return Collections.EMPTY_LIST;
@@ -149,7 +150,7 @@ public class ReviewControllerTest {
 		};
 
 
-		List<RegisteredUser> reviewersUsers = controller.getProgrammeReviewers("5", Arrays.asList(3));
+		List<RegisteredUser> reviewersUsers = controller.getProgrammeReviewers("5", Arrays.asList("3"));
 		assertEquals(2, reviewersUsers.size());
 	}
 
@@ -214,20 +215,23 @@ public class ReviewControllerTest {
 
 	@Test
 	public void shouldReturnPendingReviewersAndRemoveExistingReviewersFromList() {
-		List<Integer> ids = Arrays.asList(1, 8);
+		List<String> encryptedIds = Arrays.asList("1", "8");
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("1")).andReturn(1);
+		EasyMock.expect(encryptionHelperMock.decryptToInteger("8")).andReturn(8);
 		EasyMock.reset(userServiceMock);
 		RegisteredUser newUser1 = new RegisteredUserBuilder().id(1).toUser();
 		RegisteredUser newUser2 = new RegisteredUserBuilder().id(8).toUser();
 
 		EasyMock.expect(userServiceMock.getUser(1)).andReturn(newUser1);
 		EasyMock.expect(userServiceMock.getUser(8)).andReturn(newUser2);
-		EasyMock.replay(userServiceMock);
+		
+		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		String applicationNumber = "5";
 		final ApplicationForm applicationForm = new ApplicationFormBuilder()
 				.latestReviewRound(new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(newUser2).toReviewer()).toReviewRound()).applicationNumber(applicationNumber).id(3)
 				.toApplicationForm();
-		controller = new ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock) {
+		controller = new ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if ("5" == applicationId) {
@@ -244,7 +248,7 @@ public class ReviewControllerTest {
 
 			
 		};
-		List<RegisteredUser> newUsers = controller.getPendingReviewers(ids, applicationNumber);
+		List<RegisteredUser> newUsers = controller.getPendingReviewers(encryptedIds, applicationNumber);
 		assertEquals(1, newUsers.size());
 		assertEquals(newUser1, newUsers.get(0));
 
@@ -261,7 +265,7 @@ public class ReviewControllerTest {
 		final Program program = new ProgramBuilder().reviewers(defaultReviewer).id(6).toProgram();
 		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).reviewers(new ReviewerBuilder().user(assignedReviewer).toReviewer()).toReviewRound();
 		final ApplicationForm applicationForm = new ApplicationFormBuilder().latestReviewRound(reviewRound).id(5).program(program).toApplicationForm();
-		controller = new  ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock) {
+		controller = new  ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator,reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, encryptionHelperMock) {
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
 				if(applicationId == "5"){
@@ -273,8 +277,8 @@ public class ReviewControllerTest {
 		
 			@SuppressWarnings("unchecked")
 			@Override
-			public List<RegisteredUser> getPendingReviewers(List<Integer> pendingReviewer, String applicationId) {
-				if (pendingReviewer.size() == 1 && pendingReviewer.get(0) == 3) {
+			public List<RegisteredUser> getPendingReviewers(List<String> pendingReviewer, String applicationId) {
+				if (pendingReviewer.size() == 1 && pendingReviewer.get(0) == "3") {
 					return Arrays.asList(pendingReviewerUser);
 				}
 				return Collections.EMPTY_LIST;
@@ -291,7 +295,7 @@ public class ReviewControllerTest {
 		
 		EasyMock.expect(userServiceMock.getAllPreviousReviewersOfProgram(program)).andReturn(Arrays.asList(defaultReviewer, reviewer, pendingReviewerUser, assignedReviewer));
 		EasyMock.replay(userServiceMock);
-		List<RegisteredUser> reviewersUsers = controller.getPreviousReviewers("5", Arrays.asList(3));
+		List<RegisteredUser> reviewersUsers = controller.getPreviousReviewers("5", Arrays.asList("3"));
 		assertEquals(1, reviewersUsers.size());
 		assertTrue(reviewersUsers.contains(reviewer));
 	}
@@ -308,11 +312,12 @@ public class ReviewControllerTest {
 		reviewServiceMock = EasyMock.createMock(ReviewService.class);
 		messageSourceMock = EasyMock.createMock(MessageSource.class);
 		reviewRoundValidator = EasyMock.createMock(ReviewRoundValidator.class);
-		bindingResultMock = EasyMock.createMock(BindingResult.class);
+		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
+		bindingResultMock = EasyMock.createMock(BindingResult.class);		
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
 		EasyMock.replay(bindingResultMock);
 
-		controller = new ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock) {
+		controller = new ReviewController(applicationServiceMock, userServiceMock, userValidatorMock,reviewRoundValidator, reviewServiceMock, messageSourceMock, reviewerPropertyEditorMock, encryptionHelperMock) {
 
 			@Override
 			public ReviewRound getReviewRound(Object applicationId) {

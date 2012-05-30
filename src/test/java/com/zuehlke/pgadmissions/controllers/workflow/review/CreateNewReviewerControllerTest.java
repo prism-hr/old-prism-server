@@ -267,6 +267,6 @@ public class CreateNewReviewerControllerTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		messageSourceMock = EasyMock.createMock(MessageSource.class);
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
-		controller = new CreateNewReviewerController(null, userServiceMock, null, null, null, messageSourceMock, null);
+		controller = new CreateNewReviewerController(null, userServiceMock, null, null, null, messageSourceMock, null, null);
 	}
 }

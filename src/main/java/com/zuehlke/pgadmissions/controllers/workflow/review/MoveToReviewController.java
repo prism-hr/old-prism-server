@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.propertyeditors.ReviewerPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ReviewService;
@@ -26,13 +27,13 @@ public class MoveToReviewController extends ReviewController {
 
 	
 	MoveToReviewController() {
-		this(null, null,null, null, null, null, null);
+		this(null, null,null, null, null, null, null, null);
 	}
 		
 	@Autowired
 	public MoveToReviewController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator reviewerValidator, ReviewRoundValidator reviewRoundValidator,
-			ReviewService reviewService, MessageSource messageSource, ReviewerPropertyEditor reviewerPropertyEditor) {
-		super(applicationsService, userService, reviewerValidator,reviewRoundValidator, reviewService, messageSource,   reviewerPropertyEditor);
+			ReviewService reviewService, MessageSource messageSource, ReviewerPropertyEditor reviewerPropertyEditor,  EncryptionHelper encryptionHelper) {
+		super(applicationsService, userService, reviewerValidator,reviewRoundValidator, reviewService, messageSource,   reviewerPropertyEditor, encryptionHelper);
 		
 	}
 

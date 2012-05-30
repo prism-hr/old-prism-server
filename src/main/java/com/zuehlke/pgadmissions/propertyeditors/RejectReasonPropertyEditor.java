@@ -7,20 +7,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.zuehlke.pgadmissions.domain.RejectReason;
+import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 import com.zuehlke.pgadmissions.services.RejectService;
 
 @Component
 public class RejectReasonPropertyEditor extends PropertyEditorSupport {
 
 	private final RejectService rejectService;
+	private final EncryptionHelper encryptionHelper;
 
 	RejectReasonPropertyEditor(){
-		this(null);
+		this(null, null);
 	}
 	
 	@Autowired
-	public RejectReasonPropertyEditor(RejectService rejectService) {
+	public RejectReasonPropertyEditor(RejectService rejectService, EncryptionHelper encryptionHelper) {
 		this.rejectService = rejectService;
+		this.encryptionHelper = encryptionHelper;
 	}
 	@Override
 	public void setAsText(String strId) throws IllegalArgumentException {
@@ -28,7 +31,7 @@ public class RejectReasonPropertyEditor extends PropertyEditorSupport {
 			setValue(null);
 			return;
 		}
-		setValue(rejectService.getRejectReasonById(Integer.parseInt(strId)));
+		setValue(rejectService.getRejectReasonById(encryptionHelper.decryptToInteger(strId)));
 		
 	}
 
@@ -37,6 +40,6 @@ public class RejectReasonPropertyEditor extends PropertyEditorSupport {
 		if(getValue() == null || ((RejectReason)getValue()).getId() == null){
 			return null;
 		}
-		return ((RejectReason)getValue()).getId().toString();
+		return encryptionHelper.encrypt(((RejectReason)getValue()).getId());
 	}
 }

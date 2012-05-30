@@ -15,7 +15,7 @@ import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 @Controller
@@ -24,7 +24,7 @@ public class ApplicationFormController {
 
 	private final ProgramDAO programDAO;
 	private final ApplicationsService applicationService;
-	private final UserPropertyEditor userPropertyEditor;
+	private final PlainTextUserPropertyEditor userPropertyEditor;
 	public static final String PROGRAM_DOES_NOT_EXIST = "private/pgStudents/programs/program_does_not_exist";
 	private final ProgramInstanceDAO programInstanceDAO;
 	
@@ -33,7 +33,7 @@ public class ApplicationFormController {
 	}
 
 	@Autowired
-	public ApplicationFormController(ProgramDAO programDAO, ApplicationsService applicationService, UserPropertyEditor userPropertyEditor,
+	public ApplicationFormController(ProgramDAO programDAO, ApplicationsService applicationService, PlainTextUserPropertyEditor userPropertyEditor,
 			ProgramInstanceDAO programInstanceDAO) {
 		this.programDAO = programDAO;
 		this.applicationService = applicationService;

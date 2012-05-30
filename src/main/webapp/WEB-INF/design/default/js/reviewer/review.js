@@ -22,8 +22,7 @@ $(document).ready(function(){
 		 	var user = ids.substring(ids.indexOf("|") + 1);
 			$('#postReviewerForm').append("<input name='pendingReviewer' type='hidden' value='" + user + "'/>");	
 		});
-		$('#postReviewerForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");
-		$('#postReviewerForm').append("<input name='reviewRoundId' type='hidden' value='" +  $('#reviewRoundId').val() + "'/>");
+		$('#postReviewerForm').append("<input name='applicationId' type='hidden' value='" +  $('#applicationId').val() + "'/>");		
 		$('#postReviewerForm').append("<input name='firstName' type='hidden' value='" +  $('#newReviewerFirstName').val() + "'/>");
 		$('#postReviewerForm').append("<input name='lastName' type='hidden' value='" +  $('#newReviewerLastName').val() + "'/>");
 		$('#postReviewerForm').append("<input name='email' type='hidden' value='" +  $('#newReviewerEmail').val() + "'/>");		

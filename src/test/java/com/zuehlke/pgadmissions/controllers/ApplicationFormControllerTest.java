@@ -30,7 +30,7 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
-import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 
 public class ApplicationFormControllerTest {
@@ -39,7 +39,7 @@ public class ApplicationFormControllerTest {
 	private ApplicationFormController applicationController;
 	private ApplicationForm applicationForm;
 	private ApplicationsService applicationsServiceMock;
-	private UserPropertyEditor userPropertyEditorMock;
+	private PlainTextUserPropertyEditor userPropertyEditorMock;
 	private RegisteredUser student;
 	private ProgramInstanceDAO programInstanceDAOMock;
 
@@ -119,7 +119,7 @@ public class ApplicationFormControllerTest {
 
 		programDAOMock = EasyMock.createMock(ProgramDAO.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
+		userPropertyEditorMock = EasyMock.createMock(PlainTextUserPropertyEditor.class);
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
 		
 		

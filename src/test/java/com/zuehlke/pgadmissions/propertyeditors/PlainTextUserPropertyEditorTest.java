@@ -11,10 +11,10 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
 
-public class UserPropertyEditorTest {
+public class PlainTextUserPropertyEditorTest {
 
 	private UserService userServiceMock;
-	private UserPropertyEditor editor;
+	private PlainTextUserPropertyEditor editor;
 
 
 	@Test	
@@ -64,6 +64,6 @@ public class UserPropertyEditorTest {
 	@Before
 	public void setup(){
 		userServiceMock = EasyMock.createMock(UserService.class);
-		editor = new UserPropertyEditor(userServiceMock);
+		editor = new PlainTextUserPropertyEditor(userServiceMock);
 	}
 }

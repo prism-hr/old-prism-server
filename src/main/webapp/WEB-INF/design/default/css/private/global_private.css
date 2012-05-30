@@ -771,3 +771,17 @@ span.icon-role.interviewer { background-image: url(../../images/role_interviewer
 span.icon-role.approver { background-image: url(../../images/role_approver.png); }
 span.icon-role.applicant { background-image: url(../../images/role_applicant.png); }
 span.icon-role.referee { background-image: url(../../images/role_referee.png); }
+
+
+span.icon-up, span.icon-down {
+	background-repeat: no-repeat;
+	display: inline-block;
+	height: 10px;
+	overflow: hidden;
+	text-indent: 10px;
+	vertical-align: middle;
+	white-space: nowrap;
+	width: 10px;
+}
+span.icon-up { background-image(../../images/icon_arrow_up.png); }
+span.icon-down { background-image(../../images/icon_arrow_down.png); }

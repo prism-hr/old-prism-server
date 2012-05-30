@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,11 +113,35 @@ public class ApplicationsService {
 	public List<ApplicationForm> getAllVisibleAndMatchedApplications(String term, SearchCategories category, RegisteredUser user) {
 		List<ApplicationForm> visibleAndMatchedApplications = new ArrayList<ApplicationForm>();
 		List<ApplicationForm> visibleApplications = getVisibleApplications(user);
-		List<ApplicationForm> allMatchedApplications = applicationFormDAO.getAllApplicationsContainingTermInCategory(term, category);
-		if(allMatchedApplications != null && !allMatchedApplications.isEmpty()){
-			for (ApplicationForm applicationForm : visibleApplications) {
-				if(allMatchedApplications.contains(applicationForm)){
+		for (ApplicationForm applicationForm : visibleApplications) {
+			if(category ==  SearchCategories.APPLICATION_CODE){
+				if(applicationForm.getApplicationNumber().toLowerCase().contains(term.toLowerCase())){
 					visibleAndMatchedApplications.add(applicationForm);
+				}
+			}
+			if(category ==  SearchCategories.PROGRAMME_NAME){
+				String fullProgramName = applicationForm.getProgram().getCode() + applicationForm.getProgram().getTitle();
+				if(fullProgramName.toLowerCase().contains(term.toLowerCase())){
+					visibleAndMatchedApplications.add(applicationForm);
+				}
+			}
+			if(category ==  SearchCategories.APPLICANT_NAME){
+				String fullApplicantName = applicationForm.getApplicant().getFirstName() + applicationForm.getApplicant().getLastName();
+				if(fullApplicantName.toLowerCase().contains(term.toLowerCase())){
+					visibleAndMatchedApplications.add(applicationForm);
+				}
+			}
+			if(category ==  SearchCategories.APPLICATION_STATUS){
+				ApplicationFormStatus matchedStatus = null;
+				for (ApplicationFormStatus status : ApplicationFormStatus.values()) {
+					if(status.displayValue().toLowerCase().contains(term.toLowerCase())){
+						matchedStatus = status;
+					}
+				}
+				if(matchedStatus != null){
+					if(applicationForm.getStatus() == matchedStatus){
+						visibleAndMatchedApplications.add(applicationForm);
+					}
 				}
 			}
 		}

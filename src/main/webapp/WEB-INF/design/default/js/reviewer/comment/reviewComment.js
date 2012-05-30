@@ -5,8 +5,8 @@ $(document).ready(function(){
 		window.location.href = "/pgadmissions/reviewFeedback?applicationId=" +  $('#applicationId').val();
 	});	
 	
-	$('#submitReviewFeedback').click(function() {		
-			$('#reviewForm').append("<input type='hidden' name='applicationId' value='" + $('#applicationId').val() + "'/>");
+	$('#submitReviewFeedback').click(function() {
+						
 			$('#reviewForm').append("<input type='hidden' name='type' value='REVIEW'/>");
 			$('#reviewForm').append("<input type='hidden' name='comment' value='"+ $('#review-comment').val() + "'/>");
 

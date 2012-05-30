@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -24,7 +25,7 @@ public class DelegateToApplicationAdministratorControllerTest {
 	private ApplicationsService applicationServiceMock;
 	private UserService userServiceMock;
 	private DelegateToApplicationAdministratorController controller;
-	private PlainTextUserPropertyEditor userPropertyEditorMock;
+	private UserPropertyEditor userPropertyEditorMock;
 
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -98,7 +99,7 @@ public class DelegateToApplicationAdministratorControllerTest {
 	public void setup() {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		userPropertyEditorMock = EasyMock.createMock(PlainTextUserPropertyEditor.class);
+		userPropertyEditorMock = EasyMock.createMock(UserPropertyEditor.class);
 		controller = new DelegateToApplicationAdministratorController(applicationServiceMock, userServiceMock, userPropertyEditorMock);
 
 	}

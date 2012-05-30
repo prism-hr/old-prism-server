@@ -13,6 +13,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
 
@@ -22,14 +23,14 @@ public class DelegateToApplicationAdministratorController {
 
 	private final ApplicationsService applicationsService;
 	private final UserService userService;
-	private final PlainTextUserPropertyEditor userPropertyEditor;
+	private final UserPropertyEditor userPropertyEditor;
 
 	DelegateToApplicationAdministratorController() {
 		this(null, null, null);
 	}
 
 	@Autowired
-	public DelegateToApplicationAdministratorController(ApplicationsService applicationsService, UserService userService, PlainTextUserPropertyEditor userPropertyEditor) {
+	public DelegateToApplicationAdministratorController(ApplicationsService applicationsService, UserService userService, UserPropertyEditor userPropertyEditor) {
 		this.applicationsService = applicationsService;
 		this.userService = userService;
 		this.userPropertyEditor = userPropertyEditor;

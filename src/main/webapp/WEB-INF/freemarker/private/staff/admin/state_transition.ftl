@@ -143,7 +143,7 @@
 											<select class="max" name="applicationAdministrator" id="appliationAdmin" disabled="disabled">
 												<option value="">Select...</option>
 												<#list reviewersWillingToInterview as reviewerWillingToInterview>
-												<option value="${reviewerWillingToInterview.id?string('#####')}" >${reviewerWillingToInterview.firstName?html} ${reviewerWillingToInterview.lastName?html}</option>               
+												<option value="${encrypter.encrypt(reviewerWillingToInterview.id)}" >${reviewerWillingToInterview.firstName?html} ${reviewerWillingToInterview.lastName?html}</option>               
 												</#list>
 											</select>	
 										</form>

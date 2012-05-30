@@ -774,7 +774,7 @@ span.icon-role.referee { background-image: url(../../images/role_referee.png); }
 
 
 button span.icon-up, button span.icon-down {
-	background-repeat: no-repeat;
+	background: transparent no-repeat !important;
 	display: inline-block !important;
 	height: 10px !important;
 	margin: 0 !important;

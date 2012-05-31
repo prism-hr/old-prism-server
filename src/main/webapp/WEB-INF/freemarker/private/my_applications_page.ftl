@@ -55,17 +55,16 @@
 				        <div class="content-box-inner">
 							
 									<p style="color:red;">${(message?html)!}</p>
-									<div id="search-applications" class="row"> 
-										<div class="field">	
-											<label for="searchTerm" id="searchLbl">Search</label>
-											<input type="text" id="searchTerm" name="searchTerm" />
-											<select name="searchCategory" id="searchCategory">
-												<option value="">Column...</option>
-												<#list searchCategories as category>
-												<option value="${category}">${category.displayValue()}</option>               
-												</#list>
-											</select>	
-										</div>
+									<div id="search-box"> 
+										<label for="searchTerm" id="searchLbl">Search</label>
+										<input type="text" id="searchTerm" name="searchTerm" />
+										<button type="button">search</button>
+										<select name="searchCategory" id="searchCategory">
+											<option value="">Column...</option>
+											<#list searchCategories as category>
+											<option value="${category}">${category.displayValue()}</option>               
+											</#list>
+										</select>	
 									</div>
 							
 									<section id="applicationListSection"></section>

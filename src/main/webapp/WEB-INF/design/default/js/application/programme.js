@@ -160,20 +160,22 @@ $(document).ready(function(){
 		return result;
 	} 
 	
-	$('#addSupervisorButton').on('click', function(){
+	// Add supervisor button
+	$('#addSupervisorButton').on('click', function()
+	{
 		$("#supervisors").show();
 		if( $('#supervisorFirstname').val() ==""  || $('#supervisorFirstname').val() =="First Name" ){
-			$("span[name='superFirstname']").html('First name cannot be empty');
+			$("span[name='superFirstname']").html('First name cannot be empty.');
 			$("span[name='superFirstname']").show();
 
 		}
 		if( $('#supervisorLastname').val() ==""  || $('#supervisorLastname').val() =="Last Name" ){
-			$("span[name='superLastname']").html('Last name cannot be empty');
+			$("span[name='superLastname']").html('Last name cannot be empty.');
 			$("span[name='superLastname']").show();
 
 		}
 		if( !validateEmail($('#supervisorEmail').val())){
-			$("span[name='superEmail']").html('Email is not valid');
+			$("span[name='superEmail']").html('Email is not valid.');
 			$("span[name='superEmail']").show();
 
 		}
@@ -182,43 +184,35 @@ $(document).ready(function(){
 				$('#supervisorLastname').val() && $('#supervisorLastname').val() !="Last Name"){
 			
 		
-			$("span[name='superFirstname']").html('');
-			$("span[name='superFirstname']").hide();
-			$("span[name='superLastname']").html('');
-			$("span[name='superLastname']").hide();
-			$("span[name='superEmail']").html('');
-			$("span[name='superEmail']").hide();
+			$("#supervisor_div span.invalid").html('').hide();
 			var aware = "";
-			if($('#awareSupervisor').val() =="YES"){
+			if($('#awareSupervisor').val() =="YES")
+			{
 				aware = "Yes";
 			}
 			else{
 				aware = "No";
 			}
 			unsavedSupervisors++;
-			$('table.data-table tbody').append(
-					'<tr>' +
-					'<td >' + $('#supervisorFirstname').val()+' '+ $('#supervisorLastname').val()+'</td>' +
-					'<td >'+ $('#supervisorEmail').val()+ '</td>' +
-					'<td >' + aware +'</td>'+
-					'<td><a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> <a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a> </td>' +
-					'</tr>'+
+			$('table#supervisors tbody').append(
+					'<tr class="' + (aware ? "aware" : "unaware") + '">' +
+					'<td>' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + '(' + $('#supervisorEmail').val() + ')</td>' +
+					'<td>' +
+					'<a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> ' +
+					'<a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a>' +
 					'<input type="hidden" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 					'<input type="hidden" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
 					'<input type="hidden" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
 					'<input type="hidden" id="us_'+unsavedSupervisors+'aware" value="' + $('#awareSupervisor').val()+'"/>'	+								
-					
 					'<input type="hidden" name="suggestedSupervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $('#awareSupervisor').val() + '"} ' + "'" + "/>");
-		
+					'</td>' +
+					'</tr>';
 		
 		 $("input[name='sFN']").val($('#supervisorFirstname').val());
 		 $("input[name='sLN']").val($('#supervisorLastname').val());
 		 $("input[name='sEM']").val($('#supervisorEmail').val());
 		 $("input[name='sAS']").val($('#awareSupervisor').val());
-		 $('#supervisorId').val('');
-		 $('#supervisorFirstname').val('');
-		 $('#supervisorLastname').val('');
-		 $('#supervisorEmail').val('');
+		 $('#supervisorId, #supervisorFirstname, #supervisorLastname, #supervisorEmail').val('');
 		 $("#awareSupervisorCB").attr('checked', false);
 		 $("#awareSupervisor").val("NO");
 		}

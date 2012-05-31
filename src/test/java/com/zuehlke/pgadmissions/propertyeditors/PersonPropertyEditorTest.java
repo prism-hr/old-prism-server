@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Person;
-import com.zuehlke.pgadmissions.domain.builders.Personuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 
 
 public class PersonPropertyEditorTest {
@@ -16,7 +16,7 @@ public class PersonPropertyEditorTest {
 	@Test	
 	public void shouldParseAndSetAsValue(){
 		editor.setAsText("{\"id\": \"1\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" }");
-		Person expected = new Personuilder().id(1).firstname("Mark").lastname("Johnson").email("test@gmail.com").toRegistryUser();
+		Person expected = new PersonBuilder().id(1).firstname("Mark").lastname("Johnson").email("test@gmail.com").toPerson();
 		Person registryUser =   (Person) editor.getValue();
 		assertEquals(expected.getFirstname(), registryUser.getFirstname());
 		assertEquals(expected.getLastname(), registryUser.getLastname());
@@ -54,7 +54,7 @@ public class PersonPropertyEditorTest {
 	
 	@Test	
 	public void shouldReturnCorrectjsonString(){			
-		editor.setValue(new Personuilder().firstname("Mark").id(1).lastname("Johnson").email("test@gmail.com").toRegistryUser());
+		editor.setValue(new PersonBuilder().firstname("Mark").id(1).lastname("Johnson").email("test@gmail.com").toPerson());
 		assertEquals("{\"id\": \"1\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\"}", editor.getAsText());
 	}
 	

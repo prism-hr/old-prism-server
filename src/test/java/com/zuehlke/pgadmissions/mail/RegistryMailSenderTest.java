@@ -26,7 +26,7 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.Personuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
@@ -69,8 +69,8 @@ public class RegistryMailSenderTest {
 
 		};
 
-		Person registryUser1 = new Personuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").toRegistryUser();
-		Person registryUser2 = new Personuilder().id(3).firstname("Karla").lastname("Peters").email("peters@test.com").toRegistryUser();
+		Person registryUser1 = new PersonBuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").toPerson();
+		Person registryUser2 = new PersonBuilder().id(3).firstname("Karla").lastname("Peters").email("peters@test.com").toPerson();
 		EasyMock.expect(registryUserDAOMock.getAllPersons()).andReturn(Arrays.asList(registryUser1, registryUser2));
 		EasyMock.replay(registryUserDAOMock);
 

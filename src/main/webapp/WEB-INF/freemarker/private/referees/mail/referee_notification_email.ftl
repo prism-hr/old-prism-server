@@ -43,7 +43,7 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to upload a short PDF document confirming their suitability for PhD study. You may create your own document, or work from our template (attached). If you feel unable to provide a reference, you may also decline.</font>
 			      	</p>
-			      	<#if !referee.user.enabled>
+			      	<#if !referee.user?? || !referee.user.enabled>
 					<p>
 		      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with the UCL Portal, please do so by clicking the link below:</font>
 		      		</p>

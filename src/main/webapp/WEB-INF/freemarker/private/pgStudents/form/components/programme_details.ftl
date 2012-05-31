@@ -166,7 +166,7 @@
 					<span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.supervisor'/>"></span>
 					
 					<div>
-						<@spring.bind "programmeDetails.supervisors" /> 
+						<@spring.bind "programmeDetails.suggestedSupervisors" /> 
 						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 						<table id="supervisors" class="data-table">
 							<colgroup>

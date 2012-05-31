@@ -195,7 +195,7 @@ $(document).ready(function(){
 			}
 			unsavedSupervisors++;
 			$('table#supervisors tbody').append(
-					'<tr class="' + (aware ? "aware" : "unaware") + '">' +
+					'<tr class="' + (aware == "Yes" ? "aware" : "unaware") + '">' +
 					'<td>' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + '(' + $('#supervisorEmail').val() + ')</td>' +
 					'<td>' +
 					'<a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> ' +
@@ -207,6 +207,7 @@ $(document).ready(function(){
 					'<input type="hidden" name="suggestedSupervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $('#awareSupervisor').val() + '"} ' + "'" + "/>");
 					'</td>' +
 					'</tr>';
+			addToolTips();
 		
 		 $("input[name='sFN']").val($('#supervisorFirstname').val());
 		 $("input[name='sLN']").val($('#supervisorLastname').val());

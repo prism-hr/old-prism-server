@@ -165,19 +165,20 @@
         	<label class="group-heading-label">Supervision</label>
 					<span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.supervisor'/>"></span>
 					
-					<div>
+					<div class="field">
 						<@spring.bind "programmeDetails.suggestedSupervisors" /> 
 						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 						<table id="supervisors" class="data-table">
 							<colgroup>
 								<col />
-								<col style="width: 26px;" />
-								<col style="width: 26px;" />
+								<col style="width: 60px;" />
 							</colgroup>
 							<tbody>
                <#list programmeDetails.suggestedSupervisors! as supervisor>
 								<tr class="<#if supervisor.awareSupervisor == "YES">aware<#else>unaware</#if>">
-									<td>${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} (${supervisor.email?html})</td>
+									<td data-desc="<#if supervisor.awareSupervisor == "YES">Aware<#else>Unaware</#if>of application">
+										${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} (${supervisor.email?html})
+									</td>
 									<td>
 										<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete" name="deleteSupervisor" id="supervisorDelete_${encrypter.encrypt(supervisor.id)}">delete</a> <a class="button-edit"  id="supervisor_${encrypter.encrypt(supervisor.id)}" name ="editSupervisorLink">edit</a></#if>
 										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_supervisorId" name = "sId" value="${encrypter.encrypt(supervisor.id)}"/>

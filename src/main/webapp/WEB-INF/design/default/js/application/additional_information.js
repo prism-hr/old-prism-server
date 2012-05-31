@@ -24,18 +24,18 @@ $(document).ready(function(){
 		);
 	});
 	
-	$("input[name$='convictionRadio']").click(function() {
-		if($(this).val() == 'TRUE') {
+	$("input[name$='convictionRadio']").click(function()
+	{
+		if ($(this).val() == 'TRUE')
+		{
 			$("#convictions-details-lbl").append('<em>*</em>').removeClass("grey-label");
 			$("#convictionsText").removeClass("grey-label");
 			$("#convictionsText").removeAttr("disabled", "disabled");
-		} else {
-			var newLblText = $("#convictions-details-lbl").text();
-			var starIndex = newLblText.lastIndexOf("*");
-			if( starIndex > 0) {
-			  newLblText = newLblText.substring(0, starIndex);
-			}
-			$("#convictions-details-lbl").text(newLblText).addClass("grey-label");
+		}
+		else
+		{
+			$("#convictions-details-lbl em").remove();
+			$("#convictions-details-lbl").addClass("grey-label");
 			$("#convictionsText").val("");
 			$("#convictionsText").addClass("grey-label");
 			$("#convictionsText").attr("disabled", "disabled");

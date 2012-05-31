@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.Person;
-import com.zuehlke.pgadmissions.domain.builders.Personuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 
 
 public class PersonDAOTest extends AutomaticRollbackTestCase {
@@ -14,7 +14,7 @@ public class PersonDAOTest extends AutomaticRollbackTestCase {
 	
 	@Test
 	public void shouldSaveAndGetRegistryUserWithId(){
-		Person registryUser = new Personuilder().id(1).firstname("john").lastname("mark").email("email").toRegistryUser();
+		Person registryUser = new PersonBuilder().id(1).firstname("john").lastname("mark").email("email").toPerson();
 		sessionFactory.getCurrentSession().save(registryUser);
 		flushAndClearSession();
 		

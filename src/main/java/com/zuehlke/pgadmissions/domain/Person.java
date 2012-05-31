@@ -6,15 +6,16 @@ import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 @Entity(name = "PERSON")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Access(AccessType.FIELD)
 public class Person extends DomainObject<Integer> {
 
 
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1747305941073095458L;
 
 

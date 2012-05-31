@@ -20,7 +20,7 @@ import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.Personuilder;
+import com.zuehlke.pgadmissions.domain.builders.PersonBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -88,9 +88,9 @@ public class ConfigurationControllerTest {
 	
 	@Test
 	public void shouldSaveRegistryUsers() {
-		Person registryUserOne = new Personuilder().id(1).toRegistryUser();
-		Person registryUserTwo = new Personuilder().id(2).toRegistryUser();
-		Person registryUserThree = new Personuilder().id(3).toRegistryUser();
+		Person registryUserOne = new PersonBuilder().id(1).toPerson();
+		Person registryUserTwo = new PersonBuilder().id(2).toPerson();
+		Person registryUserThree = new PersonBuilder().id(3).toPerson();
 		RegistryUserDTO registryUserDTO = new RegistryUserDTO();
 		registryUserDTO.setRegistryUsers(Arrays.asList(registryUserOne, registryUserTwo, registryUserThree));
 		EasyMock.expect(regisrtyUserServiceMock.getAllRegistryUsers()).andReturn(Arrays.asList(registryUserOne, registryUserTwo, registryUserThree));

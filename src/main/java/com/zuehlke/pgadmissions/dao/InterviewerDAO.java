@@ -46,6 +46,7 @@ public class InterviewerDAO {
 		return (Interviewer) sessionFactory.getCurrentSession().createCriteria(Interviewer.class).add(Restrictions.eq("user", user)).uniqueResult();
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	public List<Interviewer> getInterviewersDueNotification() {
 		return sessionFactory.getCurrentSession().createCriteria(Interviewer.class)

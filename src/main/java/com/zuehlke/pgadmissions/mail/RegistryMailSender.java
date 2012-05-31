@@ -15,10 +15,10 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 
 import com.itextpdf.text.DocumentException;
-import com.zuehlke.pgadmissions.dao.RegistryUserDAO;
+import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.RegistryUser;
+import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
 import com.zuehlke.pgadmissions.services.UserService;
@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.utils.Environment;
 @Component
 public class RegistryMailSender extends MailSender {
 
-	private final RegistryUserDAO registryUserDAO;
+	private final PersonDAO registryUserDAO;
 	private final UserService userService;
 	private final PdfDocumentBuilder pdfDocumentBuilder;
 	private final PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory;
@@ -37,7 +37,7 @@ public class RegistryMailSender extends MailSender {
 	}
 
 	@Autowired
-	public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, RegistryUserDAO registryUserDAO,
+	public RegistryMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, PersonDAO registryUserDAO,
 			UserService userService, MessageSource msgSource, PdfDocumentBuilder pdfDocumentBuilder,
 			PdfAttachmentInputSourceFactory pdfAttachmentInputSourceFactory) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
@@ -48,10 +48,10 @@ public class RegistryMailSender extends MailSender {
 	}
 
 	public void sendApplicationToRegistryContacts(ApplicationForm applicationForm) throws MalformedURLException, DocumentException, IOException {
-		List<RegistryUser> registryContacts = registryUserDAO.getAllRegistryUsers();
+		List<Person> registryContacts = registryUserDAO.getAllPersons();
 		InternetAddress[] toAddresses = new InternetAddress[registryContacts.size()];
 		int counter = 0;
-		for (RegistryUser registryUser : registryContacts) {
+		for (Person registryUser : registryContacts) {
 			toAddresses[counter++] = new InternetAddress(registryUser.getEmail(), registryUser.getFirstname() + " " + registryUser.getLastname());
 		}
 		RegisteredUser currentUser = userService.getCurrentUser();

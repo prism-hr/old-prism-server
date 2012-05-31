@@ -1,13 +1,13 @@
-﻿Insert into PROGRAM(code,  title) values ('TEST-PROG-ABC',  "Test Program One" );
-Insert into PROGRAM(code,  title) values ('TEST-PROG-DEF', "Test Program Two" );
+﻿#Insert into PROGRAM(code,  title) values ('TEST-PROG-ABC',  "Test Program One" );
+#Insert into PROGRAM(code,  title) values ('TEST-PROG-DEF', "Test Program Two" );
 
 Insert into REGISTERED_USER(username, password,firstName, lastName,email, accountNonExpired,  accountNonLocked,  credentialsNonExpired,  enabled) values ('alice@test.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'Alice', 'Aaronson', 'alice@test.com', 1, 1, 1, 1);
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((select id from REGISTERED_USER where username='alice@test.com'), (select id from APPLICATION_ROLE where authority='APPROVER'));
-Insert into PROGRAM_APPROVER_LINK(program_id, registered_user_id) values ((select id from PROGRAM where code='TEST-PROG-ABC'), (select id from REGISTERED_USER where username='alice@test.com'));
+#Insert into PROGRAM_APPROVER_LINK(program_id, registered_user_id) values ((select id from PROGRAM where code='TEST-PROG-ABC'), (select id from REGISTERED_USER where username='alice@test.com'));
 
 Insert into REGISTERED_USER(username, password,firstName, lastName,email, accountNonExpired,  accountNonLocked,  credentialsNonExpired,  enabled) values ('bert@test.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'Bert', 'Bronson', 'bert@test.com', 1, 1, 1, 1);
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((select id from REGISTERED_USER where username='bert@test.com'), (select id from APPLICATION_ROLE where authority='APPROVER'));
-Insert into PROGRAM_APPROVER_LINK(program_id, registered_user_id) values ((select id from PROGRAM where code='TEST-PROG-DEF'), (select id from REGISTERED_USER where username='bert@test.com'));
+#Insert into PROGRAM_APPROVER_LINK(program_id, registered_user_id) values ((select id from PROGRAM where code='TEST-PROG-DEF'), (select id from REGISTERED_USER where username='bert@test.com'));
 
 Insert into REGISTERED_USER(username, password,firstName, lastName,email, accountNonExpired,  accountNonLocked,  credentialsNonExpired,  enabled) values ('charlie@test.com', '5f4dcc3b5aa765d61d8327deb882cf99', 'Charles', 'Chadworth', 'charlie@test.com', 1, 1, 1, 1);
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((select id from REGISTERED_USER where username='charlie@test.com'), (select id from APPLICATION_ROLE where authority='REVIEWER'));
@@ -39,4 +39,4 @@ Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((sele
 
 Insert into USER_ROLE_LINK (registered_user_id,application_role_id) values((select id from REGISTERED_USER where username='alice@test.com'), (select id from APPLICATION_ROLE where authority='ADMINISTRATOR'));
 
-Insert into PROGRAM_APPROVER_LINK(program_id, registered_user_id) values ((select id from PROGRAM where code='TEST-PROG-ABC'), (select id from REGISTERED_USER where username='fabian@test.com'));
+#Insert into PROGRAM_APPROVER_LINK(program_id, registered_user_id) values ((select id from PROGRAM where code='TEST-PROG-ABC'), (select id from REGISTERED_USER where username='fabian@test.com'));

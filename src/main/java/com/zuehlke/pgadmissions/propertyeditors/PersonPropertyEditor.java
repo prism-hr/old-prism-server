@@ -8,10 +8,10 @@ import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.stereotype.Component;
 
-import com.zuehlke.pgadmissions.domain.RegistryUser;
+import com.zuehlke.pgadmissions.domain.Person;
 
 @Component
-public class RegistryUserPropertyEditor extends PropertyEditorSupport {
+public class PersonPropertyEditor extends PropertyEditorSupport {
 	
 	
 	@SuppressWarnings("unchecked")
@@ -26,7 +26,7 @@ public class RegistryUserPropertyEditor extends PropertyEditorSupport {
 			
 			Map<String, Object> properties = objectMapper.readValue(jsonStirng,
 					Map.class);
-			RegistryUser registryUser = new RegistryUser();
+			Person registryUser = new Person();
 			registryUser.setFirstname(((String)properties.get("firstname")));
 			registryUser.setLastname(((String) properties.get("lastname")));
 			registryUser.setEmail(((String) properties.get("email")));
@@ -44,12 +44,12 @@ public class RegistryUserPropertyEditor extends PropertyEditorSupport {
 		if (getValue() == null) {
 			return null;
 		}
-		RegistryUser registryUser = (RegistryUser) getValue();
+		Person person = (Person) getValue();
 		return "{\"id\": \""
-				+ registryUser.getId() + "\",\"firstname\": \""
-				+ registryUser.getFirstname() + "\",\"lastname\": \""
-				+ registryUser.getLastname() + "\",\"email\": \""
-				+ registryUser.getEmail() + "\"}";
+				+ person.getId() + "\",\"firstname\": \""
+				+ person.getFirstname() + "\",\"lastname\": \""
+				+ person.getLastname() + "\",\"email\": \""
+				+ person.getEmail() + "\"}";
 		
 	}
 }

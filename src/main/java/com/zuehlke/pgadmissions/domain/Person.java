@@ -7,9 +7,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-@Entity(name = "REGISTRY_USER")
+@Entity(name = "PERSON")
 @Access(AccessType.FIELD)
-public class RegistryUser extends DomainObject<Integer> {
+public class Person extends DomainObject<Integer> {
 
 
 	/**

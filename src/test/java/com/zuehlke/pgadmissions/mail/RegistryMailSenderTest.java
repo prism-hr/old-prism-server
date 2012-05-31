@@ -19,14 +19,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 import com.itextpdf.text.DocumentException;
-import com.zuehlke.pgadmissions.dao.RegistryUserDAO;
+import com.zuehlke.pgadmissions.dao.PersonDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.RegistryUser;
+import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegistryUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.Personuilder;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSource;
 import com.zuehlke.pgadmissions.pdf.PdfAttachmentInputSourceFactory;
 import com.zuehlke.pgadmissions.pdf.PdfDocumentBuilder;
@@ -38,7 +38,7 @@ public class RegistryMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private RegistryMailSender registryMailSender;
-	private RegistryUserDAO registryUserDAOMock;
+	private PersonDAO registryUserDAOMock;
 	private UserService userServiceMock;
 	private MessageSource msgSourceMock;
 	private PdfDocumentBuilder pdfDocumentBuilderMock;
@@ -69,9 +69,9 @@ public class RegistryMailSenderTest {
 
 		};
 
-		RegistryUser registryUser1 = new RegistryUserBuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").toRegistryUser();
-		RegistryUser registryUser2 = new RegistryUserBuilder().id(3).firstname("Karla").lastname("Peters").email("peters@test.com").toRegistryUser();
-		EasyMock.expect(registryUserDAOMock.getAllRegistryUsers()).andReturn(Arrays.asList(registryUser1, registryUser2));
+		Person registryUser1 = new Personuilder().id(2).firstname("Bob").lastname("Jones").email("jones@test.com").toRegistryUser();
+		Person registryUser2 = new Personuilder().id(3).firstname("Karla").lastname("Peters").email("peters@test.com").toRegistryUser();
+		EasyMock.expect(registryUserDAOMock.getAllPersons()).andReturn(Arrays.asList(registryUser1, registryUser2));
 		EasyMock.replay(registryUserDAOMock);
 
 		RegisteredUser currentAdminUser = new RegisteredUserBuilder().id(1).firstName("Hanna").lastName("Hobnop").email("hobnob@test.com").toUser();
@@ -113,7 +113,7 @@ public class RegistryMailSenderTest {
 	public void setUp() {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
-		registryUserDAOMock = EasyMock.createMock(RegistryUserDAO.class);
+		registryUserDAOMock = EasyMock.createMock(PersonDAO.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 		pdfDocumentBuilderMock = EasyMock.createMock(PdfDocumentBuilder.class);

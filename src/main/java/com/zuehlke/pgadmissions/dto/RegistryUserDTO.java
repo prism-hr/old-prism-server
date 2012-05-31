@@ -3,18 +3,18 @@ package com.zuehlke.pgadmissions.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.zuehlke.pgadmissions.domain.RegistryUser;
+import com.zuehlke.pgadmissions.domain.Person;
 
 public class RegistryUserDTO {
 	
-	private List<RegistryUser> registryUsers = new ArrayList<RegistryUser>();
+	private List<Person> registryUsers = new ArrayList<Person>();
 
-	public List<RegistryUser> getRegistryUsers() {
+	public List<Person> getRegistryUsers() {
 		return registryUsers;
 	}
 
-	public void setRegistryUsers(List<RegistryUser> registryUsers) {
-		for (RegistryUser registryUser : registryUsers) {
+	public void setRegistryUsers(List<Person> registryUsers) {
+		for (Person registryUser : registryUsers) {
 			if(registryUser != null){
 				this.registryUsers.add(registryUser);
 			}

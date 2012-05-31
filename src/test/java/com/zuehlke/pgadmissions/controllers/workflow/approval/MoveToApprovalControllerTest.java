@@ -80,7 +80,7 @@ public class MoveToApprovalControllerTest {
 		
 		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
 			@Override
-				public ApplicationForm getApplicationForm(String applicationId) {
+			public ApplicationForm getApplicationForm(String applicationId) {
 				return application;
 			}
 

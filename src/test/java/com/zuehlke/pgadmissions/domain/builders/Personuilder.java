@@ -1,37 +1,37 @@
 package com.zuehlke.pgadmissions.domain.builders;
 
-import com.zuehlke.pgadmissions.domain.RegistryUser;
+import com.zuehlke.pgadmissions.domain.Person;
 
-public class RegistryUserBuilder {
+public class Personuilder {
 
 	private Integer id;
 	private String email;
 	private String firstname;
 	private String lastname;
 
-	public RegistryUserBuilder id(Integer id) {
+	public Personuilder id(Integer id) {
 		this.id = id;
 		return this;
 	}
 
-	public RegistryUserBuilder email(String email) {
+	public Personuilder email(String email) {
 		this.email = email;
 		return this;
 	}
 
-	public RegistryUserBuilder firstname(String firstname) {
+	public Personuilder firstname(String firstname) {
 		this.firstname = firstname;
 		return this;
 	}
 	
 	
-	public RegistryUserBuilder lastname(String lastname) {
+	public Personuilder lastname(String lastname) {
 		this.lastname = lastname;
 		return this;
 	}
 	
-	public RegistryUser toRegistryUser() {
-		RegistryUser registryUser = new RegistryUser();
+	public Person toRegistryUser() {
+		Person registryUser = new Person();
 		registryUser.setEmail(email);
 		registryUser.setId(id);
 		registryUser.setFirstname(firstname);

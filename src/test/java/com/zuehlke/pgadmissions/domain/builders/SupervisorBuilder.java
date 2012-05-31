@@ -15,7 +15,7 @@ public class SupervisorBuilder {
 	private String firstname;
 	private String lastname;
 	private RegisteredUser user;
-	private Date lastModified;
+	private Date lastNotified;
 	private ApprovalRound approvalRound;
 
 	public SupervisorBuilder id(Integer id) {
@@ -49,8 +49,8 @@ public class SupervisorBuilder {
 	}
 	
 	
-	public SupervisorBuilder lastModified(Date lastModified) {
-		this.lastModified = lastModified;
+	public SupervisorBuilder lastNotified(Date lastNotified) {
+		this.lastNotified = lastNotified;
 		return this;
 	}
 	
@@ -67,7 +67,7 @@ public class SupervisorBuilder {
 		supervisor.setLastname(lastname);
 		supervisor.setAwareSupervisor(awareSupervisor);
 		supervisor.setUser(user);
-		supervisor.setLastNotified(lastModified);
+		supervisor.setLastNotified(lastNotified);
 		supervisor.setApprovalRound(approvalRound);
 		return supervisor;
 	}

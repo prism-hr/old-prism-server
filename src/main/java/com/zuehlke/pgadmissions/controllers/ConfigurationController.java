@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.RegistryUser;
+import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -24,9 +24,9 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.dto.RegistryUserDTO;
 import com.zuehlke.pgadmissions.dto.StageDurationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.RegistryUserPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
-import com.zuehlke.pgadmissions.services.RegistryUserService;
+import com.zuehlke.pgadmissions.services.PersonService;
 
 @Controller
 @RequestMapping("/configuration")
@@ -36,16 +36,16 @@ public class ConfigurationController {
 	private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
 	private final StageDurationPropertyEditor stageDurationPropertyEditor;
 	private final ReminderIntervalDAO reminderIntervalDAO;
-	private final RegistryUserService registryUserService;
-	private final RegistryUserPropertyEditor registryPropertyEditor;
+	private final PersonService registryUserService;
+	private final PersonPropertyEditor registryPropertyEditor;
 	
 	ConfigurationController(){
 		this(null, null, null, null, null);
 	}
 	
 	@Autowired
-	public ConfigurationController(StageDurationDAO stateDurationDao, StageDurationPropertyEditor stageDurationPropertyEditor, ReminderIntervalDAO reminderIntervalDAO, RegistryUserService registryUserService,
-			RegistryUserPropertyEditor registryPropertyEditor) {
+	public ConfigurationController(StageDurationDAO stateDurationDao, StageDurationPropertyEditor stageDurationPropertyEditor, ReminderIntervalDAO reminderIntervalDAO, PersonService registryUserService,
+			PersonPropertyEditor registryPropertyEditor) {
 		this.stateDurationDao = stateDurationDao;
 		this.stageDurationPropertyEditor = stageDurationPropertyEditor;
 		this.reminderIntervalDAO = reminderIntervalDAO;
@@ -61,7 +61,7 @@ public class ConfigurationController {
 	
 	@InitBinder(value="registryDTO")
 	public void registerValidatorsAndPropertyEditorsForRegistryUsers(WebDataBinder binder) {
-		binder.registerCustomEditor(RegistryUser.class, registryPropertyEditor);
+		binder.registerCustomEditor(Person.class, registryPropertyEditor);
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -103,8 +103,8 @@ public class ConfigurationController {
 		if (!getCurrentUser().isInRole(Authority.SUPERADMINISTRATOR)) {
 			throw new ResourceNotFoundException();
 		}
-		List<RegistryUser> registryUsers = registryUserDTO.getRegistryUsers();
-		for (RegistryUser registryUser : registryUsers) {
+		List<Person> registryUsers = registryUserDTO.getRegistryUsers();
+		for (Person registryUser : registryUsers) {
 			registryUserService.save(registryUser);
 		}
 		populateModelMap(modelMap);

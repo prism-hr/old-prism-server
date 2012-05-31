@@ -16,11 +16,11 @@ import org.springframework.ui.ModelMap;
 import com.zuehlke.pgadmissions.dao.ReminderIntervalDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.RegistryUser;
+import com.zuehlke.pgadmissions.domain.Person;
 import com.zuehlke.pgadmissions.domain.ReminderInterval;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegistryUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.Personuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -29,9 +29,9 @@ import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.dto.RegistryUserDTO;
 import com.zuehlke.pgadmissions.dto.StageDurationDTO;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
-import com.zuehlke.pgadmissions.propertyeditors.RegistryUserPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.PersonPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.StageDurationPropertyEditor;
-import com.zuehlke.pgadmissions.services.RegistryUserService;
+import com.zuehlke.pgadmissions.services.PersonService;
 
 public class ConfigurationControllerTest {
 
@@ -42,8 +42,8 @@ public class ConfigurationControllerTest {
 	private UsernamePasswordAuthenticationToken authenticationToken;
 	private static final String CONFIGURATION_VIEW_NAME = "/private/staff/superAdmin/configuration";
 	private ReminderIntervalDAO reminderIntervalDAOMock;
-	private RegistryUserService regisrtyUserServiceMock;
-	private RegistryUserPropertyEditor registryPropertyEditorMock;
+	private PersonService regisrtyUserServiceMock;
+	private PersonPropertyEditor registryPropertyEditorMock;
 	
 
 	
@@ -88,9 +88,9 @@ public class ConfigurationControllerTest {
 	
 	@Test
 	public void shouldSaveRegistryUsers() {
-		RegistryUser registryUserOne = new RegistryUserBuilder().id(1).toRegistryUser();
-		RegistryUser registryUserTwo = new RegistryUserBuilder().id(2).toRegistryUser();
-		RegistryUser registryUserThree = new RegistryUserBuilder().id(3).toRegistryUser();
+		Person registryUserOne = new Personuilder().id(1).toRegistryUser();
+		Person registryUserTwo = new Personuilder().id(2).toRegistryUser();
+		Person registryUserThree = new Personuilder().id(3).toRegistryUser();
 		RegistryUserDTO registryUserDTO = new RegistryUserDTO();
 		registryUserDTO.setRegistryUsers(Arrays.asList(registryUserOne, registryUserTwo, registryUserThree));
 		EasyMock.expect(regisrtyUserServiceMock.getAllRegistryUsers()).andReturn(Arrays.asList(registryUserOne, registryUserTwo, registryUserThree));
@@ -122,8 +122,8 @@ public class ConfigurationControllerTest {
 		stateDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
 		stageDurationPropertyEditorMock = EasyMock.createMock(StageDurationPropertyEditor.class);
 		reminderIntervalDAOMock = EasyMock.createMock(ReminderIntervalDAO.class);
-		regisrtyUserServiceMock = EasyMock.createMock(RegistryUserService.class);
-		registryPropertyEditorMock = EasyMock.createMock(RegistryUserPropertyEditor.class);
+		regisrtyUserServiceMock = EasyMock.createMock(PersonService.class);
+		registryPropertyEditorMock = EasyMock.createMock(PersonPropertyEditor.class);
 		controller = new ConfigurationController(stateDurationDAOMock, stageDurationPropertyEditorMock, reminderIntervalDAOMock, regisrtyUserServiceMock, registryPropertyEditorMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);

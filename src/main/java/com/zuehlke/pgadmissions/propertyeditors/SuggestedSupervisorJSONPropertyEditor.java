@@ -9,17 +9,18 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 @Component
-public class SupervisorJSONPropertyEditor extends PropertyEditorSupport {
+public class SuggestedSupervisorJSONPropertyEditor extends PropertyEditorSupport {
 
 	private final EncryptionHelper encryptionHelper;
 
 	@Autowired
-	public SupervisorJSONPropertyEditor(EncryptionHelper encryptionHelper) {
+	public SuggestedSupervisorJSONPropertyEditor(EncryptionHelper encryptionHelper) {
 		this.encryptionHelper = encryptionHelper;
 	}
 
@@ -34,11 +35,13 @@ public class SupervisorJSONPropertyEditor extends PropertyEditorSupport {
 			ObjectMapper objectMapper = new ObjectMapper();
 
 			Map<String, Object> properties = objectMapper.readValue(jsonString, Map.class);
-			Supervisor supervisor = new Supervisor();
+			SuggestedSupervisor supervisor = new SuggestedSupervisor();
 			supervisor.setFirstname((String) properties.get("firstname"));
 			supervisor.setLastname((String) properties.get("lastname"));
 			supervisor.setEmail((String) properties.get("email"));
-			supervisor.setAwareSupervisor(AwareStatus.valueOf((String) properties.get("awareSupervisor")));
+			if(properties.get("awareSupervisor") != null && "YES".equals((String) properties.get("awareSupervisor"))){			
+				supervisor.setAware(true);
+			}			
 			if (StringUtils.isNotBlank((String) properties.get("id"))) {
 				supervisor.setId(encryptionHelper.decryptToInteger((String) properties.get("id")));
 			}
@@ -54,8 +57,12 @@ public class SupervisorJSONPropertyEditor extends PropertyEditorSupport {
 		if (getValue() == null) {
 			return null;
 		}
-		Supervisor supervisor = (Supervisor) getValue();
+		SuggestedSupervisor supervisor = (SuggestedSupervisor) getValue();
+		String aware = "NO";
+		if(supervisor.isAware()){
+			aware = "YES";
+		}
 		return "{\"id\": \"" + encryptionHelper.encrypt(supervisor.getId()) + "\",\"firstname\": \"" + supervisor.getFirstname() + "\",\"lastname\": \"" + supervisor.getLastname()
-				+ "\",\"email\": \"" + supervisor.getEmail() + "\", \"awareSupervisor\": \"" + supervisor.getAwareSupervisor() + "\"}";
+				+ "\",\"email\": \"" + supervisor.getEmail() + "\", \"awareSupervisor\": \"" + aware + "\"}";
 	}
 }

@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SupervisorJSONPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
 import com.zuehlke.pgadmissions.timers.RefereeReminderTask;
@@ -43,7 +43,7 @@ public class ProgrammeDetailsController {
 	private final DatePropertyEditor datePropertyEditor;
 	private final ProgrammeDetailsValidator programmeDetailsValidator;
 	private final ProgrammeDetailsService programmeDetailsService;
-	private final SupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
+	private final SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor;
 
 	ProgrammeDetailsController() {
 		this(null, null, null, null, null, null);
@@ -51,7 +51,7 @@ public class ProgrammeDetailsController {
 
 	@Autowired
 	public ProgrammeDetailsController(ApplicationsService applicationsService, ApplicationFormPropertyEditor applicationFormPropertyEditor,
-			DatePropertyEditor datePropertyEditor, SupervisorJSONPropertyEditor supervisorJSONPropertyEditor,
+			DatePropertyEditor datePropertyEditor, SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditor,
 			ProgrammeDetailsValidator programmeDetailsValidator, ProgrammeDetailsService programmeDetailsService) {
 		this.applicationsService = applicationsService;
 		this.applicationFormPropertyEditor = applicationFormPropertyEditor;

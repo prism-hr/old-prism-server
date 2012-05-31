@@ -7,14 +7,14 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.zuehlke.pgadmissions.domain.Supervisor;
-import com.zuehlke.pgadmissions.domain.builders.SupervisorBuilder;
-import com.zuehlke.pgadmissions.domain.enums.AwareStatus;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
+import com.zuehlke.pgadmissions.domain.builders.SuggestedSupervisorBuilder;
 import com.zuehlke.pgadmissions.interceptors.EncryptionHelper;
 
 
-public class SupervisorJSONPropertyEditorTest {
-	private SupervisorJSONPropertyEditor editor;
+public class SuggestedSupervisorJSONPropertyEditorTest {
+	
+	private SuggestedSupervisorJSONPropertyEditor editor;
 	private EncryptionHelper encryptionHelperMock;
 
 	@Test	
@@ -22,24 +22,24 @@ public class SupervisorJSONPropertyEditorTest {
 		EasyMock.expect(encryptionHelperMock.decryptToInteger("bob")).andReturn(1);
 		EasyMock.replay(encryptionHelperMock);
 		editor.setAsText("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"awareSupervisor\": \"YES\"}");
-		Supervisor expected = new SupervisorBuilder().id(1).firstname("Mark").lastname("Johnson").email("test@gmail.com").awareSupervisor(AwareStatus.YES).toSupervisor();
-		Supervisor supervisor =   (Supervisor) editor.getValue();
-		assertEquals(expected.getFirstname(), supervisor.getFirstname());
-		assertEquals(expected.getLastname(), supervisor.getLastname());
-		assertEquals(expected.getEmail(), supervisor.getEmail());
-		assertEquals(expected.getAwareSupervisor(), supervisor.getAwareSupervisor());
+		SuggestedSupervisor expected = new SuggestedSupervisorBuilder().id(1).firstname("Mark").lastname("Johnson").email("test@gmail.com").aware(true).toSuggestedSupervisor();
+		SuggestedSupervisor suggestedSupervisor =   (SuggestedSupervisor) editor.getValue();
+		assertEquals(expected.getFirstname(), suggestedSupervisor.getFirstname());
+		assertEquals(expected.getLastname(), suggestedSupervisor.getLastname());
+		assertEquals(expected.getEmail(), suggestedSupervisor.getEmail());
+		assertEquals(expected.isAware(), suggestedSupervisor.isAware());
 	}
 	
 	@Test	
 	public void shouldParseEmptyIdAsNull(){
-		editor.setAsText("{\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" , \"primarySupervisor\": \"YES\" , \"awareSupervisor\": \"YES\"}");		
-		Supervisor supervisor =   (Supervisor) editor.getValue();
-		assertNull (supervisor.getId());
+		editor.setAsText("{\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\" ,  \"awareSupervisor\": \"YES\"}");		
+		SuggestedSupervisor suggestedSupervisor =   (SuggestedSupervisor) editor.getValue();
+		assertNull (suggestedSupervisor.getId());
 		
 	}
 	@Test(expected=IllegalArgumentException.class)
 	public void shouldThrowIllegalArgumentExceptionIfAStringNotInTheRightFormat(){			
-		editor.setAsText("{email: 'test@gmail.com' primarySupervisor: 'YES' awareSupervisor: 'YES'}");		
+		editor.setAsText("{email: 'test@gmail.com' awareSupervisor: 'YES'}");		
 	}
 	
 	@Test	
@@ -63,13 +63,13 @@ public class SupervisorJSONPropertyEditorTest {
 	public void shouldReturnCorrectjsonString(){			
 		EasyMock.expect(encryptionHelperMock.encrypt(1)).andReturn("bob");
 		EasyMock.replay(encryptionHelperMock);
-		editor.setValue(new SupervisorBuilder().firstname("Mark").id(1).lastname("Johnson").email("test@gmail.com").awareSupervisor(AwareStatus.NO).toSupervisor());
+		editor.setValue(new SuggestedSupervisorBuilder().firstname("Mark").id(1).lastname("Johnson").email("test@gmail.com").aware(false).toSuggestedSupervisor());
 		assertEquals("{\"id\": \"bob\",\"firstname\": \"Mark\",\"lastname\": \"Johnson\",\"email\": \"test@gmail.com\", \"awareSupervisor\": \"NO\"}", editor.getAsText());
 	}
 	
 	@Before
 	public void setup(){
 		encryptionHelperMock = EasyMock.createMock(EncryptionHelper.class);
-		editor = new SupervisorJSONPropertyEditor(encryptionHelperMock);
+		editor = new SuggestedSupervisorJSONPropertyEditor(encryptionHelperMock);
 	}
 }

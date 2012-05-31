@@ -29,7 +29,6 @@ public class ProgrammeDetails extends DomainObject<Integer> {
 	private static final long serialVersionUID = -5997103825068065955L;
 
 
-
 	@Override
 	public void setId(Integer id) {
 		this.id = id;
@@ -67,7 +66,7 @@ public class ProgrammeDetails extends DomainObject<Integer> {
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "programme_detail_id")
-	private List<Supervisor> supervisors = new ArrayList<Supervisor>();
+	private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
 
 	public String getProgrammeName() {
 		return programmeName;
@@ -117,16 +116,16 @@ public class ProgrammeDetails extends DomainObject<Integer> {
 		this.application = application;
 	}
 
-	public List<Supervisor> getSupervisors() {
-		return supervisors;
+	public List<SuggestedSupervisor> getSuggestedSupervisors() {
+		return suggestedSupervisors;
 	}
 
-	public void setSupervisors(List<Supervisor> supervisors) {
-		this.supervisors = supervisors;
+	public void setSupervisors(List<SuggestedSupervisor> supervisors) {
+		this.suggestedSupervisors = supervisors;
 		if (supervisors != null && !supervisors.isEmpty()) {
 			int size = supervisors.size();
 			for (int i = size - 1; i >= 0; i--) {
-				Supervisor supervisor = supervisors.get(i);
+				SuggestedSupervisor supervisor = supervisors.get(i);
 				if (supervisor == null) {
 					supervisors.remove(i);
 				}
@@ -135,7 +134,7 @@ public class ProgrammeDetails extends DomainObject<Integer> {
 	}
 	
 	public boolean hasSupervisors(){
-		return !supervisors.isEmpty();
+		return !suggestedSupervisors.isEmpty();
 	}
 
 }

@@ -37,7 +37,7 @@ import com.zuehlke.pgadmissions.exceptions.CannotUpdateApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.ApplicationFormPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.DatePropertyEditor;
-import com.zuehlke.pgadmissions.propertyeditors.SupervisorJSONPropertyEditor;
+import com.zuehlke.pgadmissions.propertyeditors.SuggestedSupervisorJSONPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ProgrammeDetailsService;
 import com.zuehlke.pgadmissions.validators.ProgrammeDetailsValidator;
@@ -51,7 +51,7 @@ public class ProgrammeDetailsControllerTest {
 	private ProgrammeDetailsController controller;
 	private ApplicationFormPropertyEditor applicationFormPropertyEditorMock;
 	private UsernamePasswordAuthenticationToken authenticationToken;
-	private SupervisorJSONPropertyEditor supervisorJSONPropertyEditorMock;
+	private SuggestedSupervisorJSONPropertyEditor supervisorJSONPropertyEditorMock;
 
 	@Test(expected = CannotUpdateApplicationException.class)
 	public void shouldThrowExceptionIfApplicationFormNotModifiableOnPost() {
@@ -228,7 +228,7 @@ public class ProgrammeDetailsControllerTest {
 		applicationFormPropertyEditorMock = EasyMock.createMock(ApplicationFormPropertyEditor.class);
 
 		datePropertyEditorMock = EasyMock.createMock(DatePropertyEditor.class);
-		supervisorJSONPropertyEditorMock = EasyMock.createMock(SupervisorJSONPropertyEditor.class);
+		supervisorJSONPropertyEditorMock = EasyMock.createMock(SuggestedSupervisorJSONPropertyEditor.class);
 		programmeDetailsValidatorMock = EasyMock.createMock(ProgrammeDetailsValidator.class);
 		programmeDetailsServiceMock = EasyMock.createMock(ProgrammeDetailsService.class);
 

@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
-import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
 import com.zuehlke.pgadmissions.domain.enums.StudyOption;
 
@@ -19,7 +19,7 @@ public class ProgrammeDetailsBuilder {
 	private String projectName;
 	private Date startDate;
 	private Referrer referrer;
-	private List<Supervisor> supervisors = new ArrayList<Supervisor>();
+	private List<SuggestedSupervisor> suggestedSupervisors = new ArrayList<SuggestedSupervisor>();
 	
 	public ProgrammeDetailsBuilder id(Integer id) {
 		this.id = id;
@@ -57,9 +57,9 @@ public class ProgrammeDetailsBuilder {
 		this.referrer = referrer;
 		return this;
 	}
-	public ProgrammeDetailsBuilder supervisors(Supervisor... supervisors) {
-		for (Supervisor supervisor : supervisors) {
-			this.supervisors.add(supervisor);
+	public ProgrammeDetailsBuilder suggestedSupervisors(SuggestedSupervisor... suggestedSupervisors) {
+		for (SuggestedSupervisor suggestedSupervisor : suggestedSupervisors) {
+			this.suggestedSupervisors.add(suggestedSupervisor);
 		}
 		return this;
 	}
@@ -73,7 +73,7 @@ public class ProgrammeDetailsBuilder {
 		programmeDetails.setReferrer(referrer);
 		programmeDetails.setStartDate(startDate);
 		programmeDetails.setStudyOption(studyOption);
-		programmeDetails.getSupervisors().addAll(supervisors);
+		programmeDetails.getSuggestedSupervisors().addAll(suggestedSupervisors);
 		return programmeDetails;
 	}
 	

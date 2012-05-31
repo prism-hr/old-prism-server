@@ -28,7 +28,11 @@ $(document).ready(function(){
 	{
 		if ($(this).val() == 'TRUE')
 		{
-			$("#convictions-details-lbl").append('<em>*</em>').removeClass("grey-label");
+			if ($("#convictions-details-lbl em").length == 0)
+			{
+				$("#convictions-details-lbl").append('<em>*</em>');
+			}
+			$("#convictions-details-lbl").removeClass("grey-label");
 			$("#convictionsText").removeClass("grey-label");
 			$("#convictionsText").removeAttr("disabled", "disabled");
 		}

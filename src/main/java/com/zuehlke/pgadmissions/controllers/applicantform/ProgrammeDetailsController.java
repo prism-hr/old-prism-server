@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.Referrer;
@@ -120,7 +121,7 @@ public class ProgrammeDetailsController {
 		binder.setValidator(programmeDetailsValidator);
 		binder.registerCustomEditor(Date.class, datePropertyEditor);
 		binder.registerCustomEditor(ApplicationForm.class, applicationFormPropertyEditor);
-		binder.registerCustomEditor(Supervisor.class, supervisorJSONPropertyEditor);
+		binder.registerCustomEditor(SuggestedSupervisor.class, supervisorJSONPropertyEditor);
 	}
 
 	@ModelAttribute

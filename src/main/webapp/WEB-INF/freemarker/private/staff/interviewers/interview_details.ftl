@@ -131,7 +131,7 @@
 													</option>
 													</#list>
 													<#list willingToInterviewReviewers as willingReviewer>									
-													<option value="${applicationForm.applicationNumber}|${willingReviewer.id?string('#####')}">
+													<option value="${willingReviewer.id?string('#####')}">
 													${willingReviewer.firstName?html} ${willingReviewer.lastName?html} <#if !willingReviewer.enabled> - Pending</#if> (*)
 													</option>
 													</#list>

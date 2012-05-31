@@ -57,14 +57,17 @@ $(document).ready(function() {
 	
 	function doApplicationSearch()
 	{
-		if($('#searchCategory').val() != ""){
+		if($('#searchCategory').val() != "")
+		{
 			$.get("/pgadmissions/search",
 				{
 					searchCategory: $('#searchCategory').val(),
 					searchTerm:  $('#searchTerm').val()
 				},
-				function(data) {
+				function(data)
+				{
 					$('#applicationListSection').html(data);
+					addToolTips();
 				}
 			);
 		}

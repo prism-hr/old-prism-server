@@ -143,16 +143,11 @@ form input[type=checkbox], form input[type=radio] { border: none !important; pad
 form select[multiple] { vertical-align: top; }
 
 /* Keyword/search box */
-div.search-box input {
-  border: 1px solid #CCC;
-  border-radius: 10px;
-  height: 17px;
-  margin-left: 1em;
-  margin-right: -26px;
-  padding: 2px 20px;
-  width: 400px;
-}
-div.search-box button {
+div#search-box { margin-bottom: 15px; }
+div#search-box input { border: 1px solid #CCC; border-radius: 10px; height: 17px; margin-left: 1em; margin-right: -26px; padding: 2px 20px; width: 300px; }
+div#search-box label { font-weight: bold; }
+div#search-box select { margin-left: 30px; padding: 2px; }
+div#search-box button {
   background: transparent url(../../images/button_arrow.png) no-repeat 100% -2px  !important;
   border: none;
   border-radius: 0;

@@ -28,3 +28,6 @@ section.form-rows.violet div.add a.button,
 	background: linear-gradient(top,  rgba(148,97,168,1) 0%,rgba(133,82,154,1) 50%,rgba(85,39,113,1) 51%,rgba(149,97,168,1) 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#9461a8', endColorstr='#9561a8',GradientType=0 ); /* IE6-8 */
 }
+
+
+#supervisors tr.unaware td { color: #999; } /* unaware supervisors. */

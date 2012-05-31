@@ -185,7 +185,7 @@
                	<tr>
                      <td> ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} </td>
                      <td> ${supervisor.email?html} </td>
-                     <td><#if supervisor.awareSupervisor == "YES"> Yes <#else> No </#if></td>
+                     <td><#if supervisor.aware > Yes <#else> No </#if></td>
                      <td> <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete" name="deleteSupervisor" id="supervisorDelete_${encrypter.encrypt(supervisor.id)}">delete</a> <a class="button-edit"  id="supervisor_${encrypter.encrypt(supervisor.id)}" name ="editSupervisorLink">edit</a></#if></td>
                  </tr>
                     <input type="hidden" id="${encrypter.encrypt(supervisor.id)}_supervisorId" name = "sId" value="${encrypter.encrypt(supervisor.id)}"/>
@@ -194,7 +194,7 @@
                     <input type="hidden" id="${encrypter.encrypt(supervisor.id)}_email" name = "sEM"  value="${(supervisor.email?html)!}"/>
                     <input type="hidden" id="${encrypter.encrypt(supervisor.id)}_aware" name = "sAS" value="${(supervisor.primarySupervisor?html)!}"/>                    
                                
-                   <input type="hidden" name="suggestedSupervisors" id="${encrypter.encrypt(supervisor.id)}_supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
+                   <input type="hidden" name="suggestedSupervisors" id="${encrypter.encrypt(supervisor.id)}_supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"<#if supervisor.aware>YES<#else>NO</#if>"}' />                             
               </span>
               </#list>
                </tbody>

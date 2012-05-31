@@ -120,7 +120,7 @@ public class ProgrammeDetails extends DomainObject<Integer> {
 		return suggestedSupervisors;
 	}
 
-	public void setSupervisors(List<SuggestedSupervisor> supervisors) {
+	public void setSuggestedSupervisors(List<SuggestedSupervisor> supervisors) {
 		this.suggestedSupervisors = supervisors;
 		if (supervisors != null && !supervisors.isEmpty()) {
 			int size = supervisors.size();

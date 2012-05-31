@@ -9,7 +9,7 @@
 		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 		
-		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/style.css' />"/>
+		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/global_public.css' />"/>
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/actions.css' />"/>
 
 		<!--[if lt IE 9]>
@@ -59,7 +59,18 @@
 		      <!-- content box -->
 		      <div class="content-box">
 		        <div class="content-box-inner">
-		          Sorry, an error occurred while processing your request.					          
+
+							<div id="site-message" class="error">
+								<div class="header">
+									<div class="logo"><img src="images/ph_logo_login.png" alt="" /></div>
+									<div class="tagline">Your Gateway to<br />Research Opportunities</div>
+								</div>
+								<div class="content">
+									<h1>Whoops</h1>
+									<p>Sorry, an error occurred while processing your request.</p>
+								</div>
+							</div>
+
 		        </div><!-- .content-box-inner -->
 		      </div><!-- .content-box -->
 		      

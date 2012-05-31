@@ -11,7 +11,7 @@ import org.springframework.validation.Validator;
 import com.zuehlke.pgadmissions.dao.ProgramInstanceDAO;
 import com.zuehlke.pgadmissions.domain.ProgramInstance;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
-import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 
 @Component
 public class ProgrammeDetailsValidator implements Validator {
@@ -47,7 +47,7 @@ public class ProgrammeDetailsValidator implements Validator {
 			errors.rejectValue("studyOption", "programmeDetails.studyOption.invalid");
 		}
 
-		List<Supervisor> supervisors = programmeDetail.getSupervisors();
+		List<SuggestedSupervisor> supervisors = programmeDetail.getSuggestedSupervisors();
 		for (int i = 0; i < supervisors.size(); i++) {
 			// if
 			// (!EmailValidator.getInstance().isValid(supervisors.get(i).getEmail()))
@@ -56,10 +56,10 @@ public class ProgrammeDetailsValidator implements Validator {
 			// "programmeDetails.email.invalid");
 			// }
 			if (supervisors.get(i).getFirstname() == "" || supervisors.get(i).getFirstname() == null) {
-				errors.rejectValue("supervisors", "programmeDetails.firstname.notempty");
+				errors.rejectValue("suggestedSupervisors", "programmeDetails.firstname.notempty");
 			}
 			if (supervisors.get(i).getLastname() == "" || supervisors.get(i).getLastname() == null) {
-				errors.rejectValue("supervisors", "programmeDetails.lastname.notempty");
+				errors.rejectValue("suggestedSupervisors", "programmeDetails.lastname.notempty");
 			}
 		}
 	}

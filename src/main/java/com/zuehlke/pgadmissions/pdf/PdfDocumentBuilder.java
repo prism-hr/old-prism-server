@@ -34,7 +34,7 @@ import com.zuehlke.pgadmissions.domain.Funding;
 import com.zuehlke.pgadmissions.domain.Qualification;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.SuggestedSupervisor;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.PDFException;
 
@@ -150,7 +150,7 @@ public class PdfDocumentBuilder {
 			document.add(new Paragraph("How did you find us? " + application.getProgrammeDetails().getReferrer().displayValue()));
 		}
 
-		if (application.getProgrammeDetails().getSupervisors().isEmpty()) {
+		if (application.getProgrammeDetails().getSuggestedSupervisors().isEmpty()) {
 			document.add(new Paragraph(createMessage("supervisors information")));
 		} else {
 			document.add(new Paragraph("Supervisors", smallBoldFont));
@@ -180,11 +180,16 @@ public class PdfDocumentBuilder {
 			table.addCell(c1);
 			table.setHeaderRows(1);
 
-			for (Supervisor supervisor : application.getProgrammeDetails().getSupervisors()) {
+			for (SuggestedSupervisor supervisor : application.getProgrammeDetails().getSuggestedSupervisors()) {
 				table.addCell(supervisor.getFirstname());
 				table.addCell(supervisor.getLastname());
 				table.addCell(supervisor.getEmail());
-				table.addCell(supervisor.getAwareSupervisor().displayValue());
+				if(supervisor.isAware()){
+					table.addCell("Yes");	
+				}else{
+					table.addCell("No");
+				}
+				
 			}
 
 			document.add(table);

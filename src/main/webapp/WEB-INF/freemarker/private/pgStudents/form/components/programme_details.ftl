@@ -160,12 +160,12 @@
 		</div>
 
 
-        <div class="row-group">
+        <div class="row-group" id="supervisor_div">
         	
         	<label class="group-heading-label">Supervision</label>
 					<span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.supervisor'/>"></span>
 					
-					<div id="supervisor_div">
+					<div>
 						<@spring.bind "programmeDetails.supervisors" /> 
 						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 						<table id="supervisors" class="data-table">
@@ -203,8 +203,8 @@
             <label class="plain-label">Supervisor First Name</label>
              <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.firstname'/>"></span>
                 <div class="field">
-                    <input class="full" type="text" placeholder="First Name" id="supervisorFirstname" name="supervisorFirstname"/>
-                <span class="invalid" name="superFirstname" style="display:none;"></span>
+                  <input class="full" type="text" placeholder="First Name" id="supervisorFirstname" name="supervisorFirstname"/>
+                	<span class="invalid" name="superFirstname" style="display:none;"></span>
                 </div>
             </div>
             
@@ -212,8 +212,8 @@
                 <label class="plain-label">Supervisor Last Name</label>
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.lastname'/>"></span>
                 <div class="field"> 
-                    <input class="full" type="text" placeholder="Last Name" id="supervisorLastname" name="supervisorLastname"/>
-                <span class="invalid" name="superLastname" style="display:none;"></span>
+									<input class="full" type="text" placeholder="Last Name" id="supervisorLastname" name="supervisorLastname"/>
+	                <span class="invalid" name="superLastname" style="display:none;"></span>
                 </div>
             </div>
             
@@ -221,7 +221,7 @@
                 <label class="plain-label">Supervisor Email</label>
                 <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.email'/>"></span>
                 <div class="field">
-                    <input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
+									<input class="full" type="text" placeholder="Email address" id="supervisorEmail" name="supervisorEmail"/>
                 	<span class="invalid" name="superEmail" style="display:none;" ></span>
                 </div>
             </div>
@@ -233,7 +233,8 @@
                 	<input type="checkbox" name="awareSupervisorCB" id="awareSupervisorCB"/>
                 	<input type="hidden" name="awareSupervisor" id="awareSupervisor"/>
                 </div>
-            </div>      
+            </div>
+						
             <div class="row">
             	<span class="supervisorAction"></span>       
             	<div class="field">

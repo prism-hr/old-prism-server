@@ -56,9 +56,11 @@
 							
 									<p style="color:red;">${(message?html)!}</p>
 									<div id="search-box"> 
-										<label for="searchTerm" id="searchLbl">Search</label>
+										<label for="searchTerm">Search</label>
 										<input type="text" id="searchTerm" name="searchTerm" />
 										<button type="button">search</button>
+										
+										<label for="searchCategory">Filter by Actions</label>
 										<select name="searchCategory" id="searchCategory">
 											<option value="">Column...</option>
 											<#list searchCategories as category>

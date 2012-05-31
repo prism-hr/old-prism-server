@@ -239,7 +239,8 @@ public class ApplicationFormDAO {
 				
 		
 	}
-
+	
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getAllApplicationsContainingTermInCategory(String term, SearchCategories category) {
 		if(category ==  SearchCategories.APPLICATION_CODE){
@@ -268,6 +269,15 @@ public class ApplicationFormDAO {
 			}
 		}
 		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getApplicationsDueApprovalNotifications() {
+		Date twentyFourHoursAgo = DateUtils.addHours(Calendar.getInstance().getTime(), -24);
+		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).createAlias("notificationRecords", "notificationRecord")
+				.add(Restrictions.eq("notificationRecord.notificationType", NotificationType.APPROVAL_NOTIFICATION))
+				.add(Restrictions.lt("notificationRecord.date", twentyFourHoursAgo)).add(Restrictions.ltProperty("notificationRecord.date", "lastUpdated"))
+				.list();
 	}
 
 }

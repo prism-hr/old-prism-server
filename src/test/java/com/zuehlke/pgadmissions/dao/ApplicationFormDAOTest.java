@@ -21,7 +21,6 @@ import junit.framework.Assert;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.dao.DataAccessException;
 
 import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -1475,6 +1474,76 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		assertNull(applications);
 		
 	}
+	
+	@Test
+	public void shouldNotReturnApplicationNotMovedInApprovalSinceLastAlert() {
+		Date now = Calendar.getInstance().getTime();
+		Date twentyFiveHoursAgo = DateUtils.addHours(now, -25);
+		Date twentySevenHoursAgo = DateUtils.addHours(now, -27);
+		NotificationRecord lastNotificationRecord = new NotificationRecordBuilder().notificationType(NotificationType.APPROVAL_NOTIFICATION)
+				.notificationDate(twentyFiveHoursAgo).toNotificationRecord();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).lastUpdated(twentySevenHoursAgo)
+				.status(ApplicationFormStatus.APPROVAL).notificationRecords(lastNotificationRecord).toApplicationForm();
+		save(applicationForm);
+
+		flushAndClearSession();
+
+		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO.getApplicationsDueApprovalNotifications();
+		assertFalse(applicationsDueApprovalNotification.contains(applicationForm));
+
+	}
+	
+	@Test
+	public void shouldNotReturnApplicationMovedInApprovalSinceLastAlertAndLastAlertLessThan24HoursAgoFor1WeekReminderInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
+		Date twentyThreeHoursAgo = DateUtils.addHours(now, -23);
+		Date twelveHoursAgo = DateUtils.addHours(now, -12);
+		NotificationRecord lastNotificationRecord = new NotificationRecordBuilder().notificationType(NotificationType.APPROVAL_NOTIFICATION)
+				.notificationDate(twentyThreeHoursAgo).toNotificationRecord();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).lastUpdated(twelveHoursAgo)
+				.status(ApplicationFormStatus.APPROVAL).notificationRecords(lastNotificationRecord).toApplicationForm();
+		save(applicationForm);
+
+		flushAndClearSession();
+
+		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO.getApplicationsDueApprovalNotifications();
+		assertFalse(applicationsDueApprovalNotification.contains(applicationForm));
+
+	}
+	
+
+	@Test
+	public void shouldReturnApplicationMovedInApprovalSinceLastAlertAndLastAlertMoreThan24HoursAgoForOneWeekReminderInterval() {
+		ReminderInterval reminderInterval = new ReminderInterval();
+		reminderInterval.setId(1);
+		reminderInterval.setDuration(1);
+		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
+		
+		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
+		
+		Date now = Calendar.getInstance().getTime();
+		Date twentyFiveHoursAgo = DateUtils.addHours(now, -25);
+		Date twelveHoursAgo = DateUtils.addHours(now, -12);
+		NotificationRecord lastNotificationRecord = new NotificationRecordBuilder().notificationType(NotificationType.APPROVAL_NOTIFICATION)
+				.notificationDate(twentyFiveHoursAgo).toNotificationRecord();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).lastUpdated(twelveHoursAgo)
+				.status(ApplicationFormStatus.APPROVAL).notificationRecords(lastNotificationRecord).toApplicationForm();
+		save(applicationForm);
+
+		flushAndClearSession();
+
+		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO.getApplicationsDueApprovalNotifications();
+		assertTrue(applicationsDueApprovalNotification.contains(applicationForm));
+
+	}
+
 	
 	
 }

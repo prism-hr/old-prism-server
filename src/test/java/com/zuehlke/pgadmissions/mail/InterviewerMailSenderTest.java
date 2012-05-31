@@ -64,14 +64,14 @@ public class InterviewerMailSenderTest {
 
 		};
 		RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("fred").program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
 		Interviewer interviewer = new InterviewerBuilder().id(4).user(defaultInterviewer).interview(new InterviewBuilder().id(5).application(form).toInterview()).toInterviewer();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("interview.notification.interviewer"),// 
-				EasyMock.aryEq(new Object[] { 4, "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
+				EasyMock.aryEq(new Object[] { "fred", "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",//
 						"private/interviewers/mail/interviewer_notification_email.ftl", model, null)).andReturn(preparatorMock);
@@ -95,14 +95,14 @@ public class InterviewerMailSenderTest {
 		};
 
 		RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("fred").program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
 		Interviewer interviewer = new InterviewerBuilder().id(4).user(defaultInterviewer).interview(new InterviewBuilder().id(5).application(form).toInterview()).toInterviewer();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("interview.feedback.request.reminder"),// 
-				EasyMock.aryEq(new Object[] { 4, "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
+				EasyMock.aryEq(new Object[] { "fred", "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",//
 						"private/interviewers/mail/interviewer_reminder_email.ftl", model, null)).andReturn(preparatorMock);

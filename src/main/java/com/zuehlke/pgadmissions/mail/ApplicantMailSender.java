@@ -58,7 +58,6 @@ public class ApplicantMailSender extends StateChangeMailSender {
 	private String resolveSubject(ApplicationForm form, String messageCode) {
 		ApplicationFormStatus previousStage = applicationsService.getStageComingFrom(form);
 
-		String subject = resolveMessage(messageCode, form, previousStage);
-		return subject;
+		return resolveMessage(messageCode, form, previousStage);
 	}
 }

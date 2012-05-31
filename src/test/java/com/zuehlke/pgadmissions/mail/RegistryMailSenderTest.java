@@ -92,7 +92,7 @@ public class RegistryMailSenderTest {
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("validation.request.registry.contacts"),//
-				EasyMock.aryEq(new Object[] { 1, "program name" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
+				EasyMock.aryEq(new Object[] { "application number", "program name" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.aryEq(new InternetAddress[] { toAddress1, toAddress2 }),
 						EasyMock.aryEq(new InternetAddress[] { toAddress3 }), EasyMock.eq("resolved subject"),

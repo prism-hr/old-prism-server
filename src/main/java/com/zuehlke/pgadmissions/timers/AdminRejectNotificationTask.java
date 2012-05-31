@@ -52,10 +52,10 @@ public class AdminRejectNotificationTask extends TimerTask {
 			application.setRejectNotificationDate(new Date());
 			applicationDAO.save(application);
 			transaction.commit();
-			log.info("reject notification sent for application: " + application.getId());
+			log.info("reject notification sent for application: " + application.getApplicationNumber());
 		} catch (Throwable e) {
 			transaction.rollback();
-			log.info("error in sending reject notification for application: " + application.getId(), e);
+			log.info("error in sending reject notification for application: " + application.getApplicationNumber(), e);
 		}
 	}
 }

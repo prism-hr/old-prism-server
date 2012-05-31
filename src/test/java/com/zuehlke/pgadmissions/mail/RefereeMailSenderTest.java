@@ -59,14 +59,14 @@ public class RefereeMailSenderTest {
 			}
 		};
 		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().id(234).program(new ProgramBuilder().title("blabal").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicationNumber("fred").id(234).program(new ProgramBuilder().title("blabal").toProgram()).toApplicationForm();
 		referee.setApplication(form);
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("ref@test.com", "john boggs");
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.request.reminder"),// 
-				EasyMock.aryEq(new Object[] { 234, "blabal" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
+				EasyMock.aryEq(new Object[] { "fred", "blabal" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",//
 						"private/referees/mail/referee_reminder_email.ftl", model, null)).andReturn(preparatorMock);
@@ -92,14 +92,14 @@ public class RefereeMailSenderTest {
 		};
 		RegisteredUser user = new RegisteredUserBuilder().id(1).enabled(true).email("jboggs@test.com").firstName("Jonathan").lastName("Boggs").toUser();
 		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").user(user).toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().id(934).program(new ProgramBuilder().title("sdfl").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(934).applicationNumber("fred").program(new ProgramBuilder().title("sdfl").toProgram()).toApplicationForm();
 		referee.setApplication(form);
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("jboggs@test.com", "Jonathan Boggs");
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.request.reminder"),// 
-				EasyMock.aryEq(new Object[] { 934, "sdfl" }), EasyMock.eq((Locale) null))).andReturn("subj");
+				EasyMock.aryEq(new Object[] { "fred", "sdfl" }), EasyMock.eq((Locale) null))).andReturn("subj");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "subj",//
 						"private/referees/mail/existing_user_referee_reminder_email.ftl", model, null)).andReturn(preparatorMock);
@@ -127,14 +127,14 @@ public class RefereeMailSenderTest {
 		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").toReferee();
 
 		RegisteredUser applicant = new RegisteredUserBuilder().id(22).firstName("hans").lastName("huber").toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(234).applicant(applicant).program(new ProgramBuilder().title("program").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(234).applicationNumber("fred").applicant(applicant).program(new ProgramBuilder().title("program").toProgram()).toApplicationForm();
 		referee.setApplication(form);
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("ref@test.com", "john boggs");
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.request"),// 
-				EasyMock.aryEq(new Object[] { 234, "program", "hans", "huber" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
+				EasyMock.aryEq(new Object[] { "fred", "program", "hans", "huber" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject", "private/referees/mail/referee_notification_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
@@ -161,14 +161,14 @@ public class RefereeMailSenderTest {
 		};
 		RegisteredUser user = new RegisteredUserBuilder().id(1).enabled(true).email("jboggs@test.com").firstName("Jonathan").lastName("Boggs").toUser();
 		Referee referee = new RefereeBuilder().id(4).firstname("john").lastname("boggs").email("ref@test.com").user(user).toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().id(340).program(new ProgramBuilder().title("program").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(340).applicationNumber("fred").program(new ProgramBuilder().title("program").toProgram()).toApplicationForm();
 		referee.setApplication(form);
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("jboggs@test.com", "Jonathan Boggs");
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.request"),// 
-				EasyMock.aryEq(new Object[] { 340, "program" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
+				EasyMock.aryEq(new Object[] { "fred", "program" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",//
 						"private/referees/mail/existing_user_referee_notification_email.ftl", model, null)).andReturn(preparatorMock);

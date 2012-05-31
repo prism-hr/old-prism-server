@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
@@ -58,6 +60,10 @@ public class DelegateToApplicationAdministratorController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String delegateToApplicationAdministrator(@ModelAttribute("applicationForm") ApplicationForm applicationForm) {
+		NotificationRecord reviewReminderNotification = applicationForm.getNotificationForType(NotificationType.REVIEW_REMINDER);
+		if(reviewReminderNotification != null){
+			applicationForm.getNotificationRecords().remove(reviewReminderNotification);
+		}
 		applicationsService.save(applicationForm);
 
 		return "redirect:/applications";

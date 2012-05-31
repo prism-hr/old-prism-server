@@ -67,7 +67,7 @@ public class RefereeServiceTest {
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
 		Program program = new ProgramBuilder().title("program title").administrators(admin1, admin2).toProgram();
 
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).referees(referee).id(2).program(program).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicationNumber("xyz").applicant(applicant).referees(referee).id(2).program(program).toApplicationForm();
 		referee.setApplication(form);
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(1);
@@ -82,7 +82,7 @@ public class RefereeServiceTest {
 		InternetAddress toAddress3 = new InternetAddress("email3@test.com", "fred freddy");
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.provided.admin"),// 
-				EasyMock.aryEq(new Object[] { 2, "program title", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("admin notification subject");
+				EasyMock.aryEq(new Object[] { "xyz", "program title", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("admin notification subject");
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1),// 
 				EasyMock.eq("admin notification subject"),// 
@@ -96,7 +96,7 @@ public class RefereeServiceTest {
 				(InternetAddress) EasyMock.isNull())).andReturn(preparatorMock2);
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.provided.applicant"),// 
-				EasyMock.aryEq(new Object[] { 2, "program title", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("applicant notification subject");
+				EasyMock.aryEq(new Object[] {"xyz", "program title", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("applicant notification subject");
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress3), //
 				EasyMock.eq("applicant notification subject"),//
 				EasyMock.eq("private/pgStudents/mail/reference_respond_confirmation.ftl"),//
@@ -124,7 +124,7 @@ public class RefereeServiceTest {
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
 		Program program = new ProgramBuilder().title("program title").administrators(admin1, admin2).toProgram();
 
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).referees(referee).id(2).program(program).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicationNumber("xyz").applicant(applicant).referees(referee).id(2).program(program).toApplicationForm();
 		referee.setApplication(form);
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(1);
@@ -132,7 +132,7 @@ public class RefereeServiceTest {
 		refereeDAOMock.save(referee);
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.request"),// 
-				EasyMock.aryEq(new Object[] { 2, "program title", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("subject");
+				EasyMock.aryEq(new Object[] { "xyz", "program title", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("subject");
 		
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress1 = new InternetAddress("ref@test.com", "ref erre");
@@ -175,7 +175,7 @@ public class RefereeServiceTest {
 
 		Program program = new ProgramBuilder().title("some title").administrators(admin1).toProgram();
 
-		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).referees(referee).id(2).program(program).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().applicant(applicant).applicationNumber("xyz").referees(referee).id(2).program(program).toApplicationForm();
 		referee.setApplication(form);
 		ProgrammeDetails programmeDetails = new ProgrammeDetails();
 		programmeDetails.setId(1);
@@ -187,9 +187,9 @@ public class RefereeServiceTest {
 		InternetAddress toAdminAddress = new InternetAddress("email@test.com", "bob bobson");
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.provided.applicant"),// 
-				EasyMock.aryEq(new Object[] { 2, "some title", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("subject");
+				EasyMock.aryEq(new Object[] { "xyz", "some title", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("subject");
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.provided.admin"),// 
-				EasyMock.aryEq(new Object[] { 2, "some title", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("admin subject");
+				EasyMock.aryEq(new Object[] { "xyz", "some title", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("admin subject");
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress),// 
 				EasyMock.eq("subject"), //
@@ -361,7 +361,7 @@ public class RefereeServiceTest {
 
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().id(2342).applicant(applicant).program(new ProgramBuilder().title("klala").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(2342).applicationNumber("xyz").applicant(applicant).program(new ProgramBuilder().title("klala").toProgram()).toApplicationForm();
 		referee.setApplication(form);
 
 		refereeDAOMock.save(referee);
@@ -371,7 +371,7 @@ public class RefereeServiceTest {
 		InternetAddress toAddress = new InternetAddress("email3@test.com", "fred freddy");
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.provided.applicant"),// 
-				EasyMock.aryEq(new Object[] { 2342, "klala", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("subject");
+				EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("subject");
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), //
 				EasyMock.eq("subject"), //
@@ -417,7 +417,7 @@ public class RefereeServiceTest {
 
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).applicant(applicant).program(new ProgramBuilder().title("klala").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("xyz").applicant(applicant).program(new ProgramBuilder().title("klala").toProgram()).toApplicationForm();
 		referee.setApplication(form);
 
 		refereeDAOMock.save(referee);
@@ -426,7 +426,7 @@ public class RefereeServiceTest {
 		InternetAddress toAddress = new InternetAddress("email3@test.com", "fred freddy");
 		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.provided.applicant"),// 
-				EasyMock.aryEq(new Object[] { 4, "klala", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("subject");
+				EasyMock.aryEq(new Object[] { "xyz", "klala", "fred", "freddy" }), EasyMock.eq((Locale) null))).andReturn("subject");
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress), //
 				EasyMock.eq("subject"), //

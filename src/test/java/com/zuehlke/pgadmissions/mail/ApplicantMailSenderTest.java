@@ -113,7 +113,7 @@ public class ApplicantMailSenderTest {
 		};
 
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
-		ApplicationForm form = new ApplicationFormBuilder().id(4).applicant(applicant).program(new ProgramBuilder().title("Some Program").toProgram())
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().title("Some Program").toProgram())
 				.toApplicationForm();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
@@ -121,7 +121,7 @@ public class ApplicantMailSenderTest {
 
 		EasyMock.expect(applicationServiceMock.getStageComingFrom(form)).andReturn(ApplicationFormStatus.REVIEW);
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("message.code"),// 
-				EasyMock.aryEq(new Object[] { 4, "Some Program", "Jane", "Smith", "Review" }//
+				EasyMock.aryEq(new Object[] { "bob", "Some Program", "Jane", "Smith", "Review" }//
 						), EasyMock.eq((Locale)null))).andReturn("resolved subject");
 		
 		EasyMock.expect(//

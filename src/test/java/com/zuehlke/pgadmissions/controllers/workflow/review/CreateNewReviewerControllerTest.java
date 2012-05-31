@@ -45,7 +45,7 @@ public class CreateNewReviewerControllerTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application.getId())).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application)).andReturn(user);
 		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		EasyMock.expect(
@@ -70,7 +70,7 @@ public class CreateNewReviewerControllerTest {
 		RegisteredUser user = new RegisteredUserBuilder().id(5).firstName("bob").lastName("bobson").email("bobson@bob.com").toUser();
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("bob");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application.getId())).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application)).andReturn(user);
 		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		EasyMock.expect(
@@ -100,7 +100,7 @@ public class CreateNewReviewerControllerTest {
 		EasyMock.expect(encryptionHelperMock.encrypt(2)).andReturn("cd");
 		EasyMock.expect(encryptionHelperMock.encrypt(5)).andReturn("ef");
 		EasyMock.expect(userServiceMock.getUserByEmailIncludingDisabledAccounts("bobson@bob.com")).andReturn(null);
-		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application.getId())).andReturn(user);
+		EasyMock.expect(userServiceMock.createNewUserInRole("bob", "bobson", "bobson@bob.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, application)).andReturn(user);
 		EasyMock.replay(userServiceMock, encryptionHelperMock);
 
 		ModelAndView modelAndView = controller.createReviewerForNewReviewRound(user, bindingResultMock, application, pedningReviewers, Collections.EMPTY_LIST);

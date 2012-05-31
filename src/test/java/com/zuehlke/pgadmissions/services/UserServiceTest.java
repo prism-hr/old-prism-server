@@ -584,11 +584,11 @@ public class UserServiceTest {
 		
 		EasyMock.replay(userDAOMock, userFactoryMock);
 		
-		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, 1);
+		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.REVIEWER, DirectURLsEnum.ADD_REVIEW, new ApplicationFormBuilder().id(1).applicationNumber("bob").toApplicationForm());
 		
 		EasyMock.verify(userDAOMock, userFactoryMock);
 		assertEquals(newUser, createdUser);				
-		assertEquals("/reviewFeedback?applicationId=1", createdUser.getDirectToUrl());				
+		assertEquals("/reviewFeedback?applicationId=bob", createdUser.getDirectToUrl());				
 		
 		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
 		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());
@@ -609,11 +609,11 @@ public class UserServiceTest {
 		
 		EasyMock.replay(userDAOMock, userFactoryMock);
 		
-		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, 1);
+		RegisteredUser createdUser = userServiceWithCurrentUserOverride.createNewUserInRole( "la", "le", "some@email.com", Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, new ApplicationFormBuilder().id(1).applicationNumber("bob").toApplicationForm());
 		
 		EasyMock.verify(userDAOMock, userFactoryMock);
 		assertEquals(newUser, createdUser);				
-		assertEquals("/interviewFeedback?applicationId=1", createdUser.getDirectToUrl());				
+		assertEquals("/interviewFeedback?applicationId=bob", createdUser.getDirectToUrl());				
 		
 		assertTrue(createdUser.getProgramsOfWhichAdministrator().isEmpty());
 		assertTrue(createdUser.getProgramsOfWhichApprover().isEmpty());

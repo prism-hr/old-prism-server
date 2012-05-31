@@ -229,14 +229,14 @@ public class UserService {
 	}
 	
 	@Transactional
-	public RegisteredUser createNewUserInRole(String firstName, String lastName, String email, Authority authority, DirectURLsEnum directURL, Integer applicationId)  {
+	public RegisteredUser createNewUserInRole(String firstName, String lastName, String email, Authority authority, DirectURLsEnum directURL, ApplicationForm application)  {
 		RegisteredUser newUser = userDAO.getUserByEmail(email);
 		if (newUser != null) {
 			throw new IllegalStateException(String.format("user with email: %s already exists!", email));
 		}
 		newUser = userFactory.createNewUserInRoles(firstName, lastName, email, authority);
-		if(directURL != null && applicationId != null){
-			newUser.setDirectToUrl(directURL.displayValue()+applicationId);
+		if(directURL != null && application != null){
+			newUser.setDirectToUrl(directURL.displayValue() + application.getApplicationNumber());
 		}
 		userDAO.save(newUser);
 		return newUser;

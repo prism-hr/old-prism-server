@@ -248,9 +248,9 @@ public class RefereeService {
 		RegisteredUser applicant = form.getApplicant();
 		Object[] args;
 		if (applicant == null) {
-			args = new Object[] { form.getId(), form.getProgram().getTitle() };
+			args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle() };
 		} else {
-			args = new Object[] { form.getId(), form.getProgram().getTitle(),//
+			args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(),//
 					applicant.getFirstName(), applicant.getLastName() };
 		}
 		return messageSource.getMessage(code, args, null);

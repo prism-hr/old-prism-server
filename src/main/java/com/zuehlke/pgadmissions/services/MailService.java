@@ -60,7 +60,7 @@ public class MailService {
 	public void sendApplicationUpdatedMailToAdmins(ApplicationForm form) {
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 
-		String mailSubject = resolveMessage("application.update", form.getId(), form.getProgram().getTitle());
+		String mailSubject = resolveMessage("application.update", form.getApplicationNumber(), form.getProgram().getTitle());
 		for (RegisteredUser admin : administrators) {
 			try {
 				Map<String, Object> model = new HashMap<String, Object>();
@@ -113,7 +113,7 @@ public class MailService {
 			model.put("host", Environment.getInstance().getApplicationHostName());
 
 			InternetAddress toAddress = new InternetAddress(recipient.getEmail(), recipient.getFirstName() + " " + recipient.getLastName());
-			String mailSubject = resolveMessage("application.withdrawal", application.getId(), application.getProgram().getTitle());
+			String mailSubject = resolveMessage("application.withdrawal", application.getApplicationNumber(), application.getProgram().getTitle());
 
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress,// 
 					mailSubject, "private/staff/mail/application_withdrawn_notification.ftl", model, null));

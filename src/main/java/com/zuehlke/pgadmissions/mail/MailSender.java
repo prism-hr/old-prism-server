@@ -41,17 +41,16 @@ public abstract class MailSender {
 	}
 
 	protected String resolveMessage(String code, ApplicationForm form, ApplicationFormStatus previousStage) {
-		if( previousStage == null) {
+		if (previousStage == null) {
 			return resolveMessage(code, form);
 		}
 		RegisteredUser applicant = form.getApplicant();
-		if( applicant == null) {
+		if (applicant == null) {
 			throw new IllegalArgumentException("applicant must be provided!");
 		}
-		Object[] args = new Object[] { form.getId(), form.getProgram().getTitle(),//
-				applicant.getFirstName(), applicant.getLastName(),// 
+		Object[] args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName(),
 				previousStage.displayValue() };
-		
+
 		return messageSource.getMessage(code, args, null);
 	}
 
@@ -59,10 +58,9 @@ public abstract class MailSender {
 		RegisteredUser applicant = form.getApplicant();
 		Object[] args;
 		if (applicant == null) {
-			args = new Object[] { form.getId(), form.getProgram().getTitle() };
+			args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle() };
 		} else {
-			args = new Object[] { form.getId(), form.getProgram().getTitle(),//
-					applicant.getFirstName(), applicant.getLastName() };
+			args = new Object[] { form.getApplicationNumber(), form.getProgram().getTitle(), applicant.getFirstName(), applicant.getLastName() };
 		}
 		return messageSource.getMessage(code, args, null);
 	}

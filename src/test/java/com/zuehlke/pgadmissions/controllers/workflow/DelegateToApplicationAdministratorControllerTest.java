@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.controllers.workflow;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
 import org.easymock.EasyMock;
@@ -9,11 +10,14 @@ import org.junit.Test;
 import org.springframework.web.bind.WebDataBinder;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.PlainTextUserPropertyEditor;
 import com.zuehlke.pgadmissions.propertyeditors.UserPropertyEditor;
@@ -92,9 +96,17 @@ public class DelegateToApplicationAdministratorControllerTest {
 		String view = controller.delegateToApplicationAdministrator(applicationForm);
 		assertEquals("redirect:/applications", view);
 		EasyMock.verify(applicationServiceMock);
-		
 	}
 	
+	@Test
+	public void shouldResetReviewReminder(){		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).notificationRecords(new NotificationRecordBuilder().id(1).notificationType(NotificationType.REVIEW_REMINDER).toNotificationRecord()).toApplicationForm();
+		applicationServiceMock.save(applicationForm);
+		EasyMock.replay(applicationServiceMock);
+		controller.delegateToApplicationAdministrator(applicationForm);
+		assertNull(applicationForm.getNotificationForType(NotificationType.REVIEW_REMINDER));
+		
+	}
 	@Before
 	public void setup() {
 		applicationServiceMock = EasyMock.createMock(ApplicationsService.class);

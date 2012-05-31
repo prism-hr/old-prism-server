@@ -114,7 +114,7 @@ public class CreateNewInterviewerController extends InterviewController {
 		}
 
 		RegisteredUser newUser = userService.createNewUserInRole(interviewer.getFirstName(), interviewer.getLastName(), interviewer.getEmail(),
-				Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, applicationForm.getId());
+				Authority.INTERVIEWER, DirectURLsEnum.ADD_INTERVIEW, applicationForm);
 		newUserIds.add(newUser.getId());
 		return getCreateInterviewerModelAndView(applicationForm, newUserIds, getCreateInterviewerMessage("assignInterviewer.user.created", newUser), viewName);
 	}

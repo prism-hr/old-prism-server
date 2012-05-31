@@ -66,14 +66,14 @@ public class ReviewerMailSenderTest {
 		
 		
 		RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();		
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("fred").program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
 		Reviewer reviewer = new ReviewerBuilder().id(4).user(defaultReviewer).reviewRound(new ReviewRoundBuilder().application(form).toReviewRound()).toReviewer();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
 		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("review.request"),// 
-				EasyMock.aryEq(new Object[] { 4, "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
+				EasyMock.aryEq(new Object[] { "fred", "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",
@@ -102,14 +102,14 @@ public class ReviewerMailSenderTest {
 		
 		
 		RegisteredUser defaultReviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();		
-		ApplicationForm form = new ApplicationFormBuilder().id(4).program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("fred").program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
 		Reviewer reviewer = new ReviewerBuilder().id(4).user(defaultReviewer).reviewRound(new ReviewRoundBuilder().application(form).toReviewRound()).toReviewer();
 
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
 
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("review.request.reminder"),// 
-				EasyMock.aryEq(new Object[] { 4, "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved reminder subject");
+				EasyMock.aryEq(new Object[] { "fred", "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved reminder subject");
 		
 		EasyMock.expect(
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved reminder subject",

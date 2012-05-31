@@ -162,6 +162,7 @@ input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin:
 	color: #666;
 	font-size: 18pt;
 	left: 20px;
+	min-height: 200px;
 	padding: 1em 5px 0 160px;
 	position: absolute;
 	right: 20px;

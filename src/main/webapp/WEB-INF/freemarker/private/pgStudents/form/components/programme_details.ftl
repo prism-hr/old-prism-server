@@ -166,7 +166,7 @@
              <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.supervisor'/>"></span>
              
              <div id="supervisor_div">
-				<@spring.bind "programmeDetails.supervisors" /> 
+				<@spring.bind "programmeDetails.suggestedSupervisors" /> 
                 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
                 <table id="supervisors" class="data-table">
                 <thead>
@@ -180,7 +180,7 @@
           		</#if>
         </thead>
         <tbody>
-               <#list programmeDetails.supervisors! as supervisor>
+               <#list programmeDetails.suggestedSupervisors! as supervisor>
                <span name="supervisor_span">
                	<tr>
                      <td> ${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} </td>
@@ -194,7 +194,7 @@
                     <input type="hidden" id="${encrypter.encrypt(supervisor.id)}_email" name = "sEM"  value="${(supervisor.email?html)!}"/>
                     <input type="hidden" id="${encrypter.encrypt(supervisor.id)}_aware" name = "sAS" value="${(supervisor.primarySupervisor?html)!}"/>                    
                                
-                   <input type="hidden" name="supervisors" id="${encrypter.encrypt(supervisor.id)}_supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
+                   <input type="hidden" name="suggestedSupervisors" id="${encrypter.encrypt(supervisor.id)}_supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
               </span>
               </#list>
                </tbody>

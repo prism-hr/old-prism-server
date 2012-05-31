@@ -52,7 +52,11 @@ $(document).ready(function() {
 	});
 	
 	
-	$('#searchCategory').change(function(){
+	$('#search-box button').click(function() { doApplicationSearch(); });
+	$('#searchCategory').change(function() { doApplicationSearch(); });
+	
+	function doApplicationSearch()
+	{
 		if($('#searchCategory').val() != ""){
 			$.get("/pgadmissions/search",
 				{
@@ -64,7 +68,7 @@ $(document).ready(function() {
 				}
 			);
 		}
-	});
+	}
 
 
 	$('#manageUsersButton').click(function(){

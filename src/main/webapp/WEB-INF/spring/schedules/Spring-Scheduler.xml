@@ -7,6 +7,7 @@
 	<import resource="Interviewers-Emails.xml" />
 	<import resource="Referee-Emails.xml" />
 	<import resource="Admin-Emails.xml" />
+	<import resource="Approver-Emails.xml" />
 	<import resource="Bean-Definitions.xml" />
 
 	
@@ -48,6 +49,7 @@
 				<ref bean="adminInterviewReminderSchedule"/>
 				<ref bean="adminAssignedReviewerNotificationSchedule"/>
 				<ref bean="moveToApprovalNotificationSchedule"/>
+				<ref bean="approverApprovalNotificationSchedule"/>
 			</list>
 		</property>
 	</bean>

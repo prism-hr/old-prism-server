@@ -42,7 +42,7 @@
 			      			<a href="${host}/pgadmissions/register/activateAccount?activationCode=${user.activationCode}">(Continue to Portal)</a>
 			      		</font>
 			      	</p>
-			      	</#if>			      	
+					      	
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>
 			      	</p>

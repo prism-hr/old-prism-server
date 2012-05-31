@@ -7,7 +7,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.Supervisor;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
@@ -35,8 +34,8 @@ public class SupervisorDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<Supervisor> getSupervisorsDueNotification() {
-		return sessionFactory.getCurrentSession().createCriteria(Supervisor.class).add(Restrictions.isNull("lastNotified"))
-				.createAlias("supervisor.application", "application")
+		return sessionFactory.getCurrentSession().createCriteria(Supervisor.class, "supervisor").add(Restrictions.isNull("lastNotified"))
+				.createAlias("approvalRound.application", "application")
 				.add(Restrictions.eq("application.status", ApplicationFormStatus.APPROVAL))
 				.add(Restrictions.eqProperty("approvalRound", "application.latestApprovalRound"))
 				.list();

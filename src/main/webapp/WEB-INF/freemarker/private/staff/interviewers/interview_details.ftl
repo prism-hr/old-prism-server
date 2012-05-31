@@ -109,8 +109,8 @@
 										<div class="row interviewer-buttons">
 											<div class="field">
 												<span>
-													<button class="blue" type="button" id="addInterviewerBtn">Add</button>
-													<button class="blue" type="button" id="removeInterviewerBtn">Remove</button>
+													<button class="blue" type="button" id="addInterviewerBtn">Add Interviewer <span class="icon-up"></span></button>
+													<button type="button" id="removeInterviewerBtn"><span class="icon-down"></span> Remove Interviewer</button>
 												</span>
 											</div>
 										</div>
@@ -195,9 +195,9 @@
 											<#else>
 											<input class="half date" type="text" name="interviewDate" id="interviewDate" value="${(interview.interviewDueDate?string('dd-MMM-yyyy'))!}" />
 											</#if>
+											<@spring.bind "interview.interviewDueDate" /> 
+											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
-										<@spring.bind "interview.interviewDueDate" /> 
-										<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 									</div>
 									
 									<div class="row">
@@ -233,7 +233,7 @@
 											<#if assignOnly?? && assignOnly>
 											<textarea id="interviewLocation" readonly="readonly" disabled="disabled" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${(interview.locationURL?html)!}</textarea>
 											<#else>
-											<textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength='5000'>${(interview.locationURL?html)!}</textarea>
+											<textarea id="interviewLocation" name="interviewLocation" class="max" rows="1" cols="80" maxlength="5000" placeholder="(example: http://www.somewhere.com)">${(interview.locationURL?html)!}</textarea>
 											</#if>				                                            
 											<@spring.bind "interview.locationURL" /> 
 											<#list spring.status.errorMessages as error><br /><span class="invalid">${error}</span></#list>

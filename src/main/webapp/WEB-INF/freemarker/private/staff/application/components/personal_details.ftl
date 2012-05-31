@@ -82,8 +82,7 @@
 									
 			                    </#list>
 			                <#else>
-			                	<label class="admin_row_label">My Nationality</label>
-			                    <div class="field">Not Provided</div>
+			                    Not Provided
 			                </#if>
 						</div>
 					</span>

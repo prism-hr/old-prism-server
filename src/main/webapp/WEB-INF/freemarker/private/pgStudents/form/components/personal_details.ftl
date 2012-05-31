@@ -174,35 +174,31 @@
 				</#list>
               	
          
-            	<div class="row">                    	
-              		<label class="plain-label" id="my-nationality">My Nationality
-						<#if !nationalityExist>
-							<em id="nationality-em">*</em>
-						</#if>
-					</label>      
-					<span id="my-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.nationality'/>"></span>    
+					<div class="row">                    	
+						<label class="plain-label" id="my-nationality">Nationality <#if !nationalityExist><em id="nationality-em">*</em></#if></label>      
+						<span id="my-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.nationality'/>"></span>    
 					
-					<div class="field">
-						<div id="my-nationality-div">
-			              	  <#list personalDetails.candidateNationalities as nationality >
-			              	  
-			              	  	<div class="nationality-item">
-			              					<label class="full">${nationality.name}</label>  
-			              	  				<input type="hidden" name="candidateNationalities" value='${encrypter.encrypt(nationality.id)}'/>
-											<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
-			              	  	</div>                  		
-			              	  </#list>
-						</div>
+						<div class="field">
+							<div id="my-nationality-div">
+								<#list personalDetails.candidateNationalities as nationality >
+								
+								<div class="nationality-item">
+									<label class="full">${nationality.name}</label>  
+									<input type="hidden" name="candidateNationalities" value='${encrypter.encrypt(nationality.id)}'/>
+									<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
+								</div>                  		
+								</#list>
+							</div>
 						
-						<select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
+							<select class="full" name="candidateNationalityCountry" id="candidateNationalityCountry"<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>>
 								<option value="">Select...</option>
 								<#list countries as country>
 								  <option value="${encrypter.encrypt(country.id)}">${country.name?html}</option>               
 								</#list>
-						</select>             	 
+							</select>             	 
+							 
+						</div>
 						 
-					</div>
-					 
             	</div>
             	<@spring.bind "personalDetails.candidateNationalities" />
             	<#list spring.status.errorMessages as error>

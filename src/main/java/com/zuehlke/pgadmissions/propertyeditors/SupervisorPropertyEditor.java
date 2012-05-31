@@ -66,8 +66,7 @@ public class SupervisorPropertyEditor extends PropertyEditorSupport {
 				}
 			}
 		}
-		Supervisor supervisor = new Supervisor();
-		supervisor.setEmail(user.getEmail());
+		Supervisor supervisor = new Supervisor();		
 		supervisor.setUser(user);
 		return supervisor;
 	}

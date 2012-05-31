@@ -102,7 +102,7 @@ public class RefereeMailSenderTest {
 				EasyMock.aryEq(new Object[] { "fred", "sdfl" }), EasyMock.eq((Locale) null))).andReturn("subj");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "subj",//
-						"private/referees/mail/existing_user_referee_reminder_email.ftl", model, null)).andReturn(preparatorMock);
+						"private/referees/mail/referee_reminder_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
@@ -136,7 +136,8 @@ public class RefereeMailSenderTest {
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("reference.request"),// 
 				EasyMock.aryEq(new Object[] { "fred", "program", "hans", "huber" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject", "private/referees/mail/referee_notification_email.ftl", model, null)).andReturn(preparatorMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",// 
+				"private/referees/mail/referee_notification_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
@@ -171,7 +172,7 @@ public class RefereeMailSenderTest {
 				EasyMock.aryEq(new Object[] { "fred", "program" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(//
 				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",//
-						"private/referees/mail/existing_user_referee_notification_email.ftl", model, null)).andReturn(preparatorMock);
+						"private/referees/mail/referee_notification_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
 

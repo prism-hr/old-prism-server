@@ -43,7 +43,7 @@
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">You are asked to complete a short questionnaire confirming their suitability for PhD study. If you feel unable to provide a review, you may also decline.</font>
 			      	</p>
-			      	<#if !reviewer.user.enabled>
+			      	<#if !reviewer.user?? || !reviewer.user.enabled>
 			      		<p>
 			      			<font face="Arial, Helvetica, sans-serif" size="2">If you have not previously registered with the UCL Portal, please do so by clicking the link below:</font>
 			      		</p>
@@ -52,13 +52,12 @@
 				      			<a href="${host}/pgadmissions/register?userId=${reviewer.user.id?string('#######')}">Register</a>
 				      		</font>
 				      	</p>
-			      	<#else>
-				      	<p>
-				      		<font face="Arial, Helvetica, sans-serif" size="2">
-				      			<a href="${host}/pgadmissions/reviewFeedback?applicationId=${application.applicationNumber}">Provide feedback</a>
-				      		</font>
-				      	</p>
 			      	</#if>
+			      	<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      			<a href="${host}/pgadmissions/reviewFeedback?applicationId=${application.applicationNumber}">Provide feedback</a>
+			      		</font>
+			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
 			      			<a href="${host}/pgadmissions/decline/review?applicationId=${application.applicationNumber}&userId=${reviewer.user.id?string('#######')}">Decline</a>

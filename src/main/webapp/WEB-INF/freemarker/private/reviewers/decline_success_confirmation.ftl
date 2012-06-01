@@ -18,8 +18,7 @@
 		<link type="text/css" rel="stylesheet" href="<@spring.url '/design/default/css/public/register.css' />" />
 		
 	</head>
-
-	<body id="bg">
+<body id="bg">
 	
 		<div id="wrapper">
 	
@@ -31,28 +30,32 @@
 			<!-- Middle. -->
 			<div id="middle">
 	  
-			    <header>
-					<!-- App logo and tagline. -->
-			      	<div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png'/>" alt="" /></div>
-			      	<div class="tagline">Your Gateway to<br />Research Opportunities</div>
-			    </header>
-	  			<h1>
-	  				${message}.
-	  			</h1>
-	  		</div>
+        <div id="site-message" class="success">
+          <div class="header">
+            <div class="logo"><img src="<@spring.url '/design/default/images/ph_logo_login.png'/>" alt="" /></div>
+            <div class="tagline">Your Gateway to<br />Research Opportunities</div>
+          </div>
+          <div class="content">          
+            <h1>Declined</h1>
+             <p>${message}</p>  
+          </div>
+        </div>
+        
+      </div>
 	  	
-		  	<!-- Footer. -->
-		  	<div id="footer">
-		    	<ul>
-		      		<li><a href="#">Privacy</a></li>
-		      		<li><a href="#">Terms &amp; conditions</a></li>
-		      		<li><a href="#">Contact us</a></li>
-		      		<li><a href="#">Glossary</a></li>
-		    	</ul>
-		  	</div>
+      <!-- Footer. -->
+      <div id="footer">
+        <ul>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms &amp; conditions</a></li>
+            <li><a href="#">Contact us</a></li>
+            <li><a href="#">Glossary</a></li>
+        </ul>
+      </div>
 	
 		</div>
 		<!-- Scripts -->
 		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 	</body>
+	
 </html>

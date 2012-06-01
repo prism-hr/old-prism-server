@@ -43,7 +43,7 @@ public class DeclineController {
 		RegisteredUser reviewer = getReviewer(userId);
 		ApplicationForm application = getApplicationForm(applicationId);
 		commentService.declineReview(reviewer, application);
-		modelMap.put("message", "You have been successfully decline to provide a review for user " + application.getApplicant().getFirstName() + " "+ application.getApplicant().getLastName());
+		modelMap.put("message", "Thank you for letting us know you are unable to act as a reviewer on this occasion.");
 		return DECLINE_SUCCESS_VIEW_NAME;
 	}
 	
@@ -60,7 +60,7 @@ public class DeclineController {
 		Referee referee = getReferee(refereeId);
 		referee.setDeclined(true);
 		refereeService.saveReferenceAndSendDeclineNotifications(referee);
-		modelMap.put("message", "You have been successfully decline to provide a reference for user " + referee.getApplication().getApplicant().getFirstName() + " "+ referee.getApplication().getApplicant().getLastName());
+		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
 		return DECLINE_SUCCESS_VIEW_NAME;
 	}
 	

@@ -16,7 +16,7 @@
 
 	<bean id="adminValidationReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="2000" />
-		<property name="period" value="60000" />
+		<property name="period" value="300000" />
 		<property name="timerTask" ref="adminValidationReminderTimerTask" />
 	</bean>
 	
@@ -30,7 +30,7 @@
 
 	<bean id="adminReviewFeedbackNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="2000" />
-		<property name="period" value="60000" />
+		<property name="period" value="300000" />
 		<property name="timerTask" ref="adminReviewFeedbackNotificationTimerTask" />
 	</bean>
 	
@@ -43,7 +43,7 @@
 
 	<bean id="adminAssignedReviewerNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="2000" />
-		<property name="period" value="60000" />
+		<property name="period" value="300000" />
 		<property name="timerTask" ref="adminAssignedReviewerNotificationTimerTask" />
 	</bean>
 
@@ -61,7 +61,7 @@
 
 	<bean id="adminReviewReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="2000" />
-		<property name="period" value="60000" />
+		<property name="period" value="300000" />
 		<property name="timerTask" ref="adminReviewReminderTimerTask" />
 	</bean>
 
@@ -74,7 +74,7 @@
 	</bean>
 	<bean id="adminInterviewFeedbackNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="2000" />
-		<property name="period" value="60000" />
+		<property name="period" value="300000" />
 		<property name="timerTask" ref="adminInterviewFeedbackNotificationTimerTask" />
 	</bean>
 	
@@ -92,7 +92,7 @@
 
 	<bean id="adminInterviewReminderSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="2000" />
-		<property name="period" value="60000" />
+		<property name="period" value="300000" />
 		<property name="timerTask" ref="adminInterviewReminderTimerTask" />
 	</bean>
 	
@@ -112,7 +112,7 @@
 
 	<bean id="adminSubmissionNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="10500" />
-		<property name="period" value="60000" />
+		<property name="period" value="300000" />
 		<property name="timerTask" ref="adminSubmissionNotificationTimerTask" />
 	</bean>
 	
@@ -126,7 +126,7 @@
 
 	<bean id="updateNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="5000" />
-		<property name="period" value="60000" />
+		<property name="period" value="300000" />
 		<property name="timerTask" ref="updateNotificationTimerTask" />
 	</bean>
 	
@@ -139,7 +139,7 @@
 
 	<bean id="adminRejectNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="3000" />
-		<property name="period" value="60000" />
+		<property name="period" value="300000" />
 		<property name="timerTask" ref="adminRejectNotificationTask" />
 	</bean>
 </beans>

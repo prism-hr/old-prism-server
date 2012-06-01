@@ -10,6 +10,7 @@ import java.util.Date;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,6 +87,20 @@ public class ProgrammeDetailsValidatorTest {
 
 		Assert.assertEquals(1, mappingResult.getErrorCount());
 		Assert.assertEquals("user.programmeStartDate.notempty", mappingResult.getFieldError("startDate").getCode());
+	}
+
+	@Test
+	public void shouldRejectIfStartDateIsFutureDate() {
+		programmeDetail.setStartDate(DateUtils.addDays(new Date(), -1));
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(programmeDetail, "startDate");
+		EasyMock.expect(programInstanceDAOMock.getProgramInstancesWithStudyOptionAndDeadlineNotInPast(program, programmeDetail.getStudyOption())).andReturn(
+				Arrays.asList(programInstance));
+		EasyMock.replay(programInstanceDAOMock);
+		programmeDetailsValidator.validate(programmeDetail, mappingResult);
+		EasyMock.verify(programInstanceDAOMock);
+	
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("user.programmeStartDate.notFuture", mappingResult.getFieldError("startDate").getCode());
 	}
 
 	@Test
@@ -169,7 +184,7 @@ public class ProgrammeDetailsValidatorTest {
 		program.setInstances(Arrays.asList(programInstance));
 		ApplicationForm form = new ApplicationFormBuilder().id(2).program(program).applicant(currentUser).toApplicationForm();
 		programmeDetail = new ProgrammeDetailsBuilder().id(5).suggestedSupervisors(suggestedSupervisor).programmeName("programmeName")
-				.referrer(Referrer.OPTION_1).startDate(new SimpleDateFormat("yyyy/MM/dd").parse("2006/08/06")).applicationForm(form)
+				.referrer(Referrer.OPTION_1).startDate(DateUtils.addDays(new Date(),10)).applicationForm(form)
 				.studyOption(StudyOption.FULL_TIME).toProgrammeDetails();
 		programInstanceDAOMock = EasyMock.createMock(ProgramInstanceDAO.class);
 		programmeDetailsValidator = new ProgrammeDetailsValidator(programInstanceDAOMock);

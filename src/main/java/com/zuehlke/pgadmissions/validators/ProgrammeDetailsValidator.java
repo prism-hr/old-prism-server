@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.validators;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +48,9 @@ public class ProgrammeDetailsValidator implements Validator {
 			errors.rejectValue("studyOption", "programmeDetails.studyOption.invalid");
 		}
 
+		if(programmeDetail.getStartDate() != null && programmeDetail.getStartDate().before(new Date())){
+			errors.rejectValue("startDate", "user.programmeStartDate.notFuture");
+		}
 		List<SuggestedSupervisor> supervisors = programmeDetail.getSuggestedSupervisors();
 		for (int i = 0; i < supervisors.size(); i++) {
 			// if

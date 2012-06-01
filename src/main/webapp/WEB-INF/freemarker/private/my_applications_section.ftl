@@ -25,7 +25,10 @@
 					            	<#list applications as application>
 							        	<tr id="row_${application.applicationNumber}" name="applicationRow">
 							                <td><a class="row-arrow" href="#">&gt;</a></td>
-							                <td class="applicant-name">${application.applicant.firstName} ${application.applicant.lastName}</td>
+							                <td class="applicant-name">
+																${application.applicant.firstName} ${application.applicant.lastName}
+																<span class="applicant-id">${application.applicationNumber}</span>
+															</td>
 							                <td class="program-title">${application.program.code} - ${application.program.title}</td>								                
 							               	<td class="status">
 																<span class="icon-status ${application.status.displayValue()?lower_case}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>

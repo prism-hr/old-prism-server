@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApproverMailSenderTest {
@@ -28,6 +29,7 @@ public class ApproverMailSenderTest {
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private ApproverMailSender approverMailSender;
 	private MessageSource msgSourceMock;
+	private ApplicationsService applicationsServiceMock;
 
 	@Test
 	public void shouldReturnCorrectlyPopulatedModel() {
@@ -59,7 +61,7 @@ public class ApproverMailSenderTest {
 		String expTemplate = "private/approvers/mail/approval_notification_email.ftl";
 
 		final Map<String, Object> model = new HashMap<String, Object>();
-		approverMailSender = new ApproverMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+		approverMailSender = new ApproverMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, applicationsServiceMock) {
 			@Override
 			Map<String, Object> createModel(RegisteredUser approver, ApplicationForm application) {
 				return model;
@@ -85,7 +87,7 @@ public class ApproverMailSenderTest {
 		javaMailSenderMock = EasyMock.createMock(JavaMailSender.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
-
-		approverMailSender = new ApproverMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
+		approverMailSender = new ApproverMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, applicationsServiceMock);
 	}
 }

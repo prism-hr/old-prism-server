@@ -11,12 +11,17 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
 public class ApproverMailSender extends MailSender {
 
-	public ApproverMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource) {
-		super(mimeMessagePreparatorFactory, mailSender, msgSource);	
+	private final ApplicationsService applicationService;
+
+	public ApproverMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource, ApplicationsService applicationService) {
+		super(mimeMessagePreparatorFactory, mailSender, msgSource);
+		this.applicationService = applicationService;	
 	}
 
 	Map<String, Object> createModel(RegisteredUser approver, ApplicationForm application) {
@@ -36,7 +41,8 @@ public class ApproverMailSender extends MailSender {
 		List<RegisteredUser> approvers = application.getProgram().getApprovers();
 		for (RegisteredUser approver : approvers) {
 			InternetAddress toAddress = createAddress(approver);
-			String subject = resolveMessage("approval.notification.approver", application);
+			ApplicationFormStatus previousStage = applicationService.getStageComingFrom(application);
+			String subject = resolveMessage("approval.notification.approver", application, previousStage);
 			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
 					"private/approvers/mail/approval_notification_email.ftl", createModel(approver, application), null));
 		}

@@ -223,13 +223,13 @@
 												<input type="hidden" name="registryUsers" id= "registryUsers" />
 											
 										</form>
-										
-										<div class="buttons">						        		
-											<button type="button" id="cancelRegistryBtn" value="cancel">Cancel</button>
-											<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
-										</div>
-							
 									</div>
+										
+									<div class="buttons">						        		
+										<button type="button" id="cancelRegistryBtn" value="cancel">Cancel</button>
+										<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
+									</div>
+							
 								</section>
 							
 							</div><!-- .content-box-inner -->

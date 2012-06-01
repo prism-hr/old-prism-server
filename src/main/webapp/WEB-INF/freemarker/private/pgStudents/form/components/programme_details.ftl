@@ -167,32 +167,32 @@
 					
 					<div class="field">
 						<@spring.bind "programmeDetails.suggestedSupervisors" /> 
-						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+						<#list spring.status.errorMessages as error><span class="invalid">${error}</span></#list>
 						<table id="supervisors" class="data-table">
 							<colgroup>
 								<col />
 								<col style="width: 60px;" />
 							</colgroup>
 							<tbody>
-               <#list programmeDetails.suggestedSupervisors! as supervisor>
-								<tr class="<#if supervisor.awareSupervisor == "YES">aware<#else>unaware</#if>">
-									<td data-desc="<#if supervisor.awareSupervisor == "YES">Aware<#else>Unaware</#if>of application">
+								<#list programmeDetails.suggestedSupervisors! as supervisor>
+								<tr class="<#if supervisor.primarySupervisor == "YES">aware<#else>unaware</#if>">
+									<td data-desc="<#if supervisor.primarySupervisor == "YES">Aware<#else>Unaware</#if>of application">
 										${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} (${supervisor.email?html})
 									</td>
 									<td>
 										<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete" name="deleteSupervisor" id="supervisorDelete_${encrypter.encrypt(supervisor.id)}">delete</a> <a class="button-edit"  id="supervisor_${encrypter.encrypt(supervisor.id)}" name ="editSupervisorLink">edit</a></#if>
-										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_supervisorId" name = "sId" value="${encrypter.encrypt(supervisor.id)}"/>
-										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_firstname" name = "sFN" value="${(supervisor.firstname?html)!}"/>
-										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_lastname" name = "sLN" value="${(supervisor.lastname?html)!}"/>
-										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_email" name = "sEM"  value="${(supervisor.email?html)!}"/>
-										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_aware" name = "sAS" value="${(supervisor.primarySupervisor?html)!}"/>                    
+										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_supervisorId" name="sId" value="${encrypter.encrypt(supervisor.id)}"/>
+										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_firstname" name="sFN" value="${(supervisor.firstname?html)!}"/>
+										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_lastname" name="sLN" value="${(supervisor.lastname?html)!}"/>
+										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_email" name="sEM"  value="${(supervisor.email?html)!}"/>
+										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_aware" name="sAS" value="${(supervisor.primarySupervisor?html)!}"/>                    
 										<input type="hidden" name="supervisors" id="${encrypter.encrypt(supervisor.id)}_supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.awareSupervisor?html}"}' />                             
 									</td>
 								</tr>
-	              </#list>
-               </tbody>
-              </table>
-            </div>
+								</#list>
+							</tbody>
+						</table>
+					</div>
   
             
             <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>

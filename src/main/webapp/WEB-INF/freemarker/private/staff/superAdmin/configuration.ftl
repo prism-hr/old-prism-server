@@ -54,45 +54,43 @@
 				      <div class="content-box">
 				        <div class="content-box-inner">
 								
-									<section class="form-rows">
+									<section id="configuration" class="form-rows">
 										<h2>Configure Application form Stages duration</h2>
 										<div>
 											<form>
 											
-												<div class="row-group">
-													<select id="stages" style="visibility:hidden;">
-													<#list stages as stage>
-														<option value="${stage}"></option>
-													</#list>
-													</select>
-								
-													<#list stages as stage>
-													<div class="row"> 
-														<span id="${stage.displayValue()}-lbl" class="plain-label">${stage.displayValue()} Duration</span>
-														<div class="field">	
-															<input type="hidden" id="stage" name="stage" value="${stage}" />
-															<#if durationDAO.getByStatus(stage)?? && durationDAO.getByStatus(stage).duration??>  				
-															<input type="text" size="4" id="${stage}_duration" name="${stage}_duration" value="${durationDAO.getByStatus(stage).duration?string("######")}" />
-															<#else>
-															<input type="text" size="4" id="${stage}_duration" name="${stage}_duration"  />
-															</#if>
-		            							<select name="${stage}_unit" id="${stage}_unit">
-																<option value="">Select...</option>
-																<#list units as unit>
-																<option value="${unit}"
-																<#if  durationDAO.getByStatus(stage)?? && durationDAO.getByStatus(stage).unit?? && durationDAO.getByStatus(stage).unit == unit>
-																		selected="selected"
-																</#if>>
-																	${unit.displayValue()}</option>               
-																</#list>
-															</select>	
-														</div>
-														<span class="invalid" name="${stage}_invalidDuration" style="display:none;"></span>
-														<span class="invalid" name="${stage}_invalidUnit" style="display:none;"></span>
+												<select id="stages" style="visibility:hidden;">
+												<#list stages as stage>
+													<option value="${stage}"></option>
+												</#list>
+												</select>
+							
+												<#list stages as stage>
+												<div class="row"> 
+													<span id="${stage.displayValue()}-lbl" class="plain-label">${stage.displayValue()} Duration</span>
+													<div class="field">	
+														<input type="hidden" id="stage" name="stage" value="${stage}" />
+														<#if durationDAO.getByStatus(stage)?? && durationDAO.getByStatus(stage).duration??>  				
+														<input type="text" size="4" id="${stage}_duration" name="${stage}_duration" value="${durationDAO.getByStatus(stage).duration?string("######")}" />
+														<#else>
+														<input type="text" size="4" id="${stage}_duration" name="${stage}_duration"  />
+														</#if>
+														<select name="${stage}_unit" id="${stage}_unit">
+															<option value="">Select...</option>
+															<#list units as unit>
+															<option value="${unit}"
+															<#if  durationDAO.getByStatus(stage)?? && durationDAO.getByStatus(stage).unit?? && durationDAO.getByStatus(stage).unit == unit>
+																	selected="selected"
+															</#if>>
+																${unit.displayValue()}</option>               
+															</#list>
+														</select>	
 													</div>
-													</#list>
-													<input type="hidden" name="stagesDuration" id= "stagesDuration" />
-												</div><!-- close .row-group -->
+													<span class="invalid" name="${stage}_invalidDuration" style="display:none;"></span>
+													<span class="invalid" name="${stage}_invalidUnit" style="display:none;"></span>
+												</div>
+												</#list>
+												<input type="hidden" name="stagesDuration" id= "stagesDuration" />
 											
 												<div class="buttons">						        		
 													<button type="button" id="cancelDurationBtn" value="cancel">Cancel</button>
@@ -107,29 +105,26 @@
 										<div>
 											<form>
 			  					
-												<!-- Configure Reminder Interval -->
-												<div class="row-group">
-													<div class="row"> 
-														<span id="reminder-lbl" class="plain-label">Reminder Interval Duration</span>
-														<div class="field">	
-															<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
-															<input type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(intervalDAO.getReminderInterval().duration?string("######"))!}" />
-															<select name="reminderUnit" id="reminderUnit">
-																<option value="">Select...</option>
-															<#list units as unit>
-																<option value="${unit}"
-																<#if  intervalDAO.getReminderInterval()?? && intervalDAO.getReminderInterval().unit?? && intervalDAO.getReminderInterval().unit == unit>
-																	selected="selected"
-																</#if>>
-																${unit.displayValue()}</option>               
-															</#list>
-															</select>	
-														</div>
-														<span class="invalid" name="invalidDurationInterval" style="display:none;"></span>
-														<span class="invalid" name="invalidUnitInterval" style="display:none;"></span>
-													</div>
-													
-											</div><!-- close .row-group -->
+											<!-- Configure Reminder Interval -->
+											<div class="row">
+												<span id="reminder-lbl" class="plain-label">Reminder Interval Duration</span>
+												<div class="field">	
+													<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
+													<input type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(intervalDAO.getReminderInterval().duration?string("######"))!}" />
+													<select name="reminderUnit" id="reminderUnit">
+														<option value="">Select...</option>
+													<#list units as unit>
+														<option value="${unit}"
+														<#if  intervalDAO.getReminderInterval()?? && intervalDAO.getReminderInterval().unit?? && intervalDAO.getReminderInterval().unit == unit>
+															selected="selected"
+														</#if>>
+														${unit.displayValue()}</option>               
+													</#list>
+													</select>	
+												</div>
+												<span class="invalid" name="invalidDurationInterval" style="display:none;"></span>
+												<span class="invalid" name="invalidUnitInterval" style="display:none;"></span>
+											</div>
 											
 											<div class="buttons">						        		
 												<button type="button" id="cancelReminderBtn" value="cancel">Cancel</button>
@@ -145,9 +140,9 @@
 										<form id="addRegistryForm">
 
 											<!-- Add Registry Users -->
-											<div class="row-group">
+											<div class="row">
 												<span class="invalid"  name="threeMaxMessage"> </span>
-							     
+									 
 												<div id="firstRegistryUser">
 													<input type="hidden" name="1_regUserId" id= "1_regUserId" value="${(allRegistryUsers[0].id)!}" />
 													<div class="row"> 
@@ -156,14 +151,12 @@
 															<input type="text" class="full" id="1_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[0].firstname)!}" />
 														</div>
 													</div>
-												
 													<div class="row"> 
 														<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
 														<div class="field">	
 															<input type="text" class="full" id="1_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[0].lastname)!}" />
 														</div>
 													</div>
-									
 													<div class="row"> 
 														<span id="ru-email-lbl" class="plain-label">Email</span>
 														<div class="field">	
@@ -175,12 +168,12 @@
 									
 												<div id="secondRegistryUser">
 													<hr />
-
+	
 													<input type="hidden" name="2_regUserId" id= "2_regUserId" value="${(allRegistryUsers[1].id)!}"/>
 													<div class="row"> 
 														<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
 														<div class="field">	
-																<input type="text" class="full" id="2_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[1].firstname)!}"/>
+															<input type="text" class="full" id="2_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[1].firstname)!}"/>
 														</div>
 													</div>
 									
@@ -197,7 +190,7 @@
 															<input type="text" class="full" id="2_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[1].email)!}"/>
 														</div>
 													</div>
-												</span>
+												</div>
 												<span class="invalid" name="seconduserInvalid" style="display:none;"></span>
 									
 												<div id="thirdRegistryUser">
@@ -228,17 +221,14 @@
 												<span class="invalid" name="thirduserInvalid" style="display:none;"></span>
 									
 												<input type="hidden" name="registryUsers" id= "registryUsers" />
-									
-											</div>
 											
-											<div class="buttons">						        		
-												<button type="button" id="addAnother">Add Another</button>
-												<button type="button" id="cancelRegistryBtn" value="cancel">Cancel</button>
-												<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
-											</div>
-								
-										</form><!-- close .row-group -->
+										</form>
 										
+										<div class="buttons">						        		
+											<button type="button" id="cancelRegistryBtn" value="cancel">Cancel</button>
+											<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
+										</div>
+							
 									</div>
 								</section>
 							

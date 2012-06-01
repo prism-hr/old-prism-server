@@ -77,26 +77,21 @@
 				</#list>
 			
 	    	<!-- Free text field for convictions. -->
-			<div class="row">
-	       		<span id="convictions-details-lbl" class="plain-label">Description
-	        	  <#if  additionalInformation.convictions?? && additionalInformation.convictions >
-	       		    <em>*</em>
-	        	  </#if>
-	       		</span>
+				<div class="row">
+					<span id="convictions-details-lbl" class="plain-label">
+						Description<#if additionalInformation.convictions?? && additionalInformation.convictions><em>*</em></#if>
+					</span>
 	    		<span class="hint" data-desc="<@spring.message 'additionalInformation.convictionstext'/>"></span>
 	    		<div class="field">
-	      		 <#if !applicationForm.isDecided()>
-	        		<textarea id="convictionsText" name="convictionsText" 
-	        		<#if  additionalInformation.convictions?? && !additionalInformation.convictions >
-	        		    disabled="disabled"
-	        		</#if>
-	        		class="max" rows="6" cols="80" maxlength='5000'>${(additionalInformation.convictionsText?html)!}</textarea>
-					 
-	            <#else>
-	                <textarea readonly="readonly" id="convictionsText" name="convictionsText" class="max" rows="10" cols=80" >${(additionalInformation.convictionsText?html)!}</textarea>
-	            </#if>
-	            </div>
-			</div>
+						<#if !applicationForm.isDecided()>
+						<textarea id="convictionsText" name="convictionsText" 
+						<#if additionalInformation.convictions?? && !additionalInformation.convictions> disabled="disabled"</#if>
+						class="max" rows="6" cols="80" maxlength='5000'>${(additionalInformation.convictionsText?html)!}</textarea>
+						<#else>
+						<textarea readonly="readonly" id="convictionsText" name="convictionsText" class="max" rows="10" cols=80" >${(additionalInformation.convictionsText?html)!}</textarea>
+						</#if>
+					</div>
+				</div>
 				<@spring.bind "additionalInformation.convictionsText" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">

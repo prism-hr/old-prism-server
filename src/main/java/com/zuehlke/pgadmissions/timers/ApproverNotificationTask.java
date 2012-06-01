@@ -34,6 +34,7 @@ public class ApproverNotificationTask extends TimerTask {
 		Transaction transaction = session.beginTransaction();
 
 		List<ApplicationForm> applications = applicationDAO.getApplicationsDueApprovalNotifications();
+		
 		transaction.commit();
 
 		for (ApplicationForm application : applications) {
@@ -56,6 +57,6 @@ public class ApproverNotificationTask extends TimerTask {
 
 			}
 		}
-		log.info("Admin Reject Notification Task complete");
+		log.info("Application In Approval Notification To Approvers Task  complete");
 	}
 }

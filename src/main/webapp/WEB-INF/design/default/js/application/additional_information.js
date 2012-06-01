@@ -30,7 +30,7 @@ $(document).ready(function(){
 		{
 			if ($("#convictions-details-lbl em").length == 0)
 			{
-				$("#convictions-details-lbl").append('<em>*</em>');
+				$("#convictions-details-lbl").text($.trim($("#convictions-details-lbl").text())).append('<em>*</em>');
 			}
 			$("#convictions-details-lbl").removeClass("grey-label");
 			$("#convictionsText").removeClass("grey-label");

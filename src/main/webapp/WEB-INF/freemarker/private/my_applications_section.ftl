@@ -70,6 +70,7 @@
 								    					<option value="withdraw">Withdraw</option>
 								      				</#if>      												
 							                  	</select>
+
 							                </td>
 							                <td class="centre">${(application.submittedDate?string("dd MMM yyyy"))!}</td>							  
 							                <td class="centre"><input type="checkbox" name="appDownload" id="appDownload_${application.applicationNumber}"/></td>

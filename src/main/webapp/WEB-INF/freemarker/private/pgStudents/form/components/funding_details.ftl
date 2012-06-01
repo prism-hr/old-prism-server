@@ -48,6 +48,7 @@
 						<a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-edit button-hint">edit</a>
 						<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 						<a name="deleteFundingButton" data-desc="Delete" id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-delete button-hint">delete</a>
+						</#if>
 					</td>
 				</tr>
 				</#list>				               

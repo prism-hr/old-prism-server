@@ -188,7 +188,7 @@
 										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_firstname" name="sFN" value="${(supervisor.firstname?html)!}"/>
 										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_lastname" name="sLN" value="${(supervisor.lastname?html)!}"/>
 										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_email" name="sEM"  value="${(supervisor.email?html)!}"/>
-										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_aware" name="sAS" value="${(supervisor.primarySupervisor?html)!}"/>                    
+										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_aware" name="sAS" value="${(supervisor.aware?html)!}"/>                    
 										<input type="hidden" name="suggestedSupervisors" id="${encrypter.encrypt(supervisor.id)}_supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"<#if supervisor.aware>YES<#else>NO</#if>"}' />                             
 									</td>
 								</tr>

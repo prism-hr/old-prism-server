@@ -27,7 +27,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 @Entity(name = "REGISTERED_USER")
 @Access(AccessType.FIELD)
-public class RegisteredUser extends DomainObject<Integer> implements UserDetails {
+public class RegisteredUser extends DomainObject<Integer> implements UserDetails, Comparable<RegisteredUser> {
 
 	private static final long serialVersionUID = 7913035836949510857L;
 	private String firstName;
@@ -143,10 +143,12 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.email = email;
 	}
 
+	@Override
 	public String getUsername() {
 		return username;
 	}
 
+	@Override
 	public String getPassword() {
 		return password;
 	}
@@ -678,4 +680,12 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		this.directToUrl = directToUrl;
 	}
 
+	@Override
+	public int compareTo(RegisteredUser other) {
+		int firstNameResult = this.firstName.compareTo(other.firstName);
+		if (firstNameResult == 0) {
+			return this.lastName.compareTo(other.lastName);
+		}
+		return firstNameResult;
+	}
 }

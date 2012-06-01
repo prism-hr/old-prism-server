@@ -523,15 +523,15 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	public int compareTo(ApplicationForm appForm) {
 
 		if (appForm.getSubmittedDate() != null && this.getSubmittedDate() == null) {
-			return 1;
-		}
-		if (appForm.getSubmittedDate() == null && this.getSubmittedDate() != null) {
 			return -1;
 		}
-		if (appForm.getSubmittedDate() == null && this.getSubmittedDate() == null) {
-			return appForm.getApplicationTimestamp().compareTo(this.applicationTimestamp);
+		if (appForm.getSubmittedDate() == null && this.getSubmittedDate() != null) {
+			return 1;
 		}
-		return appForm.getSubmittedDate().compareTo(this.submittedDate);
+		if (appForm.getSubmittedDate() == null && this.getSubmittedDate() == null) {
+			return this.applicationTimestamp.compareTo(appForm.getApplicationTimestamp());
+		}
+		return this.submittedDate.compareTo(appForm.getSubmittedDate());
 	}
 
 	public List<Interview> getInterviews() {

@@ -1,15 +1,15 @@
 package com.zuehlke.pgadmissions.domain.enums;
 
 public enum ApplicationFormStatus {
-
+	// attention: order of the enum values is also the logical ordering of application-status
 	UNSUBMITTED("Not Submitted"), // 
 	VALIDATION("Validation"), // 
-	REJECTED("Rejected"), //
+	REVIEW("Review"), //
+	INTERVIEW("Interview"), //
 	APPROVAL("Approval"), //
 	APPROVED("Approved"), //
 	WITHDRAWN("Withdrawn"), //
-	INTERVIEW("Interview"), //
-	REVIEW("Review");
+	REJECTED("Rejected"); //
 
 	private final String displayValue;
 
@@ -23,17 +23,17 @@ public enum ApplicationFormStatus {
 	}
 
 	public static ApplicationFormStatus[] getAvailableNextStati(ApplicationFormStatus status) {
-		if (status == VALIDATION || status == REVIEW ) {
+		if (status == VALIDATION || status == REVIEW) {
 			return new ApplicationFormStatus[] { REJECTED, REVIEW, APPROVAL, INTERVIEW };
 		}
-		if( status == INTERVIEW){
+		if (status == INTERVIEW) {
 			return new ApplicationFormStatus[] { REJECTED, APPROVAL, INTERVIEW };
 		}
 		return new ApplicationFormStatus[] {};
 	}
-	
+
 	public static ApplicationFormStatus[] getConfigurableStages() {
-			return new ApplicationFormStatus[] { VALIDATION, REVIEW, APPROVAL, INTERVIEW };
+		return new ApplicationFormStatus[] { VALIDATION, REVIEW, APPROVAL, INTERVIEW };
 	}
 
 }

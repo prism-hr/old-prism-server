@@ -16,7 +16,9 @@ import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.SearchCategories;
+import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
+import com.zuehlke.pgadmissions.domain.enums.SortCategory;
+import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 @Service("applicationsService")
 public class ApplicationsService {
@@ -32,10 +34,15 @@ public class ApplicationsService {
 		this.applicationFormDAO = applicationFormDAO;
 	}
 
+	/**
+	 * @deprecated use {@link #getAllVisibleAndMatchedApplications(RegisteredUser, SearchCategory, String, SortCategory, SortOrder)} instead.
+	 * @param user
+	 * @return
+	 */
+	@Deprecated
+	@Transactional
 	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
-		List<ApplicationForm> visibleApplications = applicationFormDAO.getVisibleApplications(user);
-		Collections.sort(visibleApplications);
-		return visibleApplications;
+		return getAllVisibleAndMatchedApplications(user, null, null, null, null);
 	}
 
 	public ApplicationForm getApplicationById(Integer id) {
@@ -82,9 +89,8 @@ public class ApplicationsService {
 		if (events.size() == 2) {
 			if (events.get(1).getNewStatus() == ApplicationFormStatus.REJECTED) {
 				return events.get(0).getNewStatus();
-			} else {
-				return events.get(0).getNewStatus();
 			}
+			return events.get(0).getNewStatus();
 		}
 		if (events.size() > 2) {
 			for (int i = 0; i < events.size(); i++) {
@@ -95,9 +101,7 @@ public class ApplicationsService {
 					}
 					if (previousEvent.getNewStatus() == ApplicationFormStatus.APPROVAL) {
 						Event previousOfApproval = events.get(i - 2);
-						if (previousOfApproval.getNewStatus() == ApplicationFormStatus.REVIEW
-								|| previousOfApproval.getNewStatus() == ApplicationFormStatus.INTERVIEW
-								|| previousOfApproval.getNewStatus() == ApplicationFormStatus.VALIDATION) {
+						if (previousOfApproval.getNewStatus() == ApplicationFormStatus.REVIEW || previousOfApproval.getNewStatus() == ApplicationFormStatus.INTERVIEW || previousOfApproval.getNewStatus() == ApplicationFormStatus.VALIDATION) {
 							return previousOfApproval.getNewStatus();
 						}
 					}
@@ -108,42 +112,71 @@ public class ApplicationsService {
 	}
 
 	@Transactional
-	public List<ApplicationForm> getAllVisibleAndMatchedApplications(String term, SearchCategories category, RegisteredUser user) {
+	public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,// 
+			SearchCategory searchCategory, String term) {
+		return getAllVisibleAndMatchedApplications(user, searchCategory, term, null, null);
+	}
+
+	@Transactional
+	public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,// 
+			SearchCategory searchCategory, String term,//
+			SortCategory sortCategory, SortOrder sortOrder) {
+
 		List<ApplicationForm> visibleAndMatchedApplications = new ArrayList<ApplicationForm>();
-		List<ApplicationForm> visibleApplications = getVisibleApplications(user);
-		for (ApplicationForm applicationForm : visibleApplications) {
-			if (category == SearchCategories.APPLICATION_CODE) {
-				if (applicationForm.getApplicationNumber().toLowerCase().contains(term.toLowerCase())) {
-					visibleAndMatchedApplications.add(applicationForm);
-				}
+		List<ApplicationForm> visibleApplications = applicationFormDAO.getVisibleApplications(user);
+
+		if (searchCategory == null) {
+			visibleAndMatchedApplications = visibleApplications;
+		} else {
+			if (term == null) {
+				throw new IllegalArgumentException("Search term cannot be null when a search-category is set!");
 			}
-			if (category == SearchCategories.PROGRAMME_NAME) {
-				String fullProgramName = applicationForm.getProgram().getCode() + applicationForm.getProgram().getTitle();
-				if (fullProgramName.toLowerCase().contains(term.toLowerCase())) {
-					visibleAndMatchedApplications.add(applicationForm);
-				}
-			}
-			if (category == SearchCategories.APPLICANT_NAME) {
-				String fullApplicantName = applicationForm.getApplicant().getFirstName() + applicationForm.getApplicant().getLastName();
-				if (fullApplicantName.toLowerCase().contains(term.toLowerCase())) {
-					visibleAndMatchedApplications.add(applicationForm);
-				}
-			}
-			if (category == SearchCategories.APPLICATION_STATUS) {
-				ApplicationFormStatus matchedStatus = null;
-				for (ApplicationFormStatus status : ApplicationFormStatus.values()) {
-					if (status.displayValue().toLowerCase().contains(term.toLowerCase())) {
-						matchedStatus = status;
+			for (ApplicationForm applicationForm : visibleApplications) {
+				if (searchCategory == SearchCategory.APPLICATION_NUMBER) {
+					if (applicationForm.getApplicationNumber().toLowerCase().contains(term.toLowerCase())) {
+						visibleAndMatchedApplications.add(applicationForm);
 					}
 				}
-				if (matchedStatus != null) {
-					if (applicationForm.getStatus() == matchedStatus) {
+				if (searchCategory == SearchCategory.PROGRAMME_NAME) {
+					String fullProgramName = applicationForm.getProgram().getCode() + applicationForm.getProgram().getTitle();
+					if (fullProgramName.toLowerCase().contains(term.toLowerCase())) {
 						visibleAndMatchedApplications.add(applicationForm);
+					}
+				}
+				if (searchCategory == SearchCategory.APPLICANT_NAME) {
+					String fullApplicantName = applicationForm.getApplicant().getFirstName() + applicationForm.getApplicant().getLastName();
+					if (fullApplicantName.toLowerCase().contains(term.toLowerCase())) {
+						visibleAndMatchedApplications.add(applicationForm);
+					}
+				}
+				if (searchCategory == SearchCategory.APPLICATION_STATUS) {
+					ApplicationFormStatus matchedStatus = null;
+					for (ApplicationFormStatus status : ApplicationFormStatus.values()) {
+						if (status.displayValue().toLowerCase().contains(term.toLowerCase())) {
+							matchedStatus = status;
+						}
+					}
+					if (matchedStatus != null) {
+						if (applicationForm.getStatus() == matchedStatus) {
+							visibleAndMatchedApplications.add(applicationForm);
+						}
 					}
 				}
 			}
 		}
+		sortApplicationList(visibleAndMatchedApplications, sortCategory, sortOrder);
 		return visibleAndMatchedApplications;
 	}
 
+	private List<ApplicationForm> sortApplicationList(List<ApplicationForm> applications, SortCategory sortCategory, SortOrder sortOrder) {
+		if (sortCategory == null) {// natural ordering on submitted date.
+			Collections.sort(applications);
+			return applications;
+		}
+		if (sortOrder == null) {
+			throw new IllegalArgumentException("Sort order cannot be null when a sort-category is set!");
+		}
+		Collections.sort(applications, sortCategory.getComparator(sortOrder));
+		return applications;
+	}
 }

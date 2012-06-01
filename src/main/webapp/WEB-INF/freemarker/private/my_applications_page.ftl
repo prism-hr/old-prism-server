@@ -54,34 +54,52 @@
 				      <div class="content-box">
 				        <div class="content-box-inner">
 							
-									<p style="color:red;">${(message?html)!}</p>
-									<div id="search-box"> 
-										<label for="searchTerm">Search</label>
-										<input type="text" id="searchTerm" name="searchTerm" />
-										<button type="button">search</button>
-										
-										<label for="searchCategory">Filter by Actions</label>
-										<select name="searchCategory" id="searchCategory">
-											<option value="">Column...</option>
-											<#list searchCategories as category>
-											<option value="${category}">${category.displayValue()}</option>               
-											</#list>
-										</select>	
-									</div>
+						<p style="color:red;">${(message?html)!}</p>
+						<div id="search-box"> 
+							<label for="searchTerm">Search</label>
+							<input type="text" id="searchTerm" name="searchTerm" />
+							<button type="button">search</button>
 							
-									<section id="applicationListSection"></section>
-                      	    
+							<label for="searchCategory">Filter by Actions</label>
+							<select name="searchCategory" id="searchCategory">
+								<option value="">Column...</option>
+								<#list searchCategories as category>
+								<option value="${category}">${category.displayValue()}</option>               
+								</#list>
+							</select>	
+						</div>
+						<table class="data" border="0" >
+					       	<colgroup>
+					         	<col style="width: 24px" />
+					         	<col style="width: 20%" />
+					         	<col/>
+					         	<col/>
+					         	<col style="" />
+					         	<col style="width: 90px" />
+					         	<col style="width: 40px" />
+					        </colgroup>
+							<thead>
+									<th scope="col">&nbsp;</th>
+									<#if !user.isInRole('APPLICANT')>
+										<th scope="col" id="APPLICANT_NAME" onclick="sortList(this)">Applicant</th>
+									<#else>
+										<th scope="col"">Application #</th>
+									</#if>
+									<th scope="col" id="PROGRAMME_NAME" onclick="sortList(this)">Programme</th>					
+									<th scope="col" id="APPLICATION_STATUS" onclick="sortList(this)">Status</th>
+									<th scope="col">Actions</th>
+									<th scope="col" id="APPLICATION_DATE" onclick="sortList(this)">Submitted</th>					                
+									<th class="centre" scope="col">
+										<input type="checkbox" name="select-all" id="select-all" />
+									</th>
+								</tr>
+								<input type="hidden" id="sort-column" name="sort-column" value="APPLICATION_DATE" />
+								<input type="hidden" id="sort-order" name="sort-order" value="DESCENDING" />
+							</thead>
+							<tbody id="applicationListSection">
+							</tbody>
+						</table>
 				          <p class="right">
-				            <#if (user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR'))>
-<!--
-                                <a id="manageUsersButton" class="button">Manage Users</a>
--->
-                            </#if>
-				            <#if (user.isInRole('SUPERADMINISTRATOR'))>
-<!--
-                                <a id="configuration" class="button">Configuration</a>
--->
-                            </#if>
                             <#if (applications?size > 0)>
 				          		<a class="button" name="downloadAll" id="downloadAll">Download</a>
 				          	</#if>
@@ -92,9 +110,6 @@
 				      </div><!-- .content-box -->
 				      
 				    </article>
-				
-				
-				
 			</div>
 			<!-- Middle Ends -->
 			

@@ -178,7 +178,7 @@ $(document).ready(function()
 		
 		if (errors == 0)
 		{
-			replaceWithLoader($(this));
+			//replaceWithLoader($(this));
 			$("#supervisors").show();
 			$("#supervisor_div span.invalid").html('').hide();
 			var aware = ($('#awareSupervisor').val() =="YES") ? 'Yes' : 'No';
@@ -233,7 +233,7 @@ $(document).ready(function()
 		
 		if (errors == 0)
 		{
-			replaceWithLoader($(this));
+			//replaceWithLoader($(this));
 			$("span[name='superFirstname']").html('');
 			$("span[name='superFirstname']").hide();
 			$("span[name='superLastname']").html('');

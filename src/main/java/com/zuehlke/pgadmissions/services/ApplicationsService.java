@@ -6,12 +6,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -48,13 +45,13 @@ public class ApplicationsService {
 	public ApplicationForm getApplicationByApplicationNumber(String applicationNumber) {
 		return applicationFormDAO.getApplicationByApplicationNumber(applicationNumber);
 	}
-	
+
 	@Transactional
 	public void save(ApplicationForm application) {
 		applicationFormDAO.save(application);
 
 	}
-	
+
 	@Transactional
 	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Program program) {
 		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
@@ -62,7 +59,7 @@ public class ApplicationsService {
 		applicationForm.setApplicant(user);
 		applicationForm.setProgram(program);
 		int runningCount = applicationFormDAO.getApplicationsInProgramThisYear(program, thisYear);
-		applicationForm.setApplicationNumber(program.getCode() + "-" +  thisYear + "-" + ++runningCount);
+		applicationForm.setApplicationNumber(program.getCode() + "-" + thisYear + "-" + String.format("%06d", ++runningCount));
 		applicationFormDAO.save(applicationForm);
 		return applicationForm;
 	}
@@ -70,7 +67,7 @@ public class ApplicationsService {
 	ApplicationForm newApplicationForm() {
 		return new ApplicationForm();
 	}
-	
+
 	@Transactional
 	public List<ApplicationForm> getApplicationsDueUpdateNotification() {
 		return applicationFormDAO.getApplicationsDueUpdateNotification();
@@ -79,27 +76,28 @@ public class ApplicationsService {
 	public ApplicationFormStatus getStageComingFrom(ApplicationForm application) {
 		List<Event> events = application.getEventsSortedByDate();
 		Event previousEvent;
-		if(events.size() == 1 ){
+		if (events.size() == 1) {
 			return events.get(0).getNewStatus();
 		}
-		if(events.size() == 2){
-			if(events.get(1).getNewStatus() == ApplicationFormStatus.REJECTED){
+		if (events.size() == 2) {
+			if (events.get(1).getNewStatus() == ApplicationFormStatus.REJECTED) {
 				return events.get(0).getNewStatus();
-			}
-			else{
+			} else {
 				return events.get(0).getNewStatus();
 			}
 		}
-		if(events.size()>2){
-			for(int i=0; i<events.size(); i++){
-				if(events.get(i).getNewStatus() == ApplicationFormStatus.REJECTED ){
+		if (events.size() > 2) {
+			for (int i = 0; i < events.size(); i++) {
+				if (events.get(i).getNewStatus() == ApplicationFormStatus.REJECTED) {
 					previousEvent = events.get(i - 1);
-					if(previousEvent.getNewStatus() ==  ApplicationFormStatus.REVIEW || previousEvent.getNewStatus() ==  ApplicationFormStatus.INTERVIEW){
+					if (previousEvent.getNewStatus() == ApplicationFormStatus.REVIEW || previousEvent.getNewStatus() == ApplicationFormStatus.INTERVIEW) {
 						return previousEvent.getNewStatus();
 					}
-					if(previousEvent.getNewStatus() ==  ApplicationFormStatus.APPROVAL){
+					if (previousEvent.getNewStatus() == ApplicationFormStatus.APPROVAL) {
 						Event previousOfApproval = events.get(i - 2);
-						if(previousOfApproval.getNewStatus() ==  ApplicationFormStatus.REVIEW || previousOfApproval.getNewStatus() ==  ApplicationFormStatus.INTERVIEW || previousOfApproval.getNewStatus() ==  ApplicationFormStatus.VALIDATION){
+						if (previousOfApproval.getNewStatus() == ApplicationFormStatus.REVIEW
+								|| previousOfApproval.getNewStatus() == ApplicationFormStatus.INTERVIEW
+								|| previousOfApproval.getNewStatus() == ApplicationFormStatus.VALIDATION) {
 							return previousOfApproval.getNewStatus();
 						}
 					}
@@ -114,32 +112,32 @@ public class ApplicationsService {
 		List<ApplicationForm> visibleAndMatchedApplications = new ArrayList<ApplicationForm>();
 		List<ApplicationForm> visibleApplications = getVisibleApplications(user);
 		for (ApplicationForm applicationForm : visibleApplications) {
-			if(category ==  SearchCategories.APPLICATION_CODE){
-				if(applicationForm.getApplicationNumber().toLowerCase().contains(term.toLowerCase())){
+			if (category == SearchCategories.APPLICATION_CODE) {
+				if (applicationForm.getApplicationNumber().toLowerCase().contains(term.toLowerCase())) {
 					visibleAndMatchedApplications.add(applicationForm);
 				}
 			}
-			if(category ==  SearchCategories.PROGRAMME_NAME){
+			if (category == SearchCategories.PROGRAMME_NAME) {
 				String fullProgramName = applicationForm.getProgram().getCode() + applicationForm.getProgram().getTitle();
-				if(fullProgramName.toLowerCase().contains(term.toLowerCase())){
+				if (fullProgramName.toLowerCase().contains(term.toLowerCase())) {
 					visibleAndMatchedApplications.add(applicationForm);
 				}
 			}
-			if(category ==  SearchCategories.APPLICANT_NAME){
+			if (category == SearchCategories.APPLICANT_NAME) {
 				String fullApplicantName = applicationForm.getApplicant().getFirstName() + applicationForm.getApplicant().getLastName();
-				if(fullApplicantName.toLowerCase().contains(term.toLowerCase())){
+				if (fullApplicantName.toLowerCase().contains(term.toLowerCase())) {
 					visibleAndMatchedApplications.add(applicationForm);
 				}
 			}
-			if(category ==  SearchCategories.APPLICATION_STATUS){
+			if (category == SearchCategories.APPLICATION_STATUS) {
 				ApplicationFormStatus matchedStatus = null;
 				for (ApplicationFormStatus status : ApplicationFormStatus.values()) {
-					if(status.displayValue().toLowerCase().contains(term.toLowerCase())){
+					if (status.displayValue().toLowerCase().contains(term.toLowerCase())) {
 						matchedStatus = status;
 					}
 				}
-				if(matchedStatus != null){
-					if(applicationForm.getStatus() == matchedStatus){
+				if (matchedStatus != null) {
+					if (applicationForm.getStatus() == matchedStatus) {
 						visibleAndMatchedApplications.add(applicationForm);
 					}
 				}
@@ -147,9 +145,5 @@ public class ApplicationsService {
 		}
 		return visibleAndMatchedApplications;
 	}
-
-	
-
-
 
 }

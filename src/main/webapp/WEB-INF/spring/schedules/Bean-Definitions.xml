@@ -24,6 +24,14 @@
 		<constructor-arg index="1" ref="mailSender" />
 		<constructor-arg index="2" ref="messageSource" />
 	</bean>
+	
+	<bean id="supervisorMailSender" class="com.zuehlke.pgadmissions.mail.SupervisorMailSender"
+		autowire-candidate="false">
+		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
+		<constructor-arg index="1" ref="mailSender" />
+		<constructor-arg index="2" ref="messageSource" />
+	</bean>
+	
 	<bean id="interviewerMailSender" class="com.zuehlke.pgadmissions.mail.InterviewerMailSender"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
@@ -76,6 +84,10 @@
 		<constructor-arg ref="sessionFactoryMail" />
 	</bean>
 	<bean id="mailInterviewerDAO" class="com.zuehlke.pgadmissions.dao.InterviewerDAO"
+		autowire-candidate="false">
+		<constructor-arg ref="sessionFactoryMail" />
+	</bean>
+	<bean id="mailSupervisorDAO" class="com.zuehlke.pgadmissions.dao.SupervisorDAO"
 		autowire-candidate="false">
 		<constructor-arg ref="sessionFactoryMail" />
 	</bean>

@@ -51,6 +51,7 @@ public class InterviewCommentController {
 		RegisteredUser currentUser = userService.getCurrentUser();
 		ApplicationForm applicationForm = applicationsService.getApplicationByApplicationNumber(applicationId);
 		if (applicationForm == null  || !currentUser.isInterviewerOfApplicationForm(applicationForm) || !currentUser.canSee(applicationForm) ){
+			
 			throw new ResourceNotFoundException();
 		}
 		return applicationForm;

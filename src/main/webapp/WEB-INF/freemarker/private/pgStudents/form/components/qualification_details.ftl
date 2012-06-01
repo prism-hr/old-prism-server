@@ -306,7 +306,7 @@
 			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 			<div class="row">
 				<div class="field">
-					<a id="addQualificationButton" class="button blue">Submit</a>
+					<a id="addQualificationButton" class="button blue">Add</a>
 				</div>
 			</div>
 			</#if>

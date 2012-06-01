@@ -36,9 +36,10 @@
 				<span class="hint" data-desc="<@spring.message 'supportingDocuments.personalStatement'/>"></span>	 
 				<div class="field<#if applicationForm.personalStatement.fileName??> uploaded</#if>" id="psUploadFields">        	
 					<input id="psDocument" class="full" data-type="PERSONAL_STATEMENT" data-reference="Personal Statement" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
-					<span id="psUploadedDocument"><input type="hidden" id="document_PERSONAL_STATEMENT" value = "${(encrypter.encrypt(applicationForm.personalStatement.id))!}"/>
+					<span id="psUploadedDocument">
+						<input type="hidden" id="document_PERSONAL_STATEMENT" value="${(encrypter.encrypt(applicationForm.personalStatement.id))!}"/>
 						<input type="hidden" name="MAX_FILE_SIZE" value="500" />
-						<a target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.personalStatement.id))!}'/>">${(applicationForm.personalStatement.fileName?html)!}</a>
+						<a class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.personalStatement.id))!}'/>">${(applicationForm.personalStatement.fileName?html)!}</a>
 						<a data-desc="Change Personal Statement" class="button-edit button-hint">edit</a>
 					</span>
 					<span id="psDocumentProgress" class="progress" style="display: none;"></span>					
@@ -58,8 +59,9 @@
 				<span class="hint" data-desc="<@spring.message 'supportingDocuments.cv'/>"></span>
 				<div class="field<#if applicationForm.cv??> uploaded</#if>" id="cvUploadFields">        	
 					<input id="cvDocument" class="full" type="file" data-type="CV" data-reference="CV" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
-					<span id="cvUploadedDocument"><input type="hidden" id="document_CV" value="${(encrypter.encrypt(applicationForm.cv.id))!}"/>
-						<a target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.cv.id))!}'/>">${(applicationForm.cv.fileName)!}</a>
+					<span id="cvUploadedDocument">
+						<input type="hidden" id="document_CV" value="${(encrypter.encrypt(applicationForm.cv.id))!}"/>
+						<a class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.cv.id))!}'/>">${(applicationForm.cv.fileName)!}</a>
 						<a data-desc="Change CV" class="button-edit button-hint">edit</a>
 					</span>
 					<span id="cvDocumentProgress" class="progress" style="display: none;"></span>					

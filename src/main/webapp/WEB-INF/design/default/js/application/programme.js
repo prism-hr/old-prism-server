@@ -1,4 +1,5 @@
-$(document).ready(function(){
+$(document).ready(function()
+{
 	$("#acceptTermsPDValue").val("NO");
 	$("#addSupervisorButton").show();
 	$("#awareSupervisorCB").attr('checked', false);
@@ -7,12 +8,18 @@ $(document).ready(function(){
 	
 	var progImgCount = 0;
 	
+	/*
 	var superviworRowCount = $("#supervisors tbody").children().length;
-	if(superviworRowCount > 0){
+	if(superviworRowCount > 0)
+	{
 		$("#supervisors").show();
-	}else{
+	}
+	else
+	{
 		$("#supervisors").hide();
 	}
+	*/
+	$('#supervisors').toggle($("#supervisors tbody").children().length > 0);
 	
 	$("input[name*='acceptTermsPDCB']").click(function() {
 		if ($("#acceptTermsPDValue").val() =='YES'){
@@ -36,27 +43,30 @@ $(document).ready(function(){
 		});
 	
 	// Delete supervisor
-	$("#supervisor_div").on("click", "a[name=\"deleteSupervisor\"]", function(){	
-			var id = this.id;
-			if(id.indexOf("usd_") != -1){
-				id = id.replace('usd_', '');
-				$('#'+id+"_ussupervisors").val('');
-			}
-			else{
-				id = id.replace('supervisorDelete_', '');
-				$('#'+id+"_supervisors").val('');
-			}
-			$(this).parent("span").remove();
-			$(this).parent().parent().remove();
-			$(this).parent().parent().html('');
-			
-			var rowCount = $("#supervisors tbody tr").length;
-			
-			console.log(rowCount);
-			
-			if(rowCount == 0){
-				$("#supervisors").hide();
-			}
+	$("#supervisor_div").on("click", "a[name=\"deleteSupervisor\"]", function()
+	{	
+		var id = this.id;
+		if(id.indexOf("usd_") != -1)
+		{
+			id = id.replace('usd_', '');
+			$('#'+id+"_ussupervisors").val('');
+		}
+		else
+		{
+			id = id.replace('supervisorDelete_', '');
+			$('#'+id+"_supervisors").val('');
+		}
+		$(this).parent("span").remove();
+		$(this).parent().parent().remove();
+		$(this).parent().parent().html('');
+		
+		var rowCount = $("#supervisors tbody tr").length;
+		
+		console.log(rowCount);
+		
+		if(rowCount == 0){
+			$("#supervisors").hide();
+		}
 	});
 	
 	// Edit supervisor
@@ -181,7 +191,7 @@ $(document).ready(function(){
 			unsavedSupervisors++;
 			$('table#supervisors tbody').append(
 				'<tr class="' + (aware == "Yes" ? "aware" : "unaware") + '">' +
-				'<td>' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + '(' + $('#supervisorEmail').val() + ')</td>' +
+				'<td>' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 				'<td>' +
 				'<a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> ' +
 				'<a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a>' +
@@ -241,7 +251,7 @@ $(document).ready(function(){
 			
 			$('table#supervisors tbody').append(
 				'<tr class="' + (aware == "Yes" ? "aware" : "unaware") + '">' +
-				'<td>' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + '(' + $('#supervisorEmail').val() + ')</td>' +
+				'<td>' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 				'<td>' +
 				'<a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> ' +
 				'<a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a>' +

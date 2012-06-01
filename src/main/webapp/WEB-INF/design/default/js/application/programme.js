@@ -158,36 +158,30 @@ $(document).ready(function()
 	// Add supervisor button
 	$('#addSupervisorButton').on('click', function()
 	{
-		$("#supervisors").show();
-		if( $('#supervisorFirstname').val() ==""  || $('#supervisorFirstname').val() =="First Name" ){
-			$("span[name='superFirstname']").html('First name cannot be empty.');
-			$("span[name='superFirstname']").show();
-
-		}
-		if( $('#supervisorLastname').val() ==""  || $('#supervisorLastname').val() =="Last Name" ){
-			$("span[name='superLastname']").html('Last name cannot be empty.');
-			$("span[name='superLastname']").show();
-
-		}
-		if( !validateEmail($('#supervisorEmail').val())){
-			$("span[name='superEmail']").html('Email is not valid.');
-			$("span[name='superEmail']").show();
-
-		}
-		if( validateEmail($('#supervisorEmail').val()) && $('#supervisorEmail').val() && $('#supervisorEmail').val() !="Email address" &&
-				$('#supervisorFirstname').val() && $('#supervisorFirstname').val() !="First Name"&&
-				$('#supervisorLastname').val() && $('#supervisorLastname').val() !="Last Name"){
-			
+		var errors = 0;
 		
+		$("#supervisors").show();
+		if ($('#supervisorFirstname').val() == "")
+		{
+			$("span[name='superFirstname']").html('First name cannot be empty.').show();
+			errors++;
+		}		
+		if ($('#supervisorLastname').val() == "")
+		{
+			$("span[name='superLastname']").html('Last name cannot be empty.').show();
+			errors++;
+		}		
+		if (!validateEmail($('#supervisorEmail').val()))
+		{
+			$("span[name='superEmail']").html('Email is not valid.').show();
+			errors++;
+		}
+		
+		if (errors > 0)
+		{
 			$("#supervisor_div span.invalid").html('').hide();
-			var aware = "";
-			if($('#awareSupervisor').val() =="YES")
-			{
-				aware = "Yes";
-			}
-			else{
-				aware = "No";
-			}
+			var aware = ($('#awareSupervisor').val() =="YES") ? 'Yes' : 'No';
+
 			unsavedSupervisors++;
 			$('table#supervisors tbody').append(
 				'<tr class="' + (aware == "Yes" ? "aware" : "unaware") + '">' +
@@ -204,36 +198,40 @@ $(document).ready(function()
 				'</tr>');
 			addToolTips();
 		
-		 $("input[name='sFN']").val($('#supervisorFirstname').val());
-		 $("input[name='sLN']").val($('#supervisorLastname').val());
-		 $("input[name='sEM']").val($('#supervisorEmail').val());
-		 $("input[name='sAS']").val($('#awareSupervisor').val());
-		 $('#supervisorId, #supervisorFirstname, #supervisorLastname, #supervisorEmail').val('');
-		 $("#awareSupervisorCB").attr('checked', false);
-		 $("#awareSupervisor").val("NO");
+			$("input[name='sFN']").val($('#supervisorFirstname').val());
+			$("input[name='sLN']").val($('#supervisorLastname').val());
+			$("input[name='sEM']").val($('#supervisorEmail').val());
+			$("input[name='sAS']").val($('#awareSupervisor').val());
+			$('#supervisorId, #supervisorFirstname, #supervisorLastname, #supervisorEmail').val('');
+			$("#awareSupervisorCB").attr('checked', false);
+			$("#awareSupervisor").val("NO");
 		}
 	});
-	
-	$('#updateSupervisorButton').on('click', function(){
-		if( $('#supervisorFirstname').val() ==""  || $('#supervisorFirstname').val() =="First Name" ){
-			$("span[name='superFirstname']").html('First name cannot be empty');
-			$("span[name='superFirstname']").show();
-			
+
+	// Update supervisor.	
+	$('#updateSupervisorButton').on('click', function()
+	{
+		var errors = 0;
+		
+		$("#supervisors").show();
+		if ($('#supervisorFirstname').val() == "")
+		{
+			$("span[name='superFirstname']").html('First name cannot be empty.').show();
+			errors++;
+		}		
+		if ($('#supervisorLastname').val() == "")
+		{
+			$("span[name='superLastname']").html('Last name cannot be empty.').show();
+			errors++;
+		}		
+		if (!validateEmail($('#supervisorEmail').val()))
+		{
+			$("span[name='superEmail']").html('Email is not valid.').show();
+			errors++;
 		}
-		if( $('#supervisorLastname').val() ==""  || $('#supervisorLastname').val() =="Last Name" ){
-			$("span[name='superLastname']").html('Last name cannot be empty');
-			$("span[name='superLastname']").show();
-			
-		}
-		if( $('#supervisorEmail').val() ==""  || $('#supervisorEmail').val() =="Email address" || !validateEmail($('#supervisorEmail').val())){
-			$("span[name='superEmail']").html('Email is not valid');
-			$("span[name='superEmail']").show();
-			
-		}
-		if( $('#supervisorEmail').val() && $('#supervisorEmail').val() !="Email address" &&
-				$('#supervisorFirstname').val() && $('#supervisorFirstname').val() !="First Name"&&
-				$('#supervisorLastname').val() && $('#supervisorLastname').val() !="Last Name"){
-			
+		
+		if (errors > 0)
+		{
 			
 			$("span[name='superFirstname']").html('');
 			$("span[name='superFirstname']").hide();
@@ -241,13 +239,7 @@ $(document).ready(function()
 			$("span[name='superLastname']").hide();
 			$("span[name='superEmail']").html('');
 			$("span[name='superEmail']").hide();
-			var aware = "";
-			if($('#awareSupervisor').val() =="YES"){
-				aware = "Yes";
-			}
-			else{
-				aware = "No";
-			}
+			var aware = ($('#awareSupervisor').val() == "YES") ? 'Yes' : 'No';
 			
 			$('table#supervisors tbody').append(
 				'<tr class="' + (aware == "Yes" ? "aware" : "unaware") + '">' +
@@ -273,24 +265,31 @@ $(document).ready(function()
 			$('#supervisorFirstname').val('');
 			$('#supervisorLastname').val('');
 			$('#supervisorEmail').val('');
+
+			// restore add button.
+			$('#updateSupervisorButton').hide();
+			$('#addSupervisorButton').show();
 		}
 		$("#awareSupervisorCB").attr('checked', false);
 		$("#awareSupervisor").val("NO");
 	});
 	
 	
-	$('#programmeCloseButton').click(function(){
+	// Close Programme Details section.
+	$('#programmeCloseButton').click(function()
+	{
 		$('#programme-H2').trigger('click');
 		return false;
 	});
 	
-	
-	  bindDatePicker('#startDate');
-	  addToolTips();
+	bindDatePicker('#startDate');
+	addToolTips();
 
 });
 
-function postProgrammeData(message){
+
+function postProgrammeData(message)
+{
 	var postData = {
 			programmeName: $("#programmeName").val(),
 			projectName: $("#projectName").val(), 
@@ -302,10 +301,11 @@ function postProgrammeData(message){
 			applicationId: $('#applicationId').val(),
 			suggestedSupervisors: "",
 			message: message
-				
 		};
 		
-		$.post( "/pgadmissions/update/editProgrammeDetails" ,$.param(postData) +"&" + $('[input[name="suggestedSupervisors"]').serialize(),
+	$.post(
+		"/pgadmissions/update/editProgrammeDetails",
+		$.param(postData) + "&" + $('[input[name="suggestedSupervisors"]').serialize(),
 		function(data) {
 			$('#programmeDetailsSection').html(data);
 		});

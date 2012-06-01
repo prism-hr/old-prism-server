@@ -37,7 +37,7 @@
             <div class="tagline">Your Gateway to<br />Research Opportunities</div>
           </div>
           <div class="content">
-            <h1>You have been successfully registered.</h1>
+            <h1>Almost there...</h1>
             <p>To activate your account please check your emails and click on the activation link.</p>
           </div>
         </div>

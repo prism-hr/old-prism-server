@@ -207,6 +207,7 @@ src/sql/misc/insert_real_programs.sql
 src/sql/misc/insert_real_projects.sql
 docs/Regression test.docx
 docs/~$research_programmes_20120224.xlsx
+pull.bat
 syntax: regexp
 target/*
 

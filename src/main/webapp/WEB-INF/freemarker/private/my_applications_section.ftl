@@ -31,7 +31,7 @@
 															</td>
 							                <td class="program-title">${application.program.code} - ${application.program.title}</td>								                
 							               	<td class="status">
-																<span class="icon-status ${application.status.displayValue()?lower_case}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>
+																<span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>
 															</td>
 							                <td class="centre">
 							                	<select class="actionType" name="app_[${application.applicationNumber}]">

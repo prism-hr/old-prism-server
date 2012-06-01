@@ -175,8 +175,8 @@
 							</colgroup>
 							<tbody>
 								<#list programmeDetails.suggestedSupervisors! as supervisor>
-								<tr class="<#if supervisor.primarySupervisor == "YES">aware<#else>unaware</#if>">
-									<td data-desc="<#if supervisor.primarySupervisor == "YES">Aware<#else>Unaware</#if>of application">
+								<tr class="<#if supervisor.primarySupervisor?? && supervisor.primarySupervisor == "YES">aware<#else>unaware</#if>">
+									<td data-desc="<#if supervisor.primarySupervisor?? && supervisor.primarySupervisor == "YES">Aware<#else>Unaware</#if>of application">
 										${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} (${supervisor.email?html})
 									</td>
 									<td>

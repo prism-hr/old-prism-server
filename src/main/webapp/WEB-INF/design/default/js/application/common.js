@@ -18,6 +18,13 @@ var tooltipSettings = {
 };
 
 
+// A simple function for replacing buttons with a loading graphic.
+function replaceWithLoader($button)
+{
+	$button.replaceWith('<img class="loader" src="/pgadmissions/design/default/images/ajax-loader.gif" />');
+}
+
+
 function bindDatePicker(selector)
 {
 	// Date pickers.

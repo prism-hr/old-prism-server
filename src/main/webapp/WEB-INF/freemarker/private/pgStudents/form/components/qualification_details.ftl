@@ -59,7 +59,7 @@
 					</#if>
 				</td>
 				<td>
-					<a name="editQualificationLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="qualification_${encrypter.encrypt(existingQualification.id)}" class="button-edit button-hint">edit</a>
+					<a name="editQualificationLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="qualification_${(encrypter.encrypt(existingQualification.id))}" class="button-edit button-hint">edit</a>
 				</td>
 				<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 				<td>

@@ -16,3 +16,5 @@ label.label { font-weight: bold; }
 .registry { float: right; margin-bottom: 10px; clear: both;}
 
 #notifyRegistryButton { margin-bottom: 0; }
+
+#configuration section > div { background: #FFF !important; }

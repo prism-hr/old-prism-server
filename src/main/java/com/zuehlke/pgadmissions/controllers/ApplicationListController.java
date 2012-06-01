@@ -61,11 +61,6 @@ public class ApplicationListController {
 			@RequestParam(required = false) SearchCategory searchCategory, @RequestParam(required = false) String searchTerm, //
 			@RequestParam(required = false) SortCategory sortCategory, @RequestParam(required = false) SortOrder order) {
 
-		System.out.println("searchCategory: " + searchCategory);
-		System.out.println("searchTerm: " + searchTerm);
-		System.out.println("sortCategory: " + sortCategory);
-		System.out.println("order: " + order);
-		
 		return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, searchTerm, sortCategory, order);
 	}
 

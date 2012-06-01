@@ -69,6 +69,6 @@ class ApplicationDateCmp extends ApplicationComparator {
 
 	@Override
 	protected int sortAscending(ApplicationForm app1, ApplicationForm app2) {
-		return app1.compareTo(app2) * -1;
+		return app1.compareTo(app2);
 	}
 }

@@ -267,12 +267,12 @@
       		
 			<!-- Award date -->
 			<div class="row">
-				<span id="quali-award-date-lb" class="plain-label <#if !qualification.isQualificationCompleted()>grey-label</#if>">Award Date</span>
+				<span id="quali-award-date-lb" class="plain-label grey-label">Award Date</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.awardDate'/>"></span>
 				
 				<div class="field" id="awardDateField">
 					<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="<#if !qualification.isQualificationCompleted()>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</#if>"
-					<#if !qualification.isQualificationCompleted()>disabled="disabled"</#if> />
+					<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> />
 				</div>
 			</div>
 			
@@ -292,7 +292,7 @@
 				<div class="field <#if qualification.proofOfAward??>uploaded</#if>" id="uploadFields">         		       	
 					<input id="proofOfAward" data-type="PROOF_OF_AWARD" data-reference="Proof Of Award" class="full" type="file" name="file" value=""  <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="qualUploadedDocument">
-						<input type="hidden" id="document_PROOF_OF_AWARD" value = "${(encrypter.encrypt(qualification.proofOfAward.id))!}"/>
+						<input type="hidden" id="document_PROOF_OF_AWARD" value="${(encrypter.encrypt(qualification.proofOfAward.id))!}"/>
 						<#if qualification.proofOfAward??> 
 						<a class="docName" href="<@spring.url '/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}'/>">
 						${(qualification.proofOfAward.fileName?html)!}</a>

@@ -185,7 +185,7 @@ $(document).ready(function()
 			unsavedSupervisors++;
 			$('table#supervisors tbody').append(
 				'<tr class="' + (aware == "Yes" ? "aware" : "unaware") + '">' +
-				'<td>' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
+				'<td data-desc="' + (aware == "Yes" ? "Aware" : "Unaware") + ' of application">' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 				'<td>' +
 				'<a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> ' +
 				'<a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a>' +
@@ -243,7 +243,7 @@ $(document).ready(function()
 			
 			$('table#supervisors tbody').append(
 				'<tr class="' + (aware == "Yes" ? "aware" : "unaware") + '">' +
-				'<td>' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
+				'<td data-desc="' + (aware == "Yes" ? "Aware" : "Unaware") + ' of application">' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 				'<td>' +
 				'<a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> ' +
 				'<a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a>' +

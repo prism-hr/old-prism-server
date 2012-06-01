@@ -27,7 +27,7 @@
 							                <td><a class="row-arrow" href="#">&gt;</a></td>
 							                <td class="applicant-name">
 																${application.applicant.firstName} ${application.applicant.lastName}
-																<span class="applicant-id">${application.applicationNumber}</span>
+																<#if !user.isInRole('APPLICANT')><span class="applicant-id">${application.applicationNumber}</span></#if>
 															</td>
 							                <td class="program-title">${application.program.code} - ${application.program.title}</td>								                
 							               	<td class="status">

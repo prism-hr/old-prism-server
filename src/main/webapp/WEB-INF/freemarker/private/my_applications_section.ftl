@@ -11,7 +11,7 @@
 											<thead>
 												<tr>
 													<th scope="col">&nbsp;</th>
-													<th scope="col">Name</th>
+													<th scope="col">Applicant</th>
 													<th scope="col">Programme</th>					
 													<th scope="col">Status</th>
 													<th scope="col">Actions</th>
@@ -26,9 +26,11 @@
 							        	<tr id="row_${application.applicationNumber}" name="applicationRow">
 							                <td><a class="row-arrow" href="#">&gt;</a></td>
 							                <td class="applicant-name">
-																${application.applicant.firstName} ${application.applicant.lastName}
-																<#if !user.isInRole('APPLICANT')><span class="applicant-id">${application.applicationNumber}</span></#if>
-															</td>
+												<#if !user.isInRole('APPLICANT')>
+													${application.applicant.firstName} ${application.applicant.lastName}
+												</#if>
+												<span class="applicant-id">${application.applicationNumber}</span>
+											</td>
 							                <td class="program-title">${application.program.code} - ${application.program.title}</td>								                
 							               	<td class="status">
 																<span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>

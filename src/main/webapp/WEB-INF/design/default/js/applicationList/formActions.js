@@ -1,13 +1,10 @@
 $(document).ready(function() {
 	
-	$.get("/pgadmissions/applications/section",
-			function(data) {
-				$('#applicationListSection').html(data);
-				addToolTips();
-			}
-	);
+	populateApplicationList();
 	
-
+	$('#searchBtn').click(function(){
+		populateApplicationList();
+	});
 	
 	$(document).on('change', 'select.actionType', function() {
 		var name = this.name;
@@ -106,3 +103,44 @@ $(document).ready(function() {
 	});
 
 });
+
+function populateApplicationList() {
+	searchCategory = $('#searchCategory').val();
+	searchTerm = $('#searchTerm').val(); 
+	sortCategory = $('#sort-column').val();
+	sortOrder = $('#sort-order').val();
+	$.get("/pgadmissions/applications/section",
+		{
+			searchCategory: searchCategory,
+			searchTerm:  searchTerm,
+			sortCategory: sortCategory,
+			order: sortOrder
+		},
+		function(data) {
+			$('#applicationListSection').html(data);
+			addToolTips();
+		}
+	);
+}
+
+function sortList(column) {
+	oldValue = $('#sort-column').val();
+	newValue = column.id;
+	
+	if( oldValue == newValue) {
+		flipSortOrder();
+	} else {
+		$('#sort-column').val(newValue);
+		$('#sort-order').val("ASCENDING");
+	}
+	populateApplicationList();
+}
+
+function flipSortOrder() {
+	oldOrder = $('#sort-order').val();
+	if( oldOrder == "ASCENDING") {
+		$('#sort-order').val("DESCENDING");
+	} else {
+		$('#sort-order').val("ASCENDING");
+	}
+}

@@ -38,6 +38,8 @@ public abstract class DomainObject<T> implements Serializable {
 		return LARGE_PRIME * id.hashCode();
 	}
 
-	
-
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " [id=" + getId() + "]";
+	}
 }

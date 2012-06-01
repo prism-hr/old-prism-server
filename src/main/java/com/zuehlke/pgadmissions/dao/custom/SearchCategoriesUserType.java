@@ -1,10 +1,10 @@
 package com.zuehlke.pgadmissions.dao.custom;
 
-import com.zuehlke.pgadmissions.domain.enums.SearchCategories;
+import com.zuehlke.pgadmissions.domain.enums.SearchCategory;
 
-public class SearchCategoriesUserType extends EnumUserType<SearchCategories> {
+public class SearchCategoriesUserType extends EnumUserType<SearchCategory> {
 	public SearchCategoriesUserType() {
-		super(SearchCategories.class);
+		super(SearchCategory.class);
 
 	}
 }

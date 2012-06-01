@@ -34,7 +34,7 @@
 			<div class="row">
 				<span class="plain-label">Personal Statement (PDF)<em>*</em></span>
 				<span class="hint" data-desc="<@spring.message 'supportingDocuments.personalStatement'/>"></span>	 
-				<div class="field<#if applicationForm.personalStatement.fileName??> uploaded</#if>" id="psUploadFields">        	
+				<div class="field<#if applicationForm.personalStatemen?? && applicationForm.personalStatement.fileName??> uploaded</#if>" id="psUploadFields">        	
 					<input id="psDocument" class="full" data-type="PERSONAL_STATEMENT" data-reference="Personal Statement" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="psUploadedDocument">
 						<input type="hidden" id="document_PERSONAL_STATEMENT" value="${(encrypter.encrypt(applicationForm.personalStatement.id))!}"/>

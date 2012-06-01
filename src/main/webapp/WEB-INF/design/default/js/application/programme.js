@@ -177,7 +177,7 @@ $(document).ready(function()
 			errors++;
 		}
 		
-		if (errors > 0)
+		if (errors == 0)
 		{
 			$("#supervisor_div span.invalid").html('').hide();
 			var aware = ($('#awareSupervisor').val() =="YES") ? 'Yes' : 'No';
@@ -230,7 +230,7 @@ $(document).ready(function()
 			errors++;
 		}
 		
-		if (errors > 0)
+		if (errors == 0)
 		{
 			
 			$("span[name='superFirstname']").html('');

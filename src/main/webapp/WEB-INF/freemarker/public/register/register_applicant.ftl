@@ -58,12 +58,12 @@
 		      		<p>&gt; Register Today...</p>
 		            <input id="recordId" type="hidden" name="recordId" />
 		            
-		            <input id="firstName" type="text" name="firstName" value="${model.record.firstName}" placeholder="First Name" />
+		            <input id="firstName" type="text" name="firstName" value="${model.record.firstName!}" placeholder="First Name" />
 		            <#if model.hasError('firstName')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('firstName').code /></span>                    		
                     </#if>
 		            
-		            <input id="lastName" type="text" name="lastName" value="${model.record.lastName}" placeholder="Last Name" />
+		            <input id="lastName" type="text" name="lastName" value="${model.record.lastName!}" placeholder="Last Name" />
 		            <#if model.hasError('lastName')>                    		
                     	<span class="invalid"><@spring.message  model.result.getFieldError('lastName').code /></span>                    		
                     </#if>

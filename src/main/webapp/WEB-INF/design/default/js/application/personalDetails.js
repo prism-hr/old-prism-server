@@ -19,7 +19,8 @@ $(document).ready(function(){
 		return false;
 	});
 	
-	$('#personalDetailsCancelButton').click(function(){
+	$('#personalDetailsCancelButton').click(function()
+	{
 		$.get("/pgadmissions/update/getPersonalDetails",
 				{
 					applicationId:  $('#applicationId').val(),					
@@ -36,22 +37,34 @@ $(document).ready(function(){
 	
 	
 	//candidate nationalities
-	$('#addCandidateNationalityButton').on("click", function(){
-		if( $('#candidateNationalityCountry option:selected').val()!= ''){
+	$('#addCandidateNationalityButton').on("click", function()
+	{
+		var selected = $('#candidateNationalityCountry option:selected').val();
+		if (selected != '')
+		{
+			// Find duplicate nationalities.
+			var duplicate = false;
+			$('#my-nationality-div input[type="hidden"]').each(function()
+			{
+				if ($(this).val() == selected)
+				{
+					duplicate = true;
+					return false;
+				}
+			});
 			
-			var html = 
-	  	 	
-			'	<div class="nationality-item">'+
-			'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
+			if (!duplicate)
+			{
+				var html = 
+				'	<div class="nationality-item">'+
+				'		<label class="full">' + $('#candidateNationalityCountry option:selected').text() + '</label>'  +
 	  		"		<input type='hidden' name='candidateNationalities' value='" +$('#candidateNationalityCountry option:selected').val()+ "'/>" +
 	  		'		<a class="button-delete" data-desc="Delete">Delete</a><br/>'+
 	  		'	</div>';
-			
-			$('#my-nationality-div').append(html);
-			
-			
-			$('#nationality-em').remove();
-			
+				$('#my-nationality-div').append(html);
+				$('#nationality-em').remove();
+			}
+
 		}
 		
 	});

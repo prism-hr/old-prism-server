@@ -52,16 +52,6 @@ public class RefereeMailSender extends MailSender {
 		List<RegisteredUser> administrators = form.getProgram().getAdministrators();
 		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 		Map<String, Object> model = new HashMap<String, Object>();
-		
-		RegisteredUser refUser = referee.getUser();
-		System.out.println("STATS FOR REFEREE: " + referee.getFirstname());
-		if( refUser == null) {
-			System.out.println("REFEREE USER IS NULL!!!");
-		}
-		else {
-			System.out.println("REFEREE USER IS ENABLED: " + refUser.isEnabled());
-		}
-		
 		model.put("adminsEmails", adminsEmails);
 		model.put("referee", referee);
 		model.put("application", form);

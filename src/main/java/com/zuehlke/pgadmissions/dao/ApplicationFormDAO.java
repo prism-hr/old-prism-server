@@ -273,11 +273,14 @@ public class ApplicationFormDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueApprovalNotifications() {
-		Date twentyFourHoursAgo = DateUtils.addHours(Calendar.getInstance().getTime(), -24);
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).createAlias("notificationRecords", "notificationRecord")
-				.add(Restrictions.eq("notificationRecord.notificationType", NotificationType.APPROVAL_NOTIFICATION))
-				.add(Restrictions.lt("notificationRecord.date", twentyFourHoursAgo)).add(Restrictions.ltProperty("notificationRecord.date", "lastUpdated"))
-				.list();
+		DetachedCriteria appronalNotificationCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
+				.add(Restrictions.eq("notificationType", NotificationType.APPROVAL_NOTIFICATION))
+				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+		
+		return sessionFactory.getCurrentSession() .createCriteria(ApplicationForm.class, "applicationForm")
+				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
+				.add(Restrictions.or(Subqueries.notExists(appronalNotificationCriteria.setProjection(Projections.property("notificationRecord.id"))),
+						(Restrictions.isNull("notificationRecords")))).list();
 	}
 
 }

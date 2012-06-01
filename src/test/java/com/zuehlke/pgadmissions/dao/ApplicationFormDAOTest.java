@@ -1520,30 +1520,41 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	
 
 	@Test
-	public void shouldReturnApplicationMovedInApprovalSinceLastAlertAndLastAlertMoreThan24HoursAgoForOneWeekReminderInterval() {
-		ReminderInterval reminderInterval = new ReminderInterval();
-		reminderInterval.setId(1);
-		reminderInterval.setDuration(1);
-		reminderInterval.setUnit(DurationUnitEnum.WEEKS);
-		
-		sessionFactory.getCurrentSession().saveOrUpdate(reminderInterval);
-		
-		Date now = Calendar.getInstance().getTime();
-		Date twentyFiveHoursAgo = DateUtils.addHours(now, -25);
-		Date twelveHoursAgo = DateUtils.addHours(now, -12);
-		NotificationRecord lastNotificationRecord = new NotificationRecordBuilder().notificationType(NotificationType.APPROVAL_NOTIFICATION)
-				.notificationDate(twentyFiveHoursAgo).toNotificationRecord();
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).lastUpdated(twelveHoursAgo)
-				.status(ApplicationFormStatus.APPROVAL).notificationRecords(lastNotificationRecord).toApplicationForm();
+	public void shouldGetApplicationsDueApprovalNotifications(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
+				.status(ApplicationFormStatus.APPROVAL).notificationRecords(new NotificationRecordBuilder().notificationDate(new Date()).notificationType(NotificationType.APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION).toNotificationRecord()).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();
-
 		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO.getApplicationsDueApprovalNotifications();
 		assertTrue(applicationsDueApprovalNotification.contains(applicationForm));
-
+		
+	}
+	@Test
+	public void shouldNotReturnApplicationIfInApprovalButHasApprovalNotificationRecord(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
+				.status(ApplicationFormStatus.APPROVAL).notificationRecords(new NotificationRecordBuilder().notificationDate(new Date()).notificationType(NotificationType.APPROVAL_NOTIFICATION).toNotificationRecord()).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO.getApplicationsDueApprovalNotifications();
+		assertFalse(applicationsDueApprovalNotification.contains(applicationForm));
+		
 	}
 
+	
+	@Test
+	public void shouldReturnApplicationIfInApprovalButHasApprovalNotificationRecor(){
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
+				.status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+		save(applicationForm);
+		
+		flushAndClearSession();
+		List<ApplicationForm> applicationsDueApprovalNotification = applicationDAO.getApplicationsDueApprovalNotifications();
+		assertTrue(applicationsDueApprovalNotification.contains(applicationForm));
+		
+	}
+	
 	
 	
 }

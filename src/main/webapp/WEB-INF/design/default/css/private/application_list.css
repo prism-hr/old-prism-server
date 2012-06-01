@@ -21,7 +21,7 @@ table.data tbody td { background: url(../../images/bg_table_row.jpg) repeat-x 0 
 table.data select { width: 100%; }
 table.data thead th.headerSortDown, table.data thead th.headerSortUp { background-color: #06C; color: #FFF; }
 
-td.application-id { }
+td.applicant-id { display: block; font-size: smaller; }
 td.applicant-name { white-space: nowrap; } /* name on one line. */
 td.status { text-align: center; }
 

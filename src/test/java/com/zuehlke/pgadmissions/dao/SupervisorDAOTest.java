@@ -64,7 +64,7 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnSupervisorInLastNotifiedIsNotNull() {
 		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		Supervisor supervisor = new SupervisorBuilder().user(user).lastNotified(new Date()).toSupervisor();
 		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).toApprovalRound();
 		application.setLatestApprovalRound(approvalRound);
@@ -77,7 +77,7 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 	}
 
 	@Test
-	public void shouldNotReturnSupervisorIfApplicationNotInApprovalRound() {
+	public void shouldNotReturnSupervisorIfApplicationNotInApproved() {
 		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		Supervisor supervisor = new SupervisorBuilder().user(user).toSupervisor();
 		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).toApprovalRound();
@@ -93,7 +93,7 @@ public class SupervisorDAOTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldNotReturnSupervisorifNotSupervisorOfLatestApprovalRound() {
 		
-		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).program(program).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		Supervisor supervisor = new SupervisorBuilder().user(user).toSupervisor();
 		ApprovalRound approvalRound = new ApprovalRoundBuilder().supervisors(supervisor).application(application).toApprovalRound();
 		application.getApprovalRounds().add(approvalRound);

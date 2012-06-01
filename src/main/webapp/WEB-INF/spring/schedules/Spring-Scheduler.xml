@@ -2,12 +2,13 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 
 <beans>
-	<import resource="Applicant-Emails.xml" />
+	 <import resource="Applicant-Emails.xml" />
 	<import resource="Reviewers-Emails.xml" />
 	<import resource="Interviewers-Emails.xml" />
 	<import resource="Referee-Emails.xml" />
 	<import resource="Admin-Emails.xml" />
-	<import resource="Approver-Emails.xml" />
+	<import resource="Approver-Emails.xml" /> 
+	<import resource="Supervisor-Emails.xml" />
 	<import resource="Bean-Definitions.xml" />
 
 	
@@ -50,6 +51,7 @@
 				<ref bean="adminAssignedReviewerNotificationSchedule"/>
 				<ref bean="moveToApprovalNotificationSchedule"/>
 				<ref bean="approverApprovalNotificationSchedule"/>
+				<ref bean="supervisorNotificationSchedule"/>
 			</list>
 		</property>
 	</bean>

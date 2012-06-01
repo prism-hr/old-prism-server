@@ -21,8 +21,6 @@ import javax.persistence.Transient;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import sun.reflect.generics.visitor.Reifier;
-
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.CommentType;
@@ -249,7 +247,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			}
 		}
 
-		if (isInRole(Authority.REVIEWER) && applicationForm.getStatus() == ApplicationFormStatus.REVIEW) {
+		if (applicationForm.getStatus() == ApplicationFormStatus.REVIEW) {
 			for (Reviewer reviewer : applicationForm.getLatestReviewRound().getReviewers()) {
 				if (this.equals(reviewer.getUser())) {
 					return true;
@@ -258,7 +256,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 		}
 
 		Interview latestInterview = applicationForm.getLatestInterview();
-		if (isInRole(Authority.INTERVIEWER) && latestInterview != null && applicationForm.getStatus() == ApplicationFormStatus.INTERVIEW) {
+		if (latestInterview != null && applicationForm.getStatus() == ApplicationFormStatus.INTERVIEW) {
 			for (Interviewer interviewer : latestInterview.getInterviewers()) {
 				if (this.equals(interviewer.getUser())) {
 					return true;
@@ -567,7 +565,7 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	public boolean hasRespondedToProvideInterviewFeedbackForApplicationLatestRound(ApplicationForm application) {
 			List<Interviewer> interviewers = application.getLatestInterview().getInterviewers();
 			for (Interviewer interviewer : interviewers) {
-				if(interviewer.getInterview().equals(application.getLatestInterview()) && this.equals(interviewer.getUser())){
+				if(interviewer.getInterview().equals(application.getLatestInterview()) && this.equals(interviewer.getUser()) && interviewer.getInterviewComment() != null){
 					return true;
 				}
 			}

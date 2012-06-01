@@ -63,6 +63,7 @@ $(document).ready(function(){
 	  		'	</div>';
 				$('#my-nationality-div').append(html);
 				$('#nationality-em').remove();
+				addToolTips();
 			}
 
 		}
@@ -77,38 +78,64 @@ $(document).ready(function(){
 	});
 	
 	//maternal guardian nationalities
-	$('#addMaternalNationalityButton').on("click", function(){
-		if( $('#maternalNationalityCountry option:selected').val()!= ''){
+	$('#addMaternalNationalityButton').on("click", function()
+	{
+		var selected = $('#maternalNationalityCountry option:selected').val();
+		if (selected != '')
+		{
+			// Find duplicate nationalities.
+			var duplicate = false;
+			$('#maternal-nationality-div input[type="hidden"]').each(function()
+			{
+				if ($(this).val() == selected)
+				{
+					duplicate = true;
+					return false;
+				}
+			});
 			
-			var html = 
-			'	<div class="nationality-item">'+
-			'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='maternalGuardianNationalities' value='" +$('#maternalNationalityCountry option:selected').val() + "'/>" +
+			if (!duplicate)
+			{
+				var html = 
+				'	<div class="nationality-item">'+
+				'		<label class="full">' + $('#maternalNationalityCountry option:selected').text() + '</label>'  +
+	  		"		<input type='hidden' name='maternalGuardianNationalities' value='" +$('#maternalNationalityCountry option:selected').val()+ "'/>" +
 	  		'		<a class="button-delete" data-desc="Delete">Delete</a><br/>'+
 	  		'	</div>';
-			
-			// To show the tool-tip with the label 
-			
-			$('#maternal-nationality-div').append(html);
-
+				$('#maternal-nationality-div').append(html);
+				addToolTips();
+			}
 		}
-		
 	});
 	
 	//paternal guardian nationalities
-	$('#addPaternalNationalityButton').on("click", function(){
-		if( $('#paternalNationalityCountry option:selected').val()!= ''){
+	$('#addPaternalNationalityButton').on("click", function()
+	{
+		var selected = $('#paternalNationalityCountry option:selected').val();
+		if (selected != '')
+		{
+			// Find duplicate nationalities.
+			var duplicate = false;
+			$('#paternal-nationality-div input[type="hidden"]').each(function()
+			{
+				if ($(this).val() == selected)
+				{
+					duplicate = true;
+					return false;
+				}
+			});
 			
-			var html = 
-			'	<div class="nationality-item">'+
-			'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
-	  		"		<input type='hidden' name='paternalGuardianNationalities' value='" +$('#paternalNationalityCountry option:selected').val() + "'/>" +
-	  		'		<a class="button-delete" data-desc="Delete">Delete</a> <br/>'+
+			if (!duplicate)
+			{
+				var html = 
+				'	<div class="nationality-item">'+
+				'		<label class="full">' + $('#paternalNationalityCountry option:selected').text() + '</label>'  +
+	  		"		<input type='hidden' name='paternalGuardianNationalities' value='" +$('#paternalNationalityCountry option:selected').val()+ "'/>" +
+	  		'		<a class="button-delete" data-desc="Delete">Delete</a><br/>'+
 	  		'	</div>';
-			
-			// To show the tool-tip with the label 
-			
-			$('#paternal-nationality-div').append(html);
+				$('#paternal-nationality-div').append(html);
+				addToolTips();
+			}
 
 		}
 	});

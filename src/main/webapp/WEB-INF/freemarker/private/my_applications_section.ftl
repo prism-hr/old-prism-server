@@ -15,7 +15,7 @@
 													<th scope="col">Programme</th>					
 													<th scope="col">Status</th>
 													<th scope="col">Actions</th>
-													<th scope="col">Date</th>					                
+													<th scope="col">Submitted</th>					                
 													<th class="centre" scope="col">
 														<input type="checkbox" name="select-all" id="select-all" />
 													</th>

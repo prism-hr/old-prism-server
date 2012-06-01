@@ -17,4 +17,5 @@ label.label { font-weight: bold; }
 
 #notifyRegistryButton { margin-bottom: 0; }
 
-#configuration section > div { background: #FFF !important; }
+section#configuration > div { background: #FFF !important; }
+section#configuration div.row { margin-bottom: 0; }

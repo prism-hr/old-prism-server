@@ -237,8 +237,7 @@
 				<span class="plain-label">Has this qualification been awarded?</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.hasBeenAwarded'/>"></span>
 				<div class="field">        
-					<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"
-					<#if qualification.isQualificationCompleted()> checked="checked"</#if>
+					<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"<#if qualification.isQualificationCompleted()> checked="checked"</#if>
 					<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>	/>
 					<input type="hidden" name="currentQualification" id="currentQualification"/>
 				</div>
@@ -268,11 +267,11 @@
       		
 			<!-- Award date -->
 			<div class="row">
-				<span id="quali-award-date-lb" class="plain-label grey-label">Award Date</span>
+				<span id="quali-award-date-lb" class="plain-label <#if !qualification.isQualificationCompleted()>grey-label</#if>">Award Date</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.awardDate'/>"></span>
 				
 				<div class="field" id="awardDateField">
-					<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}"
+					<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="<#if !qualification.isQualificationCompleted()>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</#if>"
 					<#if !qualification.isQualificationCompleted()>disabled="disabled"</#if> />
 				</div>
 			</div>

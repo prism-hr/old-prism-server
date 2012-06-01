@@ -11,10 +11,10 @@
 		<form id="loginForm" method="post" action="/pgadmissions/j_spring_security_check">
 
       	<p>&gt; Login</p>
-        <input id ="username_or_email" type="text" name="j_username" placeholder="Email address" />
-        <input id ="password" type="password" name="j_password" placeholder="Password" />
+        <input id="username_or_email" type="text" name="j_username" placeholder="Email address" />
+        <input id="password" type="password" name="j_password" placeholder="Password" />
         
-        <button  name ="commit" type="submit" value="Sign In" class="blue">Go</button>
+        <button name="commit" type="submit" value="Sign In" class="blue">Go</button>
         
       </form>
     </section>

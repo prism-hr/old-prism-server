@@ -87,20 +87,23 @@
     	<div class="row-group">
 	   		<!-- First name -->
       		<div class="row">
-        		<span class="plain-label">First Name<em>*</em></span>
-        		<span class="hint" data-desc="<@spring.message 'referee.firstname'/>"></span>
-        		<div class="field">
         			<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
-        				<input class="full" id="ref_firstname" name="ref_firstname" value="${(referee.firstname?html)!}"/>  
-
-                		
+        				<span class="plain-label">First Name<em>*</em></span>
+	                	<span class="hint" data-desc="<@spring.message 'referee.firstname'/>"></span>
+	        			<div class="field">
+	        				<input class="full" id="ref_firstname" name="ref_firstname" value="${(referee.firstname?html)!}"/>  
+	                	</div>
                 	<#else>
-                	   <input readonly="readonly" class="full" id="ref_firstname" name="ref_firstname" value="${(referee.firstname?html)!}"/>
+						<span class="plain-label grey-label">First Name</span>
+						<span class="hint"></span>
+	                	<div class="field">
+	                	   <input readonly="readonly" class="full" id="ref_firstname" 
+	                	   			name="ref_firstname" value="${(referee.firstname?html)!}" disabled="disabled"/>
+	                	</div>
                 	</#if>
-          			
-        		</div>
       		</div>
-         				<@spring.bind "referee.firstname" />    
+      		
+         		<@spring.bind "referee.firstname" />    
     			<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -111,19 +114,23 @@
     
       		<!-- Last name -->
       		<div class="row">
-        		<span class="plain-label">Last Name<em>*</em></span>
-        		<span class="hint" data-desc="<@spring.message 'referee.lastname'/>"></span>
-        		<div class="field">
 	        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
-	        			<input class="full" id="ref_lastname" name="ref_lastname" value="${(referee.lastname?html)!}"/>	          
-
-
+	        		 	<span class="plain-label">Last Name<em>*</em></span>
+        				<span class="hint" data-desc="<@spring.message 'referee.lastname'/>"></span>
+        				<div class="field">
+	        				<input class="full" id="ref_lastname" name="ref_lastname" value="${(referee.lastname?html)!}"/>
+	        			</div>	          
 	            	<#else>
-	            	   <input readonly="readonly" class="full" id="ref_lastname" name="ref_lastname" value="${(referee.lastname?html)!}"/>
+	        		 	<span class="plain-label grey-label">Last Name</span>
+        				<span class="hint"></span>
+        				<div class="field">
+	            	   		<input readonly="readonly" class="full" id="ref_lastname" 
+	            	   			name="ref_lastname" value="${(referee.lastname?html)!}" disabled="disabled"/>
+	            	   	</div>
 	            	</#if>
-        		</div>
       		</div>
-	        			<@spring.bind "referee.lastname" /> 
+	        			
+	        <@spring.bind "referee.lastname" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -139,19 +146,23 @@
     
       		<!-- Employer / company name -->
       		<div class="row">
-        		<span class="plain-label">Employer<em>*</em></span>
-        		<span class="hint" data-desc="<@spring.message 'referee.employer'/>"></span>
-        		<div class="field">
-        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
-          				<input class="full" id="ref_employer" name="ref_employer" value="${(referee.jobEmployer?html)!}"/> 
-
-                		             
-                	<#else>
-                	   <input readonly="readonly" class="full" id="ref_employer" name="ref_employer" value="${(referee.jobEmployer?html)!}"/>
-                	</#if>
-        		</div>
+	        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+		        		<span class="plain-label">Employer<em>*</em></span>
+		        		<span class="hint" data-desc="<@spring.message 'referee.employer'/>"></span>
+        				<div class="field">
+							<input class="full" id="ref_employer" name="ref_employer" value="${(referee.jobEmployer?html)!}"/>
+	        			</div>	          
+	            	<#else>
+	        		 	<span class="plain-label grey-label">Employer</span>
+        				<span class="hint"></span>
+        				<div class="field">
+	            	   		<input readonly="readonly" class="full" id="ref_employer" 
+	            	   				name="ref_employer" value="${(referee.jobEmployer?html)!}" disabled="disabled"/>
+	            	   	</div>
+	            	</#if>
       		</div>
-          				<@spring.bind "referee.jobEmployer" />     
+          	
+          	<@spring.bind "referee.jobEmployer" />     
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -162,19 +173,24 @@
     
       		<!-- Position title -->
       		<div class="row">
-        		<span class="plain-label">Position<em>*</em></span>
-        		<span class="hint" data-desc="<@spring.message 'referee.position'/>"></span>
-        		<div class="field">
-        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
-          			<input class="full" id="ref_position" name="ref_position" value="${(referee.jobTitle?html)!}"/>
- 
-  
-                	<#else>
-                	   <input readonly="readonly" class="full" id="ref_position" name="ref_position" value="${(referee.jobTitle?html)!}"/>
-                	</#if>   
-        		</div>
+	        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+		        		<span class="plain-label">Position<em>*</em></span>
+		        		<span class="hint" data-desc="<@spring.message 'referee.position'/>"></span>
+        				<div class="field">
+							<input class="full" id="ref_position" name="ref_position" value="${(referee.jobTitle?html)!}"/>
+	        			</div>	          
+	            	<#else>
+	        		 	<span class="plain-label grey-label">Position</span>
+        				<span class="hint"></span>
+        				<div class="field">
+	            	   		<input readonly="readonly" class="full" id="ref_position" 
+	            	   				name="ref_position" value="${(referee.jobTitle?html)!}" disabled="disabled"/>
+	            	   	</div>
+	            	</#if>
       		</div>
-                   		 <@spring.bind "referee.jobTitle" />
+            
+            
+            <@spring.bind "referee.jobTitle" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -188,26 +204,37 @@
 
     	<div class="row-group">
     	     
-			<div class="row">
-          		<label class="group-heading-label">Address</label>
-          	</div> 
       		<!-- Address body -->
-      		<div class="row">
-        		<span class="plain-label">Address<em>*</em></span>
-        		<span class="hint" data-desc="<@spring.message 'referee.address'/>"></span>
-        		<div class="field">
-        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
-          			<textarea class="max" rows="6" cols="70" maxlength='200' id="ref_address_location" 
-          				name="ref_address_location">${(referee.addressLocation?html)!}</textarea> 
- 
-                		           		
-                	<#else>
-                	   <textarea readonly="readonly" class="max" rows="6" cols="70" id="ref_address_location" 
-                        name="ref_address_location" >${(referee.addressLocation?html)!}</textarea>
-                	</#if> 
-        		</div>
-      		</div>
-           				 <@spring.bind "referee.addressLocation" />     		
+      		
+	        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+						<div class="row">
+			          		<label class="group-heading-label">Address</label>
+			          	</div> 
+	        			<div class="row">
+			        		<span class="plain-label">Address<em>*</em></span>
+			        		<span class="hint" data-desc="<@spring.message 'referee.address'/>"></span>
+	        				<div class="field">
+		        				<textarea class="max" rows="6" cols="70" maxlength='200' id="ref_address_location" 
+	          						name="ref_address_location">${(referee.addressLocation?html)!}</textarea> 
+		        			</div>
+		        		</div>          
+	            	<#else>
+	            		<div class="row">
+			          		<label class="group-heading-label grey-label">Address</label>
+			          	</div> 
+	            		<div class="row">
+		        		 	<span class="plain-label grey-label">Address</span>
+	        				<span class="hint"></span>
+	        				<div class="field">
+	                	   		<textarea readonly="readonly" class="max" rows="6" cols="70" id="ref_address_location" 
+	                        		name="ref_address_location" disabled="disabled">${(referee.addressLocation?html)!}</textarea>
+		            	   	</div>
+		            	</div>
+	            	</#if>
+      		
+      		
+      		
+           	<@spring.bind "referee.addressLocation" />     		
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -218,23 +245,31 @@
     
       		<!-- Country -->
       		<div class="row">
-        		<span class="plain-label">Country<em>*</em></span>
-        		 <span class="hint" data-desc="<@spring.message 'referee.country'/>"></span>
-        		<div class="field">
-        		<select class="full" name="ref_address_country" id="ref_address_country"
-                <#if !referee.editable || (!referee.id?? &&  applicationForm.referees?size &gt;= 3)>
-                                disabled="disabled"
-                </#if>>
-                <option value="">Select...</option>
-                    <#list countries as country>
-                        <option value="${encrypter.encrypt(country.id)}" <#if referee.addressCountry?? && referee.addressCountry.id == country.id> selected="selected"</#if>>${country.name?html}</option>               
-                    </#list>
-                </select>
-
-                    
-        		</div>
+        			<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+	        			<span class="plain-label">Country<em>*</em></span>
+	        		 	<span class="hint" data-desc="<@spring.message 'referee.country'/>"></span>
+	        			<div class="field">
+	        				<select class="full" name="ref_address_country" id="ref_address_country">
+				                <option value="">Select...</option>
+                			    <#list countries as country>
+                        			<option value="${encrypter.encrypt(country.id)}" 
+                        				<#if referee.addressCountry?? && referee.addressCountry.id == country.id> 
+                        										selected="selected"</#if>>${country.name?html}</option>               
+                    			</#list>
+                			</select>
+	                	</div>
+                	<#else>
+						<span class="plain-label grey-label">Country</span>
+						<span class="hint"></span>
+	                	<div class="field">
+	        				<select class="full" name="ref_address_country" id="ref_address_country" disabled="disabled">
+                			</select>
+	                	</div>
+                	</#if>
+          			
       		</div>
-                  <@spring.bind "referee.addressCountry" /> 
+      		
+                <@spring.bind "referee.addressCountry" /> 
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -247,25 +282,35 @@
 
     	<div class="row-group">
     	
-    		<div class="row">
-          		<label class="group-heading-label">Contact Details</label>
-          	</div> 
     		
       		<!-- Email address -->
-      		<div class="row">
-        		<span class="plain-label">Email<em>*</em></span>
-        		 <span class="hint" data-desc="<@spring.message 'referee.email'/>"></span>
-        		<div class="field">
-        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
-          			<input class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}"/> 
-
-                	                
-                	<#else>
-                	   <input readonly="readonly" class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}"/>
-                	</#if>
-        		</div>
-      		</div>
-          			 <@spring.bind "referee.email" />       		
+      		
+	        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+	        			<div class="row">
+          					<label class="group-heading-label">Contact Details</label>
+          				</div> 
+	        			<div class="row">		
+	        				<span class="plain-label">Email<em>*</em></span>
+	        		 		<span class="hint" data-desc="<@spring.message 'referee.email'/>"></span>
+	        				<div class="field">
+								<input class="full" type="email" id="ref_email" name="ref_email" value="${(referee.email?html)!}"/>	        			
+							</div>
+						</div>	          
+	            	<#else>
+	        			<div class="row">
+          					<label class="group-heading-label grey-label">Contact Details</label>
+          				</div> 
+	        			<div class="row">	            	
+		        		 	<span class="plain-label grey-label">Email</span>
+	        				<span class="hint"></span>
+	        				<div class="field">
+								<input readonly="readonly" class="full" type="email" id="ref_email" 
+										name="ref_email" value="${(referee.email?html)!}" disabled="disabled"/>        				
+		            	   	</div>
+		            	</div>
+	            	</#if>
+          	
+          	<@spring.bind "referee.email" />       		
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -275,22 +320,24 @@
 				</#list>
 
       		<!-- Telephone -->
-      		
-     		
-            <div class="row">
-        		<span class="plain-label">Telephone<em>*</em></span>
-				<span class="hint" data-desc="<@spring.message 'referee.telephone'/>"></span>
-        		<div class="field">
-        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
-        			<input class="full" id="refPhoneNumber" name="refPhoneNumber" value="${(referee.phoneNumber?html)!}"/> 
- 
-                	<#else>
-                	   <input readonly="readonly" class="full" id="refPhoneNumber" name="refPhoneNumber" value="${(referee.phoneNumber?html)!}"/>
-                	</#if>
-          			
-        		</div>
-      		</div>
-				<@spring.bind "referee.phoneNumber" />
+      		<div class="row">
+	        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+        				<span class="plain-label">Telephone<em>*</em></span>
+						<span class="hint" data-desc="<@spring.message 'referee.telephone'/>"></span>
+        				<div class="field">
+							<input class="full" id="refPhoneNumber" name="refPhoneNumber" value="${(referee.phoneNumber?html)!}"/>	        			
+						</div>	          
+	            	<#else>
+	        		 	<span class="plain-label grey-label">Telephone</span>
+        				<span class="hint"></span>
+        				<div class="field">
+							<input readonly="readonly" class="full" id="refPhoneNumber" 
+									name="refPhoneNumber" value="${(referee.phoneNumber?html)!}" disabled="disabled"/>        				
+	            	   	</div>
+	            	</#if>
+      		</div> 
+			
+			<@spring.bind "referee.phoneNumber" />
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
@@ -300,45 +347,31 @@
 				</#list>
 
           	<!-- Skype address -->
-          
-            <div class="row">
-        		<span class="plain-label">Skype Name</span>
-        		<span class="hint" data-desc="<@spring.message 'referee.skype'/>"></span>
-        		<div class="field">
-        			<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
-        			<input class="full" id="ref_messenger" name="ref_messenger" value="${(referee.messenger?html)!}"/> 
-                     
-                	<#else>
-                	   <input readonly="readonly" class="full" id="ref_messenger" name="ref_messenger" value="${(referee.messenger?html)!}"/>
-                	</#if>
-          			
-        		</div>
+      		<div class="row">
+	        		<#if referee.editable && (applicationForm.referees?size &lt; 3 || referee.id??) >
+		        		<span class="plain-label">Skype Name</span>
+        				<span class="hint" data-desc="<@spring.message 'referee.skype'/>"></span>
+        				<div class="field">
+							<input class="full" id="ref_messenger" name="ref_messenger" value="${(referee.messenger?html)!}"/>	        			
+						</div>	          
+	            	<#else>
+	        		 	<span class="plain-label grey-label">Telephone</span>
+        				<span class="hint"></span>
+        				<div class="field">
+							<input readonly="readonly" class="full" id="ref_messenger" 
+									name="ref_messenger" value="${(referee.messenger?html)!}" disabled="disabled"/>        				
+	            	   	</div>
+	            	</#if>
       		</div>
-		<#if referee.id??>
-		</div>
-		<div>
-			<div class="row-group">
-          	            
-          		<div class="row">
-                  	<span class="label">Responded</span>                    
-                    <div class="field" id="referenceUpdated">
-                    	<#if referee.declined || referee.hasProvidedReference()>
-                   		 	Yes
-                   		 <#else>
-                   		 	No
-                   		 </#if>
-                    </div>
-                </div>
-        	</div>
-		</#if>
+
 		<#if referee.editable >
       		<!-- Add another button -->
       		<div class="row">
       			<div class="field">
-      				<#if !referee.id?? && applicationForm.referees?size &lt; 3>
+      				<#if referee.id?? || applicationForm.referees?size &lt; 3>
       					<a id="addReferenceButton" class="button blue">Submit</a>
-      				<#elseif referee.id??>
-      					<a id="addReferenceButton" class="button blue">Update Reference</a>
+      				<#else>
+      					<a class="button" style="cursor:default">Submit</a>
       				</#if>
       			</div>
       		</div>
@@ -367,7 +400,11 @@
     	 <#if applicationForm.modifiable>
       		 <a class="button" type="button" id="refereeCancelButton" name="refereeCancelButton">Clear</a>
       		 <button class="blue" type="button" id="refereeCloseButton" name="refereeCloseButton">Close</button>
-      		 <button class="blue" type="button" value="close" id="refereeSaveAndCloseButton">Save</button>
+      		 <#if referee.id?? || applicationForm.referees?size &lt; 3>
+      		 	<button class="blue" type="button" value="close" id="refereeSaveAndCloseButton">Save</button>
+      		 <#else>
+				<button class="blue" type="button" value="close" style="cursor:default">Save</button>      		 	
+      		 </#if>
       	 <#else>
             <a id="refereeCloseButton" class="button blue">Close</a>   
         </#if> 	

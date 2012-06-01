@@ -175,8 +175,8 @@
 							</colgroup>
 							<tbody>
 								<#list programmeDetails.suggestedSupervisors! as supervisor>
-								<tr class="<#if supervisor.primarySupervisor?? && supervisor.primarySupervisor == "YES">aware<#else>unaware</#if>">
-									<td data-desc="<#if supervisor.primarySupervisor?? && supervisor.primarySupervisor == "YES">Aware<#else>Unaware</#if> of application">
+								<tr class="<#if supervisor.aware>aware<#else>unaware</#if>">
+									<td data-desc="<#if supervisor.aware>Aware<#else>Unaware</#if> of application">
 										${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} (${supervisor.email?html})
 									</td>
 									<td>
@@ -189,7 +189,7 @@
 										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_lastname" name="sLN" value="${(supervisor.lastname?html)!}"/>
 										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_email" name="sEM"  value="${(supervisor.email?html)!}"/>
 										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_aware" name="sAS" value="${(supervisor.primarySupervisor?html)!}"/>                    
-										<input type="hidden" name="supervisors" id="${encrypter.encrypt(supervisor.id)}_supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"${supervisor.primarySupervisor?html}"}' />                             
+										<input type="hidden" name="suggestedSupervisors" id="${encrypter.encrypt(supervisor.id)}_supervisors" value='{"firstname" :"${(supervisor.firstname?html)!}","lastname" :"${(supervisor.lastname?html)!}","email" :"${supervisor.email?html}", "awareSupervisor":"<#if supervisor.aware>YES<#else>NO</#if>"}' />                             
 									</td>
 								</tr>
 								</#list>

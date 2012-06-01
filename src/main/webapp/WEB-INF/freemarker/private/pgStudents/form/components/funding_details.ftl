@@ -19,52 +19,37 @@
 		<table class="existing">
 			
 			<colgroup>
-            	<col style="width: 30px" />
-                <col style="width: 220px" />
-                <!--
-                <col style="width: 120px" /> -->
-                <col />
-                <col style="width: 120px" />
-                <col style="width: 30px" />
-        	</colgroup>
+				<col style="width: 30px" />
+				<col />
+				<col style="width: 150px" />
+				<col style="width: 60px" />
+			</colgroup>
             
-            <thead>
+			<thead>
 				<tr>
-                	<th id="primary-header" colspan="2">Funding Type</th>
-                    <th>Description</th>
-                    <#--
-                    <th>Supporting Documentation</th> -->
-                    <th>Award Date</th>
-                    <th colspan="1">&nbsp;</th>
-                    <th id="last-col">&nbsp;</th>
+					<th>&nbsp;</th>
+					<th>Funding</th>
+					<th>Awarded</th>
+					<th>&nbsp;</th>
 				</tr>
 			</thead>
-                
-			<tbody>
-			
-				<#list applicationForm.fundings as existingFunding>		
-					<tr>
-	                  	<td><a class="row-arrow">-</a></td>
-	                  	<td><a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(existingFunding.document.id)}"
-	                  		data-desc="Proof of Award" class="button-hint">
-	                  	${existingFunding.type.displayValue} ${(existingFunding.value?html)!}</a>
-	                  	</td>
-	                  	<td>${existingFunding.description}</td>
-	                
-	                  	<td>${existingFunding.awardDate?string('dd-MMM-yyyy')}</td>
-								<td>				                  		                		
-		                			<a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-edit button-hint">edit</a>
-		                		</td>
-		                		<td>
-	                  	     <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-		                			<a name="deleteFundingButton" data-desc="Delete" id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-delete button-hint">delete</a>
-		                		</td>
-		                	<#else>
-		                		<td></td><td></td>		                		
-		                	</#if>
 
-	                  	
-	                </tr>
+			<tbody>
+				<#list applicationForm.fundings as existingFunding>		
+				<tr>
+					<td><a class="row-arrow">-</a></td>
+					<td>
+						<a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(existingFunding.document.id)}" data-desc="Proof of Award" class="button-hint" target="_blank">
+							${existingFunding.type.displayValue} (&pound;${(existingFunding.value?html)!})
+						</a>
+					</td>
+					<td>${existingFunding.awardDate?string('dd-MMM-yyyy')}</td>
+					<td>				                  		                		
+						<a name="editFundingLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-edit button-hint">edit</a>
+						<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+						<a name="deleteFundingButton" data-desc="Delete" id="funding_${encrypter.encrypt(existingFunding.id)}" class="button-delete button-hint">delete</a>
+					</td>
+				</tr>
 				</#list>				               
 			</tbody>
 		
@@ -72,9 +57,8 @@
     </#if>
     <!-- Non-rendering data -->
           
-	<form >
-    <input type="hidden" id="fundingId" name="fundingId" value="<#if funding?? && funding.id??>${(encrypter.encrypt(funding.id))!}</#if>"/>    
-
+		<form>
+  	  <input type="hidden" id="fundingId" name="fundingId" value="<#if funding?? && funding.id??>${(encrypter.encrypt(funding.id))!}</#if>"/>    
 
 				<#if errorCode?? && errorCode=="true">
 					<div class="section-error-bar">
@@ -159,7 +143,7 @@
                 <span class="hint" data-desc="<@spring.message 'fundingDetails.award.value'/>"></span>
                 <div class="field">
                 <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-                	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${(funding.value?html)!}" />
+                	<input id="fundingValue" name="fundingValue" class="full" type="text" value="${(funding.value?html)!}" placeholder="Numbers only" />
              	 
                 	     
                 <#else>
@@ -199,36 +183,34 @@
 					</div>
 				</#list>
            
-     <!-- Attachment / supporting document -->
-      		<div class="row">
-        		<span class="plain-label">Proof of Award (PDF)<em>*</em></span>
-        		<span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
-        		<div class="field" id="fundingUploadFields">        	
-          			<input id="fundingDocument" data-type="SUPPORTING_FUNDING" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
+			<!-- Attachment / supporting document -->
+			<div class="row">
+				<span class="plain-label">Proof of Award (PDF)<em>*</em></span>
+				<span class="hint" data-desc="<@spring.message 'fundingDetails.award.proofOfAward'/>"></span>
+				<div class="field" id="fundingUploadFields">        	
+					<input id="fundingDocument" data-type="SUPPORTING_FUNDING" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="fundingUploadedDocument">
 						<input type="hidden" id="document_SUPPORTING_FUNDING" value = "${(encrypter.encrypt(funding.document.id))!}"/>
-                		
 					</span>
 					<span id="fundingDocumentProgress" class="progress" style="display: none;"></span>					
-        		</div>  
-        		
-      		</div>
-      		 	<@spring.bind "funding.document" /> 
-				<#list spring.status.errorMessages as error>
-					<div class="row">
-						<div class="field">
-							<span class="invalid">${error}</span>
-						</div>
-					</div>
-				</#list>
+				</div>  
+			</div>
+			<@spring.bind "funding.document" /> 
+			<#list spring.status.errorMessages as error>
+			<div class="row">
+				<div class="field">
+					<span class="invalid">${error}</span>
+				</div>
+			</div>
+			</#list>
       		
-      		<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-	      		<!-- Add another button -->
-	            <div class="row">
-	            	<div class="field">
-	                	<a id="addFundingButton" class="button blue">Submit</a>
-	                </div>
-	            </div>
+			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+			<!-- Add another button -->
+			<div class="row">
+				<div class="field">
+					<a id="addFundingButton" class="button blue">Submit</a>
+				</div>
+			</div>
 			</#if>
 		</div>
 

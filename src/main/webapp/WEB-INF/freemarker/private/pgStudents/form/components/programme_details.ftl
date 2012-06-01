@@ -180,7 +180,10 @@
 										${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} (${supervisor.email?html})
 									</td>
 									<td>
-										<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete" name="deleteSupervisor" id="supervisorDelete_${encrypter.encrypt(supervisor.id)}">delete</a> <a class="button-edit"  id="supervisor_${encrypter.encrypt(supervisor.id)}" name ="editSupervisorLink">edit</a></#if>
+										<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+										<a class="button-delete" data-desc="Delete" name="deleteSupervisor" id="supervisorDelete_${encrypter.encrypt(supervisor.id)}">delete</a>
+										<a class="button-edit" data-desc="Edit" id="supervisor_${encrypter.encrypt(supervisor.id)}" name ="editSupervisorLink">edit</a>
+										</#if>
 										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_supervisorId" name="sId" value="${encrypter.encrypt(supervisor.id)}"/>
 										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_firstname" name="sFN" value="${(supervisor.firstname?html)!}"/>
 										<input type="hidden" id="${encrypter.encrypt(supervisor.id)}_lastname" name="sLN" value="${(supervisor.lastname?html)!}"/>

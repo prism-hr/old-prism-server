@@ -126,7 +126,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserInterviewerAndApplicationInInterviewStage() {
 		
-		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.INTERVIEWER).toRole()).toUser();
+		RegisteredUser interviewerUser = new RegisteredUserBuilder().id(1).toUser();
 		Interview interview = new InterviewBuilder().id(1).interviewers(new InterviewerBuilder().user(interviewerUser).toInterviewer()).toInterview();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().interviews(interview).latestInterview(interview).
 				status(ApplicationFormStatus.INTERVIEW).toApplicationForm();
@@ -145,7 +145,7 @@ public class RegisteredUserTest {
 	@Test
 	public void shouldReturnTrueIfUserReviewerAndApplicationInReviewStage() {
 
-		RegisteredUser revieweruser = new RegisteredUserBuilder().id(1).roles(new RoleBuilder().authorityEnum(Authority.REVIEWER).toRole()).toUser();
+		RegisteredUser revieweruser = new RegisteredUserBuilder().id(1).toUser();
 		ReviewRound reviewRound = new ReviewRoundBuilder().reviewers(new ReviewerBuilder().user(revieweruser).toReviewer()).toReviewRound();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().latestReviewRound(reviewRound).status(ApplicationFormStatus.REVIEW).toApplicationForm();
 		assertTrue(revieweruser.canSee(applicationForm));
@@ -718,7 +718,9 @@ public class RegisteredUserTest {
 		Interview reviewRound1 = new InterviewBuilder().id(1).interviewers(interviewer1).toInterview();
 		Interview reviewRound2 = new InterviewBuilder().id(1).interviewers(interviewer2).toInterview();
 		interviewer1.setInterview(reviewRound1);
+		
 		interviewer2.setInterview(reviewRound2);
+		interviewer2.setInterviewComment(new InterviewCommentBuilder().id(2).toInterviewComment());
 		
 		application.setInterviews(Arrays.asList(reviewRound1, reviewRound2));
 		application.setLatestInterview(reviewRound2);

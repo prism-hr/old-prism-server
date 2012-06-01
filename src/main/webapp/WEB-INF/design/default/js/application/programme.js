@@ -160,7 +160,6 @@ $(document).ready(function()
 	{
 		var errors = 0;
 		
-		$("#supervisors").show();
 		if ($('#supervisorFirstname').val() == "")
 		{
 			$("span[name='superFirstname']").html('First name cannot be empty.').show();
@@ -179,6 +178,7 @@ $(document).ready(function()
 		
 		if (errors == 0)
 		{
+		$("#supervisors").show();
 			$("#supervisor_div span.invalid").html('').hide();
 			var aware = ($('#awareSupervisor').val() =="YES") ? 'Yes' : 'No';
 

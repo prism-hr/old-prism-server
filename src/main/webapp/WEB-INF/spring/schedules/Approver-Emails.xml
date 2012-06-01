@@ -11,7 +11,7 @@
 
 	<bean id="approverApprovalNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="10500" />
-		<property name="period" value="60000" />
+		<property name="period" value="300000" />
 		<property name="timerTask" ref="approverApprovalNotificationTimerTask" />
 	</bean>
 </beans>

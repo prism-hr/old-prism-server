@@ -120,9 +120,10 @@ public class ApplicationsServiceTest {
 		assertSame(newApplicationForm, returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
 		assertEquals(program, returnedForm.getProgram());
-		assertEquals("KLOP-2012-24", returnedForm.getApplicationNumber());
+		assertEquals("KLOP-2012-000024", returnedForm.getApplicationNumber());
 
 	}
+
 
 	@Before
 	public void setUp() {

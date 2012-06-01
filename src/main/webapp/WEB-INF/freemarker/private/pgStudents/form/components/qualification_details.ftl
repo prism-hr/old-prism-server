@@ -38,12 +38,11 @@
 				<td><a class="row-arrow">-</a></td>
 				<td>
 					<#if existingQualification.proofOfAward??>
-					<a href="<@spring.url '/download?documentId=${(encrypter.encrypt(existingQualification.proofOfAward.id))!}' target="_blank" />" 
-					data-desc="Proof Of Award" class="button-hint">
-					${(existingQualification.qualificationInstitution?html)!}&nbsp
-					${(existingQualification.qualificationType?html)!}&nbsp
-					${(existingQualification.qualificationSubject?html)!}&nbsp
-					(${(existingQualification.qualificationGrade?html)!})
+					<a href="<@spring.url '/download?documentId=${(encrypter.encrypt(existingQualification.proofOfAward.id))!}'" data-desc="Proof Of Award" class="button-hint" target="_blank" />
+						${(existingQualification.qualificationInstitution?html)!}&nbsp
+						${(existingQualification.qualificationType?html)!}&nbsp
+						${(existingQualification.qualificationSubject?html)!}&nbsp
+						(${(existingQualification.qualificationGrade?html)!})
 					</a>
 					<#else>
 					${(existingQualification.qualificationInstitution?html)!}&nbsp

@@ -221,9 +221,9 @@ section.folding form > div.section-error-bar {
   margin-bottom: 5px;
   padding: 10px;
 }
-section.folding form > div.section-error-bar .row { background: none; margin-bottom: 0; }
+section.folding form > div.section-error-bar .row { background: none; margin-bottom: 0; padding-left: 30px; }
 section.folding form > div.section-error-bar .invalid-info-text { margin: 0; padding: 0; }
-section.folding form > div.section-error-bar .error-hint { margin: 0 8px 0 0; }
+section.folding form > div.section-error-bar .error-hint { margin: 0 0 0 -30px; }
 
 
 input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin: -1px; }

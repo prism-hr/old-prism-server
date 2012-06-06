@@ -38,36 +38,39 @@
 				<td><a class="row-arrow">-</a></td>
 				<td>
 					<#if existingQualification.proofOfAward??>
-					<a href="<@spring.url '/download?documentId=${(encrypter.encrypt(existingQualification.proofOfAward.id))!}'" data-desc="Proof Of Award" class="button-hint" target="_blank" />
+						<#assign encProofOfAwardId = encrypter.encrypt(existingQualification.proofOfAward.id) />
+						<a href="<@spring.url '/download?documentId=${encProofOfAwardId}'/>" data-desc="Proof Of Award" class="button-hint" target="_blank" />
+							${(existingQualification.qualificationInstitution?html)!}&nbsp
+							${(existingQualification.qualificationType?html)!}&nbsp
+							${(existingQualification.qualificationSubject?html)!}&nbsp
+							(${(existingQualification.qualificationGrade?html)!})
+						</a>
+					<#else>
 						${(existingQualification.qualificationInstitution?html)!}&nbsp
 						${(existingQualification.qualificationType?html)!}&nbsp
 						${(existingQualification.qualificationSubject?html)!}&nbsp
 						(${(existingQualification.qualificationGrade?html)!})
-					</a>
-					<#else>
-					${(existingQualification.qualificationInstitution?html)!}&nbsp
-					${(existingQualification.qualificationType?html)!}&nbsp
-					${(existingQualification.qualificationSubject?html)!}&nbsp
-					(${(existingQualification.qualificationGrade?html)!})
 					</#if>
 				</td>
 				<td>
 					<#if existingQualification.isQualificationCompleted()>
-					${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}
+						${(existingQualification.qualificationAwardDate?string('dd MMM yyyy'))!}
 					<#else>
-					Expected
+						Expected
 					</#if>
 				</td>
+				<#assign encQualificationId = encrypter.encrypt(existingQualification.id) />
 				<td>
-					<a name="editQualificationLink" <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>data-desc="Edit" <#else>data-desc="Show"</#if> id="qualification_${(encrypter.encrypt(existingQualification.id))!}" class="button-edit button-hint">edit</a>
+					<a name="editQualificationLink" id="qualification_${encQualificationId}" class="button-edit button-hint" 
+						data-desc="<#if (!applicationForm.isDecided() && !applicationForm.isWithdrawn())>Edit<#else>Show</#if>">edit</a>
 				</td>
+				<td>
 				<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-				<td>
-					<a name="deleteQualificationButton" data-desc="Delete" id="qualification_${(encrypter.encrypt(existingQualification.id))!}" class="button-delete button-hint">delete</a>
-				</td>
+					<a name="deleteQualificationButton" data-desc="Delete" id="qualification_${encQualificationId}" class="button-delete button-hint">delete</a>
 				<#else>
-				<td>&nbsp;</td>
+					&nbsp;
 				</#if>
+				</td>
 			</tr>
 			</#list>
 		</tbody>

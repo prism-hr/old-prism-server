@@ -47,6 +47,9 @@
 		<#if (user.isInRole('APPLICANT') && application.isSubmitted() && !application.isDecided() && !application.isWithdrawn())>
 			<option value="withdraw">Withdraw</option>
 		</#if>      												
+		<#if (user.hasAdminRightsOnApplication(application) && application.isInState('APPROVAL'))>
+			<option value="restartApproval">Restart Approval</option>
+		</#if>      												
 		</select>
 
 	</td>

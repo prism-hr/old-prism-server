@@ -48,7 +48,6 @@ public class StateTransitionController {
 		this.userService = userService;
 		this.commentService = commentService;
 		this.commentFactory = commentFactory;
-
 	}
 
 	@ModelAttribute("applicationForm")
@@ -62,7 +61,6 @@ public class StateTransitionController {
 	}
 
 	RegisteredUser getCurrentUser() {
-
 		return userService.getCurrentUser();
 	}
 

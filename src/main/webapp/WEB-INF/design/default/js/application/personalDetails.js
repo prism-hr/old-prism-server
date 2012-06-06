@@ -181,6 +181,12 @@ $(document).ready(function(){
 		else
 		{
 			$("span[name='nonAcceptedPED']").html('');
+
+			// Attempt saving of "dirty" nationalities.
+			$('#addCandidateNationalityButton').trigger('click');
+			$('#addMaternalNationalityButton').trigger('click');
+			$('#addPaternalNationalityButton').trigger('click');
+			
 			postPersonalDetailsData('close');
 		}
 

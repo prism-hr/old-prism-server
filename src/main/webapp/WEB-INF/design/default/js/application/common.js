@@ -171,12 +171,16 @@ function isFormEmpty($container)
 	$('input[type!="hidden"],select,textarea', $container).each(function()
 	{
 		var $field = $(this);
-		// Checkboxes require checking for a checked state (as val() returns the checkbox's checked value).
-		if ($field.is(':checked') ||
-		   (($field.attr('type') != 'checkbox' && $field.attr('type') != 'radio') && $field.val().length > 0))
+		// Don't check terms checkboxes.
+		if (!$field.parent('div').hasClass('terms-field'))
 		{
-			console.log($(this).attr('name') + ' is filled.');
-			filled++;
+			// Checkboxes require checking for a checked state (as val() returns the checkbox's checked value).
+			if ($field.is(':checked') ||
+				 (($field.attr('type') != 'checkbox' && $field.attr('type') != 'radio') && $field.val().length > 0))
+			{
+				console.log($(this).attr('name') + ' is filled.');
+				filled++;
+			}
 		}
 	});
 	console.log(filled + ' fields with data.');

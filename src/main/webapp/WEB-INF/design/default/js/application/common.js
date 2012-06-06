@@ -162,3 +162,18 @@ function doUpload($upload_field)
     }
   });
 }
+
+
+function isFormEmpty($form)
+{
+	var filled = 0;
+	$('input[type!="hidden"],select,textarea', $form).each(function()
+	{
+		if ($(this).val().length > 0)
+		{
+			filled++;
+		}
+	});
+	
+	return (filled == 0);
+}

@@ -54,17 +54,15 @@
 		    <!-- Login form. -->
 		    <section id="login-box">
 		    
-		    	<form id="loginForm" method="post" 
-		    					action="/pgadmissions/j_spring_security_check">
-		    	<!--form method="post" action="w00pw00p"-->
+		    	<form id="loginForm" method="post" action="/pgadmissions/j_spring_security_check">
 		      		<p>&gt; Login</p>
 		        	
-		        	<input type="text" id ="username_or_email" name="j_username" value="Email address" />
-		        	<input type="password" id ="password" name="j_password" value="Password" />
+		        	<input type="text" id="username_or_email" name="j_username" placeholder="Email address" />
+		        	<input type="password" id ="password" name="j_password" placeholder="Password" />
 		        	<#if RequestParameters.login_error??>
 		        	<span class="invalid">Invalid username/password combination.</span>
-		            </#if>
-		        	<button name ="commit" type="submit" value="Sign In" class="blue">Go</button>
+							</#if>
+		        	<button name="commit" type="submit" value="Sign In" class="blue">Go</button>
 		      	</form>
 		      	
 		      	<a href="/pgadmissions/register?program=${program!}">&gt; Register Today...</a>
@@ -81,6 +79,5 @@
 		<script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/libraries.js'/>"></script>
 		<script type="text/javascript" src="<@spring.url '/design/default/js/script.js'/>"></script>
-		<script type="text/javascript" src="<@spring.url '/design/default/js/login.js'/>"></script>
 	</body>
 </html>

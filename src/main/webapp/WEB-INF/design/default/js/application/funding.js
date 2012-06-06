@@ -118,8 +118,6 @@ $(document).ready(function(){
 			{
 				$('#fundingCloseButton').trigger('click');
 			}
-
-			postFundingData('close');
 		}
 	});
 	

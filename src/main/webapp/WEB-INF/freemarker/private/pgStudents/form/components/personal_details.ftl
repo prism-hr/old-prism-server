@@ -185,7 +185,7 @@
 								<div class="nationality-item">
 									<label class="full">${nationality.name}</label>  
 									<input type="hidden" name="candidateNationalities" value='${encrypter.encrypt(nationality.id)}'/>
-									<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
+									<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete" data-desc="Delete">Delete</a></#if>
 								</div>                  		
 								</#list>
 							</div>
@@ -225,7 +225,7 @@
 								<div class="nationality-item">
 											<label class="full">${nationality.name}</label>  
 											<input type="hidden" name="maternalGuardianNationalities" value='${encrypter.encrypt(nationality.id)}'/>
-											<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
+											<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete" data-desc="Delete">Delete</a></#if>
 								</div>            
 							 </#list>
                   	 	</div>
@@ -254,7 +254,7 @@
                   	 			<div class="nationality-item">
 									<label class="full">${nationality.name?html}</label>  
 									<input type="hidden" name="paternalGuardianNationalities" value='${encrypter.encrypt(nationality.id)}'/>
-									<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete">Delete</a></#if>
+									<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()><a class="button-delete" data-desc="Delete">Delete</a></#if>
                   	 			</div>
                   	 		</#list>
                   	 	</div>

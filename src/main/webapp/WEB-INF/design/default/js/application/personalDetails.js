@@ -147,10 +147,12 @@ $(document).ready(function(){
 		} else {	
 			$("#acceptTermsPEDValue").val("YES");
 			
+			/*
 			$(".terms-box").attr('style','');
 			$("#pres-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#pres-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#pres-info-bar-div .row span.error-hint").remove();
+			*/
 			persImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  

@@ -31,10 +31,12 @@ $(document).ready(function(){
 		} else {	
 			$("#acceptTermsADValue").val("YES");
 			
+			/*
 			$(".terms-box").attr('style','');
 			$("#addr-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#addr-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#addr-info-bar-div .row span.error-hint").remove();
+			*/
 			addrImgCount = 0;
 
 			$.post("/pgadmissions/acceptTerms", {  

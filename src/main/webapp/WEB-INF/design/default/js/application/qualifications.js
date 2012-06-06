@@ -86,10 +86,12 @@ $(document).ready(function(){
 		} else {	
 			$("#acceptTermsQDValue").val("YES");
 			
+			/*
 			$(".terms-box").attr('style','');
 			$("#qual-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#qual-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#qual-info-bar-div .row span.error-hint").remove();
+			*/
 			qualImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  

@@ -32,10 +32,12 @@ $(document).ready(function(){
 		} else {	
 			$("#acceptTermsFDValue").val("YES");
 			
+			/*
 			$(".terms-box").attr('style','');
 			$("#fund-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#fund-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#fund-info-bar-div .row span.error-hint").remove();
+			*/
 			fundImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  

@@ -52,10 +52,12 @@ $(document).ready(function(){
 		} else {
 			$("#acceptTermsAIDValue").val("YES");
 
+			/*
 			$(".terms-box").attr('style','');
 			$("#add-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#add-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#add-info-bar-div .row span.error-hint").remove();
+			*/
 			addImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  

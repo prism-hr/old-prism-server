@@ -27,10 +27,12 @@ $(document).ready(function()
 		} else {	
 			$("#acceptTermsPDValue").val("YES");
 			
+			/*
 			$(".terms-box").attr('style','');
 			$("#prog-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#prog-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#prog-info-bar-div .row span.error-hint").remove();
+			*/
 			progImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  

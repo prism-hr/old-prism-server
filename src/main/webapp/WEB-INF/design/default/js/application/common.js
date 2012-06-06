@@ -77,6 +77,11 @@ function watchUpload($field)
 {
   var $container  = $field.parent('div.field');
   var $progress   = $container.find('span.progress');
+  
+  $container.on('click', '.button-edit', function()
+  {
+	  $container.removeClass('uploaded');
+  });
 
   $container.on('change', $field, function()
   {

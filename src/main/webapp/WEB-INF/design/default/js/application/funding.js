@@ -112,11 +112,11 @@ $(document).ready(function(){
 			// Check for a "dirty" employment position form. If there is data try to submit it.
 			if (!isFormEmpty('#fundingSection'))
 			{
-				postEmploymentData('close');
+				postFundingData('close');
 			}
 			else
 			{
-				$('#positionCloseButton').trigger('click');
+				$('#fundingCloseButton').trigger('click');
 			}
 
 			postFundingData('close');

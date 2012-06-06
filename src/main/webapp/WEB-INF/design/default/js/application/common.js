@@ -169,7 +169,9 @@ function isFormEmpty($container)
 	var filled = 0;
 	$('input[type!="hidden"],select,textarea', $container).each(function()
 	{
-		if ($(this).val().length > 0)
+		var $field = $(this);
+		if ($field.is(':checked') ||
+		   (($field.attr('type') != 'checkbox' && $field.attr('type') != 'radio') && $field.val().length > 0))
 		{
 			console.log($(this).attr('name') + ' is filled.');
 			filled++;

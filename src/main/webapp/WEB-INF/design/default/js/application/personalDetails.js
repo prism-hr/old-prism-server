@@ -166,13 +166,9 @@ $(document).ready(function(){
 	
 	$('#personalDetailsSaveButton').on("click", function()
 	{	
-		if ($("#acceptTermsPEDValue").val() =='NO')
+		if ($("#acceptTermsPEDValue").val() == 'NO')
 		{ 
-			// Highlight the information bar and terms box.
-//			var $form = $('#personalDetailsSection form');
-//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
-			
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
+			$('#personalDetailsSection .terms-box').css({borderColor: 'red', color: 'red'});
 			
 			$("#pres-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
 			$("#pres-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
@@ -181,7 +177,6 @@ $(document).ready(function(){
 				persImgCount = persImgCount + 1;
 			}
 			addToolTips();
-			
 		}
 		else
 		{

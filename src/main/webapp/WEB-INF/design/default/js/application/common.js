@@ -167,9 +167,11 @@ function doUpload($upload_field)
 function isFormEmpty($container)
 {
 	var filled = 0;
+	// DO NOT check hidden fields!
 	$('input[type!="hidden"],select,textarea', $container).each(function()
 	{
 		var $field = $(this);
+		// Checkboxes require checking for a checked state (as val() returns the checkbox's checked value).
 		if ($field.is(':checked') ||
 		   (($field.attr('type') != 'checkbox' && $field.attr('type') != 'radio') && $field.val().length > 0))
 		{

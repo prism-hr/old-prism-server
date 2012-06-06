@@ -174,6 +174,6 @@ function isFormEmpty($form)
 			filled++;
 		}
 	});
-	
+	console.log(filled + ' fields with data.');
 	return (filled == 0);
 }

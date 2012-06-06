@@ -175,7 +175,7 @@
               	
          
 					<div class="row">                    	
-						<label class="plain-label" id="my-nationality">Nationality <#if !nationalityExist><em id="nationality-em">*</em></#if></label>      
+						<label class="plain-label" id="my-nationality">Nationality<#if !nationalityExist><em id="nationality-em">*</em></#if></label>      
 						<span id="my-nationality-hint" class="hint" data-desc="<@spring.message 'personalDetails.nationality'/>"></span>    
 					
 						<div class="field">

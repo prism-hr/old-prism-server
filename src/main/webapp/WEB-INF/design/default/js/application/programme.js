@@ -147,6 +147,12 @@ $(document).ready(function()
 			{
 				// Supervisor form isn't empty.
 				$('#addSupervisorButton').trigger('click');
+				
+				// If there was an error submitting the non-empty form, don't continue.
+				if ($('#supervisor_div .invalid').length > 0)
+				{
+					return false;
+				}
 			}
 			
 			postProgrammeData('close');

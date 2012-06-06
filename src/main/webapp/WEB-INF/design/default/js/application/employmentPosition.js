@@ -5,11 +5,19 @@ $(document).ready(function(){
 	$("#acceptTermsEPValue").val("NO");
 	limitTextArea();
 	
-	$('#current').click(function() {
-		if ($('#current:checked').val() !== undefined) {
+	// Current employment checkbox
+	$('#current').click(function()
+	{
+		if ($('#current:checked').val() !== undefined) 
+		{
+			// checked
 			$("#posi-end-date-lb").text("End Date").addClass("grey-label");
-			$('#position_endDate').attr("disabled", "disabled");
-		}else{
+			$('#position_endDate').attr("disabled", "disabled")
+                                  .val(''); // empty date field.
+		}
+		else
+		{
+			// unchecked
 			$('#position_endDate').removeAttr("disabled");
 			$("#posi-end-date-lb").text("End Date").append('<em>*</em>').removeClass("grey-label");
 		}

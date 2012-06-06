@@ -198,13 +198,14 @@ table.data-table .editButton{
 }
 
 
-/* Upload fields - #uploadFields id to be changed to something more generic. */
+/* Upload fields. */
 
-section.form-rows .field a.uploaded-file { display: none; }
+section.form-rows .field a.uploaded-filename,
+section.form-rows .field a.button-edit { display: none; }
 
 /* Show only the file link when a file is uploaded. */
 section.form-rows .field.uploaded input { display: none; }
-section.form-rows .field.uploaded a.uploaded-file { display: inline-block; }
+section.form-rows .field.uploaded a.uploaded-filename { display: inline-block; }
 section.form-rows .field.uploaded a { display: inline-block; vertical-align: top; }
 
 /* Deleted uploads. */

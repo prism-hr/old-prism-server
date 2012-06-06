@@ -11,6 +11,7 @@ $(document).ready(function(){
 	});
 	
 	
+	// Delete existing funding.
 	$('a[name="deleteFundingButton"]').click( function(){	
 			var id = $(this).attr("id").replace("funding_", "");
 			$.post("/pgadmissions/deleteentity/funding",
@@ -96,6 +97,8 @@ $(document).ready(function(){
 		}
 	});
 	
+	
+	// Edit funding button.
 	$('a[name="editFundingLink"]').click(function(){
 		var id = this.id;
 		id = id.replace('funding_', '');	

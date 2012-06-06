@@ -108,6 +108,17 @@ $(document).ready(function(){
 		}
 		else{
 			$("span[name='nonAcceptedFD']").html('');
+
+			// Check for a "dirty" employment position form. If there is data try to submit it.
+			if (!isFormEmpty('#fundingSection'))
+			{
+				postEmploymentData('close');
+			}
+			else
+			{
+				$('#positionCloseButton').trigger('click');
+			}
+
 			postFundingData('close');
 		}
 	});

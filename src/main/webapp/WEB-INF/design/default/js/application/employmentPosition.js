@@ -87,7 +87,7 @@ $(document).ready(function(){
 			$("span[name='nonAcceptedEP']").html('');
 
 			// Check for a "dirty" employment position form. If there is data try to submit it.
-			if (!isFormEmpty('#supervisor_div'))
+			if (!isFormEmpty('#positionSection'))
 			{
 				postEmploymentData('close');
 			}

@@ -204,6 +204,15 @@ span.info-text {
 	margin-bottom: 5px;
 }
 
+
+div.section-info-bar {
+	background: #FFF url(../../images/temp_blue_i.png) no-repeat 10px 10px;
+	border: 1px solid #0071B9;
+	margin-bottom: 10px;
+	padding: 10px;
+}
+
+
 /* to control the looks of the information bar on top of each section */
 section.form-rows div.section-info-bar {
 	background: #FFF url(../../images/temp_blue_i.png) no-repeat 10px 10px;

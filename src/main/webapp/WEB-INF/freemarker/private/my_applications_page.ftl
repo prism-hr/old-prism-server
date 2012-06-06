@@ -54,7 +54,11 @@
 				      <div class="content-box">
 				        <div class="content-box-inner">
 							
-						<p style="color:red;">${(message?html)!}</p>
+							<#if message??>
+							<div class="section-info-bar">${(message?html)!}</div>
+							</#if>
+						
+						
 						<div id="search-box"> 
 							<label for="searchTerm">Search</label>
 							<input type="text" id="searchTerm" name="searchTerm" />

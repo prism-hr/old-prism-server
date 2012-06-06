@@ -55,7 +55,9 @@
 				        <div class="content-box-inner">
 							
 							<#if message??>
-							<div class="section-info-bar">${(message?html)!}</div>
+							<div class="section-info-bar">
+								<div class="info-text">${(message?html)!}</div>
+							</div>
 							</#if>
 						
 						

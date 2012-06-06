@@ -18,7 +18,7 @@ label.label { font-weight: bold; }
 #notifyRegistryButton { margin-bottom: 0; }
 
 section > div { background: #FFF !important; }
-section div.row { margin-bottom: 0; }
+section div.row { margin-bottom: 0 !important; }
 
 /* Headers. */
 section.form-rows h2 {

@@ -58,27 +58,9 @@ $(document).ready(function() {
 	});
 	
 	
-	$('#search-box button').click(function() { doApplicationSearch(); });
-	$('#searchCategory').change(function() { doApplicationSearch(); });
+	$('#search-box button').click(function() { populateApplicationList(); });
+	$('#searchCategory').change(function() { populateApplicationList(); });
 	
-	function doApplicationSearch()
-	{
-		if($('#searchCategory').val() != "")
-		{
-			$.get("/pgadmissions/search",
-				{
-					searchCategory: $('#searchCategory').val(),
-					searchTerm:  $('#searchTerm').val()
-				},
-				function(data)
-				{
-					$('#applicationListSection').html(data);
-					addToolTips();
-				}
-			);
-		}
-	}
-
 
 	$('#manageUsersButton').click(function(){
 		window.location.href = "/pgadmissions/manageUsers/showPage";

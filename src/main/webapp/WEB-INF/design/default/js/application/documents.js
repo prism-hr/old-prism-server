@@ -26,10 +26,12 @@ $(document).ready(function(){
 		} else {	
 			$("#acceptTermsDDValue").val("YES");
 			
+			/*
 			$(".terms-box").attr('style','');
 			$("#doc-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#doc-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#doc-info-bar-div .row span.error-hint").remove();
+			*/
 			addImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  

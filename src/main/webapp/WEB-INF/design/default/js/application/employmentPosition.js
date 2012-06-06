@@ -47,10 +47,12 @@ $(document).ready(function(){
 		} else {	
 			$("#acceptTermsEPValue").val("YES");
 			
+			/*
 			$(".terms-box").attr('style','');
 			$("#emp-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#emp-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#emp-info-bar-div .row span.error-hint").remove();
+			*/
 			empImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  

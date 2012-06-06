@@ -32,10 +32,12 @@ $(document).ready(function()
 		} else {	
 			$("#acceptTermsRDValue").val("YES");
 			
+			/*
 			$(".terms-box").attr('style','');
 			$("#ref-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#ref-info-bar-span").switchClass("invalid-info-text", "info-text", 1);
 			$("#ref-info-bar-div .row span.error-hint").remove();
+			*/
 			refImgCount = 0;
 			
 			$.post("/pgadmissions/acceptTerms", {  

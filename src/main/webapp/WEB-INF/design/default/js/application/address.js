@@ -2,6 +2,7 @@ $(document).ready(function(){
 	
 	var addrImgCount = 0; 
 	
+	/*
 	if($("#currentAddressInvalid").html() !== null || $("#currentAddressCountryInvalid").html() !== null
 			|| $("#contactAddressLocationInvalid").html() !== null || $("#contactAddressCountryInvalid").html() !== null
 			|| $("#currentAddressInvalidInvalid").html() !== null || $("#currentAddressCountryInvalid").html() !== null){
@@ -13,6 +14,7 @@ $(document).ready(function(){
 		}
 		addToolTips();
 	}
+	*/
 	
 	$("#acceptTermsADValue").val("NO");
 	limitTextArea();

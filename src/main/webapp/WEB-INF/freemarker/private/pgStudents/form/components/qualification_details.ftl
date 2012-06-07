@@ -239,9 +239,11 @@
 				<span class="plain-label">Has this qualification been awarded?</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.hasBeenAwarded'/>"></span>
 				<div class="field">        
-					<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"<#if qualification.proofOfAward??> checked="checked"</#if>
+					currentQualification: ${(qualification.currentQualification?html)!}<br/>
+					hasBeenAwarded: ${(qualification.hasBeenAwarded?html)!}
+					<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"<#if qualification.currentQualification??> checked="checked"</#if>
 					<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>	/>
-					<input type="hidden" name="currentQualification" id="currentQualification" value="<#if qualification.proofOfAward??>YES<#else>NO</#if>" />
+					<input type="hidden" name="currentQualification" id="currentQualification" value="<#if qualification.currentQualification??>YES<#else>NO</#if>" />
 				</div>
 			</div>
 

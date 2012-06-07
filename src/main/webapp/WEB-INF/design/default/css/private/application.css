@@ -78,7 +78,7 @@ section.form-rows .row { line-height: 24px; margin-bottom: 2px; clear: left; }
 
 .admin_row { border-bottom: 1px solid #999; clear: left; overflow: hidden; padding: 8px 0; }
 .admin_row_label { float: left; line-height: 1.2; width: 180px; }
-.admin_header { float: left;  width: 180px; margin-top: 4px; font-weight: bold; }
+.admin_header { float: left;  width: 180px; font-weight: bold; }
 .admin_row .field { line-height: 1.2; padding: 0 !important; }
 
 section.form-rows > div.sub_section_admin { margin-bottom: 10px; overflow: hidden; padding-bottom: 8px; }

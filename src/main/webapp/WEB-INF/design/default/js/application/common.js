@@ -178,11 +178,9 @@ function isFormEmpty($container)
 			if ($field.is(':checked') ||
 				 (($field.attr('type') != 'checkbox' && $field.attr('type') != 'radio') && $field.val()))
 			{
-				console.log($(this).attr('name') + ' is filled.');
 				filled++;
 			}
 		}
 	});
-	console.log(filled + ' fields with data.');
 	return (filled == 0);
 }

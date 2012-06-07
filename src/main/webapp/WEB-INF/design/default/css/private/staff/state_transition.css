@@ -17,7 +17,6 @@ label.label { font-weight: bold; }
 
 #notifyRegistryButton { margin-bottom: 0; }
 
-#wrapper section > div { background: #FFF !important; }
 #wrapper section div.row { margin-bottom: 0 !important; }
 
 /* Headers. */

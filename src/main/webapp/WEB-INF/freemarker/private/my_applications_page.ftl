@@ -68,7 +68,7 @@
                   <option value="${category}">${category.displayValue()}</option>               
                   </#list>
                 </select>
-                <button type="button">Go</button>
+                <button class="blue" type="button">Go</button>
               </div>
             
               <table class="data" border="0" >

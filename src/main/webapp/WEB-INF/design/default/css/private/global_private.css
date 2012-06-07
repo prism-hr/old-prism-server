@@ -143,12 +143,13 @@ form input[type=checkbox], form input[type=radio] { border: none !important; pad
 form select[multiple] { vertical-align: top; }
 
 /* Keyword/search box */
-div#search-box { margin-bottom: 15px; }
-div#search-box input { border: 1px solid #CCC; border-radius: 10px; height: 17px; margin-left: 1em; margin-right: -26px; padding: 2px 20px; width: 400px; }
+div#search-box { background: #FFF; border: 1px solid #AAA; margin-bottom: 15px; padding: 9px; text-align: right; }
 div#search-box label { font-weight: bold; }
+div#search-box input, div#search-box select { border: 1px solid #CCC; margin-left: 1em; }
+div#search-box input { width: 300px; }
 div#search-box select { margin-left: 10px; padding: 2px; width: 170px; }
 div#search-box button {
-  background: transparent url(../../images/button_arrow.png) no-repeat 100% -2px  !important;
+  /*background: transparent url(../../images/button_arrow.png) no-repeat 100% -2px  !important;
   border: none;
   border-radius: 0;
   box-shadow: none;
@@ -158,7 +159,7 @@ div#search-box button {
   overflow: hidden;
   padding: 0;
   text-indent: 20px;
-  width: 20px;
+  width: 20px;*/
 }
 
 /* Validation errors. */

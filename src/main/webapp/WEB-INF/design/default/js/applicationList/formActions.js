@@ -94,18 +94,24 @@ $(document).ready(function() {
 function populateApplicationList(reset)
 {
 	var options = {};
-	if (reset != true)
+	
+	if (reset)
 	{
-		options = {
-			searchCategory: $('#searchCategory').val(),
-			searchTerm:			$('#searchTerm').val(),
-			sortCategory:   $('#sort-column').val(),
-			order:      $('#sort-order').val()
-		};
+		// Reset search filter.
+		$('#searchTerm').val('');
+		$('#sort-column').val('APPLICATION_DATE');
+		$('#sort-order').val('DESCENDING');
 	}
+
+	options = {
+		searchCategory: $('#searchCategory').val(),
+		searchTerm:			$('#searchTerm').val(),
+		sortCategory:   $('#sort-column').val(),
+		order:      $('#sort-order').val()
+	};
 	
 	$('#search-box span.invalid').remove();
-	if (options.searchTerm.length <= 2)
+	if (options.searchTerm.length > 0 && options.searchTerm.length <= 2)
 	{
 		$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
 		return;

@@ -69,7 +69,7 @@
                   </#list>
                 </select>
                 <button class="blue" type="button" id="search-go">Go</button>
-                <button type="button" id="search-clear">Clear</button>
+                <button type="button" id="search-reset">Clear</button>
               </div>
             
               <table class="data" border="0" >

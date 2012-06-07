@@ -47,22 +47,23 @@
 			
 				<#include "/private/common/parts/nav_with_user_info.ftl"/>
 				
-				    <!-- Main content area. -->
-				    <article id="content" role="main">		    
-				      
-				      <!-- content box -->				      
-				      <div class="content-box">
-				        <div class="content-box-inner">
-								
-									<section id="configuration" class="form-rows">
-										<h2>Service Levels</h2>
-										<div>
-											<form>
-											
-												<select id="stages" style="visibility:hidden;">
-												<#list stages as stage>
+					<!-- Main content area. -->
+					<article id="content" role="main">		    
+						
+						<!-- content box -->				      
+						<div class="content-box">
+							<div class="content-box-inner">
+							
+								<section id="configuration" class="form-rows">
+									<h2>Service Levels</h2>
+									<div>
+										<form>
+										
+											<div class="row-group">
+												<select id="stages" style="display: none;">
+													<#list stages as stage>
 													<option value="${stage}"></option>
-												</#list>
+													</#list>
 												</select>
 							
 												<#list stages as stage>
@@ -91,55 +92,62 @@
 												</div>
 												</#list>
 												<input type="hidden" name="stagesDuration" id= "stagesDuration" />
-											
-												<div class="buttons">						        		
-													<button type="button" id="cancelDurationBtn" value="cancel">Clear</button>
-													<button class="blue" id="submitDurationStages" type="button" value="Submit">Submit</button>						        
-												</div>
-											</form>
-										</div>
-									</section>
-
-									<section class="form-rows">
-										<h2>Reminder Interval</h2>
-										<div>
-											<form>
-			  					
-											<!-- Configure Reminder Interval -->
-											<div class="row">
-												<span id="reminder-lbl" class="plain-label">Reminder Interval Duration<em>*</em></span>
-												<div class="field">	
-													<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
-													<input type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(intervalDAO.getReminderInterval().duration?string("######"))!}" />
-													<select name="reminderUnit" id="reminderUnit">
-														<option value="">Select...</option>
-													<#list units as unit>
-														<option value="${unit}"
-														<#if  intervalDAO.getReminderInterval()?? && intervalDAO.getReminderInterval().unit?? && intervalDAO.getReminderInterval().unit == unit>
-															selected="selected"
-														</#if>>
-														${unit.displayValue()}</option>               
-													</#list>
-													</select>	
-												</div>
-												<span class="invalid" name="invalidDurationInterval" style="display:none;"></span>
-												<span class="invalid" name="invalidUnitInterval" style="display:none;"></span>
+											</div><!-- .row-group -->
+										
+											<div class="buttons">						        		
+												<button type="button" id="cancelDurationBtn" value="cancel">Clear</button>
+												<button class="blue" id="submitDurationStages" type="button" value="Submit">Submit</button>						        
 											</div>
+											
+										</form>
+									</div>
+								</section>
+
+								<!-- Configure Reminder Interval -->
+								<section class="form-rows">
+									<h2>Reminder Interval</h2>
+									<div>
+										<form>
+											<div class="row-group">
+
+												<div class="row">
+													<span id="reminder-lbl" class="plain-label">Reminder Interval Duration<em>*</em></span>
+													<div class="field">	
+														<input type="hidden" name="reminderIntervalId" id="reminderIntervalId" value="1"/> 
+														<input type="text" size="4" id="reminderIntervalDuration" name="reminderIntervalDuration" value="${(intervalDAO.getReminderInterval().duration?string("######"))!}" />
+														<select name="reminderUnit" id="reminderUnit">
+															<option value="">Select...</option>
+														<#list units as unit>
+															<option value="${unit}"
+															<#if  intervalDAO.getReminderInterval()?? && intervalDAO.getReminderInterval().unit?? && intervalDAO.getReminderInterval().unit == unit>
+																selected="selected"
+															</#if>>
+															${unit.displayValue()}</option>               
+														</#list>
+														</select>	
+													</div>
+													<span class="invalid" name="invalidDurationInterval" style="display:none;"></span>
+													<span class="invalid" name="invalidUnitInterval" style="display:none;"></span>
+												</div><!-- .row -->
+												
+											</div><!-- .row-group -->
 											
 											<div class="buttons">						        		
 												<button type="button" id="cancelReminderBtn" value="cancel">Clear</button>
 												<button class="blue" id="submitRIBtn" type="button" value="Submit">Submit</button>						        
 											</div>
+											
 										</form>
 									</div>
 								</section>
+
 
 								<!-- Add Registry Users -->
 								<section class="form-rows">
 									<h2>Registry Contacts</h2>
 									<div>
 										<form id="addRegistryForm">
-											<span class="invalid" name="threeMaxMessage"> </span>
+											<span class="invalid" name="threeMaxMessage"></span>
 
 											<!-- First registry user -->
 											<div class="row-group" id="firstRegistryUser">
@@ -151,27 +159,27 @@
 													<div class="field">	
 														<input type="text" class="full" id="1_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[0].firstname)!}" />
 													</div>
-												</div>
+												</div><!-- .row -->
 												
 												<div class="row"> 
 													<span id="ru-lastname-lbl" class="plain-label">Last Name<em>*</em></span>
 													<div class="field">	
 														<input type="text" class="full" id="1_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[0].lastname)!}" />
 													</div>
-												</div>
+												</div><!-- .row -->
 												
 												<div class="row"> 
 													<span id="ru-email-lbl" class="plain-label">Email<em>*</em></span>
 													<div class="field">	
 														<input type="text" class="full" id="1_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[0].email)!}"/>
 													</div>
-												</div>
+												</div><!-- .row -->
 												
 												<span class="invalid" name="firstuserInvalid" style="display:none;"></span>
-											</div>
+											</div><!-- .row-group -->
 											
 									
-											<!-- First registry user -->
+											<!-- Second registry user -->
 											<div class="row-group" id="secondRegistryUser">
 	
 												<input type="hidden" name="2_regUserId" id= "2_regUserId" value="${(allRegistryUsers[1].id)!}"/>
@@ -181,25 +189,27 @@
 													<div class="field">	
 														<input type="text" class="full" id="2_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[1].firstname)!}"/>
 													</div>
-												</div>
+												</div><!-- .row -->
 									
 												<div class="row"> 
 													<span id="ru-lastname-lbl" class="plain-label">Last Name<em>*</em></span>
 													<div class="field">	
 														<input type="text" class="full" id="2_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[1].lastname)!}"/>
 													</div>
-												</div>
+												</div><!-- .row -->
 								
 												<div class="row"> 
 													<span id="ru-email-lbl" class="plain-label">Email<em>*</em></span>
 													<div class="field">	
 														<input type="text" class="full" id="2_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[1].email)!}"/>
 													</div>
-												</div>
+												</div><!-- .row -->
 												
 												<span class="invalid" name="seconduserInvalid" style="display:none;"></span>
-											</div>
+											</div><!-- .row-group -->
+											
 									
+											<!-- Third registry user -->
 											<div class="row-group" id="thirdRegistryUser">
 
 												<input type="hidden" name="3_regUserId" id= "3_regUserId" value="${(allRegistryUsers[2].id)!}"/>
@@ -209,35 +219,35 @@
 													<div class="field">	
 														<input type="text" class="full" id="3_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[2].firstname)!}"/>
 													</div>
-												</div>
+												</div><!-- .row -->
 											
 												<div class="row"> 
 													<span id="ru-lastname-lbl" class="plain-label">Last Name<em>*</em></span>
 													<div class="field">	
 														<input type="text" class="full" id="3_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[2].lastname)!}"/>
 													</div>
-												</div>
+												</div><!-- .row -->
 											
 												<div class="row"> 
 													<span id="ru-email-lbl" class="plain-label">Email<em>*</em></span>
 													<div class="field">	
 														<input type="text" class="full" id="3_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[2].email)!}"/>
 													</div>
-												</div>
+												</div><!-- .row -->
 
 												<span class="invalid" name="thirduserInvalid" style="display:none;"></span>
-											</div>
+											</div><!-- .row-group -->
 									
 											<input type="hidden" name="registryUsers" id= "registryUsers" />
 											
+											<div class="buttons">						        		
+												<button type="button" id="cancelRegistryBtn" value="cancel">Clear</button>
+												<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
+											</div>
+									
 										</form>
 									</div>
 										
-									<div class="buttons">						        		
-										<button type="button" id="cancelRegistryBtn" value="cancel">Clear</button>
-										<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
-									</div>
-							
 								</section>
 							
 							</div><!-- .content-box-inner -->

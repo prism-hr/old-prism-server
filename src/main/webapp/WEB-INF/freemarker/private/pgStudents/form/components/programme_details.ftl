@@ -176,7 +176,7 @@
 							<tbody>
 								<#list programmeDetails.suggestedSupervisors! as supervisor>
 								<tr class="<#if supervisor.aware>aware<#else>unaware</#if>">
-									<td data-desc="<#if supervisor.aware>Aware<#else>Unaware</#if> of application">
+									<td data-desc="Supervisor <#if supervisor.aware>aware<#else>unaware</#if> of application">
 										${(supervisor.firstname?html)!} ${(supervisor.lastname?html)!} (${supervisor.email?html})
 									</td>
 									<td>

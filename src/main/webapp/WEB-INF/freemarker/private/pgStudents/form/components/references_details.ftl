@@ -396,20 +396,16 @@
 	    </#if>  
 	
 	
-    	<div class="buttons">
-    	 <#if applicationForm.modifiable>
-      		 <a class="button" type="button" id="refereeCancelButton" name="refereeCancelButton">Clear</a>
-      		 <button class="blue" type="button" id="refereeCloseButton" name="refereeCloseButton">Close</button>
-      		 <#if referee.id?? || applicationForm.referees?size &lt; 3>
-      		 	<button class="blue" type="button" value="close" id="refereeSaveAndCloseButton">Save</button>
-      		 <#else>
-				<button class="blue" type="button" value="close" style="cursor:default">Save</button>      		 	
-      		 </#if>
-      	 <#else>
-            <a id="refereeCloseButton" class="button blue">Close</a>   
-        </#if> 	
-    	</div>
-
+			<div class="buttons">
+				<#if applicationForm.modifiable>
+				<a class="button" type="button" id="refereeCancelButton" name="refereeCancelButton">Clear</a>
+				<button class="blue" type="button" id="refereeCloseButton" name="refereeCloseButton">Close</button>
+				<button class="blue" type="button" value="close" id="refereeSaveAndCloseButton">Save</button>
+				<#else>
+				<a id="refereeCloseButton" class="button blue">Close</a>   
+				</#if> 	
+			</div>
+			
 	</form>
 	
 </div>

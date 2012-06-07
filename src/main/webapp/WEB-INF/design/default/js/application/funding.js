@@ -67,19 +67,7 @@ $(document).ready(function(){
 		if ($('#acceptTermsFDValue').length != 0 && $("#acceptTermsFDValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
-//			var $form = $('#fundingSection form');
-//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
-			
-			$(this).parent().parent().parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			
-			$("#fund-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
-			$("#fund-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			if(fundImgCount == 0){
-				$("#fund-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-				fundImgCount = fundImgCount + 1;
-			}
-			addToolTips();
-			
+			markSectionError('#fundingSection');
 		}
 		else
 		{
@@ -92,18 +80,7 @@ $(document).ready(function(){
 		if ($("#acceptTermsFDValue").val() =='NO')
 		{ 
 			// Highlight the information bar and terms box.
-//			var $form = $('#personalDetailsSection form');
-//			$('.terms-box, .section-info-bar', $form).css({ borderColor: 'red', color: 'red' });
-			
-			$(this).parent().parent().find('.terms-box').css({borderColor: 'red', color: 'red'});
-			
-			$("#fund-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
-			$("#fund-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
-			if(fundImgCount == 0){
-				$("#fund-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
-				fundImgCount = fundImgCount + 1;
-			}
-			addToolTips();
+			markSectionError('#fundingSection');
 			
 		}
 		else{
@@ -158,20 +135,6 @@ $(document).ready(function(){
   // Generic file upload solution...
 	watchUpload($('#fundingDocument'));
 
-/*
-	$('#fundingUploadFields').on('change','#fundingDocument', function(event){	
-		if(this.files[0].size < 10485760){
-			fundingDocumentDelete();
-			$('#fundingDocumentProgress').html("uploading file...");
-			$('#fundingDocument').attr("readonly", "readonly");
-			fundingDocumentUpload();
-			$('#fundingDocument').removeAttr("readonly");
-		}else{
-			 alert("Sorry, document must be at most 10MB.");
-		 }
-	});
-*/
-		
 });
 
 

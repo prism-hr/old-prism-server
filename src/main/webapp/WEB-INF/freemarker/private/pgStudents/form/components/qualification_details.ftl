@@ -239,17 +239,16 @@
 				<span class="plain-label">Has this qualification been awarded?</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.hasBeenAwarded'/>"></span>
 				<div class="field">        
-					<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"<#if !qualification.isQualificationCompleted()> checked="checked"</#if>
+					<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"<#if qualification.isQualificationCompleted()> checked="checked"</#if>
 					<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>	/>
-					<input type="hidden" name="currentQualification" id="currentQualification" value="<#if !qualification.isQualificationCompleted()>YES<#else>NO</#if>" />
+					<input type="hidden" name="currentQualification" id="currentQualification" value="<#if qualification.isQualificationCompleted()>YES<#else>NO</#if>" />
 				</div>
 			</div>
-
       		
 			<!-- Qualification grade -->
 			<div class="row">
 				<span id="quali-grad-id" class="plain-label">
-					<#if !qualification.isQualificationCompleted()>
+					<#if qualification.isQualificationCompleted()>
 					Grade / Result / GPA<em>*</em>
 					<#else>
 					Expected Grade / Result / GPA
@@ -275,12 +274,12 @@
       		
 			<!-- Award date -->
 			<div class="row">
-				<span id="quali-award-date-lb" class="plain-label<#if !qualification.proofOfAward??> grey-label</#if>">Award Date</span>
+				<span id="quali-award-date-lb" class="plain-label<#if !qualification.isQualificationCompleted()> grey-label</#if>">Award Date</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.awardDate'/>"></span>
 				
 				<div class="field" id="awardDateField">
-					<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="<#if !qualification.isQualificationCompleted()>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</#if>"
-					<#if !qualification.proofOfAward?? || applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> />
+					<input type="text" class="half date" id="qualificationAwardDate" name="qualificationAwardDate" value="<#if qualification.isQualificationCompleted()>${(qualification.qualificationAwardDate?string('dd-MMM-yyyy'))!}</#if>"
+					<#if !qualification.isQualificationCompleted() || applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if> />
 				</div>
 			</div>
 			
@@ -295,10 +294,10 @@
 
 			<!-- Attachment / supporting document -->
 			<div class="row">
-				<span id="quali-proof-of-award-lb" class="plain-label<#if !qualification.proofOfAward?? >grey-label</#if>">Proof of Award (PDF)</span>
+				<span id="quali-proof-of-award-lb" class="plain-label<#if !qualification.isQualificationCompleted()> grey-label</#if>">Proof of Award (PDF)</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
 				<div class="field <#if qualification.proofOfAward??>uploaded</#if>" id="uploadFields">         		       	
-					<input id="proofOfAward" data-type="PROOF_OF_AWARD" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
+					<input id="proofOfAward" data-type="PROOF_OF_AWARD" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if !qualification.isQualificationCompleted() || applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="qualUploadedDocument">
 						<input type="hidden" id="document_PROOF_OF_AWARD" value="${(encrypter.encrypt(qualification.proofOfAward.id))!}"/>
 						<#if qualification.proofOfAward??> 

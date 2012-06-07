@@ -54,6 +54,10 @@ public class MoveToApprovalController extends ApprovalController {
 
 	@RequestMapping(value = "/requestRestart", method = RequestMethod.GET)
 	public String requestApprovalRestart(@RequestParam String applicationId, ModelMap modelMap) {
+		System.out.println("------------------");
+		System.out.println(" request restart approval phase");
+		System.out.println("------------------");
+		
 		ApplicationForm applicationForm = getApplicationForm(applicationId);
 		approvalService.requestApprovalRestart(applicationForm, getUser());
 

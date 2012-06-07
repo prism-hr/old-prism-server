@@ -57,7 +57,7 @@
 		<#if application.submittedDate??>
 		${(application.submittedDate?string("dd MMM yyyy"))}
 		<#else>
-		<a href="#">Complete &gt;</a>
+		<a href="/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">Complete &gt;</a>
 		</#if>
 	</td>
 	<td class="centre">

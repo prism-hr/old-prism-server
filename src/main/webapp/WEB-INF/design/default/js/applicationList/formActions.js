@@ -2,10 +2,6 @@ $(document).ready(function() {
 	
 	populateApplicationList();
 	
-	$('#searchBtn').click(function(){
-		populateApplicationList();
-	});
-	
 	$(document).on('change', 'select.actionType', function() {
 		var name = this.name;
 		var id = name.substring(5).replace(']', '');
@@ -51,8 +47,17 @@ $(document).ready(function() {
 	});
 	
 	
-	$('#search-box button').click(function() { populateApplicationList(); });
+	/* Search functionality. */
+	$('#search-box button').click(function()
+	{
+		populateApplicationList();
+	});
+	/*
+	$('#searchBtn').click(function(){
+		populateApplicationList();
+	});
 	$('#searchCategory').change(function() { populateApplicationList(); });
+	*/
 	
 
 	$('#manageUsersButton').click(function(){

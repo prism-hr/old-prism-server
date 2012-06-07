@@ -53,7 +53,13 @@
 		</select>
 
 	</td>
-	<td class="centre">${(application.submittedDate?string("dd MMM yyyy"))!}</td>							  
+	<td class="centre">
+		<#if application.submittedDate??>
+		${(application.submittedDate?string("dd MMM yyyy"))}
+		<#else>
+		<a href="#">Complete &gt;</a>
+		</#if>
+	</td>
 	<td class="centre">
 		<input type="checkbox" name="appDownload" id="appDownload_${application.applicationNumber}"/></td>
 	</tr>

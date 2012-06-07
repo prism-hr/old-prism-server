@@ -184,3 +184,24 @@ function isFormEmpty($container)
 	});
 	return (filled == 0);
 }
+
+
+function markSectionError(section_id)
+{
+	
+	var $section = $(section_id);
+	
+	// highlight terms box.
+	$('.terms-box', $section).css({borderColor: 'red', color: 'red'});
+
+	// Change the info bar.
+	var $infobar = $('.section-info-bar', $section);
+	$infobar.switchClass('section-info-bar', 'section-error-bar', 1);
+	$(".info-text", $infobar).switchClass('info-text', 'invalid-info-text', 1);
+	if (('.error-hint', $infobar).length == 0)
+	{
+		$('.row', $infobar).prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+	}
+
+	addToolTips();
+}

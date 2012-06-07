@@ -64,9 +64,7 @@
           <#if ( size_cn > 0)>
           <#list applicationForm.personalDetails.candidateNationalities as nationality>
           <#assign index_i = nationality_index>
-          <#if (index_i < (size_cn - 1))>
-          <label class="half multiples">${nationality.name!"Not Provided"},</label>  
-          </#if>
+          ${nationality.name!"Not Provided"}<#if (index_i < (size_cn - 1))>,</#if>
           </#list>
           <#else>
           Not Provided
@@ -82,9 +80,7 @@
           <#if ( size_mn > 0)>
           <#list applicationForm.personalDetails.maternalGuardianNationalities as nationality >
           <#assign index_i = nationality_index>
-          <#if (index_i < (size_mn - 1))>
-          <label class="half multiples">${nationality.name!"Not Provided"},</label>  
-          </#if>
+          ${nationality.name!"Not Provided"}<#if (index_i < (size_mn - 1))>,</#if> 
           </#list>
           <#else>
           Not Provided
@@ -100,9 +96,7 @@
           <#if ( size_cp > 0)>
           <#list applicationForm.personalDetails.paternalGuardianNationalities as nationality >
           <#assign index_i = nationality_index>
-          <#if (index_i < (size_cp - 1))>
-          <label class="half multiples">${nationality.name!"Not Provided"},</label>  
-          </#if>
+          ${nationality.name!"Not Provided"}<#if (index_i < (size_cp - 1))>,</#if>
           </#list>
           <#else>
           Not Provided

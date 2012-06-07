@@ -39,7 +39,7 @@
 				<td>
 					<#if existingQualification.isQualificationCompleted()>
 						<#assign encProofOfAwardId = encrypter.encrypt(existingQualification.proofOfAward.id) />
-						<a href="<@spring.url '/download?documentId=${encProofOfAwardId}'/>" data-desc="Proof Of Award" class="button-hint" target="_blank" />
+						<a href="<@spring.url '/download?documentId=${encProofOfAwardId}'/>" data-desc="Proof Of Award" class="button-hint" target="_blank">
 							${(existingQualification.qualificationInstitution?html)!}&nbsp
 							${(existingQualification.qualificationType?html)!}&nbsp
 							${(existingQualification.qualificationSubject?html)!}&nbsp

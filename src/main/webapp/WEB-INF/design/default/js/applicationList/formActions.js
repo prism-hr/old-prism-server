@@ -48,10 +48,8 @@ $(document).ready(function() {
 	
 	
 	/* Search functionality. */
-	$('#search-box button').click(function()
-	{
-		populateApplicationList();
-	});
+	$('#search-go').click(function() { populateApplicationList(); });
+	$('#search-reset').click(function() { populateApplicationList(true); });
 	/*
 	$('#searchBtn').click(function(){
 		populateApplicationList();
@@ -93,19 +91,23 @@ $(document).ready(function() {
 
 });
 
-function populateApplicationList() {
-	searchCategory = $('#searchCategory').val();
-	searchTerm = $('#searchTerm').val(); 
-	sortCategory = $('#sort-column').val();
-	sortOrder = $('#sort-order').val();
+function populateApplicationList(reset)
+{
+	var options = {};
+	if (reset != true)
+	{
+		options = {
+			searchCategory: $('#searchCategory').val(),
+			searchTerm:			$('#searchTerm').val(),
+			sortCategory:   $('#sort-column').val(),
+			sortOrder:      $('#sort-order').val()
+		};
+	}
+	
 	$.get("/pgadmissions/applications/section",
+		options,
+		function(data)
 		{
-			searchCategory: searchCategory,
-			searchTerm:  searchTerm,
-			sortCategory: sortCategory,
-			order: sortOrder
-		},
-		function(data) {
 			$('#applicationListSection').html(data);
 			addToolTips();
 		}

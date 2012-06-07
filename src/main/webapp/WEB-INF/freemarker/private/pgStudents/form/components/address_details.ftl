@@ -10,17 +10,6 @@
 	<div>
 	
         	<form>
-        	
-        		<#if errorCode?? && errorCode=="true">
-					<div class="section-error-bar">
-						<div class="row">
-							<span class="error-hint" data-desc="Please provide all mandatory fields in this section."></span>             	
-							<span class="invalid-info-text">
-								<@spring.message 'addressDetails.sectionInfo'/>
-							</span>
-				 		</div>
-				 	</div>
-			 	<#else>
 				 	<div id="addr-info-bar-div" class="section-info-bar">
 						<div class="row">
 							<span id="addr-info-bar-span" class="info-text">
@@ -28,7 +17,6 @@
 							</span>
 						</div>
 					</div>	
-				</#if>
         	
         		
             	<div class="row-group">
@@ -54,7 +42,7 @@
 					<#list spring.status.errorMessages as error>
 						<div class="row">
 							<div class="field">
-								<span class="invalid">${error}</span>
+								<span id="currentAddressInvalid" class="invalid">${error}</span>
 							</div>
 						</div>
 					</#list>
@@ -81,7 +69,7 @@
 				<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
-							<span class="invalid">${error}</span>
+							<span id="currentAddressCountryInvalid" class="invalid">${error}</span>
 						</div>
 					</div>
 				</#list>
@@ -138,7 +126,7 @@
                	<#list spring.status.errorMessages as error>
 					<div class="row">
 						<div class="field">
-							<span class="invalid">${error}</span>
+							<span id="contactAddressLocationInvalid" class="invalid">${error}</span>
 						</div>
 					</div>
 				</#list>
@@ -167,7 +155,7 @@
 					<#list spring.status.errorMessages as error>
 						<div class="row">
 							<div class="field">
-								<span class="invalid">${error}</span>
+								<span id="contactAddressCountryInvalid" class="invalid">${error}</span>
 							</div>
 						</div>
 					</#list>

@@ -12,6 +12,10 @@
 	<#if message??>
 		${message?html}
 	</#if>
-	 <@spring.bind "document.*" /> 
-     <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list> 	 
 </span>
+
+	 <@spring.bind "document.*" /> 
+     <#list spring.status.errorMessages as error>
+				<span class="invalid">${error}</span>
+     </#list> 	 
+

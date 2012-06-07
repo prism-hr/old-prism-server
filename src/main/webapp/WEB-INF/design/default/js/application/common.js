@@ -188,8 +188,9 @@ function isFormEmpty($container)
 
 function markSectionError(section_id)
 {
-	
 	var $section = $(section_id);
+	var errors   = $('.invalid', $section).length;
+	if (errors == 0) { return; }
 	
 	// highlight terms box.
 	$('.terms-box', $section).css({borderColor: 'red', color: 'red'});

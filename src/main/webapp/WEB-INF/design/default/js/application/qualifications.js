@@ -4,10 +4,10 @@ $(document).ready(function(){
 	
 	$("#acceptTermsQDValue").val("NO");
 	
-	if($("#qualificationInstitution").val() == ""){
+	/*if($("#qualificationInstitution").val() == ""){
 		$("#currentQualificationCB").attr('checked', false);
 		$("#currentQualification").val("NO");
-	}
+	}*/
 	
 	if($("#currentQualificationCB").is(":checked")){
 		$("#currentQualification").val("YES");

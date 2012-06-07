@@ -148,7 +148,8 @@ $(document).ready(function(){
 
 function postFundingData(message){
 
-	$.post("/pgadmissions/update/editFunding", {  
+	$.post("/pgadmissions/update/editFunding",
+	{  
 		description: $("#fundingDescription").val(),
 		value: $("#fundingValue").val(),
 		awardDate: $("#fundingAwardDate").val(),
@@ -161,6 +162,7 @@ function postFundingData(message){
 	},
 	function(data) {
 		$('#fundingSection').html(data);
+		markSectionError('#fundingSection');
 	});
 }
 

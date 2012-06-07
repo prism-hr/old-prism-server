@@ -114,6 +114,7 @@ function postDocumentData(message){
 		},
 		function(data) {
 			$('#documentSection').html(data);
+			markSectionError('#fundingSection');
 		}
 	);
 }

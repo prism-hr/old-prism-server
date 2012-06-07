@@ -95,8 +95,8 @@ $(document).ready(function()
 		}
 			$("#addSupervisorButton").hide();
 			$("#updateSupervisorButton").show();
-			$(this).parent("span").remove();
-			$(this).parent().parent().remove();
+//			$(this).parent("span").remove();
+//			$(this).parent().parent().remove();
 	});
 	
 	$('#programmeCancelButton').click(function(){

@@ -274,7 +274,7 @@
       		
 			<!-- Award date -->
 			<div class="row">
-				<span id="quali-award-date-lb" class="plain-label<#if !qualification.isQualificationCompleted()> grey-label</#if>">Award Date<#if qualification.isQualificationCompleted()><em>*</em></span>
+				<span id="quali-award-date-lb" class="plain-label<#if !qualification.isQualificationCompleted()> grey-label</#if>">Award Date<#if qualification.isQualificationCompleted()><em>*</em></#if></span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.awardDate'/>"></span>
 				
 				<div class="field" id="awardDateField">

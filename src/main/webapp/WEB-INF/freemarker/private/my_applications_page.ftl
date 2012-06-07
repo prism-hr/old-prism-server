@@ -106,7 +106,7 @@
               
               <p class="right">
                 <#if (applications?size > 0)>
-                <a class="button" name="downloadAll" id="downloadAll">Download</a>
+                <a class="button blue" name="downloadAll" id="downloadAll">Download</a>
                 </#if>
               </p>
                         

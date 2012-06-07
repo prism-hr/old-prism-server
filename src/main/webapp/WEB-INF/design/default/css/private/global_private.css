@@ -155,7 +155,7 @@ div#search-box .invalid { display: block; margin-left: 190px; margin-top: 5px; p
 span.invalid {
 	/* background: url(../../images/button_exclaim.png) no-repeat 0 .1em; */ 
 	color: red; 
-	display: inline-block; 
+	display: block; 
 	padding-left: 3px; 
 	margin-left: -2px;
 	/*IE 7*/ zoom: 1; *display: inline;

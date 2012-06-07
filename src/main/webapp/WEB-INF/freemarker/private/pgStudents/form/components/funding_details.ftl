@@ -101,17 +101,13 @@
                     	</#list>
                   	</select>
      
+     			    <@spring.bind "funding.type" /> 
+					<#list spring.status.errorMessages as error>
+							<span class="invalid">${error}</span>
+					</#list>
                 	
 				</div>
 			</div>
-			       		<@spring.bind "funding.type" /> 
-				<#list spring.status.errorMessages as error>
-					<div class="row">
-						<div class="field">
-							<span class="invalid">${error}</span>
-						</div>
-					</div>
-				</#list>
 
             <!-- Award description -->
             <div class="row">
@@ -125,17 +121,15 @@
                   <#else>
                     <textarea id="fundingDescription" name="fundingDescription" class="full" readonly="readonly">${(funding.description?html)!}</textarea>
                 </#if>
+                
+					<@spring.bind "funding.description" />
+					<#list spring.status.errorMessages as error>
+								<span class="invalid">${error}</span>
+					</#list>                
                 </div>
                 
 			</div>
-			<@spring.bind "funding.description" />
-				<#list spring.status.errorMessages as error>
-					<div class="row">
-						<div class="field">
-							<span class="invalid">${error}</span>
-						</div>
-					</div>
-				</#list>
+
 			
               
             <!-- Value of award -->
@@ -150,16 +144,14 @@
                 <#else>
                    <input id="fundingValue" readonly="readonly" name="fundingValue" class="full" type="text" value="${(funding.value?html)!}" />
                 </#if>
+                
+					<@spring.bind "funding.value" />
+					<#list spring.status.errorMessages as error>
+								<span class="invalid">${error}</span>
+					</#list>                
                 </div>
 			</div>
-				<@spring.bind "funding.value" />
-				<#list spring.status.errorMessages as error>
-					<div class="row">
-						<div class="field">
-							<span class="invalid">${error}</span>
-						</div>
-					</div>
-				</#list>
+
               
             <!-- Award date -->
             <div class="row">
@@ -171,18 +163,14 @@
                                             disabled="disabled"
                                         </#if>>
                                 </input>
-             
+            		<@spring.bind "funding.awardDate" />
+					<#list spring.status.errorMessages as error>
+								<span class="invalid">${error}</span>
+					</#list>             
                 </div>
                 
             </div>
-            		<@spring.bind "funding.awardDate" />
-				<#list spring.status.errorMessages as error>
-					<div class="row">
-						<div class="field">
-							<span class="invalid">${error}</span>
-						</div>
-					</div>
-				</#list>
+
            
 			<!-- Attachment / supporting document -->
 			<div class="row">
@@ -198,16 +186,14 @@
 					</#if>
 					</span>
 					<span id="fundingDocumentProgress" class="progress" style="display: none;"></span>
+					
+					<@spring.bind "funding.document" /> 
+					<#list spring.status.errorMessages as error>
+							<span class="invalid">${error}</span>
+					</#list>
+					
 				</div>  
 			</div>
-			<@spring.bind "funding.document" /> 
-			<#list spring.status.errorMessages as error>
-			<div class="row">
-				<div class="field">
-					<span class="invalid">${error}</span>
-				</div>
-			</div>
-			</#list>
       		
 			<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 			<!-- Add another button -->

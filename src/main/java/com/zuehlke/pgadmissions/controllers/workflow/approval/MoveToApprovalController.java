@@ -20,20 +20,18 @@ import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.UserService;
 import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
+
 @Controller
 @RequestMapping("/approval")
 public class MoveToApprovalController extends ApprovalController {
 
-	
 	MoveToApprovalController() {
-		this(null, null,null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
-		
+
 	@Autowired
-	public MoveToApprovalController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator, ApprovalRoundValidator approvalroundValidator,
-			ApprovalService approvalService, MessageSource messageSource, SupervisorPropertyEditor supervisorPropertyEditor) {
-		super(applicationsService, userService, supervisorValidator,approvalroundValidator, approvalService, messageSource,   supervisorPropertyEditor);
-		
+	public MoveToApprovalController(ApplicationsService applicationsService, UserService userService, NewUserByAdminValidator supervisorValidator, ApprovalRoundValidator approvalroundValidator, ApprovalService approvalService, MessageSource messageSource, SupervisorPropertyEditor supervisorPropertyEditor) {
+		super(applicationsService, userService, supervisorValidator, approvalroundValidator, approvalService, messageSource, supervisorPropertyEditor);
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "moveToApproval")
@@ -50,15 +48,23 @@ public class MoveToApprovalController extends ApprovalController {
 			return APROVAL_DETAILS_VIEW_NAME;
 		}
 		approvalService.moveApplicationToApproval(applicationForm, approvalRound);
-		
+
 		return "redirect:/applications";
 	}
-	
-	
+
+	@RequestMapping(value = "/requestRestart", method = RequestMethod.GET)
+	public String requestApprovalRestart(@RequestParam String applicationId, ModelMap modelMap) {
+		ApplicationForm applicationForm = getApplicationForm(applicationId);
+		approvalService.requestApprovalRestart(applicationForm, getUser());
+
+		modelMap.put("message", String.format("An e-mail requesting the restart of the approval phase " +//
+				"for application %s was sent to the administrator!", applicationForm.getApplicationNumber()));
+		return "redirect:/applications";
+	}
+
+	@Override
 	@ModelAttribute("approvalRound")
 	public ApprovalRound getApprovalRound(@RequestParam String applicationId) {
 		return new ApprovalRound();
 	}
-
-
 }

@@ -52,19 +52,24 @@ public class ApplicationListControllerTest {
 	@Test
 	public void shouldReturnNullMessageForNullParams() {
 
-		assertNull(controller.getMessage(false, null));
+		assertNull(controller.getMessage(false, null, null));
 
 	}
 
 	@Test
 	public void shouldAddSubmissionSuccesMessageIfRequired() {
-		assertEquals("Your application has been successfully submitted.", controller.getMessage(true, null));
+		assertEquals("Your application has been successfully submitted.", controller.getMessage(true, null, null));
 
 	}
 
 	@Test
 	public void shouldAddDecissionMessageIfRequired() {
-		assertEquals("The application was successfully bobbed.", controller.getMessage(false, "bobbed"));
+		assertEquals("The application was successfully bobbed.", controller.getMessage(false, "bobbed", null));
+	}
+	
+	@Test
+	public void shouldAddPassedMessageIfRequired() {
+		assertEquals("my message", controller.getMessage(false, null, "my message"));
 	}
 
 	@Test

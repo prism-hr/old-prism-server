@@ -19,6 +19,7 @@
 		<#if user.isInRoleInProgram('APPROVER', application.program) && application.isInState('APPROVAL')>
 			<option value="approve">Approve</option>
 			<option value="reject">Reject</option>
+			<option value="restartApprovalRequest">Request restart of approval</option>
 		</#if>
 		<#if  user.hasAdminRightsOnApplication(application) && application.isInState('VALIDATION')> 
 			<option value="validate">Validate</option>

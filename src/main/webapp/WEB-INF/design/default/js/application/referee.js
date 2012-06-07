@@ -164,6 +164,7 @@ function postRefereeData(messsage){
 	$.post( "/pgadmissions/update/editReferee" , $.param(postData),			
 			function(data) {
 				$('#referencesSection').html(data);
+				markSectionError('#referencesSection');
 			}
 	);
 }

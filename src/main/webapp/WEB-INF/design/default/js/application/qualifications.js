@@ -260,6 +260,7 @@ function postQualificationData(message){
 	},
 	function(data) {
 		$('#qualificationsSection').html(data);
+		markSectionError('#qualificationsSection');
 	});
 }
 function ajaxProofOfAwardDelete(){

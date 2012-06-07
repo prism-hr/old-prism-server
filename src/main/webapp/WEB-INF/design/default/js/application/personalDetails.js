@@ -312,6 +312,7 @@ function postPersonalDetailsData(message){
 			
 			 function(data) {
 			    $('#personalDetailsSection').html(data);
+					markSectionError('#personalDetailsSection');
 			  }
 	);
 	

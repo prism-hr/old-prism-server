@@ -141,6 +141,7 @@ function postAddressData(message){
 	},
 	function(data) {
 		$('#addressSection').html(data);
+		markSectionError('#addressSection');
 	});
 }
 

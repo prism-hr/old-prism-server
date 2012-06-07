@@ -133,8 +133,6 @@
 							</div>
 						</section>
 					
-						<#include "/private/common/feedback.ftl"/>
-					
 					</div>
 					<!-- #actions -->
 

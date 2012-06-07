@@ -211,8 +211,6 @@
 							</div>
 						</section>
 						
-						<#include "/private/common/feedback.ftl"/>
-						
 						<form id="postApprovalForm" method="post" action ="<@spring.url '/approval/move'/>" >
 							
 						</form>

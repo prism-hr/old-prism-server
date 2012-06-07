@@ -239,9 +239,9 @@
 				<span class="plain-label">Has this qualification been awarded?</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.hasBeenAwarded'/>"></span>
 				<div class="field">        
-					<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"<#if qualification.completed> checked="checked"</#if>
+					<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"<#if !qualification.isQualificationCompleted()> checked="checked"</#if>
 					<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>	/>
-					<input type="hidden" name="currentQualification" id="currentQualification" value="<#if qualification.completed>YES<#else>NO</#if>" />
+					<input type="hidden" name="currentQualification" id="currentQualification" value="<#if !qualification.isQualificationCompleted()>YES<#else>NO</#if>" />
 				</div>
 			</div>
 
@@ -249,7 +249,7 @@
 			<!-- Qualification grade -->
 			<div class="row">
 				<span id="quali-grad-id" class="plain-label">
-					<#if qualification.proofOfAward??>
+					<#if !qualification.isQualificationCompleted()>
 					Grade / Result / GPA<em>*</em>
 					<#else>
 					Expected Grade / Result / GPA

@@ -239,7 +239,7 @@
 				<span class="plain-label">Has this qualification been awarded?</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.hasBeenAwarded'/>"></span>
 				<div class="field">        
-					<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"<#if qualification.isQualificationCompleted()> checked="checked"</#if>
+					<input type="checkbox" name="currentQualificationCB" id="currentQualificationCB"<#if qualification.proofOfAward??> checked="checked"</#if>
 					<#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>	/>
 					<input type="hidden" name="currentQualification" id="currentQualification"/>
 				</div>
@@ -269,7 +269,7 @@
       		
 			<!-- Award date -->
 			<div class="row">
-				<span id="quali-award-date-lb" class="plain-label grey-label">Award Date</span>
+				<span id="quali-award-date-lb" class="plain-label<#if qualification.proofOfAward??> grey-label</#if>">Award Date</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.awardDate'/>"></span>
 				
 				<div class="field" id="awardDateField">
@@ -296,9 +296,9 @@
 					<span id="qualUploadedDocument">
 						<input type="hidden" id="document_PROOF_OF_AWARD" value="${(encrypter.encrypt(qualification.proofOfAward.id))!}"/>
 						<#if qualification.proofOfAward??> 
-						<a class="docName" href="<@spring.url '/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}'/>">
+						<a class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}'/>" target="_blank">
 						${(qualification.proofOfAward.fileName?html)!}</a>
-						<a name="editPOADoc" data-desc="Change Proof Of Award" id="poaDOC" class="button-edit button-hint">edit</a>
+						<a class="button-edit button-hint" data-desc="Change Proof Of Award">edit</a> 
 						</#if>
 					</span>
 					<span class="progress" style="display: none;"></span>					

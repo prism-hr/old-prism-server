@@ -52,6 +52,7 @@ $(document).ready(function(){
 			$("#qualificationAwardDate").removeAttr("disabled", "disabled");	
 			$("#proofOfAward").removeAttr("disabled");
 			$("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
+			$("#quali-award-date-lb em").remove();
 			$("#quali-award-date-lb").append('<em>*</em>').removeClass("grey-label");
 			$("#quali-proof-of-award-lb").removeClass("grey-label");
 

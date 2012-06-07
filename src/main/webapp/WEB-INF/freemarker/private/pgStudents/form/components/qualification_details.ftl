@@ -300,7 +300,7 @@
 				<span id="quali-proof-of-award-lb" class="plain-label<#if !qualification.proofOfAward?? >grey-label</#if>">Proof of Award (PDF)</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.proofOfAward'/>"></span>
 				<div class="field <#if qualification.proofOfAward??>uploaded</#if>" id="uploadFields">         		       	
-					<input id="proofOfAward" data-type="PROOF_OF_AWARD" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if !qualification.proofOfAward || applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
+					<input id="proofOfAward" data-type="PROOF_OF_AWARD" data-reference="Proof Of Award" class="full" type="file" name="file" value="" <#if applicationForm.isDecided() || applicationForm.isWithdrawn()>disabled="disabled"</#if>/>					
 					<span id="qualUploadedDocument">
 						<input type="hidden" id="document_PROOF_OF_AWARD" value="${(encrypter.encrypt(qualification.proofOfAward.id))!}"/>
 						<#if qualification.proofOfAward??> 

@@ -7,7 +7,7 @@ $(document).ready(function(){
 	/*if($("#qualificationInstitution").val() == ""){
 		$("#currentQualificationCB").attr('checked', false);
 		$("#currentQualification").val("NO");
-	}*/
+	}
 	
 	if($("#currentQualificationCB").is(":checked")){
 		$("#currentQualification").val("YES");
@@ -18,7 +18,7 @@ $(document).ready(function(){
 		$("#qualificationAwardDate").attr("disabled", "disabled");
 		$("#proofOfAward").val("");
 		$("#proofOfAward").attr("disabled", "disabled");
-	}
+	}*/
 	
 	$('#qualificationsCloseButton').click(function(){
 		$('#qualifications-H2').trigger('click');

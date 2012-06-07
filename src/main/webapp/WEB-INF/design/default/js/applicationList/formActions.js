@@ -104,6 +104,14 @@ function populateApplicationList(reset)
 		};
 	}
 	
+	$('#search-box span.invalid').remove();
+	if (options.searchTerm.length <= 2)
+	{
+		$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
+		return;
+	}
+	
+	
 	$.get("/pgadmissions/applications/section",
 		options,
 		function(data)

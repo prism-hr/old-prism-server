@@ -16,11 +16,11 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.ApprovalService;
 import com.zuehlke.pgadmissions.services.UserService;
-import com.zuehlke.pgadmissions.validators.ApprovalRoundValidator;
 import com.zuehlke.pgadmissions.validators.NewUserByAdminValidator;
 
 public class MoveToApprovalControllerTest {
@@ -34,8 +34,6 @@ public class MoveToApprovalControllerTest {
 	private ApprovalService approvalServiceMock;
 	private MessageSource messageSourceMock;
 	private BindingResult bindingResultMock;
-
-	private ApprovalRoundValidator approvalroundValidator;
 
 	private static final String APROVAL_DETAILS_VIEW_NAME = "/private/staff/supervisors/approval_details";
 	private RegisteredUser currentUserMock;
@@ -53,17 +51,15 @@ public class MoveToApprovalControllerTest {
 
 	@Test
 	public void shouldGetApplicationFromId() {
-		
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
 
 		EasyMock.expect(currentUserMock.hasAdminRightsOnApplication(applicationForm)).andReturn(true);
-		EasyMock.expect(currentUserMock.canSee(applicationForm)).andReturn(true);
 		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("5")).andReturn(applicationForm);
 		EasyMock.replay(applicationServiceMock, currentUserMock);
 
 		ApplicationForm returnedForm = controller.getApplicationForm("5");
 		assertEquals(applicationForm, returnedForm);
-
+		EasyMock.verify(applicationServiceMock, currentUserMock);
 	}
 
 	@Test
@@ -102,18 +98,45 @@ public class MoveToApprovalControllerTest {
 		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock, userValidatorMock,null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock){
 			@Override
 			public ApplicationForm getApplicationForm(String applicationId) {
+				Assert.assertEquals("1", applicationId);
 				return applicationForm;
 			}
 
 		};
 		ApprovalRound approvalround = new ApprovalRoundBuilder().application(applicationForm).toApprovalRound();
-		EasyMock.expect(applicationServiceMock.getApplicationByApplicationNumber("1")).andReturn(applicationForm);
 		EasyMock.expect(errorsMock.hasErrors()).andReturn(true);
-		EasyMock.replay(errorsMock, applicationServiceMock);
+		EasyMock.replay(errorsMock);
 		assertEquals(APROVAL_DETAILS_VIEW_NAME, controller.moveToApproval("1", approvalround, errorsMock));
-
+		EasyMock.verify(errorsMock);
 	}
 
+	@Test
+	public void shouldRequestRestartOfApproval() {
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(121).applicationNumber("LALALA").toApplicationForm();
+		final RegisteredUser currentUser = new RegisteredUserBuilder().id(8).toUser();
+
+		controller = new MoveToApprovalController(applicationServiceMock, userServiceMock,// 
+				userValidatorMock, null, approvalServiceMock, messageSourceMock, supervisorProertyEditorMock) {
+			@Override
+			public ApplicationForm getApplicationForm(String applicationId) {
+				Assert.assertEquals("121", applicationId);
+				return applicationForm;
+			}
+
+			@Override
+			public RegisteredUser getUser() {
+				return currentUser;
+			}
+		};
+
+		approvalServiceMock.requestApprovalRestart(applicationForm, currentUser);
+		EasyMock.expectLastCall();
+		
+		ModelMap modelMap = new ModelMap();
+		assertEquals("redirect:/applications", controller.requestApprovalRestart("121", modelMap));
+		Assert.assertEquals("An e-mail requesting the restart of the approval phase for application LALALA was sent to the administrator!",// 
+				modelMap.get("message"));
+	}
 
 	@Before
 	public void setUp() {
@@ -126,7 +149,6 @@ public class MoveToApprovalControllerTest {
 
 		approvalServiceMock = EasyMock.createMock(ApprovalService.class);
 		messageSourceMock = EasyMock.createMock(MessageSource.class);
-		approvalroundValidator = EasyMock.createMock(ApprovalRoundValidator.class);
 		supervisorProertyEditorMock = EasyMock.createMock(SupervisorPropertyEditor.class);
 		bindingResultMock = EasyMock.createMock(BindingResult.class);
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);

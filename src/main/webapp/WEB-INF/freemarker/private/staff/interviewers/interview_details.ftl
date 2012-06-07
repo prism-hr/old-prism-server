@@ -252,7 +252,6 @@
 						</div>
 					</section>
 		
-					<#include "/private/common/feedback.ftl"/>
 					<form id="postInterviewForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/interview/assign'/>"<#else> action ="<@spring.url '/interview/move'/>" </#if>></form>
 					<form id="postInterviewerForm" method="post" <#if assignOnly?? && assignOnly> action ="<@spring.url '/interview/assignNewInterviewer'/>" <#else> action ="<@spring.url '/interview/createInterviewer'/>" </#if>></form>
 

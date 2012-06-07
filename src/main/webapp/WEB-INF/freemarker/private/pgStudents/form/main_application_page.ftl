@@ -229,10 +229,6 @@
                       <hr/>
                       <div class="buttons">
                       
-                  <div style="float:left">           
-                          <#include "/private/common/feedback.ftl"/>
-                        </div>
-                        
                         <#if applicationForm.isSubmitted() && !applicationForm.isDecided() && !applicationForm.isWithdrawn() && user.isInRole('APPLICANT') >
                         
                           <#include "/private/common/modal_window.ftl">

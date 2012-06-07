@@ -145,7 +145,16 @@ $(document).ready(function(){
 		}
 		else{
 			$("span[name='nonAcceptedQD']").html('');
-			postQualificationData('close');
+			
+			// Check for a "dirty" qualification form. If there is data try to submit it.
+			if (!isFormEmpty('#qualificationsSection form'))
+			{
+				postQualificationData('close');
+			}
+			else
+			{
+				$('#qualificationsCloseButton').trigger('click');
+			}
 		}
 	});
 	

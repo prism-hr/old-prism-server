@@ -55,7 +55,7 @@
 				        <div class="content-box-inner">
 								
 									<section id="configuration" class="form-rows">
-										<h2>Configure Application form Stages duration</h2>
+										<h2>Service Levels</h2>
 										<div>
 											<form>
 											
@@ -93,7 +93,7 @@
 												<input type="hidden" name="stagesDuration" id= "stagesDuration" />
 											
 												<div class="buttons">						        		
-													<button type="button" id="cancelDurationBtn" value="cancel">Cancel</button>
+													<button type="button" id="cancelDurationBtn" value="cancel">Clear</button>
 													<button class="blue" id="submitDurationStages" type="button" value="Submit">Submit</button>						        
 												</div>
 											</form>
@@ -101,7 +101,7 @@
 									</section>
 
 									<section class="form-rows">
-										<h2>Configure Email Reminders Interval</h2>
+										<h2>Reminder Interval</h2>
 										<div>
 											<form>
 			  					
@@ -127,106 +127,114 @@
 											</div>
 											
 											<div class="buttons">						        		
-												<button type="button" id="cancelReminderBtn" value="cancel">Cancel</button>
+												<button type="button" id="cancelReminderBtn" value="cancel">Clear</button>
 												<button class="blue" id="submitRIBtn" type="button" value="Submit">Submit</button>						        
 											</div>
 										</form>
 									</div>
 								</section>
 
+								<!-- Add Registry Users -->
 								<section class="form-rows">
-									<h2>Add Registry Users</h2>
+									<h2>Registry Contacts</h2>
 									<div>
 										<form id="addRegistryForm">
+											<span class="invalid" name="threeMaxMessage"> </span>
 
-											<!-- Add Registry Users -->
-											<div class="row">
-												<span class="invalid"  name="threeMaxMessage"> </span>
-									 
-												<div id="firstRegistryUser">
-													<input type="hidden" name="1_regUserId" id= "1_regUserId" value="${(allRegistryUsers[0].id)!}" />
-													<div class="row"> 
-														<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
-														<div class="field">	
-															<input type="text" class="full" id="1_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[0].firstname)!}" />
-														</div>
-													</div>
-													<div class="row"> 
-														<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
-														<div class="field">	
-															<input type="text" class="full" id="1_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[0].lastname)!}" />
-														</div>
-													</div>
-													<div class="row"> 
-														<span id="ru-email-lbl" class="plain-label">Email</span>
-														<div class="field">	
-															<input type="text" class="full" id="1_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[0].email)!}"/>
-														</div>
+											<!-- First registry user -->
+											<div class="row-group" id="firstRegistryUser">
+
+												<input type="hidden" name="1_regUserId" id= "1_regUserId" value="${(allRegistryUsers[0].id)!}" />
+												
+												<div class="row"> 
+													<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
+													<div class="field">	
+														<input type="text" class="full" id="1_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[0].firstname)!}" />
 													</div>
 												</div>
+												
+												<div class="row"> 
+													<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
+													<div class="field">	
+														<input type="text" class="full" id="1_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[0].lastname)!}" />
+													</div>
+												</div>
+												
+												<div class="row"> 
+													<span id="ru-email-lbl" class="plain-label">Email</span>
+													<div class="field">	
+														<input type="text" class="full" id="1_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[0].email)!}"/>
+													</div>
+												</div>
+												
 												<span class="invalid" name="firstuserInvalid" style="display:none;"></span>
+											</div>
+											
 									
-												<div id="secondRegistryUser">
-													<hr />
+											<!-- First registry user -->
+											<div class="row-group" id="secondRegistryUser">
 	
-													<input type="hidden" name="2_regUserId" id= "2_regUserId" value="${(allRegistryUsers[1].id)!}"/>
-													<div class="row"> 
-														<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
-														<div class="field">	
-															<input type="text" class="full" id="2_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[1].firstname)!}"/>
-														</div>
-													</div>
-									
-													<div class="row"> 
-														<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
-														<div class="field">	
-															<input type="text" class="full" id="2_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[1].lastname)!}"/>
-														</div>
-													</div>
-									
-													<div class="row"> 
-														<span id="ru-email-lbl" class="plain-label">Email</span>
-														<div class="field">	
-															<input type="text" class="full" id="2_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[1].email)!}"/>
-														</div>
-													</div>
-												</div>
-												<span class="invalid" name="seconduserInvalid" style="display:none;"></span>
-									
-												<div id="thirdRegistryUser">
-													<hr />
+												<input type="hidden" name="2_regUserId" id= "2_regUserId" value="${(allRegistryUsers[1].id)!}"/>
 
-													<input type="hidden" name="3_regUserId" id= "3_regUserId" value="${(allRegistryUsers[2].id)!}"/>
-													<div class="row"> 
-														<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
-														<div class="field">	
-															<input type="text" class="full" id="3_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[2].firstname)!}"/>
-														</div>
-													</div>
-												
-													<div class="row"> 
-														<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
-														<div class="field">	
-															<input type="text" class="full" id="3_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[2].lastname)!}"/>
-														</div>
-													</div>
-												
-													<div class="row"> 
-														<span id="ru-email-lbl" class="plain-label">Email</span>
-														<div class="field">	
-															<input type="text" class="full" id="3_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[2].email)!}"/>
-														</div>
+												<div class="row"> 
+													<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
+													<div class="field">	
+														<input type="text" class="full" id="2_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[1].firstname)!}"/>
 													</div>
 												</div>
-												<span class="invalid" name="thirduserInvalid" style="display:none;"></span>
 									
-												<input type="hidden" name="registryUsers" id= "registryUsers" />
+												<div class="row"> 
+													<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
+													<div class="field">	
+														<input type="text" class="full" id="2_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[1].lastname)!}"/>
+													</div>
+												</div>
+								
+												<div class="row"> 
+													<span id="ru-email-lbl" class="plain-label">Email</span>
+													<div class="field">	
+														<input type="text" class="full" id="2_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[1].email)!}"/>
+													</div>
+												</div>
+												
+												<span class="invalid" name="seconduserInvalid" style="display:none;"></span>
+											</div>
+									
+											<div class="row-group" id="thirdRegistryUser">
+
+												<input type="hidden" name="3_regUserId" id= "3_regUserId" value="${(allRegistryUsers[2].id)!}"/>
+
+												<div class="row"> 
+													<span id="ru-firstname-lbl" class="plain-label">Fist Name</span>
+													<div class="field">	
+														<input type="text" class="full" id="3_regUserfirstname" name="regUserFirstname" value="${(allRegistryUsers[2].firstname)!}"/>
+													</div>
+												</div>
+											
+												<div class="row"> 
+													<span id="ru-lastname-lbl" class="plain-label">Last Name</span>
+													<div class="field">	
+														<input type="text" class="full" id="3_regUserLastname" name="regUserLastname" value="${(allRegistryUsers[2].lastname)!}"/>
+													</div>
+												</div>
+											
+												<div class="row"> 
+													<span id="ru-email-lbl" class="plain-label">Email</span>
+													<div class="field">	
+														<input type="text" class="full" id="3_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[2].email)!}"/>
+													</div>
+												</div>
+
+												<span class="invalid" name="thirduserInvalid" style="display:none;"></span>
+											</div>
+									
+											<input type="hidden" name="registryUsers" id= "registryUsers" />
 											
 										</form>
 									</div>
 										
 									<div class="buttons">						        		
-										<button type="button" id="cancelRegistryBtn" value="cancel">Cancel</button>
+										<button type="button" id="cancelRegistryBtn" value="cancel">Clear</button>
 										<button class="blue" id="submitRUBtn" type="button" value="Submit">Submit</button>						        
 									</div>
 							

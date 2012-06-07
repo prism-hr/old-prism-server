@@ -197,12 +197,11 @@ function markSectionError(section_id)
 
 	// Change the info bar.
 	var $infobar = $('.section-info-bar', $section);
-	$infobar.switchClass('section-info-bar', 'section-error-bar', 1);
-	$(".info-text", $infobar).switchClass('info-text', 'invalid-info-text', 1);
+	$infobar.removeClass('section-info-bar').addClass('section-error-bar');
+	$(".info-text", $infobar).removeClass('info-text').addClass('invalid-info-text');
 	if (('.error-hint', $infobar).length == 0)
 	{
 		$('.row', $infobar).prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+		addToolTips();
 	}
-
-	addToolTips();
 }

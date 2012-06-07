@@ -108,7 +108,6 @@
                 <#if (applications?size > 0)>
                 <a class="button" name="downloadAll" id="downloadAll">Download</a>
                 </#if>
-                <#include "/private/common/feedback.ftl"/>
               </p>
                         
             </div><!-- .content-box-inner -->

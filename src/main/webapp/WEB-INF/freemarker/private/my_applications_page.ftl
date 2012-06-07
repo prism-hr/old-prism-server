@@ -68,7 +68,8 @@
                   <option value="${category}">${category.displayValue()}</option>               
                   </#list>
                 </select>
-                <button class="blue" type="button">Go</button>
+                <button class="blue" type="button" id="search-go">Go</button>
+                <button type="button" id="search-clear">Clear</button>
               </div>
             
               <table class="data" border="0" >

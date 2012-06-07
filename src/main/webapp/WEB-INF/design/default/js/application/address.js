@@ -2,6 +2,18 @@ $(document).ready(function(){
 	
 	var addrImgCount = 0; 
 	
+	if($("#currentAddressInvalid").html() !== null || $("#currentAddressCountryInvalid").html() !== null
+			|| $("#contactAddressLocationInvalid").html() !== null || $("#contactAddressCountryInvalid").html() !== null
+			|| $("#currentAddressInvalidInvalid").html() !== null || $("#currentAddressCountryInvalid").html() !== null){
+		$("#addr-info-bar-div").switchClass("section-info-bar", "section-error-bar", 1);
+		$("#addr-info-bar-span").switchClass("info-text", "invalid-info-text", 1);
+		if(addrImgCount == 0){
+			$("#addr-info-bar-div .row").prepend('<span class=\"error-hint\" data-desc=\"Please provide all mandatory fields in this section.\"></span>');
+			addrImgCount = addrImgCount + 1;
+		}
+		addToolTips();
+	}
+	
 	$("#acceptTermsADValue").val("NO");
 	limitTextArea();
 

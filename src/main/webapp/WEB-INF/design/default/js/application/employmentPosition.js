@@ -182,6 +182,7 @@ function postEmploymentData(message){
 		message:message
 	},
    function(data) {
-     $('#positionSection').html(data);
+			$('#positionSection').html(data);
+			markSectionError('#positionSection');
    });
 }

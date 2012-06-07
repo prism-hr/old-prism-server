@@ -317,5 +317,6 @@ function postProgrammeData(message)
 		$.param(postData) + "&" + $('[input[name="suggestedSupervisors"]').serialize(),
 		function(data) {
 			$('#programmeDetailsSection').html(data);
+			markSectionError('#programmeDetailsSection');
 		});
 }

@@ -110,6 +110,7 @@ $(document).ready(function(){
 			
 			function(data) {
 				$('#additionalInformationSection').html(data);
+				markSectionError('#additionalInformationSection');
 			});
 		}
 

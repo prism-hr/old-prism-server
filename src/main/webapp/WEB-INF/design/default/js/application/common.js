@@ -176,7 +176,7 @@ function isFormEmpty($container)
 		{
 			// Checkboxes require checking for a checked state (as val() returns the checkbox's checked value).
 			if ($field.is(':checked') ||
-				 (($field.attr('type') != 'checkbox' && $field.attr('type') != 'radio') && $field.val() != ''))
+				 (($field.attr('type') != 'checkbox' && $field.attr('type') != 'radio') && $field.val()))
 			{
 				console.log($(this).attr('name') + ' is filled.');
 				filled++;

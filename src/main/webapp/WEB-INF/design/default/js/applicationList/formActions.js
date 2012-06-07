@@ -100,7 +100,7 @@ function populateApplicationList(reset)
 			searchCategory: $('#searchCategory').val(),
 			searchTerm:			$('#searchTerm').val(),
 			sortCategory:   $('#sort-column').val(),
-			sortOrder:      $('#sort-order').val()
+			order:      $('#sort-order').val()
 		};
 	}
 	

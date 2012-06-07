@@ -16,6 +16,8 @@ $(document).ready(function() {
 			window.location.href = "/pgadmissions/approved/moveToApproved?applicationId=" + id;
 		}else if($(this).val() == 'reject') {
 			window.location.href = "/pgadmissions/rejectApplication?applicationId=" + id;
+		}else if($(this).val() == 'restartApprovalRequest') {
+			window.location.href = "/pgadmissions/approval/requestRestart?applicationId=" + id;
 		}else if($(this).val() == 'comment') {
 			window.location.href = "/pgadmissions/comment?applicationId=" + id;
 		}else if($(this).val() == 'print') {

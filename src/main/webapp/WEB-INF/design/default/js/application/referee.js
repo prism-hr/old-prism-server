@@ -71,7 +71,15 @@ $(document).ready(function()
 		else
 		{
 			$("span[name='nonAcceptedRD']").html('');
-			postRefereeData("close");
+			// Check for a "dirty" referee form. If there is data try to submit it.
+			if (!isFormEmpty('#referencesSection'))
+			{
+				postRefereeData('close');
+			}
+			else
+			{
+				$('#refereeCloseButton').trigger('click');
+			}
 		}
 	});
 	

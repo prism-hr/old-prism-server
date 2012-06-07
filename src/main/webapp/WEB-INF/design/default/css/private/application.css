@@ -76,9 +76,10 @@ section.form-rows footer { background: #DDD; border-top: 1px solid #999; padding
 section.form-rows h3 { margin-bottom: 1em; }
 section.form-rows .row { line-height: 24px; margin-bottom: 2px; clear: left; }
 
-.admin_row { border-bottom: 1px solid #999; clear: left; line-height: 24px; margin-bottom: 2px; overflow: auto; }
-.admin_row_label { float: left; line-height: 1.2; width: 180px; margin-top: 4px; }
+.admin_row { border-bottom: 1px solid #999; clear: left; line-height: 24px; padding: 4px 0; }
+.admin_row_label { float: left; line-height: 1.2; width: 180px; }
 .admin_header { float: left; line-height: 1.2; width: 180px; margin-top: 4px; font-weight: bold; }
+.admin_row .field { padding: 0 !important; }
 
 section.form-rows > div.sub_section_admin { margin-bottom: 10px; overflow: hidden; padding-bottom: 8px; }
 

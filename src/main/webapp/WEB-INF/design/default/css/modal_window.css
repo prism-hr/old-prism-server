@@ -1,24 +1,19 @@
-			#dialog-overlay {
+#dialog-overlay {
+	width: 100%; 
+	height: 100%;
+	position: fixed; 
+	top: 0;
+	left: 0; 
+	display: none;
+	z-index: 3000; 
 
-				/* set it to fill the whil screen */
-				width:100%; 
-				height:100%;
-	
-				/* transparency for different browsers */
-				filter:alpha(opacity=50); 
-				-moz-opacity:0.5; 
-				-khtml-opacity: 0.5; 
-				opacity: 0.5; 
-				background:#000; 
-
-				/* make sure it appear behind the dialog box but above everything else */
-				position:absolute; 
-				top:0; left:0; 
-				z-index:3000; 
-
-				/* hide it by default */
-				display:none;
-			}
+	/* transparency for different browsers */
+	filter:alpha(opacity=50); 
+	-moz-opacity:0.5; 
+	-khtml-opacity: 0.5; 
+	opacity: 0.5; 
+	background:#000; 
+}
 
 
 			#dialog-box {
@@ -32,7 +27,7 @@
 				background:#e2e4e3;	
 
 				/* make sure it has the highest z-index */
-				position:absolute; 
+				position:fixed; 
 				z-index:5000; 
 
 				/* hide it by default */
@@ -60,6 +55,7 @@
     			text-align: justify;
     			width: 72%;
 				float: left;
+				line-height: 1.2;
 			}
 			
 			#dialog-icon{

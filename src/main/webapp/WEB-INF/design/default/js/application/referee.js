@@ -161,9 +161,13 @@ function postRefereeData(messsage){
 			phoneNumber: $("#refPhoneNumber").val(),
 			message:messsage
 	}
+
+	$('#referencesSection > div').append('<div class="ajax" />');
+
 	$.post( "/pgadmissions/update/editReferee" , $.param(postData),			
 			function(data) {
 				$('#referencesSection').html(data);
+				$('#referencesSection div.ajax').remove();
 				markSectionError('#referencesSection');
 			}
 	);

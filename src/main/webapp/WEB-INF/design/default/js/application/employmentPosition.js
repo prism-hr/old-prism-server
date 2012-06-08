@@ -165,6 +165,9 @@ function postEmploymentData(message){
 	if ($('#current:checked').val() !== undefined) {
 		 current = true;
 	}
+
+	$('#positionSection > div').append('<div class="ajax" />');
+
 	$.post("/pgadmissions/update/editEmploymentPosition",
 	{ 
 		position: $("#position_title").val(),
@@ -183,6 +186,7 @@ function postEmploymentData(message){
 	},
    function(data) {
 			$('#positionSection').html(data);
+			$('#positionSection div.ajax').remove();
 			markSectionError('#positionSection');
    });
 }

@@ -146,7 +146,9 @@ $(document).ready(function(){
 });
 
 
-function postFundingData(message){
+function postFundingData(message)
+{
+	$('#fundingSection > div').append('<div class="ajax" />');
 
 	$.post("/pgadmissions/update/editFunding",
 	{  
@@ -160,8 +162,10 @@ function postFundingData(message){
 		document: $('#document_SUPPORTING_FUNDING').val(),
 		message:message
 	},
-	function(data) {
+	function(data)
+	{
 		$('#fundingSection').html(data);
+		$('#fundingSection div.ajax').remove();
 		markSectionError('#fundingSection');
 	});
 }

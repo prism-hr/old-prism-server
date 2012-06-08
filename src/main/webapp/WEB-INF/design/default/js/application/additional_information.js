@@ -99,6 +99,8 @@ $(document).ready(function(){
 		{
 
 			$("span[name='nonAcceptedAID']").html('');
+			$('#additionalInformationSection > div').append('<div class="ajax" />');
+
 			$.post("/pgadmissions/update/editAdditionalInformation", { 
 				informationText: $("#informationText").val(),
 				convictions: hasConvictions,
@@ -108,8 +110,10 @@ $(document).ready(function(){
 				message:'close'
 			},
 			
-			function(data) {
+			function(data)
+			{
 				$('#additionalInformationSection').html(data);
+				$('#additionalInformationSection div.ajax').remove();
 				markSectionError('#additionalInformationSection');
 			});
 		}

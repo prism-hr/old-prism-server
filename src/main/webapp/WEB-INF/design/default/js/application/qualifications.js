@@ -240,7 +240,10 @@ $(document).ready(function(){
 	
 });
 
-function postQualificationData(message){
+function postQualificationData(message)
+{
+	$('#qualificationsSection > div').append('<div class="ajax" />');
+
 	$.post("/pgadmissions/update/editQualification", {  
 		qualificationSubject: $("#qualificationSubject").val(), 
 		qualificationInstitution: $("#qualificationInstitution").val(), 
@@ -260,6 +263,7 @@ function postQualificationData(message){
 	},
 	function(data) {
 		$('#qualificationsSection').html(data);
+		$('#qualificationsSection div.ajax').remove();
 		markSectionError('#qualificationsSection');
 	});
 }

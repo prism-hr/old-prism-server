@@ -17,6 +17,7 @@ import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Supervisor;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.propertyeditors.SupervisorPropertyEditor;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -116,11 +117,13 @@ public abstract class ApprovalController {
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-
 		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
+		RegisteredUser currentUser = userService.getCurrentUser();
 		if (application == null
-				|| (!userService.getCurrentUser().hasAdminRightsOnApplication(application) && !userService.getCurrentUser()
-						.isSupervisorOfApplicationForm(application))) {
+				|| (!currentUser.hasAdminRightsOnApplication(application) 
+						&& !currentUser.isSupervisorOfApplicationForm(application)
+						&& !currentUser.isInRoleInProgram(Authority.APPROVER, application.getProgram())
+					)) {
 			throw new ResourceNotFoundException();
 		}
 		return application;

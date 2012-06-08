@@ -4,7 +4,8 @@
 	<input type="hidden" id="userLastNameDP" name="userLastNameDP" value="${model.user.lastName}"/>
 	<input type="hidden" id="userEmailDP" name="userEmailDP" value="${model.user.email}"/>
 
-	<a class="blue button" type="button" id="feedbackButton" name="feedbackButton">Send Feedback</a>
+	<!-- Feedback button. -->
+	<a id="feedbackButton">Send Feedback</a>
   
   <!-- Insert JS -->
   <script type="text/javascript">
@@ -19,7 +20,8 @@
 	<input type="hidden" id="userLastNameDP" name="userLastNameDP" value="${user.lastName}"/>
 	<input type="hidden" id="userEmailDP" name="userEmailDP" value="${user.email}"/>
 	
-	<a class="blue button" type="button" id="feedbackButton" name="feedbackButton">Send Feedback</a>
+	<!-- Feedback button. -->
+	<a id="feedbackButton">Send Feedback</a>
 
   <!-- Insert JS -->
   <script type="text/javascript">

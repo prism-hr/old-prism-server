@@ -353,6 +353,7 @@ $(document).ready(function()
 	
 
 	bindDatePicker('#startDate');
+	addOverlay('#programmeDetailsSection');
 	addToolTips();
 });
 

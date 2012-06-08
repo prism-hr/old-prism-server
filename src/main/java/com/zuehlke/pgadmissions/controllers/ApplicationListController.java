@@ -65,8 +65,7 @@ public class ApplicationListController {
 	}
 
 	@ModelAttribute("message")
-	public String getMessage(@RequestParam(required = false) boolean submissionSuccess, @RequestParam(required = false) String decision
-			, @RequestParam(required = false) String message) {
+	public String getMessage(@RequestParam(required = false) boolean submissionSuccess, @RequestParam(required = false) String decision, @RequestParam(required = false) String message) {
 		if (submissionSuccess) {
 			return "Your application has been successfully submitted.";
 		}

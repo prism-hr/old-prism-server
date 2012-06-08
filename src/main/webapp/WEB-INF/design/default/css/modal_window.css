@@ -51,23 +51,12 @@
 
 			}
 
-			#dialog-box #dialog-message {
-				
-				padding: 15px 0 20px 15px;
-    			text-align: justify;
-    			width: 72%;
-				float: left;
-				line-height: 1.2;
-			}
-			
-			#dialog-icon{
-			
-   			 	min-height: 44px;
-			    min-width: 44px;
-    			background: url("../images/large_exclamation.png") no-repeat scroll left center transparent;
-				float: right;
-				margin-right: 20px;
-			}
+#dialog-box #dialog-message {
+	background: url("../images/large_exclamation.png") no-repeat 290px 15px;
+	padding: 15px 80px 15px 15px;
+	text-align: justify;
+	line-height: 1.2;
+}
 			
 			#dialog-box #dialog-row {
 				

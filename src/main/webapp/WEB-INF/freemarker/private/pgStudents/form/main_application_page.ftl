@@ -235,7 +235,7 @@
                         
                     <form id="withdrawApplicationForm" action="<@spring.url "/withdraw"/>" method="POST">
                       <input type="hidden" id="wapplicationFormId" name="applicationId"   value="${applicationForm.applicationNumber}"/>
-                      <button id="withdrawButton" class="blue">Withdraw</button>
+                      <button id="withdrawButton" class="red">Withdraw</button>
                       <a class="button" href="<@spring.url '/applications'/>">Close</a>                        
                     </form>                                      
                         <#elseif !applicationForm.isSubmitted() && user.isInRole('APPLICANT')>                     

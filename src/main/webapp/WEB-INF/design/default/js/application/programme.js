@@ -20,9 +20,12 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	$("input[name*='acceptTermsPDCB']").click(function()
 	{
-		if ($("#acceptTermsPDValue").val() =='YES'){
+		if ($("#acceptTermsPDValue").val() =='YES')
+		{
 			$("#acceptTermsPDValue").val("NO");
-		} else {	
+		}
+		else
+		{	
 			$("#acceptTermsPDValue").val("YES");
 			
 			// Remove any styling from the terms box.
@@ -69,7 +72,8 @@ $(document).ready(function()
 		
 		console.log(rowCount);
 		
-		if(rowCount == 0){
+		if (rowCount == 0)
+		{
 			$("#supervisors").hide();
 		}
 	});
@@ -135,23 +139,31 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	// Edit supervisor button.
 	// -------------------------------------------------------------------------------
-	$("#supervisor_div").on("click", "a[name=\"editSupervisorLink\"]", function(){
+	$("#supervisor_div").on("click", "a[name=\"editSupervisorLink\"]", function()
+	{
 		var id = this.id;
-		if(id.indexOf("us_") != -1){
+		if (id.indexOf("us_") != -1)
+		{
+			// Unsaved supervisor
 			id = id.replace('us_', '');
 			$("#supervisorFirstname").val($('#us_'+id+"firstname").val());
 			$("#supervisorLastname").val($('#us_'+id+"lastname").val());
 			$("#supervisorEmail").val($('#us_'+id+"email").val());
-			if ($('#us_'+id+'aware').val() =='YES'){
+			if ($('#us_'+id+'aware').val() =='YES')
+			{
 				$("#awareSupervisorCB").attr('checked', true);
 				$("#awareSupervisor").val("YES");
-			} else {
+			}
+			else
+			{
 				$("#awareSupervisorCB").attr('checked', false);
 				$("#awareSupervisor").val("NO");
  			}
 			$('#'+id+"_ussupervisors").val('');
 		}
-		else{
+		else
+		{
+			// Saved supervisor
 			id = id.replace('supervisor_', '');
 			$("#supervisorId").val(id);
 			$('#'+id+"_supervisors").val('');
@@ -167,30 +179,24 @@ $(document).ready(function()
 			}
 			$('#'+id+"_supervisors").val('');
 		}
-			$("#addSupervisorButton").hide();
-			$("#updateSupervisorButton").show();
+		$("#addSupervisorButton").hide();
+		$("#updateSupervisorButton").show();
 //			$(this).parent("span").remove();
 //			$(this).parent().parent().remove();
 	});
 	
-	$('#programmeCancelButton').click(function(){
-		$("#addSupervisorButton").show();
-		$("#updateSupervisorButton").hide();
-		$.get("/pgadmissions/update/getProgrammeDetails",
-				{
-					applicationId:  $('#applicationId').val(),					
-					cacheBreaker: new Date().getTime()					
-				},
-				function(data) {
-					$('#programmeDetailsSection').html(data);
-				}
-		);
-	});
 	
-	$("input[name*='awareSupervisorCB']").click(function() {
-		if ($("#awareSupervisor").val() =='YES'){
+	// -------------------------------------------------------------------------------
+	// Supervisor "aware" checkbox.
+	// -------------------------------------------------------------------------------
+	$("input[name*='awareSupervisorCB']").click(function()
+	{
+		if ($("#awareSupervisor").val() =='YES')
+		{
 			$("#awareSupervisor").val("NO");
-		} else {		
+		}
+		else
+		{		
 			$("#awareSupervisor").val("YES");
 		}
 	});
@@ -325,6 +331,24 @@ $(document).ready(function()
 	});
 
 	
+	// -------------------------------------------------------------------------------
+	// Cancel Programme Details button.
+	// -------------------------------------------------------------------------------
+	$('#programmeCancelButton').click(function(){
+		$("#addSupervisorButton").show();
+		$("#updateSupervisorButton").hide();
+		$.get("/pgadmissions/update/getProgrammeDetails",
+				{
+					applicationId:  $('#applicationId').val(),					
+					cacheBreaker: new Date().getTime()					
+				},
+				function(data) {
+					$('#programmeDetailsSection').html(data);
+				}
+		);
+	});
+	
+
 	bindDatePicker('#startDate');
 	addToolTips();
 });

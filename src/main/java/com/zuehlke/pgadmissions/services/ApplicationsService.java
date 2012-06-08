@@ -22,7 +22,8 @@ import com.zuehlke.pgadmissions.domain.enums.SortOrder;
 
 @Service("applicationsService")
 public class ApplicationsService {
-
+	private final int APPLICATION_BLOCK_SIZE = 25;
+	
 	private final ApplicationFormDAO applicationFormDAO;
 
 	ApplicationsService() {
@@ -32,17 +33,6 @@ public class ApplicationsService {
 	@Autowired
 	public ApplicationsService(ApplicationFormDAO applicationFormDAO) {
 		this.applicationFormDAO = applicationFormDAO;
-	}
-
-	/**
-	 * @deprecated use {@link #getAllVisibleAndMatchedApplications(RegisteredUser, SearchCategory, String, SortCategory, SortOrder)} instead.
-	 * @param user
-	 * @return
-	 */
-	@Deprecated
-	@Transactional
-	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
-		return getAllVisibleAndMatchedApplications(user, null, null, null, null);
 	}
 
 	public ApplicationForm getApplicationById(Integer id) {
@@ -111,22 +101,26 @@ public class ApplicationsService {
 		return null;
 	}
 
-	@Transactional
-	public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,// 
-			SearchCategory searchCategory, String term) {
-		return getAllVisibleAndMatchedApplications(user, searchCategory, term, null, null);
-	}
-
+	/**
+	 * Returns all applications matching the given parameters
+	 * @param user
+	 * @param searchCategory
+	 * @param term
+	 * @param sortCategory
+	 * @param sortOrder
+	 * @param blockCount number of blocks of applications which should be returned (see {@link #APPLICATION_BLOCK_SIZE}).
+	 * @return
+	 */
 	@Transactional
 	public List<ApplicationForm> getAllVisibleAndMatchedApplications(RegisteredUser user,// 
 			SearchCategory searchCategory, String term,//
-			SortCategory sortCategory, SortOrder sortOrder) {
+			SortCategory sortCategory, SortOrder sortOrder, int blockCount) {
 
-		List<ApplicationForm> visibleAndMatchedApplications = new ArrayList<ApplicationForm>();
+		List<ApplicationForm> matchingApplications = new ArrayList<ApplicationForm>();
 		List<ApplicationForm> visibleApplications = applicationFormDAO.getVisibleApplications(user);
 
 		if (searchCategory == null) {
-			visibleAndMatchedApplications = visibleApplications;
+			matchingApplications = visibleApplications;
 		} else {
 			if (term == null) {
 				throw new IllegalArgumentException("Search term cannot be null when a search-category is set!");
@@ -134,19 +128,19 @@ public class ApplicationsService {
 			for (ApplicationForm applicationForm : visibleApplications) {
 				if (searchCategory == SearchCategory.APPLICATION_NUMBER) {
 					if (applicationForm.getApplicationNumber().toLowerCase().contains(term.toLowerCase())) {
-						visibleAndMatchedApplications.add(applicationForm);
+						matchingApplications.add(applicationForm);
 					}
 				}
 				if (searchCategory == SearchCategory.PROGRAMME_NAME) {
 					String fullProgramName = applicationForm.getProgram().getCode() + applicationForm.getProgram().getTitle();
 					if (fullProgramName.toLowerCase().contains(term.toLowerCase())) {
-						visibleAndMatchedApplications.add(applicationForm);
+						matchingApplications.add(applicationForm);
 					}
 				}
 				if (searchCategory == SearchCategory.APPLICANT_NAME) {
 					String fullApplicantName = applicationForm.getApplicant().getFirstName() + applicationForm.getApplicant().getLastName();
 					if (fullApplicantName.toLowerCase().contains(term.toLowerCase())) {
-						visibleAndMatchedApplications.add(applicationForm);
+						matchingApplications.add(applicationForm);
 					}
 				}
 				if (searchCategory == SearchCategory.APPLICATION_STATUS) {
@@ -158,14 +152,15 @@ public class ApplicationsService {
 					}
 					if (matchedStatus != null) {
 						if (applicationForm.getStatus() == matchedStatus) {
-							visibleAndMatchedApplications.add(applicationForm);
+							matchingApplications.add(applicationForm);
 						}
 					}
 				}
 			}
 		}
-		sortApplicationList(visibleAndMatchedApplications, sortCategory, sortOrder);
-		return visibleAndMatchedApplications;
+		matchingApplications = sortApplicationList(matchingApplications, sortCategory, sortOrder);
+		matchingApplications = reduceApplicationListSize(matchingApplications, blockCount);
+		return matchingApplications;
 	}
 
 	private List<ApplicationForm> sortApplicationList(List<ApplicationForm> applications, SortCategory sortCategory, SortOrder sortOrder) {
@@ -178,5 +173,16 @@ public class ApplicationsService {
 		}
 		Collections.sort(applications, sortCategory.getComparator(sortOrder));
 		return applications;
+	}
+	
+	private List<ApplicationForm> reduceApplicationListSize(List<ApplicationForm> applications, int blockCount) {
+		if( blockCount < 1) {
+			throw new IllegalArgumentException("Number of application blocks must be greater than 0!");
+		}
+		int toIndex = blockCount * APPLICATION_BLOCK_SIZE;
+		if( toIndex > applications.size()) {
+			return applications;
+		}
+		return applications.subList(0, toIndex);
 	}
 }

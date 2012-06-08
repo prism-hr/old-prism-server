@@ -6,8 +6,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -43,7 +45,6 @@ public class ApplicationsServiceTest {
 	private ApplicationFormDAO applicationFormDAOMock;
 	private ApplicationsService applicationsService;
 
-
 	@Before
 	public void setUp() {
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
@@ -62,7 +63,7 @@ public class ApplicationsServiceTest {
 		ApplicationForm form = new ApplicationFormBuilder().id(1).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(Arrays.asList(form));
 		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> visibleApplications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, null, null);
+		List<ApplicationForm> visibleApplications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, null, null, 1);
 		EasyMock.verify(applicationFormDAOMock);
 		Assert.assertTrue(visibleApplications.contains(form));
 		Assert.assertEquals(1, visibleApplications.size());
@@ -70,8 +71,7 @@ public class ApplicationsServiceTest {
 
 	@Test
 	public void shouldGetAllApplicationsDueAndUpdatedNotificationToAdmin() {
-		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2)
-				.toApplicationForm());
+		List<ApplicationForm> applicationsList = Arrays.asList(new ApplicationFormBuilder().id(1).toApplicationForm(), new ApplicationFormBuilder().id(2).toApplicationForm());
 		EasyMock.expect(applicationFormDAOMock.getApplicationsDueUpdateNotification()).andReturn(applicationsList);
 		EasyMock.replay(applicationFormDAOMock);
 		List<ApplicationForm> appsDueUpdateNotification = applicationsService.getApplicationsDueUpdateNotification();
@@ -79,10 +79,9 @@ public class ApplicationsServiceTest {
 		assertSame(applicationsList, appsDueUpdateNotification);
 	}
 
-	
 	@Test
-	public void shouldGetApplicationsOrderedByCreationDateThenSubmissionDateFirst() throws  ParseException {
-		
+	public void shouldGetApplicationsOrderedByCreationDateThenSubmissionDateFirst() throws ParseException {
+
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
 		ApplicationForm appOne = new ApplicationFormBuilder().id(1).appDate(format.parse("01 01 2012")).toApplicationForm();
 		ApplicationForm appTwo = new ApplicationFormBuilder().id(2).appDate(format.parse("01 01 2012")).submittedDate(format.parse("01 04 2012")).toApplicationForm();
@@ -90,14 +89,14 @@ public class ApplicationsServiceTest {
 		ApplicationForm appFour = new ApplicationFormBuilder().id(4).appDate(format.parse("01 02 2012")).submittedDate(format.parse("01 03 2012")).toApplicationForm();
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(Arrays.asList(appOne, appTwo, appThree, appFour));
 		EasyMock.replay(applicationFormDAOMock);
-		List<ApplicationForm> visibleApps = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, null, null);
+		List<ApplicationForm> visibleApps = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, null, null, 1);
 		EasyMock.verify(applicationFormDAOMock);
 		assertEquals(appOne, visibleApps.get(0));
 		assertEquals(appThree, visibleApps.get(1));
 		assertEquals(appFour, visibleApps.get(2));
 		assertEquals(appTwo, visibleApps.get(3));
 	}
-	
+
 	@Test
 	public void shouldGetApplicationById() {
 		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
@@ -107,7 +106,7 @@ public class ApplicationsServiceTest {
 		Assert.assertEquals(application, applicationsService.getApplicationById(234));
 		EasyMock.verify(applicationFormDAOMock);
 	}
-	
+
 	@Test
 	public void shouldGetApplicationbyApplicationNumber() {
 		ApplicationForm application = EasyMock.createMock(ApplicationForm.class);
@@ -117,8 +116,8 @@ public class ApplicationsServiceTest {
 		Assert.assertEquals(application, applicationsService.getApplicationByApplicationNumber("ABC"));
 		EasyMock.verify(applicationFormDAOMock);
 	}
-	
-	@Test	
+
+	@Test
 	public void shouldCreateAndSaveNewApplicationForm() {
 		Program program = new ProgramBuilder().code("KLOP").id(1).toProgram();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
@@ -143,9 +142,8 @@ public class ApplicationsServiceTest {
 
 	}
 
-
 	@Test
-	public void shouldReturnReviewIfRejectedInReviewPhase() throws ParseException{
+	public void shouldReturnReviewIfRejectedInReviewPhase() throws ParseException {
 		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
 		Event reviewEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
 		Event rejectedEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/05/05")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
@@ -153,9 +151,9 @@ public class ApplicationsServiceTest {
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		Assert.assertEquals(ApplicationFormStatus.REVIEW, stage);
 	}
-	
+
 	@Test
-	public void shouldReturnInterviewIfRejectedInInterviewPhase() throws ParseException{
+	public void shouldReturnInterviewIfRejectedInInterviewPhase() throws ParseException {
 		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
 		Event interviewEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.INTERVIEW).toEvent();
 		Event rejectedEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/05/05")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
@@ -163,9 +161,9 @@ public class ApplicationsServiceTest {
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		Assert.assertEquals(ApplicationFormStatus.INTERVIEW, stage);
 	}
-	
+
 	@Test
-	public void shouldReturnInterviewIfRejectedInApprovalPhaseAndPreviousOfApprovalIsInterview() throws ParseException{
+	public void shouldReturnInterviewIfRejectedInApprovalPhaseAndPreviousOfApprovalIsInterview() throws ParseException {
 		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
 		Event interviewEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.INTERVIEW).toEvent();
 		Event approvalEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
@@ -175,9 +173,9 @@ public class ApplicationsServiceTest {
 		Assert.assertEquals(ApplicationFormStatus.INTERVIEW, stage);
 
 	}
-	
+
 	@Test
-	public void shouldReturnReviewIfRejectedInApprovalPhaseAndPreviousOfApprovalIsReview() throws ParseException{
+	public void shouldReturnReviewIfRejectedInApprovalPhaseAndPreviousOfApprovalIsReview() throws ParseException {
 		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
 		Event reviewEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
 		Event approvalEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
@@ -187,9 +185,9 @@ public class ApplicationsServiceTest {
 		Assert.assertEquals(ApplicationFormStatus.REVIEW, stage);
 
 	}
-	
+
 	@Test
-	public void shouldReturnValidationIfRejectedInApprovalPhaseAndPreviousOfApprovalIsValidation() throws ParseException{
+	public void shouldReturnValidationIfRejectedInApprovalPhaseAndPreviousOfApprovalIsValidation() throws ParseException {
 		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
 		Event approvalEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
 		Event rejectedEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/05/05")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
@@ -197,9 +195,9 @@ public class ApplicationsServiceTest {
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		Assert.assertEquals(ApplicationFormStatus.VALIDATION, stage);
 	}
-	
+
 	@Test
-	public void shouldReturnNullIfNotRejected() throws ParseException{
+	public void shouldReturnNullIfNotRejected() throws ParseException {
 		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
 		Event reviewEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
 		Event approvalEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
@@ -207,15 +205,15 @@ public class ApplicationsServiceTest {
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		Assert.assertNull(stage);
 	}
-	
+
 	@Test
-	public void shouldReturnCurrentEventIfOnlyOneEvent() throws ParseException{
+	public void shouldReturnCurrentEventIfOnlyOneEvent() throws ParseException {
 		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
 		ApplicationForm application = new ApplicationFormBuilder().id(1).events(validationEvent).toApplicationForm();
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		Assert.assertEquals(validationEvent.getNewStatus(), stage);
 	}
-	
+
 	@Test
 	public void shouldReturnFirstEventIfOnlyTwoEventsAndLastOneIsRejected() {
 		Calendar cal = Calendar.getInstance();
@@ -226,7 +224,7 @@ public class ApplicationsServiceTest {
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		Assert.assertEquals(ApplicationFormStatus.UNSUBMITTED, stage);
 	}
-	
+
 	@Test
 	public void shouldReturnCurrentEventIfOnlyTwoEventsAndLastOneIsNotRejected() {
 		Calendar cal = Calendar.getInstance();
@@ -241,131 +239,127 @@ public class ApplicationsServiceTest {
 	@Test
 	public void shouldThrowIllegalArgumentExceptionIfSearchTermNotSet() {
 		try {
-			applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_NUMBER, null);
+			applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_NUMBER, null, null, null, 1);
 			Assert.fail("expected exception not thrown!");
 		} catch (IllegalArgumentException iae) {
 			Assert.assertTrue(iae.getMessage().startsWith("Search term cannot be null"));
 		}
 	}
-	
+
 	@Test
-	public void shouldGetAllApplicationsContainingBiologyInTheirNumber() throws ParseException{
+	public void shouldGetAllApplicationsContainingBiologyInTheirNumber() throws ParseException {
 		Program program = new ProgramBuilder().id(1).toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().applicationNumber("App_Biology").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().applicationNumber("ABCD").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().applicationNumber("BIOLOGY1").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
-		
+
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(//
 				Arrays.asList(applicationFormOne, applicationFormTwo, applicationFormThree, applicationFormFour));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_NUMBER, "BiOlOgY");
-		
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_NUMBER, "BiOlOgY", null, null, 1);
+
 		EasyMock.verify(applicationFormDAOMock);
 		assertEquals(2, applications.size());
 	}
-	
+
 	@Test
-	public void shouldGetApplicationBelongingToProgramWithCodeScienceAndOtherTitle(){
+	public void shouldGetApplicationBelongingToProgramWithCodeScienceAndOtherTitle() {
 		Program programOne = new ProgramBuilder().code("Program_ZZZZZ_1").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
-		
+
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(Arrays.asList(applicationFormOne));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.PROGRAMME_NAME, "zzZZz");
-		
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.PROGRAMME_NAME, "zzZZz", null, null, 1);
+
 		EasyMock.verify(applicationFormDAOMock);
 		assertEquals(1, applications.size());
-		
+
 	}
-	
+
 	@Test
-	public void shouldGetApplicationBelongingToProgramWithTitleScienceAndOtherCode(){
+	public void shouldGetApplicationBelongingToProgramWithTitleScienceAndOtherCode() {
 		Program programOne = new ProgramBuilder().code("empty").title("Program_ZZZZZ_1").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
-		
+
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(Arrays.asList(applicationFormOne));
 		EasyMock.replay(applicationFormDAOMock);
 
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.PROGRAMME_NAME, "zzZZz");
-		
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.PROGRAMME_NAME, "zzZZz", null, null, 1);
+
 		EasyMock.verify(applicationFormDAOMock);
 		assertEquals(1, applications.size());
-		
+
 	}
-	
+
 	@Test
-	public void shouldNotReturnAppIfTermNotInProgrameCodeOrTitle(){
+	public void shouldNotReturnAppIfTermNotInProgrameCodeOrTitle() {
 		Program programOne = new ProgramBuilder().code("empty").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(user).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
-		
+
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(Arrays.asList(applicationFormOne));
 		EasyMock.replay(applicationFormDAOMock);
 
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.PROGRAMME_NAME, "zzZZz");
-		
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.PROGRAMME_NAME, "zzZZz", null, null, 1);
+
 		EasyMock.verify(applicationFormDAOMock);
 		assertEquals(0, applications.size());
-		
-	}
-	
-	@Test
-	public void shouldGetApplicationBelongingToApplicantMatchingFirstNameFred(){
-		Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
-		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("FredzzZZZZZerick").lastName("Doe").email("email@test.com").username("freddy").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
-		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
-		
-		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(Arrays.asList(applicationFormOne));
-		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICANT_NAME, "zzZZz");
 
-		EasyMock.verify(applicationFormDAOMock);
-		assertEquals(1, applications.size());
-		
 	}
-	
+
 	@Test
-	public void shouldGetApplicationBelongingToApplicantMatchingLastName(){
+	public void shouldGetApplicationBelongingToApplicantMatchingFirstNameFred() {
 		Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
-		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com").username("freddy").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("FredzzZZZZZerick").lastName("Doe").email("email@test.com").username("freddy").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(Arrays.asList(applicationFormOne));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICANT_NAME, "zzZZz");
-		
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICANT_NAME, "zzZZz", null, null, 1);
+
 		EasyMock.verify(applicationFormDAOMock);
 		assertEquals(1, applications.size());
-		
+
 	}
-	
+
 	@Test
-	public void shouldNotReturnAppIfTermNotInApplicantNameFirstOrLastName(){
+	public void shouldGetApplicationBelongingToApplicantMatchingLastName() {
+		Program programOne = new ProgramBuilder().code("Program_Science_1").title("empty").toProgram();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Frederick").lastName("FredzzZZZZZerick").email("email@test.com").username("freddy").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
+
+		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(Arrays.asList(applicationFormOne));
+		EasyMock.replay(applicationFormDAOMock);
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICANT_NAME, "zzZZz", null, null, 1);
+
+		EasyMock.verify(applicationFormDAOMock);
+		assertEquals(1, applications.size());
+
+	}
+
+	@Test
+	public void shouldNotReturnAppIfTermNotInApplicantNameFirstOrLastName() {
 		Program programOne = new ProgramBuilder().code("empty").title("empty").toProgram();
-		RegisteredUser applicant  = new RegisteredUserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").username("freddy").password("password")
-				.accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Frederick").lastName("unique").email("email@test.com").username("freddy").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().applicationNumber("ABC").program(programOne).applicant(applicant).status(ApplicationFormStatus.APPROVAL).toApplicationForm();
 
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(Arrays.asList(applicationFormOne));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICANT_NAME, "empty");
-		
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICANT_NAME, "empty", null, null, 1);
+
 		EasyMock.verify(applicationFormDAOMock);
 		assertEquals(0, applications.size());
-		
+
 	}
-	
 
 	@Test
-	public void shouldGetAllApplicationsInValidationStage() throws ParseException{
-		Program program = new ProgramBuilder().code("empty").title("empty").toProgram(); 
+	public void shouldGetAllApplicationsInValidationStage() throws ParseException {
+		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.VALIDATION).applicationNumber("ABC").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicationNumber("App_Biology").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.VALIDATION).applicationNumber("ABCD").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).toApplicationForm();
@@ -374,18 +368,17 @@ public class ApplicationsServiceTest {
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(//
 				Arrays.asList(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_STATUS, "validati");
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_STATUS, "validati", null, null, 1);
 		EasyMock.verify(applicationFormDAOMock);
 		assertEquals(2, applications.size());
 		assertTrue(applications.contains(applicationFormOne));
 		assertTrue(applications.contains(applicationFormThree));
 	}
-	
-	
+
 	@Test
-	public void shouldGetAllApplicationsInApprovalStage(){
-		Program program = new ProgramBuilder().code("empty").title("empty").toProgram(); 
+	public void shouldGetAllApplicationsInApprovalStage() {
+		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVAL).applicationNumber("ABC").program(program).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicationNumber("App_Biology").program(program).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).applicant(user).toApplicationForm();
@@ -394,17 +387,17 @@ public class ApplicationsServiceTest {
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(//
 				Arrays.asList(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_STATUS, "approval");
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_STATUS, "approval", null, null, 1);
 		EasyMock.verify(applicationFormDAOMock);
 		assertEquals(1, applications.size());
 		assertTrue(applications.contains(applicationFormOne));
-		
+
 	}
-	
+
 	@Test
-	public void shouldGetAllApplicationsInApprovedStage() throws ParseException{
-		Program program = new ProgramBuilder().code("empty").title("empty").toProgram(); 
+	public void shouldGetAllApplicationsInApprovedStage() throws ParseException {
+		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicationNumber("App_Biology").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).toApplicationForm();
@@ -413,43 +406,43 @@ public class ApplicationsServiceTest {
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(//
 				Arrays.asList(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_STATUS, "approveD");
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_STATUS, "approveD", null, null, 1);
 		EasyMock.verify(applicationFormDAOMock);
 		assertTrue(applications.contains(applicationFormOne));
 	}
-	
+
 	@Test
-	public void shouldNotReturnAppIfNoStatusMatching() throws ParseException{
-		Program program = new ProgramBuilder().code("empty").title("empty").toProgram(); 
+	public void shouldNotReturnAppIfNoStatusMatching() throws ParseException {
+		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicationNumber("App_Biology").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().id(4).applicationNumber("BIOLOGY1").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).toApplicationForm();
-		
+
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(//
 				Arrays.asList(applicationFormFour, applicationFormOne, applicationFormThree, applicationFormTwo));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_STATUS, "lalala");
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_STATUS, "lalala", null, null, 1);
 
 		EasyMock.verify(applicationFormDAOMock);
 		assertEquals(0, applications.size());
 	}
-	
+
 	@Test
 	public void shouldThrowIllegalArgumentExceptionIfSortOrderNotSet() {
 		try {
-			applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.APPLICANT_NAME, null);
+			applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.APPLICANT_NAME, null, 1);
 			Assert.fail("expected exception not thrown!");
 		} catch (IllegalArgumentException iae) {
 			Assert.assertTrue(iae.getMessage().startsWith("Sort order cannot be null"));
 		}
 	}
-	
+
 	@Test
-	public void shouldSearchAndSort() throws ParseException{
-		Program program = new ProgramBuilder().code("empty").title("empty").toProgram(); 
+	public void shouldSearchAndSort() throws ParseException {
+		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.INTERVIEW).applicationNumber("ABC").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicationNumber("App_Biology").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/04")).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.VALIDATION).applicationNumber("ABCD").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/05")).applicant(user).toApplicationForm();
@@ -458,8 +451,8 @@ public class ApplicationsServiceTest {
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(//
 				Arrays.asList(applicationFormFour, applicationFormThree, applicationFormOne, applicationFormTwo));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_NUMBER, "AB", SortCategory.APPLICATION_STATUS, SortOrder.DESCENDING);
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, SearchCategory.APPLICATION_NUMBER, "AB", SortCategory.APPLICATION_STATUS, SortOrder.DESCENDING, 1);
 		EasyMock.verify(applicationFormDAOMock);
 		assertEquals(2, applications.size());
 		assertEquals(1, applications.get(0).getId().intValue());
@@ -467,7 +460,7 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldSortApplicationInNaturalSortOrder() throws ParseException{
+	public void shouldSortApplicationInNaturalSortOrder() throws ParseException {
 		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program).applicant(user).toApplicationForm();
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicationNumber("App_Biology").program(program).submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/03")).applicant(user).toApplicationForm();
@@ -478,7 +471,7 @@ public class ApplicationsServiceTest {
 				Arrays.asList(applicationFormThree, applicationFormOne, applicationFormFour, applicationFormTwo));
 		EasyMock.replay(applicationFormDAOMock);
 
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, null, null);
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, null, null, 1);
 
 		EasyMock.verify(applicationFormDAOMock);
 
@@ -489,51 +482,51 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldSortApplicationWithApplName() throws ParseException{
-		RegisteredUser applicant1= new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant2= new RegisteredUserBuilder().id(2).firstName("AAAA").lastName("CCCC").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant3=new RegisteredUserBuilder().id(3).firstName("BBBB").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant4= new RegisteredUserBuilder().id(4).firstName("CCCC").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+	public void shouldSortApplicationWithApplName() throws ParseException {
+		RegisteredUser applicant1 = new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant2 = new RegisteredUserBuilder().id(2).firstName("AAAA").lastName("CCCC").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant3 = new RegisteredUserBuilder().id(3).firstName("BBBB").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant4 = new RegisteredUserBuilder().id(4).firstName("CCCC").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).applicant(applicant1).status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).toApplicationForm();
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).applicant(applicant2).applicationNumber("App_Biology").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/03")).toApplicationForm();
 		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).applicant(applicant3).status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).toApplicationForm();
 		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().id(4).applicant(applicant4).applicationNumber("BIOLOGY1").program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2013/03/03")).toApplicationForm();
-		
+
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(//
 				Arrays.asList(applicationFormThree, applicationFormOne, applicationFormFour, applicationFormTwo));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING);
-		
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1);
+
 		EasyMock.verify(applicationFormDAOMock);
-		
+
 		Assert.assertEquals(1, applications.get(0).getId().intValue());
 		Assert.assertEquals(2, applications.get(1).getId().intValue());
 		Assert.assertEquals(3, applications.get(2).getId().intValue());
 		Assert.assertEquals(4, applications.get(3).getId().intValue());
 	}
-	
+
 	@Test
-	public void shouldSortApplicationWithApplDate() throws ParseException{
-		RegisteredUser applicant1= new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant2= new RegisteredUserBuilder().id(2).firstName("AAAA").lastName("CCCC").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant3=new RegisteredUserBuilder().id(3).firstName("BBBB").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant4= new RegisteredUserBuilder().id(4).firstName("CCCC").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+	public void shouldSortApplicationWithApplDate() throws ParseException {
+		RegisteredUser applicant1 = new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant2 = new RegisteredUserBuilder().id(2).firstName("AAAA").lastName("CCCC").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant3 = new RegisteredUserBuilder().id(3).firstName("BBBB").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant4 = new RegisteredUserBuilder().id(4).firstName("CCCC").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant1).status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program).toApplicationForm();
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).applicant(applicant2).applicationNumber("App_Biology").program(program).toApplicationForm();
 		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/05/05")).applicant(applicant3).status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).toApplicationForm();
 		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().id(4).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/06/06")).applicant(applicant4).applicationNumber("BIOLOGY1").program(program).toApplicationForm();
-		
+
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(//
 				Arrays.asList(applicationFormOne, applicationFormThree, applicationFormFour, applicationFormTwo));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.APPLICATION_DATE, SortOrder.ASCENDING);
-		
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.APPLICATION_DATE, SortOrder.ASCENDING, 1);
+
 		EasyMock.verify(applicationFormDAOMock);
-		
+
 		Assert.assertEquals(1, applications.get(0).getId().intValue());
 		Assert.assertEquals(4, applications.get(1).getId().intValue());
 		Assert.assertEquals(2, applications.get(2).getId().intValue());
@@ -541,25 +534,25 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldSortApplicationWithApplDateDescending() throws ParseException{
-		RegisteredUser applicant1= new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant2= new RegisteredUserBuilder().id(2).firstName("AAAA").lastName("CCCC").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant3=new RegisteredUserBuilder().id(3).firstName("BBBB").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant4= new RegisteredUserBuilder().id(4).firstName("CCCC").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+	public void shouldSortApplicationWithApplDateDescending() throws ParseException {
+		RegisteredUser applicant1 = new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant2 = new RegisteredUserBuilder().id(2).firstName("AAAA").lastName("CCCC").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant3 = new RegisteredUserBuilder().id(3).firstName("BBBB").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant4 = new RegisteredUserBuilder().id(4).firstName("CCCC").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant1).status(ApplicationFormStatus.APPROVED).applicationNumber("ABC").program(program).toApplicationForm();
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).applicant(applicant2).applicationNumber("App_Biology").program(program).toApplicationForm();
 		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).submittedDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/05/05")).applicant(applicant3).status(ApplicationFormStatus.APPROVED).applicationNumber("ABCD").program(program).toApplicationForm();
 		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().id(4).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/06/06")).applicant(applicant4).applicationNumber("BIOLOGY1").program(program).toApplicationForm();
-		
+
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(//
 				Arrays.asList(applicationFormOne, applicationFormThree, applicationFormFour, applicationFormTwo));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.APPLICATION_DATE, SortOrder.DESCENDING);
-		
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.APPLICATION_DATE, SortOrder.DESCENDING, 1);
+
 		EasyMock.verify(applicationFormDAOMock);
-		
+
 		Assert.assertEquals(3, applications.get(0).getId().intValue());
 		Assert.assertEquals(2, applications.get(1).getId().intValue());
 		Assert.assertEquals(4, applications.get(2).getId().intValue());
@@ -567,25 +560,25 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldSortApplicationWithApplStatus() throws ParseException{
-		RegisteredUser applicant1= new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant2= new RegisteredUserBuilder().id(2).firstName("AAAA").lastName("CCCC").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant3=new RegisteredUserBuilder().id(3).firstName("BBBB").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant4= new RegisteredUserBuilder().id(4).firstName("CCCC").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+	public void shouldSortApplicationWithApplStatus() throws ParseException {
+		RegisteredUser applicant1 = new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant2 = new RegisteredUserBuilder().id(2).firstName("AAAA").lastName("CCCC").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant3 = new RegisteredUserBuilder().id(3).firstName("BBBB").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant4 = new RegisteredUserBuilder().id(4).firstName("CCCC").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
 		final ApplicationForm applicationFormOne = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVED).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).applicant(applicant1).applicationNumber("ABC").program(program).toApplicationForm();
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).status(ApplicationFormStatus.INTERVIEW).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/04")).applicant(applicant2).applicationNumber("App_Biology").program(program).toApplicationForm();
 		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.REVIEW).applicant(applicant3).applicationNumber("ABCD").program(program).toApplicationForm();
 		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().id(4).status(ApplicationFormStatus.UNSUBMITTED).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/05")).applicant(applicant4).applicationNumber("BIOLOGY1").program(program).toApplicationForm();
-		
+
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(//
 				Arrays.asList(applicationFormThree, applicationFormFour, applicationFormOne, applicationFormTwo));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.APPLICATION_STATUS, SortOrder.DESCENDING);
-		
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.APPLICATION_STATUS, SortOrder.DESCENDING, 1);
+
 		EasyMock.verify(applicationFormDAOMock);
-		
+
 		Assert.assertEquals(1, applications.get(0).getId().intValue());
 		Assert.assertEquals(2, applications.get(1).getId().intValue());
 		Assert.assertEquals(3, applications.get(2).getId().intValue());
@@ -593,11 +586,11 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldSortApplicationWithProgramName() throws ParseException{
-		RegisteredUser applicant1= new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant2= new RegisteredUserBuilder().id(2).firstName("AAAA").lastName("CCCC").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant3=new RegisteredUserBuilder().id(3).firstName("BBBB").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
-		RegisteredUser applicant4= new RegisteredUserBuilder().id(4).firstName("CCCC").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+	public void shouldSortApplicationWithProgramName() throws ParseException {
+		RegisteredUser applicant1 = new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant2 = new RegisteredUserBuilder().id(2).firstName("AAAA").lastName("CCCC").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant3 = new RegisteredUserBuilder().id(3).firstName("BBBB").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		RegisteredUser applicant4 = new RegisteredUserBuilder().id(4).firstName("CCCC").lastName("AAAA").role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
 		Program program1 = new ProgramBuilder().code("empty").title("AAA").toProgram();
 		Program program2 = new ProgramBuilder().code("empty").title("CCC").toProgram();
 		Program program3 = new ProgramBuilder().code("empty").title("BBB").toProgram();
@@ -606,21 +599,88 @@ public class ApplicationsServiceTest {
 		final ApplicationForm applicationFormTwo = new ApplicationFormBuilder().id(2).program(program2).status(ApplicationFormStatus.INTERVIEW).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/04")).applicant(applicant2).applicationNumber("App_Biology").toApplicationForm();
 		final ApplicationForm applicationFormThree = new ApplicationFormBuilder().id(3).program(program3).status(ApplicationFormStatus.REVIEW).applicant(applicant3).applicationNumber("ABCD").toApplicationForm();
 		final ApplicationForm applicationFormFour = new ApplicationFormBuilder().id(4).program(program4).status(ApplicationFormStatus.UNSUBMITTED).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/05")).applicant(applicant4).applicationNumber("BIOLOGY1").toApplicationForm();
-		
+
 		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(//
 				Arrays.asList(applicationFormThree, applicationFormFour, applicationFormOne, applicationFormTwo));
 		EasyMock.replay(applicationFormDAOMock);
-		
-		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING);
-		
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, SortCategory.PROGRAMME_NAME, SortOrder.DESCENDING, 1);
+
 		EasyMock.verify(applicationFormDAOMock);
-		
+
 		Assert.assertEquals(4, applications.get(0).getId().intValue());
 		Assert.assertEquals(2, applications.get(1).getId().intValue());
 		Assert.assertEquals(3, applications.get(2).getId().intValue());
 		Assert.assertEquals(1, applications.get(3).getId().intValue());
 	}
-	
+
+	@Test
+	public void shouldLimitApplicationList() throws ParseException {
+		List<ApplicationForm> returnedAppls = new ArrayList<ApplicationForm>();
+		for (int i = 0; i < 30; i++) {
+			ApplicationForm form = new ApplicationFormBuilder().id(i).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/" + (i + 1))).toApplicationForm();
+			returnedAppls.add(form);
+		}
+
+		Collections.shuffle(returnedAppls);
+		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(returnedAppls);
+		EasyMock.replay(applicationFormDAOMock);
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, null, null, 1);
+
+		EasyMock.verify(applicationFormDAOMock);
+
+		Assert.assertEquals(25, applications.size());
+	}
+
+	@Test
+	public void shouldLimitApplicationListToFifty() throws ParseException {
+		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB")//
+				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
+
+		List<ApplicationForm> returnedAppls = new ArrayList<ApplicationForm>();
+		for (int i = 0; i < 45; i++) {
+			ApplicationForm form = new ApplicationFormBuilder().id(i).applicant(applicant).status(ApplicationFormStatus.APPROVED)//
+					.applicationNumber("ABC" + i).program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).toApplicationForm();
+			returnedAppls.add(form);
+		}
+
+		Collections.shuffle(returnedAppls);
+		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(returnedAppls);
+		EasyMock.replay(applicationFormDAOMock);
+
+		List<ApplicationForm> applications = applicationsService.getAllVisibleAndMatchedApplications(user, null, null, null, null, 2);
+
+		EasyMock.verify(applicationFormDAOMock);
+
+		Assert.assertEquals(45, applications.size());
+	}
+	@Test
+	public void shouldThrowExceptionIfNegativeBlockCount() throws ParseException {
+		RegisteredUser applicant = new RegisteredUserBuilder().id(1).firstName("AAAA").lastName("BBBB")//
+				.role(new RoleBuilder().authorityEnum(Authority.APPLICANT).toRole()).toUser();
+		Program program = new ProgramBuilder().code("empty").title("empty").toProgram();
+
+		List<ApplicationForm> returnedAppls = new ArrayList<ApplicationForm>();
+		for (int i = 0; i < 45; i++) {
+			ApplicationForm form = new ApplicationFormBuilder().id(i).applicant(applicant).status(ApplicationFormStatus.APPROVED)//
+					.applicationNumber("ABC" + i).program(program).appDate(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).toApplicationForm();
+			returnedAppls.add(form);
+		}
+
+		Collections.shuffle(returnedAppls);
+		EasyMock.expect(applicationFormDAOMock.getVisibleApplications(user)).andReturn(returnedAppls);
+		EasyMock.replay(applicationFormDAOMock);
+
+		try {
+			applicationsService.getAllVisibleAndMatchedApplications(user, null, null, null, null, 0);
+			Assert.fail("expected exception not thrown!");
+		} catch (IllegalArgumentException iae) {
+			Assert.assertEquals("Number of application blocks must be greater than 0!", iae.getMessage());
+		}
+	}
+
 	@After
 	public void tearDown() {
 		SecurityContextHolder.clearContext();

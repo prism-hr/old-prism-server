@@ -24,6 +24,7 @@
       <script type="text/javascript" src="<@spring.url '/design/default/js/application/common.js' />"></script>
       <script type="text/javascript" src="<@spring.url '/design/default/js/applicationList/formActions.js'/>"></script>
       <script type="text/javascript" src="<@spring.url '/design/default/js/script.js' />"></script>
+      <script type="text/javascript" src="<@spring.url '/design/default/js/scrollpagination.js' />"></script>
   </head>
   
   <!--[if IE 9]>
@@ -98,6 +99,7 @@
                       <input type="checkbox" name="select-all" id="select-all" />
                       <input type="hidden" id="sort-column" name="sort-column" value="APPLICATION_DATE" />
                       <input type="hidden" id="sort-order" name="sort-order" value="DESCENDING" />
+                      <input type="hidden" id="block-index" name="block-index" value="1" />
                     </th>
                   </tr>
                 </thead>

@@ -77,7 +77,7 @@ public class ApplicationListControllerTest {
 		ApplicationForm applicationOne = new ApplicationFormBuilder().id(1).toApplicationForm();
 		ApplicationForm applicationTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
 		EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user,// 
-				SearchCategory.APPLICATION_DATE, "bladibla", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING))//
+				SearchCategory.APPLICATION_DATE, "bladibla", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 4))//
 				.andReturn(Arrays.asList(applicationOne, applicationTwo));
 		EasyMock.replay(applicationsServiceMock);
 		controller = new ApplicationListController(applicationsServiceMock, userServiceMock) {
@@ -88,7 +88,29 @@ public class ApplicationListControllerTest {
 			}
 
 		};
-		List<ApplicationForm> applications = controller.getApplications(SearchCategory.APPLICATION_DATE, "bladibla", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING);
+		List<ApplicationForm> applications = controller.getApplications(SearchCategory.APPLICATION_DATE, "bladibla", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 4);
+		
+		EasyMock.verify(applicationsServiceMock);
+		Assert.assertEquals(2, applications.size());
+		Assert.assertTrue(applications.containsAll(Arrays.asList(applicationOne, applicationTwo)));
+	}
+	@Test
+	public void shouldReturnFirstBlockOfApplications() {
+		ApplicationForm applicationOne = new ApplicationFormBuilder().id(1).toApplicationForm();
+		ApplicationForm applicationTwo = new ApplicationFormBuilder().id(2).toApplicationForm();
+		EasyMock.expect(applicationsServiceMock.getAllVisibleAndMatchedApplications(user,// 
+				SearchCategory.APPLICATION_DATE, "bladibla", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, 1))//
+				.andReturn(Arrays.asList(applicationOne, applicationTwo));
+		EasyMock.replay(applicationsServiceMock);
+		controller = new ApplicationListController(applicationsServiceMock, userServiceMock) {
+			
+			@Override
+			public RegisteredUser getUser() {
+				return user;
+			}
+			
+		};
+		List<ApplicationForm> applications = controller.getApplications(SearchCategory.APPLICATION_DATE, "bladibla", SortCategory.APPLICANT_NAME, SortOrder.ASCENDING, null);
 		
 		EasyMock.verify(applicationsServiceMock);
 		Assert.assertEquals(2, applications.size());

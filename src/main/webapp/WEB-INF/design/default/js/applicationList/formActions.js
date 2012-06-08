@@ -103,13 +103,15 @@ function populateApplicationList(reset)
 		$('#searchTerm').val('');
 		$('#sort-column').val('APPLICATION_DATE');
 		$('#sort-order').val('DESCENDING');
+		$('#block-index').val("1");
 	}
 
 	options = {
 		searchCategory: $('#searchCategory').val(),
-		searchTerm:			$('#searchTerm').val(),
+		searchTerm:	    $('#searchTerm').val(),
 		sortCategory:   $('#sort-column').val(),
-		order:      $('#sort-order').val()
+		order:          $('#sort-order').val(),
+		blockCount:     $('#block-index').val()
 	};
 	
 	$('#search-box span.invalid').remove();
@@ -118,7 +120,6 @@ function populateApplicationList(reset)
 		$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
 		return;
 	}
-	
 	
 	$.get("/pgadmissions/applications/section",
 		options,
@@ -131,6 +132,7 @@ function populateApplicationList(reset)
 }
 
 function sortList(column) {
+	$('#block-index').val("1");
 	oldValue = $('#sort-column').val();
 	newValue = column.id;
 	
@@ -151,3 +153,18 @@ function flipSortOrder() {
 		$('#sort-order').val("ASCENDING");
 	}
 }
+
+$(function(){
+	$('#applicationListSection').scrollPagination({
+		'callback' : function() {
+			var blockIndex = parseInt($('#block-index').val());
+			blockIndex += 1;
+			$('#block-index').val(blockIndex.toString());
+			populateApplicationList();
+		},
+//		'contentPage': '/pgadmissions/applications/pager', // the page where you are searching for results
+//		'contentData': {}, // you can pass the children().size() to know where is the pagination
+		'scrollTarget': $(window), // who gonna scroll? in this example, the full window
+		'heightOffset': 10, // how many pixels before reaching end of the page would loading start? positives numbers only please
+	});  
+});

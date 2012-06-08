@@ -59,9 +59,11 @@ public class ApplicationListController {
 	@ModelAttribute("applications")
 	public List<ApplicationForm> getApplications(//
 			@RequestParam(required = false) SearchCategory searchCategory, @RequestParam(required = false) String searchTerm, //
-			@RequestParam(required = false) SortCategory sortCategory, @RequestParam(required = false) SortOrder order) {
+			@RequestParam(required = false) SortCategory sortCategory, @RequestParam(required = false) SortOrder order,//
+			@RequestParam(required = false) Integer blockCount) {
 
-		return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, searchTerm, sortCategory, order);
+		int blockIx = blockCount == null ? 1 : blockCount;
+		return applicationsService.getAllVisibleAndMatchedApplications(getUser(), searchCategory, searchTerm, sortCategory, order, blockIx);
 	}
 
 	@ModelAttribute("message")

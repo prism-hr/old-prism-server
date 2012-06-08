@@ -6,7 +6,6 @@
 				<div class="dialog-content">
 					<div id="dialog-header"></div>
 					<div id="dialog-message"></div>
-					<div id="dialog-icon"></div>
 					<div id="horizontal-separator"></div>
 					<div id="dialog-row">
 						<div id="dialog-actions">

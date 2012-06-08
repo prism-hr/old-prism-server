@@ -6,8 +6,8 @@ $(document).ready(function()
 	$('#withdrawButton').click(function(e)
 	{
 		e.preventDefault();
-		positionPopup();
 		setPopupText("Are you sure you want to withdraw the application? You will not be able to submit a withdrawn application.");
+		positionPopup();
 		$('#dialog-overlay, #dialog-box').show();
 		return false;
 	});
@@ -72,6 +72,12 @@ function positionIcon(maxHeight)
 
 function positionPopup()
 {
+	var offset_x = $('#dialog-box').width() / 2;
+	var offset_y = $('#dialog-box').height() / 2;
+	
+	$('#dialog-box').css({ marginLeft: -offset_x, marginTop: -offset_y })
+									.show();
+	/*
 	// get the screen height and width  
 	var maskHeight = $(document).height();
 	var maskWidth = $(document).width();
@@ -94,4 +100,5 @@ function positionPopup()
 	// assign values to the overlay and dialog box
 	$('#dialog-overlay').css({height:maskHeight, width:maskWidth}).show();
 	$('#dialog-box').css({top:dialogTop, left:dialogLeft}).show();
+	*/
 }

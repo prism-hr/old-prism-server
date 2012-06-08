@@ -32,6 +32,8 @@
 
 				/* hide it by default */
 				display:none;
+				top: 50%;
+				left: 50%;
 			}
 
 			#dialog-box .dialog-content {

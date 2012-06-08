@@ -132,7 +132,10 @@ $(document).ready(function(){
 
 });
 
-function postAddressData(message){
+function postAddressData(message)
+{
+	$('#addressSection > div').append('<div class="ajax" />');
+
 	$.post("/pgadmissions/update/editAddress", { 
 		currentAddressLocation: $("#currentAddressLocation").val(),
 		currentAddressCountry: $("#currentAddressCountry").val(),
@@ -143,6 +146,7 @@ function postAddressData(message){
 	},
 	function(data) {
 		$('#addressSection').html(data);
+		$('#addressSection div.ajax').remove();
 		markSectionError('#addressSection');
 	});
 }

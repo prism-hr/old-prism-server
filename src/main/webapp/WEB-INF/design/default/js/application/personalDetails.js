@@ -304,6 +304,8 @@ function postPersonalDetailsData(message){
 	}
 	
 	//do the post!
+	$('#personalDetailsSection > div').append('<div class="ajax" />');
+
 	$.post( "/pgadmissions/update/editPersonalDetails" ,
 			$.param(postData) + 
 			"&" + $('input[name="candidateNationalities"]').serialize()+
@@ -312,6 +314,7 @@ function postPersonalDetailsData(message){
 			
 			 function(data) {
 			    $('#personalDetailsSection').html(data);
+					$('#personalDetailsSection div.ajax').remove();
 					markSectionError('#personalDetailsSection');
 			  }
 	);

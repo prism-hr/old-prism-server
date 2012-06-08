@@ -103,7 +103,10 @@ $(document).ready(function(){
 });
 
 
-function postDocumentData(message){
+function postDocumentData(message)
+{
+
+	$('#documentSection > div').append('<div class="ajax" />');
 	
 	$.post("/pgadmissions/update/editDocuments",
 		{ 	
@@ -112,8 +115,10 @@ function postDocumentData(message){
 			personalStatement: $('#document_PERSONAL_STATEMENT').val(),
 			message:message
 		},
-		function(data) {
+		function(data)
+		{
 			$('#documentSection').html(data);
+			$('#documentSection div.ajax').remove();
 			markSectionError('#documentSection');
 		}
 	);

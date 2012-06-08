@@ -8,25 +8,19 @@ import static org.junit.Assert.assertTrue;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.ReviewRound;
-import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
-import com.zuehlke.pgadmissions.domain.builders.ReviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.pagemodels.RegisterPageModel;
@@ -94,11 +88,30 @@ public class RegisterControllerTest {
 		
 		EasyMock.replay(validatorMock, errorsMock, registrationServiceMock);
 		
-		ModelAndView modelAndView = registerController.submitRegistration(record, null, errorsMock);
+		ModelAndView modelAndView = registerController.submitRegistration(record, null, errorsMock, new ModelMap());
 		assertEquals("public/register/register_applicant", modelAndView.getViewName());
 		assertSame(record, ((RegisterPageModel) modelAndView.getModel().get("model")).getRecord());
 		assertSame(errorsMock, ((RegisterPageModel) modelAndView.getModel().get("model")).getResult());
 		EasyMock.verify(registrationServiceMock);
+	}
+	
+	@Test
+	public void shouldResendConfirmationEmail(){
+		RegisteredUser user = new RegisteredUserBuilder().id(1).firstName("mark").lastName("euston").password("123").confirmPassword("123").toUser();
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		registrationServiceMock.sendConfirmationEmail(user);
+		EasyMock.replay(userServiceMock, registrationServiceMock);
+		registerController.resendConfirmation(1, new ModelMap());
+		EasyMock.verify(userServiceMock, registrationServiceMock);
+	}
+	
+	
+	@Test(expected = ResourceNotFoundException.class)
+	public void shouldThrowResourveNotFoundIfUserIsNotFound(){
+		EasyMock.expect(userServiceMock.getUser(2)).andReturn(null);
+		EasyMock.replay(userServiceMock);
+		registerController.resendConfirmation(2, new ModelMap());
+		EasyMock.verify(userServiceMock);
 	}
 	
 	
@@ -120,8 +133,8 @@ public class RegisterControllerTest {
 		
 		EasyMock.replay( registrationServiceMock);
 		
-		ModelAndView modelAndView = registerController.submitRegistration(record, null, errorsMock);
-		assertEquals("redirect:/register/complete", modelAndView.getViewName());
+		ModelAndView modelAndView = registerController.submitRegistration(record, null, errorsMock, new ModelMap());
+		assertEquals("public/register/registration_complete", modelAndView.getViewName());
 		
 		EasyMock.verify(registrationServiceMock);
 	}

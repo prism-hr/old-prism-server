@@ -39,6 +39,7 @@
           <div class="content">
             <h1>Almost there...</h1>
             <p>To activate your account please check your emails and click on the activation link.</p>
+            <p>If you did not receive the email please <a href="/pgadmissions/register/resendConfirmation?userId=${user.id?string('#####')}" > request a new one </a></p>
           </div>
         </div>
         

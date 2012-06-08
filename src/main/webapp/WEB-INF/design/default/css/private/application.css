@@ -20,7 +20,7 @@ section.form-rows h2.empty .status { background-position: 0 -30px; }
 
 
 /* SECTION BODY ------------------------------------------------------------------------------------------ */
-section.form-rows > div { background: #CCC; border: 2px solid #999; padding: 10px; }
+section.form-rows > div { background: #CCC; border: 2px solid #999; padding: 10px; position: relative; }
 
 
 /* EXISTING ROWS ----------------------------------------------------------------------------------------- */

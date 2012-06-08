@@ -791,4 +791,4 @@ button span.icon-down { background-image: url(../../images/icon_arrow_down.png) 
 /* Feedback button */
 #feedbackButton { position: absolute; right: 35px; text-transform: none; top: 170px; }
 
-div.ajax { position: absolute; width: 100%; height: 100%; background: rgba(.5,.5,.5,.4) url(../../images/ajax-loader.gif) no-repeat center; }
+div.ajax { position: absolute; width: 100%; height: 100%; left: 0; top: 0; background: rgba(128,128,128,.4) url(../../images/ajax-loader.gif) no-repeat center; }

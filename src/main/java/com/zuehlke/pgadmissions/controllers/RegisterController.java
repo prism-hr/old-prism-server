@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +25,8 @@ public class RegisterController {
 
 	private static final String REGISTER_USERS_VIEW_NAME = "public/register/register_applicant";
 	private static final String REGISTER_INFO_VIEW_NAME = "public/register/register_info";
-	private static final String REGISTER_COMPLETE_VIEW_NAME = "/register/complete";
+//	private static final String REGISTER_COMPLETE_VIEW_NAME = "/register/complete";
+	private static final String REGISTER_COMPLETE_VIEW_NAME = "public/register/registration_complete";
 	private final UserService userService;
 	private final RegisterFormValidator validator;
 	private final RegistrationService registrationService;
@@ -66,7 +68,7 @@ public class RegisterController {
 
 	@RequestMapping(value = "/submit", method = RequestMethod.POST)
 	public ModelAndView submitRegistration(@ModelAttribute("record") RegisteredUser record, @RequestParam(required = false) Integer isSuggestedUser,
-			BindingResult errors) {
+			BindingResult errors, ModelMap modelMap) {
 		if (isSuggestedUser != null) {
 			validator.shouldValidateSameEmail(false);
 		} else {
@@ -81,10 +83,22 @@ public class RegisterController {
 			return new ModelAndView(REGISTER_USERS_VIEW_NAME, "model", model);
 		}
 		registrationService.generateAndSaveNewUser(record, isSuggestedUser);
-
-		return new ModelAndView("redirect:" + REGISTER_COMPLETE_VIEW_NAME);
+		modelMap.put("user", record);
+		return new ModelAndView(REGISTER_COMPLETE_VIEW_NAME);
 
 	}
+	
+	@RequestMapping(method = RequestMethod.GET, value="/resendConfirmation")
+	public String resendConfirmation(@RequestParam Integer userId, ModelMap modelMap) {
+		RegisteredUser user = userService.getUser(userId);
+		if (user == null) {
+			throw new ResourceNotFoundException();
+		}
+		registrationService.sendConfirmationEmail(user);
+		modelMap.put("user", user);
+		return REGISTER_COMPLETE_VIEW_NAME;
+	}
+	
 
 	@RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
 	public ModelAndView activateAccountSubmit(@RequestParam String activationCode) {

@@ -90,6 +90,11 @@ public class RegistrationService {
 		}
 		userDAO.save(newUser);
 
+		sendConfirmationEmail(newUser);
+	}
+
+	@Transactional
+	public void sendConfirmationEmail(RegisteredUser newUser) {
 		try {
 			Map<String, Object> model = modelMap();
 			model.put("user", newUser);

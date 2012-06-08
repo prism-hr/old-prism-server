@@ -116,8 +116,8 @@ $(document).ready(function()
 				'<tr class="' + (aware == "Yes" ? "aware" : "unaware") + '" rel="'+ unsavedSupervisors +'">' +
 				'<td data-desc="Supervisor ' + (aware == "Yes" ? "aware" : "unaware") + ' of application">' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 				'<td>' +
-				'<a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> ' +
 				'<a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a>' +
+				'<a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> ' +
 				'<input type="hidden" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 				'<input type="hidden" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
 				'<input type="hidden" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
@@ -237,8 +237,8 @@ $(document).ready(function()
 					'<tr class="' + (aware == "Yes" ? "aware" : "unaware") + '" rel="'+ currentRel +'">' +
 					'<td data-desc="' + (aware == "Yes" ? "Aware" : "Unaware") + ' of application">' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 					'<td>' +
-					'<a class=\"button-delete\" id="usd_'+currentRel+'" name=\"deleteSupervisor\">delete</a> ' +
 					'<a class=\"button-edit\" id="us_'+currentRel+'" name=\"editSupervisorLink\">edit</a>' +
+					'<a class=\"button-delete\" id="usd_'+currentRel+'" name=\"deleteSupervisor\">delete</a> ' +
 					'<input name="sId" type="hidden" id="us_'+currentRel+'_supervisorId" value="' + $('#supervisorId').val()+'"/>'	+								
 					'<input name="sFN" type="hidden" id="us_'+currentRel+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 					'<input name="sLN" type="hidden" id="us_'+currentRel+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								

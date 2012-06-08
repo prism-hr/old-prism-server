@@ -194,8 +194,8 @@
       <div class="row">
         <span class="supervisorAction"></span>       
         <div class="field">
-          <a id="updateSupervisorButton" class="button" style="display:none;">Update</a>
-          <a id="addSupervisorButton" class="button blue" style="display:none;">Add</a>
+          <button id="updateSupervisorButton" type="button" style="display:none;">Update</button>
+          <button id="addSupervisorButton" class="blue" type="button" style="display:none;">Add</button>
         </div>
       </div>
       </#if>
@@ -227,9 +227,9 @@
       <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
       <button type="reset" id="programmeCancelButton" name="programmeCancelButton" value="cancel">Clear</button>
       </#if>    
-      <a class="button blue" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</a>
+      <button class="blue" type="button" id="programmeCloseButton" name="programmeCloseButton">Close</button>
       <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-      <a class="button blue" type="button" id="programmeSaveButton">Save</a>
+      <button class="blue" type="button" id="programmeSaveButton">Save</button>
       </#if>    
     </div>
   

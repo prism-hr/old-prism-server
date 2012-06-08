@@ -353,7 +353,6 @@ $(document).ready(function()
 	
 
 	bindDatePicker('#startDate');
-	addOverlay('#programmeDetailsSection');
 	addToolTips();
 });
 
@@ -375,12 +374,15 @@ function postProgrammeData(message)
 			suggestedSupervisors: "",
 			message: message
 		};
+
+	$('#programmeDetailsSection > div').append('<div class="ajax" />');
 		
 	$.post(
 		"/pgadmissions/update/editProgrammeDetails",
 		$.param(postData) + "&" + $('[input[name="suggestedSupervisors"]').serialize(),
 		function(data) {
 			$('#programmeDetailsSection').html(data);
+			$('#programmeDetailsSection div.ajax').remove();
 			markSectionError('#programmeDetailsSection');
 		});
 }

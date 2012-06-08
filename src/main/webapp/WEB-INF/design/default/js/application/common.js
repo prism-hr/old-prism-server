@@ -205,11 +205,3 @@ function markSectionError(section_id)
 		addToolTips();
 	}
 }
-
-function addOverlay(section_id)
-{
-	var $target = $(section_id + ' > div');
-	
-	$target.ajaxStart(function(){ $(this).append('<div class="ajax" />');	})
-			   .ajaxComplete(function(){ $('div.ajax', this).remove(); });
-}

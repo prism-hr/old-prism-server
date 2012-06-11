@@ -5,14 +5,13 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class TimelinePhase extends TimelineObject {
 
 	private ApplicationFormStatus status = null;
 	private Date exitedPhaseDate = null;
-	
+
 	private SortedSet<Comment> comments = new TreeSet<Comment>();
 	
 	public ApplicationFormStatus getStatus() {
@@ -36,5 +35,13 @@ public class TimelinePhase extends TimelineObject {
 	public SortedSet<Comment> getComments() {		
 		return comments;
 	}
+
+	@Override
+	public String getType() {
+		return status.displayValue().toLowerCase().replace(" ", "_");
+	}
+
+
+	
 
 }

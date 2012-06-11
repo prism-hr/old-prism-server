@@ -39,6 +39,7 @@
 		        <value>messages</value>
 		        <value>tooltips</value>		        
 		        <value>email_subjects</value>		        
+		        <value>timeline_messages</value>
 		      </list>
 		    </property>
 	</bean>

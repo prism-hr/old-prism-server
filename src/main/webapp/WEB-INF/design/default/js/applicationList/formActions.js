@@ -148,20 +148,18 @@ function sortList(column)
 	}
 	
 	// Highlight the sorting column.
-	var $header = $('#'+newValue);
 	$('table th').removeClass('sorting asc desc');
-	$column.addClass('sorting');
+	var $header = $('#'+newValue);
+	$header.addClass('sorting');
 	if ($('#sort-order') == "DESCENDING")
 	{
-		$column.addClass('desc');
+		$header.addClass('desc');
 	}
 	else
 	{
-		$column.addClass('asc');
+		$header.addClass('asc');
 	}
 
-	
-	
 	populateApplicationList();
 }
 

@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	
-	populateApplicationList();
+	populateApplicationList(true);
 	
 	$(document).on('change', 'select.actionType', function() {
 		var name = this.name;

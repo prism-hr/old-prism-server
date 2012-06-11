@@ -126,7 +126,7 @@
 						<input class="half date" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth"/>
 						
 					<#else>
-						<input class="full" readonly="readonly" type="text" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
+						<input class="full" readonly="readonly" type="text" disabled="disabled" value="${(personalDetails.dateOfBirth?string('dd-MMM-yyyy'))!}" name="dateOfBirth" id="dateOfBirth" />             
 					</#if>    
 					</div>               
 				</div>
@@ -210,10 +210,11 @@
 				</#list>
             	 
               
+<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 				<div class="row">
 					<div class="field"><a class="button blue" id="addCandidateNationalityButton">Add</a></div>
 				</div>
-
+</#if>
     
             	<div class="row">                     	
               		<label class="plain-label" id="maternal-nationality">Mother's Nationality</label>
@@ -239,10 +240,11 @@
                    	 </div>
             	</div>
               
+<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
             	<div class="row">
               		<div class="field"><a class="button blue" id="addMaternalNationalityButton">Add</a></div>
               	</div>
-
+</#if>
               	 
 				<div class="row">                      	
 					<label class="plain-label" id="paternal-nationality">Father's Nationality</label> 
@@ -269,9 +271,11 @@
             	</div>
             	                     
               
+<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
             	<div class="row">
               		<div class="field"><a class="button blue" id="addPaternalNationalityButton">Add</a></div>
               	</div>
+</#if>
               	 
             </div>
           	
@@ -403,7 +407,7 @@
                 			<input class="full" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone"/>
 						 
                 		<#else>
-                			<input class="full" readonly="readonly" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone" />	          
+                			<input class="full" readonly="readonly" disabled="disabled" type="text" value="${(personalDetails.phoneNumber?html)!}" name="pd_telephone" id="pd_telephone" />	          
                 		</#if>
                 	</div>
             	</div>
@@ -424,7 +428,7 @@
                 		<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
                 			<input class="full" type="text" value="${(personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger"/>
                 		<#else>
-                			<input class="full" readonly="readonly" type="text" value="${(personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger" />	          
+                			<input class="full" readonly="readonly" disabled="disabled" type="text" value="${(personalDetails.messenger?html)!}" name="pd_messenger" id="pd_messenger" />	          
                 		</#if>
                 	</div>
             	</div>

@@ -13,24 +13,26 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Event;
-import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
-import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 
 public class EventMappingTest extends AutomaticRollbackTestCase {
+	
 	@Test
 	public void shouldSaveAndLoadEvent() throws ParseException {
-
+		RegisteredUser user = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username")
+				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
+		save(user);
+		flushAndClearSession();
+		
 		ApplicationFormStatus newStatus = ApplicationFormStatus.APPROVAL;
 		Date eventDate = new SimpleDateFormat("dd MM yyyy hh:mm:ss").parse("01 12 2011 14:09:26");
-		Event event = new EventBuilder().newStatus(newStatus).date(eventDate).toEvent();
+		Event event = new EventBuilder().newStatus(newStatus).date(eventDate).user(user).toEvent();
 		sessionFactory.getCurrentSession().saveOrUpdate(event);
 		assertNotNull(event.getId());
 		Event reloadedEvent = (Event) sessionFactory.getCurrentSession().get(Event.class, event.getId());
@@ -43,6 +45,7 @@ public class EventMappingTest extends AutomaticRollbackTestCase {
 
 		assertEquals(eventDate, reloadedEvent.getDate());
 		assertEquals(newStatus, reloadedEvent.getNewStatus());
+		assertEquals(user, reloadedEvent.getUser());
 
 	}
 

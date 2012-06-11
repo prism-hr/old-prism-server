@@ -1,7 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +12,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.TimelineEntity;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.TimelineObject;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.TimelineService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 @Controller
@@ -27,15 +27,17 @@ public class CommentTimelineController {
 
 	private final UserService userService;
 	private final ApplicationsService applicationService;
+	private final TimelineService timelineService;
 
 	CommentTimelineController() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public CommentTimelineController(ApplicationsService applicationsService, UserService userService) {
+	public CommentTimelineController(ApplicationsService applicationsService, UserService userService, TimelineService timelineService) {
 		this.applicationService = applicationsService;
 		this.userService = userService;
+		this.timelineService = timelineService;
 
 	}
 
@@ -54,15 +56,15 @@ public class CommentTimelineController {
 	public String getCommentsView() {
 		return COMMENTS_VIEW;
 	}
-
-
-	@ModelAttribute("timelineEntities")
-	public List<TimelineEntity> getSortedTimelineList(@RequestParam String id) {
-		List<TimelineEntity> timelineList = new ArrayList<TimelineEntity>();
-		timelineList.addAll(getApplicationForm(id).getVisibleComments(userService.getCurrentUser()));
-		timelineList.addAll(getApplicationForm(id).getEvents());
-		Collections.sort(timelineList);
-		return timelineList;
+	
+	@ModelAttribute("timelineObjects")
+	public List<TimelineObject> getTimelineObjects(@RequestParam String id) {
+		List<TimelineObject> timelineObjects = new ArrayList<TimelineObject>();
+		timelineObjects.addAll(timelineService.getPhases(getApplicationForm(id)));		
+		return timelineObjects;
 	}
+
+
+
 
 }

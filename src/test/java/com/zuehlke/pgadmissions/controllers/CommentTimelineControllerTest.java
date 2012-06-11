@@ -10,19 +10,22 @@ import java.util.List;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.TimelineEntity;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.dto.TimelineObject;
+import com.zuehlke.pgadmissions.dto.TimelinePhase;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.services.TimelineService;
 import com.zuehlke.pgadmissions.services.UserService;
 
 public class CommentTimelineControllerTest {
@@ -30,6 +33,7 @@ public class CommentTimelineControllerTest {
 	private ApplicationsService applicationsServiceMock;
 	private UserService userServiceMock;
 	private CommentTimelineController controller;
+	private TimelineService timelineServiceMock;
 
 	@Test
 	public void shouldGetApplicationFormFromId() {
@@ -82,51 +86,50 @@ public class CommentTimelineControllerTest {
 	}
 
 	@Test
-	public void shouldGetAllVisibleCommentsAndEventsForApplication() throws ParseException{
-		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy");
+	public void shouldGetAllPhasesForApplication() throws ParseException {
+
 		RegisteredUser currentUser = new RegisteredUserBuilder().id(5).toUser();
 		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(currentUser);
-				
-		final ApplicationForm applicationForm = EasyMock.createMock(ApplicationForm.class);
-		Comment commentOne = new CommentBuilder().id(1).date(format.parse("01 01 2011")).toComment();
-		Comment commentTwo = new CommentBuilder().date(format.parse("01 10 2011")).id(2).toComment();
-		List<Comment> commentsList = Arrays.asList(commentOne, commentTwo);
-		Event eventOne = new EventBuilder().date(format.parse("01 05 2011")).id(1).toEvent();
-		Event eventTwo = new EventBuilder().id(1).toEvent();
-		List<Event> eventsList = Arrays.asList(eventOne, eventTwo);
-		
-		
-		EasyMock.expect(applicationForm.getVisibleComments(currentUser)).andReturn(commentsList);
-		EasyMock.expect(applicationForm.getEvents()).andReturn(eventsList);
-		EasyMock.replay(userServiceMock, applicationForm);
-		
-		controller = new CommentTimelineController( applicationsServiceMock, userServiceMock){
+		EasyMock.replay(userServiceMock);
+
+		final ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+
+		controller = new CommentTimelineController(applicationsServiceMock, userServiceMock, timelineServiceMock) {
 
 			@Override
-			public ApplicationForm getApplicationForm(String id) {			
-				return applicationForm;
+			public ApplicationForm getApplicationForm(String id) {
+				if ("applicationNumber".equals(id)) {
+					return applicationForm;
+				}
+				return null;
 			}
-			
+
 		};
-		List<TimelineEntity> sortedTimelineList = controller.getSortedTimelineList("5");
-		assertEquals(4, sortedTimelineList.size());
-		assertEquals(commentTwo, sortedTimelineList.get(0));
-		assertEquals(eventOne, sortedTimelineList.get(1));
-		assertEquals(commentOne, sortedTimelineList.get(2));
-		assertEquals(eventTwo, sortedTimelineList.get(3));
+		TimelineObject timelineObjectOne = new TimelinePhase();
+		TimelineObject timelineObjectTwo = new TimelinePhase();
+		EasyMock.expect(timelineServiceMock.getPhases(applicationForm)).andReturn(
+				Arrays.asList((TimelinePhase) timelineObjectOne, (TimelinePhase) timelineObjectTwo));
+		EasyMock.replay(timelineServiceMock);
+
+		List<TimelineObject> timelineObjects = controller.getTimelineObjects("applicationNumber");
+		assertEquals(2, timelineObjects.size());
+		assertEquals(timelineObjectOne, timelineObjects.get(0));
+		assertEquals(timelineObjectTwo, timelineObjects.get(1));
+
 	}
-	
+
 	@Test
-	public void shouldReturnTimeLine(){
+	public void shouldReturnTimeLine() {
 		assertEquals("private/staff/admin/comment/timeline", controller.getCommentsView());
 	}
-	
+
 	@Before
 	public void setUp() {
 
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
 		userServiceMock = EasyMock.createMock(UserService.class);
-		controller = new CommentTimelineController(applicationsServiceMock, userServiceMock);
+		timelineServiceMock = EasyMock.createMock(TimelineService.class);
+		controller = new CommentTimelineController(applicationsServiceMock, userServiceMock, timelineServiceMock);
 
 	}
 }

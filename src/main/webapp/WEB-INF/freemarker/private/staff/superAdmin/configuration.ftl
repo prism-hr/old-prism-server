@@ -86,9 +86,9 @@
 																${unit.displayValue()}</option>               
 															</#list>
 														</select>	
+														<span class="invalid" name="${stage}_invalidDuration" style="display:none;"></span>
+														<span class="invalid" name="${stage}_invalidUnit" style="display:none;"></span>
 													</div>
-													<span class="invalid" name="${stage}_invalidDuration" style="display:none;"></span>
-													<span class="invalid" name="${stage}_invalidUnit" style="display:none;"></span>
 												</div>
 												</#list>
 												<input type="hidden" name="stagesDuration" id= "stagesDuration" />
@@ -125,9 +125,9 @@
 															${unit.displayValue()}</option>               
 														</#list>
 														</select>	
+														<span class="invalid" name="invalidDurationInterval" style="display:none;"></span>
+														<span class="invalid" name="invalidUnitInterval" style="display:none;"></span>
 													</div>
-													<span class="invalid" name="invalidDurationInterval" style="display:none;"></span>
-													<span class="invalid" name="invalidUnitInterval" style="display:none;"></span>
 												</div><!-- .row -->
 												
 											</div><!-- .row-group -->
@@ -172,10 +172,10 @@
 													<span id="ru-email-lbl" class="plain-label">Email<em>*</em></span>
 													<div class="field">	
 														<input type="text" class="full" id="1_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[0].email)!}"/>
+														<span class="invalid" name="firstuserInvalid" style="display:none;"></span>
 													</div>
 												</div><!-- .row -->
 												
-												<span class="invalid" name="firstuserInvalid" style="display:none;"></span>
 											</div><!-- .row-group -->
 											
 									
@@ -202,10 +202,10 @@
 													<span id="ru-email-lbl" class="plain-label">Email<em>*</em></span>
 													<div class="field">	
 														<input type="text" class="full" id="2_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[1].email)!}"/>
+														<span class="invalid" name="seconduserInvalid" style="display:none;"></span>
 													</div>
 												</div><!-- .row -->
 												
-												<span class="invalid" name="seconduserInvalid" style="display:none;"></span>
 											</div><!-- .row-group -->
 											
 									
@@ -232,10 +232,10 @@
 													<span id="ru-email-lbl" class="plain-label">Email<em>*</em></span>
 													<div class="field">	
 														<input type="text" class="full" id="3_regUserEmail" name="regUserEmail" value="${(allRegistryUsers[2].email)!}"/>
+														<span class="invalid" name="thirduserInvalid" style="display:none;"></span>
 													</div>
 												</div><!-- .row -->
 
-												<span class="invalid" name="thirduserInvalid" style="display:none;"></span>
 											</div><!-- .row-group -->
 									
 											<input type="hidden" name="registryUsers" id= "registryUsers" />

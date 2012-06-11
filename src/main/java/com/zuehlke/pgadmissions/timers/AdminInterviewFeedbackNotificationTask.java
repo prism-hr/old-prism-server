@@ -43,7 +43,7 @@ public class AdminInterviewFeedbackNotificationTask extends TimerTask {
 			try {
 				adminMailSender.sendAdminInterviewNotification(comment.getApplication(), comment.getUser());
 
-				comment.setAdminsNotified(CheckedStatus.YES);
+				comment.setAdminsNotified(true);
 				commentService.save(comment);
 				transaction.commit();
 				log.info("notification sent to admins for interview comment " + comment.getId());

@@ -59,16 +59,17 @@
 							    <h1>Interview feedback</h1>
 							    <br/>
 							   <p style="color:red;">Please note that once you submit your feedback you cannot re-submit or edit it.</p> 
-							     <form>
+							  	<form id ="interviewForm" method="POST" action= "<@spring.url '/interviewFeedback'/>"/>
 							   
 							    	<input type="hidden" name="applicationId" id="applicationId" value =  "${(applicationForm.applicationNumber)!}"/>
-			            			<div class="row">
-										<label class="plain-label">Decline</label>
-										<div class="field">        
-	           								<input type="checkbox" name="declineCB" id="declineCB"/>
-	           								<input type="hidden" name="declineValue" id="declineValue"/>
-	   								 	</div>
-	   								 </div>
+			            			<div class="row-group">
+											<div class="row">
+												<label class="plain-label">Decline</label>
+												<div class="field">        
+													<input type="checkbox" name="decline" id="decline"/>	           								
+												</div>
+											</div>
+										</div>
 	   								<div class="row"> 
 			           					<span id="comment-lbl" class="plain-label">Comment<em>*</em></span>
 			            				<div class="field">		            				
@@ -77,25 +78,33 @@
 	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 			            				</div>
 									</div>
-	   								<div class="row">
-			            				<span id="supervise-lbl" class="plain-label">Willing to supervise?<em>*</em></span>
+									<div class="row">
+										<span id="supervise-lbl" class="plain-label">Willing to supervise?<em>*</em></span>
 										<div class="field">
-											<label><input type="radio"   name="willingRB" value="TRUE" id="willingRB_true"/> Yes</label> 
-											<label><input type="radio"  name="willingRB" value="FALSE" id="willingRB_false"/> No</label> 
-											<@spring.bind "comment.willingToSupervice" /> 
-	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
-										</div>
-			    					</div>
-	   								<div class="row">
-			    					<span id="suitable-lbl" class="plain-label">Is candidate suitable for UCL?<em>*</em></span>
-										<div class="field">
-											<label><input type="radio"  name="suitableRB" value="TRUE" id="suitableRB_true"/> Yes</label> 
-											<label><input type="radio"  name="suitableRB" value="FALSE" id="suitableRB_false"/> No</label> 
-											<@spring.bind "comment.suitableCandidate" /> 
-	                						<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+											<label><input type="radio" name="willingToSupervise" value="true" id="willingRB_true"
+											<#if comment.willingToSuperviseSet && comment.willingToSupervise> checked="checked"</#if> 
+											/> Yes</label> 
+											<label><input type="radio" name="willingToSupervise" value="false" id="willingRB_false"
+											<#if comment.willingToSuperviseSet && !comment.willingToSupervise> checked="checked"</#if>
+											/> No</label> 
+											<@spring.bind "comment.willingToSupervise" /> 
+											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
 										</div>
 									</div>
-	   				
+
+									<div class="row">
+										<span id="suitable-lbl" class="plain-label">Is candidate suitable for UCL?<em>*</em></span>
+										<div class="field">
+											<label><input type="radio"  name="suitableCandidate" value="true" id="suitableRB_true"
+											<#if comment.suitableCandidateSet && comment.suitableCandidate> checked="checked"</#if>
+											/> Yes</label> 
+											<label><input type="radio"  name="suitableCandidate" value="false" id="suitableRB_false"
+											<#if comment.suitableCandidateSet && !comment.suitableCandidate> checked="checked"</#if>
+											/> No</label> 
+											<@spring.bind "comment.suitableCandidate" /> 
+											<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+										</div>
+									</div>
 			    
 			            			<div class="buttons">						        		
 			            				<button type="button" id="cancelInterviewFeedbackBtn" value="cancel">Cancel</button>

@@ -11,7 +11,6 @@ import com.zuehlke.pgadmissions.domain.InterviewComment;
 import com.zuehlke.pgadmissions.domain.ReviewComment;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewCommentBuilder;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class FeedbackCommentValidatorTest {
 	private FeedbackCommentValidator validator;
@@ -74,30 +73,30 @@ public class FeedbackCommentValidatorTest {
 	
 	@Test
 	public void shouldRejectInterviewCommentIfNotDeclinedAndWillingToSuperviseIsEmpty() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "willingToSupervice");
-		interviewComment.setWillingToSupervice(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "willingToSupervise");
+		interviewComment.setWillingToSupervise(null);
 		validator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("feedbackComment.willingToSupervice.notempty", mappingResult.getFieldError("willingToSupervice").getCode());
+		Assert.assertEquals("feedbackComment.willingToSupervice.notempty", mappingResult.getFieldError("willingToSupervise").getCode());
 	}
 	
 	@Test
 	public void shouldRejectInterviewCommentIfNotDeclinedAndSuitableCandidateIsEmpty() {
-		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "willingToSupervice");
-		interviewComment.setWillingToSupervice(null);
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "willingToSupervise");
+		interviewComment.setWillingToSupervise(null);
 		validator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(1, mappingResult.getErrorCount());
-		Assert.assertEquals("feedbackComment.willingToSupervice.notempty", mappingResult.getFieldError("willingToSupervice").getCode());
+		Assert.assertEquals("feedbackComment.willingToSupervice.notempty", mappingResult.getFieldError("willingToSupervise").getCode());
 	}
 	
 	
 	@Test
 	public void shouldNotRejectInterviewCommentAnyEmptyFieldIfItIsDeclined() {
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(interviewComment, "interviewComment");
-		interviewComment.setDecline(CheckedStatus.YES);
+		interviewComment.setDecline(true);
 		interviewComment.setComment(null);
 		interviewComment.setSuitableCandidate(null);
-		interviewComment.setWillingToSupervice(null);
+		interviewComment.setWillingToSupervise(null);
 		validator.validate(interviewComment, mappingResult);
 		Assert.assertEquals(0, mappingResult.getErrorCount());
 	}
@@ -106,6 +105,6 @@ public class FeedbackCommentValidatorTest {
 	public void setup() {
 		validator = new FeedbackCommentValidator();
 		reviewComment = new ReviewCommentBuilder().comment("review comment").suitableCandidate(false).willingToInterview(true).decline(false).toReviewComment();
-		interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidate(CheckedStatus.NO).willingToSupervice(CheckedStatus.YES).decline(CheckedStatus.NO).toInterviewComment();
+		interviewComment = new InterviewCommentBuilder().comment("interview comment").suitableCandidate(false).willingToSupervice(true).decline(false).toInterviewComment();
 	}
 }

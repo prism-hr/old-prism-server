@@ -681,7 +681,7 @@ public class RegisteredUserTest {
 		ApplicationForm application = new ApplicationFormBuilder().program(program).id(1).toApplicationForm();
 		
 		Comment comment = new CommentBuilder().id(1).application(application).comment("This is a generic Comment").toComment();
-		InterviewComment interviewComment = new InterviewCommentBuilder().application(application).id(2).decline(CheckedStatus.NO).comment("This is an interview comment")
+		InterviewComment interviewComment = new InterviewCommentBuilder().application(application).id(2).decline(false).comment("This is an interview comment")
 				.commentType(CommentType.INTERVIEW).toInterviewComment();
 		Comment comment1 = new CommentBuilder().id(3).application(application).comment("This is another generic Comment").toComment();
 		
@@ -826,7 +826,7 @@ public class RegisteredUserTest {
 		ApplicationForm application2 = new ApplicationFormBuilder().program(program).id(2).toApplicationForm();
 		
 		Comment comment = new CommentBuilder().id(1).application(application1).comment("This is a generic Comment").toComment();
-		InterviewComment interviewComment = new InterviewCommentBuilder().application(application2).id(2).decline(CheckedStatus.NO).comment("This is an interview comment")
+		InterviewComment interviewComment = new InterviewCommentBuilder().application(application2).id(2).decline(false).comment("This is an interview comment")
 				.commentType(CommentType.INTERVIEW).toInterviewComment();
 		Comment comment1 = new CommentBuilder().id(3).application(application1).comment("This is another generic Comment").toComment();
 		

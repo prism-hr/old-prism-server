@@ -504,7 +504,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		for (Comment comment : applicationComments) {
 			if (comment instanceof InterviewComment) {
 				InterviewComment interviewComment = (InterviewComment) comment;
-				if (interviewComment.getWillingToSupervice() == CheckedStatus.YES) {
+				if (interviewComment.getWillingToSupervise() != null && interviewComment.getWillingToSupervise()) {
 					usersWillingToSupervise.add(interviewComment.getUser());
 				}
 			}

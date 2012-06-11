@@ -34,12 +34,12 @@ public class FeedbackCommentValidator implements Validator{
 		}
 		else if (target instanceof InterviewComment) {
 			InterviewComment comment = (InterviewComment) target;
-			if(comment.getDecline() ==  CheckedStatus.NO){
-				if(comment.getSuitableCandidate() == null || (comment.getSuitableCandidate() != CheckedStatus.YES && comment.getSuitableCandidate() != CheckedStatus.NO)){
+			if(!comment.isDecline() ){
+				if(comment.getSuitableCandidate() == null ){
 					errors.rejectValue("suitableCandidate", "feedbackComment.suitableCandidate.notempty");
 				}
-				if(comment.getWillingToSupervice() == null || (comment.getWillingToSupervice() != CheckedStatus.YES && comment.getWillingToSupervice() != CheckedStatus.NO)){
-					errors.rejectValue("willingToSupervice", "feedbackComment.willingToSupervice.notempty");
+				if(comment.getWillingToSupervise() == null){
+					errors.rejectValue("willingToSupervise", "feedbackComment.willingToSupervice.notempty");
 				}
 				ValidationUtils.rejectIfEmptyOrWhitespace(errors, "comment", "feedbackComment.comment.notempty");
 			}

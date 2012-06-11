@@ -12,10 +12,10 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 
 public class InterviewCommentBuilder {
 	
-	private CheckedStatus willingToSupervice;
-	private CheckedStatus suitableCandidate;
-	private CheckedStatus decline;
-	private CheckedStatus adminsNotified;
+	private Boolean willingToSupervice;
+	private Boolean suitableCandidate;
+	private boolean decline;
+	private boolean adminsNotified;
 	private ApplicationForm applicationForm;
 	private String comment;
 	private Integer id;
@@ -29,23 +29,23 @@ public class InterviewCommentBuilder {
 		return this;
 	}
 	
-	public InterviewCommentBuilder willingToSupervice(CheckedStatus willingToSupervice) {
+	public InterviewCommentBuilder willingToSupervice(Boolean willingToSupervice) {
 		this.willingToSupervice = willingToSupervice;
 		return this;
 	}
 	
-	public InterviewCommentBuilder suitableCandidate(CheckedStatus suitableCandidate) {
+	public InterviewCommentBuilder suitableCandidate(Boolean suitableCandidate) {
 		this.suitableCandidate = suitableCandidate;
 		return this;
 	}
 	
-	public InterviewCommentBuilder decline(CheckedStatus decline) {
+	public InterviewCommentBuilder decline(boolean decline) {
 		this.decline = decline;
 		return this;
 	}
 	
 	
-	public InterviewCommentBuilder adminsNotified(CheckedStatus adminsNotified) {
+	public InterviewCommentBuilder adminsNotified(boolean adminsNotified) {
 		this.adminsNotified = adminsNotified;
 		return this;
 	}
@@ -82,7 +82,7 @@ public class InterviewCommentBuilder {
 		interviewComment.setId(id);
 		interviewComment.setSuitableCandidate(suitableCandidate);
 		interviewComment.setUser(user);
-		interviewComment.setWillingToSupervice(willingToSupervice);
+		interviewComment.setWillingToSupervise(willingToSupervice);
 		interviewComment.setAdminsNotified(adminsNotified);
 		interviewComment.setInterviewer(interviewer);
 		return interviewComment;

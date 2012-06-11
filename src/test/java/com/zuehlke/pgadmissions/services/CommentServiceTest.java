@@ -68,7 +68,7 @@ public class CommentServiceTest {
 	public void shouldGetAllInterviewCommentsDueNotificationToAdmin() {
 		InterviewComment interviewComment = new InterviewCommentBuilder().id(1).toInterviewComment();
 		InterviewComment interviewComment2 = new InterviewCommentBuilder().id(2)
-				.commentType(CommentType.INTERVIEW).adminsNotified(CheckedStatus.YES).toInterviewComment();
+				.commentType(CommentType.INTERVIEW).adminsNotified(true).toInterviewComment();
 		EasyMock.expect(commentDAOMock.getInterviewCommentsDueNotification()).andReturn(Arrays.asList(interviewComment2));
 		EasyMock.replay(commentDAOMock);
 		List<InterviewComment> commentsDueNotification = service.getInterviewCommentsDueNotification();

@@ -66,8 +66,8 @@ public class AdminInterviewFeedbackNotificationTaskTest {
 		adminInterviewTask.run();
 
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, adminMailSenderMock, commentServiceMock);
-		assertEquals(CheckedStatus.YES, interviewComment1.getAdminsNotified());
-		assertEquals(CheckedStatus.YES, interviewComment2.getAdminsNotified());
+		assertEquals(true, interviewComment1.isAdminsNotified());
+		assertEquals(true, interviewComment2.isAdminsNotified());
 	}
 	
 	

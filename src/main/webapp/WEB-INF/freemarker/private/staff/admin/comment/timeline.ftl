@@ -36,6 +36,8 @@
                           		<#include "timeline_snippets/validation_comment.ftl"/>
 						  <#elseif comment.type == 'REVIEW'>
 						  		<#include "timeline_snippets/review_comment.ftl"/>
+ 							<#elseif comment.type == 'INTERVIEW'>
+						  		<#include "timeline_snippets/interview_comment.ftl"/>						  		
                           </#if>
                         </div>
                       </li>

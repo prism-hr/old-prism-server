@@ -13,15 +13,15 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.enums.NotificationType;
-import com.zuehlke.pgadmissions.mail.ApproverMailSender;
+import com.zuehlke.pgadmissions.mail.ApproverAdminMailSender;
 
-public class ApproverNotificationTask extends TimerTask {
-	private final Logger log = Logger.getLogger(ApproverNotificationTask.class);
+public class ApproverAndAdminApprovalNotificationTask extends TimerTask {
+	private final Logger log = Logger.getLogger(ApproverAndAdminApprovalNotificationTask.class);
 	private final SessionFactory sessionFactory;
-	private final ApproverMailSender approverMailSender;
+	private final ApproverAdminMailSender approverMailSender;
 	private final ApplicationFormDAO applicationDAO;
 
-	public ApproverNotificationTask(SessionFactory sessionFactory, ApproverMailSender approverMailSender, ApplicationFormDAO applicationDAO) {
+	public ApproverAndAdminApprovalNotificationTask(SessionFactory sessionFactory, ApproverAdminMailSender approverMailSender, ApplicationFormDAO applicationDAO) {
 		this.sessionFactory = sessionFactory;
 		this.approverMailSender = approverMailSender;
 		this.applicationDAO = applicationDAO;
@@ -41,7 +41,7 @@ public class ApproverNotificationTask extends TimerTask {
 			transaction = sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().refresh(application);
 			try {
-				approverMailSender.sendApprovalNotificationToApprovers(application);
+				approverMailSender.sendApprovalNotificationToApproversAndAdmins(application);
 				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPROVAL_NOTIFICATION);
 				if (notificationRecord == null) {
 					notificationRecord = new NotificationRecord(NotificationType.APPROVAL_NOTIFICATION);

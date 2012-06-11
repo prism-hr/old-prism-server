@@ -1,6 +1,10 @@
 $(document).ready(function()
 {
 
+	// Create the feedback button.
+	makeFeedbackButton();
+
+
   // Select all checkbox implementation
   // Listen for click on toggle checkbox
   $('#select-all').click(function(event) {
@@ -118,12 +122,6 @@ $(document).ready(function()
     bindDatePickers();
   }
   
-  
-  // Sortable tables.
-  /*
-	$('table.data').tablesorter();
-  $('table.data thead th').not(':first,:last').wrapInner('<span class="arrow" />');
-	*/
   
   //Adding style to delete button to make it free from inherited style
   
@@ -245,3 +243,13 @@ function backToTop()
   $.scrollTo('#wrapper', 900);
 }
 
+
+function makeFeedbackButton()
+{
+	var pathname = window.location.pathname;
+	var linkToFeedback = "https://docs.google.com/spreadsheet/viewform?formkey=dDNPWWt4MTJ2TzBTTzQzdUx6MlpvWVE6MQ"
+		+"&entry_2="+pathname+"&entry_3="+$("#userRolesDP").val()+"&entry_4="+$("#userFirstNameDP").val()+"&entry_5="+$("#userLastNameDP").val()
+		+"&entry_6="+$("#userEmailDP").val();
+		
+	$("#feedbackButton").attr('href', linkToFeedback);
+}

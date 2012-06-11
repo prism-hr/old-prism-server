@@ -35,6 +35,7 @@ $(document).ready(function(){
 			$("#qualificationAwardDate").attr("disabled", "disabled");
 			$("#proofOfAward").val("");
 			$("#proofOfAward").attr("disabled", "disabled");
+			$("#quali-grad-id em").remove();
 			$("#quali-grad-id").text("Expected Grade / Result / GPA").append('<em>*</em>');
 			$("#quali-award-date-lb").text("Award Date").addClass("grey-label");
 			$("#quali-proof-of-award-lb").text("Proof of award (PDF)").addClass("grey-label");
@@ -51,6 +52,7 @@ $(document).ready(function(){
 			$("#currentQualification").val("YES");
 			$("#qualificationAwardDate").removeAttr("disabled", "disabled");	
 			$("#proofOfAward").removeAttr("disabled");
+			$("#quali-grad-id em").remove();
 			$("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
 			$("#quali-award-date-lb em").remove();
 			$("#quali-award-date-lb").append('<em>*</em>').removeClass("grey-label");
@@ -176,7 +178,9 @@ $(document).ready(function(){
 						
 						$("#qualificationAwardDate").removeAttr("disabled", "disabled");
 						$("#proofOfAward").removeAttr("disabled", "disabled");
+						$("#quali-grad-id em").remove();
 						$("#quali-grad-id").text("Grade / Result / GPA").append('<em>*</em>');
+						$("#quali-award-date-lb em").remove();
 						$("#quali-award-date-lb").append('<em>*</em>').removeClass("grey-label");
 						$("#quali-proof-of-award-lb").removeClass("grey-label");
 						
@@ -185,7 +189,9 @@ $(document).ready(function(){
 						
 						$("#qualificationAwardDate").attr("disabled", "disabled");
 						$("#proofOfAward").attr("disabled", "disabled");
+						$("#quali-grad-id em").remove();
 						$("#quali-grad-id").text("Expected Grade / Result / GPA").append('<em>*</em>');
+						$("#quali-award-date-lb em").remove();
 						$("#quali-award-date-lb").text("Award Date").addClass("grey-label");
 						$("#quali-proof-of-award-lb").text("Proof of award (PDF)").addClass("grey-label");
 						

@@ -118,9 +118,7 @@ function populateApplicationList(reset)
 			$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
 			return;
 		}
-	
-		// Check for selected criteria.
-		if (options.searchCategory == '')
+		else if (options.searchCategory == '')
 		{
 			$('#search-box').append('<span class="invalid">Please select a search criterion.</span>');
 			return;

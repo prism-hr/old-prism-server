@@ -126,7 +126,7 @@ function populateApplicationList(reset)
 		}
 	
 		// Check for selected criteria.
-		if (options.sortCategory == '')
+		if (options.searchCategory == '')
 		{
 			$('#search-box').append('<span class="invalid">Please select a search criterion.</span>');
 			return;

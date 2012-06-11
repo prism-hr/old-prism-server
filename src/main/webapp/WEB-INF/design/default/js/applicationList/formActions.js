@@ -115,10 +115,22 @@ function populateApplicationList(reset)
 	};
 	
 	$('#search-box span.invalid').remove();
-	if (options.searchTerm.length > 0 && options.searchTerm.length <= 2)
+
+	if (!reset)
 	{
-		$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
-		return;
+		// Check for search term.
+		if (options.searchTerm.length < 3)
+		{
+			$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
+			return;
+		}
+	
+		// Check for selected criteria.
+		if (options.sortCategory == '')
+		{
+			$('#search-box').append('<span class="invalid">Please select a search criterion.</span>');
+			return;
+		}
 	}
 	
 	$.get("/pgadmissions/applications/section",

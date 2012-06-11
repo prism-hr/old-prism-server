@@ -4,12 +4,13 @@ import java.util.Date;
 
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
-public class TimelineObject implements Comparable<TimelineObject> {
+public abstract class TimelineObject implements Comparable<TimelineObject> {
 
 	protected Date date = null;
 	protected RegisteredUser author;
 	protected String messageCode;
 
+	
 	public Date getDate() {
 		return date;
 	}
@@ -38,5 +39,8 @@ public class TimelineObject implements Comparable<TimelineObject> {
 	public int compareTo(TimelineObject otherPhase) {
 		return otherPhase.getDate().compareTo(this.getDate());
 	}
+
+	public abstract String getType();
+
 
 }

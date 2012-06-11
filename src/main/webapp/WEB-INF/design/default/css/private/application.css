@@ -163,7 +163,7 @@ section.form-rows div.comment .previous ul li span { display: block; }
 .toolbar li.pdf a { background-image: url(../../images/float_download.png) }
 .toolbar li.print a { background-image: url(../../images/float_print.png) }
 .toolbar li.tool-separator a { background-image: url("../../images/dots.png"); margin-bottom: -11px; }
-.toolbar li.tool-button a { width: 14px; height: 14px; margin-left: -1px; padding: 0; }
+.toolbar li.tool-button a { width: 14px !important; height: 14px !important; margin-left: -1px; padding: 0 !important; }
 
 /* Rest of the button to jump to each section*/
 .toolbar li.tool-button { width: 8px; height: 13px; }

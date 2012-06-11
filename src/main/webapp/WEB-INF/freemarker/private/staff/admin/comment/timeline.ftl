@@ -1,59 +1,48 @@
 <#import "/spring.ftl" as spring />
 <!-- Styles for Application List Page -->
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/global_private.css' />"/>
+<link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/application.css' />"/>
 <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/private/staff/timeline.css' />"/>
 
- <table>
-         	<colgroup>
-              	<col style="width: 100px" />
-              	<col style="width: 100px" />
-              	<col style="width: 100px" />
-              	<col style="width: 200px" />
-              	<col />          
-              	<col />
-              	<col  />
-        	</colgroup>
-	 <thead>
-	 	<tr>
-	 		<th>Author</th>
-	 		<th>Date</th>	 		
-	 		<th>Type</th>
-	 		<th>Comment</th>
-	 		<th/>
-	 		<th/>
-	 		<th/>
-	 	</tr>
- 	</thead>
- <#list timelineEntities as timelineEntity>
- 	<tr>
- 		<td>${(timelineEntity.user.firstName)!} ${(timelineEntity.user.lastName)!}</td>
- 		
- 		<td>${(timelineEntity.date?string('d/M/yy HH:mm'))!}</td>
- 		
- 		
- 		<td>${(timelineEntity.type?html)!}</td>
- 		<#if timelineEntity.newStatus?? >
- 		<td>Application entered ${timelineEntity.newStatus.displayValue()}</td>
- 		<#else>
- 		<td>${(timelineEntity.comment?html)!}</td>
- 		</#if>
- 		<#if timelineEntity.type?? && timelineEntity.type ==  "VALIDATION">
- 			<td>Qualified for PhD: ${(timelineEntity.qualifiedForPhd?string)!}</td>
- 			<td>English Competency OK: ${(timelineEntity.englishCompentencyOk?string)!}</td>
- 			<td>Fee status: ${(timelineEntity.homeOrOverseas?string)!}</td>
- 		<#elseif timelineEntity.type?? && timelineEntity.type ==  "REVIEW">
- 			<td>Interview: ${(timelineEntity.willingToInterview?string)!}</td>
- 			<td>Suitable: ${(timelineEntity.suitableCandidate?string)!}</td>
- 			<td>Decline: ${(timelineEntity.decline?string)!}</td>
-		<#elseif timelineEntity.type?? && timelineEntity.type ==  "INTERVIEW">
- 			<td>Supervise: ${(timelineEntity.willingToSupervice.displayValue()?html)!}</td>
- 			<td>Suitable: ${(timelineEntity.suitableCandidate.displayValue()?html)!}</td>
- 			<td>Decline: ${(timelineEntity.decline.displayValue()?html)!}</td>
-		<#else>
-		<td/>
-		<td/>
-		<td/> 			
- 		</#if>
-	</tr>	 
-</#list>
-</table>   
+        
+        	<section class="form-rows">
+          	<div>            
+            	<div class="row-group">
+              
+              	<ul id="timeline-statuses">
+             	 <#list timelineObjects as timelineObject>         
+                	<li class="${timelineObject.type}">
+                  	<div class="box">
+                      <div class="title">
+                        <span class="icon-role"></span>
+                        <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
+                        <span class="datetime">${timelineObject.date?string('dd-MMM-yy')} at ${timelineObject.date?string('HH:mm')}</span>
+                      </div>
+                      <p>	<@spring.message '${timelineObject.messageCode}'/> </p>
+                    </div>
+                    
+                    <ul>
+                    <#list timelineObject.comments as comment>     
+                      <li>                      	  
+                        <div class="box">
+                          <div class="title">
+                            <span class="icon-role"></span>
+                              <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
+                        		<span class="datetime">${comment.date?string('dd-MMM-yy')} at ${comment.date?string('HH:mm')}</span>
+                          </div>
+                          <p>${(comment.comment?html)!}</p>
+                        </div>
+                      </li>
+                     </#list>                       
+                    </ul>                  	
+                  </li>
+                  </#list>
+                </ul>
+              
+              </div>           
+            
+            </div>
+          </section>
+        
+
+      

@@ -53,7 +53,7 @@ public class CommentDAO {
 	public List<InterviewComment> getInterviewCommentsDueNotification() {
 		return (List<InterviewComment>) sessionFactory.getCurrentSession().createCriteria(InterviewComment.class)
 				.add(Restrictions.eq("type", CommentType.INTERVIEW))
-				.add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified",CheckedStatus.NO)))
+				.add(Restrictions.or(Restrictions.isNull("adminsNotified"), Restrictions.eq("adminsNotified",false)))
 				.list();
 	}
 	

@@ -192,10 +192,10 @@ public class CommentDAOTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		Comment comment = new CommentBuilder().user(user).comment("comment").application(application).toComment();
-		InterviewComment interviewComment1 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(CheckedStatus.NO).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
-		InterviewComment interviewComment2 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(CheckedStatus.NO).comment("comment").commentType(CommentType.REVIEW).toInterviewComment();
-		InterviewComment interviewComment3 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(null).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
-		InterviewComment interviewComment4 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(CheckedStatus.YES).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
+		InterviewComment interviewComment1 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
+		InterviewComment interviewComment2 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment").commentType(CommentType.REVIEW).toInterviewComment();
+		InterviewComment interviewComment3 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(false).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
+		InterviewComment interviewComment4 = new InterviewCommentBuilder().user(user).application(application).adminsNotified(true).comment("comment").commentType(CommentType.INTERVIEW).toInterviewComment();
 		
 		save(comment, interviewComment1, interviewComment2, interviewComment3, interviewComment4);
 		

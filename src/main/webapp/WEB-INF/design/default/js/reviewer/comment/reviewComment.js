@@ -8,8 +8,7 @@ $(document).ready(function(){
 	$('#submitReviewFeedback').click(function() {
 						
 			$('#reviewForm').append("<input type='hidden' name='type' value='REVIEW'/>");
-			$('#reviewForm').append("<input type='hidden' name='comment' value='"+ $('#review-comment').val() + "'/>");
-
+			
 			
 			if ($('#decline:checked').length > 0) {
 				$('#reviewForm').append("<input type='hidden' name='decline' value='true'/>");
@@ -42,7 +41,7 @@ $(document).ready(function(){
 			$("#supervise-lbl em").remove();
 			$('input[name="willingToInterview"]').removeAttr("checked")
 			                                     .addClass("grey-label")
-																					 .attr("disabled", "disabled");
+												 .attr("disabled", "disabled");
 			$('input[name="willingToInterview"]').parent().addClass("grey-label");
 		
 			// "Suitable for UCL" radio buttons.			
@@ -50,7 +49,7 @@ $(document).ready(function(){
 			$("#suitable-lbl em").remove();
 			$('input[name="suitableCandidate"]').removeAttr("checked")
 			                                    .addClass("grey-label")
-																					.attr("disabled", "disabled");
+												.attr("disabled", "disabled");
 			$('input[name="suitableCandidate"]').parent().addClass("grey-label");
 		
 			//remove validation messages

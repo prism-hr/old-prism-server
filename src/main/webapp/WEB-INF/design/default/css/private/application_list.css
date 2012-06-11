@@ -21,6 +21,7 @@ table.data tbody td { background: url(../../images/bg_table_row.jpg) repeat-x 0 
 table.data select { width: 100%; }
 table.data thead th.headerSortDown, table.data thead th.headerSortUp { background-color: #06C; color: #FFF; }
 
+/* Sorting functionality. */
 table.data th.sorting {
   background: rgb(147,149,152); /* Old browsers */
   /* IE9 SVG, needs conditional override of 'filter' to 'none' */
@@ -32,6 +33,9 @@ table.data th.sorting {
   background: linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#939598', endColorstr='#8c8e91',GradientType=0 ); /* IE6-8 */
 }
+
+/* Form fields inside the table. */
+table.data td input, table.data td select { vertical-align: middle; }
 
 td.applicant-name { white-space: nowrap; } /* name on one line. */
 td.applicant-name .applicant-id { display: block; font-size: smaller; }

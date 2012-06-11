@@ -170,7 +170,7 @@
                 <div id="programme-details">                
 									<div class="row">
 										<label class="label">Programme</label>
-										${applicationForm.program.code} - ${applicationForm.program.title}
+										${applicationForm.program.title}
 									</div>
 									
 									<div class="row">

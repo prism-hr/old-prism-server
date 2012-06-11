@@ -142,10 +142,6 @@
 						</div>
             
             <!-- FLOATING TOOLBAR -->
-						<ul id="feedback-toolbar" class="toolbar">
-							<li class="feedback"><a id="feedbackButton" title="Send Feedback">Send Feedback</a></li>
-						</ul>
-
 						<ul id="view-toolbar" class="toolbar">
 							<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
 							<li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" title="Print">Print</a></li>

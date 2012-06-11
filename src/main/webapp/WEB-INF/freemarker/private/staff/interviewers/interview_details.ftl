@@ -49,7 +49,7 @@
 		<article id="content" role="main">
 		
 			<!-- FLOATING TOOLBAR -->
-			<ul id="view-toolbar">
+			<ul id="view-toolbar" class="toolbar">
 				<li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
 				<li class="print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>" title="Print">Print</a></li>
 			</ul>

@@ -73,7 +73,7 @@
 			      
 			      
 				   <!-- FLOATING TOOLBAR -->
-                  <ul id="view-toolbar">
+                  <ul id="view-toolbar" class="toolbar">
                     <li class="top"><a href="javascript:backToTop();" title="Back to top">Back to top</a></li>
                   </ul>
 			      

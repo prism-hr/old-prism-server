@@ -1,0 +1,54 @@
+#content .content-box-inner { padding: 25px 10px 40px; }
+
+#message-options { margin-bottom: 20px; overflow: hidden; }
+#message-options ul { list-style: none; }
+#message-options ul li { float: left; font-weight: bold; line-height: 34px; }
+#message-options ul li a { background: no-repeat; display: block; height: 34px; overflow: hidden; text-indent: 94px; width: 94px; }
+#message-options a:hover, #message-options li.current a { background-position: 0 -34px; }
+#message-options ul.left { float: left; }
+#message-options ul.right { float: right; }
+
+#message-options li.alerts a { background-image: url(../images/message-alerts.png); margin-left: 15px; }
+#message-options li.all a { background-image: url(../images/message-all.png); }
+#message-options li.back a { background-image: url(../images/message-back.png);}
+#message-options li.compose a { background-image: url(../images/message-compose.png); margin-right: 6px; }
+#message-options li.messages a { background-image: url(../images/message-messages.png); }
+#message-options li.reply a { background-image: url(../images/message-reply.png); }
+#message-options li.send a { background-image: url(../images/message-send.png); }
+
+table.messages { border: 1px solid #999; border-bottom: none; border-spacing: 0; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; width: 100%; }
+table.messages thead th {
+  background: rgb(124,124,124); /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzdjN2M3YyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iI2JjYmNiYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM3YzdjN2MiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+  background: -moz-linear-gradient(top,  rgba(124,124,124,1) 0%, rgba(188,188,188,1) 50%, rgba(124,124,124,1) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(124,124,124,1)), color-stop(50%,rgba(188,188,188,1)), color-stop(100%,rgba(124,124,124,1))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* IE10+ */
+  background: linear-gradient(top,  rgba(124,124,124,1) 0%,rgba(188,188,188,1) 50%,rgba(124,124,124,1) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#7c7c7c', endColorstr='#7c7c7c',GradientType=0 ); /* IE6-8 */
+  cursor: pointer; font-weight: bold; text-align: left; padding: 5px 3px;
+}
+table.messages th, table.messages td { padding: 3px; vertical-align: middle; }
+table.messages tr td, table.messages tr th { border-bottom: 1px solid #999; }
+table.data tbody td, table.messages tbody td { background: #FFF; border-bottom: 	 1px solid #999; }
+table.messages tr.unread td { font-weight: bold; }
+table tfoot td { background: #FFF; height: 30px; }
+
+table.messages tr.message-body td { border-bottom: none; color: #666; padding: 20px 20px 0; }
+table.messages tr.message-body h1 { border-bottom: 1px solid #999; font-size: 12pt; font-weight: normal; margin-bottom: .6em; padding-bottom: .6em; }
+table.messages tr.message-body p { line-height: 1.2; width: 80%; }
+
+a.delete-button { background: url(../images/message-delete.png) no-repeat 0 -15px; display: block; height: 15px; margin: 0 auto; overflow: hidden; text-indent: 15px; width: 15px; }
+a.delete-button:hover { background-position: 0 0; }
+
+
+#message-compose { background: #666 url(../images/bg_button.png) repeat-x 0 -20px; border: 1px solid #999; padding-top: 20px; }
+#message-compose form { background: #FFF; padding: 20px 20px 2px; }
+#message-compose div.row { margin-bottom: 15px; }
+#message-compose label span { display: inline-block; width: 100px; }
+#message-compose select { width: 200px; }
+#message-compose textarea { width: 100%; }
+#message-compose div.carbon-copy { padding-left: 100px; }
+#message-compose div.carbon-copy a.button { background: none; border: none; box-shadow: none; color: #000; }

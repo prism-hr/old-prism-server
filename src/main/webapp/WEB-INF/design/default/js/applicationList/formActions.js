@@ -131,25 +131,49 @@ function populateApplicationList(reset)
 	);
 }
 
-function sortList(column) {
+function sortList(column)
+{
 	$('#block-index').val("1");
 	oldValue = $('#sort-column').val();
 	newValue = column.id;
 	
-	if( oldValue == newValue) {
+	if (oldValue == newValue)
+	{
 		flipSortOrder();
-	} else {
+	}
+	else
+	{
 		$('#sort-column').val(newValue);
 		$('#sort-order').val("ASCENDING");
 	}
+	
+	// Highlight the sorting column.
+	var $header = $('#'+newValue);
+	$('table th').removeClass('sorting asc desc');
+	$column.addClass('sorting');
+	if ($('#sort-order') == "DESCENDING")
+	{
+		$column.addClass('desc');
+	}
+	else
+	{
+		$column.addClass('asc');
+	}
+
+	
+	
 	populateApplicationList();
 }
 
-function flipSortOrder() {
+function flipSortOrder()
+{
 	oldOrder = $('#sort-order').val();
-	if( oldOrder == "ASCENDING") {
+	if (oldOrder == "ASCENDING")
+	{
 		$('#sort-order').val("DESCENDING");
-	} else {
+	}
+	else
+	{
 		$('#sort-order').val("ASCENDING");
 	}
 }

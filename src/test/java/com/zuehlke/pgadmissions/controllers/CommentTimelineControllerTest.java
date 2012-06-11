@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
@@ -21,6 +22,8 @@ import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.TimelineObject;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -117,7 +120,15 @@ public class CommentTimelineControllerTest {
 		assertEquals(timelineObjectTwo, timelineObjects.get(1));
 
 	}
-
+	@Test
+	public void shouldReturnAllValidationQuestionOptions(){
+		assertArrayEquals(ValidationQuestionOptions.values(), controller.getValidationQuestionOptions());
+	}
+	
+	@Test
+	public void shouldReturnHomeOrOverseasOptions(){
+		assertArrayEquals(HomeOrOverseas.values(), controller.getHomeOrOverseasOptions());
+	}
 	@Test
 	public void shouldReturnTimeLine() {
 		assertEquals("private/staff/admin/comment/timeline", controller.getCommentsView());

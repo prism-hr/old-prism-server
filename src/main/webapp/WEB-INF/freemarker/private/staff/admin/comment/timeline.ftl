@@ -19,6 +19,7 @@
                         <span class="datetime">${timelineObject.date?string('dd-MMM-yy')} at ${timelineObject.date?string('HH:mm')}</span>
                       </div>
                       <p>	<@spring.message '${timelineObject.messageCode}'/> </p>
+                      
                     </div>
                     
                     <ul>
@@ -31,6 +32,11 @@
                         		<span class="datetime">${comment.date?string('dd-MMM-yy')} at ${comment.date?string('HH:mm')}</span>
                           </div>
                           <p>${(comment.comment?html)!}</p>
+                          <#if comment.type == 'VALIDATION'>                           	                       
+                          		<#include "timeline_snippets/validation_comment.ftl"/>
+						  <#elseif comment.type == 'REVIEW'>
+						  		<#include "timeline_snippets/review_comment.ftl"/>
+                          </#if>
                         </div>
                       </li>
                      </#list>                       

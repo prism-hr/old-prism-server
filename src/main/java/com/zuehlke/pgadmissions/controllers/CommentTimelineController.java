@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
+import com.zuehlke.pgadmissions.domain.enums.ValidationQuestionOptions;
 import com.zuehlke.pgadmissions.dto.TimelineObject;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
@@ -62,6 +64,16 @@ public class CommentTimelineController {
 		List<TimelineObject> timelineObjects = new ArrayList<TimelineObject>();
 		timelineObjects.addAll(timelineService.getPhases(getApplicationForm(id)));		
 		return timelineObjects;
+	}
+
+	@ModelAttribute("validationQuestionOptions")
+	public ValidationQuestionOptions[] getValidationQuestionOptions() {
+		return ValidationQuestionOptions.values();
+	}
+	
+	@ModelAttribute("homeOrOverseasOptions")
+	public HomeOrOverseas[] getHomeOrOverseasOptions() {
+		return HomeOrOverseas.values();
 	}
 
 

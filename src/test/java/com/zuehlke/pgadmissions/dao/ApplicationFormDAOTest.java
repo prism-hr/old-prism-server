@@ -1195,11 +1195,12 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
-	public void shouldReturnApplicationsWithNoApprovedNotificationDate() {
+	public void shouldReturnApplicationsWithNoApprovedNotificationRecord() {
 		Integer noOfAppsBefore  = applicationDAO.getApplicationsDueApprovedNotifications().size();
 		RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichApprover(program).toUser();
 		
-		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).approver(approver).status(ApplicationFormStatus.APPROVED)
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program)
+				.notificationRecords(new NotificationRecordBuilder().notificationType(NotificationType.APPLICANT_MOVED_TO_INTERVIEW_NOTIFICATION).notificationDate(new Date()).toNotificationRecord()).program(program).applicant(user).status(ApplicationFormStatus.REVIEW).applicant(user).status(ApplicationFormStatus.REVIEW).approver(approver).status(ApplicationFormStatus.APPROVED)
 		.toApplicationForm();
 		
 		save(approver, applicationForm);
@@ -1212,15 +1213,15 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 	}
 	
 	@Test
-	public void shouldNotReturnApplicationsWithApprovedNotificationDate() {
+	public void shouldNotReturnApplicationsWithApprovedNotificationrRecord() {
 		int noOfAppsBefore  = applicationDAO.getApplicationsDueApprovedNotifications().size();
 		
 		RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichApprover(program).toUser();
 		
 		ApplicationForm applicationForm = new ApplicationFormBuilder()
-		.program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
+		.notificationRecords(new NotificationRecordBuilder().notificationType(NotificationType.APPROVED_NOTIFICATION).notificationDate(new Date()).toNotificationRecord()).program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
 		.approver(approver).status(ApplicationFormStatus.APPROVED)
-		.approvedNotificationDate(new Date()).toApplicationForm();
+		.toApplicationForm();
 		
 		save(approver, applicationForm);
 		flushAndClearSession();

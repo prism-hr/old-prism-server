@@ -38,6 +38,8 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 #timeline-statuses .box .title .name { margin-left: 4px; }
 #timeline-statuses .box .title .datetime { float: right; margin-right: 5px; }
 #timeline-statuses .box p { line-height: 1.2; padding: 10px 25px 10px 10px; }
+#timeline-statuses .box h3 { margin-bottom: 0; padding: 5px 10px; }
+#timeline-statuses .box label { display: inline-block; margin-right: 1em; }
 
 #timeline-statuses ul .box .title { background: #AAA; }
 #timeline-statuses ul .box p { background-image: none !important; }

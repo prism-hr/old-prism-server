@@ -1,23 +1,29 @@
-<p>Is the applicant qualified for PhD entry to UCL?</p>
+<h3>Is the applicant qualified for PhD entry to UCL?</h3>
 <p>                          									           				
 	<#list validationQuestionOptions as option>
-	<input type="radio" name="qualifiedForPhd" value="${option}" disabled="disabled" <#if comment.qualifiedForPhd?? && comment.qualifiedForPhd == option>checked="checked"</#if>/><label> ${option.displayValue}</label>
+	<label>
+		<input type="radio" name="qualifiedForPhd" value="${option}" disabled="disabled" <#if comment.qualifiedForPhd?? && comment.qualifiedForPhd == option>checked="checked"</#if>/>
+		${option.displayValue}
+	</label>
 	</#list>									
 </p>
 
-<p>Does the applicant meeting the minimum required standard of English Language competence?</p>
+<h3>Does the applicant meeting the minimum required standard of English Language competence?</h3>
 <p>                       							
-									            				
 	<#list validationQuestionOptions as option>
-	<label><input type="radio" name="englishCompentencyOk" value="${option}"  disabled="disabled" <#if comment.englishCompentencyOk?? &&  comment.englishCompentencyOk == option>checked="checked"</#if>/> ${option.displayValue}</label>
+	<label>
+		<input type="radio" name="englishCompentencyOk" value="${option}"  disabled="disabled" <#if comment.englishCompentencyOk?? &&  comment.englishCompentencyOk == option>checked="checked"</#if>/>
+		${option.displayValue}
+		</label>
 	</#list>
-	
 </p>
 
-<p>What is the applicant's fee status?</p>
-<p>                          															  				
+<h3>What is the applicant's fee status?</h3>
+<p>
 	<#list homeOrOverseasOptions as option>
-	<label><input type="radio" name="homeOrOverseas" value="${option}" disabled="disabled" <#if comment.homeOrOverseas?? && comment.homeOrOverseas == option>checked="checked"</#if>/> ${option.displayValue}</label>
+	<label>
+		<input type="radio" name="homeOrOverseas" value="${option}" disabled="disabled" <#if comment.homeOrOverseas?? && comment.homeOrOverseas == option>checked="checked"</#if>/>
+		${option.displayValue}
+	</label>
 	</#list>
-
 </p>

@@ -249,11 +249,10 @@
 			<div class="row">
 				<span id="quali-grad-id" class="plain-label">
 					<#if qualification.isQualificationCompleted()>
-					Grade / Result / GPA
+					Grade / Result / GPA<em>*</em>
 					<#else>
-					Expected Grade / Result / GPA
+					Expected Grade / Result / GPA<em>*</em>
 					</#if>
-					<em>*</em>
 				</span>
 				<span class="hint" data-desc="<@spring.message 'education.qualifications.grade'/>"></span>
 				<div class="field">

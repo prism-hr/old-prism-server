@@ -143,7 +143,7 @@
             
             <!-- FLOATING TOOLBAR -->
 						<ul id="feedback-toolbar" class="toolbar">
-							<li class="feedback"<a id="feedbackButton" title="Send Feedback">Send Feedback</a></li>
+							<li class="feedback"><a id="feedbackButton" title="Send Feedback">Send Feedback</a></li>
 						</ul>
 
 						<ul id="view-toolbar" class="toolbar">

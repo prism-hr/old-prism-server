@@ -24,7 +24,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 @Entity(name="COMMENT")
 @Inheritance(strategy = InheritanceType.JOINED)
 @Access(AccessType.FIELD) 
-public class Comment extends TimelineEntity {
+public class Comment extends DomainObject<Integer> implements Comparable<Comment> {
 
 	private static final long serialVersionUID = 2861325991249900547L;
 
@@ -93,7 +93,9 @@ public class Comment extends TimelineEntity {
 		return CommentType.GENERIC;
 	}
 
-
-	
+	@Override
+	public int compareTo(Comment otherComment) {
+		return otherComment.getDate().compareTo(this.date);
+	}	
 
 }

@@ -143,6 +143,8 @@
 		<property name="timerTask" ref="adminRejectNotificationTask" />
 	</bean>
 	
+	<!-- approval notification handled in Approver-Emails.xml bean id: approverAdminApprovalNotificationTimerTask-->
+
 	<!-- approved notification -->
 	
 	<bean id="adminApprovedNotificationTask" class="com.zuehlke.pgadmissions.timers.AdminApprovedNotificationTask">

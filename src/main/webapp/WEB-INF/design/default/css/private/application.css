@@ -155,23 +155,6 @@ section.form-rows div.comment .previous ul li.even { background: #EEE; }
 section.form-rows div.comment .previous ul li span { display: block; }
 
 
-/* FLOATING TOOLBARS ------------------------------------------------------------------------------------- */
-.toolbar { background: #333; border-radius: 5px 0 0 5px; list-style: none; padding: 5px 10px; position: fixed; right: 0; }
-.toolbar li { margin: 10px 0; }
-.toolbar li a { background: no-repeat; display: block; height: 15px; overflow: hidden; text-indent: 15px; width: 15px; }
-.toolbar li.top a { background-image: url(../../images/float_up.png) }
-.toolbar li.pdf a { background-image: url(../../images/float_download.png) }
-.toolbar li.print a { background-image: url(../../images/float_print.png) }
-.toolbar li.tool-separator a { background-image: url("../../images/dots.png"); margin-bottom: -11px; }
-.toolbar li.tool-button a { width: 14px !important; height: 14px !important; margin-left: -1px; padding: 0 !important; }
-
-/* Rest of the button to jump to each section*/
-.toolbar li.tool-button { width: 8px; height: 13px; }
-
-#feedback-toolbar { top: 90px; }
-#view-toolbar { top: 140px; }
-
-
 
 /* Dynamic Data Table */
 table.data-table { border-collapse: collapse; border-spacing: 0; }

@@ -168,7 +168,7 @@ section.form-rows div.comment .previous ul li span { display: block; }
 /* Rest of the button to jump to each section*/
 .toolbar li.tool-button { width: 8px; height: 13px; }
 
-#feedback-toolbar { top: 100px; }
+#feedback-toolbar { top: 90px; }
 #view-toolbar { top: 140px; }
 
 

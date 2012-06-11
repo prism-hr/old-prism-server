@@ -35,9 +35,9 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The application ${application.applicationNumber} has now been moved to approval. <#if user.isInRole('APPROVER') > You can approve the application below.<#else>You can view the application below.</#if></font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The application ${application.applicationNumber} has now been moved to approval. <#if user.isInRoleInProgram('APPROVER', application.program)> You can approve the application below.<#else>You can view the application below.</#if></font>
 			      	</p>
-			      	 <#if user.isInRole('APPROVER') > 
+			      	 <#if user.isInRoleInProgram('APPROVER', application.program) > 
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
 			      			<a href="${host}/pgadmissions/approved/moveToApproved?applicationId=${application.applicationNumber}">Approve application</a>

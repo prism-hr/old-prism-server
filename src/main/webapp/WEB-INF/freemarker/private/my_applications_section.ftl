@@ -1,6 +1,8 @@
 <#list applications as application>
 <tr id="row_${application.applicationNumber}" name="applicationRow">
-	<td><a class="row-arrow" href="#">&gt;</a></td>
+	<td class="centre">
+		<input type="checkbox" name="appDownload" id="appDownload_${application.applicationNumber}"/>
+	</td>
 	<td class="applicant-name">
 		<#if !user.isInRole('APPLICANT')>
 			${application.applicant.firstName} ${application.applicant.lastName}
@@ -61,7 +63,5 @@
 		<a href="/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">Complete &gt;</a>
 		</#if>
 	</td>
-	<td class="centre">
-		<input type="checkbox" name="appDownload" id="appDownload_${application.applicationNumber}"/></td>
-	</tr>
+</tr>
 </#list>

@@ -50,8 +50,24 @@ $(document).ready(function() {
 	
 	
 	/* Search functionality. */
-	$('#search-go').click(function() { populateApplicationList(); });
-	$('#search-reset').click(function() { populateApplicationList(true); });
+	$('#search-go').click(function()
+	{
+		if (options.searchTerm.length < 3)
+		{
+			$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
+			return;
+		}
+		else if (options.searchCategory == '')
+		{
+			$('#search-box').append('<span class="invalid">Please select a search criterion.</span>');
+			return;
+		}
+		populateApplicationList();
+	});
+	$('#search-reset').click(function()
+	{
+		populateApplicationList(true);
+	});
 	
 
 	$('#manageUsersButton').click(function(){
@@ -114,21 +130,6 @@ function populateApplicationList(reset)
 	
 	$('#search-box span.invalid').remove();
 
-	if (!reset)
-	{
-		// Check for search term.
-		if (options.searchTerm.length > 0 && options.searchTerm.length < 3)
-		{
-			$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
-			return;
-		}
-		else if (options.searchCategory == '')
-		{
-			$('#search-box').append('<span class="invalid">Please select a search criterion.</span>');
-			return;
-		}
-	}
-	
 	$.get("/pgadmissions/applications/section",
 		options,
 		function(data)

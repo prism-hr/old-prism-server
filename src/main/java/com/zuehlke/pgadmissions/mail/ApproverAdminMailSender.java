@@ -1,8 +1,11 @@
 package com.zuehlke.pgadmissions.mail;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.mail.internet.InternetAddress;
 
@@ -15,21 +18,21 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
-public class ApproverMailSender extends MailSender {
+public class ApproverAdminMailSender extends MailSender {
 
 	private final ApplicationsService applicationService;
 
-	public ApproverMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource, ApplicationsService applicationService) {
+	public ApproverAdminMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource, ApplicationsService applicationService) {
 		super(mimeMessagePreparatorFactory, mailSender, msgSource);
 		this.applicationService = applicationService;	
 	}
 
-	Map<String, Object> createModel(RegisteredUser approver, ApplicationForm application) {
+	Map<String, Object> createModel(RegisteredUser user, ApplicationForm application) {
 		List<RegisteredUser> administrators = application.getProgram().getAdministrators();
 		String adminsEmails = getAdminsEmailsCommaSeparatedAsString(administrators);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("adminsEmails", adminsEmails);
-		model.put("approver", approver);
+		model.put("user", user);
 		model.put("application", application);
 
 		model.put("applicant", application.getApplicant());
@@ -37,14 +40,17 @@ public class ApproverMailSender extends MailSender {
 		return model;
 	}
 
-	public void sendApprovalNotificationToApprovers(ApplicationForm application) {
-		List<RegisteredUser> approvers = application.getProgram().getApprovers();
-		for (RegisteredUser approver : approvers) {
-			InternetAddress toAddress = createAddress(approver);
-			ApplicationFormStatus previousStage = applicationService.getStageComingFrom(application);
-			String subject = resolveMessage("approval.notification.approver", application, previousStage);
+	public void sendApprovalNotificationToApproversAndAdmins(ApplicationForm application) {
+		List<RegisteredUser> approversAndAdmins = new ArrayList<RegisteredUser>();
+		approversAndAdmins.addAll(application.getProgram().getApprovers());
+		approversAndAdmins.addAll(application.getProgram().getAdministrators());
+		Set<RegisteredUser> uniqueUsers = new HashSet<RegisteredUser>(approversAndAdmins);
+		ApplicationFormStatus previousStage = applicationService.getStageComingFrom(application);
+		for (RegisteredUser user : uniqueUsers) {
+			InternetAddress toAddress = createAddress(user);
+			String subject = resolveMessage("approval.notification.approverAndAdmin", application, previousStage);
 			javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
-					"private/approvers/mail/approval_notification_email.ftl", createModel(approver, application), null));
+					"private/approvers/mail/approval_notification_email.ftl", createModel(user, application), null));
 		}
 	}
 }

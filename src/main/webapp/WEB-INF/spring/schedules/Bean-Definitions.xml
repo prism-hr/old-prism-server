@@ -55,7 +55,7 @@
 		<constructor-arg index="3" ref="messageSource" />
 	</bean>
 
-	<bean id="approverMailSender" class="com.zuehlke.pgadmissions.mail.ApproverMailSender"
+	<bean id="approverMailSender" class="com.zuehlke.pgadmissions.mail.ApproverAdminMailSender"
 		autowire-candidate="false">
 		<constructor-arg index="0" ref="mimeMessagePreparatorFactory" />
 		<constructor-arg index="1" ref="mailSender" />

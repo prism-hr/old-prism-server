@@ -97,8 +97,8 @@
                     </#if>
                     <th scope="col" id="PROGRAMME_NAME" onclick="sortList(this)">Programme</th>          
                     <th scope="col" id="APPLICATION_STATUS" onclick="sortList(this)">Status</th>
-                    <th scope="col">Actions</th>
-                    <th scope="col" id="APPLICATION_DATE" onclick="sortList(this)">Submitted</th>                          
+                    <th scope="col" class="centre">Actions</th>
+                    <th scope="col" class="centre" id="APPLICATION_DATE" onclick="sortList(this)">Submitted</th>                          
                   </tr>
                 </thead>
                 <tbody id="applicationListSection">

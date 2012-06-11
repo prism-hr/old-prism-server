@@ -25,6 +25,9 @@ td.applicant-name { white-space: nowrap; } /* name on one line. */
 td.applicant-name .applicant-id { display: block; font-size: smaller; }
 td.status { text-align: center; }
 
+a.proceed-link { color: #00F; }
+a.proceed-link:hover, a.proceed-link:focus { text-decoration: underline; }
+
 
 /* Application status icons. ------------------------------------------------------------------------- */
 span.icon-status {

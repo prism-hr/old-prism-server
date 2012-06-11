@@ -9,7 +9,7 @@
 		</#if>
 		<span class="applicant-id">${application.applicationNumber}</span>
 	</td>
-	<td class="program-title">${application.program.code} - ${application.program.title}</td>								                
+	<td class="program-title">${application.program.title}</td>								                
 	<td class="status">
 		<span class="icon-status ${application.status.displayValue()?lower_case?replace(' ','-')}" data-desc="${application.status.displayValue()}">${application.status.displayValue()}</span>
 	</td>
@@ -60,7 +60,7 @@
 		<#if application.submittedDate??>
 		${(application.submittedDate?string("dd MMM yyyy"))}
 		<#else>
-		<a href="/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">Complete &gt;</a>
+		<a class="proceed-link" href="/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">Proceed &gt;</a>
 		</#if>
 	</td>
 </tr>

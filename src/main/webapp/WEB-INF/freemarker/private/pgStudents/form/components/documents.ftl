@@ -40,7 +40,9 @@
 						<input type="hidden" id="document_PERSONAL_STATEMENT" value="${(encrypter.encrypt(applicationForm.personalStatement.id))!}"/>
 						<input type="hidden" name="MAX_FILE_SIZE" value="500" />
 						<a class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.personalStatement.id))!}'/>">${(applicationForm.personalStatement.fileName?html)!}</a>
+						<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 						<a data-desc="Change Personal Statement" class="button-edit button-hint">edit</a>
+						</#if>
 					</span>
 					<span id="psDocumentProgress" class="progress" style="display: none;"></span>					
 				</div>  
@@ -62,7 +64,9 @@
 					<span id="cvUploadedDocument">
 						<input type="hidden" id="document_CV" value="${(encrypter.encrypt(applicationForm.cv.id))!}"/>
 						<a class="uploaded-filename" target="_blank" href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.cv.id))!}'/>">${(applicationForm.cv.fileName)!}</a>
+						<#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
 						<a data-desc="Change CV" class="button-edit button-hint">edit</a>
+						</#if>
 					</span>
 					<span id="cvDocumentProgress" class="progress" style="display: none;"></span>					
 				</div>  

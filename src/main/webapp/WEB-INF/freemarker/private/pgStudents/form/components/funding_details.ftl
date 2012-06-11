@@ -112,7 +112,7 @@
           <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>    
           <textarea id="fundingDescription" name="fundingDescription" class="max" cols="70" rows="6" maxlength='2000'>${(funding.description?html)!}</textarea>
           <#else>
-          <textarea id="fundingDescription" name="fundingDescription" class="full" readonly="readonly" disabled="disabled">${(funding.description?html)!}</textarea>
+          <textarea id="fundingDescription" name="fundingDescription" class="full" readonly="readonly">${(funding.description?html)!}</textarea>
           </#if>
           
           <@spring.bind "funding.description" />
@@ -165,7 +165,9 @@
             <input type="hidden" id="document_SUPPORTING_FUNDING" value="${(encrypter.encrypt(funding.document.id))!}"/>
           <#if funding.document??>
             <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(funding.document.id)}" data-desc="Proof of Award" class="uploaded-filename" target="_blank">${funding.document.fileName}</a>
-            <a class="button-edit button-hint" data-desc="Edit Proof Of Award">edit</a> 
+            <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
+						<a class="button-edit button-hint" data-desc="Edit Proof Of Award">edit</a>
+						</#if>
           </#if>
           </span>
           <span id="fundingDocumentProgress" class="progress" style="display: none;"></span>

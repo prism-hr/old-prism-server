@@ -180,7 +180,7 @@
 									<#if applicationForm.isSubmitted()>
 										<div class="row">
 										<label>Date Submitted</label>
-												${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}
+												${(applicationForm.submittedDate?string("dd MMM yyyy hh:mm a"))!}
 										</div>
 									</#if>
 							

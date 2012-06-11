@@ -52,12 +52,6 @@ $(document).ready(function() {
 	/* Search functionality. */
 	$('#search-go').click(function() { populateApplicationList(); });
 	$('#search-reset').click(function() { populateApplicationList(true); });
-	/*
-	$('#searchBtn').click(function(){
-		populateApplicationList();
-	});
-	$('#searchCategory').change(function() { populateApplicationList(); });
-	*/
 	
 
 	$('#manageUsersButton').click(function(){
@@ -119,7 +113,7 @@ function populateApplicationList(reset)
 	if (!reset)
 	{
 		// Check for search term.
-		if (options.searchTerm.length < 3)
+		if (options.searchTerm.length > 0 && options.searchTerm.length < 3)
 		{
 			$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
 			return;

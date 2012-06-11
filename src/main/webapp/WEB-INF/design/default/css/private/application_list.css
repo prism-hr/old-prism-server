@@ -21,6 +21,18 @@ table.data tbody td { background: url(../../images/bg_table_row.jpg) repeat-x 0 
 table.data select { width: 100%; }
 table.data thead th.headerSortDown, table.data thead th.headerSortUp { background-color: #06C; color: #FFF; }
 
+table.data th.sorting {
+  background: rgb(147,149,152); /* Old browsers */
+  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
+  background: -moz-linear-gradient(top,  rgba(147,149,152,1) 0%, rgba(147,149,152,1) 50%, rgba(98,99,101,1) 51%, rgba(140,142,145,1) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(147,149,152,1)), color-stop(50%,rgba(147,149,152,1)), color-stop(51%,rgba(98,99,101,1)), color-stop(100%,rgba(140,142,145,1))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* IE10+ */
+  background: linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#939598', endColorstr='#8c8e91',GradientType=0 ); /* IE6-8 */
+}
+
 td.applicant-name { white-space: nowrap; } /* name on one line. */
 td.applicant-name .applicant-id { display: block; font-size: smaller; }
 td.status { text-align: center; }

@@ -84,6 +84,10 @@ $(document).ready(function() {
 			window.location.href = "/pgadmissions/print/all?appList="+$('#appList').val();
 		}
 	});
+	
+	$('#myAccount').click(function(){
+		window.location.href = "/pgadmissions/myAccount";
+	});
 
 });
 

@@ -142,4 +142,18 @@
 		<property name="period" value="300000" />
 		<property name="timerTask" ref="adminRejectNotificationTask" />
 	</bean>
+	
+	<!-- approved notification -->
+	
+	<bean id="adminApprovedNotificationTask" class="com.zuehlke.pgadmissions.timers.AdminApprovedNotificationTask">
+		<constructor-arg index="0" ref="sessionFactoryMail" />
+		<constructor-arg index="1" ref="adminMailSender" />
+		<constructor-arg index="2" ref="mailApplicationDAO" />		
+	</bean>
+
+	<bean id="adminApprovedNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="3000" />
+		<property name="period" value="300000" />
+		<property name="timerTask" ref="adminApprovedNotificationTask" />
+	</bean>
 </beans>

@@ -48,71 +48,109 @@ public class ApplicationFormDAO {
 	}
 
 	public ApplicationForm get(Integer id) {
-		return (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, id);
+		return (ApplicationForm) sessionFactory.getCurrentSession().get(
+				ApplicationForm.class, id);
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getAllApplications() {
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).list();
+		return sessionFactory.getCurrentSession()
+				.createCriteria(ApplicationForm.class).list();
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Qualification> getQualificationsByApplication(ApplicationForm application) {
-		return sessionFactory.getCurrentSession().createCriteria(Qualification.class).add(Restrictions.eq("application", application)).list();
+	public List<Qualification> getQualificationsByApplication(
+			ApplicationForm application) {
+		return sessionFactory.getCurrentSession()
+				.createCriteria(Qualification.class)
+				.add(Restrictions.eq("application", application)).list();
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ApplicationForm> getApplicationsDueAdminReminder(NotificationType notificationType, ApplicationFormStatus status) {
+	public List<ApplicationForm> getApplicationsDueAdminReminder(
+			NotificationType notificationType, ApplicationFormStatus status) {
 
 		Date today = Calendar.getInstance().getTime();
-		ReminderInterval reminderInterval = (ReminderInterval) sessionFactory.getCurrentSession().createCriteria(ReminderInterval.class).uniqueResult();
-		Date subtractInterval = DateUtils.addMinutes(today, -reminderInterval.getDurationInMinutes());
+		ReminderInterval reminderInterval = (ReminderInterval) sessionFactory
+				.getCurrentSession().createCriteria(ReminderInterval.class)
+				.uniqueResult();
+		Date subtractInterval = DateUtils.addMinutes(today,
+				-reminderInterval.getDurationInMinutes());
 
-		DetachedCriteria anyRemindersCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
+		DetachedCriteria anyRemindersCriteria = DetachedCriteria
+				.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", notificationType))
-				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+				.add(Property.forName("notificationRecord.application")
+						.eqProperty("applicationForm.id"));
 
-		DetachedCriteria overDueRemindersCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", notificationType)).add(Restrictions.lt("notificationRecord.date", subtractInterval))
-				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
+		DetachedCriteria overDueRemindersCriteria = DetachedCriteria
+				.forClass(NotificationRecord.class, "notificationRecord")
+				.add(Restrictions.eq("notificationType", notificationType))
+				.add(Restrictions.lt("notificationRecord.date",
+						subtractInterval))
+				.add(Property.forName("notificationRecord.application")
+						.eqProperty("applicationForm.id"));
 
 		return sessionFactory
 				.getCurrentSession()
 				.createCriteria(ApplicationForm.class, "applicationForm")
 				.add(Restrictions.eq("status", status))
 				.add(Restrictions.lt("dueDate", today))
-				.add(Restrictions.or(Subqueries.exists(overDueRemindersCriteria.setProjection(Projections.property("notificationRecord.id"))),
-						Subqueries.notExists(anyRemindersCriteria.setProjection(Projections.property("notificationRecord.id"))))).list();
-
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<ApplicationForm> getApplicationsDueUpdateNotification() {
-		Date twentyFourHoursAgo = DateUtils.addHours(Calendar.getInstance().getTime(), -24);
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).createAlias("notificationRecords", "notificationRecord")
-				.add(Restrictions.eq("notificationRecord.notificationType", NotificationType.UPDATED_NOTIFICATION))
-				.add(Restrictions.lt("notificationRecord.date", twentyFourHoursAgo)).add(Restrictions.ltProperty("notificationRecord.date", "lastUpdated"))
+				.add(Restrictions.or(Subqueries.exists(overDueRemindersCriteria
+						.setProjection(Projections
+								.property("notificationRecord.id"))),
+						Subqueries.notExists(anyRemindersCriteria
+								.setProjection(Projections
+										.property("notificationRecord.id")))))
 				.list();
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ApplicationForm> getApplicationsDueNotificationForStateChangeEvent(NotificationType notificationType, ApplicationFormStatus newStatus) {
-		DetachedCriteria notificationCriteriaOne = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", notificationType))
-				.add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
+	public List<ApplicationForm> getApplicationsDueUpdateNotification() {
+		Date twentyFourHoursAgo = DateUtils.addHours(Calendar.getInstance()
+				.getTime(), -24);
+		return sessionFactory
+				.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.createAlias("notificationRecords", "notificationRecord")
+				.add(Restrictions.eq("notificationRecord.notificationType",
+						NotificationType.UPDATED_NOTIFICATION))
+				.add(Restrictions.lt("notificationRecord.date",
+						twentyFourHoursAgo))
+				.add(Restrictions.ltProperty("notificationRecord.date",
+						"lastUpdated")).list();
 
-		DetachedCriteria notificationCriteriaTwo = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getApplicationsDueNotificationForStateChangeEvent(
+			NotificationType notificationType, ApplicationFormStatus newStatus) {
+		DetachedCriteria notificationCriteriaOne = DetachedCriteria
+				.forClass(NotificationRecord.class, "notificationRecord")
 				.add(Restrictions.eq("notificationType", notificationType))
-				.add(Property.forName("notificationRecord.application.id").eqProperty("event.application.id"));
+				.add(Property.forName("notificationRecord.application.id")
+						.eqProperty("event.application.id"));
+
+		DetachedCriteria notificationCriteriaTwo = DetachedCriteria
+				.forClass(NotificationRecord.class, "notificationRecord")
+				.add(Restrictions.eq("notificationType", notificationType))
+				.add(Property.forName("notificationRecord.application.id")
+						.eqProperty("event.application.id"));
 
 		DetachedCriteria reviewEventsCriteria = DetachedCriteria
 				.forClass(Event.class, "event")
 				.add(Restrictions.eq("newStatus", newStatus))
-				.add(Restrictions.or(Subqueries.notExists(notificationCriteriaOne.setProjection(Projections.property("notificationRecord.id"))),
-						Subqueries.propertyGt("date", notificationCriteriaTwo.setProjection(Projections.max("notificationRecord.date")))))
-				.add(Property.forName("event.application").eqProperty("applicationForm.id"));
+				.add(Restrictions.or(Subqueries
+						.notExists(notificationCriteriaOne
+								.setProjection(Projections
+										.property("notificationRecord.id"))),
+						Subqueries.propertyGt("date", notificationCriteriaTwo
+								.setProjection(Projections
+										.max("notificationRecord.date")))))
+				.add(Property.forName("event.application").eqProperty(
+						"applicationForm.id"));
 
 		List<ApplicationFormStatus> invalidStateList = new ArrayList<ApplicationFormStatus>();
 		invalidStateList.add(ApplicationFormStatus.APPROVED);
@@ -120,24 +158,36 @@ public class ApplicationFormDAO {
 		if (!ApplicationFormStatus.REJECTED.equals(newStatus)) {
 			invalidStateList.add(ApplicationFormStatus.REJECTED);
 		}
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class, "applicationForm")
-				.add(Restrictions.not(Restrictions.in("status", invalidStateList)))
-				.add(Subqueries.exists(reviewEventsCriteria.setProjection(Projections.property("event.id")))).list();
+		return sessionFactory
+				.getCurrentSession()
+				.createCriteria(ApplicationForm.class, "applicationForm")
+				.add(Restrictions.not(Restrictions.in("status",
+						invalidStateList)))
+				.add(Subqueries.exists(reviewEventsCriteria
+						.setProjection(Projections.property("event.id"))))
+				.list();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getVisibleApplications(RegisteredUser user) {
 		if (user.isInRole(Authority.APPLICANT)) {
-			return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicant", user)).list();
+			return sessionFactory.getCurrentSession()
+					.createCriteria(ApplicationForm.class)
+					.add(Restrictions.eq("applicant", user)).list();
 
 		}
 		if (user.isInRole(Authority.SUPERADMINISTRATOR)) {
-			return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-					.add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED))).list();
+			return sessionFactory
+					.getCurrentSession()
+					.createCriteria(ApplicationForm.class)
+					.add(Restrictions.not(Restrictions.eq("status",
+							ApplicationFormStatus.UNSUBMITTED))).list();
 		}
 
 		if (user.isInRole(Authority.REFEREE)) {
-			return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).createAlias("referees", "referee")
+			return sessionFactory.getCurrentSession()
+					.createCriteria(ApplicationForm.class)
+					.createAlias("referees", "referee")
 					.add(Restrictions.eq("referee.user", user)).list();
 		}
 
@@ -177,43 +227,68 @@ public class ApplicationFormDAO {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ApplicationForm> getSubmittedApplicationsOfWhichApplicationAdministrator(RegisteredUser user) {
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-				.add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED))).add(Restrictions.eq("applicationAdministrator", user))
-				.list();
+	private List<ApplicationForm> getSubmittedApplicationsOfWhichApplicationAdministrator(
+			RegisteredUser user) {
+		return sessionFactory
+				.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.not(Restrictions.eq("status",
+						ApplicationFormStatus.UNSUBMITTED)))
+				.add(Restrictions.eq("applicationAdministrator", user)).list();
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ApplicationForm> getSubmittedApplicationsInProgramsOfWhichAdmin(RegisteredUser user) {
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class)
-				.add(Restrictions.not(Restrictions.eq("status", ApplicationFormStatus.UNSUBMITTED)))
-				.add(Restrictions.in("program", user.getProgramsOfWhichAdministrator())).list();
+	private List<ApplicationForm> getSubmittedApplicationsInProgramsOfWhichAdmin(
+			RegisteredUser user) {
+		return sessionFactory
+				.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.not(Restrictions.eq("status",
+						ApplicationFormStatus.UNSUBMITTED)))
+				.add(Restrictions.in("program",
+						user.getProgramsOfWhichAdministrator())).list();
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ApplicationForm> getApprovedApplicationsInProgramsOfWhichApprover(RegisteredUser user) {
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
-				.add(Restrictions.in("program", user.getProgramsOfWhichApprover())).list();
+	private List<ApplicationForm> getApprovedApplicationsInProgramsOfWhichApprover(
+			RegisteredUser user) {
+		return sessionFactory
+				.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
+				.add(Restrictions.in("program",
+						user.getProgramsOfWhichApprover())).list();
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ApplicationForm> getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(RegisteredUser user) {
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("status", ApplicationFormStatus.REVIEW))
-				.createAlias("latestReviewRound", "latestReviewRound").createAlias("latestReviewRound.reviewers", "reviewer")
+	private List<ApplicationForm> getApplicationsCurrentlyInReviewOfWhichReviewerOfLatestRound(
+			RegisteredUser user) {
+		return sessionFactory.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.eq("status", ApplicationFormStatus.REVIEW))
+				.createAlias("latestReviewRound", "latestReviewRound")
+				.createAlias("latestReviewRound.reviewers", "reviewer")
 				.add(Restrictions.eq("reviewer.user", user)).list();
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<ApplicationForm> getApplicationsCurrentlyInInterviewOfWhichInterviewerOfLatestInterview(RegisteredUser user) {
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
-				.createAlias("latestInterview", "latestInterview").createAlias("latestInterview.interviewers", "interviewer")
+	private List<ApplicationForm> getApplicationsCurrentlyInInterviewOfWhichInterviewerOfLatestInterview(
+			RegisteredUser user) {
+		return sessionFactory
+				.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.eq("status", ApplicationFormStatus.INTERVIEW))
+				.createAlias("latestInterview", "latestInterview")
+				.createAlias("latestInterview.interviewers", "interviewer")
 				.add(Restrictions.eq("interviewer.user", user)).list();
 	}
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueRejectNotifications() {
 		Session session = sessionFactory.getCurrentSession();
-		List<ApplicationForm> result = session.createCriteria(ApplicationForm.class).add(Restrictions.eq("status", ApplicationFormStatus.REJECTED))
+		List<ApplicationForm> result = session
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.eq("status", ApplicationFormStatus.REJECTED))
 				.add(Restrictions.isNull("rejectNotificationDate")).list();
 		return result;
 	}
@@ -226,25 +301,50 @@ public class ApplicationFormDAO {
 			throw new IllegalArgumentException(e);
 		}
 		Date endYear = DateUtils.addYears(startYear, 1);
-		return sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("program", program))
-				.add(Restrictions.between("applicationTimestamp", startYear, endYear)).list().size();
+		return sessionFactory
+				.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.eq("program", program))
+				.add(Restrictions.between("applicationTimestamp", startYear,
+						endYear)).list().size();
 
 	}
 
-	public ApplicationForm getApplicationByApplicationNumber(String applicationNumber) {
-		return  (ApplicationForm) sessionFactory.getCurrentSession().createCriteria(ApplicationForm.class).add(Restrictions.eq("applicationNumber",applicationNumber)).uniqueResult();
-				
-		
+	public ApplicationForm getApplicationByApplicationNumber(
+			String applicationNumber) {
+		return (ApplicationForm) sessionFactory.getCurrentSession()
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.eq("applicationNumber", applicationNumber))
+				.uniqueResult();
+
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueApprovalNotifications() {
-		DetachedCriteria appronalNotificationCriteria = DetachedCriteria.forClass(NotificationRecord.class, "notificationRecord")
-				.add(Restrictions.eq("notificationType", NotificationType.APPROVAL_NOTIFICATION))
-				.add(Property.forName("notificationRecord.application").eqProperty("applicationForm.id"));
-		
-		return sessionFactory.getCurrentSession() .createCriteria(ApplicationForm.class, "applicationForm")
+		DetachedCriteria appronalNotificationCriteria = DetachedCriteria
+				.forClass(NotificationRecord.class, "notificationRecord")
+				.add(Restrictions.eq("notificationType",
+						NotificationType.APPROVAL_NOTIFICATION))
+				.add(Property.forName("notificationRecord.application")
+						.eqProperty("applicationForm.id"));
+
+		return sessionFactory
+				.getCurrentSession()
+				.createCriteria(ApplicationForm.class, "applicationForm")
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVAL))
-				.add(Subqueries.notExists(appronalNotificationCriteria.setProjection(Projections.property("notificationRecord.id")))).list();
+				.add(Subqueries.notExists(appronalNotificationCriteria
+						.setProjection(Projections
+								.property("notificationRecord.id")))).list();
 	}
+
+	@SuppressWarnings("unchecked")
+	public List<ApplicationForm> getApplicationsDueApprovedNotifications() {
+		Session session = sessionFactory.getCurrentSession();
+		List<ApplicationForm> result = session
+				.createCriteria(ApplicationForm.class)
+				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVED))
+				.add(Restrictions.isNull("approvedNotificationDate")).list();
+		return result;
+	}
+
 }

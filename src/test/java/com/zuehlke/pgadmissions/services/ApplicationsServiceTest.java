@@ -185,7 +185,18 @@ public class ApplicationsServiceTest {
 		Assert.assertEquals(ApplicationFormStatus.REVIEW, stage);
 
 	}
-
+	
+	//
+	@Test
+	public void shouldReturnReviewIfInApprovalPhaseAndPreviousOfApprovalIsReview() throws ParseException {
+		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
+		Event reviewEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
+		Event approvalEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVAL).events(validationEvent, reviewEvent).toApplicationForm();
+		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
+		Assert.assertEquals(ApplicationFormStatus.REVIEW, stage);
+	}
+	
 	@Test
 	public void shouldReturnValidationIfRejectedInApprovalPhaseAndPreviousOfApprovalIsValidation() throws ParseException {
 		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
@@ -197,13 +208,13 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldReturnNullIfNotRejected() throws ParseException {
+	public void shouldReturnThePreviousStageIfNotRejected() throws ParseException {
 		Event validationEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
 		Event reviewEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
 		Event approvalEvent = new EventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
 		ApplicationForm application = new ApplicationFormBuilder().id(1).events(validationEvent, reviewEvent, approvalEvent).toApplicationForm();
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
-		Assert.assertNull(stage);
+		Assert.assertEquals(ApplicationFormStatus.APPROVAL, stage);
 	}
 
 	@Test

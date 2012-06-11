@@ -98,7 +98,7 @@ public class ApplicationsService {
 				}
 			}
 		}
-		return null;
+		return events.get(events.size()-2).getNewStatus();
 	}
 
 	/**

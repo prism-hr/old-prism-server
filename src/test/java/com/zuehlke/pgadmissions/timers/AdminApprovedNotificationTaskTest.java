@@ -19,6 +19,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 
 public class AdminApprovedNotificationTaskTest {
@@ -70,7 +71,7 @@ public class AdminApprovedNotificationTaskTest {
 		approvedTask.run();
 
 		EasyMock.verify(applicationDaoMock, sessionFactoryMock, sessionMock, mailSenderMock, tx1, tx2);
-		Assert.assertNotNull(application.getApprovedNotificationDate());
+		Assert.assertEquals(NotificationType.APPROVED_NOTIFICATION, application.getNotificationRecords().get(application.getNotificationRecords().size()-1).getNotificationType());
 	}
 
 	@Test
@@ -103,7 +104,7 @@ public class AdminApprovedNotificationTaskTest {
 		approvedTask.run();
 
 		EasyMock.verify(applicationDaoMock, sessionFactoryMock, sessionMock, mailSenderMock, tx1, tx2);
-		Assert.assertNotNull(application.getApprovedNotificationDate());
+		Assert.assertEquals(NotificationType.APPROVED_NOTIFICATION, application.getNotificationRecords().get(application.getNotificationRecords().size()-1).getNotificationType());
 	}
 
 	@Test
@@ -137,6 +138,5 @@ public class AdminApprovedNotificationTaskTest {
 		approvedTask.run();
 
 		EasyMock.verify(applicationDaoMock, sessionFactoryMock, sessionMock, mailSenderMock, tx1, tx2);
-		Assert.assertNull(application.getApprovedNotificationDate());
 	}
 }

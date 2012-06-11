@@ -165,11 +165,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@Column(name = "reject_notification_date")
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date rejectNotificationDate;
-	
-	@Column(name = "approved_notification_date")
-	@Temporal(value = TemporalType.TIMESTAMP)
-	private Date approvedNotificationDate;
-	
+
 	@OneToOne
 	@JoinColumn(name = "latest_interview_id")
 	private Interview latestInterview;
@@ -619,14 +615,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setApplicationNumber(String applicationNumber) {
 		this.applicationNumber = applicationNumber;
-	}
-
-	public Date getApprovedNotificationDate() {
-		return approvedNotificationDate;
-	}
-
-	public void setApprovedNotificationDate(Date approvedNotificationDate) {
-		this.approvedNotificationDate = approvedNotificationDate;
 	}
 
 }

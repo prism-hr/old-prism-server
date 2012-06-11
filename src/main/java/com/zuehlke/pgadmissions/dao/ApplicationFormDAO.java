@@ -339,12 +339,20 @@ public class ApplicationFormDAO {
 
 	@SuppressWarnings("unchecked")
 	public List<ApplicationForm> getApplicationsDueApprovedNotifications() {
-		Session session = sessionFactory.getCurrentSession();
-		List<ApplicationForm> result = session
-				.createCriteria(ApplicationForm.class)
+		DetachedCriteria appronalNotificationCriteria = DetachedCriteria
+				.forClass(NotificationRecord.class, "notificationRecord")
+				.add(Restrictions.eq("notificationType",
+						NotificationType.APPROVED_NOTIFICATION))
+				.add(Property.forName("notificationRecord.application")
+						.eqProperty("applicationForm.id"));
+
+		return sessionFactory
+				.getCurrentSession()
+				.createCriteria(ApplicationForm.class, "applicationForm")
 				.add(Restrictions.eq("status", ApplicationFormStatus.APPROVED))
-				.add(Restrictions.isNull("approvedNotificationDate")).list();
-		return result;
+				.add(Subqueries.notExists(appronalNotificationCriteria
+						.setProjection(Projections
+								.property("notificationRecord.id")))).list();
 	}
 
 }

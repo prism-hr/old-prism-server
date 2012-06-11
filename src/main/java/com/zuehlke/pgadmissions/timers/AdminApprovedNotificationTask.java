@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 import com.zuehlke.pgadmissions.mail.AdminMailSender;
 
 public class AdminApprovedNotificationTask extends TimerTask {
@@ -44,7 +46,12 @@ public class AdminApprovedNotificationTask extends TimerTask {
 			RegisteredUser approver = application.getApprover();
 			try {
 				adminMailSender.sendAdminApprovedNotification(application, approver);
-				application.setApprovedNotificationDate(new Date());
+				NotificationRecord notificationRecord = application.getNotificationForType(NotificationType.APPROVED_NOTIFICATION);
+				if (notificationRecord == null) {
+					notificationRecord = new NotificationRecord(NotificationType.APPROVED_NOTIFICATION);
+					application.getNotificationRecords().add(notificationRecord);
+				}
+				notificationRecord.setDate(new Date());
 				applicationDAO.save(application);
 				transaction.commit();
 				log.info("approved notification sent for application: " + application.getApplicationNumber());

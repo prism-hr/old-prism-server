@@ -109,4 +109,17 @@ public class AdminMailSender extends StateChangeMailSender {
 		MimeMessagePreparator msgPreparator = mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, ccAddresses, subject, template, model, null);
 		javaMailSender.send(msgPreparator);
 	}
+
+	public void sendAdminApprovedNotification(ApplicationForm application, RegisteredUser approver) {
+		Map<String, Object> model = createModel(application);
+		model.put("approver", approver);
+		model.put("previousStage", applicationService.getStageComingFrom(application));
+
+		List<RegisteredUser> administrators = new ArrayList<RegisteredUser>(application.getProgram().getAdministrators());
+		administrators.remove(approver);
+		if (!administrators.isEmpty()) {
+			internalSend(application, administrators, "approved.notification", "private/staff/admin/mail/approved_notification.ftl", model);
+		}
+		
+	}
 }

@@ -53,6 +53,8 @@ public class ApplicationFormBuilder {
 	private Document personalStatement = null;
 	private AdditionalInformation info;	
 	private Date lastUpdated;
+	private Date approvedNotificationDate;
+	private Date rejectNotificationDate;
 	
 	private List<ApprovalRound> approvalRounds = new ArrayList<ApprovalRound>();
 	private List<Interview> interviews = new ArrayList<Interview>();
@@ -117,6 +119,18 @@ public class ApplicationFormBuilder {
 		return this;
 	}
 
+	
+	public ApplicationFormBuilder approvedNotificationDate(Date approvedNotificationDate) {
+		this.approvedNotificationDate = approvedNotificationDate;
+		return this;
+	}
+	
+	
+	public ApplicationFormBuilder rejectNotificationDate(Date rejectNotificationDate) {
+		this.rejectNotificationDate = rejectNotificationDate;
+		return this;
+	}
+	
 	public ApplicationFormBuilder interviews(Interview...interviews) {
 		for (Interview interview : interviews) {
 			this.interviews.add(interview);
@@ -308,6 +322,9 @@ public class ApplicationFormBuilder {
 		application.setRejection(rejection);
 		application.setApplicationAdministrator(applicationAdministrator);
 		application.setApplicationNumber(applicationNumber);
+		
+		application.setRejectNotificationDate(rejectNotificationDate);
+		application.setApprovedNotificationDate(approvedNotificationDate);
 		return application;
 	}
 }

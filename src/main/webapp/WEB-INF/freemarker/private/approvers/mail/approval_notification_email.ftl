@@ -35,13 +35,21 @@
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The application ${application.applicationNumber} has now been moved to approval. You can approve the application below.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The application ${application.applicationNumber} has now been moved to approval. <#if user.isInRole('APPROVER') > You can approve the application below.<#else>You can view the application below.</#if></font>
 			      	</p>
+			      	 <#if user.isInRole('APPROVER') > 
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
 			      			<a href="${host}/pgadmissions/approved/moveToApproved?applicationId=${application.applicationNumber}">Approve application</a>
 			      		</font>
 			      	</p>
+			      	<#else>
+			      		<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">View application</a>
+			      		</font>
+			      	</p>
+			      	 </#if>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>
 			      	</p>

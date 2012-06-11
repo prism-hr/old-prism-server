@@ -1194,6 +1194,42 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Assert.assertEquals(numOfRejecteAppl, applications.size());
 	}
 	
+	@Test
+	public void shouldReturnApplicationsWithNoApprovedNotificationDate() {
+		Integer noOfAppsBefore  = applicationDAO.getApplicationsDueApprovedNotifications().size();
+		RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichApprover(program).toUser();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW).approver(approver).status(ApplicationFormStatus.APPROVED)
+		.toApplicationForm();
+		
+		save(approver, applicationForm);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getApplicationsDueApprovedNotifications();
+		Assert.assertNotNull(applications);
+		Assert.assertEquals(noOfAppsBefore + 1, applications.size());
+		assertTrue(applications.contains(applicationForm));
+	}
+	
+	@Test
+	public void shouldNotReturnApplicationsWithApprovedNotificationDate() {
+		int noOfAppsBefore  = applicationDAO.getApplicationsDueApprovedNotifications().size();
+		
+		RegisteredUser approver = new RegisteredUserBuilder().firstName("Jane").lastName("Doe").email("email@test.com").username("username2").password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).programsOfWhichApprover(program).toUser();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder()
+		.program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
+		.approver(approver).status(ApplicationFormStatus.APPROVED)
+		.approvedNotificationDate(new Date()).toApplicationForm();
+		
+		save(approver, applicationForm);
+		flushAndClearSession();
+		
+		List<ApplicationForm> applications = applicationDAO.getApplicationsDueApprovedNotifications();
+		Assert.assertNotNull(applications);
+		Assert.assertEquals(noOfAppsBefore, applications.size());
+	}
+	
 	
 	@Test
 	public void shouldReturnNumberOfApplicationsInProgramThisYear(){

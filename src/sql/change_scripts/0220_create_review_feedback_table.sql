@@ -1,0 +1,8 @@
+CREATE TABLE REVIEW_COMMENT (
+  id INTEGER UNSIGNED NOT NULL,
+  willing_to_supervise VARCHAR(30) NOT NULL,
+  suitable_candidate VARCHAR(30) NOT NULL,
+  decline VARCHAR(30) NOT NULL,
+  CONSTRAINT review_comment_fk FOREIGN KEY (id) REFERENCES COMMENT(id)
+)
+ENGINE = InnoDB;

@@ -155,21 +155,22 @@ section.form-rows div.comment .previous ul li.even { background: #EEE; }
 section.form-rows div.comment .previous ul li span { display: block; }
 
 
-/* FLOATING TOOLBAR -------------------------------------------------------------------------------------- */
-#view-toolbar { background: #333; border-radius: 5px 0 0 5px; list-style: none; padding: 5px 10px; position: fixed; right: 0; top: 200px; }
-#view-toolbar li { margin: 10px 0; }
-#view-toolbar li a { background: no-repeat; display: block; height: 15px; overflow: hidden; text-indent: 15px; width: 15px; }
-#view-toolbar li.top a { background-image: url(../../images/float_up.png) }
-#view-toolbar li.pdf a { background-image: url(../../images/float_download.png) }
-#view-toolbar li.print a { background-image: url(../../images/float_print.png) }
-#view-toolbar li.tool-separator a { background-image: url("../../images/dots.png"); margin-bottom: -11px; }
-#view-toolbar li.tool-button a { width: 14px; height: 14px; margin-left: -1px; padding: 0; }
+/* FLOATING TOOLBARS ------------------------------------------------------------------------------------- */
+.toolbar { background: #333; border-radius: 5px 0 0 5px; list-style: none; padding: 5px 10px; position: fixed; right: 0; }
+.toolbar li { margin: 10px 0; }
+.toolbar li a { background: no-repeat; display: block; height: 15px; overflow: hidden; text-indent: 15px; width: 15px; }
+.toolbar li.top a { background-image: url(../../images/float_up.png) }
+.toolbar li.pdf a { background-image: url(../../images/float_download.png) }
+.toolbar li.print a { background-image: url(../../images/float_print.png) }
+.toolbar li.tool-separator a { background-image: url("../../images/dots.png"); margin-bottom: -11px; }
+.toolbar li.tool-button a { width: 14px; height: 14px; margin-left: -1px; padding: 0; }
 
 /* Rest of the button to jump to each section*/
-li.tool-button{
-	width: 8px;
-	height: 13px;
-}
+.toolbar li.tool-button { width: 8px; height: 13px; }
+
+#feedback-toolbar { top: 100px; }
+#view-toolbar { top: 140px; }
+
 
 
 /* Dynamic Data Table */

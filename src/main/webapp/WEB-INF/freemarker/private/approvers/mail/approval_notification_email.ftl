@@ -32,16 +32,24 @@
 		    	</td>
 		    	<td width="500">
 		      		<h1 style="font-size: 12pt;">
-		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${approver.firstName?html},</font>
+		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">The application ${application.applicationNumber} has now been moved to approval. You can approve the application below.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The application ${application.applicationNumber} has now been moved to approval. <#if user.isInRoleInProgram('APPROVER', application.program)> You can approve the application below.<#else>You can view the application below.</#if></font>
 			      	</p>
+			      	 <#if user.isInRoleInProgram('APPROVER', application.program) > 
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
 			      			<a href="${host}/pgadmissions/approved/moveToApproved?applicationId=${application.applicationNumber}">Approve application</a>
 			      		</font>
 			      	</p>
+			      	<#else>
+			      		<p>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">
+			      			<a href="${host}/pgadmissions/application?view=view&applicationId=${application.applicationNumber}">View application</a>
+			      		</font>
+			      	</p>
+			      	 </#if>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>
 			      	</p>

@@ -24,10 +24,10 @@ import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.utils.Environment;
 
-public class ApproverMailSenderTest {
+public class ApproverAdminMailSenderTest {
 	private JavaMailSender javaMailSenderMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
-	private ApproverMailSender approverMailSender;
+	private ApproverAdminMailSender approverMailSender;
 	private MessageSource msgSourceMock;
 	private ApplicationsService applicationsServiceMock;
 
@@ -43,41 +43,46 @@ public class ApproverMailSenderTest {
 		Map<String, Object> model = approverMailSender.createModel(approverOne, form);
 		assertEquals(form, model.get("application"));
 		assertEquals(applicant, model.get("applicant"));
-		assertEquals(approverOne, model.get("approver"));
+		assertEquals(approverOne, model.get("user"));
 		assertEquals(Environment.getInstance().getApplicationHostName(), model.get("host"));
 
 	}
 
 	@Test
-	public void sendingApprovalNotifications() throws Exception {
-		RegisteredUser admin = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
+	public void sendingApprovalNotificationsToApproverAndAdmin() throws Exception {
+		RegisteredUser admin = new RegisteredUserBuilder().id(2).email("admin@test.com").firstName("bob").lastName("the builder").toUser();
 		RegisteredUser approver = new RegisteredUserBuilder().id(1).email("bob@test.com").firstName("bob").lastName("the builder").toUser();
 		RegisteredUser applicant = new RegisteredUserBuilder().firstName("Jane").lastName("Smith").email("jane.smith@test.com").id(10).toUser();
 		
 		ApplicationForm application = new ApplicationFormBuilder().id(4).applicationNumber("bob").applicant(applicant).program(new ProgramBuilder().approver(approver).title("prg").administrators(admin).toProgram()).toApplicationForm();
 
-		InternetAddress expAddr = new InternetAddress("bob@test.com", "bob the builder");
+		InternetAddress expAddr1 = new InternetAddress("bob@test.com", "bob the builder");
+		InternetAddress expAddr2 = new InternetAddress("admin@test.com", "bob the builder");
 
 		String expTemplate = "private/approvers/mail/approval_notification_email.ftl";
 
 		final Map<String, Object> model = new HashMap<String, Object>();
-		approverMailSender = new ApproverMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, applicationsServiceMock) {
+		approverMailSender = new ApproverAdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, applicationsServiceMock) {
 			@Override
 			Map<String, Object> createModel(RegisteredUser approver, ApplicationForm application) {
 				return model;
 			}
 		};
 
-		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("approval.notification.approver"),// 
-				EasyMock.aryEq(new Object[] {"bob", "prg", "Jane", "Smith" }), EasyMock.eq((Locale) null))).andReturn("subject");
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("approval.notification.approverAndAdmin"),// 
+				EasyMock.aryEq(new Object[] {"bob", "prg", "Jane", "Smith" }), EasyMock.eq((Locale) null))).andReturn("subject").anyTimes();
 
 		MimeMessagePreparator mimePrepMock = EasyMock.createMock(MimeMessagePreparator.class);
-		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr1, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
 		javaMailSenderMock.send(mimePrepMock);
+
+		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(expAddr2, "subject", expTemplate, model, null)).andReturn(mimePrepMock);
+		javaMailSenderMock.send(mimePrepMock);
+		
 		EasyMock.expectLastCall();
 		EasyMock.replay(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 
-		approverMailSender.sendApprovalNotificationToApprovers(application);
+		approverMailSender.sendApprovalNotificationToApproversAndAdmins(application);
 
 		EasyMock.verify(mimePrepMock, javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 	}
@@ -88,6 +93,6 @@ public class ApproverMailSenderTest {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 		applicationsServiceMock = EasyMock.createMock(ApplicationsService.class);
-		approverMailSender = new ApproverMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, applicationsServiceMock);
+		approverMailSender = new ApproverAdminMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, applicationsServiceMock);
 	}
 }

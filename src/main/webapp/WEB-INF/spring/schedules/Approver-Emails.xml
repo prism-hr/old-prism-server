@@ -2,16 +2,16 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 <beans>
 	<!-- Approval notifications -->
-	<bean id="approverApprovalNotificationTimerTask"
-		class="com.zuehlke.pgadmissions.timers.ApproverNotificationTask">
+	<bean id="approverAdminApprovalNotificationTimerTask"
+		class="com.zuehlke.pgadmissions.timers.ApproverAndAdminApprovalNotificationTask">
 		<constructor-arg index="0" ref="sessionFactoryMail" />
 		<constructor-arg index="1" ref="approverMailSender" />
 		<constructor-arg index="2" ref="mailApplicationDAO" />
 	</bean>
 
-	<bean id="approverApprovalNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+	<bean id="approverAdminApprovalNotificationSchedule" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay" value="10500" />
 		<property name="period" value="300000" />
-		<property name="timerTask" ref="approverApprovalNotificationTimerTask" />
+		<property name="timerTask" ref="approverAdminApprovalNotificationTimerTask" />
 	</bean>
 </beans>

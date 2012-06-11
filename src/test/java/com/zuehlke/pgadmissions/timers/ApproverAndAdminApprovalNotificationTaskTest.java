@@ -18,15 +18,15 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
-import com.zuehlke.pgadmissions.mail.ApproverMailSender;
+import com.zuehlke.pgadmissions.mail.ApproverAdminMailSender;
 
-public class ApproverNotificationTaskTest {
+public class ApproverAndAdminApprovalNotificationTaskTest {
 
 	private SessionFactory sessionFactoryMock;
 	private Session sessionMock;
 	private ApplicationFormDAO applicationDAOMock;
-	private ApproverNotificationTask approverNotificationTask;
-	private ApproverMailSender approverMailSenderMock;
+	private ApproverAndAdminApprovalNotificationTask approverNotificationTask;
+	private ApproverAdminMailSender approverMailSenderMock;
 	
 
 	@Test
@@ -48,12 +48,12 @@ public class ApproverNotificationTaskTest {
 		transactionOne.commit();
 		sessionMock.refresh(form1);
 		
-		approverMailSenderMock.sendApprovalNotificationToApprovers(form1);
+		approverMailSenderMock.sendApprovalNotificationToApproversAndAdmins(form1);
 		applicationDAOMock.save(form1);
 		transactionTwo.commit();
 		sessionMock.refresh(form2);
 
-		approverMailSenderMock.sendApprovalNotificationToApprovers(form2);
+		approverMailSenderMock.sendApprovalNotificationToApproversAndAdmins(form2);
 		applicationDAOMock.save(form2);
 		transactionThree.commit();
 
@@ -73,8 +73,8 @@ public class ApproverNotificationTaskTest {
 		sessionFactoryMock = EasyMock.createMock(SessionFactory.class);
 		sessionMock = EasyMock.createMock(Session.class);
 		applicationDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
-		approverMailSenderMock = EasyMock.createMock(ApproverMailSender.class);
-		approverNotificationTask = new ApproverNotificationTask(sessionFactoryMock, approverMailSenderMock, applicationDAOMock);
+		approverMailSenderMock = EasyMock.createMock(ApproverAdminMailSender.class);
+		approverNotificationTask = new ApproverAndAdminApprovalNotificationTask(sessionFactoryMock, approverMailSenderMock, applicationDAOMock);
 
 	}
 

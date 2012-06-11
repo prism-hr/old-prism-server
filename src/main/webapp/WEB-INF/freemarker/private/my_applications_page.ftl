@@ -75,17 +75,21 @@
             
               <table class="data" border="0" >
                 <colgroup>
-                  <col style="width: 24px" />
+                  <col style="width: 40px" />
                   <col style="width: 20%" />
                   <col />
                   <col />
                   <col />
                   <col style="width: 90px" />
-                  <col style="width: 40px" />
                 </colgroup>
                 <thead>
                   <tr>
-                    <th scope="col">&nbsp;</th>
+                    <th class="centre" scope="col">
+                      <input type="checkbox" name="select-all" id="select-all" />
+                      <input type="hidden" id="sort-column" name="sort-column" value="APPLICATION_DATE" />
+                      <input type="hidden" id="sort-order" name="sort-order" value="DESCENDING" />
+                      <input type="hidden" id="block-index" name="block-index" value="1" />
+                    </th>
                     <#if !user.isInRole('APPLICANT')>
                     <th scope="col" id="APPLICANT_NAME" onclick="sortList(this)">Applicant</th>
                     <#else>
@@ -95,12 +99,6 @@
                     <th scope="col" id="APPLICATION_STATUS" onclick="sortList(this)">Status</th>
                     <th scope="col">Actions</th>
                     <th scope="col" id="APPLICATION_DATE" onclick="sortList(this)">Submitted</th>                          
-                    <th class="centre" scope="col">
-                      <input type="checkbox" name="select-all" id="select-all" />
-                      <input type="hidden" id="sort-column" name="sort-column" value="APPLICATION_DATE" />
-                      <input type="hidden" id="sort-order" name="sort-order" value="DESCENDING" />
-                      <input type="hidden" id="block-index" name="block-index" value="1" />
-                    </th>
                   </tr>
                 </thead>
                 <tbody id="applicationListSection">

@@ -14,24 +14,24 @@
 
 #timeline-statuses .validation .box { background: #FDDB91; }
 #timeline-statuses .validation .box .title { background: #FBBE1E; }
-#timeline-statuses .validation .box p { background-image: url(../../images/bg_status_validation.gif); }
+#timeline-statuses .validation .box p { background-image: url(../../../images/bg_status_validation.gif); }
 #timeline-statuses .validation ul .box { background-color: #FFECBF; }
 #timeline-statuses .validation ul .box .title { background: #FECB61; }
 
 #timeline-statuses .review .box { background: #C2DCEB; }
 #timeline-statuses .review .box .title { background: #A8CBDE; }
-#timeline-statuses .review .box p { background-image: url(../../images/bg_status_review.gif); }
+#timeline-statuses .review .box p { background-image: url(../../../images/bg_status_review.gif); }
 #timeline-statuses .review ul .box { background-color: #E6F2F8; }
 #timeline-statuses .review ul .box .title { background: #AED5E7; }
 
 #timeline-statuses .interview .box { background: #D6DFAE; }
 #timeline-statuses .interview .box .title { background: #C5CE88; }
-#timeline-statuses .interview .box p { background-image: url(../../images/bg_status_interview.gif); }
+#timeline-statuses .interview .box p { background-image: url(../../../images/bg_status_interview.gif); }
 #timeline-statuses .interview ul .box { background-color: #E8EDD1; }
 #timeline-statuses .interview ul .box .title { background: #CCD495; }
 
 #timeline-statuses .approval .box { background: #EAEB93; }
 #timeline-statuses .approval .box .title { background: #DCDD28; }
-#timeline-statuses .approval .box p { background-image: url(../../images/bg_status_approval.gif); }
+#timeline-statuses .approval .box p { background-image: url(../../../images/bg_status_approval.gif); }
 #timeline-statuses .approval ul .box { background-color: #F5F7CF; }
 #timeline-statuses .approval ul .box .title { background: #E4E466; }

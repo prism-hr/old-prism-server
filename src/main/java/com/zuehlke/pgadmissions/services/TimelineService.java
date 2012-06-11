@@ -63,7 +63,7 @@ public class TimelineService {
 	}
 	
 	private String resolveMessageCodeForStatus(ApplicationFormStatus status){
-		return "timeline.phase." + status.displayValue().toLowerCase();
+		return "timeline.phase." + status.displayValue().toLowerCase().replace(" ", "_");
 	}
 
 }

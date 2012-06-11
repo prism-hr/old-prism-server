@@ -12,7 +12,11 @@ import java.util.List;
 import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
+import org.junit.After;
 import org.junit.Test;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
@@ -172,6 +176,13 @@ public class ApplicationFormTest {
 	
 	@Test
 	public void shouldAddEventIfStatusIsChanged(){
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		authenticationToken.setDetails(user);
+		SecurityContextImpl secContext = new SecurityContextImpl();
+		secContext.setAuthentication(authenticationToken);
+		SecurityContextHolder.setContext(secContext);
+
 		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
 		assertEquals(1, applicationForm.getEvents().size());
 		applicationForm.setStatus(ApplicationFormStatus.REVIEW);
@@ -179,6 +190,7 @@ public class ApplicationFormTest {
 		assertEquals(ApplicationFormStatus.UNSUBMITTED, applicationForm.getEvents().get(0).getNewStatus());
 		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getEvents().get(1).getNewStatus());
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(0).getDate(), Calendar.DATE));		
+		assertEquals(user,applicationForm.getEvents().get(0).getUser());
 		
 	}
 	
@@ -264,6 +276,9 @@ public class ApplicationFormTest {
 		
 	}
 	
-	
+	@After
+	public void tearDown(){
+		SecurityContextHolder.clearContext();
+	}
 
 }

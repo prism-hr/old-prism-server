@@ -23,6 +23,7 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -34,19 +35,19 @@ import com.zuehlke.pgadmissions.domain.enums.NotificationType;
 public class ApplicationForm extends DomainObject<Integer> implements Comparable<ApplicationForm> {
 
 	private static final long serialVersionUID = -7671357234815343496L;
-	
+
 	@Column(name = "application_number")
 	private String applicationNumber;
-	
+
 	@ManyToOne
 	@JoinColumn(name = "app_administrator_id")
 	private RegisteredUser applicationAdministrator;
-	
-	@OneToOne( cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
+
+	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "rejection_id")
 	private Rejection rejection;
-	
+
 	@OneToMany(orphanRemoval = true, cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
@@ -128,7 +129,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@JoinColumn(name = "application_form_id")
 	private List<ApprovalRound> approvalRounds = new ArrayList<ApprovalRound>();
-	
+
 	@OneToMany(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })
 	@org.hibernate.annotations.Cascade({ org.hibernate.annotations.CascadeType.SAVE_UPDATE })
 	@OrderBy("createdDate desc")
@@ -161,7 +162,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne(mappedBy = "application")
 	private AdditionalInformation additionalInformation;
 
-
 	@Column(name = "reject_notification_date")
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date rejectNotificationDate;
@@ -173,7 +173,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	@OneToOne
 	@JoinColumn(name = "latest_approval_round_id")
 	private ApprovalRound latestApprovalRound;
-	
+
 	@OneToOne
 	@JoinColumn(name = "latest_review_round_id")
 	private ReviewRound latestReviewRound;
@@ -409,7 +409,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return status;
 	}
 
-
 	public Date getRejectNotificationDate() {
 		return rejectNotificationDate;
 	}
@@ -423,10 +422,18 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		Event event = new Event();
 		event.setNewStatus(status);
 		event.setDate(new Date());
+		event.setUser(getCurrentUser());
 		this.events.add(event);
 
 		this.status = status;
 
+	}
+
+	private RegisteredUser getCurrentUser() {
+		if(SecurityContextHolder.getContext() == null ||SecurityContextHolder.getContext().getAuthentication() == null || !(SecurityContextHolder.getContext().getAuthentication().getDetails() instanceof RegisteredUser)  ){
+			return null;
+		}
+		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 	}
 
 	public boolean isInValidationStage() {
@@ -491,13 +498,13 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.events.clear();
 		this.events.addAll(events);
 	}
-	
+
 	public List<RegisteredUser> getUsersWillingToSupervise() {
 		List<RegisteredUser> usersWillingToSupervise = new ArrayList<RegisteredUser>();
 		for (Comment comment : applicationComments) {
-			if (comment instanceof InterviewComment ) {
+			if (comment instanceof InterviewComment) {
 				InterviewComment interviewComment = (InterviewComment) comment;
-				if (interviewComment.getWillingToSupervice() == CheckedStatus.YES){
+				if (interviewComment.getWillingToSupervice() == CheckedStatus.YES) {
 					usersWillingToSupervise.add(interviewComment.getUser());
 				}
 			}
@@ -505,20 +512,19 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		return usersWillingToSupervise;
 	}
 
-	
 	public List<RegisteredUser> getReviewersWillingToInterview() {
 		List<RegisteredUser> usersWillingToInterview = new ArrayList<RegisteredUser>();
 		for (Comment comment : applicationComments) {
-			if (comment instanceof ReviewComment ) {
+			if (comment instanceof ReviewComment) {
 				ReviewComment reviewComment = (ReviewComment) comment;
-				if (reviewComment.getWillingToInterview()){
+				if (reviewComment.getWillingToInterview()) {
 					usersWillingToInterview.add(reviewComment.getUser());
 				}
 			}
 		}
 		return usersWillingToInterview;
 	}
-	
+
 	@Override
 	public int compareTo(ApplicationForm appForm) {
 

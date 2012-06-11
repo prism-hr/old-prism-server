@@ -143,10 +143,10 @@
 															</option>
 														</#list>
 													</select>
-												</div>
-											</div>
 											<@spring.bind "reviewRound.reviewers" /> 
 				                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+												</div>
+											</div>
 										</div>
 										
 										<div class="row-group">				
@@ -164,26 +164,26 @@
 				                               	<label class="label normal">Reviewer First Name<em>*</em></label> 
 			                                   	<div class="field">
 				                                   <input class="full" type="text" name="newReviewerFirstName" id="newReviewerFirstName" value="${(reviewer.firstName?html)!}"/>
-				                               	</div>
 				                               	<@spring.bind "reviewer.firstName" /> 
 					                			 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>	
+				                               	</div>
 					                        </div>
 			                                <div class="row">
 			                                    <label class="label normal">Reviewer Last Name<em>*</em></label>
 			                                    <div class="field">
 			                                        <input class="full" type="text" name="newReviewerLastName" id="newReviewerLastName" value="${(reviewer.lastName?html)!}"/>			                                      
-			                                    </div>
 			                                      <@spring.bind "reviewer.lastName" /> 
 				                			   		<#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+			                                    </div>
 			                                </div>
 					                                
 				                             <div class="row">
 			                                	<label class="label normal">Email<em>*</em></label>
 		                                        <div class="field">
 		                                         	<input class="full" type="text"  name="newReviewerEmail" id="newReviewerEmail" value="${(reviewer.email?html)!}"/>			                                         
-		                                        </div>
 		                                         <@spring.bind "reviewer.email" /> 
 			                			   		 <#list spring.status.errorMessages as error> <span class="invalid">${error}</span></#list>
+		                                        </div>
 				                             </div>
 										
 											<div class="row">

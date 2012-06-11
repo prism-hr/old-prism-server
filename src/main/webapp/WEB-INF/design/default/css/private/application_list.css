@@ -23,15 +23,16 @@ table.data thead th.headerSortDown, table.data thead th.headerSortUp { backgroun
 
 /* Sorting functionality. */
 table.data th.sorting {
-  background: rgb(147,149,152); /* Old browsers */
-  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-  background: -moz-linear-gradient(top,  rgba(147,149,152,1) 0%, rgba(147,149,152,1) 50%, rgba(98,99,101,1) 51%, rgba(140,142,145,1) 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(147,149,152,1)), color-stop(50%,rgba(147,149,152,1)), color-stop(51%,rgba(98,99,101,1)), color-stop(100%,rgba(140,142,145,1))); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* IE10+ */
-  background: linear-gradient(top,  rgba(147,149,152,1) 0%,rgba(147,149,152,1) 50%,rgba(98,99,101,1) 51%,rgba(140,142,145,1) 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#939598', endColorstr='#8c8e91',GradientType=0 ); /* IE6-8 */
+	background: #0076c0; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwNzZjMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjUwJSIgc3RvcC1jb2xvcj0iIzAwYmJmMCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDc2YzAiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top,  #0076c0 0%, #00bbf0 50%, #0076c0 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0076c0), color-stop(50%,#00bbf0), color-stop(100%,#0076c0)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #0076c0 0%,#00bbf0 50%,#0076c0 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #0076c0 0%,#00bbf0 50%,#0076c0 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #0076c0 0%,#00bbf0 50%,#0076c0 100%); /* IE10+ */
+	background: linear-gradient(top,  #0076c0 0%,#00bbf0 50%,#0076c0 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0076c0', endColorstr='#0076c0',GradientType=0 ); /* IE6-8 */
 }
 
 /* Form fields inside the table. */

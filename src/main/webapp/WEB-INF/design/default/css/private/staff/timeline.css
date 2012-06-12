@@ -45,6 +45,8 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 #timeline-statuses ul .box .title { background: #AAA; }
 #timeline-statuses ul .box p { background-image: none !important; font-size: 12px; font-weight: normal; }
 
+#timeline-statuses ul .box ul li { display: inline-block; }
+
 #timeline-statuses .validation .box { background: #FDDB91; }
 #timeline-statuses .validation .box .title { background: #FBBE1E; }
 #timeline-statuses .validation .box p { background-image: url(../../../images/bg_status_validation.gif); }

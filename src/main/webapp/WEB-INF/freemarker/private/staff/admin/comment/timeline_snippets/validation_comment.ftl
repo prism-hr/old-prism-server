@@ -9,14 +9,13 @@
 </p>
 
 <h3>Does the applicant meeting the minimum required standard of English Language competence?</h3>
-<p>                       							
+<ul>                       							
 	<#list validationQuestionOptions as option>
-	<label>
-		<input type="radio" name="englishCompentencyOk" value="${option}"  disabled="disabled" <#if comment.englishCompentencyOk?? &&  comment.englishCompentencyOk == option>checked="checked"</#if>/>
+	<li<#if !comment.englishCompentencyOk?? || !comment.englishCompentencyOk == option> class="grey-label"</#if>>
 		${option.displayValue}
-		</label>
+	</li>
 	</#list>
-</p>
+</ul>
 
 <h3>What is the applicant's fee status?</h3>
 <p>

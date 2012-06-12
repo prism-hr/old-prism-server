@@ -46,6 +46,22 @@ $(document).ready(function()
 				function(data)
 				{
 					$('#application').html(data);
+
+					// Toggle grey-label class where you find instances of "Not Provided" text.
+					$('#application .field').each(function()
+					{
+						 var strValue = $(this).text();
+						 if (strValue.match("Not Provided"))
+						 {
+							 $(this).toggleClass('grey-label');
+							 var labelValue = $(this).prev().text();
+							 if (labelValue.match("Additional Information"))
+							 {
+								 $(this).prev().css("font-weight","bold");
+							 }
+						 }
+					});
+
 				}
 			);
 		}

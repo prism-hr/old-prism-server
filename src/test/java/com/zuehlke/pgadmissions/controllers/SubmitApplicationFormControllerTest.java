@@ -22,6 +22,7 @@ import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
@@ -106,7 +107,8 @@ public class SubmitApplicationFormControllerTest {
 		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());	
 		assertEquals(DateUtils.truncate(DateUtils.addHours(new Date(), 8), Calendar.HOUR), DateUtils.truncate(applicationForm.getDueDate(), Calendar.HOUR));
 		assertEquals(2, applicationForm.getEvents().size());
-		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getEvents().get(1).getNewStatus());
+		
+		assertEquals(ApplicationFormStatus.VALIDATION, ((StateChangeEvent)applicationForm.getEvents().get(1)).getNewStatus());
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(1).getDate(), Calendar.DATE));
 		
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getSubmittedDate(), Calendar.DATE));

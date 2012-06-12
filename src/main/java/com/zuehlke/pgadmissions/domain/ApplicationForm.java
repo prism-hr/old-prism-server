@@ -419,7 +419,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setStatus(ApplicationFormStatus status) {
 
-		Event event = new Event();
+		StateChangeEvent event = new StateChangeEvent();
 		event.setNewStatus(status);
 		event.setDate(new Date());
 		event.setUser(getCurrentUser());
@@ -572,17 +572,24 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.latestReviewRound = latestReviewRound;
 	}
 
-	public List<Event> getEventsSortedByDate() {
-		Comparator<Event> dateComparator = new Comparator<Event>() {
+	public List<StateChangeEvent> getStateChangeEventsSortedByDate() {
+		List<StateChangeEvent> stateChangeEvents = new ArrayList<StateChangeEvent>();
+		Comparator<StateChangeEvent> dateComparator = new Comparator<StateChangeEvent>() {
 			@Override
-			public int compare(Event event1, Event event2) {
+			public int compare(StateChangeEvent event1, StateChangeEvent event2) {
 				return event1.getDate().compareTo(event2.getDate());
 			}
 		};
-		Collections.sort(events, dateComparator);
-		return events;
+		for (Event event : events) {
+			stateChangeEvents.add((StateChangeEvent) event);
+		}
+		Collections.sort(stateChangeEvents, dateComparator);
+		//turn events;
+		
+		return stateChangeEvents;
 	}
 
+	
 	public Rejection getRejection() {
 		return rejection;
 	}

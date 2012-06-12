@@ -19,10 +19,7 @@ import com.zuehlke.pgadmissions.domain.enums.CommentType;
 @Entity(name="REVIEW_COMMENT")
 @Access(AccessType.FIELD)
 public class ReviewComment extends Comment{
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 9120577563568889651L;
 
 	@OneToOne(cascade = { javax.persistence.CascadeType.PERSIST, javax.persistence.CascadeType.REMOVE })

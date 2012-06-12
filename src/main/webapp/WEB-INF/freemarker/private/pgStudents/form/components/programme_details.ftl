@@ -236,6 +236,7 @@
 </div>
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/programme.js'/>"></script>
+<#--
 <@spring.bind "programmeDetails.*" />
 <#if ((errorCode?? && errorCode=='false' && studyOptionError?? && studyOptionError =='false' && programError?? && programError =='false' && !applicationForm.shouldOpenFirstSection()) || applicationForm.isSubmitted() || (message?? && message='close' && !spring.status.errorMessages?has_content))>
 <script type="text/javascript">
@@ -252,3 +253,4 @@ $(document).ready(function()
 });
 </script> 
 </#if>
+-->

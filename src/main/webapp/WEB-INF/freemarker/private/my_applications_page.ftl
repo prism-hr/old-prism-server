@@ -61,6 +61,12 @@
             
               <!-- Search/filter box. -->
               <div id="search-box"> 
+								<div class="downloads">
+									<#if (applications?size > 0)>
+									<a class="button blue" name="downloadAll" id="downloadAll">Download</a>
+									</#if>
+								</div>
+								
                 <label for="searchTerm">Filter</label>
                 <input type="text" id="searchTerm" name="searchTerm" />
                 <select name="searchCategory" id="searchCategory">
@@ -105,12 +111,6 @@
                 </tbody>
               </table>
               
-              <p class="right">
-                <#if (applications?size > 0)>
-                <a class="button blue" name="downloadAll" id="downloadAll">Download</a>
-                </#if>
-              </p>
-                        
             </div><!-- .content-box-inner -->
           </div><!-- .content-box -->
               

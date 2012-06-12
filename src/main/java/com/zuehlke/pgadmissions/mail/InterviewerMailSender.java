@@ -17,7 +17,7 @@ import com.zuehlke.pgadmissions.utils.Environment;
 public class InterviewerMailSender extends MailSender {
 
 	public InterviewerMailSender(MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailSender, MessageSource msgSource) {
-		super(mimeMessagePreparatorFactory, mailSender, msgSource);	
+		super(mimeMessagePreparatorFactory, mailSender, msgSource);
 	}
 
 	Map<String, Object> createModel(Interviewer interviewer) {
@@ -38,14 +38,20 @@ public class InterviewerMailSender extends MailSender {
 		internalSendMail(interviewer, "interview.notification.interviewer", "private/interviewers/mail/interviewer_notification_email.ftl");
 	}
 
-	public void sendInterviewerReminder(Interviewer interviewer) {
-		internalSendMail(interviewer, "interview.feedback.request.reminder", "private/interviewers/mail/interviewer_reminder_email.ftl");
+	public void sendInterviewerReminder(Interviewer interviewer, boolean firstReminder) {
+		String subject = "interview.feedback.request.reminder";
+		String template = "private/interviewers/mail/interviewer_reminder_email.ftl";
+		if (firstReminder) {
+			subject = "interview.feedback.request";
+			template = "private/interviewers/mail/interviewer_reminder_email_first.ftl";
+		}
+		internalSendMail(interviewer, subject, template);
 	}
-	
+
 	private void internalSendMail(Interviewer interviewer, String subjectCode, String template) {
 		InternetAddress toAddress = createAddress(interviewer.getUser());
 		String subject = resolveMessage(subjectCode, interviewer.getInterview().getApplication());
-		
+
 		javaMailSender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
 				template, createModel(interviewer), null));
 	}

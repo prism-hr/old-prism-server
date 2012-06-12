@@ -34,8 +34,8 @@
 		      		<h1 style="font-size: 12pt;">
 		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
 		      		</h1>
-			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that the academic review period for Application ${application.applicationNumber} for UCL ${application.program.title} has expired. Please review the feedback and select the next action.</font>
+			      	<p>			      	
+			      		<font face="Arial, Helvetica, sans-serif" size="2">The academic review period for Application ${application.applicationNumber} for UCL ${application.program.title} has expired. Please review the feedback and select the next action.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
@@ -43,7 +43,7 @@
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We will continue to send reminders until you respond to this request.
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.
 			      		</font>
 			      	</p>
 			      	<p>

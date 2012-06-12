@@ -189,7 +189,7 @@ function isFormEmpty($container)
 function markSectionError(section_id)
 {
 	var $section = $(section_id);
-	var errors   = $('.invalid', $section).length;
+	var errors   = $('.invalid:visible', $section).length;
 	if (errors == 0) { return; }
 	
 	// highlight terms box.

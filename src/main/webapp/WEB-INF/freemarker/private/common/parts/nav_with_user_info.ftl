@@ -8,7 +8,7 @@
 	<!-- Main tabbed menu -->
 	<nav>
 		<ul>
-			<li><a href="#">My Account</a></li>			
+			<li><a href="<@spring.url '/myAccount'/>">My Account</a></li>			
 			<li class="current"><a href="<@spring.url '/applications'/>">My Applications </a></li>    
 			<#if user?? && (user.isInRole('SUPERADMINISTRATOR') || user.isInRole('ADMINISTRATOR'))>
 			<li><a href="<@spring.url '/manageUsers/showPage'/>">Manage Users</a></li>

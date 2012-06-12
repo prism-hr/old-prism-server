@@ -80,7 +80,7 @@ public class ApplicationsService {
 			if (events.get(1).getNewStatus() == ApplicationFormStatus.REJECTED) {
 				return events.get(0).getNewStatus();
 			}
-			return events.get(0).getNewStatus();
+			return application.getStatus();
 		}
 		if (events.size() > 2) {
 			for (int i = 0; i < events.size(); i++) {
@@ -98,7 +98,7 @@ public class ApplicationsService {
 				}
 			}
 		}
-		return events.get(events.size()-2).getNewStatus();
+		return events.get(events.size()-1).getNewStatus();
 	}
 
 	/**

@@ -418,23 +418,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 	}
 
 	public void setStatus(ApplicationFormStatus status) {
-
-		StateChangeEvent event = new StateChangeEvent();
-		event.setNewStatus(status);
-		event.setDate(new Date());
-		event.setUser(getCurrentUser());
-		this.events.add(event);
-
 		this.status = status;
-
 	}
 
-	private RegisteredUser getCurrentUser() {
-		if(SecurityContextHolder.getContext() == null ||SecurityContextHolder.getContext().getAuthentication() == null || !(SecurityContextHolder.getContext().getAuthentication().getDetails() instanceof RegisteredUser)  ){
-			return null;
-		}
-		return (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
-	}
+	
 
 	public boolean isInValidationStage() {
 		return status == ApplicationFormStatus.VALIDATION;
@@ -517,7 +504,7 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		for (Comment comment : applicationComments) {
 			if (comment instanceof ReviewComment) {
 				ReviewComment reviewComment = (ReviewComment) comment;
-				if (reviewComment.getWillingToInterview()) {
+				if (reviewComment.getWillingToInterview()!= null && reviewComment.getWillingToInterview()) {
 					usersWillingToInterview.add(reviewComment.getUser());
 				}
 			}
@@ -584,8 +571,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 			stateChangeEvents.add((StateChangeEvent) event);
 		}
 		Collections.sort(stateChangeEvents, dateComparator);
-		//turn events;
-		
 		return stateChangeEvents;
 	}
 

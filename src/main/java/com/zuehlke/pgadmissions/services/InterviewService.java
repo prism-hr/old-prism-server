@@ -11,21 +11,24 @@ import com.zuehlke.pgadmissions.dao.InterviewDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
 public class InterviewService {
 
 	private final InterviewDAO interviewDAO;
 	private final ApplicationFormDAO applicationFormDAO;
+	private final EventFactory eventFactory;
 	
 	InterviewService() {
-		this(null, null);
+		this(null, null, null);
 	}
 	
 	@Autowired
-	public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO){
+	public InterviewService(InterviewDAO interviewDAO, ApplicationFormDAO applicationFormDAO, EventFactory eventFactory){
 		this.interviewDAO = interviewDAO;
 		this.applicationFormDAO = applicationFormDAO;
+		this.eventFactory = eventFactory;
 	}
 	
 	@Transactional
@@ -49,6 +52,7 @@ public class InterviewService {
 		interviewDAO.save(interview);
 		applicationForm.setLatestInterview(interview);
 		applicationForm.setStatus(ApplicationFormStatus.INTERVIEW);
+		applicationForm.getEvents().add(eventFactory.createEvent(interview));
 		applicationFormDAO.save(applicationForm);
 		
 	}

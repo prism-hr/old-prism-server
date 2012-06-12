@@ -2,6 +2,7 @@ package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.*;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -15,10 +16,18 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
+import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewStateChangeEventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -41,7 +50,8 @@ public class TimelineServiceTest {
 		RegisteredUser userTwo = new RegisteredUserBuilder().id(2).toUser();
 		RegisteredUser userThree = new RegisteredUserBuilder().id(3).toUser();
 		StateChangeEvent validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1).toEvent();
-		StateChangeEvent reviewPhaseEnteredEvent = new StateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).user(userTwo).toEvent();
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).toReviewRound();
+		StateChangeEvent reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).user(userTwo).reviewRound(reviewRound).toReviewStateChangeEvent();
 		StateChangeEvent rejectedPhaseEnteredEvent = new StateChangeEventBuilder().date(rejectedDate).newStatus(ApplicationFormStatus.REJECTED).id(3).user(userThree).toEvent();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
 		applicationForm.getEvents().clear();
@@ -62,6 +72,7 @@ public class TimelineServiceTest {
 		assertEquals(rejectedDate, timelinePhaseTwo.getExitedPhaseDate());
 		assertEquals(ApplicationFormStatus.REVIEW, timelinePhaseTwo.getStatus());
 		assertEquals(userTwo, timelinePhaseTwo.getAuthor());
+		assertEquals(reviewRound, timelinePhaseTwo.getReviewRound());
 		assertEquals("timeline.phase.review", timelinePhaseTwo.getMessageCode());
 
 		TimelinePhase timelinePhaseThree = phases.get(2);
@@ -71,7 +82,40 @@ public class TimelineServiceTest {
 		assertEquals(userOne, timelinePhaseThree.getAuthor());
 		assertEquals("timeline.phase.validation", timelinePhaseThree.getMessageCode());
 	}
+	
+	@Test
+	public void shouldAddReviewRoundIfReviewStateChange() throws ParseException{		
+		ReviewRound reviewRound = new ReviewRoundBuilder().id(1).toReviewRound();
+		StateChangeEvent reviewPhaseEnteredEvent = new ReviewStateChangeEventBuilder().newStatus(ApplicationFormStatus.REVIEW).id(2).reviewRound(reviewRound).toReviewStateChangeEvent();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		applicationForm.getEvents().clear();
+		applicationForm.getEvents().addAll(Arrays.asList(reviewPhaseEnteredEvent));
 
+		TimelinePhase phase = timelineService.getPhases(applicationForm).get(0);
+
+		assertEquals(reviewRound, phase.getReviewRound());
+	
+	
+	}
+
+	@Test
+	public void shouldAddInterviewIfInterviewStateChange() throws ParseException{
+		
+		Interview interview = new InterviewBuilder().id(1).toInterview();
+		InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().newStatus(ApplicationFormStatus.INTERVIEW).id(1).interview(interview).toInterviewStateChangeEvent();
+		
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		applicationForm.getEvents().clear();
+		applicationForm.getEvents().addAll(Arrays.asList(interviewStateChangeEvent));
+
+		TimelinePhase phase = timelineService.getPhases(applicationForm).get(0);
+
+		assertEquals(interview, phase.getInterview());
+	
+	
+	}
 	@Test
 	public void shouldAddCommentsToCorrectPhase() throws Exception {
 

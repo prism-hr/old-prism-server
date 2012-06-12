@@ -175,25 +175,7 @@ public class ApplicationFormTest {
 	}
 	
 	
-	@Test
-	public void shouldAddEventIfStatusIsChanged(){
-		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
-		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
-		authenticationToken.setDetails(user);
-		SecurityContextImpl secContext = new SecurityContextImpl();
-		secContext.setAuthentication(authenticationToken);
-		SecurityContextHolder.setContext(secContext);
 
-		ApplicationForm applicationForm = new ApplicationFormBuilder().toApplicationForm();
-		assertEquals(1, applicationForm.getEvents().size());
-		applicationForm.setStatus(ApplicationFormStatus.REVIEW);
-		assertEquals(2, applicationForm.getEvents().size());
-		assertEquals(ApplicationFormStatus.UNSUBMITTED, ((StateChangeEvent)applicationForm.getEvents().get(0)).getNewStatus());
-		assertEquals(ApplicationFormStatus.REVIEW,  ((StateChangeEvent)applicationForm.getEvents().get(1)).getNewStatus());
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(0).getDate(), Calendar.DATE));		
-		assertEquals(user,applicationForm.getEvents().get(0).getUser());
-		
-	}
 	
 	@Test
 	public void shouldReturnUsersWilingToSupervise()  throws ParseException{

@@ -3,7 +3,6 @@ package com.zuehlke.pgadmissions.services;
 import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -19,11 +18,16 @@ import com.zuehlke.pgadmissions.dao.ReviewRoundDAO;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
+import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 
 public class ReviewServiceTest {
 
@@ -34,13 +38,16 @@ public class ReviewServiceTest {
 
 	private StageDurationDAO stageDurationDAOMock;
 
+	private EventFactory eventFactoryMock;
+
 	@Before
 	public void setUp() {
 
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		reviewRoundDAOMock = EasyMock.createMock(ReviewRoundDAO.class);
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
-		reviewService = new ReviewService(applicationFormDAOMock, reviewRoundDAOMock, stageDurationDAOMock);
+		eventFactoryMock = EasyMock.createMock(EventFactory.class);
+		reviewService = new ReviewService(applicationFormDAOMock, reviewRoundDAOMock, stageDurationDAOMock, eventFactoryMock);
 	}
 
 	@Test
@@ -52,13 +59,21 @@ public class ReviewServiceTest {
 				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
 		reviewRoundDAOMock.save(reviewRound);
 		applicationFormDAOMock.save(applicationForm);
-		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock);
+		StateChangeEvent event = new ReviewStateChangeEventBuilder().id(1).toReviewStateChangeEvent();
+		
+		EasyMock.expect(eventFactoryMock.createEvent(reviewRound)).andReturn(event);
+		
+		EasyMock.replay(reviewRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
 
 		reviewService.moveApplicationToReview(applicationForm, reviewRound);
+		
 		assertEquals(DateUtils.truncate(DateUtils.addDays(new Date(), 2), Calendar.DATE), DateUtils.truncate(applicationForm.getDueDate(), Calendar.DATE));
 		assertEquals(applicationForm, reviewRound.getApplication());
 		assertEquals(reviewRound, applicationForm.getLatestReviewRound());
 		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getStatus());
+		
+		assertEquals(1, applicationForm.getEvents().size());
+		assertEquals(event, applicationForm.getEvents().get(0));
 		EasyMock.verify(reviewRoundDAOMock, applicationFormDAOMock);
 
 	}

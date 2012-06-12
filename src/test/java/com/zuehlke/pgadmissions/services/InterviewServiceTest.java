@@ -15,15 +15,19 @@ import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.InterviewDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Interview;
+import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.InterviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 
 public class InterviewServiceTest {
 
 	private InterviewDAO interviewDAOMock;
 	private InterviewService interviewService;
 	private ApplicationFormDAO applicationFormDAOMock;
+	private EventFactory eventFactoryMock;
 	
 	@Test
 	public void shouldGetInterviewById() {
@@ -50,15 +54,20 @@ public class InterviewServiceTest {
 		ApplicationForm applicationForm = new ApplicationFormBuilder().status(ApplicationFormStatus.VALIDATION).id(1).toApplicationForm();
 		interviewDAOMock.save(interview);
 		applicationFormDAOMock.save(applicationForm);
-		EasyMock.replay(interviewDAOMock, applicationFormDAOMock);
+		InterviewStateChangeEvent interviewStateChangeEvent = new InterviewStateChangeEventBuilder().id(1).toInterviewStateChangeEvent();
+		EasyMock.expect(eventFactoryMock.createEvent(interview)).andReturn(interviewStateChangeEvent);
+		EasyMock.replay(interviewDAOMock, applicationFormDAOMock, eventFactoryMock);
 		
 		interviewService.moveApplicationToInterview(interview, applicationForm);
+		
 		assertEquals(dateFormat.parse("02 04 2012"), applicationForm.getDueDate());
 		assertEquals(applicationForm, interview.getApplication());
 		assertEquals(interview, applicationForm.getLatestInterview());
 		assertEquals(ApplicationFormStatus.INTERVIEW, applicationForm.getStatus());
 		EasyMock.verify(interviewDAOMock, applicationFormDAOMock);
 		
+		assertEquals(1, applicationForm.getEvents().size());
+		assertEquals(interviewStateChangeEvent, applicationForm.getEvents().get(0));
 	}
 	
 	@Test
@@ -98,7 +107,8 @@ public class InterviewServiceTest {
 	public void setUp() {
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		interviewDAOMock = EasyMock.createMock(InterviewDAO.class);
-		interviewService = new InterviewService(interviewDAOMock, applicationFormDAOMock);
+		eventFactoryMock = EasyMock.createMock(EventFactory.class);
+		interviewService = new InterviewService(interviewDAOMock, applicationFormDAOMock, eventFactoryMock);
 	}
 	
 }

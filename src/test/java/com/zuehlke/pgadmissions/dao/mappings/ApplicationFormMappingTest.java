@@ -293,7 +293,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		ApplicationForm reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		assertEquals(3, reloadedApplication.getEvents().size());
+		assertEquals(2, reloadedApplication.getEvents().size());
 		assertTrue(reloadedApplication.getEvents().containsAll(Arrays.asList(eventOne, eventTwo)));
 		
 		eventOne = (StateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, eventOneId);
@@ -302,7 +302,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		flushAndClearSession();
 		
 		reloadedApplication = (ApplicationForm) sessionFactory.getCurrentSession().get(ApplicationForm.class, application.getId());
-		assertEquals(2, reloadedApplication.getEvents().size());
+		assertEquals(1, reloadedApplication.getEvents().size());
 		assertTrue(reloadedApplication.getEvents().containsAll(Arrays.asList(eventTwo)));
 		
 		assertNull(sessionFactory.getCurrentSession().get(StateChangeEvent.class, eventOneId));

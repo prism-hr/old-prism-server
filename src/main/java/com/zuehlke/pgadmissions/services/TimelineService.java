@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
+import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
@@ -39,6 +41,11 @@ public class TimelineService {
 			phase.setStatus( ((StateChangeEvent)event).getNewStatus());
 			phase.setAuthor(event.getUser());
 			phase.setMessageCode(resolveMessageCodeForStatus(((StateChangeEvent)event).getNewStatus()));
+			if(event instanceof ReviewStateChangeEvent){
+				phase.setReviewRound(((ReviewStateChangeEvent)event).getReviewRound());
+			}else if(event instanceof InterviewStateChangeEvent){
+				phase.setInterview(((InterviewStateChangeEvent)event).getInterview());
+			}
 			phases.add(phase);
 			
 		}

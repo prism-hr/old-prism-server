@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-import org.apache.commons.collections.Predicate;
-import org.apache.commons.lang.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -39,11 +37,12 @@ public class RejectApplicationController {
 	private static final String NEXT_VIEW_NAME = "redirect:/applications";
 	private static final String REJECTION_MAIL_TEMPLATE = "private/pgStudents/mail/rejected_notification";
 	private final RejectService rejectService;
-	private final ApplicationsService applicationService;
+	
 
 	private final RejectReasonPropertyEditor rejectReasonPropertyEditor;
 	private final UserService userService;
 	private final RejectionValidator rejectionValidator;
+	private final ApplicationsService applicationsService;
 
 	RejectApplicationController() {
 		this(null, null, null, null, null);
@@ -52,7 +51,8 @@ public class RejectApplicationController {
 	@Autowired
 	public RejectApplicationController(ApplicationsService applicationsService, RejectService rejectService, UserService userService,
 			RejectReasonPropertyEditor rejectReasonPropertyEditor, RejectionValidator rejectionValidator) {
-		this.applicationService = applicationsService;
+		
+		this.applicationsService = applicationsService;
 		this.rejectService = rejectService;
 		this.userService = userService;
 		this.rejectReasonPropertyEditor = rejectReasonPropertyEditor;
@@ -89,7 +89,7 @@ public class RejectApplicationController {
 																// rejection to
 																// get right
 																// stage back*/
-		ApplicationFormStatus stage = applicationService.getStageComingFrom(application);
+		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		model.put("stage", stage);
 		model.put("application", application);
 		model.put("reason", rejection.getRejectionReason());
@@ -110,16 +110,12 @@ public class RejectApplicationController {
 
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
-		ApplicationForm application = applicationService.getApplicationByApplicationNumber(applicationId);
+		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
 		checkPermissionForApplication(application);
 		checkApplicationStatus(application);
 		return application;
 	}
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
-		return getCurrentUser();
-	}
 
 	private void checkApplicationStatus(ApplicationForm application) {
 		switch (application.getStatus()) {
@@ -141,7 +137,7 @@ public class RejectApplicationController {
 		}
 	}
 
-	private RegisteredUser getCurrentUser() {
+	protected RegisteredUser getCurrentUser() {
 		return userService.getCurrentUser();
 	}
 

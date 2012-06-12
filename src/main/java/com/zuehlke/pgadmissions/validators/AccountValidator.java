@@ -69,7 +69,7 @@ public class AccountValidator implements Validator {
 		List<RegisteredUser> allUsers = userService.getAllUsers();
 		allUsers.remove(existingUser);
 		for (RegisteredUser user : allUsers) {
-			if(user.getEmail().equals(updatedUser.getEmail()))
+			if(user.getUsername().equals(updatedUser.getEmail()))
 				errors.rejectValue("email", "account.email.alreadyexists");
 		}
 		if (!EmailValidator.getInstance().isValid(updatedUser.getEmail())) {

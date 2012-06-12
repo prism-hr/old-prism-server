@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.UserFactory;
 
@@ -39,20 +40,22 @@ public class UserService {
 	private final Logger log = Logger.getLogger(UserService.class);
 	private final UserFactory userFactory;
 	private final MessageSource msgSource;
+	private final EncryptionUtils encryptionUtils;
 
 	UserService() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public UserService(UserDAO userDAO, RoleDAO roleDAO, UserFactory userFactory, MimeMessagePreparatorFactory mimeMessagePreparatorFactory,
-			JavaMailSender mailsender, MessageSource msgSource) {
+			JavaMailSender mailsender, MessageSource msgSource, EncryptionUtils encryptionUtils) {
 		this.userDAO = userDAO;
 		this.roleDAO = roleDAO;
 		this.userFactory = userFactory;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
 		this.msgSource = msgSource;
+		this.encryptionUtils = encryptionUtils;
 	}
 
 	public RegisteredUser getUser(Integer id) {
@@ -303,8 +306,10 @@ public class UserService {
 	public void updateCurrentUserAndSave(RegisteredUser user) {
 			RegisteredUser currentUser = getCurrentUser();
 			currentUser.setEmail(user.getEmail());
-			if (StringUtils.isNotBlank(user.getPassword())) {
-				currentUser.setPassword(user.getPassword());
+			if (StringUtils.isNotBlank(user.getNewPassword())) {
+				System.out.println("here");
+				System.out.println(encryptionUtils);
+				currentUser.setPassword(encryptionUtils.getMD5Hash(user.getNewPassword()));
 			}
 			currentUser.setUsername(user.getEmail());
 			save(currentUser);

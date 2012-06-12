@@ -140,7 +140,7 @@ public class AccountValidatorTest {
 
 	@Test
 	public void shouldRejectIfNewEmailAlreadyExists() {
-		userArray.add(new RegisteredUserBuilder().id(1).username("email").firstName("bob").lastName("bobson").
+		userArray.add(new RegisteredUserBuilder().id(1).username("email2@test.com").firstName("bob").lastName("bobson").
 				email("email2@test.com").confirmPassword("12345678").newPassword("12345678").password("5f4dcc3b5aa765d61d8327deb882cf99").toUser());
 		user.setEmail("email2@test.com");
 		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "email");

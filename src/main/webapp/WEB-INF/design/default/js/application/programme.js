@@ -31,7 +31,7 @@ $(document).ready(function()
 			$("#acceptTermsPDValue").val("YES");
 			
 			// Remove any styling from the terms box.
-			$('#programmeDetailsSection .terms-box').attr('style','');
+			//$('#programmeDetailsSection .terms-box').attr('style','');
 			/*
 			$("#prog-info-bar-div").switchClass("section-error-bar", "section-info-bar", 1);
 			$("#prog-info-bar-span").switchClass("invalid-info-text", "info-text", 1);

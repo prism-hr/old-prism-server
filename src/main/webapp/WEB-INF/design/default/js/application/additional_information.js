@@ -116,14 +116,11 @@ $(document).ready(function(){
 				$('#additionalInformationSection div.ajax').remove();
 				markSectionError('#additionalInformationSection');
 
-				if (message == 'close')
+				// Close the section only if there are no errors.
+				var errorCount = $('#additionalInformationSection .invalid:visible').length;
+				if (errorCount == 0)
 				{
-					// Close the section only if there are no errors.
-					var errorCount = $('#additionalInformationSection .invalid:visible').length;
-					if (errorCount == 0)
-					{
-						$('#additional-H2').trigger('click');
-					}
+					$('#additional-H2').trigger('click');
 				}
 			});
 		}

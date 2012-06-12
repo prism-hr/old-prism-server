@@ -46,11 +46,14 @@ public class AccountController {
 
 	
 	@RequestMapping(value="/submit",method = RequestMethod.POST)
-	public String saveAccountDetails(@Valid @ModelAttribute("updatedUser") RegisteredUser user, BindingResult bindingResult) {
+	public String saveAccountDetails(@Valid @ModelAttribute("updatedUser") RegisteredUser user, BindingResult bindingResult, ModelMap modelMap) {
 		if(bindingResult.hasErrors()){
 			return ACCOUNT_PAGE_VIEW_NAME;
 		}
-		userService.updateCurrentUserAndSave(user);
+		if(userService.isAccountChanged(user)){
+			modelMap.put("message", "You have successfully changed your account details. A mail is sent to your email address with your new details");
+		}
+		userService.updateCurrentUserAndReturnIsChanged(user);
 		return "redirect:/applications";
 	}
 

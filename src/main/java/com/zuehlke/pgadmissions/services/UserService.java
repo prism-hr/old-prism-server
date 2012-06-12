@@ -303,16 +303,17 @@ public class UserService {
 	}
 
 	@Transactional
-	public void updateCurrentUserAndSave(RegisteredUser user) {
+	public void updateCurrentUserAndReturnIsChanged(RegisteredUser user) {
 			RegisteredUser currentUser = getCurrentUser();
 			currentUser.setEmail(user.getEmail());
 			if (StringUtils.isNotBlank(user.getNewPassword())) {
-				System.out.println("here");
-				System.out.println(encryptionUtils);
 				currentUser.setPassword(encryptionUtils.getMD5Hash(user.getNewPassword()));
 			}
 			currentUser.setUsername(user.getEmail());
 			save(currentUser);
 	}
-
+	
+	public boolean isAccountChanged(RegisteredUser user){
+		return !getCurrentUser().getEmail().equals(user.getEmail()) || (!StringUtils.isBlank(user.getNewPassword()) && !getCurrentUser().getPassword().equals(encryptionUtils.getMD5Hash(user.getNewPassword())));
+	}
 }

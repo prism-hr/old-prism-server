@@ -58,9 +58,6 @@
 									<h2>Account Details</h2>
 									<div>
 										<form>
-											<input type="hidden" id="userId" value="${user.id?string("#####")}" />
-											<input type="hidden" id="firstname" value="${user.firstName}" />
-											<input type="hidden" id="lastname" value="${user.lastName}" />
 											<div class="row-group">
 												<div class="row"> 
 													<span id="email-lbl" class="label">Full Name</span>

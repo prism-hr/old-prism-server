@@ -694,7 +694,7 @@ public class UserServiceTest {
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("newpass")).andReturn("encryptednewpass");
 		RegisteredUser userOne = new RegisteredUserBuilder().email("two").password("12").newPassword("newpass").toUser();
 		EasyMock.replay(encryptionUtilsMock);
-		userServiceWithCurrentUserOverride.updateCurrentUserAndSave(userOne);
+		userServiceWithCurrentUserOverride.updateCurrentUserAndReturnIsChanged(userOne);
 		assertEquals("two", currentUser.getUsername());
 		assertEquals("two", currentUser.getEmail());
 		assertEquals("encryptednewpass", currentUser.getPassword());
@@ -715,11 +715,78 @@ public class UserServiceTest {
 		};
 		RegisteredUser userOne = new RegisteredUserBuilder().username("one").email("two").password("").id(5).toUser();
 		userServiceWithCurrentUserOverride.save(currentUser);
-		userServiceWithCurrentUserOverride.updateCurrentUserAndSave(userOne);
+		userServiceWithCurrentUserOverride.updateCurrentUserAndReturnIsChanged(userOne);
 		assertEquals("two", currentUser.getUsername());
 		assertEquals("two", currentUser.getEmail());
 		assertEquals("12", currentUser.getPassword());
 		
+	}
+	
+	@Test
+	public void shouldReturnTrueIfPasswordChanged(){
+		final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em").toUser();
+		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
+			
+			@Override
+			public RegisteredUser getCurrentUser() {
+				return currentUser;
+			}
+			
+		};
+		RegisteredUser userOne = new RegisteredUserBuilder().username("em").email("em").newPassword("123").id(5).toUser();
+		assertTrue(userServiceWithCurrentUserOverride.isAccountChanged(userOne));
+	}
+	
+	@Test
+	public void shouldReturnTrueIfEmailChanged(){
+		final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em").toUser();
+		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
+			
+			@Override
+			public RegisteredUser getCurrentUser() {
+				return currentUser;
+			}
+			
+		};
+		RegisteredUser userOne = new RegisteredUserBuilder().email("newmail").newPassword("12").id(5).toUser();
+		assertTrue(userServiceWithCurrentUserOverride.isAccountChanged(userOne));
+	}
+	
+	@Test
+	public void shouldReturnFalseIfNothingChanged(){
+		final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em").toUser();
+		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
+			
+			@Override
+			public RegisteredUser getCurrentUser() {
+				return currentUser;
+			}
+			
+		};
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("12")).andReturn("12");
+		EasyMock.replay(encryptionUtilsMock);
+		RegisteredUser userOne = new RegisteredUserBuilder().email("em").newPassword("12").id(5).toUser();
+		assertFalse(userServiceWithCurrentUserOverride.isAccountChanged(userOne));
+	}
+	
+	
+	@Test
+	public void shouldReturnFalseIfNothingChangedAndPasswordIsBlank(){
+		final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em").toUser();
+		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
+			
+			@Override
+			public RegisteredUser getCurrentUser() {
+				return currentUser;
+			}
+			
+		};
+		RegisteredUser userOne = new RegisteredUserBuilder().email("em").newPassword("").id(5).toUser();
+		assertFalse(userServiceWithCurrentUserOverride.isAccountChanged(userOne));
 	}
 	
 	@Before

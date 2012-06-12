@@ -680,8 +680,8 @@ public class UserServiceTest {
 	}
 	
 	@Test
-	public void shouldUpdateCurrentUserAndSave(){
-		final RegisteredUser currentUser = new RegisteredUserBuilder().id(7).password("12").email("em").username("em").toUser();
+	public void shouldUpdateCurrentUserAndSendEmailConfirmation() throws UnsupportedEncodingException{
+		final RegisteredUser currentUser = new RegisteredUserBuilder().firstName("f").lastName("l").id(7).password("12").email("em").username("em").toUser();
 		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
 				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
 
@@ -693,8 +693,21 @@ public class UserServiceTest {
 		};
 		EasyMock.expect(encryptionUtilsMock.getMD5Hash("newpass")).andReturn("encryptednewpass");
 		RegisteredUser userOne = new RegisteredUserBuilder().email("two").password("12").newPassword("newpass").toUser();
-		EasyMock.replay(encryptionUtilsMock);
-		userServiceWithCurrentUserOverride.updateCurrentUserAndReturnIsChanged(userOne);
+		
+		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
+		InternetAddress toAddress1 = new InternetAddress("two", "f l");
+		
+		EasyMock.expect(msgSourceMock.getMessage("account.updated.confirmation", null, null)).andReturn("resolved subject");
+		
+		EasyMock.expect(
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(EasyMock.eq(toAddress1), EasyMock.eq("resolved subject"),
+						EasyMock.eq("private/mail/account_updated_confirmation.ftl"), EasyMock.isA(Map.class), (InternetAddress)EasyMock.isNull())).andReturn(preparatorMock1);
+		mailsenderMock.send(preparatorMock1);
+
+		EasyMock.replay(encryptionUtilsMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock);
+
+		userServiceWithCurrentUserOverride.updateCurrentUserAndSendEmailNotification(userOne);
+		EasyMock.verify(encryptionUtilsMock, mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock);
 		assertEquals("two", currentUser.getUsername());
 		assertEquals("two", currentUser.getEmail());
 		assertEquals("encryptednewpass", currentUser.getPassword());
@@ -715,7 +728,7 @@ public class UserServiceTest {
 		};
 		RegisteredUser userOne = new RegisteredUserBuilder().username("one").email("two").password("").id(5).toUser();
 		userServiceWithCurrentUserOverride.save(currentUser);
-		userServiceWithCurrentUserOverride.updateCurrentUserAndReturnIsChanged(userOne);
+		userServiceWithCurrentUserOverride.updateCurrentUserAndSendEmailNotification(userOne);
 		assertEquals("two", currentUser.getUsername());
 		assertEquals("two", currentUser.getEmail());
 		assertEquals("12", currentUser.getPassword());

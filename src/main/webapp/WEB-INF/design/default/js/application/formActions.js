@@ -19,9 +19,13 @@ $(document).ready(function(){
 				errorCode: $('#personalDetailsError').val(),
 				cacheBreaker: new Date().getTime() 
 			},
-			function(data) {
+			function(data)
+			{
 				$('#personalDetailsSection').html(data);
-				$('#personalDetails-H2').trigger('click');
+				if ($('#personalDetailsSection .section-error-bar').length == 0)
+				{
+					$('#personalDetails-H2').trigger('click');
+				}
 			}
 	);
 	$.get("/pgadmissions/update/getAddress",

@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Qualification;
@@ -140,7 +140,7 @@ public class ApplicationFormDAO {
 						.eqProperty("event.application.id"));
 
 		DetachedCriteria reviewEventsCriteria = DetachedCriteria
-				.forClass(Event.class, "event")
+				.forClass(StateChangeEvent.class, "event")
 				.add(Restrictions.eq("newStatus", newStatus))
 				.add(Restrictions.or(Subqueries
 						.notExists(notificationCriteriaOne

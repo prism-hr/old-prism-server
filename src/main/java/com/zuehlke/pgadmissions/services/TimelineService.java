@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
 
@@ -34,10 +35,10 @@ public class TimelineService {
 		 
 		for (Event event : events) {
 			TimelinePhase phase = new TimelinePhase();
-			phase.setDate(event.getDate());
-			phase.setStatus(event.getNewStatus());
+			phase.setDate(event.getDate());			
+			phase.setStatus( ((StateChangeEvent)event).getNewStatus());
 			phase.setAuthor(event.getUser());
-			phase.setMessageCode(resolveMessageCodeForStatus(event.getNewStatus()));
+			phase.setMessageCode(resolveMessageCodeForStatus(((StateChangeEvent)event).getNewStatus()));
 			phases.add(phase);
 			
 		}

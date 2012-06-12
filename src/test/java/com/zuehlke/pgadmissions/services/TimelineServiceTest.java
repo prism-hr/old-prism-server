@@ -15,10 +15,11 @@ import org.junit.Test;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
@@ -39,9 +40,9 @@ public class TimelineServiceTest {
 		RegisteredUser userOne = new RegisteredUserBuilder().id(1).toUser();
 		RegisteredUser userTwo = new RegisteredUserBuilder().id(2).toUser();
 		RegisteredUser userThree = new RegisteredUserBuilder().id(3).toUser();
-		Event validationPhaseEnteredEvent = new EventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1).toEvent();
-		Event reviewPhaseEnteredEvent = new EventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).user(userTwo).toEvent();
-		Event rejectedPhaseEnteredEvent = new EventBuilder().date(rejectedDate).newStatus(ApplicationFormStatus.REJECTED).id(3).user(userThree).toEvent();
+		StateChangeEvent validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).user(userOne).id(1).toEvent();
+		StateChangeEvent reviewPhaseEnteredEvent = new StateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).user(userTwo).toEvent();
+		StateChangeEvent rejectedPhaseEnteredEvent = new StateChangeEventBuilder().date(rejectedDate).newStatus(ApplicationFormStatus.REJECTED).id(3).user(userThree).toEvent();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
 		applicationForm.getEvents().clear();
 		applicationForm.getEvents().addAll(Arrays.asList(rejectedPhaseEnteredEvent, validationPhaseEnteredEvent, reviewPhaseEnteredEvent));
@@ -86,8 +87,8 @@ public class TimelineServiceTest {
 		Date commentDateThree = format.parse("03 04 2012 17:01:41");
 		Comment commentThree = new CommentBuilder().date(commentDateThree).id(5).toComment();
 
-		Event validationPhaseEnteredEvent = new EventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).id(1).toEvent();
-		Event reviewPhaseEnteredEvent = new EventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).toEvent();
+		Event validationPhaseEnteredEvent = new StateChangeEventBuilder().date(submissionDate).newStatus(ApplicationFormStatus.VALIDATION).id(1).toEvent();
+		Event reviewPhaseEnteredEvent = new StateChangeEventBuilder().date(validatedDate).newStatus(ApplicationFormStatus.REVIEW).id(2).toEvent();
 
 		ApplicationForm applicationForm = EasyMock.createMock(ApplicationForm.class);
 		EasyMock.expect(applicationForm.getEvents()).andReturn(Arrays.asList(validationPhaseEnteredEvent, reviewPhaseEnteredEvent));

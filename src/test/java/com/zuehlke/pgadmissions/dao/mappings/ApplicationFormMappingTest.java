@@ -25,7 +25,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Document;
-import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
 import com.zuehlke.pgadmissions.domain.PersonalDetails;
@@ -41,7 +41,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
 import com.zuehlke.pgadmissions.domain.builders.DocumentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
@@ -282,8 +282,8 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 	@Test
 	public void shouldSaveAndLoadEventsWithApplication() throws ParseException {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd MM yyyy hh:mm:ss");
-		Event eventOne = new EventBuilder().date(simpleDateFormat.parse("01 12 2011 14:09:26")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
-		Event eventTwo = new EventBuilder().date(simpleDateFormat.parse("03 12 2011 14:09:26")).newStatus(ApplicationFormStatus.UNSUBMITTED).toEvent();
+		StateChangeEvent eventOne = new StateChangeEventBuilder().date(simpleDateFormat.parse("01 12 2011 14:09:26")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
+		StateChangeEvent eventTwo = new StateChangeEventBuilder().date(simpleDateFormat.parse("03 12 2011 14:09:26")).newStatus(ApplicationFormStatus.UNSUBMITTED).toEvent();
 		ApplicationForm application = new ApplicationFormBuilder().program(program).applicant(user).events(eventOne, eventTwo).toApplicationForm();
 		
 		save(application);
@@ -296,7 +296,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(3, reloadedApplication.getEvents().size());
 		assertTrue(reloadedApplication.getEvents().containsAll(Arrays.asList(eventOne, eventTwo)));
 		
-		eventOne = (Event) sessionFactory.getCurrentSession().get(Event.class, eventOneId);
+		eventOne = (StateChangeEvent) sessionFactory.getCurrentSession().get(StateChangeEvent.class, eventOneId);
 		reloadedApplication.getEvents().remove(eventOne);
 		save(reloadedApplication);
 		flushAndClearSession();
@@ -305,7 +305,7 @@ public class ApplicationFormMappingTest extends AutomaticRollbackTestCase {
 		assertEquals(2, reloadedApplication.getEvents().size());
 		assertTrue(reloadedApplication.getEvents().containsAll(Arrays.asList(eventTwo)));
 		
-		assertNull(sessionFactory.getCurrentSession().get(Event.class, eventOneId));
+		assertNull(sessionFactory.getCurrentSession().get(StateChangeEvent.class, eventOneId));
 
 	}
 	

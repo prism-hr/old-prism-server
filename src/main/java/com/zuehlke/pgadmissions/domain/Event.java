@@ -8,65 +8,39 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Type;
-
-import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
-
 @Entity(name = "EVENT")
-@Access(AccessType.FIELD)
-public class Event extends DomainObject<Integer> {
+@Inheritance(strategy = InheritanceType.JOINED)
+@Access(AccessType.FIELD) 
+public abstract class Event extends DomainObject<Integer> {
 
-	private static final long serialVersionUID = 3927731824429659338L;
+	
+	private static final long serialVersionUID = -3417291018172094109L;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "event_date")
-	private Date date;
-
-	@Type(type = "com.zuehlke.pgadmissions.dao.custom.ApplicationFormStatusEnumUserType")
-	@Column(name = "new_status")
-	private ApplicationFormStatus newStatus;
-
+	protected Date date;
+	
 	@ManyToOne
 	@JoinColumn(name = "application_form_id")
-	private ApplicationForm application;
-
+	protected ApplicationForm application;
 	
 	@ManyToOne
 	@JoinColumn(name = "registered_user_id")
-	private RegisteredUser user;
-
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	@Override
-	@Id
-	@GeneratedValue
-	@Access(AccessType.PROPERTY)
-	public Integer getId() {
-		return id;
-	}
+	protected RegisteredUser user;
 
 	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(Date eventDate) {
-		this.date = eventDate;
-	}
-
-	public ApplicationFormStatus getNewStatus() {
-		return newStatus;
-	}
-
-	public void setNewStatus(ApplicationFormStatus newStatus) {
-		this.newStatus = newStatus;
+	public void setDate(Date date) {
+		this.date = date;
 	}
 
 	public ApplicationForm getApplication() {
@@ -84,5 +58,20 @@ public class Event extends DomainObject<Integer> {
 	public void setUser(RegisteredUser user) {
 		this.user = user;
 	}
+	
+
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	@Override
+	@Id
+	@GeneratedValue
+	@Access(AccessType.PROPERTY)
+	public Integer getId() {
+		return id;
+	}
+	
 
 }

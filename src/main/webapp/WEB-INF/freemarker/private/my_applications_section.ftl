@@ -56,7 +56,7 @@
 		</select>
 
 	</td>
-	<td class="centre">
+	<td>
 		<#if application.submittedDate??>
 		${(application.submittedDate?string("dd MMM yyyy"))}
 		<#else>

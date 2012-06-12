@@ -113,7 +113,7 @@
         <span class="admin_row_label">Document</span>
         <#if referee.hasProvidedReference() >
         <div class="field">
-          <a href="<@spring.url '/download/reference?referenceId=${encrypter.encrypt(referee.reference.id)}'/>">
+          <a href="<@spring.url '/download/reference?referenceId=${encrypter.encrypt(referee.reference.id)}'/>" target="_blank">
           ${referee.reference.document.fileName?html}</a>
         </div>
         <#else> 

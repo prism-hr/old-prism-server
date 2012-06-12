@@ -10,7 +10,7 @@
       <div class="admin_row">
         <span class="admin_row_label">Personal Statement</span>
         <div class="field">            
-          <a href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.personalStatement.id))!}'/>">
+          <a href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.personalStatement.id))!}'/>" target="_blank">
             ${(applicationForm.personalStatement.fileName)!}
           </a>
         </div>            
@@ -19,7 +19,7 @@
       <div class="admin_row">
         <span class="admin_row_label">CV / resume</span>                  
         <div class="field">
-          <a href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.cv.id))!}'/>">
+          <a href="<@spring.url '/download?documentId=${(encrypter.encrypt(applicationForm.cv.id))!}'/>" target="_blank">
             ${(applicationForm.cv.fileName)!}
           </a>
         </div>

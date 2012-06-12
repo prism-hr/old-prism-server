@@ -524,6 +524,7 @@
 
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/personalDetails.js'/>"></script>
 
+<#--
 <@spring.bind "personalDetails.*" /> 
  
 <#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>
@@ -533,3 +534,4 @@
 	});
 </script>
 </#if>
+-->

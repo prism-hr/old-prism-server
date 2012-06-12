@@ -312,10 +312,21 @@ function postPersonalDetailsData(message){
 			"&" + $('input[name="maternalGuardianNationalities"]').serialize()+
 			"&" + $('input[name="paternalGuardianNationalities"]').serialize(),
 			
-			 function(data) {
+			 function(data)
+			 {
 			    $('#personalDetailsSection').html(data);
 					$('#personalDetailsSection div.ajax').remove();
 					markSectionError('#personalDetailsSection');
+
+					if (message == 'close')
+					{
+						// Close the section only if there are no errors.
+						var errorCount = $('#personalDetailsSection .invalid:visible').length;
+						if (errorCount == 0)
+						{
+							$('#personalDetails-H2').trigger('click');
+						}
+					}
 			  }
 	);
 	

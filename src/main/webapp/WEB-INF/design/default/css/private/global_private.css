@@ -234,6 +234,8 @@ section.folding form > div.section-error-bar .row { background: none; margin-bot
 section.folding form > div.section-error-bar .invalid-info-text { margin: 0; padding: 0; }
 section.folding form > div.section-error-bar .error-hint { margin: 0 0 0 -30px; }
 
+section.folding h2 { cursor: pointer; }
+
 
 input.invalid, select.invalid, textarea.invalid { border: 2px solid red; margin: -1px; }
 p.invalid { background: url(../../images/button_exclaim.png) no-repeat 0 .1em; color: red; clear: left; display: inline-block; padding-bottom: 10px; padding-left: 24px; line-height: 24px;}

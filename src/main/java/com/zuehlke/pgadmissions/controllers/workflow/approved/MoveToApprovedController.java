@@ -15,25 +15,32 @@ import com.zuehlke.pgadmissions.exceptions.CannotApproveApplicationException;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Controller
 @RequestMapping("/approved")
-public class MoveToApprovedController {
+public class MoveToApprovedController  {
 
 	
 	private static final String APPROVED_DETAILS_VIEW_NAME = "/private/staff/approver/approve_page";
-	private final ApplicationsService applicationsService;
+
 	private final UserService userService;
+
+	private final ApplicationsService applicationsService;
+
+	private final EventFactory eventFactory;
 
 
 	MoveToApprovedController() {
-		this(null, null);
+		this(null, null, null);
 	}
 		
 	@Autowired
-	public MoveToApprovedController(ApplicationsService applicationsService, UserService userService) {
+	public MoveToApprovedController(ApplicationsService applicationsService, UserService userService, EventFactory eventFactory) {
+
 		this.applicationsService = applicationsService;
 		this.userService = userService;
+		this.eventFactory = eventFactory;
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "moveToApproved")
@@ -53,12 +60,12 @@ public class MoveToApprovedController {
 		}
 		applicationForm.setStatus(ApplicationFormStatus.APPROVED);
 		applicationForm.setApprover(getUser());
+		applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.APPROVED));
 		applicationsService.save(applicationForm);		
 		return "redirect:/applications";
 	}
 	
-	
-
+		
 	@ModelAttribute("applicationForm")
 	public ApplicationForm getApplicationForm(@RequestParam String applicationId) {
 		ApplicationForm application = applicationsService.getApplicationByApplicationNumber(applicationId);
@@ -73,9 +80,14 @@ public class MoveToApprovedController {
 	}
 
 
-	@ModelAttribute("user")
-	public RegisteredUser getUser() {
+	
+	 RegisteredUser getCurrentUser() {
 		return userService.getCurrentUser();
+	}
+
+	@ModelAttribute("user")
+	public RegisteredUser getUser() {		
+		return getCurrentUser();
 	}
 
 }

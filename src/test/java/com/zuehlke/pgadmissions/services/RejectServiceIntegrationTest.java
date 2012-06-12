@@ -6,6 +6,9 @@ import org.hibernate.SessionFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -63,6 +66,7 @@ public class RejectServiceIntegrationTest {
 				.password("password").accountNonExpired(false).accountNonLocked(false).credentialsNonExpired(false).enabled(false).toUser();
 		userDAO.save(approver);
 
+		
 		Program program = new Program();
 		program.setTitle("alelele");
 		program.setCode("blabjk");
@@ -79,6 +83,13 @@ public class RejectServiceIntegrationTest {
 
 		flushNClear();
 
+		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
+		
+		authenticationToken.setDetails(user);
+		SecurityContextImpl secContext = new SecurityContextImpl();
+		secContext.setAuthentication(authenticationToken);
+		SecurityContextHolder.setContext(secContext);
+		
 		Rejection rejection = new RejectionBuilder().rejectionReason(reason1).toRejection();
 		rejectsService.moveApplicationToReject(application, approver, rejection);
 		flushNClear();
@@ -89,6 +100,8 @@ public class RejectServiceIntegrationTest {
 		Assert.assertEquals(reason1, storedAppl.getRejection().getRejectionReason());
 			
 		Assert.assertEquals(approver, application.getApprover());
+		
+
 	}
 
 	private void flushNClear() {

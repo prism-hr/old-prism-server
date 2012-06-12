@@ -14,6 +14,7 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
 public class ReviewService {
@@ -21,17 +22,19 @@ public class ReviewService {
 	private final ApplicationFormDAO applicationDAO;
 	private final ReviewRoundDAO reviewRoundDAO;
 	private final StageDurationDAO stageDurationDAO;
+	private final EventFactory eventFactory;
 
 	ReviewService() {
-		this(null, null, null);
+		this(null, null, null, null);
 	}
 
 	@Autowired
-	public ReviewService(ApplicationFormDAO applicationDAO, ReviewRoundDAO reviewRoundDAO, StageDurationDAO stageDurationDAO) {
+	public ReviewService(ApplicationFormDAO applicationDAO, ReviewRoundDAO reviewRoundDAO, StageDurationDAO stageDurationDAO, EventFactory eventFactory) {
 
 		this.applicationDAO = applicationDAO;
 		this.reviewRoundDAO = reviewRoundDAO;
 		this.stageDurationDAO = stageDurationDAO;
+		this.eventFactory = eventFactory;
 
 	}
 
@@ -43,9 +46,8 @@ public class ReviewService {
 		reviewRoundDAO.save(reviewRound);
 		StageDuration reviewStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.REVIEW);
 		application.setDueDate(DateUtils.addMinutes(new Date(), reviewStageDuration.getDurationInMinutes()));
-	
-
 		application.setStatus(ApplicationFormStatus.REVIEW);
+		application.getEvents().add(eventFactory.createEvent(reviewRound));
 		applicationDAO.save(application);
 	}
 

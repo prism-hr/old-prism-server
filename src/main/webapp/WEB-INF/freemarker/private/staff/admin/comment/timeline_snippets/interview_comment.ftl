@@ -1,5 +1,5 @@
 <#if comment.decline>
-<p>Declined to interview.</p>
+<p>Declined to act as interviewer on this occasion.</p>
 <#else>
 <h3>Willing to supervise?</h3>
 <ul>

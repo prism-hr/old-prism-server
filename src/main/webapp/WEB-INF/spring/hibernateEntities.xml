@@ -38,6 +38,7 @@
 	     		<value>com.zuehlke.pgadmissions.domain.PendingRoleNotification</value>
 	     		<value>com.zuehlke.pgadmissions.domain.StateChangeEvent</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent</value>
+	     		<value>com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent</value>
 	     		<value>com.zuehlke.pgadmissions.domain.Interviewer</value>
 	     		<value>com.zuehlke.pgadmissions.domain.ReviewRound</value>
 	     		<value>com.zuehlke.pgadmissions.domain.RejectReason</value>

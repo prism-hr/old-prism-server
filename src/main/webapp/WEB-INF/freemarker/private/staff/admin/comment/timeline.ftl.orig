@@ -16,7 +16,7 @@
 	                      <div class="title">
 	                        <span class="icon-role"></span>
 	                        <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
-	                        <span class="datetime">${timelineObject.date?string('dd MMM yy')} at ${timelineObject.date?string('HH:mm')}</span>
+	                        <span class="datetime">${timelineObject.date?string('dd-MMM-yy')} at ${timelineObject.date?string('HH:mm')}</span>
 	                      </div>
                    
                       	<p><@spring.message '${timelineObject.messageCode}'/>.</p>  
@@ -29,7 +29,7 @@
 	                   		 </#list>
 	                   	<#elseif timelineObject.interview??>
 	                   	 	<h3>Interview</h3>
-	                   	 	<p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
+	                   	 	<p>${timelineObject.interview.interviewDueDate?string('dd-MMM-yy')} at ${timelineObject.interview.interviewTime}</p>
 	                   	 	<p>${timelineObject.interview.furtherDetails?html}</p>                  
 	                   		<h3>Invited interviewers:</h3>           			
 	

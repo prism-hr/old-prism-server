@@ -15,6 +15,7 @@ import java.util.List;
 
 import junit.framework.Assert;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -26,10 +27,12 @@ import org.springframework.security.core.context.SecurityContextImpl;
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -192,8 +195,8 @@ public class ApplicationsServiceTest {
 	public void shouldReturnReviewIfInApprovalPhaseAndPreviousOfApprovalIsReview() throws ParseException {
 		StateChangeEvent validationEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
 		Event reviewEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
-		Event approvalEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVAL).events(validationEvent, reviewEvent).toApplicationForm();
+		Event approvalEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/03")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).status(ApplicationFormStatus.APPROVAL).events(validationEvent, reviewEvent, approvalEvent).toApplicationForm();
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		Assert.assertEquals(ApplicationFormStatus.REVIEW, stage);
 	}
@@ -210,10 +213,10 @@ public class ApplicationsServiceTest {
 
 	@Test
 	public void shouldReturnThePreviousStageIfNotRejected() throws ParseException {
-		StateChangeEvent validationEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
-		Event reviewEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
-		Event approvalEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).events(validationEvent, reviewEvent, approvalEvent).toApplicationForm();
+		Event validationEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/03")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
+		Event reviewEvent = new ReviewStateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REVIEW).toReviewStateChangeEvent();
+		Event approvalEvent = new StateChangeEventBuilder().date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/05/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
+		ApplicationForm application = new ApplicationFormBuilder().status(ApplicationFormStatus.APPROVED).id(1).events(validationEvent, reviewEvent, approvalEvent).toApplicationForm();
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		Assert.assertEquals(ApplicationFormStatus.APPROVAL, stage);
 	}
@@ -231,19 +234,21 @@ public class ApplicationsServiceTest {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_YEAR, 1);
 		Date tomorrow = cal.getTime();
+		StateChangeEvent validatioEvent = new StateChangeEventBuilder().date(DateUtils.addDays(tomorrow, -1)).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
 		StateChangeEvent rejectedEvent = new StateChangeEventBuilder().date(tomorrow).newStatus(ApplicationFormStatus.REJECTED).toEvent();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).events(rejectedEvent).toApplicationForm();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).events(validatioEvent, rejectedEvent).toApplicationForm();
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
-		Assert.assertEquals(ApplicationFormStatus.UNSUBMITTED, stage);
+		Assert.assertEquals(ApplicationFormStatus.VALIDATION, stage);
 	}
 
 	@Test
-	public void shouldReturnCurrentEventIfOnlyTwoEventsAndLastOneIsNotRejected() {
+	public void shouldReturnCurrentStatusIfOnlyTwoEventsAndLastOneIsNotRejected() {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_YEAR, 1);
 		Date tomorrow = cal.getTime();
 		StateChangeEvent validationEvent = new StateChangeEventBuilder().date(tomorrow).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
-		ApplicationForm application = new ApplicationFormBuilder().id(1).events(validationEvent).toApplicationForm();
+		Event reviewEvent = new ReviewStateChangeEventBuilder().date(DateUtils.addDays(tomorrow, 1)).newStatus(ApplicationFormStatus.REVIEW).toReviewStateChangeEvent();
+		ApplicationForm application = new ApplicationFormBuilder().id(1).events(validationEvent,reviewEvent).toApplicationForm();
 		ApplicationFormStatus stage = applicationsService.getStageComingFrom(application);
 		Assert.assertEquals(application.getStatus(), stage);
 	}

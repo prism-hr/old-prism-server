@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Calendar;
@@ -26,11 +27,13 @@ import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
 import com.zuehlke.pgadmissions.services.ApplicationsService;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 import com.zuehlke.pgadmissions.validators.ApplicationFormValidator;
 
 public class SubmitApplicationFormControllerTest {
@@ -47,6 +50,8 @@ public class SubmitApplicationFormControllerTest {
 	
 
 	private StageDurationDAO stageDurationDAOMock;
+
+	private EventFactory eventFactoryMock;
 
 	@Test
 	public void shouldReturnCurrentUser() {
@@ -97,23 +102,27 @@ public class SubmitApplicationFormControllerTest {
 		stageDuration.setUnit(DurationUnitEnum.HOURS);
 		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDuration);
 		applicationsServiceMock.save(applicationForm);
+
+		StateChangeEvent event = new StateChangeEventBuilder().id(1).toEvent();
+		EasyMock.expect(eventFactoryMock.createEvent(ApplicationFormStatus.VALIDATION)).andReturn(event);
 		
-		EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationDAOMock);
+		EasyMock.replay(applicationsServiceMock, errorsMock, stageDurationDAOMock, eventFactoryMock);
 		
 		
 		applicationController.submitApplication(applicationForm, errorsMock);
 
 		EasyMock.verify(applicationsServiceMock);
-		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());	
-		assertEquals(DateUtils.truncate(DateUtils.addHours(new Date(), 8), Calendar.HOUR), DateUtils.truncate(applicationForm.getDueDate(), Calendar.HOUR));
-		assertEquals(2, applicationForm.getEvents().size());
+		assertEquals(ApplicationFormStatus.VALIDATION, applicationForm.getStatus());
 		
-		assertEquals(ApplicationFormStatus.VALIDATION, ((StateChangeEvent)applicationForm.getEvents().get(1)).getNewStatus());
-		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(1).getDate(), Calendar.DATE));
+		assertEquals(DateUtils.truncate(DateUtils.addHours(new Date(), 8), Calendar.HOUR), DateUtils.truncate(applicationForm.getDueDate(), Calendar.HOUR));
 		
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getSubmittedDate(), Calendar.DATE));
 		assertEquals(DateUtils.truncate(Calendar.getInstance().getTime(),Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));		
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getLastUpdated(), Calendar.DATE));
+		
+		assertEquals(1, applicationForm.getEvents().size());
+		assertEquals(event, applicationForm.getEvents().get(0));
+		
 
 	}
 
@@ -194,7 +203,8 @@ public class SubmitApplicationFormControllerTest {
 
 		applicationFormValidatorMock = EasyMock.createMock(ApplicationFormValidator.class);
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
-		applicationController = new SubmitApplicationFormController(applicationsServiceMock, applicationFormValidatorMock, stageDurationDAOMock);
+		eventFactoryMock = EasyMock.createMock(EventFactory.class);
+		applicationController = new SubmitApplicationFormController(applicationsServiceMock, applicationFormValidatorMock, stageDurationDAOMock,eventFactoryMock);
 
 		authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
 		student = new RegisteredUserBuilder().id(1).username("mark").email("mark@gmail.com").firstName("mark").lastName("ham")

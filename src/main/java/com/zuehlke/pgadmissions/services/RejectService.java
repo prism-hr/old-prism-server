@@ -13,40 +13,26 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.RejectReason;
 import com.zuehlke.pgadmissions.domain.Rejection;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
 public class RejectService {
 
 	private final ApplicationFormDAO applicationDao;
 	private final RejectReasonDAO rejectDao;
+	private final EventFactory eventFactory;
 
 	RejectService() {
-		this(null, null);
+		this(null, null, null);
 	}
 
 	@Autowired
-	public RejectService(ApplicationFormDAO applicationDAO, RejectReasonDAO rejectDao) {
+	public RejectService(ApplicationFormDAO applicationDAO, RejectReasonDAO rejectDao, EventFactory eventFactory) {
 		this.applicationDao = applicationDAO;
 		this.rejectDao = rejectDao;
+		this.eventFactory = eventFactory;
 	}
 
-	/*
-	 * @Transactional public void moveApplicationToReject(ApplicationForm
-	 * application, RegisteredUser approver, Collection<RejectReason> reasons) {
-	 * if (reasons == null || reasons.isEmpty()) { throw new
-	 * IllegalArgumentException("no reasons for rejection specified!"); } for
-	 * (RejectReason rejectReason : reasons) { if (rejectReason == null) { throw
-	 * new IllegalArgumentException("reasons for rejection is null!"); }
-	 * application.getRejectReasons().add(rejectReason); } if (approver == null)
-	 * { throw new IllegalArgumentException("approver must not be null!"); } if
-	 * (!(application.getProgram().isApprover(approver) ||
-	 * application.getProgram().isAdministrator(approver) )) { throw new
-	 * IllegalArgumentException
-	 * ("approver is not an approver in the program of the application!"); }
-	 * application.setApprover(approver);
-	 * application.setStatus(ApplicationFormStatus.REJECTED);
-	 * applicationDao.save(application); }
-	 */
 
 	@Transactional(readOnly = true)
 	public List<RejectReason> getAllRejectionReasons() {
@@ -70,8 +56,9 @@ public class RejectService {
 			throw new IllegalArgumentException("approver is not an approver or administrator in the program of the application!");
 		}
 		application.setApprover(approver);
-		application.setStatus(ApplicationFormStatus.REJECTED);
+		application.setStatus(ApplicationFormStatus.REJECTED);		
 		application.setRejection(rejection);
+		application.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.REJECTED));
 		applicationDao.save(application);
 
 	}

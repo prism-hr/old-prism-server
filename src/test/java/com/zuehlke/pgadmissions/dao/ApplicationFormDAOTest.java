@@ -26,6 +26,7 @@ import com.zuehlke.pgadmissions.dao.mappings.AutomaticRollbackTestCase;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Country;
 import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.NotificationRecord;
@@ -38,7 +39,7 @@ import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.Reviewer;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CountryBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
@@ -587,7 +588,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();
 		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
-				.events(new EventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
+				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();
@@ -602,7 +603,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();
 		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.WITHDRAWN)
-				.events(new EventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
+				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();
@@ -617,7 +618,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();
 		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REJECTED)
-				.events(new EventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
+				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();
@@ -632,7 +633,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();
 		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REJECTED)
-				.events(new EventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REJECTED).toEvent()).toApplicationForm();
+				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REJECTED).toEvent()).toApplicationForm();
 		save(applicationForm);
 		
 		flushAndClearSession();
@@ -647,7 +648,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();
 		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.APPROVED)
-				.events(new EventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
+				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();
@@ -664,7 +665,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		NotificationRecord lastNotificationRecord = new NotificationRecordBuilder().notificationType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION)
 				.notificationDate(fiveMinutesAgo).toNotificationRecord();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
-				.events(new EventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).notificationRecords(lastNotificationRecord).toApplicationForm();
+				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).notificationRecords(lastNotificationRecord).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();
@@ -682,7 +683,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		NotificationRecord lastNotificationRecord = new NotificationRecordBuilder().notificationType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION)
 				.notificationDate(fiveMinutesAgo).toNotificationRecord();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user)
-				.events(new EventBuilder().date(twentyMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent(), new EventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).notificationRecords(lastNotificationRecord).toApplicationForm();
+				.events(new StateChangeEventBuilder().date(twentyMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent(), new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent()).notificationRecords(lastNotificationRecord).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();
@@ -699,8 +700,8 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date twoMinutesAgo = DateUtils.addMinutes(now, -2);
 		NotificationRecord lastNotificationRecord = new NotificationRecordBuilder().notificationType(NotificationType.APPLICANT_MOVED_TO_REVIEW_NOTIFICATION)
 				.notificationDate(fiveMinutesAgo).toNotificationRecord();
-		Event firstEvent = new EventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent();
-		Event lastEvent = new EventBuilder().date(twoMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent();
+		StateChangeEvent firstEvent = new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent();
+		Event lastEvent = new StateChangeEventBuilder().date(twoMinutesAgo).newStatus(ApplicationFormStatus.REVIEW).toEvent();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.REVIEW)
 				.events(firstEvent, lastEvent).notificationRecords(lastNotificationRecord).toApplicationForm();
 		save(applicationForm);
@@ -718,7 +719,7 @@ public class ApplicationFormDAOTest extends AutomaticRollbackTestCase {
 		Date now = Calendar.getInstance().getTime();
 		Date tenMinutesAgo = DateUtils.addMinutes(now, -10);
 		ApplicationForm applicationForm = new ApplicationFormBuilder().program(program).applicant(user).status(ApplicationFormStatus.VALIDATION)
-				.events(new EventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.VALIDATION).toEvent()).toApplicationForm();
+				.events(new StateChangeEventBuilder().date(tenMinutesAgo).newStatus(ApplicationFormStatus.VALIDATION).toEvent()).toApplicationForm();
 		save(applicationForm);
 
 		flushAndClearSession();

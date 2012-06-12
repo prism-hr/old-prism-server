@@ -20,6 +20,7 @@ public class RegisteredUserBuilder {
 	private String username;
 	private String password;
 	private String confirmPassword;
+	private String newPassword;
 	private String directURL;
 	private Integer id;
 	private boolean enabled = true;
@@ -142,6 +143,11 @@ public class RegisteredUserBuilder {
 		return this;
 	}
 	
+	public RegisteredUserBuilder newPassword(String newPassword) {
+		this.newPassword = newPassword;
+		return this;
+	}
+	
 	public RegisteredUserBuilder confirmPassword(String confirmPassword) {
 		this.confirmPassword = confirmPassword;
 		return this;
@@ -180,6 +186,7 @@ public class RegisteredUserBuilder {
 		user.setEmail(email);
 		user.setUsername(username);
 		user.setPassword(password);
+		user.setNewPassword(newPassword);
 		user.setEnabled(enabled);
 		user.setAccountNonExpired(accountNonExpired);
 		user.setAccountNonLocked(accountNonLocked);

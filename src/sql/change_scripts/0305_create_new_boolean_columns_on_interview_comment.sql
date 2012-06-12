@@ -1,0 +1,1 @@
+ALTER TABLE INTERVIEW_COMMENT ADD COLUMN willing_to_supervise tinyint(1), ADD COLUMN decline tinyint(1), ADD COLUMN suitable_candidate tinyint(1), ADD COLUMN admins_notified tinyint(1); 

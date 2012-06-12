@@ -21,6 +21,7 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#personalDetailsSection').html(data);
+				$('#personalDetails-H2').trigger('click');
 			}
 	);
 	$.get("/pgadmissions/update/getAddress",

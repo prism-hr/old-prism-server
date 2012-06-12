@@ -36,6 +36,7 @@ table.data th.sorting {
 }
 
 /* Form fields inside the table. */
+table.data td input { margin-bottom: 3px; } /* addresses vertical alignment in relation to gradient background. */
 table.data td input, table.data td select { vertical-align: middle; }
 
 td.applicant-name { white-space: nowrap; } /* name on one line. */

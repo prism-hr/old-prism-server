@@ -34,6 +34,9 @@ table.data th.sorting {
 	background: linear-gradient(top,  #0076c0 0%,#00bbf0 50%,#0076c0 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0076c0', endColorstr='#0076c0',GradientType=0 ); /* IE6-8 */
 }
+table.data th.sorting span { float: right; width: 10px; height: 10px; background-repeat: no-repeat; }
+table.data th.sorting.asc span { backgorund-image: url(../../../images/icon_arrow_up.png); }
+table.data th.sorting.down span { backgorund-image: url(../../../images/icon_arrow_up.png); }
 
 /* Form fields inside the table. */
 table.data td input { margin-bottom: 3px; } /* addresses vertical alignment in relation to gradient background. */

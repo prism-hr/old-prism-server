@@ -51,9 +51,9 @@ public class AccountController {
 			return ACCOUNT_PAGE_VIEW_NAME;
 		}
 		if(userService.isAccountChanged(user)){
-			modelMap.put("message", "You have successfully changed your account details. A mail is sent to your email address with your new details");
+			modelMap.put("message", "You have successfully changed your account details. A confirmation mail is sent to your email address.");
+			userService.updateCurrentUserAndSendEmailNotification(user);
 		}
-		userService.updateCurrentUserAndReturnIsChanged(user);
 		return "redirect:/applications";
 	}
 

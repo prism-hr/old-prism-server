@@ -96,8 +96,8 @@
 				               
 						     <#if applicationForm.isSubmitted()>
 						          	<div class="row">
-						            	<label>Date Submitted</label>
-						              <input id="applicationNumber" disabled size="20" value="${(applicationForm.submittedDate?string("dd-MMM-yyyy hh:mm a"))!}" />
+						            	<label>Submitted</label>
+						              <input id="applicationNumber" disabled size="20" value="${(applicationForm.submittedDate?string("dd MMM yyyy"))!}" />
 						            </div>
 						    </#if>
 				        <!--    

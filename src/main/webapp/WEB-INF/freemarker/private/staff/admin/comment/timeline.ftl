@@ -29,7 +29,7 @@
                           <div class="title">
                             <span class="icon-role"></span>
                               <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
-                        		<span class="datetime">${comment.date?string('dd-MMM-yy')} at ${comment.date?string('HH:mm')}</span>
+                        		<span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
                           </div>
                           <p>${(comment.comment?html)!}</p>
                           <#if comment.type == 'VALIDATION'>                           	                       

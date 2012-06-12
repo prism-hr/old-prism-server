@@ -34,7 +34,7 @@ table.data th.sorting {
 	background: linear-gradient(top,  #0076c0 0%,#00bbf0 50%,#0076c0 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#0076c0', endColorstr='#0076c0',GradientType=0 ); /* IE6-8 */
 }
-table.data th.sorting span { float: right; width: 10px; height: 16px; background: no-repeat center; margin-right: 2px; }
+table.data th.sorting span { float: right; width: 10px; height: 16px; background: no-repeat center; margin: 0 2px 0 3px; }
 table.data th.sorting.asc span { background-image: url(../../images/icon_arrow_up.png); }
 table.data th.sorting.down span { background-image: url(../../images/icon_arrow_up.png); }
 

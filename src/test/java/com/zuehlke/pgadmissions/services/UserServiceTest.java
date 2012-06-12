@@ -43,6 +43,7 @@ import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DirectURLsEnum;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.utils.EncryptionUtils;
 import com.zuehlke.pgadmissions.utils.UserFactory;
 
 public class UserServiceTest {
@@ -57,6 +58,7 @@ public class UserServiceTest {
 	private RegisteredUser currentUserMock;
 	private UserFactory userFactoryMock;
 	private MessageSource msgSourceMock;
+	private EncryptionUtils encryptionUtilsMock;
 
 	@Test
 	public void shouldGetUserFromDAO() {
@@ -185,7 +187,7 @@ public class UserServiceTest {
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		userService =new UserService(userDAOMock, roleDAOMock,userFactoryMock,
-				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock){
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
 				
 			@Override
 			public void save(RegisteredUser user) {
@@ -679,9 +681,9 @@ public class UserServiceTest {
 	
 	@Test
 	public void shouldUpdateCurrentUserAndSave(){
-		final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em").toUser();
+		final RegisteredUser currentUser = new RegisteredUserBuilder().id(7).password("12").email("em").username("em").toUser();
 		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
-				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock){
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
 
 			@Override
 			public RegisteredUser getCurrentUser() {
@@ -689,12 +691,13 @@ public class UserServiceTest {
 			}
 			
 		};
-		RegisteredUser userOne = new RegisteredUserBuilder().username("one").email("two").password("newpass").id(5).toUser();
-		userServiceWithCurrentUserOverride.save(currentUser);
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("newpass")).andReturn("encryptednewpass");
+		RegisteredUser userOne = new RegisteredUserBuilder().email("two").password("12").newPassword("newpass").toUser();
+		EasyMock.replay(encryptionUtilsMock);
 		userServiceWithCurrentUserOverride.updateCurrentUserAndSave(userOne);
 		assertEquals("two", currentUser.getUsername());
 		assertEquals("two", currentUser.getEmail());
-		assertEquals("newpass", currentUser.getPassword());
+		assertEquals("encryptednewpass", currentUser.getPassword());
 		
 	}
 	
@@ -702,7 +705,7 @@ public class UserServiceTest {
 	public void shouldNotChangePassIfPasswordIsBlank(){
 		final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em").toUser();
 		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
-				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock){
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
 			
 			@Override
 			public RegisteredUser getCurrentUser() {
@@ -721,6 +724,7 @@ public class UserServiceTest {
 	
 	@Before
 	public void setUp() {
+		encryptionUtilsMock = EasyMock.createMock(EncryptionUtils.class);
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
 		mailsenderMock = EasyMock.createMock(JavaMailSender.class);
 		UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(null, null);
@@ -736,9 +740,9 @@ public class UserServiceTest {
 		userFactoryMock = EasyMock.createMock(UserFactory.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
 		
-		userService = new UserService(userDAOMock, roleDAOMock,userFactoryMock,  mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock);
+		userService = new UserService(userDAOMock, roleDAOMock,userFactoryMock,  mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock);
 		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
-				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock){
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock, encryptionUtilsMock){
 
 			@Override
 			public RegisteredUser getCurrentUser() {

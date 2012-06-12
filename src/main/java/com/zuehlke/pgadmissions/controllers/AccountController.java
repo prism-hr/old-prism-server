@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -33,7 +34,7 @@ public class AccountController {
 		this.accountValidator = accountValidator;
 	}
 	
-	@InitBinder(value="user")
+	@InitBinder(value="updatedUser")
 	public void registerValidator(WebDataBinder binder) {
 		binder.setValidator(accountValidator);
 	}
@@ -45,7 +46,7 @@ public class AccountController {
 
 	
 	@RequestMapping(value="/submit",method = RequestMethod.POST)
-	public String saveAccountDetails(@Valid RegisteredUser user, BindingResult bindingResult) {
+	public String saveAccountDetails(@Valid @ModelAttribute("updatedUser") RegisteredUser user, BindingResult bindingResult) {
 		if(bindingResult.hasErrors()){
 			return ACCOUNT_PAGE_VIEW_NAME;
 		}
@@ -53,7 +54,12 @@ public class AccountController {
 		return "redirect:/applications";
 	}
 
-	@ModelAttribute("user")
+	@ModelAttribute(value="updatedUser")
+	public RegisteredUser getUpdatedUser() {
+		return new RegisteredUser();
+	}
+	
+	@ModelAttribute(value="user")
 	public RegisteredUser getUser() {
 		return userService.getCurrentUser();
 	}

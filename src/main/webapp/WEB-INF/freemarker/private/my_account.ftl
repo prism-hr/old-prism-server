@@ -59,6 +59,8 @@
 									<div>
 										<form>
 											<input type="hidden" id="userId" value="${user.id?string("#####")}" />
+											<input type="hidden" id="firstname" value="${user.firstName}" />
+											<input type="hidden" id="lastname" value="${user.lastName}" />
 											<div class="row-group">
 												<div class="row"> 
 													<span id="email-lbl" class="label">Full Name</span>
@@ -72,7 +74,7 @@
 													<div class="field">	
 														<input type="text" id="email" value="${user.email}" />
 													</div>
-													<@spring.bind "user.email" />
+													<@spring.bind "updatedUser.email" />
 													<#list spring.status.errorMessages as error>
 														<div class="field">
 															<span class="invalid">${error}</span>
@@ -85,7 +87,7 @@
 													<div class="field">	
 														<input id="currentPassword" type="password" />
 													</div>
-													<@spring.bind "user.password" />
+													<@spring.bind "updatedUser.password" />
 													<#list spring.status.errorMessages as error>
 														<div class="field">
 															<span class="invalid">${error}</span>
@@ -98,7 +100,7 @@
 													<div class="field">	
 														<input id="newPassword" type="password"  />
 													</div>
-													<@spring.bind "user.newPassword" />
+													<@spring.bind "updatedUser.newPassword" />
 													<#list spring.status.errorMessages as error>
 														<div class="field">
 															<span class="invalid">${error}</span>
@@ -111,7 +113,7 @@
 													<div class="field">	
 														<input id="confirmNewPass" type="password"  />
 													</div>
-													<@spring.bind "user.confirmPassword" />
+													<@spring.bind "updatedUser.confirmPassword" />
 													<#list spring.status.errorMessages as error>
 														<div class="field">
 															<span class="invalid">${error}</span>

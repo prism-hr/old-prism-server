@@ -2,13 +2,14 @@ $(document).ready(function(){
 	
 	$('#saveChanges').click(function(){
 		var postData ={ 
-				email : $('#email').val()
+				id : $('#userId').val(),
+				email : $('#email').val(),
+				firstName : $('#firstname').val(),
+				lastName : $('#lastname').val(),
+				password : $('#currentPassword').val(),
+				newPassword : $('#newPassword').val(),
+				confirmPassword : $('#confirmNewPass').val()
 		};
-		if ($('#currentPassword').val() !== '' && $('#newPassword').val().trim !== '' && $('#confirmNewPass').val() !== '') {
-			postData.password = $('#currentPassword').val();
-			postData.newPassword = $('#newPassword').val();
-			postData.confirmPassword = $('#confirmNewPass').val();
-		}
 		$.post("/pgadmissions/myAccount/submit", 
 				$.param(postData),
 				function(data) {

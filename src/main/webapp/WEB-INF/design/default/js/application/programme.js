@@ -380,7 +380,8 @@ function postProgrammeData(message)
 	$.post(
 		"/pgadmissions/update/editProgrammeDetails",
 		$.param(postData) + "&" + $('[input[name="suggestedSupervisors"]').serialize(),
-		function(data) {
+		function(data)
+		{
 			$('#programmeDetailsSection').html(data);
 			$('#programmeDetailsSection div.ajax').remove();
 			markSectionError('#programmeDetailsSection');
@@ -388,7 +389,7 @@ function postProgrammeData(message)
 			if (message == 'close')
 			{
 				// Close the section only if there are no errors.
-				var errorCount = $('#programmeDetailsSection .invalid').length;
+				var errorCount = $('#programmeDetailsSection .invalid:visible').length;
 				if (errorCount == 0)
 				{
 					$('#programme-H2').trigger('click');

@@ -20,7 +20,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
 
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.EventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewCommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.NotificationRecordBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
@@ -160,17 +160,18 @@ public class ApplicationFormTest {
 	}
 	
 	@Test
-	public void shouldReturnEventsSortedByDate() throws ParseException{
-		Event validationEvent = new EventBuilder().id(1).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/01/01")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
-		Event reviewEvent = new EventBuilder().id(2).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/02/02")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
-		Event approvalEvent = new EventBuilder().id(3).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
-		Event rejectedEvent = new EventBuilder().id(40).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
+	public void shouldReturnStateChangeEventsEventsSortedByDate() throws ParseException{
+		Event validationEvent = new StateChangeEventBuilder().id(1).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/01/01")).newStatus(ApplicationFormStatus.VALIDATION).toEvent();
+		Event reviewEvent = new StateChangeEventBuilder().id(2).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/02/02")).newStatus(ApplicationFormStatus.REVIEW).toEvent();
+		StateChangeEvent approvalEvent = new StateChangeEventBuilder().id(3).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/03/04")).newStatus(ApplicationFormStatus.APPROVAL).toEvent();
+		Event rejectedEvent = new StateChangeEventBuilder().id(40).date(new SimpleDateFormat("yyyy/MM/dd").parse("2012/04/04")).newStatus(ApplicationFormStatus.REJECTED).toEvent();
 		ApplicationForm application = new ApplicationFormBuilder().id(1).events(approvalEvent, rejectedEvent, reviewEvent, validationEvent).toApplicationForm();
-		List<Event> eventsSortedByDate = application.getEventsSortedByDate();
+		List<StateChangeEvent> eventsSortedByDate = application.getStateChangeEventsSortedByDate();
 		Assert.assertEquals(validationEvent, eventsSortedByDate.get(0));
 		Assert.assertEquals(reviewEvent, eventsSortedByDate.get(1));
 		Assert.assertEquals(approvalEvent, eventsSortedByDate.get(2));
 		Assert.assertEquals(rejectedEvent, eventsSortedByDate.get(3));
+		//fail("re-implement when other event types created");
 	}
 	
 	
@@ -187,8 +188,8 @@ public class ApplicationFormTest {
 		assertEquals(1, applicationForm.getEvents().size());
 		applicationForm.setStatus(ApplicationFormStatus.REVIEW);
 		assertEquals(2, applicationForm.getEvents().size());
-		assertEquals(ApplicationFormStatus.UNSUBMITTED, applicationForm.getEvents().get(0).getNewStatus());
-		assertEquals(ApplicationFormStatus.REVIEW, applicationForm.getEvents().get(1).getNewStatus());
+		assertEquals(ApplicationFormStatus.UNSUBMITTED, ((StateChangeEvent)applicationForm.getEvents().get(0)).getNewStatus());
+		assertEquals(ApplicationFormStatus.REVIEW,  ((StateChangeEvent)applicationForm.getEvents().get(1)).getNewStatus());
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(applicationForm.getEvents().get(0).getDate(), Calendar.DATE));		
 		assertEquals(user,applicationForm.getEvents().get(0).getUser());
 		

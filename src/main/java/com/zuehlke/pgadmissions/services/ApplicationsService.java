@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Event;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -71,8 +71,8 @@ public class ApplicationsService {
 	}
 
 	public ApplicationFormStatus getStageComingFrom(ApplicationForm application) {
-		List<Event> events = application.getEventsSortedByDate();
-		Event previousEvent;
+		List<StateChangeEvent> events = application.getStateChangeEventsSortedByDate();
+		StateChangeEvent previousEvent;
 		if (events.size() == 1) {
 			return events.get(0).getNewStatus();
 		}
@@ -90,7 +90,7 @@ public class ApplicationsService {
 						return previousEvent.getNewStatus();
 					}
 					if (previousEvent.getNewStatus() == ApplicationFormStatus.APPROVAL) {
-						Event previousOfApproval = events.get(i - 2);
+						StateChangeEvent previousOfApproval = events.get(i - 2);
 						if (previousOfApproval.getNewStatus() == ApplicationFormStatus.REVIEW || previousOfApproval.getNewStatus() == ApplicationFormStatus.INTERVIEW || previousOfApproval.getNewStatus() == ApplicationFormStatus.VALIDATION) {
 							return previousOfApproval.getNewStatus();
 						}

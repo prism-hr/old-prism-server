@@ -84,7 +84,7 @@
                   <col style="width: 40px" />
                   <col style="width: 20%" />
                   <col />
-                  <col />
+                  <col style="width: 60px;" />
                   <col />
                   <col style="width: 90px" />
                 </colgroup>

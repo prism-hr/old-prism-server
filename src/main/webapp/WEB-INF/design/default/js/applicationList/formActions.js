@@ -2,6 +2,9 @@ $(document).ready(function() {
 	
 	populateApplicationList(true);
 	
+	/* up/down arrows for sorting. */
+	$('table.data thead th').prepend('<span />');
+	
 	$(document).on('change', 'select.actionType', function() {
 		var name = this.name;
 		var id = name.substring(5).replace(']', '');

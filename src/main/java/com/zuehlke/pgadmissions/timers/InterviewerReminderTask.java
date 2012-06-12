@@ -36,7 +36,8 @@ public class InterviewerReminderTask extends TimerTask {
 			transaction = sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().refresh(interviewer);
 			try {
-				interviewerMailSender.sendInterviewerReminder(interviewer);
+				interviewerMailSender.sendInterviewerReminder(interviewer, interviewer.isFirstAdminNotification());
+				interviewer.setFirstAdminNotification(false);
 				interviewer.setLastNotified(new Date());
 				interviewerDAO.save(interviewer);
 				transaction.commit();

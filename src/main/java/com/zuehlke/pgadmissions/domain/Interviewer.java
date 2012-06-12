@@ -14,10 +14,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Type;
-
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
-
 @Entity(name = "INTERVIEWER")
 @Access(AccessType.FIELD)
 public class Interviewer extends DomainObject<Integer> {
@@ -31,6 +27,9 @@ public class Interviewer extends DomainObject<Integer> {
 
 	@Column(name = "requires_admin_notification")
 	private boolean requiresAdminNotification;
+	
+	@Column(name = "first_admin_notification")
+	private boolean firstAdminNotification = true;
 	
 	@Column(name = "admins_notified_on")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -116,4 +115,11 @@ public class Interviewer extends DomainObject<Integer> {
 		this.requiresAdminNotification = requiresAdminNotification;
 	}
 
+	public boolean isFirstAdminNotification() {
+		return firstAdminNotification;
+	}
+
+	public void setFirstAdminNotification(boolean firstAdminNotification) {
+		this.firstAdminNotification = firstAdminNotification;
+	}
 }

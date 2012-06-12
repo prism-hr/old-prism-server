@@ -5,7 +5,6 @@ import java.util.Date;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.Interviewer;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
-import com.zuehlke.pgadmissions.domain.enums.CheckedStatus;
 
 public class InterviewerBuilder {
 	private Integer id;
@@ -14,6 +13,7 @@ public class InterviewerBuilder {
 	private Interview interview;
 	private boolean requiresAdminNotification;
 	private Date dateAdminsNotified;
+	private boolean firstAdminNotification;
 
 	public InterviewerBuilder dateAdminsNotified(Date dateAdminsNotified) {
 		this.dateAdminsNotified = dateAdminsNotified;
@@ -45,10 +45,16 @@ public class InterviewerBuilder {
 		return this;
 	}
 
+	public InterviewerBuilder firstAdminNotification(boolean firstNotification) {
+		this.firstAdminNotification = firstNotification;
+		return this;
+	}
+
 	public Interviewer toInterviewer() {
 		Interviewer interviewer = new Interviewer();
 		interviewer.setId(id);
 		interviewer.setRequiresAdminNotification(requiresAdminNotification);
+		interviewer.setFirstAdminNotification(firstAdminNotification);
 		interviewer.setUser(user);
 		interviewer.setLastNotified(lastNotified);
 		interviewer.setInterview(interview);

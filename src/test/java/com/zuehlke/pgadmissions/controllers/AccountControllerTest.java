@@ -52,15 +52,26 @@ public class AccountControllerTest {
 	}
 	
 	@Test
-	public void shouldSaveUserIfNoErrorsAndRedirectToApplicationsList(){
+	public void shouldSaveUserIfNoErrorsAccountIsChangedAndRedirectToApplicationsList(){
 		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
-		userServiceMock.updateCurrentUserAndReturnIsChanged(student);
+		userServiceMock.updateCurrentUserAndSendEmailNotification(student);
 		EasyMock.expect(userServiceMock.isAccountChanged(student)).andReturn(true);
 		EasyMock.replay(bindingResultMock, userServiceMock);
 		ModelMap modelMap = new ModelMap();
 		
 		Assert.assertEquals("redirect:/applications", accountController.saveAccountDetails(student, bindingResultMock, modelMap));
-		Assert.assertEquals("You have successfully changed your account details. A mail is sent to your email address with your new details", modelMap.get("message"));
+		Assert.assertEquals("You have successfully changed your account details. A confirmation mail is sent to your email address.", modelMap.get("message"));
+		EasyMock.verify(bindingResultMock, userServiceMock);
+	}
+	
+	@Test
+	public void shouldNotSaveIdAccountIsNotChanged(){
+		EasyMock.expect(bindingResultMock.hasErrors()).andReturn(false);
+		EasyMock.expect(userServiceMock.isAccountChanged(student)).andReturn(false);
+		EasyMock.replay(bindingResultMock, userServiceMock);
+		ModelMap modelMap = new ModelMap();
+		
+		Assert.assertEquals("redirect:/applications", accountController.saveAccountDetails(student, bindingResultMock, modelMap));
 		EasyMock.verify(bindingResultMock, userServiceMock);
 	}
 	

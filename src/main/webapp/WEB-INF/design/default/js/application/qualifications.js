@@ -271,6 +271,16 @@ function postQualificationData(message)
 		$('#qualificationsSection').html(data);
 		$('#qualificationsSection div.ajax').remove();
 		markSectionError('#qualificationsSection');
+
+		if (message == 'close')
+		{
+			// Close the section only if there are no errors.
+			var errorCount = $('#qualificationsSection .invalid:visible').length;
+			if (errorCount == 0)
+			{
+				$('#qualifications-H2').trigger('click');
+			}
+		}
 	});
 }
 function ajaxProofOfAwardDelete(){

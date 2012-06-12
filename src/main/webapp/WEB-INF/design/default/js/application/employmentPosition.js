@@ -188,5 +188,15 @@ function postEmploymentData(message){
 			$('#positionSection').html(data);
 			$('#positionSection div.ajax').remove();
 			markSectionError('#positionSection');
+
+			if (message == 'close')
+			{
+				// Close the section only if there are no errors.
+				var errorCount = $('#positionSection .invalid:visible').length;
+				if (errorCount == 0)
+				{
+					$('#position-H2').trigger('click');
+				}
+			}
    });
 }

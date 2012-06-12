@@ -167,6 +167,16 @@ function postFundingData(message)
 		$('#fundingSection').html(data);
 		$('#fundingSection div.ajax').remove();
 		markSectionError('#fundingSection');
+
+		if (message == 'close')
+		{
+			// Close the section only if there are no errors.
+			var errorCount = $('#fundingSection .invalid:visible').length;
+			if (errorCount == 0)
+			{
+				$('#funding-H2').trigger('click');
+			}
+		}
 	});
 }
 

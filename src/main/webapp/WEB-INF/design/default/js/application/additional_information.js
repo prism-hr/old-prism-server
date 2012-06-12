@@ -115,6 +115,16 @@ $(document).ready(function(){
 				$('#additionalInformationSection').html(data);
 				$('#additionalInformationSection div.ajax').remove();
 				markSectionError('#additionalInformationSection');
+
+				if (message == 'close')
+				{
+					// Close the section only if there are no errors.
+					var errorCount = $('#additionalInformationSection .invalid:visible').length;
+					if (errorCount == 0)
+					{
+						$('#additional-H2').trigger('click');
+					}
+				}
 			});
 		}
 

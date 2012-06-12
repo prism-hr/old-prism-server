@@ -120,6 +120,16 @@ function postDocumentData(message)
 			$('#documentSection').html(data);
 			$('#documentSection div.ajax').remove();
 			markSectionError('#documentSection');
+
+			if (message == 'close')
+			{
+				// Close the section only if there are no errors.
+				var errorCount = $('#documentSection .invalid:visible').length;
+				if (errorCount == 0)
+				{
+					$('#documents-H2').trigger('click');
+				}
+			}
 		}
 	);
 }

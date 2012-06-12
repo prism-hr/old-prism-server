@@ -337,6 +337,8 @@
 </div>
 	
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/employmentPosition.js'/>"></script>
+
+<#--
  <@spring.bind "employmentPosition.*" /> 
  
 <#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>	
@@ -346,3 +348,4 @@
 	});
 </script>
 </#if>
+-->

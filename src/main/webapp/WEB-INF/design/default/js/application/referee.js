@@ -169,6 +169,16 @@ function postRefereeData(messsage){
 				$('#referencesSection').html(data);
 				$('#referencesSection div.ajax').remove();
 				markSectionError('#referencesSection');
+
+				if (message == 'close')
+				{
+					// Close the section only if there are no errors.
+					var errorCount = $('#referencesSection .invalid:visible').length;
+					if (errorCount == 0)
+					{
+						$('#references-H2').trigger('click');
+					}
+				}
 			}
 	);
 }

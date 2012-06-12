@@ -148,6 +148,16 @@ function postAddressData(message)
 		$('#addressSection').html(data);
 		$('#addressSection div.ajax').remove();
 		markSectionError('#addressSection');
+
+		if (message == 'close')
+		{
+			// Close the section only if there are no errors.
+			var errorCount = $('#addressSection .invalid:visible').length;
+			if (errorCount == 0)
+			{
+				$('#address-H2').trigger('click');
+			}
+		}
 	});
 }
 

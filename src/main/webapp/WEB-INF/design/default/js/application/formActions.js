@@ -32,6 +32,7 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#addressSection').html(data);
+				$('#address-H2').trigger('click');
 			}
 	);
 	$.get("/pgadmissions/update/getQualification",
@@ -42,6 +43,7 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#qualificationsSection').html(data);
+				$('#qualifications-H2').trigger('click');
 			}
 	);
 	$.get("/pgadmissions/update/getEmploymentPosition",
@@ -52,6 +54,7 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#positionSection').html(data);
+				$('#position-H2').trigger('click');
 			}
 	);
 	$.get("/pgadmissions/update/getFunding",
@@ -62,6 +65,7 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#fundingSection').html(data);
+				$('#funding-H2').trigger('click');
 			}
 	);
 	$.get("/pgadmissions/update/getReferee",
@@ -72,6 +76,7 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#referencesSection').html(data);
+				$('#referee-H2').trigger('click');
 			}
 	);
 
@@ -83,6 +88,7 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#documentSection').html(data);
+				$('#documents-H2').trigger('click');
 			}
 	);
 	
@@ -94,6 +100,7 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#additionalInformationSection').html(data);
+				$('#additional-H2').trigger('click');
 			}
 	);
 	$.get("/pgadmissions/acceptTerms/getTermsAndConditions",

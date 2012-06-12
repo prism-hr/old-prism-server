@@ -226,6 +226,7 @@
 <script type="text/javascript" src="<@spring.url '/design/default/js/application/funding.js'/>"></script>
   
 
+<#--
 <@spring.bind "funding.*" /> 
  
 <#if (errorCode?? && errorCode=='false') || (message?? && message='close' && !spring.status.errorMessages?has_content)>  
@@ -235,3 +236,4 @@
   });
 </script>
 </#if>
+-->

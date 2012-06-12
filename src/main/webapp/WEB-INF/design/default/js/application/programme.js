@@ -384,5 +384,15 @@ function postProgrammeData(message)
 			$('#programmeDetailsSection').html(data);
 			$('#programmeDetailsSection div.ajax').remove();
 			markSectionError('#programmeDetailsSection');
+			
+			if (message == 'close')
+			{
+				// Close the section only if there are no errors.
+				var errorCount = $('#programmeDetailsSection .invalid').length;
+				if (errorCount == 0)
+				{
+					$('#programme-H2').trigger('click');
+				}
+			}
 		});
 }

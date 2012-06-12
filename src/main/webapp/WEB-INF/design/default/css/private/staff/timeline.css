@@ -43,7 +43,7 @@ table thead th.headerSortDown, table thead th.headerSortUp { background-color: #
 #timeline-statuses .box label input { vertical-align: middle; }
 
 #timeline-statuses ul .box .title { background: #AAA; }
-#timeline-statuses ul .box p { background-image: none !important; font-size: 12pt; font-weight: normal; }
+#timeline-statuses ul .box p { background-image: none !important; font-size: 12px; font-weight: normal; }
 
 #timeline-statuses .validation .box { background: #FDDB91; }
 #timeline-statuses .validation .box .title { background: #FBBE1E; }

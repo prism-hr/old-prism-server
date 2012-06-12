@@ -163,7 +163,7 @@ function sortList(column)
 	$('table th').removeClass('sorting asc desc');
 	var $header = $('#'+newValue);
 	$header.addClass('sorting');
-	if ($('#sort-order') == "DESCENDING")
+	if ($('#sort-order').val() == "DESCENDING")
 	{
 		$header.addClass('desc');
 	}

@@ -109,8 +109,8 @@
 										<div class="row interviewer-buttons">
 											<div class="field">
 												<span>
-													<button class="blue" type="button" id="addInterviewerBtn">Add Interviewer <span class="icon-up"></span></button>
-													<button type="button" id="removeInterviewerBtn"><span class="icon-down"></span> Remove Interviewer</button>
+													<button class="blue" type="button" id="addInterviewerBtn">Add <span class="icon-up"></span></button>
+													<button type="button" id="removeInterviewerBtn"><span class="icon-down"></span> Remove</button>
 												</span>
 											</div>
 										</div>

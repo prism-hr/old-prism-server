@@ -52,12 +52,12 @@ $(document).ready(function() {
 	/* Search functionality. */
 	$('#search-go').click(function()
 	{
-		if (options.searchTerm.length < 3)
+		if ($('#searchTerm').val().length < 3)
 		{
 			$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
 			return;
 		}
-		else if (options.searchCategory == '')
+		else if ($('#searchCategory').val() == '')
 		{
 			$('#search-box').append('<span class="invalid">Please select a search criterion.</span>');
 			return;

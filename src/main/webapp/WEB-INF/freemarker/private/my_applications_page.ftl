@@ -105,8 +105,6 @@
                 </tbody>
               </table>
               
-              <a class="button blue" name="myAccount" id="myAccount">My Account</a>
-              
               <p class="right">
                 <#if (applications?size > 0)>
                 <a class="button blue" name="downloadAll" id="downloadAll">Download</a>

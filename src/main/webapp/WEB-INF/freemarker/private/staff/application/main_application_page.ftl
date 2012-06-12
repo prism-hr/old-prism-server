@@ -118,10 +118,6 @@
             <#include "/private/staff/application/components/additional_information.ftl"/>
           </section>
           
-          <hr />
-          
-          <a class="button" href="<@spring.url '/applications'/>">Close</a>
-        
         </div><!-- .content-box-inner -->
       </div><!-- .content-box -->
     

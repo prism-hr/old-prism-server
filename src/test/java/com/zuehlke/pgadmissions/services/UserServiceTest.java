@@ -677,6 +677,48 @@ public class UserServiceTest {
 		assertTrue(users.containsAll(Arrays.asList(userOne, userTwo)));		
 	}
 	
+	@Test
+	public void shouldUpdateCurrentUserAndSave(){
+		final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em").toUser();
+		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock){
+
+			@Override
+			public RegisteredUser getCurrentUser() {
+				return currentUser;
+			}
+			
+		};
+		RegisteredUser userOne = new RegisteredUserBuilder().username("one").email("two").password("newpass").id(5).toUser();
+		userServiceWithCurrentUserOverride.save(currentUser);
+		userServiceWithCurrentUserOverride.updateCurrentUserAndSave(userOne);
+		assertEquals("two", currentUser.getUsername());
+		assertEquals("two", currentUser.getEmail());
+		assertEquals("newpass", currentUser.getPassword());
+		
+	}
+	
+	@Test
+	public void shouldNotChangePassIfPasswordIsBlank(){
+		final RegisteredUser currentUser = new RegisteredUserBuilder().password("12").email("em").username("em").toUser();
+		userServiceWithCurrentUserOverride = new UserService(userDAOMock, roleDAOMock,userFactoryMock,
+				mimeMessagePreparatorFactoryMock, mailsenderMock, msgSourceMock){
+			
+			@Override
+			public RegisteredUser getCurrentUser() {
+				return currentUser;
+			}
+			
+		};
+		RegisteredUser userOne = new RegisteredUserBuilder().username("one").email("two").password("").id(5).toUser();
+		userServiceWithCurrentUserOverride.save(currentUser);
+		userServiceWithCurrentUserOverride.updateCurrentUserAndSave(userOne);
+		assertEquals("two", currentUser.getUsername());
+		assertEquals("two", currentUser.getEmail());
+		assertEquals("12", currentUser.getPassword());
+		
+	}
+	
 	@Before
 	public void setUp() {
 		mimeMessagePreparatorFactoryMock = EasyMock.createMock(MimeMessagePreparatorFactory.class);
@@ -706,6 +748,9 @@ public class UserServiceTest {
 		};
 
 	}
+	
+	
+	
 
 	@After
 	public void tearDown() {

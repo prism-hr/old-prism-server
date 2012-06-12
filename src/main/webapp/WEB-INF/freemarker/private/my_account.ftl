@@ -1,4 +1,4 @@
-<section id="assignstagessection" >					          	
+<section id="my_account_section" >					          	
 <!DOCTYPE HTML>
 <#import "/spring.ftl" as spring />
 <html>
@@ -22,6 +22,7 @@
 		<![endif]-->
 	
 	    <script type="text/javascript" src="<@spring.url '/design/default/js/jquery.min.js' />"></script>
+	    <script type="text/javascript" src="<@spring.url '/design/default/js/my-account.js' />"></script>
 	    
 	    
 	</head>
@@ -57,6 +58,7 @@
 									<h2>Account Details</h2>
 									<div>
 										<form>
+											<input type="hidden" id="userId" value="${user.id?string("#####")}" />
 											<div class="row-group">
 												<div class="row"> 
 													<span id="email-lbl" class="label">Full Name</span>
@@ -70,6 +72,12 @@
 													<div class="field">	
 														<input type="text" id="email" value="${user.email}" />
 													</div>
+													<@spring.bind "user.email" />
+													<#list spring.status.errorMessages as error>
+														<div class="field">
+															<span class="invalid">${error}</span>
+														</div>
+													</#list>
 												</div>
 												
 												<div class="row"> 
@@ -77,6 +85,12 @@
 													<div class="field">	
 														<input id="currentPassword" type="password" />
 													</div>
+													<@spring.bind "user.password" />
+													<#list spring.status.errorMessages as error>
+														<div class="field">
+															<span class="invalid">${error}</span>
+														</div>
+													</#list>
 												</div>
 												
 												<div class="row"> 
@@ -84,6 +98,12 @@
 													<div class="field">	
 														<input id="newPassword" type="password"  />
 													</div>
+													<@spring.bind "user.newPassword" />
+													<#list spring.status.errorMessages as error>
+														<div class="field">
+															<span class="invalid">${error}</span>
+														</div>
+													</#list>
 												</div>
 												
 												<div class="row"> 
@@ -91,6 +111,12 @@
 													<div class="field">	
 														<input id="confirmNewPass" type="password"  />
 													</div>
+													<@spring.bind "user.confirmPassword" />
+													<#list spring.status.errorMessages as error>
+														<div class="field">
+															<span class="invalid">${error}</span>
+														</div>
+													</#list>
 												</div>
 												
 												
@@ -98,7 +124,7 @@
 										
 											<div class="buttons">						        		
 												<button type="button" id="cancelMyACnt" value="cancel">Clear</button>
-												<button class="blue" id="saveMyAcnt" type="button" value="Submit">Save Changes</button>						        
+												<button class="blue" id="saveChanges" type="button" value="Submit">Save Changes</button>						        
 											</div>
 											
 										</form>

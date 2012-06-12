@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.mail.internet.InternetAddress;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -296,6 +297,17 @@ public class UserService {
 	@Transactional
 	public List<RegisteredUser> getReviewersWillingToInterview(ApplicationForm applicationForm) {
 		return userDAO.getReviewersWillingToInterview(applicationForm);
+	}
+
+	@Transactional
+	public void updateCurrentUserAndSave(RegisteredUser user) {
+			RegisteredUser currentUser = getCurrentUser();
+			currentUser.setEmail(user.getEmail());
+			if (StringUtils.isNotBlank(user.getPassword())) {
+				currentUser.setPassword(user.getPassword());
+			}
+			currentUser.setUsername(user.getEmail());
+			save(currentUser);
 	}
 
 }

@@ -68,23 +68,23 @@ public class RegistrationService {
 		return record;
 	}
 
-	public RegisteredUser updateUser(RegisteredUser record, Integer isSuggestedUser) {
-		RegisteredUser suggestedUser = userDAO.get(isSuggestedUser);
-		suggestedUser.setActivationCode(encryptionUtils.generateUUID());
-		suggestedUser.setPassword(encryptionUtils.getMD5Hash(record.getPassword()));
-		suggestedUser.setUsername(record.getEmail());
-		suggestedUser.setFirstName(record.getFirstName());
-		suggestedUser.setLastName(record.getLastName());
-		suggestedUser.setEmail(record.getEmail());
-		return suggestedUser;
+	public RegisteredUser updateUser(RegisteredUser record, Integer userIdOfSuggestedUser) {
+		RegisteredUser existingUser = userDAO.get(userIdOfSuggestedUser);
+		existingUser.setActivationCode(encryptionUtils.generateUUID());
+		existingUser.setPassword(encryptionUtils.getMD5Hash(record.getPassword()));
+		existingUser.setUsername(record.getEmail());
+		existingUser.setFirstName(record.getFirstName());
+		existingUser.setLastName(record.getLastName());
+		existingUser.setEmail(record.getEmail());
+		return existingUser;
 	}
 
 	@Transactional
-	public void generateAndSaveNewUser(RegisteredUser record, Integer isSuggestedUser) {
+	public void generateAndSaveNewUser(RegisteredUser record, Integer userIdOfSuggestedUser) {
 
 		RegisteredUser newUser;
-		if (isSuggestedUser != null) {
-			newUser = updateUser(record, isSuggestedUser);
+		if (userIdOfSuggestedUser != null) {
+			newUser = updateUser(record, userIdOfSuggestedUser);
 		} else {
 			newUser = createNewUser(record);
 		}

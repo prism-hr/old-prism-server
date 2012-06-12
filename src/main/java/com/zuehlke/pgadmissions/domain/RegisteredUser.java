@@ -38,6 +38,9 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 	private String password;
 
 	@Transient
+	private String newPassword;
+	
+	@Transient
 	private String confirmPassword;
 
 	@Transient
@@ -687,5 +690,13 @@ public class RegisteredUser extends DomainObject<Integer> implements UserDetails
 			return this.lastName.compareTo(other.lastName);
 		}
 		return firstNameResult;
+	}
+
+	public String getNewPassword() {
+		return newPassword;
+	}
+
+	public void setNewPassword(String newPassword) {
+		this.newPassword = newPassword;
 	}
 }

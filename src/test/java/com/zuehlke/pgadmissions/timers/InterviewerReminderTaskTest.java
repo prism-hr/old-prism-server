@@ -3,11 +3,12 @@ package com.zuehlke.pgadmissions.timers;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
@@ -19,8 +20,8 @@ import org.junit.Test;
 
 import com.zuehlke.pgadmissions.dao.InterviewerDAO;
 import com.zuehlke.pgadmissions.domain.Interviewer;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.mail.InterviewerMailSender;
 
 
@@ -33,7 +34,7 @@ public class InterviewerReminderTaskTest {
 	
 
 	@Test
-	public void shouldGetInterviewersAndSendReminders() throws UnsupportedEncodingException {
+	public void shouldGetInterviewersAndSendReminders() {
 		Transaction transactionOne = EasyMock.createMock(Transaction.class);
 		Transaction transactionTwo = EasyMock.createMock(Transaction.class);
 		Transaction transactionThree = EasyMock.createMock(Transaction.class);
@@ -42,8 +43,8 @@ public class InterviewerReminderTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
 
-		Interviewer interviewerOne = new InterviewerBuilder().id(1).user(new RegisteredUserBuilder().email("hello@test.com").toUser()).toInterviewer();
-		Interviewer interviewerTwo = new InterviewerBuilder().id(2).user(new RegisteredUserBuilder().email("hello@test.com").toUser()).toInterviewer();
+		Interviewer interviewerOne = new InterviewerBuilder().id(1).user(new RegisteredUserBuilder().email("hello@test.com").toUser()).firstAdminNotification(true).toInterviewer();
+		Interviewer interviewerTwo = new InterviewerBuilder().id(2).user(new RegisteredUserBuilder().email("hello@test.com").toUser()).firstAdminNotification(true).toInterviewer();
 		sessionMock.refresh(interviewerOne);
 		sessionMock.refresh(interviewerTwo);
 		List<Interviewer> interviewerList = Arrays.asList(interviewerOne, interviewerTwo);
@@ -51,11 +52,11 @@ public class InterviewerReminderTaskTest {
 		
 		transactionOne.commit();
 
-		mailServiceMock.sendInterviewerReminder(interviewerOne);
+		mailServiceMock.sendInterviewerReminder(interviewerOne, true);
 		interviewerDAOMock.save(interviewerOne);
 		transactionTwo.commit();
 
-		mailServiceMock.sendInterviewerReminder(interviewerTwo);
+		mailServiceMock.sendInterviewerReminder(interviewerTwo, true);
 		interviewerDAOMock.save(interviewerTwo);
 		transactionThree.commit();
 
@@ -66,10 +67,12 @@ public class InterviewerReminderTaskTest {
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, interviewerDAOMock);
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(interviewerOne.getLastNotified(), Calendar.DATE));
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(interviewerTwo.getLastNotified(), Calendar.DATE));
+		Assert.assertFalse(interviewerOne.isFirstAdminNotification());
+		Assert.assertFalse(interviewerTwo.isFirstAdminNotification());
 	}
 
 	@Test
-	public void shouldRollBackTransactionIfExceptionOccurs() throws UnsupportedEncodingException {
+	public void shouldRollBackTransactionIfExceptionOccurs() {
 		Transaction transactionOne = EasyMock.createMock(Transaction.class);
 		Transaction transactionTwo = EasyMock.createMock(Transaction.class);
 		Transaction transactionThree = EasyMock.createMock(Transaction.class);
@@ -77,18 +80,18 @@ public class InterviewerReminderTaskTest {
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionOne);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionTwo);
 		EasyMock.expect(sessionMock.beginTransaction()).andReturn(transactionThree);
-		Interviewer interviewerOne = new InterviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").toUser()).id(1).toInterviewer();
-		Interviewer interviewerTwo = new InterviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").toUser()).id(2).toInterviewer();
+		Interviewer interviewerOne = new InterviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").toUser()).id(1).firstAdminNotification(true).toInterviewer();
+		Interviewer interviewerTwo = new InterviewerBuilder().user(new RegisteredUserBuilder().email("hello@test.com").toUser()).id(2).firstAdminNotification(false).toInterviewer();
 		sessionMock.refresh(interviewerOne);
 		sessionMock.refresh(interviewerTwo);
 		EasyMock.expect(interviewerDAOMock.getInterviewersDueReminder()).andReturn(Arrays.asList(interviewerOne, interviewerTwo));
 		
 		transactionOne.commit();
-		mailServiceMock.sendInterviewerReminder(interviewerOne);
+		mailServiceMock.sendInterviewerReminder(interviewerOne, true);
 
 		EasyMock.expectLastCall().andThrow(new RuntimeException());
 		transactionTwo.rollback();
-		mailServiceMock.sendInterviewerReminder(interviewerTwo);
+		mailServiceMock.sendInterviewerReminder(interviewerTwo, false);
 		interviewerDAOMock.save(interviewerTwo);
 		transactionThree.commit();
 
@@ -99,6 +102,8 @@ public class InterviewerReminderTaskTest {
 		EasyMock.verify(sessionFactoryMock, sessionMock, transactionOne, transactionTwo, mailServiceMock, interviewerDAOMock);
 		assertNull(interviewerOne.getLastNotified());
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(interviewerTwo.getLastNotified(), Calendar.DATE));
+		Assert.assertTrue(interviewerOne.isFirstAdminNotification());
+		Assert.assertFalse(interviewerTwo.isFirstAdminNotification());
 	}
 
 	@Before

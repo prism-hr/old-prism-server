@@ -84,7 +84,7 @@ public class InterviewerMailSenderTest {
 	}
 
 	@Test
-	public void shouldSendInterviewerReminderForInterviewer() throws UnsupportedEncodingException {
+	public void shouldSendFirstInterviewerReminderForInterviewer() throws UnsupportedEncodingException {
 		final HashMap<String, Object> model = new HashMap<String, Object>();
 		interviewerMailSender = new InterviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
 
@@ -101,6 +101,36 @@ public class InterviewerMailSenderTest {
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
 
+		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("interview.feedback.request"),// 
+				EasyMock.aryEq(new Object[] { "fred", "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
+		EasyMock.expect(//
+				mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(toAddress, "resolved subject",//
+						"private/interviewers/mail/interviewer_reminder_email_first.ftl", model, null)).andReturn(preparatorMock);
+		javaMailSenderMock.send(preparatorMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+
+		interviewerMailSender.sendInterviewerReminder(interviewer, true);
+
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+	}
+	@Test
+	public void shouldSendInterviewerReminderForInterviewer() throws UnsupportedEncodingException {
+		final HashMap<String, Object> model = new HashMap<String, Object>();
+		interviewerMailSender = new InterviewerMailSender(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock) {
+			
+			@Override
+			Map<String, Object> createModel(Interviewer interviewer) {
+				return model;
+			}
+		};
+		
+		RegisteredUser defaultInterviewer = new RegisteredUserBuilder().id(11).firstName("Hanna").lastName("Hoopla").email("hanna.hoopla@test.com").toUser();
+		ApplicationForm form = new ApplicationFormBuilder().id(4).applicationNumber("fred").program(new ProgramBuilder().title("program abc").toProgram()).toApplicationForm();
+		Interviewer interviewer = new InterviewerBuilder().id(4).user(defaultInterviewer).interview(new InterviewBuilder().id(5).application(form).toInterview()).toInterviewer();
+		
+		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
+		InternetAddress toAddress = new InternetAddress("hanna.hoopla@test.com", "Hanna Hoopla");
+		
 		EasyMock.expect(msgSourceMock.getMessage(EasyMock.eq("interview.feedback.request.reminder"),// 
 				EasyMock.aryEq(new Object[] { "fred", "program abc" }), EasyMock.eq((Locale) null))).andReturn("resolved subject");
 		EasyMock.expect(//
@@ -108,9 +138,9 @@ public class InterviewerMailSenderTest {
 						"private/interviewers/mail/interviewer_reminder_email.ftl", model, null)).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
-
-		interviewerMailSender.sendInterviewerReminder(interviewer);
-
+		
+		interviewerMailSender.sendInterviewerReminder(interviewer, false);
+		
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
 	}
 

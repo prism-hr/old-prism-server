@@ -1,6 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-	
+
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Untitled Document</title>
@@ -17,7 +17,7 @@
 			    <td width="50" bgcolor="#141215" style="background-color: #141215;">
 			    	<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" />
 			    </td>
-			    <td width="500" bgcolor="#141215" style="background-color: #141215;">			    	
+			    <td width="500" bgcolor="#141215" style="background-color: #141215;">			    
 			    </td>
 			    <td width="50" bgcolor="#141215" style="background-color: #141215;">
 			    	<img src="${host}/pgadmissions/design/default/images/shim.gif" width="50" height="30" alt="" />
@@ -32,19 +32,18 @@
 		    	</td>
 		    	<td width="500">
 		      		<h1 style="font-size: 12pt;">
-		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${admin.firstName?html},</font>
+		      			<font face="Arial, Helvetica, sans-serif" color="#0055A1">Dear ${interviewer.user.firstName?html},</font>
 		      		</h1>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We recently informed you that the academic review period for Application ${application.applicationNumber} for UCL ${application.program.title} has expired. Please review the feedback and select the next action.</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">Please provide feedback on your recent interview with ${applicant.firstName?html} ${applicant.lastName?html} for Application ${application.applicationNumber} for UCL ${application.program.title}.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">
-			      			<a href="${host}/pgadmissions/progress?application=${application.applicationNumber}">Evaluate Feedback</a>
+			      			<a href="${host}/pgadmissions/interviewFeedback?applicationId=${application.applicationNumber}">Provide feedback</a>
 			      		</font>
 			      	</p>
 			      	<p>
-			      		<font face="Arial, Helvetica, sans-serif" size="2">We will continue to send reminders until you respond to this request.
-			      		</font>
+			      		<font face="Arial, Helvetica, sans-serif" size="2">We will send reminders until you respond to this request.</font>
 			      	</p>
 			      	<p>
 			      		<font face="Arial, Helvetica, sans-serif" size="2">With best regards,<br />UCL Elect</font>

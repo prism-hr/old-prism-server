@@ -1,5 +1,9 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.text.ParseException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -42,7 +46,7 @@ public class ApplicationFormController {
 	}
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
-	public ModelAndView createNewApplicationForm(@RequestParam Integer program) {
+	public ModelAndView createNewApplicationForm(@RequestParam Integer program, @RequestParam String programDeadline) throws ParseException {
 
 		RegisteredUser user = (RegisteredUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
 
@@ -50,10 +54,9 @@ public class ApplicationFormController {
 		if(prog==null || programInstanceDAO.getActiveProgramInstances(prog).isEmpty()){
 			return new ModelAndView(PROGRAM_DOES_NOT_EXIST); 
 		}
-		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog);
+		ApplicationForm applicationForm = applicationService.createAndSaveNewApplicationForm(user, prog, programDeadline);
 
 		return new ModelAndView("redirect:/application", "applicationId", applicationForm.getApplicationNumber());
-
 	}
 
 	ApplicationForm newApplicationForm() {

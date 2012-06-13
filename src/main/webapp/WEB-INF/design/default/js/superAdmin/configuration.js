@@ -200,7 +200,13 @@ function appendRegistryUsersJSON() {
 		return result;
 	} 
 	
-	
+	$('button.apply').click(function() {
+    	$('#program').val(this.id);
+    	if ($('#'+this.id+'_deadline').html() == "12-Dec-2012"){
+    		$('#program').val("12-Dec-2012");
+    	}
+    	$('#applyForm').submit();
+   });
 	
 	
 }

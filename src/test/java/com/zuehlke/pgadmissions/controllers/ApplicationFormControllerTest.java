@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -51,12 +52,12 @@ public class ApplicationFormControllerTest {
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramById(12)).andReturn(program);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program, null)).andReturn(applicationForm);
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 		
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
 		
-		applicationController.createNewApplicationForm(12);
+		applicationController.createNewApplicationForm(12, null);
 		EasyMock.verify(applicationsServiceMock);
 		
 	}
@@ -68,37 +69,54 @@ public class ApplicationFormControllerTest {
 		program.setInstances(Arrays.asList(programInstance));
 		
 		EasyMock.expect(programDAOMock.getProgramById(12)).andReturn(program);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program, null)).andReturn(applicationForm);
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
 		
-		ModelAndView modelAndView = applicationController.createNewApplicationForm(12);
+		ModelAndView modelAndView = applicationController.createNewApplicationForm(12, null);
 		assertEquals(applicationForm.getApplicationNumber(), modelAndView.getModel().get("applicationId"));
 		assertEquals("redirect:/application", modelAndView.getViewName());
 
 	}
 	
+	
 	@Test
-	public void shouldReturnProgramDoesNotExistPageIfProgramDoesNotExists(){
+	public void shouldRedirectToApplicationFormViewAndSaveBatchDedline() throws ParseException {
+		Program program = new ProgramBuilder().id(12).title("Program 1").toProgram();
+		ProgramInstance programInstance = new ProgramInstanceBuilder().id(1).studyOption(StudyOption.FULL_TIME).applicationDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2030/08/06")).toProgramInstance();
+		program.setInstances(Arrays.asList(programInstance));
+		EasyMock.expect(programDAOMock.getProgramById(12)).andReturn(program);		
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program, "2012/12/12")).andReturn(applicationForm);
+		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(Arrays.asList(programInstance)).anyTimes();
+		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
+		
+		ModelAndView modelAndView = applicationController.createNewApplicationForm(12, "2012/12/12");
+		assertEquals(applicationForm.getApplicationNumber(), modelAndView.getModel().get("applicationId"));
+		assertEquals("redirect:/application", modelAndView.getViewName());
+		EasyMock.verify(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
+	}
+	
+	@Test
+	public void shouldReturnProgramDoesNotExistPageIfProgramDoesNotExists() throws ParseException{
 		Program program1 = new ProgramBuilder().toProgram();
 		EasyMock.expect(programDAOMock.getProgramById(1)).andReturn(null);		
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program1)).andReturn(null);
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
 		
-		ModelAndView modelAndView = applicationController.createNewApplicationForm(1);
+		ModelAndView modelAndView = applicationController.createNewApplicationForm(1, null);
 		assertEquals("private/pgStudents/programs/program_does_not_exist", modelAndView.getViewName());
 	}
 	
 	
 	@Test
-	public void shouldReturnProgramDoesNotExistPageIfProgramExistsButDoesntHaveAnyActiveInstances(){
+	public void shouldReturnProgramDoesNotExistPageIfProgramExistsButDoesntHaveAnyActiveInstances() throws ParseException{
 		Program program = new ProgramBuilder().id(12).toProgram();
 		EasyMock.expect(programDAOMock.getProgramById(12)).andReturn(null);		
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(student, program, null)).andReturn(applicationForm);
 		EasyMock.expect(programInstanceDAOMock.getActiveProgramInstances(program)).andReturn(null);
 		EasyMock.replay(programDAOMock, applicationsServiceMock, programInstanceDAOMock);
 		
-		ModelAndView modelAndView = applicationController.createNewApplicationForm(12);
+		ModelAndView modelAndView = applicationController.createNewApplicationForm(12, null);
 		assertEquals("private/pgStudents/programs/program_does_not_exist", modelAndView.getViewName());
 	}
 	

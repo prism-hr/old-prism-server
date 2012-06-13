@@ -305,6 +305,8 @@ public class UserService {
 	@Transactional
 	public void updateCurrentUserAndSendEmailNotification(RegisteredUser user) {
 			RegisteredUser currentUser = getCurrentUser();
+			currentUser.setFirstName(user.getFirstName());
+			currentUser.setLastName(user.getLastName());
 			currentUser.setEmail(user.getEmail());
 			if (StringUtils.isNotBlank(user.getNewPassword())) {
 				currentUser.setPassword(encryptionUtils.getMD5Hash(user.getNewPassword()));
@@ -331,6 +333,9 @@ public class UserService {
 	}
 
 	public boolean isAccountChanged(RegisteredUser user){
-		return !getCurrentUser().getEmail().equals(user.getEmail()) || (!StringUtils.isBlank(user.getNewPassword()) && !getCurrentUser().getPassword().equals(encryptionUtils.getMD5Hash(user.getNewPassword())));
+		return !getCurrentUser().getEmail().equals(user.getEmail()) 
+				|| !getCurrentUser().getFirstName().equals(user.getFirstName())
+				|| !getCurrentUser().getLastName().equals(user.getLastName())
+				|| (!StringUtils.isBlank(user.getNewPassword()) && !getCurrentUser().getPassword().equals(encryptionUtils.getMD5Hash(user.getNewPassword())));
 	}
 }

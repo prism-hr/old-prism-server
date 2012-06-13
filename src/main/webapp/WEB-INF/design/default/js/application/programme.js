@@ -280,7 +280,8 @@ $(document).ready(function()
 			$("span[name='nonAcceptedPD']").html('');
 
 			// Check for a "dirty" supervisor form.
-			if (!isFormEmpty('#supervisor_div'))
+			//if (!isFormEmpty('#supervisor_div'))
+			if ($('#supervisorId').val() == '' && $('#supervisorFirstname').val() == '' && $('#supervisorLastname').val() == '' && $('#supervisorEmail').val() == '')
 			{
 				$('#addSupervisorButton').trigger('click');
 				// If there was an error submitting the non-empty form, don't continue.

@@ -21,6 +21,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.EncryptionUtils;
+import com.zuehlke.pgadmissions.utils.Environment;
 import com.zuehlke.pgadmissions.utils.UserFactory;
 
 public class UserServiceResetPasswordTest {
@@ -82,7 +83,7 @@ public class UserServiceResetPasswordTest {
 		Map<String, Object> expectedMap = new HashMap<String, Object>();
 		expectedMap.put("user", storedUser);
 		expectedMap.put("newPassword", newPassword);
-		expectedMap.put("host", "http://localhost:8080");
+		expectedMap.put("host", Environment.getInstance().getApplicationHostName());
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(//
 				EasyMock.eq(toAddress), //
@@ -120,7 +121,7 @@ public class UserServiceResetPasswordTest {
 		Map<String, Object> expectedMap = new HashMap<String, Object>();
 		expectedMap.put("user", storedUser);
 		expectedMap.put("newPassword", newPassword);
-		expectedMap.put("host", "http://localhost:8080");
+		expectedMap.put("host", Environment.getInstance().getApplicationHostName());
 
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(//
 				EasyMock.eq(toAddress), //

@@ -82,7 +82,9 @@ public class RefereeServiceTest {
 		programmeDetails.setId(1);
 		form.setProgrammeDetails(programmeDetails);
 		refereeDAOMock.save(referee);
-
+		ReferenceEvent event = new ReferenceEventBuilder().id(4).toEvent();
+		EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
+		applicationFormDAOMock.save(form);
 		MimeMessagePreparator preparatorMock1 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock2 = EasyMock.createMock(MimeMessagePreparator.class);
 		MimeMessagePreparator preparatorMock3 = EasyMock.createMock(MimeMessagePreparator.class);
@@ -115,10 +117,12 @@ public class RefereeServiceTest {
 		javaMailSenderMock.send(preparatorMock2);
 		javaMailSenderMock.send(preparatorMock3);
 
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock);
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, msgSourceMock, refereeDAOMock, eventFactoryMock, applicationFormDAOMock);
 
 		refereeService.saveReferenceAndSendMailNotifications(referee);
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock);
+		assertEquals(1, form.getEvents().size());
+		assertEquals(event, form.getEvents().get(0));
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, msgSourceMock, refereeDAOMock, eventFactoryMock, applicationFormDAOMock);
 	}
 
 	@SuppressWarnings("unchecked")

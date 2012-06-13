@@ -95,16 +95,22 @@ $(document).ready(function() {
 		
 	});
 
-	$('#downloadAll').click(function(){
-		var appListValue = $('#appList').val();
-		if (appListValue==''){
+	$('#downloadAll').click(function()
+	{
+		//var appListValue = $('#appList').val();
+		var appListValue = $("input[name='appDownload']").val();
+		if (appListValue == '')
+		{
 			alert("At least one application must be selected for download!");
-		} else {
+		}
+		else
+		{
 			window.location.href = "/pgadmissions/print/all?appList="+$('#appList').val();
 		}
 	});
 	
-	$('#myAccount').click(function(){
+	$('#myAccount').click(function()
+	{
 		window.location.href = "/pgadmissions/myAccount";
 	});
 

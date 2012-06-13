@@ -128,10 +128,6 @@ $(document).ready(function()
 				'</tr>');
 			addToolTips();
 		
-			$("input[name='sFN']").val($('#supervisorFirstname').val());
-			$("input[name='sLN']").val($('#supervisorLastname').val());
-			$("input[name='sEM']").val($('#supervisorEmail').val());
-			$("input[name='sAS']").val(isAware);
 			$('#supervisorId, #supervisorFirstname, #supervisorLastname, #supervisorEmail').val('');
 			$("input[name='awareSupervisor']").val(["NO"]);
 		}

@@ -41,6 +41,7 @@ public class ApplicationFormBuilder {
 	private Program program;
 	private Date appDate;
 	private Date submittedDate;
+	private Date batchDeadline;
 	private Date dueDate;
 	private CheckedStatus acceptedTerms;
 	private List<NotificationRecord> notificationRecords = new ArrayList<NotificationRecord>();
@@ -255,8 +256,12 @@ public class ApplicationFormBuilder {
 		this.id = id;
 		return this;
 	}
-	
 
+	public ApplicationFormBuilder batchDeadline(Date batchDeadline) {
+		this.batchDeadline = batchDeadline;
+		return this;
+	}
+	
 	public ApplicationFormBuilder appDate(Date date) {
 		this.appDate = date;
 		return this;
@@ -316,6 +321,8 @@ public class ApplicationFormBuilder {
 		application.setRejection(rejection);
 		application.setApplicationAdministrator(applicationAdministrator);
 		application.setApplicationNumber(applicationNumber);
+		
+		application.setBatchDeadline(batchDeadline);
 		
 		application.setRejectNotificationDate(rejectNotificationDate);
 		return application;

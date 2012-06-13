@@ -109,6 +109,7 @@ $(document).ready(function()
 			$("#supervisors").show();
 			$("#supervisor_div span.invalid").html('').hide();
 			var aware = ($("input[name='awareSupervisor']").val() == "YES") ? 'Yes' : 'No';
+			console.log('field: '+$("input[name='awareSupervisor']").val()+' - aware: '+aware);
 
 			unsavedSupervisors++;
 			$('table#supervisors tbody').append(
@@ -283,7 +284,7 @@ $(document).ready(function()
 			//if (!isFormEmpty('#supervisor_div'))
 			if ($('#supervisorId').val() == '' && $('#supervisorFirstname').val() == '' && $('#supervisorLastname').val() == '' && $('#supervisorEmail').val() == '')
 			{
-				$('#addSupervisorButton').trigger('click');
+				$('#addSupervisorButton:visible, #updateSupervisorButton:visible').trigger('click'); // either add or update will be visible
 				// If there was an error submitting the non-empty form, don't continue.
 				if ($('#supervisor_div .invalid:visible').length > 0)
 				{

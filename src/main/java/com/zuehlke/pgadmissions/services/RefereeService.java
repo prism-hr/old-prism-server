@@ -78,7 +78,8 @@ public class RefereeService {
 
 	@Transactional
 	public void saveReferenceAndSendMailNotifications(Referee referee) {
-		save(referee);
+		save(referee);		
+		addReferenceEventToApplication(referee);
 		sendMailToApplicant(referee);
 		sendMailToAdministrators(referee);
 
@@ -217,10 +218,14 @@ public class RefereeService {
 	public void declineToActAsRefereeAndNotifiyApplicant(Referee referee) {
 		referee.setDeclined(true);
 		refereeDAO.save(referee);
+		addReferenceEventToApplication(referee);
+		sendMailToApplicant(referee);
+	}
+
+	private void addReferenceEventToApplication(Referee referee) {
 		ApplicationForm application = referee.getApplication();
 		application.getEvents().add(eventFactory.createEvent(referee));
 		applicationFormDAO.save(application);
-		sendMailToApplicant(referee);
 	}
 
 	public void sendRefereeMailNotification(Referee referee) {

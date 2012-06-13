@@ -37,7 +37,9 @@ public class TimelineService {
 		List<Event> events = applicationForm.getEvents();
 		 
 		for (Event event : events) {
-			phases.add(createTimelineObjectForEvent(event));
+			if(event instanceof StateChangeEvent){
+				phases.add(createTimelineObjectForEvent(event));
+			}
 			
 		}
 		sortAndSetExitDates(phases);
@@ -58,6 +60,7 @@ public class TimelineService {
 	}
 
 	private TimelinePhase createTimelineObjectForEvent(Event event) {
+		
 		TimelinePhase phase = new TimelinePhase();
 		phase.setDate(event.getDate());			
 		phase.setStatus( ((StateChangeEvent)event).getNewStatus());

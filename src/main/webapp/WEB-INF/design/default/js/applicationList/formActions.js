@@ -97,8 +97,7 @@ $(document).ready(function() {
 
 	$('#downloadAll').click(function()
 	{
-		//var appListValue = $('#appList').val();
-		var appListValue = $("input[name='appDownload']").val();
+		var appListValue = $('#appList').val();
 		if (appListValue == '')
 		{
 			alert("At least one application must be selected for download!");

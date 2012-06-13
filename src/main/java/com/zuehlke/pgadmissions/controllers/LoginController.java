@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping("/login")
 public class LoginController {
 
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value = "", method = RequestMethod.GET)
 	public String getLoginPage(HttpServletRequest request, ModelMap modelMap) {
 		HttpSession session = request.getSession();
 		DefaultSavedRequest attribute = (DefaultSavedRequest) session.getAttribute("SPRING_SECURITY_SAVED_REQUEST");
@@ -26,5 +26,4 @@ public class LoginController {
 
 		return "public/login/login_page";
 	}
-
 }

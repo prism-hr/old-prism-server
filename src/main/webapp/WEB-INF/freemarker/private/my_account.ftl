@@ -60,10 +60,29 @@
 										<form>
 											<div class="row-group">
 												<div class="row"> 
-													<span id="email-lbl" class="label">Full Name</span>
+													<span id="email-lbl" class="plain-label">Firstname</span>
 													<div class="field">	
-														${user.firstName} ${user.lastName}
+														<input type="text" id="firstName" value="${user.firstName}" />
 													</div>
+													<@spring.bind "updatedUser.firstName" />
+													<#list spring.status.errorMessages as error>
+														<div class="field">
+															<span class="invalid">${error}</span>
+														</div>
+													</#list>
+												</div>
+												
+												<div class="row"> 
+													<span id="email-lbl" class="plain-label">Lastname</span>
+													<div class="field">	
+														<input type="text" id="lastName" value="${user.lastName}" />
+													</div>
+													<@spring.bind "updatedUser.lastName" />
+													<#list spring.status.errorMessages as error>
+														<div class="field">
+															<span class="invalid">${error}</span>
+														</div>
+													</#list>
 												</div>
 												
 												<div class="row"> 

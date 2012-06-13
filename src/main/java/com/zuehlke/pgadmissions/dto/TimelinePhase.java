@@ -12,6 +12,7 @@ import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 
 public class TimelinePhase extends TimelineObject {
 
+
 	private ApplicationFormStatus status = null;
 	private Date exitedPhaseDate = null;
 	private ReviewRound reviewRound = null;
@@ -70,5 +71,19 @@ public class TimelinePhase extends TimelineObject {
 	public void setApprovalRound(ApprovalRound approvalRound) {
 		this.approvalRound = approvalRound;
 	}
+
+	public String getMessageCode() {
+		return "timeline.phase." + status.displayValue().toLowerCase().replace(" ", "_");
+	}
+
+	@Override
+	public Date getMostRecentActivityDate() {	
+		if(comments.isEmpty()){
+			return eventDate;
+		}
+		return comments.iterator().next().getDate();
+	}
+
+	
 
 }

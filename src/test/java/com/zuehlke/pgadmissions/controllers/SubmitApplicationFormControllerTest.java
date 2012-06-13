@@ -221,7 +221,8 @@ public class SubmitApplicationFormControllerTest {
 		applicationController.calculateAndSetValidationDueDate(applicationForm);
 		Calendar tomorrow = Calendar.getInstance();
 		tomorrow.add(Calendar.MINUTE, 1440);
-		Assert.assertEquals(tomorrow.getTime().getTime(), applicationForm.getDueDate().getTime());
+		Assert.assertEquals(tomorrow.getTime().getTime(), applicationForm.getDueDate().getTime(), 5);
+		
 	}
 
 	@Before

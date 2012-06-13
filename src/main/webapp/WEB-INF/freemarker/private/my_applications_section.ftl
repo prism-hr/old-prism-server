@@ -1,7 +1,7 @@
 <#list applications as application>
 <tr id="row_${application.applicationNumber}" name="applicationRow">
 	<td class="centre">
-		<input type="checkbox" name="appDownload" id="appDownload_${application.applicationNumber}"/>
+		<input type="checkbox" name="appDownload" title="Select to download" id="appDownload_${application.applicationNumber}"/>
 	</td>
 	<td class="applicant-name">
 		<#if !user.isInRole('APPLICANT')>

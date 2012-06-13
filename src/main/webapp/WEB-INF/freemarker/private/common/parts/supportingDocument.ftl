@@ -4,7 +4,7 @@
 		<input type="text" id="document_${document.type}" value = "${encrypter.encrypt(document.id)}" style="display:none" name="document"/>
 		<#if document.type != 'REFERENCE'>
 			<a class="uploaded-filename" href="<@spring.url '/download?documentId=${encrypter.encrypt(document.id)}'/>" target="_blank">${document.fileName?html}</a>
-			<a data-desc="Edit" class="button-edit button-hint">edit</a>
+			<a data-desc="Delete" class="button-delete button-hint">delete</a>
 		<#else>
 			${document.fileName?html}
 		</#if>		

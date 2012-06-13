@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
@@ -141,7 +143,7 @@ public class RegisterControllerTest {
 	
 	
 	@Test
-	public void shouldActivateAccountAndRedirectToApplicationListIfNoDirectURL(){
+	public void shouldActivateAccountAndRedirectToApplicationListIfNoDirectURL() throws ParseException{
 		String activationCode = "ul5oaij68186jbcg";
 		RegisteredUser user = new RegisteredUserBuilder().role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
 		EasyMock.expect(registrationServiceMock.findUserForActivationCode(activationCode)).andReturn(user);		
@@ -155,7 +157,7 @@ public class RegisterControllerTest {
 	
 	
 	@Test
-	public void shouldActivateAccountAndRedirectToDirectURLIfProvided(){
+	public void shouldActivateAccountAndRedirectToDirectURLIfProvided() throws ParseException{
 		String activationCode = "ul5oaij68186jbcg";
 		RegisteredUser user = new RegisteredUserBuilder().directURL("/directLink").role(new RoleBuilder().authorityEnum(Authority.SUPERADMINISTRATOR).toRole()).id(1).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
 		EasyMock.expect(registrationServiceMock.findUserForActivationCode(activationCode)).andReturn(user);		
@@ -170,14 +172,14 @@ public class RegisterControllerTest {
 	
 	
 	@Test
-	public void shouldCreatNewApplicationAndRedirectToItIfUserHasOriginalProgram(){
+	public void shouldCreatNewApplicationAndRedirectToItIfUserHasOriginalProgram() throws ParseException{
 		String activationCode = "ul5oaij68186jbcg";
 		Program program = new ProgramBuilder().id(1).toProgram();
 		ApplicationForm applicationForm = new ApplicationFormBuilder().id(21).applicationNumber("ABC").toApplicationForm();
 		RegisteredUser user = new RegisteredUserBuilder().id(1).programOriginallyAppliedTo(program).activationCode(activationCode).enabled(false).username("email@email.com").email("email@email.com").password("1234").toUser();
 		EasyMock.expect(registrationServiceMock.findUserForActivationCode(activationCode)).andReturn(user);		
 		userServiceMock.save(user);
-		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(user, program)).andReturn(applicationForm);
+		EasyMock.expect(applicationsServiceMock.createAndSaveNewApplicationForm(user, program, null)).andReturn(applicationForm);
 		EasyMock.replay(registrationServiceMock, applicationsServiceMock);
 		ModelAndView modelAndView = registerController.activateAccountSubmit(activationCode);		
 		EasyMock.verify(registrationServiceMock);
@@ -186,7 +188,7 @@ public class RegisterControllerTest {
 	}
 	
 	@Test
-	public void shouldReturnToRegistrationPageIfNouserFound(){
+	public void shouldReturnToRegistrationPageIfNouserFound() throws ParseException{
 		
 		String activationCode = "differentactivationcode";
 		EasyMock.expect(registrationServiceMock.findUserForActivationCode(activationCode)).andReturn(null);		

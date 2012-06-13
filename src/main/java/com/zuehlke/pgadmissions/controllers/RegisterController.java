@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.controllers;
 
+import java.text.ParseException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -101,7 +103,7 @@ public class RegisterController {
 	
 
 	@RequestMapping(value = "/activateAccount", method = RequestMethod.GET)
-	public ModelAndView activateAccountSubmit(@RequestParam String activationCode) {
+	public ModelAndView activateAccountSubmit(@RequestParam String activationCode) throws ParseException {
 		RegisteredUser user = registrationService.findUserForActivationCode(activationCode);
 		if (user == null) {
 			RegisterPageModel pageModel = new RegisterPageModel();
@@ -112,7 +114,7 @@ public class RegisterController {
 		userService.save(user);
 		String redirectView = "redirect:";
 		if (user.getProgramOriginallyAppliedTo() != null) {
-			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProgramOriginallyAppliedTo());
+			ApplicationForm newApplicationForm = applicationsService.createAndSaveNewApplicationForm(user, user.getProgramOriginallyAppliedTo(), null);
 			redirectView = redirectView + "/application?applicationId=" + newApplicationForm.getApplicationNumber();
 		} else {
 			if(user.getDirectToUrl() != null){

@@ -6,17 +6,18 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 
 public abstract class TimelineObject implements Comparable<TimelineObject> {
 
-	protected Date date = null;
+	protected Date eventDate = null;
+
 	protected RegisteredUser author;
 
 
 	
-	public Date getDate() {
-		return date;
+	public Date getEventDate() {
+		return eventDate;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setEventDate(Date date) {
+		this.eventDate = date;
 	}
 
 	public RegisteredUser getAuthor() {
@@ -30,10 +31,13 @@ public abstract class TimelineObject implements Comparable<TimelineObject> {
 	public abstract String getMessageCode(); 
 	@Override
 	public int compareTo(TimelineObject otherPhase) {
-		return otherPhase.getDate().compareTo(this.getDate());
+		return otherPhase.getMostRecentActivityDate().compareTo(this.getMostRecentActivityDate());
 	}
 
 	public abstract String getType();
+
+	public abstract Date getMostRecentActivityDate();
+
 
 
 }

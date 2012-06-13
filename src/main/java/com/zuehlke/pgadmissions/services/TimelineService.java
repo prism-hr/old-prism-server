@@ -38,7 +38,7 @@ public class TimelineService {
 		List<Comment> visibleComments = applicationForm.getVisibleComments(userService.getCurrentUser());
 		for (Comment comment : visibleComments) {
 			for (TimelinePhase phase : phases) {
-				if (comment.getDate().after(phase.getDate())
+				if (comment.getDate().after(phase.getEventDate())
 						&& (phase.getExitedPhaseDate() == null || comment.getDate().before(phase.getExitedPhaseDate()))) {
 					phase.getComments().add(comment);
 				}
@@ -49,7 +49,7 @@ public class TimelineService {
 	private TimelinePhase createTimelinePhaseForEvent(Event event) {	
 		
 		TimelinePhase phase = new TimelinePhase();
-		phase.setDate(event.getDate());			
+		phase.setEventDate(event.getDate());			
 		phase.setStatus( ((StateChangeEvent)event).getNewStatus());
 		phase.setAuthor(event.getUser());		
 		if(event instanceof ReviewStateChangeEvent){
@@ -67,7 +67,7 @@ public class TimelineService {
 		Collections.sort(phases);
 		for (int i = phases.size() - 1; i > 0; i--) {
 			TimelinePhase thisPhase = phases.get(i);
-			thisPhase.setExitedPhaseDate(phases.get(i - 1).getDate());
+			thisPhase.setExitedPhaseDate(phases.get(i - 1).getEventDate());
 		}
 	}
 	
@@ -94,7 +94,7 @@ public class TimelineService {
 
 	private TimelineReference createTimelineReferenceFromEvent(Event event) {
 		TimelineReference timelineReference = new TimelineReference();
-		timelineReference.setDate(event.getDate());
+		timelineReference.setEventDate(event.getDate());
 		timelineReference.setAuthor(event.getUser());
 		timelineReference.setReferee(((ReferenceEvent) event).getReferee());
 		return timelineReference;

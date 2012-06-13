@@ -13,6 +13,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
@@ -22,6 +23,7 @@ import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
 import com.zuehlke.pgadmissions.utils.Environment;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
 public class RefereeService {
@@ -33,20 +35,24 @@ public class RefereeService {
 	private final UserService userService;
 	private final RoleDAO roleDAO;
 	private final MessageSource messageSource;
+	private final EventFactory eventFactory;
+	private final ApplicationFormDAO applicationFormDAO;
 
 	RefereeService() {
-		this(null, null, null, null, null, null);
+		this(null, null, null, null, null, null, null, null);
 	}
 
 	@Autowired
 	public RefereeService(RefereeDAO refereeDAO, MimeMessagePreparatorFactory mimeMessagePreparatorFactory, JavaMailSender mailsender, UserService userService,
-			RoleDAO roleDAO, MessageSource messageSource) {
+			RoleDAO roleDAO, MessageSource messageSource, EventFactory eventFactory, ApplicationFormDAO applicationFormDAO) {
 		this.refereeDAO = refereeDAO;
 		this.mimeMessagePreparatorFactory = mimeMessagePreparatorFactory;
 		this.mailsender = mailsender;
 		this.userService = userService;
 		this.roleDAO = roleDAO;
 		this.messageSource = messageSource;
+		this.eventFactory = eventFactory;
+		this.applicationFormDAO = applicationFormDAO;
 
 	}
 
@@ -118,7 +124,7 @@ public class RefereeService {
 			
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
 					"private/pgStudents/mail/reference_respond_confirmation.ftl", model, null));
-		} catch (Throwable e) {
+		  } catch (Throwable e) {
 			log.warn("error while sending email", e);
 		}
 	}
@@ -208,8 +214,12 @@ public class RefereeService {
 	}
 
 	@Transactional
-	public void saveReferenceAndSendDeclineNotifications(Referee referee) {
+	public void declineToActAsRefereeAndNotifiyApplicant(Referee referee) {
+		referee.setDeclined(true);
 		refereeDAO.save(referee);
+		ApplicationForm application = referee.getApplication();
+		application.getEvents().add(eventFactory.createEvent(referee));
+		applicationFormDAO.save(application);
 		sendMailToApplicant(referee);
 	}
 

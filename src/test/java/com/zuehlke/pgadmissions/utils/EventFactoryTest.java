@@ -16,12 +16,15 @@ import com.zuehlke.pgadmissions.domain.ApprovalStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
+import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceEvent;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
@@ -94,6 +97,21 @@ public class EventFactoryTest {
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(stageChangeEvent.getDate(), Calendar.DATE));
 		assertEquals(ApplicationFormStatus.APPROVAL, stageChangeEvent.getNewStatus());
 		assertEquals(approval, stageChangeEvent.getApprovalRound());
+	}
+	
+	@Test
+	public void shouldReturnReferencEvent() {
+		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+		EasyMock.replay(userServiceMock);
+	
+		Referee referee = new RefereeBuilder().id(1).toReferee();
+		Event event = eventFactory.createEvent( referee);
+		assertTrue(event instanceof ReferenceEvent);
+		ReferenceEvent referenceEvent = (ReferenceEvent) event;
+		assertEquals(user, referenceEvent.getUser());
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(referenceEvent.getDate(), Calendar.DATE));		
+		assertEquals(referee, referenceEvent.getReferee());
 	}
 	
 	@Before

@@ -27,6 +27,7 @@ public class DeclineControllerTest {
 	private CommentService commentServiceMock;
 	private RefereeService refereeServiceMock;
 	private static final String DECLINE_REVIEW_SUCCESS_VIEW_NAME = "/private/reviewers/decline_success_confirmation";
+	
 
 	@Test
 	public void shouldGetReviewerFromId() {
@@ -119,9 +120,13 @@ public class DeclineControllerTest {
 				return referee;
 			}
 		}; 
-		refereeServiceMock.saveReferenceAndSendDeclineNotifications(referee);
+		
+		refereeServiceMock.declineToActAsRefereeAndNotifiyApplicant(referee);
+		
 		EasyMock.replay(refereeServiceMock);
+		
 		String view = controller.declineReference(referee.getId(), new ModelMap());
+		
 		EasyMock.verify(refereeServiceMock);
 		assertEquals(DECLINE_REVIEW_SUCCESS_VIEW_NAME, view);
 	}
@@ -132,8 +137,7 @@ public class DeclineControllerTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		commentServiceMock = EasyMock.createMock(CommentService.class);
 		refereeServiceMock = EasyMock.createMock(RefereeService.class);
-		
-		
+	
 		controller = new DeclineController(userServiceMock, commentServiceMock, applicationServiceMock, refereeServiceMock); 
 
 	}

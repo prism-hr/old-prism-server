@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
@@ -17,21 +18,25 @@ import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
+import com.zuehlke.pgadmissions.dao.ApplicationFormDAO;
 import com.zuehlke.pgadmissions.dao.RefereeDAO;
 import com.zuehlke.pgadmissions.dao.RoleDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.ProgrammeDetails;
 import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceEvent;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.Role;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReferenceEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.mail.MimeMessagePreparatorFactory;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 
 public class RefereeServiceTest {
 
@@ -42,6 +47,9 @@ public class RefereeServiceTest {
 	private RoleDAO roleDAOMock;
 	private MimeMessagePreparatorFactory mimeMessagePreparatorFactoryMock;
 	private MessageSource msgSourceMock;
+	private EventFactory eventFactoryMock;
+	private ApplicationFormDAO applicationFormDAOMock;
+
 
 	@Before
 	public void setUp() {
@@ -51,8 +59,9 @@ public class RefereeServiceTest {
 		userServiceMock = EasyMock.createMock(UserService.class);
 		roleDAOMock = EasyMock.createMock(RoleDAO.class);
 		msgSourceMock = EasyMock.createMock(MessageSource.class);
-
-		refereeService = new RefereeService(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock, msgSourceMock);
+		eventFactoryMock = EasyMock.createMock(EventFactory.class);
+		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
+		refereeService = new RefereeService(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock, msgSourceMock, eventFactoryMock, applicationFormDAOMock);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -292,7 +301,7 @@ public class RefereeServiceTest {
 	public void shouldCreateUserWithRefereeRoleIfRefereeDoesNotExist() {
 		final RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
 		Referee referee = new RefereeBuilder().id(1).firstname("ref").lastname("erre").email("emailemail@test.com").toReferee();
-		refereeService = new RefereeService(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock, msgSourceMock) {
+		refereeService = new RefereeService(refereeDAOMock, mimeMessagePreparatorFactoryMock, javaMailSenderMock, userServiceMock, roleDAOMock, msgSourceMock, eventFactoryMock,applicationFormDAOMock) {
 			@Override
 			RegisteredUser newRegisteredUser() {
 				return user;
@@ -357,7 +366,7 @@ public class RefereeServiceTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void shouldSaveRefereeAndSendDeclineNotification() throws UnsupportedEncodingException {
+	public void shouldSetDeclineAndSendDeclineNotification() throws UnsupportedEncodingException {
 
 		RegisteredUser applicant = new RegisteredUserBuilder().id(3).firstName("fred").lastName("freddy").email("email3@test.com").toUser();
 		Referee referee = new RefereeBuilder().id(4).firstname("ref").lastname("erre").email("ref@test.com").toReferee();
@@ -366,6 +375,9 @@ public class RefereeServiceTest {
 
 		refereeDAOMock.save(referee);
 
+		ReferenceEvent event = new ReferenceEventBuilder().id(4).toEvent();
+		EasyMock.expect(eventFactoryMock.createEvent(referee)).andReturn(event);
+		applicationFormDAOMock.save(form);
 		MimeMessagePreparator preparatorMock = EasyMock.createMock(MimeMessagePreparator.class);
 
 		InternetAddress toAddress = new InternetAddress("email3@test.com", "fred freddy");
@@ -380,11 +392,15 @@ public class RefereeServiceTest {
 				(InternetAddress) EasyMock.isNull())).andReturn(preparatorMock);
 		javaMailSenderMock.send(preparatorMock);
 
-		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock);
+		
+		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock, eventFactoryMock, applicationFormDAOMock);
 
-		refereeService.saveReferenceAndSendDeclineNotifications(referee);
+		refereeService.declineToActAsRefereeAndNotifiyApplicant(referee);
 
-		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock, msgSourceMock);
+		assertTrue(referee.isDeclined());
+		assertEquals(1, form.getEvents().size());
+		assertEquals(event, form.getEvents().get(0));
+		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock, msgSourceMock,applicationFormDAOMock);
 
 	}
 
@@ -402,7 +418,7 @@ public class RefereeServiceTest {
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock);
 
 		try {
-			refereeService.saveReferenceAndSendDeclineNotifications(referee);
+			refereeService.declineToActAsRefereeAndNotifiyApplicant(referee);
 		} catch (Exception e) {
 			// expected..ignore
 		}
@@ -437,7 +453,7 @@ public class RefereeServiceTest {
 		EasyMock.expectLastCall().andThrow(new RuntimeException("OH no - email sending's gone wrong!!"));
 		EasyMock.replay(mimeMessagePreparatorFactoryMock, javaMailSenderMock, refereeDAOMock, msgSourceMock);
 
-		refereeService.saveReferenceAndSendDeclineNotifications(referee);
+		refereeService.declineToActAsRefereeAndNotifiyApplicant(referee);
 
 		EasyMock.verify(javaMailSenderMock, mimeMessagePreparatorFactoryMock, refereeDAOMock, msgSourceMock);
 

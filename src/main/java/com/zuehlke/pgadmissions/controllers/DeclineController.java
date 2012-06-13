@@ -15,6 +15,7 @@ import com.zuehlke.pgadmissions.services.ApplicationsService;
 import com.zuehlke.pgadmissions.services.CommentService;
 import com.zuehlke.pgadmissions.services.RefereeService;
 import com.zuehlke.pgadmissions.services.UserService;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Controller
 @RequestMapping(value = { "/decline" })
@@ -24,6 +25,7 @@ public class DeclineController {
 	private final ApplicationsService applicationsService;
 	private static final String DECLINE_SUCCESS_VIEW_NAME = "/private/reviewers/decline_success_confirmation";
 	private final RefereeService refereeService;
+	
 	
 	DeclineController() {
 		this(null, null, null, null);
@@ -36,6 +38,7 @@ public class DeclineController {
 		this.commentService = commentService;
 		this.applicationsService = applicationsService;
 		this.refereeService = refereeService;
+		
 	}
 	
 	@RequestMapping(value="/review", method = RequestMethod.GET)
@@ -57,9 +60,8 @@ public class DeclineController {
 
 	@RequestMapping(value = "/reference", method = RequestMethod.GET)
 	public String declineReference(@RequestParam Integer refereeId, ModelMap modelMap) {
-		Referee referee = getReferee(refereeId);
-		referee.setDeclined(true);
-		refereeService.saveReferenceAndSendDeclineNotifications(referee);
+		Referee referee = getReferee(refereeId);	
+		refereeService.declineToActAsRefereeAndNotifiyApplicant(referee);
 		modelMap.put("message", "Thank you for letting us know you are unable to act as a referee on this occasion.");
 		return DECLINE_SUCCESS_VIEW_NAME;
 	}

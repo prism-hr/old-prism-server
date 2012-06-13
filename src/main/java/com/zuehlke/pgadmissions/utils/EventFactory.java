@@ -10,6 +10,8 @@ import com.zuehlke.pgadmissions.domain.ApprovalStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
+import com.zuehlke.pgadmissions.domain.Referee;
+import com.zuehlke.pgadmissions.domain.ReferenceEvent;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
@@ -58,6 +60,14 @@ public class EventFactory {
 		event.setUser(userService.getCurrentUser());
 		event.setDate(new Date());
 		event.setApprovalRound(approvalRound);
+		return event;
+	}
+
+	public Event createEvent(Referee referee) {
+		ReferenceEvent event = new ReferenceEvent();		
+		event.setUser(userService.getCurrentUser());
+		event.setDate(new Date());
+		event.setReferee(referee);
 		return event;
 	}
 

@@ -2,6 +2,9 @@ package com.zuehlke.pgadmissions.dto;
 
 import static org.junit.Assert.*;
 
+import java.util.Date;
+
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.Referee;
@@ -29,5 +32,14 @@ public class TimelineReferenceTest {
 		referee.setDeclined(true);
 		assertEquals("timeline.reference.declined", timelineReference.getMessageCode());
 
+	}
+	
+	@Test
+	public void shouldReturnEventDateAsMostRecentAticivyDate(){
+		Date eventDate = DateUtils.addDays(new Date(), -2);
+		TimelineReference timelineReference = new TimelineReference();
+		timelineReference.setEventDate(eventDate);
+		assertEquals(eventDate, timelineReference.getMostRecentActivityDate());
+		
 	}
 }

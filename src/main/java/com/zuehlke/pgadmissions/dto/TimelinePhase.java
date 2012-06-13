@@ -76,6 +76,14 @@ public class TimelinePhase extends TimelineObject {
 		return "timeline.phase." + status.displayValue().toLowerCase().replace(" ", "_");
 	}
 
+	@Override
+	public Date getMostRecentActivityDate() {	
+		if(comments.isEmpty()){
+			return eventDate;
+		}
+		return comments.iterator().next().getDate();
+	}
+
 	
 
 }

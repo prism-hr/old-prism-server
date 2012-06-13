@@ -16,7 +16,7 @@
 	                      <div class="title">
 	                        <span class="icon-role"></span>
 	                        <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
-	                        <span class="datetime">${timelineObject.date?string('dd MMM yy')} at ${timelineObject.date?string('HH:mm')}</span>
+	                        <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 	                      </div>
                    
                       	<p><@spring.message '${timelineObject.messageCode}'/>.</p>  

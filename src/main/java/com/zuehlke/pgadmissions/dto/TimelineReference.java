@@ -1,5 +1,7 @@
 package com.zuehlke.pgadmissions.dto;
 
+import java.util.Date;
+
 import com.zuehlke.pgadmissions.domain.Referee;
 
 public class TimelineReference extends TimelineObject {
@@ -21,6 +23,10 @@ public class TimelineReference extends TimelineObject {
 			return "timeline.reference.declined";
 		}
 		return "timeline.reference.uploaded";
+	}
+	@Override
+	public Date getMostRecentActivityDate() {
+		return eventDate;
 	}
 	
 	

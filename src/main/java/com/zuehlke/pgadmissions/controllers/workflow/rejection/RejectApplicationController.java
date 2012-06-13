@@ -154,5 +154,9 @@ public class RejectApplicationController {
 		binder.setValidator(rejectionValidator);
 
 	}
+	@ModelAttribute("user")
+	public RegisteredUser getUser() {	
+		return getCurrentUser();
+	}
 
 }

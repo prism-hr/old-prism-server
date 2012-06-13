@@ -20,6 +20,7 @@ public class TimelinePhase extends TimelineObject {
 	private ApprovalRound approvalRound = null;
 	
 	private SortedSet<Comment> comments = new TreeSet<Comment>();
+	private boolean rejectedByApprover;
 	
 	public ApplicationFormStatus getStatus() {
 		return status;
@@ -82,6 +83,31 @@ public class TimelinePhase extends TimelineObject {
 			return eventDate;
 		}
 		return comments.iterator().next().getDate();
+	}
+
+	@Override
+	public String getUserCapacity() {
+		if(ApplicationFormStatus.UNSUBMITTED == status || ApplicationFormStatus.VALIDATION == status || ApplicationFormStatus.WITHDRAWN == status){
+			return "applicant";
+		}
+		if(ApplicationFormStatus.REVIEW == status || ApplicationFormStatus.INTERVIEW == status || ApplicationFormStatus.APPROVAL== status){
+			return "admin";
+		}
+		if(ApplicationFormStatus.APPROVED == status){
+			return "approver";
+		}
+		if(rejectedByApprover){
+			return "approver";
+		}
+		return "admin";
+	}
+
+	public void setRejectedByApprover(boolean rejectedByApprover) {
+		this.rejectedByApprover = rejectedByApprover;
+	}
+
+	public boolean isRejectedByApprover() {
+		return rejectedByApprover;
 	}
 
 	

@@ -23,7 +23,6 @@ import javax.persistence.TemporalType;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Type;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
@@ -570,7 +569,9 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 			}
 		};
 		for (Event event : events) {
-			stateChangeEvents.add((StateChangeEvent) event);
+			if(event instanceof StateChangeEvent){
+				stateChangeEvents.add((StateChangeEvent) event);
+			}
 		}
 		Collections.sort(stateChangeEvents, dateComparator);
 		return stateChangeEvents;

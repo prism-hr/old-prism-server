@@ -42,4 +42,9 @@ public class TimelineReferenceTest {
 		assertEquals(eventDate, timelineReference.getMostRecentActivityDate());
 		
 	}
+	
+	@Test
+	public void shouldReturnRefereeAsCapacity(){
+		assertEquals("referee", new TimelineReference().getUserCapacity());
+	}
 }

@@ -28,6 +28,10 @@ public class TimelineReference extends TimelineObject {
 	public Date getMostRecentActivityDate() {
 		return eventDate;
 	}
+	@Override
+	public String getUserCapacity() {
+		return "referee";
+	}
 	
 	
 

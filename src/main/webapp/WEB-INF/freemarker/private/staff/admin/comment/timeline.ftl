@@ -10,11 +10,11 @@
             	<div class="row-group">
               
               	<ul id="timeline-statuses">
-             	 <#list timelineObjects as timelineObject>         
+             	 <#list timelineObjects as timelineObject>
                 	<li class="${timelineObject.type}">
                   	<div class="box">
 	                      <div class="title">
-	                        <span class="icon-role"></span>
+	                        <span class="icon-role ${timelineObject.userCapacity}"></span>
 	                        <span class="name">${(timelineObject.author.firstName?html)!} ${(timelineObject.author.lastName?html)!}</span>
 	                        <span class="datetime">${timelineObject.eventDate?string('dd MMM yy')} at ${timelineObject.eventDate?string('HH:mm')}</span>
 	                      </div>
@@ -49,11 +49,21 @@
                     </div>
                     <#if timelineObject.comments??>
 	                    <ul>
-	                    <#list timelineObject.comments as comment>     
+	                    <#list timelineObject.comments as comment>
+	                    	 <#if comment.type == 'GENERIC' || comment.type == 'VALIDATION' ||  comment.type == 'REVIEW_EVALUATION' ||  comment.type == 'INTERVIEW_EVALUATION'>                           	                       
+	                          	 <#assign role = "admin"/>     
+							  <#elseif comment.type == 'REVIEW'>
+							  		<#assign role = "reviewer"/>
+	 						 <#elseif comment.type == 'INTERVIEW'>
+							  		<#assign role = "interviewer"/>		
+							  <#elseif comment.type == 'APPROVAL'>
+							  		<#assign role = "approver"/>					  		
+	                          </#if>
+	                    	
 	                      <li>                      	  
 	                        <div class="box">
 	                          <div class="title">
-	                            <span class="icon-role"></span>
+	                            <span class="icon-role ${role}"></span>
 	                              <span class="name">${(comment.user.firstName?html)!} ${(comment.user.lastName?html)!}</span>
 	                        		<span class="datetime">${comment.date?string('dd MMM yy')} at ${comment.date?string('HH:mm')}</span>
 	                          </div>

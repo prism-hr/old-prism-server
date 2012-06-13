@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -21,6 +22,7 @@ import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
+import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.Referee;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -31,6 +33,7 @@ import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewStateChangeEventBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RefereeBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReferenceEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
@@ -38,6 +41,7 @@ import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.TimelineObject;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
 import com.zuehlke.pgadmissions.dto.TimelineReference;
@@ -230,7 +234,37 @@ public class TimelineServiceTest {
 		assertEquals(commentOne, iterator.next());
 
 	}
+	@Test
+	public void shouldSetRejectedByApproverTrueIfRejectUserIsApproverInProgram(){
+		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).toApplicationForm();
+		EasyMock.expect(userMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(true);
+		EasyMock.replay(userMock);
+		
+		Event event = new StateChangeEventBuilder().application(applicationForm).user(userMock).newStatus(ApplicationFormStatus.REJECTED).toEvent();		
+		applicationForm.getEvents().add(event);
 
+		List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
+		TimelinePhase phase = (TimelinePhase) phases.get(0);
+		assertTrue(phase.isRejectedByApprover());		
+	}
+	
+	@Test
+	public void shouldSetRejectedByApproverFalseIfRejectUserIsNOTApproverInProgram(){
+		RegisteredUser userMock = EasyMock.createMock(RegisteredUser.class);
+		Program program = new ProgramBuilder().id(1).toProgram();
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(1).program(program).toApplicationForm();
+		EasyMock.expect(userMock.isInRoleInProgram(Authority.APPROVER, program)).andReturn(false);
+		EasyMock.replay(userMock);
+		
+		Event event = new StateChangeEventBuilder().application(applicationForm).user(userMock).newStatus(ApplicationFormStatus.REJECTED).toEvent();		
+		applicationForm.getEvents().add(event);
+
+		List<TimelineObject> phases = timelineService.getTimelineObjects(applicationForm);
+		TimelinePhase phase = (TimelinePhase) phases.get(0);
+		assertFalse(phase.isRejectedByApprover());		
+	}
 	@Before
 	public void setup() {
 		format = new SimpleDateFormat("dd MM yyyy HH:mm:ss");

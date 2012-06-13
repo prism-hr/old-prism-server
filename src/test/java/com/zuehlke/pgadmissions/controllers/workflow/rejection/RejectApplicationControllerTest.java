@@ -3,8 +3,6 @@ package com.zuehlke.pgadmissions.controllers.workflow.rejection;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -13,9 +11,7 @@ import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -250,6 +246,16 @@ public class RejectApplicationControllerTest {
 		EasyMock.verify(rejectServiceMock);
 		Assert.assertNotNull(allReasons);
 		Assert.assertTrue(allReasons.containsAll(values));
+	}
+	
+	@Test
+	public void shouldGetCurrentUserAsUser(){
+		EasyMock.reset(userServiceMock);
+		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user).anyTimes();
+		EasyMock.replay(userServiceMock);
+		assertEquals(user,controllerUT.getUser());
+		
 	}
 
 	// -------------------------------------------

@@ -64,16 +64,57 @@ public class TimelinePhaseTest {
 		phase.getComments().addAll(Arrays.asList(new CommentBuilder().date(commetnDateTwo).toComment(), new CommentBuilder().date(commetnDateOne).toComment()));
 		assertEquals(commetnDateTwo, phase.getMostRecentActivityDate());
 	}
-	
+
 	@Test
 	public void shouldSetMostRecentActivityDateAsEventDateIfNoComments() throws ParseException {
 		SimpleDateFormat format = new SimpleDateFormat("dd MM yyyy HH:mm:ss");
-		
+
 		Date eventDate = format.parse("03 04 2012 11:00:45");
-		
 
 		TimelinePhase phase = new TimelinePhase();
-		phase.setEventDate(eventDate);		
+		phase.setEventDate(eventDate);
 		assertEquals(eventDate, phase.getMostRecentActivityDate());
+	}
+
+	@Test
+	public void shouldReturnCorrectcapcityForObviousCases() {
+		TimelinePhase timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.UNSUBMITTED);
+		assertEquals("applicant", timelinePhase.getUserCapacity());
+
+		timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.VALIDATION);
+		assertEquals("applicant", timelinePhase.getUserCapacity());
+
+		timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.WITHDRAWN);
+		assertEquals("applicant", timelinePhase.getUserCapacity());
+
+		timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.REVIEW);
+		assertEquals("admin", timelinePhase.getUserCapacity());
+
+		timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.INTERVIEW);
+		assertEquals("admin", timelinePhase.getUserCapacity());
+
+		timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.APPROVAL);
+		assertEquals("admin", timelinePhase.getUserCapacity());
+
+		timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.APPROVED);
+		assertEquals("approver", timelinePhase.getUserCapacity());
+	}
+
+	@Test
+	public void shouldReturnCorrectCapacityIfRejectedByAdminOrAPprover() {
+		TimelinePhase timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.REJECTED);
+		timelinePhase.setRejectedByApprover(true);
+		assertEquals("approver", timelinePhase.getUserCapacity());
+		timelinePhase.setRejectedByApprover(false);
+		assertEquals("admin", timelinePhase.getUserCapacity());
+
 	}
 }

@@ -15,6 +15,8 @@ import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.ReferenceEvent;
 import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
+import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
+import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.dto.TimelineObject;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
 import com.zuehlke.pgadmissions.dto.TimelineReference;
@@ -46,7 +48,7 @@ public class TimelineService {
 		}
 	}
 
-	private TimelinePhase createTimelinePhaseForEvent(Event event) {	
+	private TimelinePhase createTimelinePhaseForEvent(Event event, ApplicationForm applicationForm) {	
 		
 		TimelinePhase phase = new TimelinePhase();
 		phase.setEventDate(event.getDate());			
@@ -59,6 +61,9 @@ public class TimelineService {
 		}
 		else if(event instanceof ApprovalStateChangeEvent){
 			phase.setApprovalRound(((ApprovalStateChangeEvent)event).getApprovalRound());
+		}
+		if(phase.getStatus() == ApplicationFormStatus.REJECTED && event.getUser().isInRoleInProgram(Authority.APPROVER, applicationForm.getProgram())){
+			phase.setRejectedByApprover(true);
 		}
 		return phase;
 	}
@@ -80,7 +85,7 @@ public class TimelineService {
 		 
 		for (Event event : events) {
 			if(event instanceof StateChangeEvent){				
-				phases.add(createTimelinePhaseForEvent(event));
+				phases.add(createTimelinePhaseForEvent(event, applicationForm));
 			}else if(event instanceof ReferenceEvent){
 				timelineObjects.add(createTimelineReferenceFromEvent(event));
 			}			

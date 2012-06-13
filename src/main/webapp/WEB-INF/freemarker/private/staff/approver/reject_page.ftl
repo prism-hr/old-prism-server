@@ -48,7 +48,7 @@
 				<!-- Main content area. -->
 				<article id="content" role="main">
 
-				    <#if !user.isInRole('APPLICANT')>
+				    <#if  !user.isInRole('APPLICANT')>
 				    	<#include "/private/common/parts/tools.ftl"/>
 				    </#if>
 

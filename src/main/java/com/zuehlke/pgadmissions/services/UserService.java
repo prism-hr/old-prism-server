@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -113,7 +114,7 @@ public class UserService {
 			model.put("applicant", applicant);
 			model.put("adminsEmails", adminsEmails);
 			model.put("host", Environment.getInstance().getApplicationHostName());
-			InternetAddress toAddress = new InternetAddress(referee.getEmail(), referee.getFirstName() + " " + referee.getLastName());
+			InternetAddress toAddress = createUserAddress(referee);
 			String subject = msgSource.getMessage("registration.confirmation.referee", null, null);
 			
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,
@@ -337,5 +338,40 @@ public class UserService {
 				|| !getCurrentUser().getFirstName().equals(user.getFirstName())
 				|| !getCurrentUser().getLastName().equals(user.getLastName())
 				|| (!StringUtils.isBlank(user.getNewPassword()) && !getCurrentUser().getPassword().equals(encryptionUtils.getMD5Hash(user.getNewPassword())));
+	}
+
+	@Transactional
+	public void resetPassword(String email) {
+		RegisteredUser storedUser = userDAO.getUserByEmail(email);
+		if (storedUser == null) { // user-mail not found -> ignore
+			log.info("reset password request failed, e-mail not found: " + email);
+			return;
+		}
+		try {
+			String newPassword = encryptionUtils.generateUserPassword();
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put("user", storedUser);
+			model.put("newPassword", newPassword);
+			model.put("host", Environment.getInstance().getApplicationHostName());
+			InternetAddress toAddress = createUserAddress(storedUser);
+			String subject = msgSource.getMessage("user.password.reset", null, null);
+
+			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
+					"private/pgStudents/mail/new_password_confirmation.ftl", model, null));
+
+			String hashPassword = encryptionUtils.getMD5Hash(newPassword);
+			storedUser.setPassword(hashPassword);
+			userDAO.save(storedUser);
+		} catch (Throwable e) {
+			log.warn("error while sending email", e);
+		}
+	}
+
+	private InternetAddress createUserAddress(RegisteredUser user) {
+		try {
+			return new InternetAddress(user.getEmail(), user.getFirstName() + " " + user.getLastName());
+		} catch (UnsupportedEncodingException e) { // this shouldn't happen...
+			throw new RuntimeException(e);
+		}
 	}
 }

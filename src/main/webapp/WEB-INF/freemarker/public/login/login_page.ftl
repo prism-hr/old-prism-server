@@ -8,7 +8,7 @@
     
     <!-- Styles for Login List Page -->
     <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/global_public.css' />"/>
-    <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/login.css' />"/>
+    <link rel="stylesheet" type="text/css" href="<@spring.url '/design/default/css/public/forgotPassword.css' />"/>
     
     <!-- Styles for login List Page -->
     
@@ -66,6 +66,7 @@
             </form>
             
             <a href="/pgadmissions/register?program=${program!}">&gt; Register Today...</a>
+            <a href="/pgadmissions/forgotPassword">&gt; Forgot Password</a>
             
         </section>
     

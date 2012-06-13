@@ -91,7 +91,7 @@
                 <thead>
                   <tr>
                     <th class="centre" scope="col">
-                      <input type="checkbox" name="select-all" id="select-all" />
+                      <input type="checkbox" name="select-all" title="Select to download all" id="select-all" />
                       <input type="hidden" id="sort-column" name="sort-column" value="APPLICATION_DATE" />
                       <input type="hidden" id="sort-order" name="sort-order" value="DESCENDING" />
                       <input type="hidden" id="block-index" name="block-index" value="1" />

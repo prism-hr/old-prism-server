@@ -186,7 +186,7 @@
         <span class="hint" data-desc="<@spring.message 'programmeDetails.supervisor.awareOfApplication'/>"></span>
         <div class="field">
           <label><input type="radio" name="awareSupervisor" value="YES" /> Yes</label>
-          <label><input type="radio" name="awareSupervisor" value="NO" checked="checked" /> No</label>
+          <label><input type="radio" name="awareSupervisor" value="NO" /> No</label>
         </div>
       </div>
   

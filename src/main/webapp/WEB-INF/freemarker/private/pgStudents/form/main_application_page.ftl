@@ -137,7 +137,7 @@
             
             <div id="tools">
 								<ul class="left">
-										<li class="icon-print"><a href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Print Page</a></li>
+										<li class="icon-print"><a title="Click to Download" href="<@spring.url '/print?applicationFormId=${applicationForm.applicationNumber}'/>">Download PDF</a></li>
 								</ul>
 						</div>
             

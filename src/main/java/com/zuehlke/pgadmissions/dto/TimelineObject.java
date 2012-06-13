@@ -8,7 +8,7 @@ public abstract class TimelineObject implements Comparable<TimelineObject> {
 
 	protected Date date = null;
 	protected RegisteredUser author;
-	protected String messageCode;
+
 
 	
 	public Date getDate() {
@@ -27,14 +27,7 @@ public abstract class TimelineObject implements Comparable<TimelineObject> {
 		this.author = author;
 	}
 
-	public String getMessageCode() {
-		return messageCode;
-	}
-
-	public void setMessageCode(String messageCode) {
-		this.messageCode = messageCode;
-	}
-
+	public abstract String getMessageCode(); 
 	@Override
 	public int compareTo(TimelineObject otherPhase) {
 		return otherPhase.getDate().compareTo(this.getDate());

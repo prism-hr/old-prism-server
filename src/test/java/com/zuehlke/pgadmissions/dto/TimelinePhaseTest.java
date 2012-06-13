@@ -28,4 +28,25 @@ public class TimelinePhaseTest {
 		timelinePhase.setStatus(ApplicationFormStatus.UNSUBMITTED);
 		assertEquals("not_submitted", timelinePhase.getType());
 	}
+	
+	@Test
+	public void shouldReturnMessageCodeFromType(){
+		TimelinePhase timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.VALIDATION);
+		assertEquals("timeline.phase.validation", timelinePhase.getMessageCode());
+		
+		
+		timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.REVIEW);
+		assertEquals("timeline.phase.review", timelinePhase.getMessageCode());
+		
+		timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.WITHDRAWN);
+		assertEquals("timeline.phase.withdrawn", timelinePhase.getMessageCode());
+		
+		
+		timelinePhase = new TimelinePhase();
+		timelinePhase.setStatus(ApplicationFormStatus.UNSUBMITTED);
+		assertEquals("timeline.phase.not_submitted", timelinePhase.getMessageCode());
+	}
 }

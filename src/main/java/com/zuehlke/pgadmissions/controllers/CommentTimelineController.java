@@ -1,6 +1,5 @@
 package com.zuehlke.pgadmissions.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,10 +59,9 @@ public class CommentTimelineController {
 	}
 	
 	@ModelAttribute("timelineObjects")
-	public List<TimelineObject> getTimelineObjects(@RequestParam String id) {
-		List<TimelineObject> timelineObjects = new ArrayList<TimelineObject>();
-		timelineObjects.addAll(timelineService.getPhases(getApplicationForm(id)));		
-		return timelineObjects;
+	public List<TimelineObject> getTimelineObjects(@RequestParam String id) {		
+		return timelineService.getTimelineObjects(getApplicationForm(id));		
+		
 	}
 
 	@ModelAttribute("validationQuestionOptions")

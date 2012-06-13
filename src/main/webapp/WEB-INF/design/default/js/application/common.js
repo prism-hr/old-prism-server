@@ -77,7 +77,7 @@ function watchUpload($field)
   var $container  = $field.parent('div.field');
   var $progress   = $container.find('span.progress');
   
-  $container.on('click', '.button-edit', function()
+  $container.on('click', '.button-delete', function()
   {
 	  $container.removeClass('uploaded');
   });
@@ -156,7 +156,7 @@ function doUpload($upload_field)
 				$hfParent.html(data).show();
 				$container.addClass('uploaded');
 				var doc_type = $upload_field.attr('data-reference');
-				$('a.button-edit', $hfParent).attr({ 'data-desc': 'Edit ' + doc_type })
+				$('a.button-delete', $hfParent).attr({ 'data-desc': 'Delete ' + doc_type })
                                      .qtip(tooltipSettings);
 			}
     }

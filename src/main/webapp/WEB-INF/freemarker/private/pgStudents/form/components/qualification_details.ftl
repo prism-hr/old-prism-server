@@ -303,7 +303,7 @@
 						<#if qualification.proofOfAward??> 
 						<a class="uploaded-filename" href="<@spring.url '/download?documentId=${(encrypter.encrypt(qualification.proofOfAward.id))!}'/>" target="_blank">
 						${(qualification.proofOfAward.fileName?html)!}</a>
-						<a class="button-edit button-hint" data-desc="Change Proof Of Award">edit</a> 
+						<a class="button-delete button-hint" data-desc="Change Proof Of Award">delete</a> 
 						</#if>
 					</span>
 					<span class="progress" style="display: none;"></span>					

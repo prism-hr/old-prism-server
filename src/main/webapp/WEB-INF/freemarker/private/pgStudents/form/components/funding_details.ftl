@@ -166,7 +166,7 @@
           <#if funding.document??>
             <a href="<@spring.url '/download'/>?documentId=${encrypter.encrypt(funding.document.id)}" data-desc="Proof of Award" class="uploaded-filename" target="_blank">${funding.document.fileName}</a>
             <#if !applicationForm.isDecided() && !applicationForm.isWithdrawn()>
-						<a class="button-edit button-hint" data-desc="Edit Proof Of Award">edit</a>
+						<a class="button-delete button-hint" data-desc="Edit Proof Of Award">delete</a>
 						</#if>
           </#if>
           </span>

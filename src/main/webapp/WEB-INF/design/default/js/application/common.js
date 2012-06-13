@@ -80,6 +80,7 @@ function watchUpload($field)
   $container.on('click', '.button-delete', function()
   {
 	  $container.removeClass('uploaded');
+		$field.val('');
   });
 
   $container.on('change', $field, function()

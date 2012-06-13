@@ -357,7 +357,7 @@ public class UserService {
 			String subject = msgSource.getMessage("user.password.reset", null, null);
 
 			mailsender.send(mimeMessagePreparatorFactory.getMimeMessagePreparator(toAddress, subject,//
-					"private/pgStudents/mail/new_password_confirmation.ftl", model, null));
+					"private/mail/new_password_confirmation.ftl", model, null));
 
 			String hashPassword = encryptionUtils.getMD5Hash(newPassword);
 			storedUser.setPassword(hashPassword);

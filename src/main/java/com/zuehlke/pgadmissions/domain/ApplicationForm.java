@@ -94,7 +94,10 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	@Column(name = "submitted_on_timestamp")
 	private Date submittedDate;
-
+	
+	@Column(name = "batch_deadline")
+	private Date batchDeadline;
+	
 	@Column(name = "last_updated")
 	@Temporal(value = TemporalType.TIMESTAMP)
 	private Date lastUpdated;
@@ -613,6 +616,14 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 
 	public void setApplicationNumber(String applicationNumber) {
 		this.applicationNumber = applicationNumber;
+	}
+
+	public Date getBatchDeadline() {
+		return batchDeadline;
+	}
+
+	public void setBatchDeadline(Date batchDeadline) {
+		this.batchDeadline = batchDeadline;
 	}
 
 }

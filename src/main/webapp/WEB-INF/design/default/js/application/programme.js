@@ -117,10 +117,11 @@ $(document).ready(function()
 				'<td>' +
 				'<a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a>' +
 				'<a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> ' +
-				'<input type="hidden" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
-				'<input type="hidden" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
-				'<input type="hidden" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
-				'<input type="hidden" id="us_'+unsavedSupervisors+'aware" value="' + $("input[name='awareSupervisor']").val()+'"/>'	+								
+				'<input type="hidden" name="sId" id="us_'+unsavedSupervisors+'_supervisorId" value="'+unsavedSupervisors+'" />' +
+				'<input type="hidden" name="sFN" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
+				'<input type="hidden" name="sLN" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
+				'<input type="hidden" name="sEM" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
+				'<input type="hidden" name="sAS" id="us_'+unsavedSupervisors+'aware" value="' + $("input[name='awareSupervisor']").val()+'"/>'	+								
 				'<input type="hidden" name="suggestedSupervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $("input[name='awareSupervisor']").val() + '"} ' + "'" + "/>" +
 				'</td>' +
 				'</tr>');

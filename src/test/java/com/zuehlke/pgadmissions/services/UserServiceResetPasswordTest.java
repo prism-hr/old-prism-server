@@ -88,7 +88,7 @@ public class UserServiceResetPasswordTest {
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(//
 				EasyMock.eq(toAddress), //
 				EasyMock.eq("subject"), //
-				EasyMock.eq("private/pgStudents/mail/new_password_confirmation.ftl"),//
+				EasyMock.eq("private/mail/new_password_confirmation.ftl"),//
 				EasyMock.eq(expectedMap), //
 				EasyMock.isNull(InternetAddress.class))).andReturn(preparatorMock);
 		mailsenderMock.send(preparatorMock);
@@ -126,7 +126,7 @@ public class UserServiceResetPasswordTest {
 		EasyMock.expect(mimeMessagePreparatorFactoryMock.getMimeMessagePreparator(//
 				EasyMock.eq(toAddress), //
 				EasyMock.eq("subject"), //
-				EasyMock.eq("private/pgStudents/mail/new_password_confirmation.ftl"),//
+				EasyMock.eq("private/mail/new_password_confirmation.ftl"),//
 				EasyMock.eq(expectedMap), //
 				EasyMock.isNull(InternetAddress.class))).andReturn(preparatorMock);
 		mailsenderMock.send(preparatorMock);

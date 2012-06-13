@@ -36,7 +36,10 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#addressSection').html(data);
-				$('#address-H2').trigger('click');
+				if ($('#addressSection .section-error-bar').length == 0)
+				{
+					$('#address-H2').trigger('click');
+				}
 			}
 	);
 	$.get("/pgadmissions/update/getQualification",
@@ -47,7 +50,10 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#qualificationsSection').html(data);
-				$('#qualifications-H2').trigger('click');
+				if ($('#qualificationsSection .section-error-bar').length == 0)
+				{
+					$('#qualifications-H2').trigger('click');
+				}
 			}
 	);
 	$.get("/pgadmissions/update/getEmploymentPosition",
@@ -58,7 +64,10 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#positionSection').html(data);
-				$('#position-H2').trigger('click');
+				if ($('#positionSection .section-error-bar').length == 0)
+				{
+					$('#position-H2').trigger('click');
+				}
 			}
 	);
 	$.get("/pgadmissions/update/getFunding",
@@ -69,7 +78,10 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#fundingSection').html(data);
-				$('#funding-H2').trigger('click');
+				if ($('#fundingSection .section-error-bar').length == 0)
+				{
+					$('#funding-H2').trigger('click');
+				}
 			}
 	);
 	$.get("/pgadmissions/update/getReferee",
@@ -80,7 +92,10 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#referencesSection').html(data);
-				$('#referee-H2').trigger('click');
+				if ($('#referencesSection .section-error-bar').length == 0)
+				{
+					$('#referee-H2').trigger('click');
+				}
 			}
 	);
 
@@ -92,7 +107,10 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#documentSection').html(data);
-				$('#documents-H2').trigger('click');
+				if ($('#documentSection .section-error-bar').length == 0)
+				{
+					$('#documents-H2').trigger('click');
+				}
 			}
 	);
 	
@@ -104,7 +122,10 @@ $(document).ready(function(){
 			},
 			function(data) {
 				$('#additionalInformationSection').html(data);
-				$('#additional-H2').trigger('click');
+				if ($('#additionalInformationSection .section-error-bar').length == 0)
+				{
+					$('#additional-H2').trigger('click');
+				}
 			}
 	);
 	$.get("/pgadmissions/acceptTerms/getTermsAndConditions",

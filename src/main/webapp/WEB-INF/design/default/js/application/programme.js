@@ -143,7 +143,7 @@ $(document).ready(function()
 	// -------------------------------------------------------------------------------
 	$("table#supervisors").on("click", ".button-edit", function()
 	{
-		var $edit_row = $(this).closest('tr');
+		var $edit_row = $(this).parent().parent('tr');
 		currentRel		= $edit_row.attr('rel');
 		
 		var s_id				= $('input[name="sId"]', $edit_row).val();

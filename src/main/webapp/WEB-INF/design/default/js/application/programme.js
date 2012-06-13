@@ -110,7 +110,6 @@ $(document).ready(function()
 			$("#supervisor_div span.invalid").html('').hide();
 			var isAware = $("input[name='awareSupervisor']:checked").val(); 
 			var awareState = (isAware == "YES" ? "aware" : "unaware");
-			console.log('field: '+isAware+' - state: '+awareState);
 
 			unsavedSupervisors++;
 			$('table#supervisors tbody').append(
@@ -209,7 +208,6 @@ $(document).ready(function()
 			*/
 			var isAware = $("input[name='awareSupervisor']:checked").val(); 
 			var awareState = (isAware == "YES" ? "aware" : "unaware");
-			console.log('field: '+isAware+' - state: '+awareState);
 			
 			$('table#supervisors tbody tr[rel="'+ currentRel +'"]').replaceWith(
 					'<tr class="' + awareState + '" rel="'+ currentRel +'">' +
@@ -276,7 +274,10 @@ $(document).ready(function()
 
 			// Check for a "dirty" supervisor form.
 			//if (!isFormEmpty('#supervisor_div'))
-			if ($('#supervisorId').val() == '' && $('#supervisorFirstname').val() == '' && $('#supervisorLastname').val() == '' && $('#supervisorEmail').val() == '')
+			if ($('#supervisorId').val() != '' ||
+					$('#supervisorFirstname').val() != '' ||
+					$('#supervisorLastname').val() != '' ||
+					$('#supervisorEmail').val() != '')
 			{
 				$('#addSupervisorButton:visible, #updateSupervisorButton:visible').trigger('click'); // either add or update will be visible
 				// If there was an error submitting the non-empty form, don't continue.

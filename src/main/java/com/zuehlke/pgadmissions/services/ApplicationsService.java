@@ -1,11 +1,13 @@
 package com.zuehlke.pgadmissions.services;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,11 +52,15 @@ public class ApplicationsService {
 	}
 
 	@Transactional
-	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Program program) {
+	public ApplicationForm createAndSaveNewApplicationForm(RegisteredUser user, Program program, String programDeadline) throws ParseException {
 		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
 		ApplicationForm applicationForm = newApplicationForm();
 		applicationForm.setApplicant(user);
 		applicationForm.setProgram(program);
+		if(StringUtils.isNotBlank(programDeadline)){
+			Date programDeadlineDate = new SimpleDateFormat("dd-MMM-yyyy").parse(programDeadline);
+			applicationForm.setBatchDeadline(programDeadlineDate);
+		}
 		int runningCount = applicationFormDAO.getApplicationsInProgramThisYear(program, thisYear);
 		applicationForm.setApplicationNumber(program.getCode() + "-" + thisYear + "-" + String.format("%06d", ++runningCount));
 		applicationFormDAO.save(applicationForm);

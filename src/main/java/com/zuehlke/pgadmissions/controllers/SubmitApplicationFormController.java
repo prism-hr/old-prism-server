@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.zuehlke.pgadmissions.dao.StageDurationDAO;
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.exceptions.ResourceNotFoundException;
@@ -64,7 +65,7 @@ public class SubmitApplicationFormController {
 		}
 		
 		applicationForm.setStatus(ApplicationFormStatus.VALIDATION);		
-		applicationForm.setDueDate(calculateAndGetValidationDueDate());
+		calculateAndSetValidationDueDate(applicationForm);
 		applicationForm.setSubmittedDate(new Date());
 		applicationForm.setLastUpdated(applicationForm.getSubmittedDate());
 		applicationForm.getEvents().add(eventFactory.createEvent(ApplicationFormStatus.VALIDATION));
@@ -72,10 +73,14 @@ public class SubmitApplicationFormController {
 		return "redirect:/applications?submissionSuccess=true";
 	}
 
-	public Date calculateAndGetValidationDueDate() {
-		 Calendar dueDate = Calendar.getInstance();
-		 dueDate.add(Calendar.MINUTE, stageDurationDAO.getByStatus(ApplicationFormStatus.VALIDATION).getDurationInMinutes());
-		 return dueDate.getTime();
+	public void calculateAndSetValidationDueDate(ApplicationForm applicationForm) {
+		Calendar dueDate = Calendar.getInstance();
+		if (applicationForm.getBatchDeadline() != null){
+			dueDate.setTime(applicationForm.getBatchDeadline());
+		}
+		StageDuration validationDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.VALIDATION);
+		dueDate.add(Calendar.MINUTE, validationDuration.getDurationInMinutes());
+		applicationForm.setDueDate(dueDate.getTime());
 	}
 
 	@InitBinder("applicationForm")

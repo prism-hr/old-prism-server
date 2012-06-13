@@ -3,10 +3,14 @@ package com.zuehlke.pgadmissions.controllers;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
+
+import junit.framework.Assert;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.easymock.EasyMock;
@@ -193,6 +197,31 @@ public class SubmitApplicationFormControllerTest {
 		EasyMock.replay(applicationsServiceMock, userMock);
 
 		applicationController.getApplicationForm("3");
+	}
+	
+	@Test
+	public void shouldSetValidationDateAfterOneDayOfBatchDeadlineIfBatchDeadlineIsSetAndValidationStageDurationIsOneDay() throws ParseException{
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).batchDeadline(new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/12")).toApplicationForm();
+		StageDuration stageDurationMock = EasyMock.createMock(StageDuration.class);
+		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
+		EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
+		EasyMock.replay(stageDurationDAOMock, stageDurationMock);
+		applicationController.calculateAndSetValidationDueDate(applicationForm);
+		Date oneDayMore = new SimpleDateFormat("yyyy/MM/dd").parse("2012/12/13");
+		Assert.assertEquals(oneDayMore.getTime(), applicationForm.getDueDate().getTime());
+	}
+	
+	@Test
+	public void shouldSetValidationDateToCurrentDatePlusValidationStageIntervalIfBatchDeadlineIsNotSet() throws ParseException{
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(3).status(ApplicationFormStatus.UNSUBMITTED).toApplicationForm();
+		StageDuration stageDurationMock = EasyMock.createMock(StageDuration.class);
+		EasyMock.expect(stageDurationDAOMock.getByStatus(ApplicationFormStatus.VALIDATION)).andReturn(stageDurationMock);
+		EasyMock.expect(stageDurationMock.getDurationInMinutes()).andReturn(1440);
+		EasyMock.replay(stageDurationDAOMock, stageDurationMock);
+		applicationController.calculateAndSetValidationDueDate(applicationForm);
+		Calendar tomorrow = Calendar.getInstance();
+		tomorrow.add(Calendar.MINUTE, 1440);
+		Assert.assertEquals(tomorrow.getTime().getTime(), applicationForm.getDueDate().getTime());
 	}
 
 	@Before

@@ -1,5 +1,6 @@
 package com.zuehlke.pgadmissions.services;
 
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -122,7 +123,7 @@ public class ApplicationsServiceTest {
 	}
 
 	@Test
-	public void shouldCreateAndSaveNewApplicationForm() {
+	public void shouldCreateAndSaveNewApplicationFormWithoutBatchDeadline() throws ParseException {
 		Program program = new ProgramBuilder().code("KLOP").id(1).toProgram();
 		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
 		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
@@ -137,13 +138,38 @@ public class ApplicationsServiceTest {
 		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23);
 		applicationFormDAOMock.save(newApplicationForm);
 		EasyMock.replay(applicationFormDAOMock);
-		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program);
+		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program, null);
 		EasyMock.verify(applicationFormDAOMock);
 		assertSame(newApplicationForm, returnedForm);
 		assertEquals(registeredUser, returnedForm.getApplicant());
 		assertEquals(program, returnedForm.getProgram());
 		assertEquals("KLOP-2012-000024", returnedForm.getApplicationNumber());
-
+		assertNull(returnedForm.getBatchDeadline());
+	}
+	
+	@Test
+	public void shouldCreateAndSaveNewApplicationFormWithBatchDeadline() throws ParseException {
+		Program program = new ProgramBuilder().code("KLOP").id(1).toProgram();
+		RegisteredUser registeredUser = new RegisteredUserBuilder().id(1).toUser();
+		final ApplicationForm newApplicationForm = new ApplicationFormBuilder().id(1).toApplicationForm();
+		applicationsService = new ApplicationsService(applicationFormDAOMock) {
+			
+			@Override
+			ApplicationForm newApplicationForm() {
+				return newApplicationForm;
+			}
+		};
+		String thisYear = new SimpleDateFormat("yyyy").format(new Date());
+		EasyMock.expect(applicationFormDAOMock.getApplicationsInProgramThisYear(program, thisYear)).andReturn(23);
+		applicationFormDAOMock.save(newApplicationForm);
+		EasyMock.replay(applicationFormDAOMock);
+		ApplicationForm returnedForm = applicationsService.createAndSaveNewApplicationForm(registeredUser, program, "12-Dec-2012");
+		EasyMock.verify(applicationFormDAOMock);
+		assertSame(newApplicationForm, returnedForm);
+		assertEquals(registeredUser, returnedForm.getApplicant());
+		assertEquals(program, returnedForm.getProgram());
+		assertEquals("KLOP-2012-000024", returnedForm.getApplicationNumber());
+		assertNotNull(returnedForm.getBatchDeadline());
 	}
 
 	@Test

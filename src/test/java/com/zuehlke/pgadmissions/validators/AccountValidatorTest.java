@@ -184,4 +184,32 @@ public class AccountValidatorTest {
 		Assert.assertEquals("account.newPassword.same", mappingResult.getFieldError("newPassword").getCode());
 	}
 	
+	@Test
+	public void shouldRejectIfFirstNameEmpty() {
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "firstName");
+		user.setFirstName("");
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa765d61d8327deb882cf99")).andReturn("5f4dcc3b5aa765d61d8327deb882cf99");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
+		EasyMock.replay(userServiceMock, encryptionUtilsMock);
+		accountValidator.validate(user, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("user.firstName.notempty", mappingResult.getFieldError("firstName").getCode());
+	}
+
+	@Test
+	public void shouldRejectIfLastNameNull() {
+		DirectFieldBindingResult mappingResult = new DirectFieldBindingResult(user, "lastName");
+		user.setLastName(null);
+		EasyMock.expect(userServiceMock.getUser(1)).andReturn(user);
+		EasyMock.expect(userServiceMock.getAllUsers()).andReturn(userArray);
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("5f4dcc3b5aa765d61d8327deb882cf99")).andReturn("5f4dcc3b5aa765d61d8327deb882cf99");
+		EasyMock.expect(encryptionUtilsMock.getMD5Hash("12345678")).andReturn("12345678");
+		EasyMock.replay(userServiceMock, encryptionUtilsMock);
+		accountValidator.validate(user, mappingResult);
+		Assert.assertEquals(1, mappingResult.getErrorCount());
+		Assert.assertEquals("user.lastName.notempty", mappingResult.getFieldError("lastName").getCode());
+	}
+	
 }

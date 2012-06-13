@@ -136,6 +136,7 @@
         <div class="field">${(applicationForm.personalDetails.messenger?html)!"Not Provided"}</div>
       </div>
       
+<#--
       <div class="admin_row">
         <label class="admin_row_label">Ethnicity</label>
         <div class="field">${(applicationForm.personalDetails.ethnicity.name?html)!"Not Provided"}</div>
@@ -145,7 +146,7 @@
         <label class="admin_row_label">Disability</label>
         <div class="field">${(applicationForm.personalDetails.disability.name?html)!"Not Provided"}</div>
       </div>
-      
+-->      
     </div>            
   </form>
   

@@ -4,22 +4,16 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
-import com.zuehlke.pgadmissions.domain.Comment;
-import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
-import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
-import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.HomeOrOverseas;
@@ -110,8 +104,7 @@ public class CommentTimelineControllerTest {
 		};
 		TimelineObject timelineObjectOne = new TimelinePhase();
 		TimelineObject timelineObjectTwo = new TimelinePhase();
-		EasyMock.expect(timelineServiceMock.getPhases(applicationForm)).andReturn(
-				Arrays.asList((TimelinePhase) timelineObjectOne, (TimelinePhase) timelineObjectTwo));
+		EasyMock.expect(timelineServiceMock.getTimelineObjects(applicationForm)).andReturn(Arrays.asList(timelineObjectOne, timelineObjectTwo));
 		EasyMock.replay(timelineServiceMock);
 
 		List<TimelineObject> timelineObjects = controller.getTimelineObjects("applicationNumber");
@@ -120,15 +113,17 @@ public class CommentTimelineControllerTest {
 		assertEquals(timelineObjectTwo, timelineObjects.get(1));
 
 	}
+
 	@Test
-	public void shouldReturnAllValidationQuestionOptions(){
+	public void shouldReturnAllValidationQuestionOptions() {
 		assertArrayEquals(ValidationQuestionOptions.values(), controller.getValidationQuestionOptions());
 	}
-	
+
 	@Test
-	public void shouldReturnHomeOrOverseasOptions(){
+	public void shouldReturnHomeOrOverseasOptions() {
 		assertArrayEquals(HomeOrOverseas.values(), controller.getHomeOrOverseasOptions());
 	}
+
 	@Test
 	public void shouldReturnTimeLine() {
 		assertEquals("private/staff/admin/comment/timeline", controller.getCommentsView());

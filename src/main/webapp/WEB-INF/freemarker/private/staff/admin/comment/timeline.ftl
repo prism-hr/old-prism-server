@@ -27,6 +27,7 @@
 	                   		 <#list  timelineObject.reviewRound.reviewers as reviewer>
 	                   		 	<p>${reviewer.user.firstName} ${reviewer.user.lastName}</p>
 	                   		 </#list>
+	                   		 
 	                   	<#elseif timelineObject.interview??>
 	                   	 	<h3>Interview</h3>
 	                   	 	<p>${timelineObject.interview.interviewDueDate?string('dd MMM yy')} at ${timelineObject.interview.interviewTime}</p>
@@ -36,6 +37,13 @@
 	                   		 <#list  timelineObject.interview.interviewers as interviewer>
 	                   		 	<p>${interviewer.user.firstName} ${interviewer.user.lastName}</p>
 	                   		 </#list>
+	                   	 <#elseif timelineObject.approvalRound??>
+	                   		 <h3>Selected supervisors:</h3>           			
+	
+	                   		 <#list  timelineObject.approvalRound.supervisors as supervisor>
+	                   		 	<p>${supervisor.user.firstName} ${supervisor.user.lastName}</p>
+	                   		 </#list>
+	                   		 
 	                   	</#if>                   		
                     
                     </div>

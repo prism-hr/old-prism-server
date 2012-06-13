@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
@@ -15,7 +16,8 @@ public class TimelinePhase extends TimelineObject {
 	private Date exitedPhaseDate = null;
 	private ReviewRound reviewRound = null;
 	private Interview interview = null;
-
+	private ApprovalRound approvalRound = null;
+	
 	private SortedSet<Comment> comments = new TreeSet<Comment>();
 	
 	public ApplicationFormStatus getStatus() {
@@ -61,8 +63,12 @@ public class TimelinePhase extends TimelineObject {
 		this.interview = interview;
 	}
 
+	public ApprovalRound getApprovalRound() {
+		return approvalRound;
+	}
 
-
-	
+	public void setApprovalRound(ApprovalRound approvalRound) {
+		this.approvalRound = approvalRound;
+	}
 
 }

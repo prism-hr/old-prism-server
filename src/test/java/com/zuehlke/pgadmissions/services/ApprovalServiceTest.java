@@ -19,15 +19,19 @@ import com.zuehlke.pgadmissions.domain.ApplicationForm;
 import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Program;
 import com.zuehlke.pgadmissions.domain.RegisteredUser;
+import com.zuehlke.pgadmissions.domain.StateChangeEvent;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ProgramBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ReviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RoleBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StageDurationBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
 import com.zuehlke.pgadmissions.domain.enums.DurationUnitEnum;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 
 public class ApprovalServiceTest {
 
@@ -40,14 +44,16 @@ public class ApprovalServiceTest {
 
 	private MailService mailServiceMock;
 
+	private EventFactory eventFactoryMock;
+
 	@Before
 	public void setUp() {
 		applicationFormDAOMock = EasyMock.createMock(ApplicationFormDAO.class);
 		approvalRoundDAOMock = EasyMock.createMock(ApprovalRoundDAO.class);
 		stageDurationDAOMock = EasyMock.createMock(StageDurationDAO.class);
 		mailServiceMock = EasyMock.createMock(MailService.class);
-		
-		approvalService = new ApprovalService(applicationFormDAOMock, approvalRoundDAOMock, stageDurationDAOMock, mailServiceMock);
+		eventFactoryMock = EasyMock.createMock(EventFactory.class);
+		approvalService = new ApprovalService(applicationFormDAOMock, approvalRoundDAOMock, stageDurationDAOMock, mailServiceMock,eventFactoryMock );
 	}
 
 	@Test
@@ -59,13 +65,20 @@ public class ApprovalServiceTest {
 				new StageDurationBuilder().duration(2).unit(DurationUnitEnum.DAYS).toStageDuration());
 		approvalRoundDAOMock.save(approvalRound);
 		applicationFormDAOMock.save(applicationForm);
-		EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock);
+		
+		StateChangeEvent event = new ApprovalStateChangeEventBuilder().id(1).toApprovalStateChangeEvent();		
+		EasyMock.expect(eventFactoryMock.createEvent(approvalRound)).andReturn(event);
+		
+		EasyMock.replay(approvalRoundDAOMock, applicationFormDAOMock, stageDurationDAOMock, eventFactoryMock);
 
 		approvalService.moveApplicationToApproval(applicationForm, approvalRound);
 		assertEquals(DateUtils.truncate(DateUtils.addDays(new Date(), 2), Calendar.DATE), DateUtils.truncate(applicationForm.getDueDate(), Calendar.DATE));
 		assertEquals(applicationForm, approvalRound.getApplication());
 		assertEquals(approvalRound, applicationForm.getLatestApprovalRound());
 		assertEquals(ApplicationFormStatus.APPROVAL, applicationForm.getStatus());
+		assertEquals(1, applicationForm.getEvents().size());
+		assertEquals(event, applicationForm.getEvents().get(0));
+		
 		EasyMock.verify(approvalRoundDAOMock, applicationFormDAOMock);
 
 	}

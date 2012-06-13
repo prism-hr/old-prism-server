@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
@@ -36,20 +37,15 @@ public class TimelineService {
 		List<Event> events = applicationForm.getEvents();
 		 
 		for (Event event : events) {
-			TimelinePhase phase = new TimelinePhase();
-			phase.setDate(event.getDate());			
-			phase.setStatus( ((StateChangeEvent)event).getNewStatus());
-			phase.setAuthor(event.getUser());
-			phase.setMessageCode(resolveMessageCodeForStatus(((StateChangeEvent)event).getNewStatus()));
-			if(event instanceof ReviewStateChangeEvent){
-				phase.setReviewRound(((ReviewStateChangeEvent)event).getReviewRound());
-			}else if(event instanceof InterviewStateChangeEvent){
-				phase.setInterview(((InterviewStateChangeEvent)event).getInterview());
-			}
-			phases.add(phase);
+			phases.add(createTimelineObjectForEvent(event));
 			
 		}
 		sortAndSetExitDates(phases);
+		addCommentsToCorrectPhase(applicationForm, phases);
+		return phases;
+	}
+
+	private void addCommentsToCorrectPhase(ApplicationForm applicationForm, List<TimelinePhase> phases) {
 		List<Comment> visibleComments = applicationForm.getVisibleComments(userService.getCurrentUser());
 		for (Comment comment : visibleComments) {
 			for (TimelinePhase phase : phases) {
@@ -59,7 +55,23 @@ public class TimelineService {
 				}
 			}
 		}
-		return phases;
+	}
+
+	private TimelinePhase createTimelineObjectForEvent(Event event) {
+		TimelinePhase phase = new TimelinePhase();
+		phase.setDate(event.getDate());			
+		phase.setStatus( ((StateChangeEvent)event).getNewStatus());
+		phase.setAuthor(event.getUser());
+		phase.setMessageCode(resolveMessageCodeForStatus(((StateChangeEvent)event).getNewStatus()));
+		if(event instanceof ReviewStateChangeEvent){
+			phase.setReviewRound(((ReviewStateChangeEvent)event).getReviewRound());
+		}else if(event instanceof InterviewStateChangeEvent){
+			phase.setInterview(((InterviewStateChangeEvent)event).getInterview());
+		}
+		else if(event instanceof ApprovalStateChangeEvent){
+			phase.setApprovalRound(((ApprovalStateChangeEvent)event).getApprovalRound());
+		}
+		return phase;
 	}
 
 	private void sortAndSetExitDates(List<TimelinePhase> phases) {

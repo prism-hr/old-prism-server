@@ -424,7 +424,6 @@ public class ApplicationForm extends DomainObject<Integer> implements Comparable
 		this.status = status;
 	}
 
-	
 
 	public boolean isInValidationStage() {
 		return status == ApplicationFormStatus.VALIDATION;

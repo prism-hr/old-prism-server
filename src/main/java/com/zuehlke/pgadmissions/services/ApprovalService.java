@@ -16,6 +16,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.StageDuration;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.domain.enums.Authority;
+import com.zuehlke.pgadmissions.utils.EventFactory;
 
 @Service
 public class ApprovalService {
@@ -24,19 +25,21 @@ public class ApprovalService {
 	private final ApprovalRoundDAO approvalRoundDAO;
 	private final StageDurationDAO stageDurationDAO;
 	private final MailService mailService;
+	private final EventFactory eventFactory;
 
 	ApprovalService() {
-		this(null, null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	@Autowired
-	public ApprovalService(ApplicationFormDAO applicationDAO, 
-			ApprovalRoundDAO approvalRoundDAO, StageDurationDAO stageDurationDAO, MailService mailService) {
+	public ApprovalService(ApplicationFormDAO applicationDAO, ApprovalRoundDAO approvalRoundDAO, StageDurationDAO stageDurationDAO, MailService mailService,
+			EventFactory eventFactory) {
 
 		this.applicationDAO = applicationDAO;
 		this.approvalRoundDAO = approvalRoundDAO;
 		this.stageDurationDAO = stageDurationDAO;
 		this.mailService = mailService;
+		this.eventFactory = eventFactory;
 
 	}
 
@@ -48,27 +51,26 @@ public class ApprovalService {
 		approvalRoundDAO.save(approvalRound);
 		StageDuration approveStageDuration = stageDurationDAO.getByStatus(ApplicationFormStatus.APPROVAL);
 		application.setDueDate(DateUtils.addMinutes(new Date(), approveStageDuration.getDurationInMinutes()));
-	
-
 		application.setStatus(ApplicationFormStatus.APPROVAL);
+		application.getEvents().add(eventFactory.createEvent(approvalRound));
 		applicationDAO.save(application);
 	}
 
 	@Transactional
 	public void requestApprovalRestart(ApplicationForm application, RegisteredUser approver) {
-		if( !approver.isInRole(Authority.APPROVER)) {
+		if (!approver.isInRole(Authority.APPROVER)) {
 			throw new IllegalArgumentException(String.format("User %s is not an approver!", approver.getUsername()));
 		}
-		if(!approver.isInRoleInProgram(Authority.APPROVER, application.getProgram())){
+		if (!approver.isInRoleInProgram(Authority.APPROVER, application.getProgram())) {
 			throw new IllegalArgumentException(String.format("User %s is not an approver in program %s!",//
 					approver.getUsername(), application.getProgram().getTitle()));
 		}
-		if( ApplicationFormStatus.APPROVAL != application.getStatus()) {
+		if (ApplicationFormStatus.APPROVAL != application.getStatus()) {
 			throw new IllegalArgumentException(String.format("Application %s is not in state APPROVAL!", application.getApplicationNumber()));
 		}
-		
+
 		mailService.sendRequestRestartApproval(application, approver);
-		
+
 	}
 
 	private void checkApplicationStatus(ApplicationForm application) {

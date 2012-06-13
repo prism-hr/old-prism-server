@@ -1,6 +1,7 @@
 package com.zuehlke.pgadmissions.services;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,22 +15,24 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zuehlke.pgadmissions.domain.ApplicationForm;
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
 import com.zuehlke.pgadmissions.domain.Comment;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
+import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
-import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.builders.ApplicationFormBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.CommentBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewStateChangeEventBuilder;
-import com.zuehlke.pgadmissions.domain.builders.InterviewerBuilder;
+import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewStateChangeEventBuilder;
 import com.zuehlke.pgadmissions.domain.builders.StateChangeEventBuilder;
-import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.enums.ApplicationFormStatus;
 import com.zuehlke.pgadmissions.dto.TimelinePhase;
 
@@ -113,6 +116,24 @@ public class TimelineServiceTest {
 		TimelinePhase phase = timelineService.getPhases(applicationForm).get(0);
 
 		assertEquals(interview, phase.getInterview());
+	
+	
+	}
+	
+	@Test
+	public void shouldAddApprovalRoundIfApprovalStateChange() throws ParseException{
+		
+		ApprovalRound approvalRound = new ApprovalRoundBuilder().id(1).toApprovalRound();
+		StateChangeEvent reviewPhaseEnteredEvent = new ApprovalStateChangeEventBuilder().newStatus(ApplicationFormStatus.REVIEW).id(2).approvalRound(approvalRound).toApprovalStateChangeEvent();
+		
+		ApplicationForm applicationForm = new ApplicationFormBuilder().id(5).toApplicationForm();
+		applicationForm.getEvents().clear();
+		applicationForm.getEvents().addAll(Arrays.asList(reviewPhaseEnteredEvent));
+
+		TimelinePhase phase = timelineService.getPhases(applicationForm).get(0);
+
+		assertEquals(approvalRound, phase.getApprovalRound());
+	
 	
 	
 	}

@@ -11,6 +11,8 @@ import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.ApprovalStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
@@ -18,6 +20,7 @@ import com.zuehlke.pgadmissions.domain.RegisteredUser;
 import com.zuehlke.pgadmissions.domain.ReviewRound;
 import com.zuehlke.pgadmissions.domain.ReviewStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.StateChangeEvent;
+import com.zuehlke.pgadmissions.domain.builders.ApprovalRoundBuilder;
 import com.zuehlke.pgadmissions.domain.builders.InterviewBuilder;
 import com.zuehlke.pgadmissions.domain.builders.RegisteredUserBuilder;
 import com.zuehlke.pgadmissions.domain.builders.ReviewRoundBuilder;
@@ -74,6 +77,23 @@ public class EventFactoryTest {
 		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(stageChangeEvent.getDate(), Calendar.DATE));
 		assertEquals(ApplicationFormStatus.INTERVIEW, stageChangeEvent.getNewStatus());
 		assertEquals(interview, stageChangeEvent.getInterview());
+	}
+	
+	
+	@Test
+	public void shouldReturnApprovalStateChangeEvent() {
+		RegisteredUser user = new RegisteredUserBuilder().id(1).toUser();
+		EasyMock.expect(userServiceMock.getCurrentUser()).andReturn(user);
+		EasyMock.replay(userServiceMock);
+		ApprovalRound approval = new ApprovalRoundBuilder().id(1).toApprovalRound();
+		Event event = eventFactory.createEvent( approval);
+		
+		assertTrue(event instanceof ApprovalStateChangeEvent);
+		ApprovalStateChangeEvent stageChangeEvent = (ApprovalStateChangeEvent) event;
+		assertEquals(user, stageChangeEvent.getUser());
+		assertEquals(DateUtils.truncate(new Date(), Calendar.DATE), DateUtils.truncate(stageChangeEvent.getDate(), Calendar.DATE));
+		assertEquals(ApplicationFormStatus.APPROVAL, stageChangeEvent.getNewStatus());
+		assertEquals(approval, stageChangeEvent.getApprovalRound());
 	}
 	
 	@Before

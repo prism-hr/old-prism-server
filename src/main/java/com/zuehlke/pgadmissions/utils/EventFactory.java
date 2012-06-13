@@ -5,6 +5,8 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.zuehlke.pgadmissions.domain.ApprovalRound;
+import com.zuehlke.pgadmissions.domain.ApprovalStateChangeEvent;
 import com.zuehlke.pgadmissions.domain.Event;
 import com.zuehlke.pgadmissions.domain.Interview;
 import com.zuehlke.pgadmissions.domain.InterviewStateChangeEvent;
@@ -47,6 +49,15 @@ public class EventFactory {
 		event.setUser(userService.getCurrentUser());
 		event.setDate(new Date());
 		event.setInterview(interview);
+		return event;
+	}
+
+	public Event createEvent(ApprovalRound approvalRound) {
+		ApprovalStateChangeEvent event = new ApprovalStateChangeEvent();
+		event.setNewStatus(ApplicationFormStatus.APPROVAL);
+		event.setUser(userService.getCurrentUser());
+		event.setDate(new Date());
+		event.setApprovalRound(approvalRound);
 		return event;
 	}
 

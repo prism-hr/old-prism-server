@@ -11,7 +11,7 @@
 <ul>                       							
 	<#list validationQuestionOptions as option>
 	<li<#if comment.englishCompentencyOk?? && comment.englishCompentencyOk != option> class="grey-label"</#if>>
-		${option.displayValue} (${comment.englishCompentencyOk})
+		${option.displayValue}
 	</li>
 	</#list>
 </ul>

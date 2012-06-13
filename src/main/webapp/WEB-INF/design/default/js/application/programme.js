@@ -108,7 +108,7 @@ $(document).ready(function()
 			//replaceWithLoader($(this));
 			$("#supervisors").show();
 			$("#supervisor_div span.invalid").html('').hide();
-			var aware = ($('#awareSupervisor').val() == "YES") ? 'Yes' : 'No';
+			var aware = ($("input[name='awareSupervisor']").val() == "YES") ? 'Yes' : 'No';
 
 			unsavedSupervisors++;
 			$('table#supervisors tbody').append(
@@ -120,8 +120,8 @@ $(document).ready(function()
 				'<input type="hidden" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 				'<input type="hidden" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
 				'<input type="hidden" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
-				'<input type="hidden" id="us_'+unsavedSupervisors+'aware" value="' + $('#awareSupervisor').val()+'"/>'	+								
-				'<input type="hidden" name="suggestedSupervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $('#awareSupervisor').val() + '"} ' + "'" + "/>" +
+				'<input type="hidden" id="us_'+unsavedSupervisors+'aware" value="' + $("input[name='awareSupervisor']").val()+'"/>'	+								
+				'<input type="hidden" name="suggestedSupervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $("input[name='awareSupervisor']").val() + '"} ' + "'" + "/>" +
 				'</td>' +
 				'</tr>');
 			addToolTips();
@@ -129,9 +129,9 @@ $(document).ready(function()
 			$("input[name='sFN']").val($('#supervisorFirstname').val());
 			$("input[name='sLN']").val($('#supervisorLastname').val());
 			$("input[name='sEM']").val($('#supervisorEmail').val());
-			$("input[name='sAS']").val($('#awareSupervisor').val());
+			$("input[name='sAS']").val($("input[name='awareSupervisor']").val());
 			$('#supervisorId, #supervisorFirstname, #supervisorLastname, #supervisorEmail').val('');
-			$("#awareSupervisor").val(["NO"]);
+			$("input[name='awareSupervisor']").val(["NO"]);
 		}
 	});
 
@@ -225,8 +225,8 @@ $(document).ready(function()
 					'<input name="sFN" type="hidden" id="us_'+currentRel+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 					'<input name="sLN" type="hidden" id="us_'+currentRel+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
 					'<input name="sEM" type="hidden" id="us_'+currentRel+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
-					'<input name="sAS" type="hidden" id="us_'+currentRel+'aware" value="' + $('#awareSupervisor').val()+'"/>'	+								
-					'<input type="hidden" name="suggestedSupervisors" id="'+currentRel+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $('#awareSupervisor').val() + '"} ' + "'" + "/>" +
+					'<input name="sAS" type="hidden" id="us_'+currentRel+'aware" value="' + $("input[name='awareSupervisor']").val()+'"/>'	+								
+					'<input type="hidden" name="suggestedSupervisors" id="'+currentRel+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $("input[name='awareSupervisor']").val() + '"} ' + "'" + "/>" +
 					'</td>' +
 					'</tr>'
 			);
@@ -251,7 +251,7 @@ $(document).ready(function()
 			$('#updateSupervisorButton').hide();
 			$('#addSupervisorButton').show();
 		}
-		$("#awareSupervisor").val(["NO"]);
+		$("input[name='awareSupervisor']").val(["NO"]);
 	});
 
 

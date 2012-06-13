@@ -108,13 +108,14 @@ $(document).ready(function()
 			//replaceWithLoader($(this));
 			$("#supervisors").show();
 			$("#supervisor_div span.invalid").html('').hide();
-			var aware = ($("input[name='awareSupervisor']").val() == "YES") ? 'Yes' : 'No';
-			console.log('field: '+$("input[name='awareSupervisor']").val()+' - aware: '+aware);
+			var isAware = $("input[name='awareSupervisor']:checked").val(); 
+			var isAwareLC = isAware.toLowerCase; // = ($("input[name='awareSupervisor']").val() == "YES") ? 'Yes' : 'No';
+			console.log('field: '+isAware+' - aware: '+isAwareLC);
 
 			unsavedSupervisors++;
 			$('table#supervisors tbody').append(
-				'<tr class="' + (aware == "Yes" ? "aware" : "unaware") + '" rel="'+ unsavedSupervisors +'">' +
-				'<td data-desc="Supervisor ' + (aware == "Yes" ? "aware" : "unaware") + ' of application">' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
+				'<tr class="' + isAwareLC + '" rel="'+ unsavedSupervisors +'">' +
+				'<td data-desc="Supervisor ' + isAwareLC + ' of application">' + $('#supervisorFirstname').val() + ' '+ $('#supervisorLastname').val() + ' (' + $('#supervisorEmail').val() + ')</td>' +
 				'<td>' +
 				'<a class=\"button-edit\" id="us_'+unsavedSupervisors+'" name=\"editSupervisorLink\">edit</a>' +
 				'<a class=\"button-delete\" id="usd_'+unsavedSupervisors+'" name=\"deleteSupervisor\">delete</a> ' +
@@ -123,7 +124,7 @@ $(document).ready(function()
 				'<input type="hidden" name="sLN" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
 				'<input type="hidden" name="sEM" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
 				'<input type="hidden" name="sAS" id="us_'+unsavedSupervisors+'aware" value="' + $("input[name='awareSupervisor']").val()+'"/>'	+								
-				'<input type="hidden" name="suggestedSupervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + $("input[name='awareSupervisor']").val() + '"} ' + "'" + "/>" +
+				'<input type="hidden" name="suggestedSupervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + isAware + '"} ' + "'" + "/>" +
 				'</td>' +
 				'</tr>');
 			addToolTips();

@@ -6,8 +6,7 @@ $(document).ready(function()
 {
 	$("#acceptTermsPDValue").val("NO");
 	$("#addSupervisorButton").show();
-	$("#awareSupervisorCB").attr('checked', false);
-	//$("#awareSupervisor").val("NO");
+	$("input[name='awareSupervisor']").val("NO");
 	var unsavedSupervisors = 0;
 	
 	var progImgCount = 0;
@@ -109,7 +108,7 @@ $(document).ready(function()
 			//replaceWithLoader($(this));
 			$("#supervisors").show();
 			$("#supervisor_div span.invalid").html('').hide();
-			var aware = ($('input[name="awareSupervisor"]').val() == "YES") ? 'Yes' : 'No';
+			var aware = ($('#awareSupervisor').val() =="YES") ? 'Yes' : 'No';
 
 			unsavedSupervisors++;
 			$('table#supervisors tbody').append(
@@ -132,7 +131,8 @@ $(document).ready(function()
 			$("input[name='sEM']").val($('#supervisorEmail').val());
 			$("input[name='sAS']").val($('#awareSupervisor').val());
 			$('#supervisorId, #supervisorFirstname, #supervisorLastname, #supervisorEmail').val('');
-			$('input[name="awareSupervisor"]').val("NO");
+			$("#awareSupervisorCB").attr('checked', false);
+			$("#awareSupervisor").val("NO");
 		}
 	});
 
@@ -159,11 +159,13 @@ $(document).ready(function()
 		$("#supervisorEmail").val(s_email);
 		if (s_aware == 'YES')
 		{
-			$('input[name="awareSupervisor"]').val('YES');
+			//$("#awareSupervisorCB").attr('checked', true);
+			$("input[name='awareSupervisor']").val('YES');
 		}
 		else
 		{
-			$('input[name="awareSupervisor"]').val('NO');
+			//$("#awareSupervisorCB").attr('checked', false);
+			$("input[name='awareSupervisor']").val('NO');
 		}
 
 		// Show all other edit buttons (as something hides the current edit button).
@@ -266,7 +268,8 @@ $(document).ready(function()
 			$('#updateSupervisorButton').hide();
 			$('#addSupervisorButton').show();
 		}
-		$('input[name="awareSupervisor"]').val("NO");
+		$("#awareSupervisorCB").attr('checked', false);
+		$("#awareSupervisor").val("NO");
 	});
 
 

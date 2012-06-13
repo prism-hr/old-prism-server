@@ -109,7 +109,7 @@ $(document).ready(function()
 			$("#supervisors").show();
 			$("#supervisor_div span.invalid").html('').hide();
 			var isAware = $("input[name='awareSupervisor']:checked").val(); 
-			var awareState = (isAware == "YES" ? "aware" : "unaware"); // = ($("input[name='awareSupervisor']").val() == "YES") ? 'Yes' : 'No';
+			var awareState = (isAware == "YES" ? "aware" : "unaware");
 			console.log('field: '+isAware+' - state: '+awareState);
 
 			unsavedSupervisors++;
@@ -123,7 +123,7 @@ $(document).ready(function()
 				'<input type="hidden" name="sFN" id="us_'+unsavedSupervisors+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 				'<input type="hidden" name="sLN" id="us_'+unsavedSupervisors+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
 				'<input type="hidden" name="sEM" id="us_'+unsavedSupervisors+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
-				'<input type="hidden" name="sAS" id="us_'+unsavedSupervisors+'aware" value="' + $("input[name='awareSupervisor']").val()+'"/>'	+								
+				'<input type="hidden" name="sAS" id="us_'+unsavedSupervisors+'aware" value="' + isAware+'"/>'	+								
 				'<input type="hidden" name="suggestedSupervisors" id="'+unsavedSupervisors+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + isAware + '"} ' + "'" + "/>" +
 				'</td>' +
 				'</tr>');
@@ -132,7 +132,7 @@ $(document).ready(function()
 			$("input[name='sFN']").val($('#supervisorFirstname').val());
 			$("input[name='sLN']").val($('#supervisorLastname').val());
 			$("input[name='sEM']").val($('#supervisorEmail').val());
-			$("input[name='sAS']").val($("input[name='awareSupervisor']").val());
+			$("input[name='sAS']").val(isAware);
 			$('#supervisorId, #supervisorFirstname, #supervisorLastname, #supervisorEmail').val('');
 			$("input[name='awareSupervisor']").val(["NO"]);
 		}
@@ -159,16 +159,7 @@ $(document).ready(function()
 		$("#supervisorFirstname").val(s_firstname);
 		$("#supervisorLastname").val(s_lastname);
 		$("#supervisorEmail").val(s_email);
-		if (s_aware == 'YES')
-		{
-			//$("#awareSupervisorCB").attr('checked', true);
-			$("input[name='awareSupervisor']").val(['YES']);
-		}
-		else
-		{
-			//$("#awareSupervisorCB").attr('checked', false);
-			$("input[name='awareSupervisor']").val(['NO']);
-		}
+		$("input[name='awareSupervisor']").val([s_aware]);
 
 		// Show all other edit buttons (as something hides the current edit button).
 		$('table#supervisors .button-edit').show();
@@ -217,7 +208,7 @@ $(document).ready(function()
 			$("span[name='superEmail']").hide();
 			*/
 			var isAware = $("input[name='awareSupervisor']:checked").val(); 
-			var awareState = (isAware == "YES" ? "aware" : "unaware"); // = ($("input[name='awareSupervisor']").val() == "YES") ? 'Yes' : 'No';
+			var awareState = (isAware == "YES" ? "aware" : "unaware");
 			console.log('field: '+isAware+' - state: '+awareState);
 			
 			$('table#supervisors tbody tr[rel="'+ currentRel +'"]').replaceWith(
@@ -230,7 +221,7 @@ $(document).ready(function()
 					'<input name="sFN" type="hidden" id="us_'+currentRel+'firstname" value="' + $('#supervisorFirstname').val()+'"/>'	+								
 					'<input name="sLN" type="hidden" id="us_'+currentRel+'lastname" value="' + $('#supervisorLastname').val()+'"/>'	+								
 					'<input name="sEM" type="hidden" id="us_'+currentRel+'email" value="' + $('#supervisorEmail').val()+'"/>'	+								
-					'<input name="sAS" type="hidden" id="us_'+currentRel+'aware" value="' + $("input[name='awareSupervisor']").val()+'"/>'	+								
+					'<input name="sAS" type="hidden" id="us_'+currentRel+'aware" value="' + isAware +'"/>'	+								
 					'<input type="hidden" name="suggestedSupervisors" id="'+currentRel+'_ussupervisors" value=' +"'" + '{"id":"' +  $('#supervisorId').val()+ '","firstname":"' +  $('#supervisorFirstname').val()+ '","lastname":"' +  $('#supervisorLastname').val()+ '","email":"' +  $('#supervisorEmail').val() +  '", "awareSupervisor":"' + isAware + '"} ' + "'" + "/>" +
 					'</td>' +
 					'</tr>'

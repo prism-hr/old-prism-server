@@ -75,7 +75,6 @@ function addToolTips()
 function watchUpload($field)
 {
   var $container  = $field.parent('div.field');
-  var $progress   = $container.find('span.progress');
   
   $container.on('click', '.button-delete', function()
   {
@@ -90,8 +89,8 @@ function watchUpload($field)
 		if (input.files[0].size < 10485760) // 10MB in bytes
     {
 			deleteUploadedFile($hidden);
-			$progress.html('uploading file...');
 			$field.attr("readonly", "readonly");
+			$container.addClass('posting');
 			doUpload($(input));
 			$field.removeAttr("readonly");
 		 }
@@ -119,19 +118,6 @@ function doUpload($upload_field)
   var $hfParent   = $hidden.parent();
   var $progress   = $container.find('span.progress');
 
-	// Showing/hiding progress bar (message) when we're uploading the file via AJAX.	
-	$progress.ajaxStart(function()
-  {
-		$(this).show();
-		$container.addClass('posting');
-	})
-	.ajaxComplete(function()
-  {
-		$(this).hide();
-		$progress.html("");
-		$container.removeClass('posting');
-	});
-  
 	// Remove any previous error messages.
 	$container.find('span.invalid').remove();
 
@@ -162,6 +148,7 @@ function doUpload($upload_field)
 				$('a.button-delete', $hfParent).attr({ 'data-desc': 'Delete ' + doc_type })
                                      .qtip(tooltipSettings);
 			}
+			$container.removeClass('posting');
     }
   });
 }

@@ -53,6 +53,7 @@
 				<ref bean="approverAdminApprovalNotificationSchedule"/>
 				<ref bean="supervisorNotificationSchedule"/> 
 				<ref bean="adminApprovedNotificationSchedule"/> 
+				<ref bean="approverApprovalReminderSchedule"/> 
 			</list>
 		</property>
 	</bean>

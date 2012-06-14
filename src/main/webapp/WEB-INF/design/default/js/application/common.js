@@ -123,13 +123,13 @@ function doUpload($upload_field)
 	$progress.ajaxStart(function()
   {
 		$(this).show();
-		$upload_field.addClass('posting');
+		$container.addClass('posting');
 	})
 	.ajaxComplete(function()
   {
 		$(this).hide();
 		$progress.html("");
-		$upload_field.removeClass('posting');
+		$container.removeClass('posting');
 	});
   
 	// Remove any previous error messages.

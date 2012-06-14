@@ -58,6 +58,7 @@ $(document).ready(function() {
 	/* Search functionality. */
 	$('#search-go').click(function()
 	{
+		$('#search-box span.invalid').remove();
 		if ($('#searchTerm').val().length < 3)
 		{
 			$('#search-box').append('<span class="invalid">Search term must be at least three characters.</span>');
